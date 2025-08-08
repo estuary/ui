@@ -9,6 +9,14 @@ import produce from 'immer';
 
 import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 
+export enum HydrationStatus {
+    HYDRATED = 0,
+    SERVER_UPDATE_REQUESTED = 1,
+    SERVER_UPDATING = 3,
+    VALIDATION_REQUESTED = 4,
+    VALIDATING = 5,
+}
+
 export type SelectionAlgorithm =
     | 'depthZero'
     | 'depthOne'
@@ -32,8 +40,10 @@ export interface FieldSelectionDictionary {
 
 interface BindingFieldSelections {
     [uuid: string]: {
-        value: FieldSelectionDictionary;
         hasConflicts: boolean;
+        hydrating: boolean;
+        status: HydrationStatus;
+        value: FieldSelectionDictionary;
     };
 }
 
@@ -65,10 +75,10 @@ export interface StoreWithFieldSelection {
         value: FieldSelectionDictionary | undefined,
         hasConflicts: boolean
     ) => void;
-
-    selectionSaving: boolean;
-    setSelectionSaving: (
-        value: StoreWithFieldSelection['selectionSaving']
+    stubSelections: (bindingUUIDs: string[]) => void;
+    advanceHydrationStatus: (
+        targetStatus: HydrationStatus,
+        bindingUUID?: string
     ) => void;
 
     selectionAlgorithm: SelectionAlgorithm | null;
@@ -80,18 +90,37 @@ export interface StoreWithFieldSelection {
     setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
 }
 
+const getHydrationStatus = (status?: HydrationStatus): HydrationStatus => {
+    if (status === HydrationStatus.HYDRATED) {
+        return HydrationStatus.SERVER_UPDATE_REQUESTED;
+    }
+
+    if (status === HydrationStatus.SERVER_UPDATE_REQUESTED) {
+        return HydrationStatus.SERVER_UPDATING;
+    }
+
+    if (status === HydrationStatus.SERVER_UPDATING) {
+        return HydrationStatus.VALIDATION_REQUESTED;
+    }
+
+    if (status === HydrationStatus.VALIDATION_REQUESTED) {
+        return HydrationStatus.VALIDATING;
+    }
+
+    if (status === HydrationStatus.VALIDATING) {
+        return HydrationStatus.HYDRATED;
+    }
+
+    return HydrationStatus.VALIDATION_REQUESTED;
+};
+
 export const getInitialFieldSelectionData = (): Pick<
     StoreWithFieldSelection,
-    | 'recommendFields'
-    | 'searchQuery'
-    | 'selectionAlgorithm'
-    | 'selectionSaving'
-    | 'selections'
+    'recommendFields' | 'searchQuery' | 'selectionAlgorithm' | 'selections'
 > => ({
     recommendFields: {},
     searchQuery: null,
     selectionAlgorithm: null,
-    selectionSaving: false,
     selections: {},
 });
 
@@ -100,11 +129,49 @@ export const getStoreWithFieldSelectionSettings = (
 ): StoreWithFieldSelection => ({
     ...getInitialFieldSelectionData(),
 
+    advanceHydrationStatus: (targetStatus, bindingUUID) => {
+        set(
+            produce((state: BindingState) => {
+                if (bindingUUID && state.selections?.[bindingUUID]) {
+                    const evaluatedStatus = getHydrationStatus(
+                        state.selections[bindingUUID].status
+                    );
+
+                    state.selections[bindingUUID].hydrating =
+                        evaluatedStatus !== HydrationStatus.HYDRATED;
+
+                    state.selections[bindingUUID].status = evaluatedStatus;
+                } else {
+                    Object.entries(state.selections)
+                        .filter(
+                            ([_uuid, { status }]) => status === targetStatus
+                        )
+                        .forEach(([uuid, { status }]) => {
+                            const evaluatedStatus = getHydrationStatus(status);
+
+                            state.selections[uuid].hydrating =
+                                evaluatedStatus !== HydrationStatus.HYDRATED;
+
+                            state.selections[uuid].status = evaluatedStatus;
+                        });
+                }
+            }),
+            false,
+            'Hydration Status Advanced'
+        );
+    },
+
     initializeSelections: (bindingUUID, selections, hasConflicts) => {
         set(
             produce((state: BindingState) => {
+                const evaluatedStatus = getHydrationStatus(
+                    state.selections[bindingUUID].status
+                );
+
                 state.selections[bindingUUID] = {
                     hasConflicts,
+                    hydrating: evaluatedStatus !== HydrationStatus.HYDRATED,
+                    status: evaluatedStatus,
                     value: selections,
                 };
             }),
@@ -125,8 +192,6 @@ export const getStoreWithFieldSelectionSettings = (
 
         set(
             produce((state: BindingState) => {
-                state.selections[bindingUUID] = { hasConflicts, value };
-
                 switch (selectedAlgorithm) {
                     case 'depthZero': {
                         state.recommendFields[bindingUUID] = 0;
@@ -146,9 +211,16 @@ export const getStoreWithFieldSelectionSettings = (
                     }
                 }
 
-                if (!state.selectionSaving) {
-                    state.selectionSaving = true;
-                }
+                const evaluatedStatus = getHydrationStatus(
+                    state.selections[bindingUUID].status
+                );
+
+                state.selections[bindingUUID] = {
+                    hasConflicts,
+                    hydrating: evaluatedStatus !== HydrationStatus.HYDRATED,
+                    status: evaluatedStatus,
+                    value,
+                };
             }),
             false,
             'Algorithmic Selections Set'
@@ -185,32 +257,24 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setSelectionSaving: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.selectionSaving = value;
-            }),
-            false,
-            'Selection Saving Set'
-        );
-    },
-
     setMultiSelection: (bindingUUID, updatedFields, hasConflicts) => {
         set(
             produce((state: BindingState) => {
                 const fields = state.selections[bindingUUID].value;
 
+                const evaluatedStatus = getHydrationStatus(
+                    state.selections[bindingUUID].status
+                );
+
                 state.selections[bindingUUID] = {
                     hasConflicts,
+                    hydrating: evaluatedStatus !== HydrationStatus.HYDRATED,
+                    status: evaluatedStatus,
                     value: {
                         ...fields,
                         ...updatedFields,
                     },
                 };
-
-                if (!state.selectionSaving) {
-                    state.selectionSaving = true;
-                }
             }),
             false,
             'Multiple Field Selections Set'
@@ -233,12 +297,41 @@ export const getStoreWithFieldSelectionSettings = (
                     },
                 };
 
-                if (!state.selectionSaving && previousSelectionMode !== mode) {
-                    state.selectionSaving = true;
+                if (
+                    !state.selections[bindingUUID].hydrating &&
+                    previousSelectionMode !== mode
+                ) {
+                    const evaluatedStatus = getHydrationStatus(
+                        state.selections[bindingUUID].status
+                    );
+
+                    state.selections[bindingUUID].hydrating =
+                        evaluatedStatus !== HydrationStatus.HYDRATED;
+
+                    state.selections[bindingUUID].status = evaluatedStatus;
                 }
             }),
             false,
             'Single Field Selection Set'
+        );
+    },
+
+    stubSelections: (bindingUUIDs) => {
+        set(
+            produce((state: BindingState) => {
+                bindingUUIDs.forEach((bindingUUID) => {
+                    if (!state.selections?.[bindingUUID]) {
+                        state.selections[bindingUUID] = {
+                            hasConflicts: false,
+                            hydrating: true,
+                            status: getHydrationStatus(),
+                            value: {},
+                        };
+                    }
+                });
+            }),
+            false,
+            'Selections Stubbed'
         );
     },
 });

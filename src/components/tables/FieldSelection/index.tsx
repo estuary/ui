@@ -20,6 +20,7 @@ import {
 import TableColumnSelector from 'src/components/tables/TableColumnSelector';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
@@ -29,9 +30,19 @@ import { evaluateColumnsToShow } from 'src/utils/table-utils';
 export default function FieldSelectionTable({
     bindingUUID,
     missingServerData,
-    selections,
 }: FieldSelectionTableProps) {
     const intl = useIntl();
+
+    const selections = useBindingStore((state) =>
+        state.selections?.[bindingUUID]
+            ? Object.entries(state.selections[bindingUUID].value).map(
+                  ([field, selection]) => ({ ...selection, field })
+              )
+            : []
+    );
+    const selectionsHydrating = useBindingStore(
+        (state) => state.selections?.[bindingUUID]?.hydrating
+    );
 
     const formStatus = useFormStateStore_status();
 
@@ -73,11 +84,7 @@ export default function FieldSelectionTable({
             setTableState({
                 status: TableStatuses.NO_EXISTING_DATA,
             });
-        } else if (
-            formStatus === FormStatus.GENERATING ||
-            formStatus === FormStatus.TESTING ||
-            formStatus === FormStatus.TESTING_BACKGROUND
-        ) {
+        } else if (selectionsHydrating) {
             setTableState({ status: TableStatuses.LOADING });
         } else if (processedSelections && processedSelections.length > 0) {
             setTableState({
@@ -90,7 +97,7 @@ export default function FieldSelectionTable({
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [formStatus, processedSelections, searchQuery]);
+    }, [formStatus, processedSelections, searchQuery, selectionsHydrating]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 

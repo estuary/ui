@@ -1,6 +1,4 @@
-import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
-
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
@@ -14,6 +12,7 @@ import FieldSelectionTable from 'src/components/tables/FieldSelection';
 import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
+import { HydrationStatus } from 'src/stores/Binding/slices/FieldSelection';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
@@ -37,11 +36,6 @@ function FieldSelectionViewer({
     collectionName,
     refreshRequired,
 }: Props) {
-    const [saveInProgress, setSaveInProgress] = useState(false);
-    const [data, setData] = useState<
-        ExpandedFieldSelection[] | null | undefined
-    >();
-
     const applyFieldSelections = useFieldSelection(bindingUUID, collectionName);
     const { validateFieldSelection } = useFieldSelectionAlgorithm();
 
@@ -53,10 +47,14 @@ function FieldSelectionViewer({
         (state) => state.initializeSelections
     );
     const stagedBindingIndex = useBinding_currentBindingIndex();
-
-    const selectionSaving = useBindingStore((state) => state.selectionSaving);
-    const setSelectionSaving = useBindingStore(
-        (state) => state.setSelectionSaving
+    const advanceHydrationStatus = useBindingStore(
+        (state) => state.advanceHydrationStatus
+    );
+    const selectionsHydrating = useBindingStore(
+        (state) => state.selections?.[bindingUUID].hydrating
+    );
+    const hydrationStatus = useBindingStore(
+        (state) => state.selections?.[bindingUUID].status
     );
 
     // Draft Editor Store
@@ -78,11 +76,15 @@ function FieldSelectionViewer({
     );
 
     useEffect(() => {
-        if (formActive || selectionSaving || saveInProgress) {
-            return;
-        }
+        if (
+            serverDataExists &&
+            hydrationStatus === HydrationStatus.VALIDATION_REQUESTED
+        ) {
+            advanceHydrationStatus(
+                HydrationStatus.VALIDATION_REQUESTED,
+                bindingUUID
+            );
 
-        if (serverDataExists) {
             validateFieldSelection().then(
                 ({ builtBinding, fieldStanza, response }) => {
                     if (!response) {
@@ -104,25 +106,17 @@ function FieldSelectionViewer({
                         updatedSelections,
                         response.hasConflicts
                     );
-                    setData(
-                        Object.entries(updatedSelections).map(
-                            ([field, selection]) => ({ ...selection, field })
-                        )
-                    );
                 },
-                () => {
-                    setData(null);
-                }
+                () => {}
             );
         }
     }, [
+        advanceHydrationStatus,
         bindingUUID,
         collectionName,
         draftSpecs,
-        formActive,
+        hydrationStatus,
         initializeSelections,
-        saveInProgress,
-        selectionSaving,
         serverDataExists,
         setRecommendFields,
         stagedBindingIndex,
@@ -136,9 +130,15 @@ function FieldSelectionViewer({
     );
 
     useEffect(() => {
-        if (selectionSaving && !saveInProgress && draftSpec) {
+        if (
+            draftSpec &&
+            hydrationStatus === HydrationStatus.SERVER_UPDATE_REQUESTED
+        ) {
             setFormState({ status: FormStatus.UPDATING });
-            setSaveInProgress(true);
+            advanceHydrationStatus(
+                HydrationStatus.SERVER_UPDATE_REQUESTED,
+                bindingUUID
+            );
 
             // TODO (field selection): Extend error handling.
             applyFieldSelections(draftSpec)
@@ -157,21 +157,25 @@ function FieldSelectionViewer({
                     }
                 )
                 .finally(() => {
-                    setSelectionSaving(false);
-                    setSaveInProgress(false);
+                    advanceHydrationStatus(
+                        HydrationStatus.SERVER_UPDATING,
+                        bindingUUID
+                    );
                 });
         }
     }, [
+        advanceHydrationStatus,
         applyFieldSelections,
+        bindingUUID,
         draftSpec,
-        saveInProgress,
-        selectionSaving,
+        hydrationStatus,
         setFormState,
-        setSaveInProgress,
-        setSelectionSaving,
     ]);
 
-    const loading = formActive || formStatus === FormStatus.TESTING_BACKGROUND;
+    const loading =
+        selectionsHydrating ||
+        formActive ||
+        formStatus === FormStatus.TESTING_BACKGROUND;
 
     return (
         <Box sx={{ my: 3 }}>
@@ -202,7 +206,6 @@ function FieldSelectionViewer({
             <FieldSelectionTable
                 bindingUUID={bindingUUID}
                 missingServerData={!serverDataExists}
-                selections={data}
             />
         </Box>
     );
