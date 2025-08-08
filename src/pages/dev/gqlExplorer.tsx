@@ -13,7 +13,7 @@ const GqlExplorer = () => {
     const session = useUserStore((state) => state.session);
 
     if (!session) {
-        return <PageContainer>Must be logged in</PageContainer>;
+        return null;
     }
 
     // token consumed in flow/crates/agent/src/api/public/graphql/mod.rs
