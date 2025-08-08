@@ -7,7 +7,7 @@ import { useUserStore } from 'src/context/User/useUserContextStore';
 const sandbox = ['allow-scripts', 'allow-same-origin', 'allow-popups'].join(
     ' '
 );
-const ENDPOINT = 'http://localhost:8675/api/v1/graphql/graphiql';
+const ENDPOINT = `${import.meta.env.VITE_GQL_URL}/graphiql`;
 
 const GqlExplorer = () => {
     const session = useUserStore((state) => state.session);
