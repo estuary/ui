@@ -40,9 +40,11 @@ export enum FormStatus {
 
     FAILED = 'FAILED',
 
+    // Used to disable buttons quickly on Test/Save clicking
+    PROCESSING = 'PROCESSING',
+
     // USE WITH CAUTION - only for prompts right now (Q3 2024)
     LOCKED = 'LOCKED',
-    PROCESSING = 'PROCESSING',
 }
 
 export interface EntityFormState {
