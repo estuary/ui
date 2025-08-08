@@ -135,6 +135,7 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.table.filterLabel': `Filter by Name or Reactor Address`,
 
     'admin.tabs.users': `Account Access`,
+    'admin.tabs.notifications': `Notifications`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
@@ -166,4 +167,15 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.generate.logsHeader': `Please wait while we save and apply your storage mapping.`,
     'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
     'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
+
+    'admin.notifications.title': `Alert History`,
+    'admin.notifications.message': `Below you can see a history of all notifications`,
+
+    'admin.notifications.table.data.firedAt': `Fired At`,
+    'admin.notifications.table.data.recipients': `Recipients`,
+    'admin.notifications.table.data.resolvedAt': `Resolved At`,
+    'admin.notifications.table.label': `List of all alerts for tenant`,
+    'admin.notifications.table.empty.header': `No alerts found`,
+    'admin.notifications.table.empty.message': `This tenant has no historical alerts`,
+    'admin.notifications.table.error.message': `There was an error attempting to fetch alert history.`,
 };
