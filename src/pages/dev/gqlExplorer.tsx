@@ -1,40 +1,39 @@
-import { createGraphiQLFetcher } from '@graphiql/toolkit';
-import { GraphiQL } from 'graphiql';
+import { Box } from '@mui/material';
 
+import SingleLineCode from 'src/components/content/SingleLineCode';
 import PageContainer from 'src/components/shared/PageContainer';
-
-import 'graphiql/style.css';
-
-import { useMemo } from 'react';
-
-import { Box, Typography, useTheme } from '@mui/material';
-
 import { useUserStore } from 'src/context/User/useUserContextStore';
-import { stringifyJSON } from 'src/services/stringify';
-import { getAuthHeader } from 'src/utils/misc-utils';
+
+const sandbox = ['allow-scripts', 'allow-same-origin', 'allow-popups'].join(
+    ' '
+);
+const ENDPOINT = 'http://localhost:8675/api/v1/graphql/graphiql';
 
 const GqlExplorer = () => {
-    const theme = useTheme();
     const session = useUserStore((state) => state.session);
 
-    const fetcher = useMemo(
-        () =>
-            createGraphiQLFetcher({
-                url: import.meta.env.VITE_GQL_URL,
-            }),
-        []
-    );
+    if (!session) {
+        return <PageContainer>Must be logged in</PageContainer>;
+    }
+
+    // token consumed in flow/crates/agent/src/api/public/graphql/mod.rs
+    const iframeSrc = `${ENDPOINT}?access_token=${encodeURIComponent(session.access_token)}`;
 
     return (
         <PageContainer>
-            <Typography variant="h6">Graphiql v3</Typography>
-            <Box sx={{ height: '79vh', minHeight: 250 }}>
-                <GraphiQL
-                    fetcher={fetcher}
-                    defaultHeaders={stringifyJSON(
-                        getAuthHeader(session?.access_token)
-                    )}
-                    forcedTheme={theme.palette.mode}
+            <SingleLineCode
+                value={iframeSrc}
+                sx={{ maxWidth: undefined, width: '100%' }}
+            />
+            <Box sx={{ height: '75vh', minHeight: 250 }}>
+                <iframe
+                    src={iframeSrc}
+                    sandbox={sandbox}
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                    }}
+                    title="GQL Explorer"
                 />
             </Box>
         </PageContainer>
