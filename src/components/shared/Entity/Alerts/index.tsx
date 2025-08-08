@@ -34,7 +34,9 @@ function EntityAlerts() {
         return <>error</>;
     }
 
-    return <textarea rows={20} cols={75} value={stringifyJSON(data)} />;
+    return (
+        <textarea rows={20} cols={75} readOnly value={stringifyJSON(data)} />
+    );
 }
 
 export default EntityAlerts;
