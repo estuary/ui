@@ -19,8 +19,6 @@ function HeaderProgress({ waitTimes }: EntityToolbarProgressProps) {
     const formActive = useFormStateStore_isActive();
     const formStatus = useFormStateStore_status();
     const discovering = !draftId && formStatus === FormStatus.GENERATING;
-    const saved = formStatus === FormStatus.SAVED;
-    const locked = formStatus === FormStatus.LOCKED;
 
     return (
         <Box
@@ -29,7 +27,11 @@ function HeaderProgress({ waitTimes }: EntityToolbarProgressProps) {
             }}
         >
             <Fade
-                in={Boolean(formActive && !saved && !locked)}
+                in={Boolean(
+                    formActive &&
+                        formStatus !== FormStatus.SAVED &&
+                        formStatus !== FormStatus.LOCKED
+                )}
                 mountOnEnter
                 unmountOnExit
             >

@@ -42,6 +42,7 @@ export enum FormStatus {
 
     // USE WITH CAUTION - only for prompts right now (Q3 2024)
     LOCKED = 'LOCKED',
+    PROCESSING = 'PROCESSING',
 }
 
 export interface EntityFormState {

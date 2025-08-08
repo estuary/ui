@@ -33,6 +33,7 @@ import { hasLength } from 'src/utils/misc-utils';
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
 export const DEFAULT_DEBOUNCE_WAIT = 500;
+export const LONG_DEBOUNCE_WAIT = 1000;
 export const QUICK_DEBOUNCE_WAIT = DEFAULT_DEBOUNCE_WAIT / 2;
 export const NEAR_INSTANT_DEBOUNCE_WAIT = QUICK_DEBOUNCE_WAIT / 2;
 export const NEW_TASK_PUBLICATION_ID = '00:00:00:00:00:00:00:00';

@@ -27,7 +27,10 @@ const formActive = (status: FormStatus) => {
         status === FormStatus.SAVED ||
         // This is like 'saved' but a bit different. With PreSavePrompt we need a way to make sure the user
         //  never is able to get back out of that ever
-        status === FormStatus.LOCKED
+        status === FormStatus.LOCKED ||
+        // Used while the form is processing stuff. Right now only used in useSave for the time between the
+        //  button click and the actual test/save starts. If you set to testing or saving the logs show :facepalm
+        status === FormStatus.PROCESSING
     );
 };
 
@@ -168,6 +171,16 @@ const getInitialState = (
                     // If we are locked then we should only ever want the user leaving the page
                     state.formState.exitWhenLogsClose = true;
                     return;
+                }
+
+                if (
+                    formState.status === FormStatus.PROCESSING
+                    // Boolean(
+                    //     newState.status !== FormStatus.SAVING &&
+                    //         newState.status !== FormStatus.TESTING
+                    // )
+                ) {
+                    console.log('PROCESSING UPDATING TO', newState.status);
                 }
 
                 state.formState = { ...formState, ...newState };

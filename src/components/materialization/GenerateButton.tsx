@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
 import useGenerateCatalog from 'src/components/materialization/useGenerateCatalog';
@@ -13,6 +13,8 @@ interface Props {
 }
 
 function MaterializeGenerateButton({ disabled }: Props) {
+    const intl = useIntl();
+
     const generateCatalog = useGenerateCatalog();
     const isSaving = useEditorStore_isSaving();
     const formActive = useFormStateStore_isActive();
@@ -20,13 +22,15 @@ function MaterializeGenerateButton({ disabled }: Props) {
 
     return (
         <Button
-            onClick={async () => {
-                await generateCatalog(mutateDraftSpecs);
+            onClick={() => {
+                void generateCatalog(mutateDraftSpecs);
             }}
             disabled={disabled || isSaving || formActive}
             sx={entityHeaderButtonSx}
         >
-            <FormattedMessage id="cta.generateCatalog.materialization" />
+            {intl.formatMessage({
+                id: 'cta.generateCatalog.materialization',
+            })}
         </Button>
     );
 }
