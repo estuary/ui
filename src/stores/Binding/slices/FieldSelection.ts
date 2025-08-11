@@ -274,7 +274,8 @@ export const getStoreWithFieldSelectionSettings = (
                 const fields = state.selections[bindingUUID].value;
 
                 const evaluatedStatus = getHydrationStatus(
-                    state.selections[bindingUUID].status
+                    state.selections[bindingUUID].status,
+                    true
                 );
 
                 state.selections[bindingUUID] = {
@@ -313,7 +314,8 @@ export const getStoreWithFieldSelectionSettings = (
                     previousSelectionMode !== mode
                 ) {
                     const evaluatedStatus = getHydrationStatus(
-                        state.selections[bindingUUID].status
+                        state.selections[bindingUUID].status,
+                        true
                     );
 
                     state.selections[bindingUUID].hydrating =
