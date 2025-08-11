@@ -45,6 +45,7 @@ export const getFieldSelection = (
             fieldsStanza.exclude.includes(outcome.field)
         ) {
             updatedSelections[outcome.field] = {
+                field: outcome.field,
                 mode: 'exclude',
                 outcome,
                 projection,
@@ -64,6 +65,7 @@ export const getFieldSelection = (
 
             if (meta !== undefined) {
                 updatedSelections[outcome.field] = {
+                    field: outcome.field,
                     meta,
                     mode: 'require',
                     outcome,
@@ -85,6 +87,7 @@ export const getFieldSelection = (
 
             if (meta !== undefined) {
                 updatedSelections[outcome.field] = {
+                    field: outcome.field,
                     meta,
                     mode: 'require',
                     outcome,
@@ -96,6 +99,7 @@ export const getFieldSelection = (
         }
 
         updatedSelections[outcome.field] = {
+            field: outcome.field,
             mode: isSelectedField(outcome) ? 'default' : null,
             outcome,
             projection,

@@ -21,8 +21,6 @@ import TableColumnSelector from 'src/components/tables/TableColumnSelector';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { useFormStateStore_status } from 'src/stores/FormState/hooks';
-import { FormStatus } from 'src/stores/FormState/types';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
@@ -35,16 +33,12 @@ export default function FieldSelectionTable({
 
     const selections = useBindingStore((state) =>
         state.selections?.[bindingUUID]
-            ? Object.entries(state.selections[bindingUUID].value).map(
-                  ([field, selection]) => ({ ...selection, field })
-              )
+            ? Object.values(state.selections[bindingUUID].value)
             : []
     );
     const selectionsHydrating = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.hydrating
     );
-
-    const formStatus = useFormStateStore_status();
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -80,13 +74,9 @@ export default function FieldSelectionTable({
     );
 
     useEffect(() => {
-        if (formStatus === FormStatus.INIT) {
-            setTableState({
-                status: TableStatuses.NO_EXISTING_DATA,
-            });
-        } else if (selectionsHydrating) {
+        if (selectionsHydrating) {
             setTableState({ status: TableStatuses.LOADING });
-        } else if (processedSelections && processedSelections.length > 0) {
+        } else if (processedSelections.length > 0) {
             setTableState({
                 status: TableStatuses.DATA_FETCHED,
             });
@@ -97,7 +87,7 @@ export default function FieldSelectionTable({
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [formStatus, processedSelections, searchQuery, selectionsHydrating]);
+    }, [processedSelections.length, searchQuery, selectionsHydrating]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 
@@ -184,8 +174,7 @@ export default function FieldSelectionTable({
                                 !missingServerData &&
                                 !loading &&
                                 processedSelections &&
-                                processedSelections.length > 0 &&
-                                formStatus !== FormStatus.TESTING ? (
+                                processedSelections.length > 0 ? (
                                     <Rows
                                         columns={columnsToShow}
                                         data={processedSelections}

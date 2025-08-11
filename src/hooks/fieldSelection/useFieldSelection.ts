@@ -1,5 +1,5 @@
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
-import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
@@ -53,17 +53,16 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                     require: {},
                 };
 
-                const requiredFields: Pick<
-                    ExpandedFieldSelection,
-                    'field' | 'meta'
-                >[] = Object.entries(selections[bindingUUID].value)
-                    .filter(
-                        ([_field, selection]) => selection.mode === 'require'
-                    )
-                    .map(([field, selection]) => ({
-                        field,
-                        meta: selection.meta,
-                    }));
+                const requiredFields: Pick<FieldSelection, 'field' | 'meta'>[] =
+                    Object.entries(selections[bindingUUID].value)
+                        .filter(
+                            ([_field, selection]) =>
+                                selection.mode === 'require'
+                        )
+                        .map(([field, selection]) => ({
+                            field,
+                            meta: selection.meta,
+                        }));
 
                 const excludedFields: string[] = Object.entries(
                     selections[bindingUUID].value

@@ -39,6 +39,7 @@ import {
     resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
+    stubBindingFieldSelection,
     updateBackfilledBindingState,
     whatChanged,
 } from 'src/stores/Binding/shared';
@@ -268,7 +269,6 @@ const getInitialState = (
 
             if (entityType === 'materialization') {
                 const boundCollections = Object.keys(get().bindings);
-                const bindingUUIDs = Object.keys(get().resourceConfigs);
 
                 if (hasLength(boundCollections)) {
                     const trialCollections = await evaluateTrialCollections(
@@ -280,10 +280,6 @@ const getInitialState = (
                         trialCollections,
                         specHydrationResponse.bindingChanges.addedCollections
                     );
-                }
-
-                if (bindingUUIDs.length > 0) {
-                    get().stubSelections(bindingUUIDs);
                 }
             }
         } else {
@@ -405,6 +401,8 @@ const getInitialState = (
                 state.resourceConfigs = sortedResourceConfigs;
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
+                const bindingUUIDs = Object.keys(state.resourceConfigs);
+
                 if (state.backfilledBindings.length > 0) {
                     if (entityType === 'capture') {
                         // if they have anything marked for backfill make sure the setting is forced on
@@ -412,8 +410,7 @@ const getInitialState = (
                     }
 
                     state.backfillAllBindings =
-                        state.backfilledBindings.length ===
-                        Object.keys(state.resourceConfigs).length;
+                        state.backfilledBindings.length === bindingUUIDs.length;
                 } else {
                     state.backfillAllBindings = false;
                 }
@@ -423,6 +420,11 @@ const getInitialState = (
                     state,
                     sortedResourceConfigs,
                     rehydrating // mainly for field selection refresh so the select binding is not lost
+                );
+
+                state.selections = stubBindingFieldSelection(
+                    bindingUUIDs,
+                    'SERVER_UPDATING'
                 );
             }),
             false,

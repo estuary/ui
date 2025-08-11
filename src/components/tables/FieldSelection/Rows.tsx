@@ -2,7 +2,7 @@ import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/FieldSelection/types';
-import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 import { TableCell, TableRow } from '@mui/material';
 
@@ -83,18 +83,14 @@ function Rows({ columnToSort, columns, data, sortDirection }: RowsProps) {
         return (
             <>
                 {data
-                    .sort(
-                        (
-                            first: ExpandedFieldSelection,
-                            second: ExpandedFieldSelection
-                        ) =>
-                            basicSort_string(
-                                first.field,
-                                second.field,
-                                sortDirection
-                            )
+                    .sort((first: FieldSelection, second: FieldSelection) =>
+                        basicSort_string(
+                            first.field,
+                            second.field,
+                            sortDirection
+                        )
                     )
-                    .map((record: ExpandedFieldSelection, index: number) => (
+                    .map((record: FieldSelection, index: number) => (
                         <Row
                             columns={columns}
                             row={record}

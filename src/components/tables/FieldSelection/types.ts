@@ -1,15 +1,15 @@
-import type { ExpandedFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { SortDirection, TableColumns } from 'src/types';
 
 export interface RowProps {
     columns: TableColumns[];
-    row: ExpandedFieldSelection;
+    row: FieldSelection;
 }
 
 export interface RowsProps {
     columnToSort: string;
     columns: TableColumns[];
-    data: ExpandedFieldSelection[];
+    data: FieldSelection[];
     sortDirection: SortDirection;
 }
 

@@ -1,5 +1,5 @@
 import type {
-    ExpandedFieldSelection,
+    FieldSelection,
     SelectionAlgorithm,
 } from 'src/stores/Binding/slices/FieldSelection';
 
@@ -8,7 +8,7 @@ export type FieldSelectionType = 'default' | 'require' | 'exclude';
 export interface BaseProps {
     bindingUUID: string;
     loading: boolean;
-    selections: ExpandedFieldSelection[] | null | undefined;
+    selections: FieldSelection[] | null | undefined;
 }
 
 export interface MenuActionProps extends BaseProps {

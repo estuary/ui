@@ -9,13 +9,13 @@ import produce from 'immer';
 
 import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 
-export enum HydrationStatus {
-    HYDRATED = 0,
-    SERVER_UPDATE_REQUESTED = 1,
-    SERVER_UPDATING = 3,
-    VALIDATION_REQUESTED = 4,
-    VALIDATING = 5,
-}
+export type HydrationStatus =
+    | 'HYDRATED'
+    | 'SERVER_UPDATE_REQUESTED'
+    | 'SCOPED_SERVER_UPDATE_REQUESTED'
+    | 'SERVER_UPDATING'
+    | 'VALIDATION_REQUESTED'
+    | 'VALIDATING';
 
 export type SelectionAlgorithm =
     | 'depthZero'
@@ -24,34 +24,33 @@ export type SelectionAlgorithm =
     | 'depthUnlimited';
 
 export interface FieldSelection {
+    field: string;
     mode: FieldSelectionType | null;
     outcome: FieldOutcome;
     meta?: Schema;
     projection?: BuiltProjection;
 }
 
-export interface ExpandedFieldSelection extends FieldSelection {
-    field: string;
-}
-
 export interface FieldSelectionDictionary {
     [field: string]: FieldSelection;
 }
 
-interface BindingFieldSelections {
-    [uuid: string]: {
-        hasConflicts: boolean;
-        hydrating: boolean;
-        status: HydrationStatus;
-        value: FieldSelectionDictionary;
-    };
+export interface BindingFieldSelection {
+    hasConflicts: boolean;
+    hydrating: boolean;
+    status: HydrationStatus;
+    value: FieldSelectionDictionary;
+}
+
+export interface BindingFieldSelectionDictionary {
+    [uuid: string]: BindingFieldSelection;
 }
 
 export interface StoreWithFieldSelection {
     recommendFields: { [uuid: string]: boolean | number };
     setRecommendFields: (bindingUUID: string, value: boolean | number) => void;
 
-    selections: BindingFieldSelections;
+    selections: BindingFieldSelectionDictionary;
     initializeSelections: (
         bindingUUID: string,
         selections: FieldSelectionDictionary,
@@ -75,7 +74,6 @@ export interface StoreWithFieldSelection {
         value: FieldSelectionDictionary | undefined,
         hasConflicts: boolean
     ) => void;
-    stubSelections: (bindingUUIDs: string[]) => void;
     advanceHydrationStatus: (
         targetStatus: HydrationStatus,
         bindingUUID?: string
@@ -90,28 +88,38 @@ export interface StoreWithFieldSelection {
     setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
 }
 
-const getHydrationStatus = (status?: HydrationStatus): HydrationStatus => {
-    if (status === HydrationStatus.HYDRATED) {
-        return HydrationStatus.SERVER_UPDATE_REQUESTED;
+const isHydrating = (status: HydrationStatus) => status !== 'HYDRATED';
+
+const getHydrationStatus = (
+    status?: HydrationStatus,
+    scoped?: boolean
+): HydrationStatus => {
+    if (status === 'HYDRATED') {
+        return scoped
+            ? 'SCOPED_SERVER_UPDATE_REQUESTED'
+            : 'SERVER_UPDATE_REQUESTED';
     }
 
-    if (status === HydrationStatus.SERVER_UPDATE_REQUESTED) {
-        return HydrationStatus.SERVER_UPDATING;
+    if (
+        status === 'SERVER_UPDATE_REQUESTED' ||
+        status === 'SCOPED_SERVER_UPDATE_REQUESTED'
+    ) {
+        return 'SERVER_UPDATING';
     }
 
-    if (status === HydrationStatus.SERVER_UPDATING) {
-        return HydrationStatus.VALIDATION_REQUESTED;
+    if (status === 'SERVER_UPDATING') {
+        return 'VALIDATION_REQUESTED';
     }
 
-    if (status === HydrationStatus.VALIDATION_REQUESTED) {
-        return HydrationStatus.VALIDATING;
+    if (status === 'VALIDATION_REQUESTED') {
+        return 'VALIDATING';
     }
 
-    if (status === HydrationStatus.VALIDATING) {
-        return HydrationStatus.HYDRATED;
+    if (status === 'VALIDATING') {
+        return 'HYDRATED';
     }
 
-    return HydrationStatus.VALIDATION_REQUESTED;
+    return 'VALIDATION_REQUESTED';
 };
 
 export const getInitialFieldSelectionData = (): Pick<
@@ -134,14 +142,15 @@ export const getStoreWithFieldSelectionSettings = (
             produce((state: BindingState) => {
                 if (bindingUUID && state.selections?.[bindingUUID]) {
                     const evaluatedStatus = getHydrationStatus(
-                        state.selections[bindingUUID].status
+                        state.selections[bindingUUID].status,
+                        true
                     );
 
                     state.selections[bindingUUID].hydrating =
-                        evaluatedStatus !== HydrationStatus.HYDRATED;
+                        isHydrating(evaluatedStatus);
 
                     state.selections[bindingUUID].status = evaluatedStatus;
-                } else {
+                } else if (!bindingUUID) {
                     Object.entries(state.selections)
                         .filter(
                             ([_uuid, { status }]) => status === targetStatus
@@ -150,10 +159,12 @@ export const getStoreWithFieldSelectionSettings = (
                             const evaluatedStatus = getHydrationStatus(status);
 
                             state.selections[uuid].hydrating =
-                                evaluatedStatus !== HydrationStatus.HYDRATED;
+                                isHydrating(evaluatedStatus);
 
                             state.selections[uuid].status = evaluatedStatus;
                         });
+                } else {
+                    // TODO: Track this error scenario.
                 }
             }),
             false,
@@ -170,7 +181,7 @@ export const getStoreWithFieldSelectionSettings = (
 
                 state.selections[bindingUUID] = {
                     hasConflicts,
-                    hydrating: evaluatedStatus !== HydrationStatus.HYDRATED,
+                    hydrating: isHydrating(evaluatedStatus),
                     status: evaluatedStatus,
                     value: selections,
                 };
@@ -217,7 +228,7 @@ export const getStoreWithFieldSelectionSettings = (
 
                 state.selections[bindingUUID] = {
                     hasConflicts,
-                    hydrating: evaluatedStatus !== HydrationStatus.HYDRATED,
+                    hydrating: isHydrating(evaluatedStatus),
                     status: evaluatedStatus,
                     value,
                 };
@@ -268,7 +279,7 @@ export const getStoreWithFieldSelectionSettings = (
 
                 state.selections[bindingUUID] = {
                     hasConflicts,
-                    hydrating: evaluatedStatus !== HydrationStatus.HYDRATED,
+                    hydrating: isHydrating(evaluatedStatus),
                     status: evaluatedStatus,
                     value: {
                         ...fields,
@@ -306,32 +317,13 @@ export const getStoreWithFieldSelectionSettings = (
                     );
 
                     state.selections[bindingUUID].hydrating =
-                        evaluatedStatus !== HydrationStatus.HYDRATED;
+                        isHydrating(evaluatedStatus);
 
                     state.selections[bindingUUID].status = evaluatedStatus;
                 }
             }),
             false,
             'Single Field Selection Set'
-        );
-    },
-
-    stubSelections: (bindingUUIDs) => {
-        set(
-            produce((state: BindingState) => {
-                bindingUUIDs.forEach((bindingUUID) => {
-                    if (!state.selections?.[bindingUUID]) {
-                        state.selections[bindingUUID] = {
-                            hasConflicts: false,
-                            hydrating: true,
-                            status: getHydrationStatus(),
-                            value: {},
-                        };
-                    }
-                });
-            }),
-            false,
-            'Selections Stubbed'
         );
     },
 });

@@ -1,3 +1,5 @@
+import type { BindingFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+
 import { useEffect, useMemo } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
@@ -12,7 +14,6 @@ import FieldSelectionTable from 'src/components/tables/FieldSelection';
 import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
-import { HydrationStatus } from 'src/stores/Binding/slices/FieldSelection';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
@@ -50,12 +51,7 @@ function FieldSelectionViewer({
     const advanceHydrationStatus = useBindingStore(
         (state) => state.advanceHydrationStatus
     );
-    const selectionsHydrating = useBindingStore(
-        (state) => state.selections?.[bindingUUID].hydrating
-    );
-    const hydrationStatus = useBindingStore(
-        (state) => state.selections?.[bindingUUID].status
-    );
+    const selections = useBindingStore((state) => state.selections);
 
     // Draft Editor Store
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
@@ -75,15 +71,17 @@ function FieldSelectionViewer({
         [draftSpecs]
     );
 
+    const bindingSelection: BindingFieldSelection | undefined = useMemo(
+        () => selections?.[bindingUUID],
+        [bindingUUID, selections]
+    );
+
     useEffect(() => {
         if (
             serverDataExists &&
-            hydrationStatus === HydrationStatus.VALIDATION_REQUESTED
+            bindingSelection?.status === 'VALIDATION_REQUESTED'
         ) {
-            advanceHydrationStatus(
-                HydrationStatus.VALIDATION_REQUESTED,
-                bindingUUID
-            );
+            advanceHydrationStatus('VALIDATION_REQUESTED', bindingUUID);
 
             validateFieldSelection().then(
                 ({ builtBinding, fieldStanza, response }) => {
@@ -115,7 +113,7 @@ function FieldSelectionViewer({
         bindingUUID,
         collectionName,
         draftSpecs,
-        hydrationStatus,
+        bindingSelection?.status,
         initializeSelections,
         serverDataExists,
         setRecommendFields,
@@ -132,11 +130,11 @@ function FieldSelectionViewer({
     useEffect(() => {
         if (
             draftSpec &&
-            hydrationStatus === HydrationStatus.SERVER_UPDATE_REQUESTED
+            bindingSelection?.status === 'SCOPED_SERVER_UPDATE_REQUESTED'
         ) {
             setFormState({ status: FormStatus.UPDATING });
             advanceHydrationStatus(
-                HydrationStatus.SERVER_UPDATE_REQUESTED,
+                'SCOPED_SERVER_UPDATE_REQUESTED',
                 bindingUUID
             );
 
@@ -157,23 +155,20 @@ function FieldSelectionViewer({
                     }
                 )
                 .finally(() => {
-                    advanceHydrationStatus(
-                        HydrationStatus.SERVER_UPDATING,
-                        bindingUUID
-                    );
+                    advanceHydrationStatus('SERVER_UPDATING', bindingUUID);
                 });
         }
     }, [
         advanceHydrationStatus,
         applyFieldSelections,
+        bindingSelection?.status,
         bindingUUID,
         draftSpec,
-        hydrationStatus,
         setFormState,
     ]);
 
     const loading =
-        selectionsHydrating ||
+        bindingSelection?.hydrating ||
         formActive ||
         formStatus === FormStatus.TESTING_BACKGROUND;
 
