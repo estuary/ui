@@ -209,6 +209,9 @@ export const generateTaskSpec = (
                 // Check if disable is a boolean otherwise default to false
                 const bindingDisabled = isBoolean(disable) ? disable : false;
 
+                // TODO (performance) - this is the main block that freezes the screen
+                //  when generating a catalog on Capture after a discovery
+
                 // See which binding we need to update
                 const existingBindingIndex = resourceConfigServerUpdateRequired
                     ? getBindingIndex(
