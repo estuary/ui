@@ -12,7 +12,7 @@ import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 export type HydrationStatus =
     | 'HYDRATED'
     | 'SERVER_UPDATE_REQUESTED'
-    | 'SCOPED_SERVER_UPDATE_REQUESTED'
+    | 'RESET_REQUESTED'
     | 'SERVER_UPDATING'
     | 'VALIDATION_REQUESTED'
     | 'VALIDATING';
@@ -76,7 +76,8 @@ export interface StoreWithFieldSelection {
     ) => void;
     advanceHydrationStatus: (
         targetStatus: HydrationStatus,
-        bindingUUID?: string
+        bindingUUID?: string,
+        resetRequested?: boolean
     ) => void;
 
     selectionAlgorithm: SelectionAlgorithm | null;
@@ -92,18 +93,13 @@ const isHydrating = (status: HydrationStatus) => status !== 'HYDRATED';
 
 const getHydrationStatus = (
     status?: HydrationStatus,
-    scoped?: boolean
+    reset?: boolean
 ): HydrationStatus => {
     if (status === 'HYDRATED') {
-        return scoped
-            ? 'SCOPED_SERVER_UPDATE_REQUESTED'
-            : 'SERVER_UPDATE_REQUESTED';
+        return reset ? 'RESET_REQUESTED' : 'SERVER_UPDATE_REQUESTED';
     }
 
-    if (
-        status === 'SERVER_UPDATE_REQUESTED' ||
-        status === 'SCOPED_SERVER_UPDATE_REQUESTED'
-    ) {
+    if (status === 'SERVER_UPDATE_REQUESTED' || status === 'RESET_REQUESTED') {
         return 'SERVER_UPDATING';
     }
 
@@ -137,13 +133,13 @@ export const getStoreWithFieldSelectionSettings = (
 ): StoreWithFieldSelection => ({
     ...getInitialFieldSelectionData(),
 
-    advanceHydrationStatus: (targetStatus, bindingUUID) => {
+    advanceHydrationStatus: (targetStatus, bindingUUID, resetRequested) => {
         set(
             produce((state: BindingState) => {
                 if (bindingUUID && state.selections?.[bindingUUID]) {
                     const evaluatedStatus = getHydrationStatus(
                         state.selections[bindingUUID].status,
-                        true
+                        resetRequested
                     );
 
                     state.selections[bindingUUID].hydrating =
@@ -156,7 +152,10 @@ export const getStoreWithFieldSelectionSettings = (
                             ([_uuid, { status }]) => status === targetStatus
                         )
                         .forEach(([uuid, { status }]) => {
-                            const evaluatedStatus = getHydrationStatus(status);
+                            const evaluatedStatus = getHydrationStatus(
+                                status,
+                                resetRequested
+                            );
 
                             state.selections[uuid].hydrating =
                                 isHydrating(evaluatedStatus);
@@ -274,8 +273,7 @@ export const getStoreWithFieldSelectionSettings = (
                 const fields = state.selections[bindingUUID].value;
 
                 const evaluatedStatus = getHydrationStatus(
-                    state.selections[bindingUUID].status,
-                    true
+                    state.selections[bindingUUID].status
                 );
 
                 state.selections[bindingUUID] = {
@@ -314,8 +312,7 @@ export const getStoreWithFieldSelectionSettings = (
                     previousSelectionMode !== mode
                 ) {
                     const evaluatedStatus = getHydrationStatus(
-                        state.selections[bindingUUID].status,
-                        true
+                        state.selections[bindingUUID].status
                     );
 
                     state.selections[bindingUUID].hydrating =

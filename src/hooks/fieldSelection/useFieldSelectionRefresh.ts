@@ -28,7 +28,7 @@ function useFieldSelectionRefresh() {
     const refresh = useCallback(
         async (draftIdToUse?: string | null) => {
             setUpdating(true);
-            advanceHydrationStatus('HYDRATED');
+            advanceHydrationStatus('HYDRATED', undefined, true);
 
             let evaluatedDraftId = draftIdToUse;
             if (!evaluatedDraftId) {
@@ -36,9 +36,7 @@ function useFieldSelectionRefresh() {
                     evaluatedDraftId = await generateCatalog(
                         mutateDraftSpec,
                         false // we don't want to skip all the extra updates
-                    ).finally(() =>
-                        advanceHydrationStatus('SERVER_UPDATE_REQUESTED')
-                    );
+                    ).finally(() => advanceHydrationStatus('RESET_REQUESTED'));
                 } catch (_error: unknown) {
                     setUpdating(false);
                 }

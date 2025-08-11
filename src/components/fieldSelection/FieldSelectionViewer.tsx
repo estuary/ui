@@ -130,13 +130,10 @@ function FieldSelectionViewer({
     useEffect(() => {
         if (
             draftSpec &&
-            bindingSelection?.status === 'SCOPED_SERVER_UPDATE_REQUESTED'
+            bindingSelection?.status === 'SERVER_UPDATE_REQUESTED'
         ) {
             setFormState({ status: FormStatus.UPDATING });
-            advanceHydrationStatus(
-                'SCOPED_SERVER_UPDATE_REQUESTED',
-                bindingUUID
-            );
+            advanceHydrationStatus('SERVER_UPDATE_REQUESTED', bindingUUID);
 
             // TODO (field selection): Extend error handling.
             applyFieldSelections(draftSpec)
