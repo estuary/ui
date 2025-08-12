@@ -436,6 +436,10 @@ function useSave(
 
     return useCallback(
         async (draftId: string | null, hideLogs?: boolean) => {
+            setFormState({
+                status: FormStatus.PROCESSING,
+            });
+
             // FullSource updates the draft directly and does not require a new generation so
             //  need to check for errors. We might want to add all the errors here just to be safe or
             //  in the future when we directly update drafts

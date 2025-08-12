@@ -34,7 +34,7 @@ function RediscoverButton({ entityType, disabled }: Props) {
             <Box>
                 <IconButton
                     disabled={disable}
-                    onClick={generateCatalog}
+                    onClick={() => void generateCatalog()}
                     sx={{ borderRadius: 0 }}
                     aria-label={intl.formatMessage({
                         id: 'workflows.collectionSelector.cta.rediscover',
