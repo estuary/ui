@@ -3,11 +3,9 @@ import type {
     RowsProps,
 } from 'src/components/tables/BillLineItems/types';
 
-import { Stack, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
+import { Stack, TableCell, TableRow, Typography } from '@mui/material';
 
-import { HelpCircle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
-
+import TaskExplination from 'src/components/tables/BillLineItems/TaskExplination';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
 
 function Row({ row, descriptionTooltip }: RowProps) {
@@ -34,8 +32,6 @@ function Row({ row, descriptionTooltip }: RowProps) {
 }
 
 function Rows({ lineItems }: RowsProps) {
-    const intl = useIntl();
-
     return (
         <>
             {lineItems.map((record, index) => (
@@ -44,14 +40,7 @@ function Rows({ lineItems }: RowsProps) {
                     key={index}
                     descriptionTooltip={
                         record.description.includes('Task usage') ? (
-                            <Tooltip
-                                placement="right"
-                                title={intl.formatMessage({
-                                    id: 'admin.billing.label.lineItems.tooltip.message',
-                                })}
-                            >
-                                <HelpCircle style={{ fontSize: 11 }} />
-                            </Tooltip>
+                            <TaskExplination />
                         ) : null
                     }
                 />
