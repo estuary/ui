@@ -42,7 +42,7 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.label.lineItems.empty': `No bill to display`,
     'admin.billing.label.lineItems.loading': `Loading your bill`,
     'admin.billing.label.lineItems.header': `How is this calculated?`,
-    'admin.billing.label.lineItems.tooltip.message': `A single capture or materialization counts as a task. Disabled tasks do not accrue usage hours.`,
+    'admin.billing.label.lineItems.tooltip.message': `Each active connector counts as a task`,
 
     'admin.billing.tier.free': `Free`,
     'admin.billing.tier.personal': `Cloud`,
