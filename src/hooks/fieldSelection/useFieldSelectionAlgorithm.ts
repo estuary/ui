@@ -1,23 +1,17 @@
 import type {
     BaseMaterializationFields,
+    BuiltBinding,
     MaterializationBinding,
-    MaterializationFields,
-    MaterializationFields_Legacy,
+    ValidatedBinding,
 } from 'src/types/schemaModels';
 import type { FieldSelectionInput, FieldSelectionResult } from 'src/types/wasm';
 
 import { useCallback } from 'react';
 
 import { evaluate_field_selection } from '@estuary/flow-web';
-import { cloneDeep } from 'lodash';
 
-import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
-import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
-import { useBindingStore } from 'src/stores/Binding/Store';
-import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
-import { getRelatedBindings } from 'src/utils/workflow-utils';
 
 export interface AlgorithmConfig {
     depth?: number;
@@ -44,93 +38,19 @@ const evaluateFieldSelection = async (input: FieldSelectionInput) => {
     return response;
 };
 
-const getDraftedFieldSelections = (
-    draftedBinding: MaterializationBinding,
-    config: AlgorithmConfig
-) => {
-    let fieldStanza:
-        | MaterializationFields
-        | MaterializationFields_Legacy
-        | undefined = draftedBinding?.fields;
-
-    if (typeof config?.depth === 'number') {
-        fieldStanza = config?.reset
-            ? { recommended: config.depth }
-            : { ...fieldStanza, recommended: config.depth };
-    }
-
-    if (config?.exclude && config.exclude.length > 0) {
-        const existingExcludedFields: string[] = fieldStanza?.exclude ?? [];
-
-        fieldStanza =
-            fieldStanza?.recommended === undefined
-                ? {
-                      recommended: DEFAULT_RECOMMENDED_FLAG,
-                      exclude: config.exclude,
-                  }
-                : {
-                      ...fieldStanza,
-                      exclude: existingExcludedFields.concat(config.exclude),
-                  };
-    }
-
-    return fieldStanza;
-};
-
 export default function useFieldSelectionAlgorithm() {
     const isEdit = useEntityWorkflow_Editing();
 
-    const currentCollection = useBindingStore(
-        (state) => state.currentBinding?.collection
-    );
-    const stagedBindingIndex = useBinding_currentBindingIndex();
-
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-
     const validateFieldSelection = useCallback(
-        async (config?: AlgorithmConfig) => {
-            const draftSpecsQuery =
-                draftSpecs.length !== 0 ? cloneDeep(draftSpecs[0]) : undefined;
-
-            if (
-                !draftSpecsQuery ||
-                !draftSpecsQuery.built_spec ||
-                !draftSpecsQuery.validated ||
-                !currentCollection
-            ) {
-                return Promise.reject(
-                    'missing draft spec data for algo application'
-                );
-            }
-
-            const { builtBinding, draftedBinding, validationBinding } =
-                getRelatedBindings(
-                    draftSpecsQuery.built_spec,
-                    draftSpecsQuery.spec,
-                    stagedBindingIndex,
-                    currentCollection,
-                    draftSpecsQuery.validated
-                );
-
-            if (!builtBinding || !draftedBinding || !validationBinding) {
+        async (
+            builtBinding: BuiltBinding | undefined,
+            draftedBinding: MaterializationBinding | undefined,
+            validatedBinding: ValidatedBinding | undefined
+        ) => {
+            if (!builtBinding || !draftedBinding || !validatedBinding) {
                 return Promise.reject(
                     'data not found: built spec binding, drafted binding, or validation binding'
                 );
-            }
-
-            let fieldStanza:
-                | MaterializationFields
-                | MaterializationFields_Legacy
-                | undefined = draftedBinding?.fields;
-
-            if (config) {
-                fieldStanza = getDraftedFieldSelections(draftedBinding, config);
-
-                if (!fieldStanza) {
-                    return Promise.reject('updated field selections undefined');
-                }
-
-                draftedBinding.fields = fieldStanza;
             }
 
             let response: FieldSelectionResult | undefined;
@@ -141,15 +61,15 @@ export default function useFieldSelectionAlgorithm() {
                     collectionProjections: builtBinding.collection.projections,
                     liveSpec: isEdit ? builtBinding : undefined,
                     model: draftedBinding,
-                    validated: validationBinding,
+                    validated: validatedBinding,
                 });
             } catch (error: unknown) {
                 logRocketEvent('evaluate_field_selection:failed', error);
             }
 
-            return { builtBinding, fieldStanza, response };
+            return { fieldStanza: draftedBinding?.fields, response };
         },
-        [currentCollection, draftSpecs, isEdit, stagedBindingIndex]
+        [isEdit]
     );
 
     return { validateFieldSelection };

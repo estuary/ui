@@ -27,7 +27,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    return useCallback(
+    const applyFieldSelection = useCallback(
         async (draftSpec: DraftSpecQuery) => {
             // TODO (field selection) we should make it so this does not need to be figured out
             //  every call as it is pretty wasteful. Since we are passing in the spec already maybe
@@ -40,77 +40,73 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
 
             if (!mutateDraftSpecs || bindingIndex === -1) {
                 return Promise.reject();
-            } else {
-                const spec: Schema = cloneDeep(draftSpec.spec);
+            }
 
-                const recommended = Object.hasOwn(recommendFields, bindingUUID)
-                    ? recommendFields[bindingUUID]
-                    : DEFAULT_RECOMMENDED_FLAG;
+            const spec: Schema = cloneDeep(draftSpec.spec);
 
-                spec.bindings[bindingIndex].fields = {
-                    recommended,
-                    exclude: [],
-                    require: {},
-                };
+            const recommended = Object.hasOwn(recommendFields, bindingUUID)
+                ? recommendFields[bindingUUID]
+                : DEFAULT_RECOMMENDED_FLAG;
 
-                const requiredFields: Pick<FieldSelection, 'field' | 'meta'>[] =
-                    Object.entries(selections[bindingUUID].value)
-                        .filter(
-                            ([_field, selection]) =>
-                                selection.mode === 'require'
-                        )
-                        .map(([field, selection]) => ({
-                            field,
-                            meta: selection.meta,
-                        }));
+            spec.bindings[bindingIndex].fields = {
+                recommended,
+                exclude: [],
+                require: {},
+            };
 
-                const excludedFields: string[] = Object.entries(
-                    selections[bindingUUID].value
-                )
+            const requiredFields: Pick<FieldSelection, 'field' | 'meta'>[] =
+                Object.entries(selections[bindingUUID].value)
                     .filter(
-                        ([_field, selection]) => selection.mode === 'exclude'
+                        ([_field, selection]) => selection.mode === 'require'
                     )
-                    .map(([field]) => field);
+                    .map(([field, selection]) => ({
+                        field,
+                        meta: selection.meta,
+                    }));
 
-                // Remove the require property if no fields are explicitly required, otherwise set the property.
-                if (hasLength(requiredFields)) {
-                    const formattedFields: Schema = {};
+            const excludedFields: string[] = Object.entries(
+                selections[bindingUUID].value
+            )
+                .filter(([_field, selection]) => selection.mode === 'exclude')
+                .map(([field]) => field);
 
-                    requiredFields.forEach(({ field, meta }) => {
-                        formattedFields[field] = meta ?? {};
-                    });
+            // Remove the require property if no fields are explicitly required, otherwise set the property.
+            if (hasLength(requiredFields)) {
+                const formattedFields: Schema = {};
 
-                    spec.bindings[bindingIndex].fields.require =
-                        formattedFields;
-                } else {
-                    spec.bindings[bindingIndex].fields = omit(
-                        spec.bindings[bindingIndex].fields,
-                        'require'
-                    );
-                }
-
-                // Remove the exclude property if no fields are marked for explicit exclusion, otherwise set the property.
-                if (hasLength(excludedFields)) {
-                    spec.bindings[bindingIndex].fields.exclude = excludedFields;
-                } else {
-                    spec.bindings[bindingIndex].fields = omit(
-                        spec.bindings[bindingIndex].fields,
-                        'exclude'
-                    );
-                }
-
-                const updateResponse = await modifyDraftSpec(spec, {
-                    draft_id: draftId,
-                    catalog_name: draftSpec.catalog_name,
-                    spec_type: 'materialization',
+                requiredFields.forEach(({ field, meta }) => {
+                    formattedFields[field] = meta ?? {};
                 });
 
-                if (updateResponse.error) {
-                    return Promise.reject(updateResponse.error);
-                }
-
-                return mutateDraftSpecs();
+                spec.bindings[bindingIndex].fields.require = formattedFields;
+            } else {
+                spec.bindings[bindingIndex].fields = omit(
+                    spec.bindings[bindingIndex].fields,
+                    'require'
+                );
             }
+
+            // Remove the exclude property if no fields are marked for explicit exclusion, otherwise set the property.
+            if (hasLength(excludedFields)) {
+                spec.bindings[bindingIndex].fields.exclude = excludedFields;
+            } else {
+                spec.bindings[bindingIndex].fields = omit(
+                    spec.bindings[bindingIndex].fields,
+                    'exclude'
+                );
+            }
+
+            const updateResponse = await modifyDraftSpec(spec, {
+                draft_id: draftId,
+                catalog_name: draftSpec.catalog_name,
+                spec_type: 'materialization',
+            });
+
+            if (updateResponse.error) {
+                return Promise.reject(updateResponse.error);
+            }
+
+            return mutateDraftSpecs();
         },
         [
             bindingUUID,
@@ -122,6 +118,8 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             stagedBindingIndex,
         ]
     );
+
+    return { applyFieldSelection };
 }
 
 export default useFieldSelection;

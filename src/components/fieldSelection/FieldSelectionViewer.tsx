@@ -11,9 +11,9 @@ import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/S
 import RefreshButton from 'src/components/fieldSelection/RefreshButton';
 import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
+import useRelatedBindings from 'src/hooks/bindings/useRelatedBindings';
 import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
-import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
@@ -37,7 +37,13 @@ function FieldSelectionViewer({
     collectionName,
     refreshRequired,
 }: Props) {
-    const applyFieldSelections = useFieldSelection(bindingUUID, collectionName);
+    const { builtBinding, draftedBinding, validatedBinding } =
+        useRelatedBindings();
+
+    const { applyFieldSelection } = useFieldSelection(
+        bindingUUID,
+        collectionName
+    );
     const { validateFieldSelection } = useFieldSelectionAlgorithm();
 
     // Bindings Store
@@ -47,14 +53,13 @@ function FieldSelectionViewer({
     const initializeSelections = useBindingStore(
         (state) => state.initializeSelections
     );
-    const stagedBindingIndex = useBinding_currentBindingIndex();
     const advanceHydrationStatus = useBindingStore(
         (state) => state.advanceHydrationStatus
     );
     const selections = useBindingStore((state) => state.selections);
 
     // Draft Editor Store
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
+    const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
 
     // Form State Store
     const formActive = useFormStateStore_isActive();
@@ -64,11 +69,13 @@ function FieldSelectionViewer({
     const serverDataExists = useMemo(
         () =>
             Boolean(
-                draftSpecs.length > 0 &&
-                    draftSpecs[0].built_spec &&
-                    draftSpecs[0].validated
+                collectionName &&
+                    draftSpecsRows.length > 0 &&
+                    draftSpecsRows[0].spec &&
+                    draftSpecsRows[0].built_spec &&
+                    draftSpecsRows[0].validated
             ),
-        [draftSpecs]
+        [collectionName, draftSpecsRows]
     );
 
     const bindingSelection: BindingFieldSelection | undefined = useMemo(
@@ -78,13 +85,19 @@ function FieldSelectionViewer({
 
     useEffect(() => {
         if (
-            serverDataExists &&
+            builtBinding &&
+            draftedBinding &&
+            validatedBinding &&
             bindingSelection?.status === 'VALIDATION_REQUESTED'
         ) {
             advanceHydrationStatus('VALIDATION_REQUESTED', bindingUUID);
 
-            validateFieldSelection().then(
-                ({ builtBinding, fieldStanza, response }) => {
+            validateFieldSelection(
+                builtBinding,
+                draftedBinding,
+                validatedBinding
+            ).then(
+                ({ fieldStanza, response }) => {
                     if (!response) {
                         return;
                     }
@@ -92,7 +105,7 @@ function FieldSelectionViewer({
                     const updatedSelections = getFieldSelection(
                         response.outcomes,
                         fieldStanza,
-                        builtBinding.collection.projections
+                        builtBinding?.collection.projections
                     );
 
                     setRecommendFields(
@@ -111,20 +124,23 @@ function FieldSelectionViewer({
     }, [
         advanceHydrationStatus,
         bindingUUID,
+        builtBinding,
         collectionName,
-        draftSpecs,
+        draftedBinding,
+        draftSpecsRows,
         bindingSelection?.status,
         initializeSelections,
-        serverDataExists,
         setRecommendFields,
-        stagedBindingIndex,
+        validatedBinding,
         validateFieldSelection,
     ]);
 
     const draftSpec = useMemo(
         () =>
-            draftSpecs.length > 0 && draftSpecs[0].spec ? draftSpecs[0] : null,
-        [draftSpecs]
+            draftSpecsRows.length > 0 && draftSpecsRows[0].spec
+                ? draftSpecsRows[0]
+                : null,
+        [draftSpecsRows]
     );
 
     useEffect(() => {
@@ -136,7 +152,7 @@ function FieldSelectionViewer({
             advanceHydrationStatus('SERVER_UPDATE_REQUESTED', bindingUUID);
 
             // TODO (field selection): Extend error handling.
-            applyFieldSelections(draftSpec)
+            applyFieldSelection(draftSpec)
                 .then(
                     () => {
                         setFormState({ status: FormStatus.UPDATED });
@@ -157,7 +173,7 @@ function FieldSelectionViewer({
         }
     }, [
         advanceHydrationStatus,
-        applyFieldSelections,
+        applyFieldSelection,
         bindingSelection?.status,
         bindingUUID,
         draftSpec,

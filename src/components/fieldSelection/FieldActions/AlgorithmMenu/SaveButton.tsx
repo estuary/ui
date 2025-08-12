@@ -5,42 +5,32 @@ import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import {
-    DEFAULT_RECOMMENDED_FLAG,
-    getFieldSelection,
-} from 'src/utils/fieldSelection-utils';
-import { hasLength } from 'src/utils/misc-utils';
+import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 
 export default function SaveButton({
     bindingUUID,
     close,
     loading,
-    selections,
     selectedAlgorithm,
 }: SaveButtonProps) {
     const intl = useIntl();
 
-    const { validateFieldSelection } = useFieldSelectionAlgorithm();
-
-    const setAlgorithmicSelection = useBindingStore(
-        (state) => state.setAlgorithmicSelection
+    const advanceHydrationStatus = useBindingStore(
+        (state) => state.advanceHydrationStatus
+    );
+    const setRecommendFields = useBindingStore(
+        (state) => state.setRecommendFields
     );
 
     const formActive = useFormStateStore_isActive();
 
     return (
         <Button
-            disabled={
-                loading ||
-                formActive ||
-                !hasLength(selections) ||
-                !selectedAlgorithm
-            }
+            disabled={loading || formActive || !selectedAlgorithm}
             onClick={() => {
-                const config: AlgorithmConfig | undefined =
+                const config: AlgorithmConfig =
                     selectedAlgorithm === 'depthZero'
                         ? { depth: 0 }
                         : selectedAlgorithm === 'depthTwo'
@@ -52,40 +42,13 @@ export default function SaveButton({
                                         : 1,
                             };
 
-                if (selections && selectedAlgorithm) {
-                    validateFieldSelection(config).then(
-                        ({ builtBinding, fieldStanza, response }) => {
-                            if (!response) {
-                                return;
-                            }
+                setRecommendFields(
+                    bindingUUID,
+                    config?.depth ?? DEFAULT_RECOMMENDED_FLAG
+                );
 
-                            const updatedSelections = getFieldSelection(
-                                response.outcomes,
-                                fieldStanza,
-                                builtBinding.collection.projections
-                            );
-
-                            setAlgorithmicSelection(
-                                selectedAlgorithm,
-                                bindingUUID,
-                                updatedSelections,
-                                response.hasConflicts
-                            );
-
-                            close();
-                        },
-                        (_errors: string | string[]) => {
-                            // if (typeof errors === 'string') {
-                            //     setServerError([{ ...BASE_ERROR, message: errors }]);
-                            //     return;
-                            // }
-                            // const formattedErrors: PostgrestError[] = errors.map(
-                            //     (error) => ({ ...BASE_ERROR, message: error })
-                            // );
-                            // setServerError(formattedErrors);
-                        }
-                    );
-                }
+                advanceHydrationStatus('HYDRATED');
+                close();
             }}
             size="small"
             variant="outlined"

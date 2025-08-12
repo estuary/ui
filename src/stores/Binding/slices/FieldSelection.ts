@@ -7,8 +7,6 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
-
 export type HydrationStatus =
     | 'HYDRATED'
     | 'SERVER_UPDATE_REQUESTED'
@@ -65,14 +63,8 @@ export interface StoreWithFieldSelection {
     ) => void;
     setMultiSelection: (
         bindingUUID: string,
-        updatedFields: FieldSelectionDictionary,
-        hasConflicts: boolean
-    ) => void;
-    setAlgorithmicSelection: (
-        selectedAlgorithm: SelectionAlgorithm,
-        bindingUUID: string,
-        value: FieldSelectionDictionary | undefined,
-        hasConflicts: boolean
+        targetFields: string[],
+        targetMode: FieldSelectionType
     ) => void;
     advanceHydrationStatus: (
         targetStatus: HydrationStatus,
@@ -190,53 +182,6 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setAlgorithmicSelection: (
-        selectedAlgorithm,
-        bindingUUID,
-        value,
-        hasConflicts
-    ) => {
-        if (!value) {
-            return;
-        }
-
-        set(
-            produce((state: BindingState) => {
-                switch (selectedAlgorithm) {
-                    case 'depthZero': {
-                        state.recommendFields[bindingUUID] = 0;
-                        break;
-                    }
-                    case 'depthTwo': {
-                        state.recommendFields[bindingUUID] = 2;
-                        break;
-                    }
-                    case 'depthUnlimited': {
-                        state.recommendFields[bindingUUID] = true;
-                        break;
-                    }
-                    default: {
-                        state.recommendFields[bindingUUID] =
-                            DEFAULT_RECOMMENDED_FLAG;
-                    }
-                }
-
-                const evaluatedStatus = getHydrationStatus(
-                    state.selections[bindingUUID].status
-                );
-
-                state.selections[bindingUUID] = {
-                    hasConflicts,
-                    hydrating: isHydrating(evaluatedStatus),
-                    status: evaluatedStatus,
-                    value,
-                };
-            }),
-            false,
-            'Algorithmic Selections Set'
-        );
-    },
-
     setRecommendFields: (bindingUUID, value) => {
         set(
             produce((state: BindingState) => {
@@ -267,24 +212,23 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setMultiSelection: (bindingUUID, updatedFields, hasConflicts) => {
+    setMultiSelection: (bindingUUID, targetFields, targetMode) => {
         set(
             produce((state: BindingState) => {
-                const fields = state.selections[bindingUUID].value;
-
                 const evaluatedStatus = getHydrationStatus(
                     state.selections[bindingUUID].status
                 );
 
-                state.selections[bindingUUID] = {
-                    hasConflicts,
-                    hydrating: isHydrating(evaluatedStatus),
-                    status: evaluatedStatus,
-                    value: {
-                        ...fields,
-                        ...updatedFields,
-                    },
-                };
+                state.selections[bindingUUID].hydrating =
+                    isHydrating(evaluatedStatus);
+                state.selections[bindingUUID].status = evaluatedStatus;
+
+                Object.values(state.selections[bindingUUID].value)
+                    .filter(({ field }) => targetFields.includes(field))
+                    .forEach(({ field }) => {
+                        state.selections[bindingUUID].value[field].mode =
+                            targetMode;
+                    });
             }),
             false,
             'Multiple Field Selections Set'

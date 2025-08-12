@@ -451,6 +451,13 @@ const getDraftedMaterializationBinding = (
     return draftedBinding;
 };
 
+export interface RelatedBindings {
+    builtBinding: BuiltBinding | undefined;
+    draftedBinding: MaterializationBinding | undefined;
+    liveBinding: MaterializationBinding | undefined;
+    validatedBinding: ValidatedBinding | undefined;
+}
+
 export const getRelatedBindings = (
     builtSpec: Schema,
     draftSpec: Schema,
@@ -458,7 +465,7 @@ export const getRelatedBindings = (
     targetCollection: string,
     validationResponse: Schema,
     liveSpec?: Schema | null
-) => {
+): RelatedBindings => {
     // Select the binding from the built spec that corresponds to the current collection
     //  to extract the projection information.
     // Defaulting to empty array. This is to handle when a user has disabled a collection
@@ -468,7 +475,7 @@ export const getRelatedBindings = (
     // The validation phase of a publication produces a document which correlates each binding projection
     // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
     // from the validation document that corresponds to the current collection to extract the constraint types.
-    const validationBinding = getBindingByResourcePath<ValidatedBinding>(
+    const validatedBinding = getBindingByResourcePath<ValidatedBinding>(
         builtBinding?.resourcePath ?? [],
         validationResponse
     );
@@ -490,5 +497,5 @@ export const getRelatedBindings = (
           )
         : undefined;
 
-    return { builtBinding, draftedBinding, liveBinding, validationBinding };
+    return { builtBinding, draftedBinding, liveBinding, validatedBinding };
 };
