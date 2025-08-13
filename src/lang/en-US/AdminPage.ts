@@ -42,10 +42,8 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.label.lineItems.empty': `No bill to display`,
     'admin.billing.label.lineItems.loading': `Loading your bill`,
     'admin.billing.label.lineItems.header': `How is this calculated?`,
-    'admin.billing.label.lineItems.tooltip': `Active captures and materializations accrue task hours while they are enabled. The average month has 720 hours, so each task will accrue about that many hours per month if it’s always on.`,
+    'admin.billing.label.lineItems.tooltip': `Active captures and materializations accrue task hours while they are enabled. The average month has 720 hours, so each task will accrue about that many hours per month if it is always on.`,
     'admin.billing.label.lineItems.tooltip.title': `Each active connector counts as a task`,
-    'admin.billing.label.lineItems.tooltip.description1': `The average month has 720 hours`,
-    'admin.billing.label.lineItems.tooltip.description2': `Each task will accrue about that many hours per month if it’s always on.`,
 
     'admin.billing.tier.free': `Free`,
     'admin.billing.tier.personal': `Cloud`,

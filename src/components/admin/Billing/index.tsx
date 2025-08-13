@@ -16,6 +16,7 @@ import DateRange from 'src/components/admin/Billing/DateRange';
 import BillingLoadError from 'src/components/admin/Billing/LoadError';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
+import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import TenantOptions from 'src/components/admin/Billing/TenantOptions';
 import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
@@ -35,9 +36,9 @@ import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
-// Adding a hair of height so that a slight amount of a line item
-//  is shown and hope that'll make it clear the section can scroll
-const invoiceCardHeight = TOTAL_CARD_HEIGHT + 5;
+// Adding the height of a row generally works and should make it
+//  not _too_ tall
+const invoiceCardHeight = TOTAL_CARD_HEIGHT + INVOICE_ROW_HEIGHT;
 
 function AdminBilling({ showAddPayment }: AdminBillingProps) {
     usePageTitle({
