@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { DateTime } from 'luxon';
 
 import { useExpiringLocalStorage } from 'src/_compliance/hooks/useExpiringLocalStorage';
+import useSupportRoleGrant from 'src/_compliance/hooks/useSupportRoleGrant';
 import useUpdateAuditTable from 'src/_compliance/hooks/useUpdateAuditTable';
 import { defaultPrivacySettings } from 'src/_compliance/shared';
 import { usePrivacySettingStore } from 'src/_compliance/stores/usePrivacySettingStore';
@@ -18,6 +19,7 @@ function usePrivacySettings() {
         }
     );
 
+    const { supportRoleGrant } = useSupportRoleGrant();
     const { consentAudit } = useUpdateAuditTable();
     const [currentSetting, setVal, resetValue] = useExpiringLocalStorage(
         'estuary.privacy-settings',
@@ -56,6 +58,18 @@ function usePrivacySettings() {
                 });
             }
 
+            const roleGrantResponse = await supportRoleGrant({
+                supportEnabled: true,
+                expiration: duration,
+            });
+
+            if (roleGrantResponse?.error) {
+                // error handling
+                return Promise.resolve({
+                    error: true,
+                });
+            }
+
             setVal(
                 {
                     enhancedSupportEnabled: true,
@@ -70,7 +84,7 @@ function usePrivacySettings() {
                 error: false,
             });
         },
-        [consentAudit, idUser, setVal, user]
+        [consentAudit, idUser, setVal, supportRoleGrant, user]
     );
 
     const revokeAccess = useCallback(async () => {

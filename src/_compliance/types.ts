@@ -28,6 +28,7 @@ export interface ConsentAuditArgs {
 }
 
 export interface SupportRoleGrantArgs {
+    supportEnabled: boolean;
     expiration: any;
 }
 
