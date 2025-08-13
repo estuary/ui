@@ -5,7 +5,7 @@ import type {
 
 import { Stack, TableCell, TableRow, Typography } from '@mui/material';
 
-import TaskExplination from 'src/components/tables/BillLineItems/TaskExplination';
+import TaskExplanation from 'src/components/tables/BillLineItems/TaskExplanation';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
 
 function Row({ row, descriptionTooltip }: RowProps) {
@@ -40,7 +40,7 @@ function Rows({ lineItems }: RowsProps) {
                     key={index}
                     descriptionTooltip={
                         record.description.includes('Task usage') ? (
-                            <TaskExplination />
+                            <TaskExplanation />
                         ) : null
                     }
                 />

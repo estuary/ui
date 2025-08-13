@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 import PopperWrapper from 'src/components/shared/PopperWrapper';
 
 const POPPER_KEY = '';
-function TaskExplination() {
+function TaskExplanation() {
     const intl = useIntl();
 
     const anchorElement = useRef(null);
@@ -40,6 +40,11 @@ function TaskExplination() {
                 }}
                 popperProps={{
                     placement: 'right',
+                    sx: {
+                        ['& .MuiBox-root']: {
+                            maxWidth: 375,
+                        },
+                    },
                 }}
             >
                 <Stack spacing={1}>
@@ -59,4 +64,4 @@ function TaskExplination() {
     );
 }
 
-export default TaskExplination;
+export default TaskExplanation;
