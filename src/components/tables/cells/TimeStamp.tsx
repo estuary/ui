@@ -31,7 +31,7 @@ function TimeStamp({ enableExact, enableRelative, time }: Props) {
                     {enableExact ? (
                         <FormattedDate
                             day="2-digit"
-                            month="2-digit"
+                            month="short"
                             year="numeric"
                             hour="numeric"
                             minute="numeric"

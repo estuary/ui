@@ -1,6 +1,7 @@
 import { gql, useQuery } from 'urql';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import AlertTypeContent from 'src/components/tables/AlertHistory/AlertTypeContent';
 
 const LatestAlertQuery = gql`
     query ($prefixes: [String!]!) {
@@ -24,15 +25,25 @@ function LatestAlert({ taskName }: any) {
         return null;
     }
 
-    const noAlerts = !data.alerts || data.alerts.length < 1;
+    const alertCount = data?.alerts?.length ?? 0;
 
     return (
         <AlertBox
             short
-            severity={noAlerts ? 'success' : 'error'}
-            title={noAlerts ? 'All Good' : 'Latest Alert'}
+            severity={alertCount > 0 ? 'error' : 'success'}
+            title={
+                alertCount === 0
+                    ? 'All Good'
+                    : alertCount === 1
+                      ? 'Unresolved Alert'
+                      : 'Unresolved Alerts'
+            }
         >
-            {noAlerts ? 'No recent alerts' : data.alerts[0].alertType}
+            {alertCount > 0 ? (
+                <AlertTypeContent alertType={data.alerts[0].alertType} />
+            ) : (
+                'No unresolved alerts'
+            )}
         </AlertBox>
     );
 }

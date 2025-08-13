@@ -4,9 +4,8 @@ import { Fragment, useState } from 'react';
 
 import { Collapse, TableCell, TableRow, useTheme } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { authenticatedRoutes } from 'src/app/routes';
+import AlertTypeContent from 'src/components/tables/AlertHistory/AlertTypeContent';
 import DetailsPane from 'src/components/tables/AlertHistory/DetailsPane';
 import ChipList from 'src/components/tables/cells/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
@@ -22,17 +21,15 @@ interface RowsProps {
 
 interface RowProps {
     row: any;
-    setFoo: () => void;
     disableDetailsLink?: boolean;
 }
 
-function Row({
-    disableDetailsLink,
-    setFoo,
-    row: { alertType, catalogName, firedAt, resolvedAt, alertDetails },
-}: RowProps) {
-    const intl = useIntl();
+function Row({ disableDetailsLink, row }: RowProps) {
     const theme = useTheme();
+
+    const { alertType, catalogName, firedAt, resolvedAt, alertDetails } = row;
+
+    const [foo, setFoo] = useState(false);
 
     const { generatePath } = useDetailsNavigator(
         alertDetails.spec_type === 'capture'
@@ -43,67 +40,61 @@ function Row({
     );
 
     return (
-        <TableRow
-            hover
-            sx={getEntityTableRowSx(theme)}
-            onClick={() => {
-                setFoo();
-            }}
-        >
-            {disableDetailsLink ? (
-                <TableCell>{catalogName}</TableCell>
-            ) : (
-                <EntityNameLink
-                    name={catalogName}
-                    showEntityStatus={false}
-                    detailsLink={generatePath({ catalog_name: catalogName })}
-                    entityStatusTypes={[alertDetails.spec_type]}
-                />
-            )}
-
-            <TableCell>
-                {alertType
-                    ? intl.formatMessage({
-                          id: `admin.notifications.alertType.${alertType}`,
-                      })
-                    : ''}
-            </TableCell>
-
-            <ChipList
-                stripPath={false}
-                values={alertDetails.recipients.map(
-                    (recipient: any) => recipient.email
+        <>
+            <TableRow
+                hover
+                sx={getEntityTableRowSx(theme)}
+                onClick={() => {
+                    setFoo(!foo);
+                }}
+            >
+                {disableDetailsLink ? (
+                    <TableCell>{catalogName}</TableCell>
+                ) : (
+                    <EntityNameLink
+                        name={catalogName}
+                        showEntityStatus={false}
+                        detailsLink={generatePath({
+                            catalog_name: catalogName,
+                        })}
+                        entityStatusTypes={[alertDetails.spec_type]}
+                    />
                 )}
-            />
 
-            <TimeStamp time={firedAt} />
+                <TableCell>details</TableCell>
 
-            <TableCell>{resolvedAt}</TableCell>
-        </TableRow>
+                <TableCell>
+                    <AlertTypeContent alertType={alertType} />
+                </TableCell>
+
+                <ChipList
+                    stripPath={false}
+                    values={alertDetails.recipients.map(
+                        (recipient: any) => recipient.email
+                    )}
+                />
+
+                <TimeStamp time={firedAt} enableExact />
+
+                <TableCell>{resolvedAt}</TableCell>
+            </TableRow>
+            <TableRow sx={{ display: foo ? undefined : 'none' }}>
+                <TableCell colSpan={5}>
+                    <Collapse unmountOnExit in={foo}>
+                        <DetailsPane foo={row} />
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </>
     );
 }
 
 function Rows({ data, disableDetailsLink }: RowsProps) {
-    const [foo, setFoo] = useState(false);
-
     return (
         <>
             {data.map((row: any, index: number) => (
                 <Fragment key={`alertHistoryTable_${index}`}>
-                    <Row
-                        setFoo={() => {
-                            setFoo(!foo);
-                        }}
-                        row={row}
-                        disableDetailsLink={disableDetailsLink}
-                    />
-                    <TableRow>
-                        <TableCell colSpan={5}>
-                            <Collapse unmountOnExit in={Boolean(foo)}>
-                                <DetailsPane foo={data} />
-                            </Collapse>
-                        </TableCell>
-                    </TableRow>
+                    <Row row={row} disableDetailsLink={disableDetailsLink} />
                 </Fragment>
             ))}
         </>

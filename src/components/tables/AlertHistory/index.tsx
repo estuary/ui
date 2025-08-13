@@ -25,6 +25,10 @@ const columns: TableColumns[] = [
     },
     {
         field: null,
+        headerIntlKey: 'admin.notifications.table.data.details',
+    },
+    {
+        field: null,
         headerIntlKey: 'admin.notifications.table.data.alertType',
     },
     {
