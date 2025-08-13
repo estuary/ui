@@ -27,6 +27,10 @@ export interface ConsentAuditArgs {
     expiration: any;
 }
 
+export interface SupportRoleGrantArgs {
+    expiration: any;
+}
+
 export interface PrivacySettingStore {
     updatingSetting: boolean;
     updateError: null | any;

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Box, Grid } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import EnhancedSupport from 'src/_compliance/guards/EnhancedSupport/EnhancedSupport';
 import SupportBenefits from 'src/_compliance/guards/EnhancedSupport/SupportBenefits';
@@ -13,6 +13,8 @@ import FullPageWrapper from 'src/app/FullPageWrapper';
 import FullPageError from 'src/components/fullPage/Error';
 
 function EnhancedSupportGuard({ children }: BaseComponentProps) {
+    const intl = useIntl();
+
     const [loading] = useState(false);
     const [error] = useState<string | null>(null);
 
@@ -25,15 +27,19 @@ function EnhancedSupportGuard({ children }: BaseComponentProps) {
             <FullPageError
                 error={error}
                 message={
-                    <FormattedMessage
-                        id="legal.error.failedToFetch.message"
-                        values={{
-                            privacy: (
-                                <FormattedMessage id="legal.docs.privacy" />
-                            ),
-                            terms: <FormattedMessage id="legal.docs.terms" />,
-                        }}
-                    />
+                    <>
+                        {intl.formatMessage(
+                            { id: 'legal.error.failedToFetch.message' },
+                            {
+                                privacy: (
+                                    <FormattedMessage id="legal.docs.privacy" />
+                                ),
+                                terms: (
+                                    <FormattedMessage id="legal.docs.terms" />
+                                ),
+                            }
+                        )}
+                    </>
                 }
             />
         );
