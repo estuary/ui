@@ -383,28 +383,28 @@ export const modifyExistingCaptureDraftSpec = async (
     });
 };
 
-const getBuiltBinding = (
+export const getBuiltBindingIndex = (
     builtSpec: Schema,
     targetCollection: string
-): BuiltBinding | undefined => {
+): number => {
     const builtBindings: BuiltBinding[] = builtSpec.bindings ?? [];
 
-    return builtBindings.find(
+    return builtBindings.findIndex(
         (binding) => binding.collection.name === targetCollection
     );
 };
 
-const getBindingByResourcePath = <T extends Schema>(
+export const getBindingIndexByResourcePath = <T extends Schema>(
     resourcePath: string[],
     schema: Schema
-): T | undefined => {
+): number => {
     if (resourcePath.length === 0) {
-        return undefined;
+        return -1;
     }
 
     const bindings: T[] = schema.bindings;
 
-    return bindings.find((binding) => {
+    return bindings.findIndex((binding) => {
         let bindingResourcePath: string[] = [];
 
         if (binding?.resourcePath) {
@@ -425,37 +425,55 @@ const getDraftedMaterializationBinding = (
     stagedBindingIndex: number,
     targetCollection: string,
     indexLookupOnly?: boolean
-): MaterializationBinding | undefined => {
+): {
+    draftedBinding: MaterializationBinding | undefined;
+    draftedBindingIndex: number;
+} => {
     let draftedBinding: MaterializationBinding | undefined;
+    let draftedBindingIndex = -1;
 
     // Attempt to identify the target drafted binding by resource path pointer(s) before
     // relying on the binding index.
     if (!indexLookupOnly && resourcePath) {
-        draftedBinding = getBindingByResourcePath<MaterializationBinding>(
-            resourcePath,
-            draftSpec
-        );
+        draftedBindingIndex =
+            getBindingIndexByResourcePath<MaterializationBinding>(
+                resourcePath,
+                draftSpec
+            );
+
+        draftedBinding = draftSpec.bindings.at(draftedBindingIndex);
     }
 
     if (!draftedBinding) {
-        const bindingIndex: number = getBindingIndex(
+        draftedBindingIndex = getBindingIndex(
             draftSpec.bindings,
             targetCollection,
             stagedBindingIndex
         );
 
         draftedBinding =
-            bindingIndex > -1 ? draftSpec.bindings[bindingIndex] : undefined;
+            draftedBindingIndex > -1
+                ? draftSpec.bindings[draftedBindingIndex]
+                : undefined;
     }
 
-    return draftedBinding;
+    return { draftedBinding, draftedBindingIndex };
 };
 
+interface BindingTypes<B, V, T> {
+    built: B | undefined;
+    drafted: T | undefined;
+    live: T | undefined;
+    validated: V | undefined;
+}
+
 export interface RelatedBindings {
-    builtBinding: BuiltBinding | undefined;
-    draftedBinding: MaterializationBinding | undefined;
-    liveBinding: MaterializationBinding | undefined;
-    validatedBinding: ValidatedBinding | undefined;
+    indices: BindingTypes<number, number, number>;
+    values: BindingTypes<
+        BuiltBinding,
+        ValidatedBinding,
+        MaterializationBinding
+    >;
 }
 
 export const getRelatedBindings = (
@@ -470,32 +488,53 @@ export const getRelatedBindings = (
     //  to extract the projection information.
     // Defaulting to empty array. This is to handle when a user has disabled a collection
     //  which causes the binding to not be included in the built_spec
-    const builtBinding = getBuiltBinding(builtSpec, targetCollection);
+    const builtBindingIndex = getBuiltBindingIndex(builtSpec, targetCollection);
+    const builtBinding: BuiltBinding | undefined =
+        builtSpec.bindings.at(builtBindingIndex);
 
     // The validation phase of a publication produces a document which correlates each binding projection
     // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
     // from the validation document that corresponds to the current collection to extract the constraint types.
-    const validatedBinding = getBindingByResourcePath<ValidatedBinding>(
-        builtBinding?.resourcePath ?? [],
-        validationResponse
-    );
+    const validatedBindingIndex =
+        getBindingIndexByResourcePath<ValidatedBinding>(
+            builtBinding?.resourcePath ?? [],
+            validationResponse
+        );
+    const validatedBinding: ValidatedBinding | undefined =
+        validationResponse.bindings.at(validatedBindingIndex);
 
     // TODO (field-selection): Use the staged binding index to identify the target drafted binding for now.
     //   Determine whether resource path pointer can be used for drafted binding lookup.
-    const draftedBinding = getDraftedMaterializationBinding(
-        draftSpec,
-        builtBinding?.resourcePath,
-        stagedBindingIndex,
-        targetCollection,
-        true
-    );
+    const { draftedBinding, draftedBindingIndex } =
+        getDraftedMaterializationBinding(
+            draftSpec,
+            builtBinding?.resourcePath,
+            stagedBindingIndex,
+            targetCollection,
+            true
+        );
 
-    const liveBinding = liveSpec
-        ? getBindingByResourcePath<MaterializationBinding>(
+    const liveBindingIndex = liveSpec
+        ? getBindingIndexByResourcePath<MaterializationBinding>(
               builtBinding?.resourcePath ?? [],
               liveSpec
           )
         : undefined;
+    const liveBinding: MaterializationBinding | undefined =
+        liveSpec?.bindings.at(liveBindingIndex);
 
-    return { builtBinding, draftedBinding, liveBinding, validatedBinding };
+    return {
+        indices: {
+            built: builtBindingIndex,
+            drafted: draftedBindingIndex,
+            live: liveBindingIndex,
+            validated: validatedBindingIndex,
+        },
+        values: {
+            built: builtBinding,
+            drafted: draftedBinding,
+            live: liveBinding,
+            validated: validatedBinding,
+        },
+    };
 };

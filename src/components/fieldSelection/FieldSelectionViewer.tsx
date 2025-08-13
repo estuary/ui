@@ -11,9 +11,7 @@ import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/S
 import RefreshButton from 'src/components/fieldSelection/RefreshButton';
 import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
-import useRelatedBindings from 'src/hooks/bindings/useRelatedBindings';
 import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
-import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     useFormStateStore_isActive,
@@ -21,10 +19,6 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import {
-    DEFAULT_RECOMMENDED_FLAG,
-    getFieldSelection,
-} from 'src/utils/fieldSelection-utils';
 
 interface Props {
     bindingUUID: string;
@@ -37,22 +31,12 @@ function FieldSelectionViewer({
     collectionName,
     refreshRequired,
 }: Props) {
-    const { builtBinding, draftedBinding, validatedBinding } =
-        useRelatedBindings();
-
     const { applyFieldSelection } = useFieldSelection(
         bindingUUID,
         collectionName
     );
-    const { validateFieldSelection } = useFieldSelectionAlgorithm();
 
     // Bindings Store
-    const setRecommendFields = useBindingStore(
-        (state) => state.setRecommendFields
-    );
-    const initializeSelections = useBindingStore(
-        (state) => state.initializeSelections
-    );
     const advanceHydrationStatus = useBindingStore(
         (state) => state.advanceHydrationStatus
     );
@@ -82,58 +66,6 @@ function FieldSelectionViewer({
         () => selections?.[bindingUUID],
         [bindingUUID, selections]
     );
-
-    useEffect(() => {
-        if (
-            builtBinding &&
-            draftedBinding &&
-            validatedBinding &&
-            bindingSelection?.status === 'VALIDATION_REQUESTED'
-        ) {
-            advanceHydrationStatus('VALIDATION_REQUESTED', bindingUUID);
-
-            validateFieldSelection(
-                builtBinding,
-                draftedBinding,
-                validatedBinding
-            ).then(
-                ({ fieldStanza, response }) => {
-                    if (!response) {
-                        return;
-                    }
-
-                    const updatedSelections = getFieldSelection(
-                        response.outcomes,
-                        fieldStanza,
-                        builtBinding?.collection.projections
-                    );
-
-                    setRecommendFields(
-                        bindingUUID,
-                        fieldStanza?.recommended ?? DEFAULT_RECOMMENDED_FLAG
-                    );
-                    initializeSelections(
-                        bindingUUID,
-                        updatedSelections,
-                        response.hasConflicts
-                    );
-                },
-                () => {}
-            );
-        }
-    }, [
-        advanceHydrationStatus,
-        bindingUUID,
-        builtBinding,
-        collectionName,
-        draftedBinding,
-        draftSpecsRows,
-        bindingSelection?.status,
-        initializeSelections,
-        setRecommendFields,
-        validatedBinding,
-        validateFieldSelection,
-    ]);
 
     const draftSpec = useMemo(
         () =>

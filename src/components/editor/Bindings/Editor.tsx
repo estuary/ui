@@ -27,6 +27,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useEntityType } from 'src/context/EntityContext';
 import useBackgroundTest from 'src/hooks/fieldSelection/useBackgroundTest';
+import useFieldSelectionAlgorithm from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 import useInitializeCollectionDraft from 'src/hooks/useInitializeCollectionDraft';
 import {
     useBinding_currentBindingUUID,
@@ -43,6 +44,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
 
     const initializeCollectionDraft = useInitializeCollectionDraft();
     const { refreshRequired } = useBackgroundTest();
+    useFieldSelectionAlgorithm();
 
     // Binding Store
     const currentCollection = useBinding_currentCollection();

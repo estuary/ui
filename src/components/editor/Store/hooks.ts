@@ -14,6 +14,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDraftSpecs_forEditor } from 'src/hooks/useDraftSpecs';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { EditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
@@ -608,6 +609,10 @@ export const useHydrateEditorState = (
 ) => {
     const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
 
+    const setRelatedBindingIndices = useBindingStore(
+        (state) => state.setRelatedBindingIndices
+    );
+
     const draftId = useEditorStore_id({ localScope });
     const persistedDraftId = useEditorStore_persistedDraftId({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
@@ -626,6 +631,13 @@ export const useHydrateEditorState = (
     useEffect(() => {
         if (!response.isValidating) {
             setQueryResponse(response);
+
+            if (response.draftSpecs.length > 0) {
+                setRelatedBindingIndices(
+                    response.draftSpecs[0].built_spec,
+                    response.draftSpecs[0].validated
+                );
+            }
         }
-    }, [setQueryResponse, response]);
+    }, [setQueryResponse, setRelatedBindingIndices, response]);
 };

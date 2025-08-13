@@ -175,7 +175,7 @@ export const initializeCurrentBinding = (
     };
 };
 
-export const getResourceConfig = (
+const getResourceConfig = (
     binding: any,
     bindingIndex: number
 ): ResourceConfig => {
@@ -191,9 +191,11 @@ export const getResourceConfig = (
         errors: [],
         meta: {
             ...disableProp,
+            builtBindingIndex: -1,
             collectionName,
             bindingIndex,
             onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,
+            validatedBindingIndex: -1,
         },
     };
 };
