@@ -1,11 +1,11 @@
-import { gql, useQuery } from 'urql';
+import { gql } from 'urql';
 
+import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { stringifyJSON } from 'src/services/stringify';
 
-const AlertHistoryQuery = gql`
+const alertHistoryQuery = gql`
     query ($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             catalogName
@@ -20,22 +20,15 @@ const AlertHistoryQuery = gql`
 function EntityAlerts() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const [{ fetching, data, error }] = useQuery({
-        query: AlertHistoryQuery,
-        variables: { prefixes: [catalogName] },
-        pause: !catalogName,
-    });
-
-    if (fetching) {
-        return <>fetching</>;
-    }
-
-    if (error) {
-        return <>error</>;
-    }
-
     return (
-        <textarea rows={20} cols={75} readOnly value={stringifyJSON(data)} />
+        <AlertHistoryTable
+            disableDetailsLink
+            querySettings={{
+                query: alertHistoryQuery,
+                variables: { prefixes: [catalogName] },
+                pause: !catalogName,
+            }}
+        />
     );
 }
 

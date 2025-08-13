@@ -1,6 +1,7 @@
 import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
+import { gql } from 'urql';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
@@ -8,6 +9,19 @@ import AdminTabs from 'src/components/admin/Tabs';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import usePageTitle from 'src/hooks/usePageTitle';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+
+const alertHistoryQuery = gql`
+    query ($prefixes: [String!]!) {
+        alerts(prefixes: $prefixes) {
+            catalogName
+            firedAt
+            alertType
+            alertDetails: arguments
+            resolvedAt
+        }
+    }
+`;
 
 function Notifications() {
     usePageTitle({
@@ -16,6 +30,7 @@ function Notifications() {
     });
 
     const intl = useIntl();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     return (
         <>
@@ -49,7 +64,12 @@ function Notifications() {
                 </Box>
 
                 <Divider />
-                <AlertHistoryTable />
+                <AlertHistoryTable
+                    querySettings={{
+                        query: alertHistoryQuery,
+                        variables: { prefixes: [selectedTenant] },
+                    }}
+                />
             </Stack>
         </>
     );

@@ -1,3 +1,4 @@
+import type { AlertHistoryTableProps } from 'src/components/tables/AlertHistory/types';
 import type { TableColumns, TableState } from 'src/types';
 
 import { useEffect, useState } from 'react';
@@ -5,12 +6,11 @@ import { useEffect, useState } from 'react';
 import { Box, Table, TableContainer } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import { gql, useQuery } from 'urql';
+import { useQuery } from 'urql';
 
 import Rows from 'src/components/tables/AlertHistory/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import { useTenantStore } from 'src/stores/Tenant/Store';
 import { TableStatuses } from 'src/types';
 
 // TODO (optimization): The prefix alert table should have a last updated column
@@ -22,6 +22,10 @@ const columns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'entityTable.data.entity',
+    },
+    {
+        field: null,
+        headerIntlKey: 'admin.notifications.table.data.alertType',
     },
     {
         field: null,
@@ -37,27 +41,14 @@ const columns: TableColumns[] = [
     },
 ];
 
-const AlertHistoryQuery = gql`
-    query ($prefixes: [String!]!) {
-        alerts(prefixes: $prefixes) {
-            catalogName
-            firedAt
-            alertType
-            alertDetails: arguments
-            resolvedAt
-        }
-    }
-`;
-
-function AlertHistoryTable() {
+function AlertHistoryTable({
+    querySettings,
+    disableDetailsLink,
+}: AlertHistoryTableProps) {
     const intl = useIntl();
 
     // Get the data from the server
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const [{ fetching, data, error }] = useQuery({
-        query: AlertHistoryQuery,
-        variables: { prefixes: [selectedTenant] },
-    });
+    const [{ fetching, data, error }] = useQuery(querySettings);
 
     // Manage table state
     const [tableState, setTableState] = useState<TableState>({
@@ -120,7 +111,11 @@ function AlertHistoryTable() {
                         loading={loading}
                         rows={
                             hasData ? (
-                                <Rows columns={columns} data={data.alerts} />
+                                <Rows
+                                    columns={columns}
+                                    data={data.alerts}
+                                    disableDetailsLink={disableDetailsLink}
+                                />
                             ) : null
                         }
                     />

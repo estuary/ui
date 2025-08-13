@@ -174,8 +174,18 @@ export const AdminPage: Record<string, string> = {
     'admin.notifications.table.data.firedAt': `Fired At`,
     'admin.notifications.table.data.recipients': `Recipients`,
     'admin.notifications.table.data.resolvedAt': `Resolved At`,
+    'admin.notifications.table.data.alertType': `Alert Type`,
     'admin.notifications.table.label': `List of all alerts for tenant`,
     'admin.notifications.table.empty.header': `No alerts found`,
     'admin.notifications.table.empty.message': `This tenant has no historical alerts`,
     'admin.notifications.table.error.message': `There was an error attempting to fetch alert history.`,
+
+    // These are dynamically built in ui/src/components/tables/AlertHistory/Rows.tsx
+    'admin.notifications.alertType.autodiscoverfailed': `Auto Discover Failed`,
+    'admin.notifications.alertType.shardfailed': `Shard Failure`,
+    'admin.notifications.alertType.datamovementstalled': `Data Movement Stalled`,
+    'admin.notifications.alertType.freetrial': ``,
+    'admin.notifications.alertType.freetrialending': `Free Trial Ending`,
+    'admin.notifications.alertType.freetrialstalled': ``,
+    'admin.notifications.alertType.missingpaymentmethod': `Missing Payment Method`,
 };
