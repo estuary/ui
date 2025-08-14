@@ -1,30 +1,24 @@
-import type { TableColumns } from 'src/types';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/AlertHistory/types';
 
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 
 import { Collapse, TableCell, TableRow, useTheme } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import AlertTypeContent from 'src/components/tables/AlertHistory/AlertTypeContent';
 import DetailsPane from 'src/components/tables/AlertHistory/DetailsPane';
+import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
 import ChipList from 'src/components/tables/cells/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
+import { isColumnVisible } from 'src/utils/table-utils';
 
-interface RowsProps {
-    columns: TableColumns[];
-    data: any;
-    disableDetailsLink?: boolean;
-}
-
-interface RowProps {
-    row: any;
-    disableDetailsLink?: boolean;
-}
-
-function Row({ disableDetailsLink, row }: RowProps) {
+function Row({ hideEntityName, row }: RowProps) {
     const theme = useTheme();
 
     const { alertType, catalogName, firedAt, resolvedAt, alertDetails } = row;
@@ -48,9 +42,7 @@ function Row({ disableDetailsLink, row }: RowProps) {
                     setFoo(!foo);
                 }}
             >
-                {disableDetailsLink ? (
-                    <TableCell>{catalogName}</TableCell>
-                ) : (
+                {hideEntityName ? null : (
                     <EntityNameLink
                         name={catalogName}
                         showEntityStatus={false}
@@ -89,13 +81,21 @@ function Row({ disableDetailsLink, row }: RowProps) {
     );
 }
 
-function Rows({ data, disableDetailsLink }: RowsProps) {
+function Rows({ columns, data }: RowsProps) {
+    const detailsColumnVisible = isColumnVisible(
+        columns,
+        alertHistoryOptionalColumnIntlKeys.entityName
+    );
+
     return (
         <>
             {data.map((row: any, index: number) => (
-                <Fragment key={`alertHistoryTable_${index}`}>
-                    <Row row={row} disableDetailsLink={disableDetailsLink} />
-                </Fragment>
+                <Row
+                    key={`alertHistoryTable_${index}`}
+                    columns={columns}
+                    row={row}
+                    hideEntityName={!detailsColumnVisible}
+                />
             ))}
         </>
     );

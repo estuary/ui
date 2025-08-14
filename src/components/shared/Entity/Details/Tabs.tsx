@@ -14,12 +14,13 @@ import useGlobalSearchParams, {
 
 const TAB_KEY = 'details-tabs';
 function DetailTabs() {
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+
     const [searchParams] = useSearchParams();
     const shouldShowLogs = useEntityShouldShowLogs();
     const hasSupportRole = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess
     );
-    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const getPath = useCallback(
         (path: string) => {

@@ -33,7 +33,7 @@ function AlertsAreActiveBadge({
             showZero
             sx={{
                 ['& .MuiBadge-badge']: {
-                    right: -4,
+                    right: -6,
                     top: -4,
                 },
             }}

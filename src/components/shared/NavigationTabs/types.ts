@@ -1,11 +1,11 @@
 import type { TabsProps } from '@mui/material';
 import type { ComponentType } from 'react';
 
-export interface NavigationTabProps {
+export interface NavigationTabProps<T = any> {
     labelMessageId: string;
     path: string;
-    Wrapper?: ComponentType<any>;
-    wrapperProps?: any;
+    Wrapper?: ComponentType<T>;
+    wrapperProps?: T;
 }
 
 export interface NavigationTabsProps {

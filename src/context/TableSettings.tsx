@@ -1,10 +1,12 @@
 import type { Dispatch, SetStateAction } from 'react';
+import type { TablePrefix } from 'src/stores/Tables/hooks';
 import type { BaseComponentProps } from 'src/types';
 
-import { createContext, useContext } from 'react';
+import { createContext, useCallback, useContext } from 'react';
 
 import { useLocalStorage, useMount } from 'react-use';
 
+import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
@@ -25,11 +27,19 @@ export interface TableSettingsState {
 
 const TableSettingsContext = createContext<TableSettingsState | null>(null);
 
-const TableSettingsProvider = ({ children }: BaseComponentProps) => {
+export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
     const [tableSettings, setTableSettings] =
         useLocalStorage<TableSettingsDictionary>(
             LocalStorageKeys.TABLE_SETTINGS,
             {
+                [TablePrefixes.alertHistoryForEntity]: {
+                    shownOptionalColumns: [],
+                },
+                [TablePrefixes.alertHistoryForTenant]: {
+                    shownOptionalColumns: [
+                        alertHistoryOptionalColumnIntlKeys.entityName,
+                    ],
+                },
                 [TablePrefixes.fieldSelection]: {
                     shownOptionalColumns: [],
                 },
@@ -57,6 +67,26 @@ const TableSettingsProvider = ({ children }: BaseComponentProps) => {
                 },
             });
         }
+
+        if (!tableSettings?.[TablePrefixes.alertHistoryForEntity]) {
+            setTableSettings({
+                ...tableSettings,
+                [TablePrefixes.alertHistoryForEntity]: {
+                    shownOptionalColumns: [],
+                },
+            });
+        }
+
+        if (!tableSettings?.[TablePrefixes.alertHistoryForTenant]) {
+            setTableSettings({
+                ...tableSettings,
+                [TablePrefixes.alertHistoryForTenant]: {
+                    shownOptionalColumns: [
+                        alertHistoryOptionalColumnIntlKeys.entityName,
+                    ],
+                },
+            });
+        }
     });
 
     return (
@@ -68,7 +98,7 @@ const TableSettingsProvider = ({ children }: BaseComponentProps) => {
     );
 };
 
-const useDisplayTableColumns = () => {
+export const useDisplayTableColumns = () => {
     const context = useContext(TableSettingsContext);
 
     if (context === null) {
@@ -80,4 +110,45 @@ const useDisplayTableColumns = () => {
     return context;
 };
 
-export { TableSettingsProvider, useDisplayTableColumns };
+export const useDisplayTableColumnSetter = (tablePrefix: TablePrefix) => {
+    const { tableSettings, setTableSettings } = useDisplayTableColumns();
+    return useCallback(
+        (checked: boolean, column: string) => {
+            const existingSettings = tableSettings ?? {};
+
+            const shownOptionalColumns = Object.hasOwn(
+                existingSettings,
+                tablePrefix
+            )
+                ? existingSettings[tablePrefix].shownOptionalColumns
+                : [];
+
+            const columnShown = shownOptionalColumns.includes(column);
+
+            const evaluatedSettings =
+                !checked && columnShown
+                    ? {
+                          ...existingSettings,
+                          [tablePrefix]: {
+                              shownOptionalColumns: shownOptionalColumns.filter(
+                                  (value) => value !== column
+                              ),
+                          },
+                      }
+                    : checked && !columnShown
+                      ? {
+                            ...existingSettings,
+                            [tablePrefix]: {
+                                shownOptionalColumns: [
+                                    ...shownOptionalColumns,
+                                    column,
+                                ],
+                            },
+                        }
+                      : existingSettings;
+
+            setTableSettings(evaluatedSettings);
+        },
+        [setTableSettings, tablePrefix, tableSettings]
+    );
+};

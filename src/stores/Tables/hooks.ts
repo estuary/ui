@@ -22,7 +22,8 @@ export enum TableFilterKeys {
 export enum TablePrefixes {
     accessGrants = 'ag',
     accessLinks = 'ali',
-    alertHistory = 'ahi',
+    alertHistoryForTenant = 'tah',
+    alertHistoryForEntity = 'eah',
     billing = 'bil',
     captures = 'cap',
     collections = 'col',

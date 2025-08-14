@@ -4,6 +4,7 @@ import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
 
 const alertHistoryQuery = gql`
     query EntityAlertHistory($prefixes: [String!]!) {
@@ -22,7 +23,7 @@ function EntityAlerts() {
 
     return (
         <AlertHistoryTable
-            disableDetailsLink
+            tablePrefix={TablePrefixes.alertHistoryForEntity}
             querySettings={{
                 query: alertHistoryQuery,
                 variables: { prefixes: [catalogName] },

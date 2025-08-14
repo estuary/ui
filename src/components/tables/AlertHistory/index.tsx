@@ -1,7 +1,7 @@
 import type { AlertHistoryTableProps } from 'src/components/tables/AlertHistory/types';
-import type { TableColumns, TableState } from 'src/types';
+import type { TableState } from 'src/types';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
 
@@ -9,47 +9,34 @@ import { useIntl } from 'react-intl';
 import { useQuery } from 'urql';
 
 import Rows from 'src/components/tables/AlertHistory/Rows';
+import {
+    optionalColumns,
+    tableColumns,
+} from 'src/components/tables/AlertHistory/shared';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { TableStatuses } from 'src/types';
-
-// TODO (optimization): The prefix alert table should have a last updated column
-//   however the current data model does not provide a means to reliably track
-//   when the emails subscribed to alerts under a given prefix were last updated.
-//   If the most recently subscribed email for a given prefix is removed,
-//   the latest `updated_at` value would be rolling back in time.
-const columns: TableColumns[] = [
-    {
-        field: null,
-        headerIntlKey: 'entityTable.data.entity',
-    },
-    {
-        field: null,
-        headerIntlKey: 'admin.notifications.table.data.details',
-    },
-    {
-        field: null,
-        headerIntlKey: 'admin.notifications.table.data.alertType',
-    },
-    {
-        field: null,
-        headerIntlKey: 'admin.notifications.table.data.recipients',
-    },
-    {
-        field: null,
-        headerIntlKey: 'admin.notifications.table.data.firedAt',
-    },
-    {
-        field: null,
-        headerIntlKey: 'admin.notifications.table.data.resolvedAt',
-    },
-];
+import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 function AlertHistoryTable({
     querySettings,
-    disableDetailsLink,
+    tablePrefix,
 }: AlertHistoryTableProps) {
     const intl = useIntl();
+
+    const { tableSettings } = useDisplayTableColumns();
+
+    const columnsToShow = useMemo(
+        () =>
+            evaluateColumnsToShow(
+                optionalColumns,
+                tableColumns,
+                tablePrefix,
+                tableSettings
+            ),
+        [tablePrefix, tableSettings]
+    );
 
     // Get the data from the server
     const [{ fetching, data, error }] = useQuery(querySettings);
@@ -100,10 +87,13 @@ function AlertHistoryTable({
                         id: 'admin.notifications.table.label',
                     })}
                 >
-                    <EntityTableHeader columns={columns} selectData={true} />
+                    <EntityTableHeader
+                        columns={columnsToShow}
+                        selectData={true}
+                    />
 
                     <EntityTableBody
-                        columns={columns}
+                        columns={columnsToShow}
                         noExistingDataContentIds={{
                             header: 'admin.notifications.table.empty.header',
                             message: failed
@@ -116,9 +106,8 @@ function AlertHistoryTable({
                         rows={
                             hasData ? (
                                 <Rows
-                                    columns={columns}
+                                    columns={columnsToShow}
                                     data={data.alerts}
-                                    disableDetailsLink={disableDetailsLink}
                                 />
                             ) : null
                         }

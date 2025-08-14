@@ -9,6 +9,7 @@ import AdminTabs from 'src/components/admin/Tabs';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import usePageTitle from 'src/hooks/usePageTitle';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
 const alertHistoryQuery = gql`
@@ -65,6 +66,7 @@ function Notifications() {
 
                 <Divider />
                 <AlertHistoryTable
+                    tablePrefix={TablePrefixes.alertHistoryForTenant}
                     querySettings={{
                         query: alertHistoryQuery,
                         variables: { prefixes: [selectedTenant] },
