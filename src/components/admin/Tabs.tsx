@@ -1,87 +1,58 @@
-import { useMemo, useState } from 'react';
+import type { NavigationTabProps } from 'src/components/shared/NavigationTabs/types';
 
-import { Box, Tab, Tabs } from '@mui/material';
-
-import { useIntl } from 'react-intl';
-import { Link, useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import AlertsAreActiveBadge from 'src/components/shared/AlertsAreActiveBadge';
+import NavigationTabs from 'src/components/shared/NavigationTabs';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
+const TAB_KEY = 'admin-tabs';
 function AdminTabs() {
-    const intl = useIntl();
-    const { pathname } = useLocation();
-    const [selectedTab, setSelectedTab] = useState(0);
     const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const tabProps = useMemo(() => {
-        const response = [
+        const response: NavigationTabProps[] = [
             {
-                label: 'admin.tabs.users',
+                labelMessageId: 'admin.tabs.users',
                 path: authenticatedRoutes.admin.accessGrants.fullPath,
             },
             {
-                label: 'admin.tabs.notifications',
+                Wrapper: AlertsAreActiveBadge,
+                wrapperProps: {
+                    prefixes: [selectedTenant],
+                },
+                labelMessageId: 'admin.tabs.notifications',
                 path: authenticatedRoutes.admin.notifications.fullPath,
             },
             {
-                label: 'admin.tabs.settings',
+                labelMessageId: 'admin.tabs.settings',
                 path: authenticatedRoutes.admin.settings.fullPath,
             },
         ];
 
         if (hasAnyAccess) {
             response.push({
-                label: 'admin.tabs.billing',
+                labelMessageId: 'admin.tabs.billing',
                 path: authenticatedRoutes.admin.billing.fullPath,
             });
         }
 
         return response.concat([
             {
-                label: 'admin.tabs.connectors',
+                labelMessageId: 'admin.tabs.connectors',
                 path: authenticatedRoutes.admin.connectors.fullPath,
             },
             {
-                label: 'admin.tabs.api',
+                labelMessageId: 'admin.tabs.api',
                 path: authenticatedRoutes.admin.api.fullPath,
             },
         ]);
-    }, [hasAnyAccess]);
+    }, [hasAnyAccess, selectedTenant]);
 
-    const tabs = useMemo(
-        () =>
-            tabProps.map((tabProp, index) => {
-                if (pathname.startsWith(tabProp.path)) {
-                    setSelectedTab(index);
-                }
-
-                return (
-                    <Tab
-                        key={`admin-tabs-${tabProp.label}`}
-                        label={intl.formatMessage({
-                            id: tabProp.label,
-                        })}
-                        component={Link}
-                        to={tabProp.path}
-                    />
-                );
-            }),
-        [intl, pathname, tabProps]
-    );
-
-    return (
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs
-                allowScrollButtonsMobile
-                variant="scrollable"
-                scrollButtons="auto"
-                value={selectedTab}
-            >
-                {tabs}
-            </Tabs>
-        </Box>
-    );
+    return <NavigationTabs keyPrefix={TAB_KEY} tabs={tabProps} />;
 }
 
 export default AdminTabs;

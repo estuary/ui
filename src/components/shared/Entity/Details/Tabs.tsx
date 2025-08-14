@@ -1,37 +1,53 @@
-import { useMemo, useState } from 'react';
+import type { NavigationTabProps } from 'src/components/shared/NavigationTabs/types';
 
-import { Box, Tab, Tabs } from '@mui/material';
+import { useCallback, useMemo } from 'react';
 
-import { useIntl } from 'react-intl';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
+import AlertsAreActiveBadge from 'src/components/shared/AlertsAreActiveBadge';
 import useEntityShouldShowLogs from 'src/components/shared/Entity/Details/useEntityShouldShowLogs';
+import NavigationTabs from 'src/components/shared/NavigationTabs';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 
+const TAB_KEY = 'details-tabs';
 function DetailTabs() {
-    const intl = useIntl();
-
+    const [searchParams] = useSearchParams();
+    const shouldShowLogs = useEntityShouldShowLogs();
     const hasSupportRole = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess
     );
-    const shouldShowLogs = useEntityShouldShowLogs();
-    const [searchParams] = useSearchParams();
-    const { pathname } = useLocation();
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const [selectedTab, setSelectedTab] = useState(0);
+    const getPath = useCallback(
+        (path: string) => {
+            // Since we have capture, materialization, and collection paths
+            //  it is easier to just make the link go "up" once and then
+            //  change the path. Hardcoding the search params here so they
+            //  do not get removed during navigation.
+            return `../${path}?${searchParams}`;
+        },
+        [searchParams]
+    );
 
     const tabProps = useMemo(() => {
-        const response = [
+        const response: NavigationTabProps[] = [
             {
-                label: 'details.tabs.overview',
+                labelMessageId: 'details.tabs.overview',
                 path: 'overview',
             },
             {
-                label: 'details.tabs.alerts',
+                Wrapper: AlertsAreActiveBadge,
+                wrapperProps: {
+                    prefixes: [catalogName],
+                },
+                labelMessageId: 'details.tabs.alerts',
                 path: 'alerts',
             },
             {
-                label: 'details.tabs.spec',
+                labelMessageId: 'details.tabs.spec',
                 path: 'spec',
             },
         ];
@@ -39,14 +55,14 @@ function DetailTabs() {
         // TODO (details:history) not currently live but is here to make sure it can render
         if (hasSupportRole) {
             response.push({
-                label: 'details.tabs.history',
+                labelMessageId: 'details.tabs.history',
                 path: 'history',
             });
         }
 
         if (shouldShowLogs) {
             response.push({
-                label: 'details.tabs.ops',
+                labelMessageId: 'details.tabs.ops',
                 path: 'ops',
             });
         }
@@ -54,44 +70,8 @@ function DetailTabs() {
         return response;
     }, [hasSupportRole, shouldShowLogs]);
 
-    const tabs = useMemo(
-        () =>
-            tabProps.map((tabProp, index) => {
-                // Since we have capture, materialization, and collection paths
-                //  it is easier to just make the link go "up" once and then
-                //  change the path. Hardcoding the search params here so they
-                //  do not get removed during navigation.
-                const to = `../${tabProp.path}?${searchParams}`;
-
-                if (pathname.includes(tabProp.path)) {
-                    setSelectedTab(index);
-                }
-
-                return (
-                    <Tab
-                        key={`details-tabs-${tabProp.label}`}
-                        label={intl.formatMessage({
-                            id: tabProp.label,
-                        })}
-                        component={Link}
-                        to={to}
-                    />
-                );
-            }),
-        [intl, pathname, searchParams, tabProps]
-    );
-
     return (
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs
-                allowScrollButtonsMobile
-                variant="scrollable"
-                scrollButtons="auto"
-                value={selectedTab}
-            >
-                {tabs}
-            </Tabs>
-        </Box>
+        <NavigationTabs keyPrefix={TAB_KEY} tabs={tabProps} getPath={getPath} />
     );
 }
 

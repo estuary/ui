@@ -12,7 +12,7 @@ import usePageTitle from 'src/hooks/usePageTitle';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
 const alertHistoryQuery = gql`
-    query ($prefixes: [String!]!) {
+    query AlertHistory($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             catalogName
             firedAt

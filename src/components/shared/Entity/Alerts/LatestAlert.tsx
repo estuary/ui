@@ -4,7 +4,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import AlertTypeContent from 'src/components/tables/AlertHistory/AlertTypeContent';
 
 const LatestAlertQuery = gql`
-    query ($prefixes: [String!]!) {
+    query LatestAlert($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             alertType
         }

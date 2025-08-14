@@ -6,7 +6,7 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 
 const alertHistoryQuery = gql`
-    query ($prefixes: [String!]!) {
+    query EntityAlertHistory($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             catalogName
             firedAt
