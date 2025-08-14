@@ -1,3 +1,5 @@
+import type { TableCellProps } from '@mui/material';
+
 import { Box, TableCell, Tooltip } from '@mui/material';
 
 import { formatDistanceToNow, formatRelative } from 'date-fns';
@@ -7,11 +9,17 @@ interface Props {
     time: string | Date;
     enableExact?: boolean;
     enableRelative?: boolean;
+    TableCellProps?: Partial<TableCellProps>;
 }
 
-function TimeStamp({ enableExact, enableRelative, time }: Props) {
+function TimeStamp({
+    enableExact,
+    enableRelative,
+    time,
+    TableCellProps,
+}: Props) {
     return (
-        <TableCell>
+        <TableCell {...(TableCellProps ?? {})}>
             <Tooltip
                 title={
                     <FormattedDate

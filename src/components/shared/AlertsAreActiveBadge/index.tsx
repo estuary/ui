@@ -30,7 +30,8 @@ function AlertsAreActiveBadge({
             color={error || hasActiveAlerts ? 'warning' : 'success'}
             overlap="rectangular"
             invisible={fetching}
-            showZero
+            // TODO (Alert History) - decide if we want to show zero or not
+            // showZero
             sx={{
                 ['& .MuiBadge-badge']: {
                     right: -6,

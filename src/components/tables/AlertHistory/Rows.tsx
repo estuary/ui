@@ -53,11 +53,23 @@ function Row({ hideEntityName, row }: RowProps) {
                     />
                 )}
 
-                <TableCell>details</TableCell>
-
                 <TableCell>
                     <AlertTypeContent alertType={alertType} />
                 </TableCell>
+
+                <TimeStamp
+                    time={firedAt}
+                    enableExact
+                    TableCellProps={{
+                        sx: { whiteSpace: 'nowrap' },
+                    }}
+                />
+
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                    {resolvedAt ?? '-'}
+                </TableCell>
+
+                <TableCell>details</TableCell>
 
                 <ChipList
                     stripPath={false}
@@ -65,10 +77,6 @@ function Row({ hideEntityName, row }: RowProps) {
                         (recipient: any) => recipient.email
                     )}
                 />
-
-                <TimeStamp time={firedAt} enableExact />
-
-                <TableCell>{resolvedAt}</TableCell>
             </TableRow>
             <TableRow sx={{ display: foo ? undefined : 'none' }}>
                 <TableCell colSpan={5}>

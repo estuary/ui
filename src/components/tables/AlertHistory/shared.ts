@@ -15,22 +15,28 @@ export const tableColumns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'admin.notifications.table.data.details',
-    },
-    {
-        field: null,
         headerIntlKey: 'admin.notifications.table.data.alertType',
-    },
-    {
-        field: null,
-        headerIntlKey: 'admin.notifications.table.data.recipients',
+        collapseHeader: true,
+        minWidth: 225,
     },
     {
         field: null,
         headerIntlKey: 'admin.notifications.table.data.firedAt',
+        collapseHeader: true,
+        minWidth: 175,
     },
     {
         field: null,
         headerIntlKey: 'admin.notifications.table.data.resolvedAt',
+        collapseHeader: true,
+        minWidth: 175,
+    },
+    {
+        field: null,
+        headerIntlKey: 'admin.notifications.table.data.details',
+    },
+    {
+        field: null,
+        headerIntlKey: 'admin.notifications.table.data.recipients',
     },
 ];
