@@ -246,7 +246,7 @@ export const Workflows: Record<string, string> = {
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
     // Schema Mode
-    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the second-to-last part of the collection name (unless it's dbo or public).`,
+    'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the non-default second-to-last part of the collection name.`,
     'schemaMode.input.label': `Target Resource Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
