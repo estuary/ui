@@ -15,13 +15,13 @@ const IconButtonWithPopper = ({
     trigger = 'click',
 }: ButtonWithPopperProps) => {
     const [open, setOpen] = useState<boolean>(false);
-    const [anchorEl, setAnchorEl] = useState<
-        null | HTMLElement | (EventTarget & Element)
-    >(null);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const togglePopper = (event: MouseEvent<HTMLElement>, value?: boolean) => {
         setAnchorEl(event.currentTarget);
-        setOpen(value ? value : (previousOpen) => !previousOpen);
+        setOpen(
+            typeof value === 'boolean' ? value : (previousOpen) => !previousOpen
+        );
     };
 
     return (

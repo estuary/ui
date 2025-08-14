@@ -19,7 +19,9 @@ function ButtonWithPopper({
 
     const togglePopper = (event: MouseEvent<HTMLElement>, value?: boolean) => {
         setAnchorEl(event.currentTarget);
-        setOpen(value ? value : (previousOpen) => !previousOpen);
+        setOpen(
+            typeof value === 'boolean' ? value : (previousOpen) => !previousOpen
+        );
     };
 
     return (
