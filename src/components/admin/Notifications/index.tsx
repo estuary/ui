@@ -1,4 +1,4 @@
-import type { AlertHistoryQuery, AlertHistoryVariables } from 'src/types/gql';
+import type { AlertHistoryQueryResponse, AlertsVariables } from 'src/types/gql';
 
 import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
 
@@ -14,7 +14,7 @@ import usePageTitle from 'src/hooks/usePageTitle';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
-const alertHistoryQuery = gql<AlertHistoryQuery, AlertHistoryVariables>`
+const alertHistoryQuery = gql<AlertHistoryQueryResponse, AlertsVariables>`
     query AlertHistory($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             catalogName

@@ -1,9 +1,11 @@
+import type { AlertsVariables, LatestAlertQueryResponse } from 'src/types/gql';
+
 import { gql, useQuery } from 'urql';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import AlertTypeContent from 'src/components/tables/AlertHistory/AlertTypeContent';
 
-const LatestAlertQuery = gql`
+const LatestAlertQuery = gql<LatestAlertQueryResponse, AlertsVariables>`
     query LatestAlert($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             alertType
@@ -40,7 +42,7 @@ function LatestAlert({ taskName }: any) {
             }
         >
             {alertCount > 0 ? (
-                <AlertTypeContent alertType={data.alerts[0].alertType} />
+                <AlertTypeContent alertType={data?.alerts[0].alertType} />
             ) : (
                 'No unresolved alerts'
             )}

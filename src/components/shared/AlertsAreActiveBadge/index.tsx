@@ -1,10 +1,11 @@
 import type { AlertsAreActiveBadgeProps } from 'src/components/shared/AlertsAreActiveBadge/types';
+import type { AlertsVariables, LatestAlertQueryResponse } from 'src/types/gql';
 
 import { Badge, badgeClasses } from '@mui/material';
 
 import { gql, useQuery } from 'urql';
 
-const LatestAlertQuery = gql`
+const LatestAlertQuery = gql<LatestAlertQueryResponse, AlertsVariables>`
     query LatestAlert($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             alertType
@@ -19,6 +20,7 @@ function AlertsAreActiveBadge({
     const [{ fetching, data, error }] = useQuery({
         query: LatestAlertQuery,
         variables: { prefixes },
+        pause: !prefixes,
     });
 
     const activeAlertCount = data?.alerts.length ?? 0;

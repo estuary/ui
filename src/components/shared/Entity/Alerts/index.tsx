@@ -1,4 +1,4 @@
-import type { AlertHistoryQuery, AlertHistoryVariables } from 'src/types/gql';
+import type { AlertHistoryQueryResponse, AlertsVariables } from 'src/types/gql';
 
 import { gql } from 'urql';
 
@@ -8,7 +8,7 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 
-const alertHistoryQuery = gql<AlertHistoryQuery, AlertHistoryVariables>`
+const alertHistoryQuery = gql<AlertHistoryQueryResponse, AlertsVariables>`
     query EntityAlertHistory($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             catalogName

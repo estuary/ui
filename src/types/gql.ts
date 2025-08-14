@@ -1,4 +1,12 @@
-export type AlertType = any;
+export type AlertType =
+    | 'autodiscoverfailed'
+    | 'shardfailed'
+    | 'datamovementstalled'
+    | 'freetrial'
+    | 'freetrialending'
+    | 'freetrialstalled'
+    | 'missingpaymentmethod';
+
 export interface Alert {
     alertType: AlertType;
     firedAt: string;
@@ -7,10 +15,14 @@ export interface Alert {
     catalogName: string;
 }
 
-export interface AlertHistoryVariables {
-    prefixes: string[];
+export interface AlertsVariables {
+    prefixes: string[] | undefined;
 }
 
-export interface AlertHistoryQuery {
+export interface AlertHistoryQueryResponse {
     alerts: Alert[];
+}
+
+export interface LatestAlertQueryResponse {
+    alerts: Pick<Alert, 'alertType'>[];
 }
