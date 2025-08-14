@@ -169,7 +169,7 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
 
     'admin.notifications.title': `Alert History`,
-    'admin.notifications.message': `Below you can see a history of all notifications`,
+    'admin.notifications.message': `Below is all entities that have an active alert`,
 
     'admin.notifications.table.data.firedAt': `Fired At`,
     'admin.notifications.table.data.recipients': `Recipients`,
