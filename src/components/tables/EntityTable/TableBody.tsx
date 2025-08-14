@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 
 import { Box, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import TableLoadingRows from 'src/components/tables/Loading';
 import {
@@ -34,6 +34,8 @@ function EntityTableBody({
     CustomBody,
     enableDivRendering,
 }: Props) {
+    const intl = useIntl();
+
     const columnKeys = useMemo(() => {
         return getColumnKeyList(columns);
     }, [columns]);
@@ -73,12 +75,12 @@ function EntityTableBody({
                                     align="center"
                                     sx={{ mb: 1 }}
                                 >
-                                    <FormattedMessage
-                                        id={getEmptyTableHeader(
+                                    {intl.formatMessage({
+                                        id: getEmptyTableHeader(
                                             tableState.status,
                                             noExistingDataContentIds
-                                        )}
-                                    />
+                                        ),
+                                    })}
                                 </Typography>
 
                                 <Typography component="div" align="center">
