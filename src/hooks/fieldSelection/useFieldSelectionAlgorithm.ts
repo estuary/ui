@@ -3,6 +3,8 @@ import type {
     BaseMaterializationFields,
     BuiltBinding,
     MaterializationBinding,
+    MaterializationFields,
+    MaterializationFields_Legacy,
     ValidatedBinding,
 } from 'src/types/schemaModels';
 import type { FieldSelectionInput, FieldSelectionResult } from 'src/types/wasm';
@@ -23,11 +25,22 @@ import {
     DEFAULT_RECOMMENDED_FLAG,
     getFieldSelection,
 } from 'src/utils/fieldSelection-utils';
+import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 export interface AlgorithmConfig {
     depth?: number;
     exclude?: BaseMaterializationFields['exclude'];
     reset?: boolean;
+}
+
+interface FieldSelectionValidationResponse {
+    bindingUUID: string;
+    builtBinding: BuiltBinding;
+    fieldStanza:
+        | MaterializationFields
+        | MaterializationFields_Legacy
+        | undefined;
+    result: FieldSelectionResult | undefined;
 }
 
 // evaluate_field selection WASM routine documentation can be found here:
@@ -82,15 +95,23 @@ export default function useFieldSelectionAlgorithm() {
             builtBindingIndex: number,
             draftedBindingIndex: number,
             validatedBindingIndex: number
-        ) => {
+        ): Promise<FieldSelectionValidationResponse> => {
             const builtBinding: BuiltBinding | undefined =
-                draftSpecsRow.built_spec?.bindings.at(builtBindingIndex);
+                builtBindingIndex > -1
+                    ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
+                    : undefined;
 
             const draftedBinding: MaterializationBinding | undefined =
-                draftSpecsRow.spec.bindings.at(draftedBindingIndex);
+                draftedBindingIndex > -1
+                    ? draftSpecsRow.spec.bindings.at(draftedBindingIndex)
+                    : undefined;
 
             const validatedBinding: ValidatedBinding | undefined =
-                draftSpecsRow.validated?.bindings.at(validatedBindingIndex);
+                validatedBindingIndex > -1
+                    ? draftSpecsRow.validated?.bindings.at(
+                          validatedBindingIndex
+                      )
+                    : undefined;
 
             if (!builtBinding || !draftedBinding || !validatedBinding) {
                 return Promise.reject(
@@ -98,10 +119,10 @@ export default function useFieldSelectionAlgorithm() {
                 );
             }
 
-            let response: FieldSelectionResult | undefined;
+            let result: FieldSelectionResult | undefined;
 
             try {
-                response = await evaluateFieldSelection({
+                result = await evaluateFieldSelection({
                     collectionKey: builtBinding.collection.key,
                     collectionProjections: builtBinding.collection.projections,
                     liveSpec: isEdit ? builtBinding : undefined,
@@ -116,7 +137,7 @@ export default function useFieldSelectionAlgorithm() {
                 bindingUUID,
                 builtBinding,
                 fieldStanza: draftedBinding?.fields,
-                response,
+                result,
             };
         },
         [isEdit]
@@ -157,16 +178,23 @@ export default function useFieldSelectionAlgorithm() {
                 );
             });
 
-        Promise.all(validationRequests).then(
+        Promise.allSettled(validationRequests).then(
             (responses) => {
-                responses.forEach(
-                    ({ bindingUUID, builtBinding, fieldStanza, response }) => {
-                        if (!response) {
+                responses.forEach((response) => {
+                    if (isPromiseFulfilledResult(response)) {
+                        if (!response.value.result) {
                             return;
                         }
 
+                        const {
+                            bindingUUID,
+                            builtBinding,
+                            fieldStanza,
+                            result,
+                        } = response.value;
+
                         const updatedSelections = getFieldSelection(
-                            response.outcomes,
+                            result.outcomes,
                             fieldStanza,
                             builtBinding?.collection.projections
                         );
@@ -178,10 +206,10 @@ export default function useFieldSelectionAlgorithm() {
                         initializeSelections(
                             bindingUUID,
                             updatedSelections,
-                            response.hasConflicts
+                            result.hasConflicts
                         );
                     }
-                );
+                });
             },
             (error) => {
                 console.log('>>> validation error', error);

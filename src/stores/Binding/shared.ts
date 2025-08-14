@@ -286,7 +286,7 @@ export const stubBindingFieldSelection = (
             selections[bindingUUID] = {
                 hasConflicts: false,
                 hydrating: true,
-                status: defaultStatus ?? 'VALIDATION_REQUESTED',
+                status: defaultStatus ?? 'HYDRATED',
                 value: {},
             };
         }

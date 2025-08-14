@@ -995,8 +995,11 @@ const getInitialState = (
                         const builtBindingIndex = builtSpec
                             ? getBuiltBindingIndex(builtSpec, collectionName)
                             : -1;
+
                         const builtBinding: BuiltBinding | undefined =
-                            builtSpec?.bindings.at(builtBindingIndex);
+                            builtBindingIndex > -1
+                                ? builtSpec?.bindings.at(builtBindingIndex)
+                                : undefined;
 
                         let validatedBindingIndex = -1;
 
