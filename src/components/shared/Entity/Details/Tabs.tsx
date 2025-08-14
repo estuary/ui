@@ -68,7 +68,7 @@ function DetailTabs() {
         }
 
         return response;
-    }, [hasSupportRole, shouldShowLogs]);
+    }, [catalogName, hasSupportRole, shouldShowLogs]);
 
     return (
         <NavigationTabs keyPrefix={TAB_KEY} tabs={tabProps} getPath={getPath} />
