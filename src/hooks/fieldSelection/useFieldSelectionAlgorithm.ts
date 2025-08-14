@@ -1,6 +1,5 @@
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type {
-    BaseMaterializationFields,
     BuiltBinding,
     MaterializationBinding,
     MaterializationFields,
@@ -26,12 +25,6 @@ import {
     getFieldSelection,
 } from 'src/utils/fieldSelection-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
-
-export interface AlgorithmConfig {
-    depth?: number;
-    exclude?: BaseMaterializationFields['exclude'];
-    reset?: boolean;
-}
 
 interface FieldSelectionValidationResponse {
     bindingUUID: string;

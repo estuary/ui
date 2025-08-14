@@ -1,5 +1,4 @@
 import type { SaveButtonProps } from 'src/components/fieldSelection/types';
-import type { AlgorithmConfig } from 'src/hooks/fieldSelection/useFieldSelectionAlgorithm';
 
 import { Button } from '@mui/material';
 
@@ -30,21 +29,16 @@ export default function SaveButton({
         <Button
             disabled={loading || formActive || !selectedAlgorithm}
             onClick={() => {
-                const config: AlgorithmConfig =
+                const recommendedFlag =
                     selectedAlgorithm === 'depthZero'
-                        ? { depth: 0 }
+                        ? 0
                         : selectedAlgorithm === 'depthTwo'
-                          ? { depth: 2 }
-                          : {
-                                depth:
-                                    typeof DEFAULT_RECOMMENDED_FLAG === 'number'
-                                        ? DEFAULT_RECOMMENDED_FLAG
-                                        : 1,
-                            };
+                          ? 2
+                          : DEFAULT_RECOMMENDED_FLAG;
 
                 setRecommendFields(
                     bindingUUID,
-                    config?.depth ?? DEFAULT_RECOMMENDED_FLAG
+                    recommendedFlag ?? DEFAULT_RECOMMENDED_FLAG
                 );
 
                 advanceHydrationStatus('HYDRATED');
