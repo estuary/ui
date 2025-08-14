@@ -7,7 +7,7 @@ import { Divider, Grid, Typography } from '@mui/material';
 
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import { getInvoicesBetween } from 'src/api/billing';
@@ -16,6 +16,7 @@ import DateRange from 'src/components/admin/Billing/DateRange';
 import BillingLoadError from 'src/components/admin/Billing/LoadError';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
+import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import TenantOptions from 'src/components/admin/Billing/TenantOptions';
 import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
@@ -35,15 +36,17 @@ import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
 
-// Adding a hair of height so that a slight amount of a line item
-//  is shown and hope that'll make it clear the section can scroll
-const invoiceCardHeight = TOTAL_CARD_HEIGHT + 5;
+// Adding the height of a row generally works and should make it
+//  not _too_ tall
+const invoiceCardHeight = TOTAL_CARD_HEIGHT + INVOICE_ROW_HEIGHT;
 
 function AdminBilling({ showAddPayment }: AdminBillingProps) {
     usePageTitle({
         header: routeTitle,
         headerLink: 'https://www.estuary.dev/pricing/',
     });
+
+    const intl = useIntl();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
@@ -133,7 +136,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <Grid item xs={12} md={9}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        <FormattedMessage id="admin.billing.header" />
+                        {intl.formatMessage({ id: 'admin.billing.header' })}
                     </Typography>
 
                     <PricingTierDetails />
@@ -155,9 +158,9 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 <Grid item xs={12} md={6}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
-                        message={
-                            <FormattedMessage id="admin.billing.table.history.header" />
-                        }
+                        message={intl.formatMessage({
+                            id: 'admin.billing.table.history.header',
+                        })}
                     >
                         <BillingHistoryTable />
                     </CardWrapper>
@@ -166,9 +169,9 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 <Grid item xs={12} md={6}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
-                        message={
-                            <FormattedMessage id="admin.billing.graph.usageByMonth.header" />
-                        }
+                        message={intl.formatMessage({
+                            id: 'admin.billing.graph.usageByMonth.header',
+                        })}
                     >
                         <GraphStateWrapper>
                             <UsageByMonthGraph />
@@ -181,17 +184,23 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                         height={invoiceCardHeight}
                         message={
                             active || !hydrated ? (
-                                <FormattedMessage id="admin.billing.label.lineItems.loading" />
+                                intl.formatMessage({
+                                    id: 'admin.billing.label.lineItems.loading',
+                                })
                             ) : selectedInvoice ? (
                                 <>
-                                    <FormattedMessage id="admin.billing.label.lineItems" />
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.label.lineItems',
+                                    })}
                                     <DateRange
                                         start_date={selectedInvoice.date_start}
                                         end_date={selectedInvoice.date_end}
                                     />
                                 </>
                             ) : (
-                                <FormattedMessage id="admin.billing.label.lineItems.empty" />
+                                intl.formatMessage({
+                                    id: 'admin.billing.label.lineItems.empty',
+                                })
                             )
                         }
                     >
@@ -225,11 +234,15 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                                         fontWeight: '400',
                                     }}
                                 >
-                                    <FormattedMessage id="admin.billing.paymentMethods.header" />
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.paymentMethods.header',
+                                    })}
                                 </Typography>
                                 <AlertBox short severity="error">
                                     <Typography component="div">
-                                        <FormattedMessage id="admin.billing.error.paymentMethodsError" />
+                                        {intl.formatMessage({
+                                            id: 'admin.billing.error.paymentMethodsError',
+                                        })}
                                     </Typography>
                                 </AlertBox>
                             </>
