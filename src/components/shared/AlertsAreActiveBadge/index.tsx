@@ -1,6 +1,6 @@
 import type { AlertsAreActiveBadgeProps } from 'src/components/shared/AlertsAreActiveBadge/types';
 
-import { Badge } from '@mui/material';
+import { Badge, badgeClasses } from '@mui/material';
 
 import { gql, useQuery } from 'urql';
 
@@ -28,12 +28,11 @@ function AlertsAreActiveBadge({
         <Badge
             badgeContent={activeAlertCount}
             color={error || hasActiveAlerts ? 'warning' : 'success'}
-            overlap="rectangular"
             invisible={fetching}
-            // TODO (Alert History) - decide if we want to show zero or not
-            // showZero
+            overlap="rectangular"
+            // showZero // TODO (Alert History) - decide if we want to show zero or not
             sx={{
-                ['& .MuiBadge-badge']: {
+                [`& .${badgeClasses.badge}`]: {
                     right: -6,
                     top: -4,
                 },
