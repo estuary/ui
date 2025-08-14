@@ -1,8 +1,10 @@
 import type { TablePrefixes } from 'src/stores/Tables/hooks';
 import type { TableColumns } from 'src/types';
+import type { AlertHistoryQuery, AlertHistoryVariables } from 'src/types/gql';
+import type { UseQueryArgs } from 'urql';
 
 export interface AlertHistoryTableProps {
-    querySettings: any;
+    querySettings: UseQueryArgs<AlertHistoryVariables, AlertHistoryQuery>;
     tablePrefix:
         | TablePrefixes.alertHistoryForEntity
         | TablePrefixes.alertHistoryForTenant;

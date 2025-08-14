@@ -1,3 +1,5 @@
+import type { AlertHistoryQuery, AlertHistoryVariables } from 'src/types/gql';
+
 import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -12,7 +14,7 @@ import usePageTitle from 'src/hooks/usePageTitle';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
-const alertHistoryQuery = gql`
+const alertHistoryQuery = gql<AlertHistoryQuery, AlertHistoryVariables>`
     query AlertHistory($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
             catalogName
@@ -69,7 +71,9 @@ function Notifications() {
                     tablePrefix={TablePrefixes.alertHistoryForTenant}
                     querySettings={{
                         query: alertHistoryQuery,
-                        variables: { prefixes: [selectedTenant] },
+                        variables: {
+                            prefixes: [selectedTenant],
+                        },
                     }}
                 />
             </Stack>
