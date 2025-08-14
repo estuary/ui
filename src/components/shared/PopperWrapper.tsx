@@ -44,7 +44,11 @@ function PopperWrapper({
             open={open}
             anchorEl={anchorEl}
             transition
-            sx={{ zIndex: popperIndex }}
+            sx={
+                popperProps?.sx
+                    ? { ...popperProps.sx, zIndex: popperIndex }
+                    : { zIndex: popperIndex }
+            }
         >
             {({ TransitionProps }) => (
                 <ClickAwayListener onClickAway={externalAreaClicked}>

@@ -1,22 +1,25 @@
-import type { InvoiceLineItem } from 'src/api/billing';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/BillLineItems/types';
 
-import { TableCell, TableRow, Typography } from '@mui/material';
+import { Stack, TableCell, TableRow, Typography } from '@mui/material';
 
+import TaskExplanation from 'src/components/tables/BillLineItems/TaskExplanation';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
 
-interface RowProps {
-    row: InvoiceLineItem;
-}
-
-interface RowsProps {
-    lineItems: InvoiceLineItem[];
-}
-
-function Row({ row }: RowProps) {
+function Row({ row, descriptionTooltip }: RowProps) {
     return (
         <TableRow hover>
             <TableCell>
-                <Typography>{row.description}</Typography>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <Typography>{row.description}</Typography>
+                    {descriptionTooltip}
+                </Stack>
             </TableCell>
             <TableCell>
                 <Typography>{row.count}</Typography>
@@ -32,7 +35,15 @@ function Rows({ lineItems }: RowsProps) {
     return (
         <>
             {lineItems.map((record, index) => (
-                <Row row={record} key={index} />
+                <Row
+                    row={record}
+                    key={index}
+                    descriptionTooltip={
+                        record.description.includes('Task usage') ? (
+                            <TaskExplanation />
+                        ) : null
+                    }
+                />
             ))}
         </>
     );
