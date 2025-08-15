@@ -1,6 +1,10 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import type {
+    BindingFieldSelectionDictionary,
+    HydrationStatus,
+} from 'src/stores/Binding/slices/FieldSelection';
+import type {
     BindingChanges,
     Bindings,
     BindingState,
@@ -171,7 +175,7 @@ export const initializeCurrentBinding = (
     };
 };
 
-export const getResourceConfig = (
+const getResourceConfig = (
     binding: any,
     bindingIndex: number
 ): ResourceConfig => {
@@ -187,9 +191,11 @@ export const getResourceConfig = (
         errors: [],
         meta: {
             ...disableProp,
+            builtBindingIndex: -1,
             collectionName,
             bindingIndex,
             onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,
+            validatedBindingIndex: -1,
         },
     };
 };
@@ -267,6 +273,26 @@ export const updateBackfilledBindingState = (
             state.backfilledBindings.length ===
             Object.keys(state.resourceConfigs).length;
     }
+};
+
+export const stubBindingFieldSelection = (
+    bindingUUIDs: string[],
+    defaultStatus?: HydrationStatus
+): BindingFieldSelectionDictionary => {
+    const selections: BindingFieldSelectionDictionary = {};
+
+    bindingUUIDs.forEach((bindingUUID) => {
+        if (!selections?.[bindingUUID]) {
+            selections[bindingUUID] = {
+                hasConflicts: false,
+                hydrating: true,
+                status: defaultStatus ?? 'HYDRATED',
+                value: {},
+            };
+        }
+    });
+
+    return selections;
 };
 
 export const STORE_KEY = 'Bindings';

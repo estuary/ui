@@ -5,6 +5,7 @@ import useSave from 'src/components/shared/Entity/Actions/useSave';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import { CustomEvents } from 'src/services/types';
+import { useBindingStore } from 'src/stores/Binding/Store';
 
 function useFieldSelectionRefresh() {
     const [updating, setUpdating] = useState(false);
@@ -20,9 +21,14 @@ function useFieldSelectionRefresh() {
         true
     );
 
+    const advanceHydrationStatus = useBindingStore(
+        (state) => state.advanceHydrationStatus
+    );
+
     const refresh = useCallback(
         async (draftIdToUse?: string | null) => {
             setUpdating(true);
+            advanceHydrationStatus('HYDRATED', undefined, true);
 
             let evaluatedDraftId = draftIdToUse;
             if (!evaluatedDraftId) {
@@ -30,7 +36,7 @@ function useFieldSelectionRefresh() {
                     evaluatedDraftId = await generateCatalog(
                         mutateDraftSpec,
                         false // we don't want to skip all the extra updates
-                    );
+                    ).finally(() => advanceHydrationStatus('RESET_REQUESTED'));
                 } catch (_error: unknown) {
                     setUpdating(false);
                 }
@@ -40,7 +46,9 @@ function useFieldSelectionRefresh() {
             //  if this is not returned then the function itself handled showing an error
             if (evaluatedDraftId) {
                 try {
-                    await saveCatalog(evaluatedDraftId, true);
+                    await saveCatalog(evaluatedDraftId, true).finally(() =>
+                        advanceHydrationStatus('SERVER_UPDATING')
+                    );
                 } catch (_error: unknown) {
                     setUpdating(false);
                 }
@@ -49,7 +57,7 @@ function useFieldSelectionRefresh() {
             // I do not think this is truly needed but being safe so the user is not stuck with a disabled button
             setUpdating(false);
         },
-        [generateCatalog, mutateDraftSpec, saveCatalog]
+        [advanceHydrationStatus, generateCatalog, mutateDraftSpec, saveCatalog]
     );
 
     return {

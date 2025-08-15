@@ -41,8 +41,10 @@ export interface Bindings {
 export interface ResourceConfig extends JsonFormsData {
     // errors: any[];
     meta: {
-        collectionName: string;
         bindingIndex: number;
+        builtBindingIndex: number;
+        collectionName: string;
+        validatedBindingIndex: number;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
@@ -177,6 +179,10 @@ export interface BindingState
         targetBindingUUID: string,
         formData: JsonFormsData,
         disableCheckingErrors?: boolean
+    ) => void;
+    setRelatedBindingIndices: (
+        builtSpec: Schema | null,
+        validationResponse: Schema | null
     ) => void;
 
     resourceConfigErrorsExist: boolean;

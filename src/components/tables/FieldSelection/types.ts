@@ -1,19 +1,19 @@
-import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
+import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { SortDirection, TableColumns } from 'src/types';
 
 export interface RowProps {
     columns: TableColumns[];
-    row: CompositeProjection;
+    row: FieldSelection;
 }
 
 export interface RowsProps {
     columnToSort: string;
     columns: TableColumns[];
-    data: CompositeProjection[];
+    data: FieldSelection[];
     sortDirection: SortDirection;
 }
 
 export interface FieldSelectionTableProps {
     bindingUUID: string;
-    projections: CompositeProjection[] | null | undefined;
+    missingServerData: boolean;
 }

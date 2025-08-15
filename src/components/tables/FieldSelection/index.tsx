@@ -7,7 +7,8 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import FieldActions from 'src/components/editor/Bindings/FieldSelection/FieldActions';
+import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
+import ExcludeAllButton from 'src/components/fieldSelection/FieldActions/ExcludeAllButton';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import FieldFilter from 'src/components/tables/FieldSelection/FieldFilter';
@@ -19,19 +20,25 @@ import {
 import TableColumnSelector from 'src/components/tables/TableColumnSelector';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
-import { useFormStateStore_status } from 'src/stores/FormState/hooks';
-import { FormStatus } from 'src/stores/FormState/types';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 export default function FieldSelectionTable({
     bindingUUID,
-    projections,
+    missingServerData,
 }: FieldSelectionTableProps) {
     const intl = useIntl();
 
-    const formStatus = useFormStateStore_status();
+    const selections = useBindingStore((state) =>
+        state.selections?.[bindingUUID]
+            ? Object.values(state.selections[bindingUUID].value)
+            : []
+    );
+    const selectionsHydrating = useBindingStore(
+        (state) => state.selections?.[bindingUUID]?.hydrating
+    );
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -54,33 +61,22 @@ export default function FieldSelectionTable({
 
     const searchQuery = useBinding_searchQuery();
 
-    const processedProjections = useMemo(
+    const processedSelections = useMemo(
         () =>
             searchQuery
-                ? projections?.filter(
-                      ({ field, ptr }) =>
+                ? selections?.filter(
+                      ({ field, projection }) =>
                           field.includes(searchQuery) ||
-                          ptr?.includes(searchQuery)
+                          projection?.ptr?.includes(searchQuery)
                   )
-                : projections,
-        [projections, searchQuery]
+                : selections,
+        [selections, searchQuery]
     );
 
     useEffect(() => {
-        if (
-            formStatus === FormStatus.INIT ||
-            formStatus === FormStatus.FAILED
-        ) {
-            setTableState({
-                status: TableStatuses.NO_EXISTING_DATA,
-            });
-        } else if (
-            formStatus === FormStatus.GENERATING ||
-            formStatus === FormStatus.TESTING ||
-            formStatus === FormStatus.TESTING_BACKGROUND
-        ) {
+        if (selectionsHydrating) {
             setTableState({ status: TableStatuses.LOADING });
-        } else if (processedProjections && processedProjections.length > 0) {
+        } else if (processedSelections.length > 0) {
             setTableState({
                 status: TableStatuses.DATA_FETCHED,
             });
@@ -91,9 +87,8 @@ export default function FieldSelectionTable({
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [formStatus, processedProjections, searchQuery]);
+    }, [processedSelections.length, searchQuery, selectionsHydrating]);
 
-    const failed = formStatus === FormStatus.FAILED;
     const loading = tableState.status === TableStatuses.LOADING;
 
     const { tableSettings } = useDisplayTableColumns();
@@ -120,10 +115,10 @@ export default function FieldSelectionTable({
                     justifyContent: 'space-between',
                 }}
             >
-                <FieldActions
+                <AlgorithmMenu
                     bindingUUID={bindingUUID}
                     loading={loading}
-                    projections={processedProjections}
+                    selections={selections}
                 />
 
                 <Stack
@@ -132,6 +127,12 @@ export default function FieldSelectionTable({
                     sx={{ alignItems: 'center' }}
                 >
                     <FieldFilter disabled={loading} />
+
+                    <ExcludeAllButton
+                        bindingUUID={bindingUUID}
+                        loading={loading}
+                        selections={processedSelections}
+                    />
 
                     <TableColumnSelector
                         loading={loading}
@@ -162,7 +163,7 @@ export default function FieldSelectionTable({
                             columns={columnsToShow}
                             noExistingDataContentIds={{
                                 header: 'fieldSelection.table.empty.header',
-                                message: failed
+                                message: missingServerData
                                     ? 'fieldSelection.table.error.message'
                                     : 'fieldSelection.table.empty.message',
                                 disableDoclink: true,
@@ -170,14 +171,13 @@ export default function FieldSelectionTable({
                             tableState={tableState}
                             loading={loading}
                             rows={
-                                !failed &&
+                                !missingServerData &&
                                 !loading &&
-                                processedProjections &&
-                                processedProjections.length > 0 &&
-                                formStatus !== FormStatus.TESTING ? (
+                                processedSelections &&
+                                processedSelections.length > 0 ? (
                                     <Rows
                                         columns={columnsToShow}
-                                        data={processedProjections}
+                                        data={processedSelections}
                                         sortDirection={sortDirection}
                                         columnToSort={columnToSort}
                                     />

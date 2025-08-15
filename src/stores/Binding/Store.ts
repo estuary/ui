@@ -3,6 +3,7 @@ import type {
     BindingState,
     ResourceConfig,
 } from 'src/stores/Binding/types';
+import type { BuiltBinding, ValidatedBinding } from 'src/types/schemaModels';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -39,6 +40,7 @@ import {
     resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
+    stubBindingFieldSelection,
     updateBackfilledBindingState,
     whatChanged,
 } from 'src/stores/Binding/shared';
@@ -57,6 +59,8 @@ import { parsePostgresInterval } from 'src/utils/time-utils';
 import {
     getBackfillCounter,
     getBindingIndex,
+    getBindingIndexByResourcePath,
+    getBuiltBindingIndex,
     getCollectionName,
 } from 'src/utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'src/validation';
@@ -141,7 +145,12 @@ const getInitialState = (
                                         collectionName,
                                         {}
                                     ),
-                                    meta: { collectionName, bindingIndex },
+                                    meta: {
+                                        bindingIndex,
+                                        builtBindingIndex: -1,
+                                        collectionName,
+                                        validatedBindingIndex: -1,
+                                    },
                                 };
                             }
                         });
@@ -179,7 +188,7 @@ const getInitialState = (
                 //  while also going through and initializing but I am really tired right now
 
                 // Go through the discovered bindings BEFORE sorting so that
-                //  we know the original indexs of all the bindings.
+                //  we know the original indices of all the bindings.
                 state.resourceConfigs = {};
                 draftSpecResponse.data[0].spec.bindings.forEach(
                     (binding: any, index: number) => {
@@ -400,6 +409,8 @@ const getInitialState = (
                 state.resourceConfigs = sortedResourceConfigs;
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
+                const bindingUUIDs = Object.keys(state.resourceConfigs);
+
                 if (state.backfilledBindings.length > 0) {
                     if (entityType === 'capture') {
                         // if they have anything marked for backfill make sure the setting is forced on
@@ -407,8 +418,7 @@ const getInitialState = (
                     }
 
                     state.backfillAllBindings =
-                        state.backfilledBindings.length ===
-                        Object.keys(state.resourceConfigs).length;
+                        state.backfilledBindings.length === bindingUUIDs.length;
                 } else {
                     state.backfillAllBindings = false;
                 }
@@ -418,6 +428,11 @@ const getInitialState = (
                     state,
                     sortedResourceConfigs,
                     rehydrating // mainly for field selection refresh so the select binding is not lost
+                );
+
+                state.selections = stubBindingFieldSelection(
+                    bindingUUIDs,
+                    'SERVER_UPDATING'
                 );
             }),
             false,
@@ -494,7 +509,9 @@ const getInitialState = (
                         ...jsonFormDefaults,
                         meta: {
                             bindingIndex: reducedBindingCount + index,
+                            builtBindingIndex: -1,
                             collectionName,
+                            validatedBindingIndex: -1,
                             // When adding default this so the first click on the binding
                             //  does not cause extra renders
                             disable: undefined,
@@ -950,6 +967,63 @@ const getInitialState = (
         );
     },
 
+    setRelatedBindingIndices: (builtSpec, validationResponse) => {
+        if (!builtSpec || !validationResponse) {
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
+                Object.entries(state.resourceConfigs).forEach(
+                    ([
+                        uuid,
+                        {
+                            meta: { collectionName, disable },
+                        },
+                    ]) => {
+                        if (disable) {
+                            state.resourceConfigs[uuid].meta.builtBindingIndex =
+                                -1;
+
+                            state.resourceConfigs[
+                                uuid
+                            ].meta.validatedBindingIndex = -1;
+
+                            return;
+                        }
+
+                        const builtBindingIndex = builtSpec
+                            ? getBuiltBindingIndex(builtSpec, collectionName)
+                            : -1;
+
+                        const builtBinding: BuiltBinding | undefined =
+                            builtBindingIndex > -1
+                                ? builtSpec?.bindings.at(builtBindingIndex)
+                                : undefined;
+
+                        let validatedBindingIndex = -1;
+
+                        if (builtBinding && validationResponse) {
+                            validatedBindingIndex =
+                                getBindingIndexByResourcePath<ValidatedBinding>(
+                                    builtBinding?.resourcePath ?? [],
+                                    validationResponse
+                                );
+                        }
+
+                        state.resourceConfigs[uuid].meta.builtBindingIndex =
+                            builtBindingIndex;
+
+                        state.resourceConfigs[uuid].meta.validatedBindingIndex =
+                            validatedBindingIndex;
+                    }
+                );
+            }),
+            false,
+            'Related Binding Indices Set'
+        );
+    },
+
     setResourceSchema: async (val) => {
         const resolved = await getDereffedSchema(val);
 
@@ -1085,7 +1159,11 @@ const getInitialState = (
                     ...value,
                     meta: {
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
+                        builtBindingIndex:
+                            targetResourceConfig.meta.builtBindingIndex,
                         collectionName: targetCollection,
+                        validatedBindingIndex:
+                            targetResourceConfig.meta.validatedBindingIndex,
                         // When adding default this so the first click on the binding
                         //  does not cause extra renders
                         disable: undefined,

@@ -1,6 +1,5 @@
 import type { ConnectorConfig } from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
-import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { CallSupabaseResponse } from 'src/services/supabase';
 import type {
@@ -18,11 +17,15 @@ import type {
     Schema,
     SourceCaptureDef,
 } from 'src/types';
+import type {
+    BuiltBinding,
+    MaterializationBinding,
+    ValidatedBinding,
+} from 'src/types/schemaModels';
 
-import { isBoolean, isEmpty } from 'lodash';
+import { isBoolean, isEmpty, isEqual } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
-import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
 import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
@@ -380,33 +383,158 @@ export const modifyExistingCaptureDraftSpec = async (
     });
 };
 
-// Common materialization field selection checks
-export const isRequireOnlyField = (
-    constraintType: ConstraintTypes
-): boolean => {
-    return (
-        constraintType === ConstraintTypes.FIELD_REQUIRED ||
-        constraintType === ConstraintTypes.LOCATION_REQUIRED
+export const getBuiltBindingIndex = (
+    builtSpec: Schema,
+    targetCollection: string
+): number => {
+    const builtBindings: BuiltBinding[] = builtSpec.bindings ?? [];
+
+    return builtBindings.findIndex(
+        (binding) => binding.collection.name === targetCollection
     );
 };
 
-export const isRecommendedField = (
-    constraintType: ConstraintTypes
-): boolean => {
-    const required = isRequireOnlyField(constraintType);
+export const getBindingIndexByResourcePath = <T extends Schema>(
+    resourcePath: string[],
+    schema: Schema
+): number => {
+    if (resourcePath.length === 0) {
+        return -1;
+    }
 
-    return required || constraintType === ConstraintTypes.LOCATION_RECOMMENDED;
+    const bindings: T[] = schema.bindings;
+
+    return bindings.findIndex((binding) => {
+        let bindingResourcePath: string[] = [];
+
+        if (binding?.resourcePath) {
+            bindingResourcePath = binding.resourcePath;
+        } else if (binding?.resource?._meta?.path) {
+            bindingResourcePath = binding.resource._meta.path;
+        }
+
+        return bindingResourcePath.length > 0
+            ? isEqual(bindingResourcePath, resourcePath)
+            : false;
+    });
 };
 
-export const isExcludeOnlyField = (
-    constraintType: ConstraintTypes
-): boolean => {
-    return (
-        constraintType === ConstraintTypes.FIELD_FORBIDDEN ||
-        constraintType === ConstraintTypes.UNSATISFIABLE
-    );
+const getDraftedMaterializationBinding = (
+    draftSpec: Schema,
+    resourcePath: string[] | undefined,
+    stagedBindingIndex: number,
+    targetCollection: string,
+    indexLookupOnly?: boolean
+): {
+    draftedBinding: MaterializationBinding | undefined;
+    draftedBindingIndex: number;
+} => {
+    let draftedBinding: MaterializationBinding | undefined;
+    let draftedBindingIndex = -1;
+
+    // Attempt to identify the target drafted binding by resource path pointer(s) before
+    // relying on the binding index.
+    if (!indexLookupOnly && resourcePath) {
+        draftedBindingIndex =
+            getBindingIndexByResourcePath<MaterializationBinding>(
+                resourcePath,
+                draftSpec
+            );
+
+        draftedBinding = draftSpec.bindings.at(draftedBindingIndex);
+    }
+
+    if (!draftedBinding) {
+        draftedBindingIndex = getBindingIndex(
+            draftSpec.bindings,
+            targetCollection,
+            stagedBindingIndex
+        );
+
+        draftedBinding =
+            draftedBindingIndex > -1
+                ? draftSpec.bindings[draftedBindingIndex]
+                : undefined;
+    }
+
+    return { draftedBinding, draftedBindingIndex };
 };
 
-export const isFieldSelectionType = (value: any): value is FieldSelectionType =>
-    typeof value === 'string' &&
-    (value === 'default' || value === 'exclude' || value === 'require');
+interface BindingTypes<B, V, T> {
+    built: B | undefined;
+    drafted: T | undefined;
+    live: T | undefined;
+    validated: V | undefined;
+}
+
+export interface RelatedBindings {
+    indices: BindingTypes<number, number, number>;
+    values: BindingTypes<
+        BuiltBinding,
+        ValidatedBinding,
+        MaterializationBinding
+    >;
+}
+
+export const getRelatedBindings = (
+    builtSpec: Schema,
+    draftSpec: Schema,
+    stagedBindingIndex: number,
+    targetCollection: string,
+    validationResponse: Schema,
+    liveSpec?: Schema | null
+): RelatedBindings => {
+    // Select the binding from the built spec that corresponds to the current collection
+    //  to extract the projection information.
+    // Defaulting to empty array. This is to handle when a user has disabled a collection
+    //  which causes the binding to not be included in the built_spec
+    const builtBindingIndex = getBuiltBindingIndex(builtSpec, targetCollection);
+    const builtBinding: BuiltBinding | undefined =
+        builtSpec.bindings.at(builtBindingIndex);
+
+    // The validation phase of a publication produces a document which correlates each binding projection
+    // to a constraint type (defined in flow/go/protocols/materialize/materialize.proto). Select the binding
+    // from the validation document that corresponds to the current collection to extract the constraint types.
+    const validatedBindingIndex =
+        getBindingIndexByResourcePath<ValidatedBinding>(
+            builtBinding?.resourcePath ?? [],
+            validationResponse
+        );
+    const validatedBinding: ValidatedBinding | undefined =
+        validationResponse.bindings.at(validatedBindingIndex);
+
+    // TODO (field-selection): Use the staged binding index to identify the target drafted binding for now.
+    //   Determine whether resource path pointer can be used for drafted binding lookup.
+    const { draftedBinding, draftedBindingIndex } =
+        getDraftedMaterializationBinding(
+            draftSpec,
+            builtBinding?.resourcePath,
+            stagedBindingIndex,
+            targetCollection,
+            true
+        );
+
+    const liveBindingIndex = liveSpec
+        ? getBindingIndexByResourcePath<MaterializationBinding>(
+              builtBinding?.resourcePath ?? [],
+              liveSpec
+          )
+        : undefined;
+    const liveBinding: MaterializationBinding | undefined =
+        liveSpec?.bindings.at(liveBindingIndex);
+
+    return {
+        indices: {
+            built: builtBindingIndex,
+            drafted: draftedBindingIndex,
+            live: liveBindingIndex,
+            validated: validatedBindingIndex,
+        },
+        values: {
+            built: builtBinding,
+            drafted: draftedBinding,
+            live: liveBinding,
+            validated: validatedBinding,
+        },
+    };
+};
