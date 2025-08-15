@@ -20,6 +20,7 @@ import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 function AlertHistoryTable({
+    getDataFromResponse,
     querySettings,
     tablePrefix,
 }: AlertHistoryTableProps) {
@@ -39,7 +40,15 @@ function AlertHistoryTable({
     );
 
     // Get the data from the server
-    const [{ fetching, data, error }] = useQuery(querySettings);
+    const [{ fetching, data: fooData, error }] = useQuery(querySettings);
+
+    const data = useMemo(() => {
+        if (getDataFromResponse) {
+            return getDataFromResponse(fooData);
+        }
+
+        return fooData;
+    }, [fooData, getDataFromResponse]);
 
     // Manage table state
     const [tableState, setTableState] = useState<TableState>({

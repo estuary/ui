@@ -23,6 +23,11 @@ export interface AlertHistoryQueryResponse {
     alerts: Alert[];
 }
 
+export interface EntityHistoryQueryResponse {
+    capture: AlertHistoryQueryResponse;
+    materialization: AlertHistoryQueryResponse;
+}
+
 export interface LatestAlertQueryResponse {
     alerts: Pick<Alert, 'alertType'>[];
 }

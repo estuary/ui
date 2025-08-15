@@ -8,6 +8,7 @@ export interface AlertHistoryTableProps {
     tablePrefix:
         | TablePrefixes.alertHistoryForEntity
         | TablePrefixes.alertHistoryForTenant;
+    getDataFromResponse?: (foo: unknown) => AlertHistoryQueryResponse;
 }
 
 export interface RowsProps {
