@@ -55,7 +55,7 @@ const evaluateFieldSelection = async (input: FieldSelectionInput) => {
     return response;
 };
 
-export default function useFieldSelectionAlgorithm() {
+export default function useValidateFieldSelection() {
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
 
