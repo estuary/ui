@@ -13,7 +13,6 @@ import { useCallback, useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { evaluate_field_selection } from '@estuary/flow-web';
-import { cloneDeep } from 'lodash';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -154,9 +153,7 @@ export default function useValidateFieldSelection() {
         }
 
         const draftSpecsRow =
-            draftSpecsRows.length !== 0
-                ? cloneDeep(draftSpecsRows[0])
-                : undefined;
+            draftSpecsRows.length !== 0 ? draftSpecsRows[0] : undefined;
 
         if (
             !draftSpecsRow ||
