@@ -1,10 +1,11 @@
 import type { FieldSelectionTableProps } from 'src/components/tables/FieldSelection/types';
 import type { SortDirection, TableState } from 'src/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Stack, Table, TableContainer } from '@mui/material';
 
+import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
@@ -73,21 +74,32 @@ export default function FieldSelectionTable({
         [selections, searchQuery]
     );
 
+    const displayLoadingState = useRef(
+        debounce(() => setTableState({ status: TableStatuses.LOADING }), 750)
+    );
+
     useEffect(() => {
         if (selectionsHydrating) {
-            setTableState({ status: TableStatuses.LOADING });
+            displayLoadingState.current();
         } else if (processedSelections.length > 0) {
+            displayLoadingState.current?.cancel();
             setTableState({
                 status: TableStatuses.DATA_FETCHED,
             });
         } else {
+            displayLoadingState.current?.cancel();
             setTableState({
                 status: searchQuery
                     ? TableStatuses.UNMATCHED_FILTER
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [processedSelections.length, searchQuery, selectionsHydrating]);
+    }, [
+        displayLoadingState,
+        processedSelections.length,
+        searchQuery,
+        selectionsHydrating,
+    ]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 
