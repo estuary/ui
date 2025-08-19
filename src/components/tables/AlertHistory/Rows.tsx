@@ -65,9 +65,11 @@ function Row({ hideEntityName, row }: RowProps) {
 
                 <ChipList
                     stripPath={false}
-                    values={alertDetails.recipients.map(
-                        (recipient: any) => recipient.email
-                    )}
+                    values={
+                        alertDetails.recipients?.map(
+                            (recipient: any) => recipient.email
+                        ) ?? []
+                    }
                 />
             </TableRow>
             <TableRow sx={{ display: foo ? undefined : 'none' }}>

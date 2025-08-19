@@ -8,6 +8,7 @@ interface TableSettings {
 }
 
 export interface AlertSetting {
+    detailKeys: string[];
     humanReadableIntlKey: string;
     explanationIntlKey: string;
 }

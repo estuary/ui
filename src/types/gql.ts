@@ -1,3 +1,5 @@
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+
 export type AlertType =
     | 'autodiscoverfailed'
     | 'shardfailed'
@@ -7,11 +9,17 @@ export type AlertType =
     | 'freetrialstalled'
     | 'missingpaymentmethod';
 
+export interface AlertDetails {
+    spec_type: ShardEntityTypes;
+    evaluation_interval?: string;
+    recipients?: string[];
+}
+
 export interface Alert {
     alertType: AlertType;
     firedAt: string;
     resolvedAt: string;
-    alertDetails: any;
+    alertDetails: AlertDetails;
     catalogName: string;
 }
 
