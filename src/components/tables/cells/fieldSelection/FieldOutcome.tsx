@@ -4,7 +4,7 @@ import { Stack, TableCell } from '@mui/material';
 
 import FieldOutcomeButton from 'src/components/tables/cells/fieldSelection/FieldOutcomeButton';
 
-const FieldOutcome = ({ outcome }: BaseFieldOutcomeProps) => {
+const FieldOutcome = ({ bindingUUID, outcome }: BaseFieldOutcomeProps) => {
     if (!outcome?.select && !outcome?.reject) {
         return <TableCell />;
     }
@@ -12,7 +12,10 @@ const FieldOutcome = ({ outcome }: BaseFieldOutcomeProps) => {
     return (
         <TableCell>
             <Stack style={{ alignItems: 'center' }}>
-                <FieldOutcomeButton outcome={outcome} />
+                <FieldOutcomeButton
+                    bindingUUID={bindingUUID}
+                    outcome={outcome}
+                />
             </Stack>
         </TableCell>
     );

@@ -14,17 +14,21 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { evaluate_field_selection } from '@estuary/flow-web';
 import { cloneDeep } from 'lodash';
+import { useSnackbar } from 'notistack';
+import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     DEFAULT_RECOMMENDED_FLAG,
     getFieldSelection,
 } from 'src/utils/fieldSelection-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 interface FieldSelectionValidationResponse {
     bindingUUID: string;
@@ -56,6 +60,8 @@ const evaluateFieldSelection = async (input: FieldSelectionInput) => {
 };
 
 export default function useValidateFieldSelection() {
+    const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
 
@@ -77,6 +83,9 @@ export default function useValidateFieldSelection() {
                 )
                 .map(([uuid, _bindingFieldSelection]) => uuid)
         )
+    );
+    const trackValidationFailure = useBindingStore(
+        (state) => state.trackValidationFailure
     );
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
@@ -157,9 +166,16 @@ export default function useValidateFieldSelection() {
             return;
         }
 
+        let rejectedRequests: { collection: string; uuid: string }[] = [];
+
         const validationRequests = Object.entries(resourceConfigs)
             .filter(([uuid, _config]) => targetBindingUUIDs.includes(uuid))
             .map(([uuid, { meta }]) => {
+                rejectedRequests.push({
+                    collection: meta.collectionName,
+                    uuid,
+                });
+
                 advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
 
                 return validateFieldSelection(
@@ -171,51 +187,79 @@ export default function useValidateFieldSelection() {
                 );
             });
 
-        Promise.allSettled(validationRequests).then(
-            (responses) => {
-                responses.forEach((response) => {
-                    if (isPromiseFulfilledResult(response)) {
-                        if (!response.value.result) {
-                            return;
+        Promise.allSettled(validationRequests)
+            .then(
+                (responses) => {
+                    responses.forEach((response) => {
+                        if (isPromiseFulfilledResult(response)) {
+                            if (!response.value.result) {
+                                return;
+                            }
+
+                            const {
+                                bindingUUID,
+                                builtBinding,
+                                fieldStanza,
+                                result,
+                            } = response.value;
+
+                            const updatedSelections = getFieldSelection(
+                                result.outcomes,
+                                fieldStanza,
+                                builtBinding?.collection.projections
+                            );
+
+                            setRecommendFields(
+                                bindingUUID,
+                                fieldStanza?.recommended ??
+                                    DEFAULT_RECOMMENDED_FLAG
+                            );
+                            initializeSelections(
+                                bindingUUID,
+                                updatedSelections,
+                                result.hasConflicts
+                            );
+
+                            rejectedRequests = rejectedRequests.filter(
+                                ({ uuid }) => uuid !== bindingUUID
+                            );
                         }
-
-                        const {
-                            bindingUUID,
-                            builtBinding,
-                            fieldStanza,
-                            result,
-                        } = response.value;
-
-                        const updatedSelections = getFieldSelection(
-                            result.outcomes,
-                            fieldStanza,
-                            builtBinding?.collection.projections
+                    });
+                },
+                (error) => {
+                    logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                        validationError: error,
+                    });
+                }
+            )
+            .finally(() => {
+                if (rejectedRequests.length > 0) {
+                    rejectedRequests.forEach(({ collection, uuid }) => {
+                        enqueueSnackbar(
+                            intl.formatMessage(
+                                {
+                                    id: 'fieldSelection.error.validationFailed',
+                                },
+                                { collection }
+                            ),
+                            { ...snackbarSettings, variant: 'error' }
                         );
 
-                        setRecommendFields(
-                            bindingUUID,
-                            fieldStanza?.recommended ?? DEFAULT_RECOMMENDED_FLAG
-                        );
-                        initializeSelections(
-                            bindingUUID,
-                            updatedSelections,
-                            result.hasConflicts
-                        );
-                    }
-                });
-            },
-            (error) => {
-                console.log('>>> validation error', error);
-            }
-        );
+                        trackValidationFailure(uuid);
+                    });
+                }
+            });
     }, [
         advanceHydrationStatus,
         draftSpecsRows,
+        enqueueSnackbar,
         entityType,
         initializeSelections,
+        intl,
         resourceConfigs,
         setRecommendFields,
         targetBindingUUIDs,
+        trackValidationFailure,
         validateFieldSelection,
     ]);
 }

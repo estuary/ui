@@ -38,7 +38,11 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            <FieldName field={row.field} outcome={row.outcome} />
+            <FieldName
+                bindingUUID={currentBindingUUID}
+                field={row.field}
+                outcome={row.outcome}
+            />
 
             {pointerColumnVisible ? (
                 <TableCell sx={wrappingTableBodyCell}>
@@ -66,7 +70,10 @@ function Row({ columns, row }: RowProps) {
                 <TableCell />
             )}
 
-            <FieldOutcome outcome={row.outcome} />
+            <FieldOutcome
+                bindingUUID={currentBindingUUID}
+                outcome={row.outcome}
+            />
         </TableRow>
     );
 }

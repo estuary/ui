@@ -93,7 +93,7 @@ function FieldSelectionViewer({
                         setFormState({
                             status: FormStatus.FAILED,
                             error: {
-                                title: 'fieldSelection.update.failed',
+                                title: 'fieldSelection.error.serverUpdateFailed',
                                 error,
                             },
                         });

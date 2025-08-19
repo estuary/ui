@@ -4,6 +4,7 @@ import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
 
 export interface BaseFieldOutcomeProps {
+    bindingUUID: string | null;
     outcome: FieldOutcome;
 }
 

@@ -287,6 +287,7 @@ export const stubBindingFieldSelection = (
                 hasConflicts: false,
                 hydrating: true,
                 status: defaultStatus ?? 'HYDRATED',
+                validationFailed: false,
                 value: {},
             };
         }
