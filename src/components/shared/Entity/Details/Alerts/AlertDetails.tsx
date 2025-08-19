@@ -10,9 +10,13 @@ function AlertDetails({ datum }: AlertDetailsProps) {
         return (
             <KeyValueList
                 data={details.map((detail: any, index: number) => {
+                    const val = detail.dataVal;
+
+                    // TODO (alert history) - handle formatting data
+
                     return {
                         title: detail.label,
-                        val: detail.dataVal,
+                        val,
                     };
                 })}
             />

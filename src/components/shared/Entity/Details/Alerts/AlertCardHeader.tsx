@@ -9,6 +9,7 @@ import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCardHeader({ datum }: AlertCardHeaderProps) {
     const intl = useIntl();
+
     const { docLink, humanReadable } = useAlertTypeContent(datum);
 
     return (
@@ -20,7 +21,7 @@ function AlertCardHeader({ datum }: AlertCardHeaderProps) {
                 justifyContent: 'space-between',
             }}
         >
-            <Typography>{humanReadable}</Typography>
+            <Typography variant="h6">{humanReadable}</Typography>
 
             {docLink ? (
                 <ExternalLink link={docLink}>

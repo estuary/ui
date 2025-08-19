@@ -1,5 +1,7 @@
 import type { AlertCardProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
+import { DateTime } from 'luxon';
+
 import CardWrapper from 'src/components/shared/CardWrapper';
 import AlertCardHeader from 'src/components/shared/Entity/Details/Alerts/AlertCardHeader';
 import AlertDetails from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
@@ -19,7 +21,9 @@ function AlertCard({ datum }: AlertCardProps) {
                     },
                     {
                         title: 'Started At',
-                        val: datum.firedAt,
+                        val: DateTime.fromISO(datum.firedAt)
+                            .toUTC()
+                            .toLocaleString(DateTime.DATETIME_FULL),
                     },
                 ]}
             />

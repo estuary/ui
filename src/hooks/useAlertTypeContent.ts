@@ -20,6 +20,7 @@ function useAlertTypeContent({ alertType, alertDetails }: Alert) {
                             id: `alertType.details.${detailKey}`,
                         }),
                         dataVal: alertDetails[detailKey],
+                        key: detailKey,
                     });
                 });
             }

@@ -188,13 +188,13 @@ export const AdminPage: Record<string, string> = {
     'alertType.details.spec_type': `Spec Type`,
 
     'admin.notifications.alertType.autodiscoverfailed': `Auto Discover Failed`,
-    'admin.notifications.alertType.explanation.autodiscoverfailed': `Auto Discover Failed explanation`,
+    'admin.notifications.alertType.explanation.autodiscoverfailed': `The entity was unable to connect to the source system to automatically update the schema.`,
 
     'admin.notifications.alertType.shardfailed': `Shard Failure`,
     'admin.notifications.alertType.explanation.shardfailed': `Shard Failure explanation`,
 
     'admin.notifications.alertType.datamovementstalled': `Data Movement Stalled`,
-    'admin.notifications.alertType.explanation.datamovementstalled': `This means that the entity is still running but has not need data for some time.`,
+    'admin.notifications.alertType.explanation.datamovementstalled': `The entity is still running but has not need data for some time.`,
 
     'admin.notifications.alertType.freetrial': ``,
     'admin.notifications.alertType.explanation.freetrial': ``,
