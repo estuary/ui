@@ -1,13 +1,15 @@
 import type { AlertCardHeaderProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
-import { IconButton, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
-import { HelpCircle } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
+import ExternalLink from 'src/components/shared/ExternalLink';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCardHeader({ datum }: AlertCardHeaderProps) {
-    const { humanReadable } = useAlertTypeContent(datum);
+    const intl = useIntl();
+    const { docLink, humanReadable } = useAlertTypeContent(datum);
 
     return (
         <Stack
@@ -19,13 +21,12 @@ function AlertCardHeader({ datum }: AlertCardHeaderProps) {
             }}
         >
             <Typography>{humanReadable}</Typography>
-            <IconButton
-                sx={{
-                    p: 0,
-                }}
-            >
-                <HelpCircle />
-            </IconButton>
+
+            {docLink ? (
+                <ExternalLink link={docLink}>
+                    {intl.formatMessage({ id: 'terms.documentation' })}
+                </ExternalLink>
+            ) : null}
         </Stack>
     );
 }

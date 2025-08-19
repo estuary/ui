@@ -183,9 +183,9 @@ export const AdminPage: Record<string, string> = {
     'admin.notifications.table.error.message': `There was an error attempting to fetch alert history.`,
 
     // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
-    'alertType.details.evaluation_interval': `evaluation_interval label:`,
-    'alertType.details.spec_type': `spec_type label:`,
-    'alertType.details.recipients': `recipients label:`,
+    'alertType.details.evaluation_interval': `Evaluation Interval`,
+    'alertType.details.recipients': `Notification Recipients`,
+    'alertType.details.spec_type': `Spec Type`,
 
     'admin.notifications.alertType.autodiscoverfailed': `Auto Discover Failed`,
     'admin.notifications.alertType.explanation.autodiscoverfailed': `Auto Discover Failed explanation`,
@@ -194,7 +194,7 @@ export const AdminPage: Record<string, string> = {
     'admin.notifications.alertType.explanation.shardfailed': `Shard Failure explanation`,
 
     'admin.notifications.alertType.datamovementstalled': `Data Movement Stalled`,
-    'admin.notifications.alertType.explanation.datamovementstalled': `Data Movement Stalled explanation`,
+    'admin.notifications.alertType.explanation.datamovementstalled': `This means that the entity is still running but has not need data for some time.`,
 
     'admin.notifications.alertType.freetrial': ``,
     'admin.notifications.alertType.explanation.freetrial': ``,

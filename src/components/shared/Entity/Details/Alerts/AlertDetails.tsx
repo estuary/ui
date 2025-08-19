@@ -1,5 +1,6 @@
 import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
+import KeyValueList from 'src/components/shared/KeyValueList';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertDetails({ datum }: AlertDetailsProps) {
@@ -7,17 +8,14 @@ function AlertDetails({ datum }: AlertDetailsProps) {
 
     if (details.length > 0) {
         return (
-            <ul>
-                {details.map((detail: any, index: number) => {
-                    console.log('detail', detail);
-
-                    return (
-                        <li key={`alert_details_${index}`}>
-                            {detail.label} | {detail.dataVal}
-                        </li>
-                    );
+            <KeyValueList
+                data={details.map((detail: any, index: number) => {
+                    return {
+                        title: detail.label,
+                        val: detail.dataVal,
+                    };
                 })}
-            </ul>
+            />
         );
     }
 

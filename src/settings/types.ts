@@ -10,6 +10,7 @@ interface TableSettings {
 
 export interface AlertSetting {
     detailKeys: (keyof AlertDetails)[];
+    docLink: string;
     humanReadableIntlKey: string;
     explanationIntlKey: string;
 }

@@ -26,6 +26,7 @@ function useAlertTypeContent({ alertType, alertDetails }: Alert) {
 
             return {
                 details,
+                docLink: ALERT_SETTING[alertType].docLink,
                 humanReadable: intl.formatMessage({
                     id: ALERT_SETTING[alertType].humanReadableIntlKey,
                 }),
@@ -40,7 +41,7 @@ function useAlertTypeContent({ alertType, alertDetails }: Alert) {
             humanReadable: '',
             explanation: '',
         };
-    }, [alertType, intl]);
+    }, [alertDetails, alertType, intl]);
 }
 
 export default useAlertTypeContent;
