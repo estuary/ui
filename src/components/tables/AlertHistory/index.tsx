@@ -87,43 +87,35 @@ function AlertHistoryTable({
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
 
     return (
-        <Box>
-            <TableContainer component={Box}>
-                <Table
-                    size="small"
-                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                    aria-label={intl.formatMessage({
-                        id: 'admin.notifications.table.label',
-                    })}
-                >
-                    <EntityTableHeader
-                        columns={columnsToShow}
-                        selectData={true}
-                    />
+        <TableContainer component={Box}>
+            <Table
+                size="small"
+                sx={{ minWidth: 350, borderCollapse: 'separate' }}
+                aria-label={intl.formatMessage({
+                    id: 'admin.notifications.table.label',
+                })}
+            >
+                <EntityTableHeader columns={columnsToShow} selectData={true} />
 
-                    <EntityTableBody
-                        columns={columnsToShow}
-                        noExistingDataContentIds={{
-                            header: 'admin.notifications.table.empty.header',
-                            message: failed
-                                ? 'admin.notifications.table.error.message'
-                                : 'admin.notifications.table.empty.message',
-                            disableDoclink: true,
-                        }}
-                        tableState={tableState}
-                        loading={loading}
-                        rows={
-                            hasData ? (
-                                <Rows
-                                    columns={columnsToShow}
-                                    data={data?.alerts}
-                                />
-                            ) : null
-                        }
-                    />
-                </Table>
-            </TableContainer>
-        </Box>
+                <EntityTableBody
+                    columns={columnsToShow}
+                    noExistingDataContentIds={{
+                        header: 'admin.notifications.table.empty.header',
+                        message: failed
+                            ? 'admin.notifications.table.error.message'
+                            : 'admin.notifications.table.empty.message',
+                        disableDoclink: true,
+                    }}
+                    tableState={tableState}
+                    loading={loading}
+                    rows={
+                        hasData && data?.alerts ? (
+                            <Rows columns={columnsToShow} data={data?.alerts} />
+                        ) : null
+                    }
+                />
+            </Table>
+        </TableContainer>
     );
 }
 

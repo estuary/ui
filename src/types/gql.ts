@@ -11,7 +11,7 @@ export interface Alert {
     alertType: AlertType;
     firedAt: string;
     resolvedAt: string;
-    arguments: any;
+    alertDetails: any;
     catalogName: string;
 }
 
@@ -19,6 +19,7 @@ export interface AlertsVariables {
     prefixes: string[] | undefined;
 }
 
+export type ActiveAlertsQueryResponse = AlertHistoryQueryResponse;
 export interface AlertHistoryQueryResponse {
     alerts: Alert[];
 }

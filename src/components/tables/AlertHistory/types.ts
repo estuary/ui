@@ -1,6 +1,10 @@
 import type { TablePrefixes } from 'src/stores/Tables/hooks';
 import type { TableColumns } from 'src/types';
-import type { AlertHistoryQueryResponse, AlertsVariables } from 'src/types/gql';
+import type {
+    Alert,
+    AlertHistoryQueryResponse,
+    AlertsVariables,
+} from 'src/types/gql';
 import type { UseQueryArgs } from 'urql';
 
 export interface AlertHistoryTableProps {
@@ -11,14 +15,16 @@ export interface AlertHistoryTableProps {
     getDataFromResponse?: (foo: unknown) => AlertHistoryQueryResponse;
 }
 
+export interface ActiveAlertsProps {}
+
 export interface RowsProps {
     columns: TableColumns[];
-    data: any;
+    data: AlertHistoryQueryResponse['alerts'];
 }
 
 export interface RowProps {
     columns: TableColumns[];
-    row: any;
+    row: Alert;
     hideEntityName?: boolean;
 }
 

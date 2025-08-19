@@ -11,9 +11,9 @@ import { authenticatedRoutes } from 'src/app/routes';
 import AlertTypeContent from 'src/components/tables/AlertHistory/AlertTypeContent';
 import DetailsPane from 'src/components/tables/AlertHistory/DetailsPane';
 import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
+import ActiveOrResolvedCells from 'src/components/tables/cells/activeResolved/Cells';
 import ChipList from 'src/components/tables/cells/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
-import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { isColumnVisible } from 'src/utils/table-utils';
@@ -53,20 +53,13 @@ function Row({ hideEntityName, row }: RowProps) {
                     />
                 )}
 
-                <TableCell>
-                    <AlertTypeContent alertType={alertType} />
-                </TableCell>
-
-                <TimeStamp
-                    time={firedAt}
-                    enableExact
-                    TableCellProps={{
-                        sx: { whiteSpace: 'nowrap' },
-                    }}
+                <ActiveOrResolvedCells
+                    firedAt={firedAt}
+                    resolvedAt={resolvedAt}
                 />
 
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                    {resolvedAt ?? '-'}
+                <TableCell>
+                    <AlertTypeContent alertType={alertType} />
                 </TableCell>
 
                 <TableCell>details</TableCell>

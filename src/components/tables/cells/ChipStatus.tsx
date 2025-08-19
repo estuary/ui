@@ -6,11 +6,11 @@ import { useIntl } from 'react-intl';
 
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
-function ChipStatus({ messageId, color }: ChipStatusProps) {
+function ChipStatus({ messageId, color, TableCellProps }: ChipStatusProps) {
     const intl = useIntl();
 
     return (
-        <TableCell>
+        <TableCell {...(TableCellProps ?? {})}>
             <OutlinedChip
                 component="span"
                 color={color}

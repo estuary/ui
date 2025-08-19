@@ -18,6 +18,7 @@ export interface LuxonGrainSettings {
 const dayAndMonthFormat = `LLL dd`;
 const timeZoneFormat = `ZZZZ`;
 export const defaultQueryDateFormat = `yyyy-MM-dd'T'HH:mm:ssZZ`;
+export const dayAndTimeFormat = `${dayAndMonthFormat} HH:mm:ssZZZZ`;
 
 const DAILY_GRAIN_SETTINGS: LuxonGrainSettings = {
     relativeUnit: 'days',

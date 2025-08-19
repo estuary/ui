@@ -174,6 +174,7 @@ export const AdminPage: Record<string, string> = {
     'admin.notifications.table.data.firedAt': `Fired At`,
     'admin.notifications.table.data.recipients': `Recipients`,
     'admin.notifications.table.data.resolvedAt': `Resolved At`,
+    'admin.notifications.table.data.duration': `Duration`,
     'admin.notifications.table.data.alertType': `Alert Type`,
     'admin.notifications.table.data.details': `Details`,
     'admin.notifications.table.label': `List of all alerts for tenant`,
