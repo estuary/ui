@@ -8,20 +8,21 @@ import { useState } from 'react';
 import { Collapse, TableCell, TableRow, useTheme } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import AlertTypeContent from 'src/components/tables/AlertHistory/AlertTypeContent';
 import DetailsPane from 'src/components/tables/AlertHistory/DetailsPane';
 import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
 import ActiveOrResolvedCells from 'src/components/tables/cells/activeResolved/Cells';
 import ChipList from 'src/components/tables/cells/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ hideEntityName, row }: RowProps) {
-    const theme = useTheme();
-
     const { alertType, catalogName, firedAt, resolvedAt, alertDetails } = row;
+
+    const theme = useTheme();
+    const { humanReadable } = useAlertTypeContent(alertType);
 
     const [foo, setFoo] = useState(false);
 
@@ -58,9 +59,7 @@ function Row({ hideEntityName, row }: RowProps) {
                     resolvedAt={resolvedAt}
                 />
 
-                <TableCell>
-                    <AlertTypeContent alertType={alertType} />
-                </TableCell>
+                <TableCell>{humanReadable}</TableCell>
 
                 <TableCell>details</TableCell>
 

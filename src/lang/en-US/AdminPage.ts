@@ -182,12 +182,25 @@ export const AdminPage: Record<string, string> = {
     'admin.notifications.table.empty.message': `This tenant has no historical alerts`,
     'admin.notifications.table.error.message': `There was an error attempting to fetch alert history.`,
 
-    // These are dynamically built in ui/src/components/tables/AlertHistory/Rows.tsx
+    // Consumed in ui/src/settings/alerts.ts
     'admin.notifications.alertType.autodiscoverfailed': `Auto Discover Failed`,
+    'admin.notifications.alertType.explanation.autodiscoverfailed': `Auto Discover Failed explanation`,
+
     'admin.notifications.alertType.shardfailed': `Shard Failure`,
+    'admin.notifications.alertType.explanation.shardfailed': `Shard Failure explanation`,
+
     'admin.notifications.alertType.datamovementstalled': `Data Movement Stalled`,
+    'admin.notifications.alertType.explanation.datamovementstalled': `Data Movement Stalled explanation`,
+
     'admin.notifications.alertType.freetrial': ``,
+    'admin.notifications.alertType.explanation.freetrial': ``,
+
     'admin.notifications.alertType.freetrialending': `Free Trial Ending`,
+    'admin.notifications.alertType.explanation.freetrialending': `Free Trial Ending explanation`,
+
     'admin.notifications.alertType.freetrialstalled': ``,
+    'admin.notifications.alertType.explanation.freetrialstalled': ``,
+
     'admin.notifications.alertType.missingpaymentmethod': `Missing Payment Method`,
+    'admin.notifications.alertType.explanation.missingpaymentmethod': `Missing Payment Method explanation`,
 };

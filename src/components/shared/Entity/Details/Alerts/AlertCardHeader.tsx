@@ -4,9 +4,11 @@ import { IconButton, Stack, Typography } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
 
-import AlertTypeContent from 'src/components/tables/AlertHistory/AlertTypeContent';
+import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCardHeader({ alertType }: AlertCardHeaderProps) {
+    const { humanReadable } = useAlertTypeContent(alertType);
+
     return (
         <Stack
             direction="row"
@@ -16,9 +18,7 @@ function AlertCardHeader({ alertType }: AlertCardHeaderProps) {
                 justifyContent: 'space-between',
             }}
         >
-            <Typography>
-                <AlertTypeContent alertType={alertType} />
-            </Typography>
+            <Typography>{humanReadable}</Typography>
             <IconButton
                 sx={{
                     p: 0,

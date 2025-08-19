@@ -7,6 +7,11 @@ interface TableSettings {
     headerIntlKey: string;
 }
 
+export interface AlertSetting {
+    humanReadableIntlKey: string;
+    explanationIntlKey: string;
+}
+
 export interface DataPlaneSetting {
     prefix: string;
     table: TableSettings;
