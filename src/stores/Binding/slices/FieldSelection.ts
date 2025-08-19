@@ -72,7 +72,10 @@ export interface StoreWithFieldSelection {
         bindingUUID?: string,
         resetRequested?: boolean
     ) => void;
-    trackValidationFailure: (bindingUUID: string) => void;
+    setValidationFailure: (
+        bindingUUID: string,
+        serverUpdateFailed?: boolean
+    ) => void;
 
     selectionAlgorithm: SelectionAlgorithm | null;
     setSelectionAlgorithm: (
@@ -87,8 +90,13 @@ const isHydrating = (status: HydrationStatus) => status !== 'HYDRATED';
 
 export const getHydrationStatus = (
     status?: HydrationStatus,
-    reset?: boolean
+    reset?: boolean,
+    forcedStatus?: HydrationStatus
 ): HydrationStatus => {
+    if (forcedStatus) {
+        return forcedStatus;
+    }
+
     if (status === 'HYDRATED') {
         return reset ? 'RESET_REQUESTED' : 'SERVER_UPDATE_REQUESTED';
     }
@@ -116,9 +124,14 @@ const setBindingHydrationStatus = (
     state: BindingState,
     bindingUUID: string,
     status: HydrationStatus,
-    resetRequested?: boolean
+    resetRequested?: boolean,
+    forcedStatus?: HydrationStatus
 ) => {
-    const evaluatedStatus = getHydrationStatus(status, resetRequested);
+    const evaluatedStatus = getHydrationStatus(
+        status,
+        resetRequested,
+        forcedStatus
+    );
 
     state.selections[bindingUUID].hydrating = isHydrating(evaluatedStatus);
     state.selections[bindingUUID].status = evaluatedStatus;
@@ -279,13 +292,20 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    trackValidationFailure: (bindingUUID) => {
+    setValidationFailure: (bindingUUID, serverUpdateFailed) => {
         set(
             produce((state: BindingState) => {
                 const { status } = state.selections[bindingUUID];
 
                 state.selections[bindingUUID].validationFailed = true;
-                setBindingHydrationStatus(state, bindingUUID, status);
+
+                setBindingHydrationStatus(
+                    state,
+                    bindingUUID,
+                    status,
+                    undefined,
+                    serverUpdateFailed ? 'HYDRATED' : undefined
+                );
             }),
             false,
             'Validation Failures Tracked'

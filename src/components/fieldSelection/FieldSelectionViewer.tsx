@@ -4,7 +4,8 @@ import { useEffect, useMemo } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useSnackbar } from 'notistack';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
@@ -19,6 +20,7 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 interface Props {
     bindingUUID: string;
@@ -31,6 +33,9 @@ function FieldSelectionViewer({
     collectionName,
     refreshRequired,
 }: Props) {
+    const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
+
     const { applyFieldSelection } = useFieldSelection(
         bindingUUID,
         collectionName
@@ -41,6 +46,9 @@ function FieldSelectionViewer({
         (state) => state.advanceHydrationStatus
     );
     const selections = useBindingStore((state) => state.selections);
+    const setValidationFailure = useBindingStore(
+        (state) => state.setValidationFailure
+    );
 
     // Draft Editor Store
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
@@ -84,32 +92,46 @@ function FieldSelectionViewer({
             advanceHydrationStatus('SERVER_UPDATE_REQUESTED', bindingUUID);
 
             // TODO (field selection): Extend error handling.
-            applyFieldSelection(draftSpec)
-                .then(
-                    () => {
-                        setFormState({ status: FormStatus.UPDATED });
-                    },
-                    (error) => {
-                        setFormState({
-                            status: FormStatus.FAILED,
-                            error: {
-                                title: 'fieldSelection.error.serverUpdateFailed',
-                                error,
-                            },
-                        });
-                    }
-                )
-                .finally(() => {
+            applyFieldSelection(draftSpec).then(
+                () => {
+                    setFormState({ status: FormStatus.UPDATED });
+
                     advanceHydrationStatus('SERVER_UPDATING', bindingUUID);
-                });
+                },
+                (error) => {
+                    setFormState({
+                        status: FormStatus.FAILED,
+                        error: {
+                            title: 'fieldSelection.error.serverUpdateFailed',
+                            error,
+                        },
+                    });
+
+                    enqueueSnackbar(
+                        intl.formatMessage(
+                            {
+                                id: 'fieldSelection.error.validationFailed',
+                            },
+                            { collection: collectionName }
+                        ),
+                        { ...snackbarSettings, variant: 'error' }
+                    );
+
+                    setValidationFailure(bindingUUID, true);
+                }
+            );
         }
     }, [
         advanceHydrationStatus,
         applyFieldSelection,
         bindingSelection?.status,
         bindingUUID,
+        collectionName,
         draftSpec,
+        enqueueSnackbar,
+        intl,
         setFormState,
+        setValidationFailure,
     ]);
 
     const loading =

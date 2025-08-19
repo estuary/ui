@@ -84,8 +84,8 @@ export default function useValidateFieldSelection() {
                 .map(([uuid, _bindingFieldSelection]) => uuid)
         )
     );
-    const trackValidationFailure = useBindingStore(
-        (state) => state.trackValidationFailure
+    const setValidationFailure = useBindingStore(
+        (state) => state.setValidationFailure
     );
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
@@ -245,7 +245,7 @@ export default function useValidateFieldSelection() {
                             { ...snackbarSettings, variant: 'error' }
                         );
 
-                        trackValidationFailure(uuid);
+                        setValidationFailure(uuid);
                     });
                 }
             });
@@ -258,8 +258,8 @@ export default function useValidateFieldSelection() {
         intl,
         resourceConfigs,
         setRecommendFields,
+        setValidationFailure,
         targetBindingUUIDs,
-        trackValidationFailure,
         validateFieldSelection,
     ]);
 }
