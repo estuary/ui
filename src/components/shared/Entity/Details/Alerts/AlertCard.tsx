@@ -2,25 +2,19 @@ import type { AlertCardProps } from 'src/components/shared/Entity/Details/Alerts
 
 import { Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import AlertCardHeader from 'src/components/shared/Entity/Details/Alerts/AlertCardHeader';
-import { ALERT_SETTING } from 'src/settings/alerts';
+import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCard({ datum }: AlertCardProps) {
-    const intl = useIntl();
+    const { explanation } = useAlertTypeContent(datum.alertType);
 
     return (
         <CardWrapper
             key={`active_alerts_${datum.firedAt}`}
             message={<AlertCardHeader alertType={datum.alertType} />}
         >
-            <Typography>
-                {intl.formatMessage({
-                    id: ALERT_SETTING[datum.alertType].explanationIntlKey,
-                })}
-            </Typography>
+            <Typography>{explanation}</Typography>
             <ul>
                 <li>fired: {datum.firedAt}</li>
                 <li>resolved: {datum.resolvedAt}</li>
