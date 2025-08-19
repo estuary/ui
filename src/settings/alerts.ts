@@ -16,7 +16,7 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
             'admin.notifications.alertType.explanation.shardfailed',
     },
     datamovementstalled: {
-        detailKeys: [],
+        detailKeys: ['evaluation_interval'],
         humanReadableIntlKey:
             'admin.notifications.alertType.datamovementstalled',
         explanationIntlKey:

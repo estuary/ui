@@ -19,10 +19,10 @@ import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ hideEntityName, row }: RowProps) {
-    const { alertType, catalogName, firedAt, resolvedAt, alertDetails } = row;
+    const { catalogName, firedAt, resolvedAt, alertDetails } = row;
 
     const theme = useTheme();
-    const { humanReadable } = useAlertTypeContent(alertType);
+    const { humanReadable } = useAlertTypeContent(row);
 
     const [foo, setFoo] = useState(false);
 

@@ -182,7 +182,11 @@ export const AdminPage: Record<string, string> = {
     'admin.notifications.table.empty.message': `This tenant has no historical alerts`,
     'admin.notifications.table.error.message': `There was an error attempting to fetch alert history.`,
 
-    // Consumed in ui/src/settings/alerts.ts
+    // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
+    'alertType.details.evaluation_interval': `evaluation_interval label:`,
+    'alertType.details.spec_type': `spec_type label:`,
+    'alertType.details.recipients': `recipients label:`,
+
     'admin.notifications.alertType.autodiscoverfailed': `Auto Discover Failed`,
     'admin.notifications.alertType.explanation.autodiscoverfailed': `Auto Discover Failed explanation`,
 

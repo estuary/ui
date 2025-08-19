@@ -1,5 +1,6 @@
 import type { OptionalColumn } from 'src/components/collection/Selector/Table/useCollectionsSelectorColumns';
 import type { TableIntlConfig } from 'src/types';
+import type { AlertDetails } from 'src/types/gql';
 
 interface TableSettings {
     noExistingDataContentIds: TableIntlConfig;
@@ -8,7 +9,7 @@ interface TableSettings {
 }
 
 export interface AlertSetting {
-    detailKeys: string[];
+    detailKeys: (keyof AlertDetails)[];
     humanReadableIntlKey: string;
     explanationIntlKey: string;
 }

@@ -4,22 +4,23 @@ import { Typography } from '@mui/material';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
 import AlertCardHeader from 'src/components/shared/Entity/Details/Alerts/AlertCardHeader';
+import AlertDetails from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCard({ datum }: AlertCardProps) {
-    const { explanation } = useAlertTypeContent(datum.alertType);
+    const { explanation } = useAlertTypeContent(datum);
 
     return (
         <CardWrapper
             key={`active_alerts_${datum.firedAt}`}
-            message={<AlertCardHeader alertType={datum.alertType} />}
+            message={<AlertCardHeader datum={datum} />}
         >
             <Typography>{explanation}</Typography>
             <ul>
                 <li>fired: {datum.firedAt}</li>
-                <li>resolved: {datum.resolvedAt}</li>
-                <li>interval : {datum.alertDetails.evaluation_interval}</li>
             </ul>
+
+            <AlertDetails datum={datum} />
         </CardWrapper>
     );
 }

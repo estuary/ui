@@ -6,8 +6,8 @@ import { HelpCircle } from 'iconoir-react';
 
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
-function AlertCardHeader({ alertType }: AlertCardHeaderProps) {
-    const { humanReadable } = useAlertTypeContent(alertType);
+function AlertCardHeader({ datum }: AlertCardHeaderProps) {
+    const { humanReadable } = useAlertTypeContent(datum);
 
     return (
         <Stack

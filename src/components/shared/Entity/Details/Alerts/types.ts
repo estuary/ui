@@ -5,5 +5,9 @@ export interface AlertCardProps {
 }
 
 export interface AlertCardHeaderProps {
-    alertType: Alert['alertType'];
+    datum: Alert;
+}
+
+export interface AlertDetailsProps {
+    datum: Alert;
 }
