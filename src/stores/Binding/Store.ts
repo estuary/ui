@@ -548,6 +548,8 @@ const getInitialState = (
 
                 // See if the recently updated configs have errors
                 populateResourceConfigErrors(state, reducedResourceConfig);
+
+                state.selections = stubBindingFieldSelection(bindingUUIDs);
             }),
             false,
             'Resource Config Prefilled'

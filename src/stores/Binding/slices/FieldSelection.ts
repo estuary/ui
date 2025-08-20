@@ -86,7 +86,7 @@ export interface StoreWithFieldSelection {
     setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
 }
 
-const isHydrating = (status: HydrationStatus) => status !== 'HYDRATED';
+export const isHydrating = (status: HydrationStatus) => status !== 'HYDRATED';
 
 export const getHydrationStatus = (
     status?: HydrationStatus,

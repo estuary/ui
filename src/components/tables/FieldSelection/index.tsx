@@ -8,6 +8,7 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 
+import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
 import ExcludeAllButton from 'src/components/fieldSelection/FieldActions/ExcludeAllButton';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -40,6 +41,8 @@ export default function FieldSelectionTable({
     const selectionsHydrating = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.hydrating
     );
+
+    const persistedDraftId = useEditorStore_persistedDraftId();
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -175,9 +178,12 @@ export default function FieldSelectionTable({
                             columns={columnsToShow}
                             noExistingDataContentIds={{
                                 header: 'fieldSelection.table.empty.header',
-                                message: missingServerData
-                                    ? 'fieldSelection.table.error.message'
-                                    : 'fieldSelection.table.empty.message',
+                                message:
+                                    persistedDraftId && missingServerData
+                                        ? 'fieldSelection.table.error.message'
+                                        : !persistedDraftId
+                                          ? 'fieldSelection.table.noDraft.message'
+                                          : 'fieldSelection.table.empty.message',
                                 disableDoclink: true,
                             }}
                             tableState={tableState}

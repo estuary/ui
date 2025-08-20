@@ -180,6 +180,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.cta.selectField': `Select`,
     'fieldSelection.table.empty.header': `No information found`,
     'fieldSelection.table.empty.message': `Click "Refresh" to evaluate the fields of the source collection.`,
+    'fieldSelection.table.noDraft.message': `Click "Next" at the top of the page to add this binding to the draft.`,
     'fieldSelection.table.error.message': `There was an error attempting to fetch the list of fields.`,
     'fieldSelection.table.label.collectionOmits': `Collection Omits`,
     'fieldSelection.table.label.connectorForbids': `Connector Forbids`,

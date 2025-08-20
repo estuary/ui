@@ -21,7 +21,10 @@ import { getSchema_Resource } from 'src/api/hydration';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { BASE_ERROR } from 'src/services/supabase';
 import { getInitialBackfillData } from 'src/stores/Binding/slices/Backfill';
-import { getInitialFieldSelectionData } from 'src/stores/Binding/slices/FieldSelection';
+import {
+    getInitialFieldSelectionData,
+    isHydrating,
+} from 'src/stores/Binding/slices/FieldSelection';
 import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
 import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
 import { populateErrors } from 'src/stores/utils';
@@ -285,7 +288,7 @@ export const stubBindingFieldSelection = (
         if (!selections?.[bindingUUID]) {
             selections[bindingUUID] = {
                 hasConflicts: false,
-                hydrating: true,
+                hydrating: defaultStatus ? isHydrating(defaultStatus) : false,
                 status: defaultStatus ?? 'HYDRATED',
                 validationFailed: false,
                 value: {},
