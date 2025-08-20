@@ -81,7 +81,7 @@ function AlertSubscriptionDialog({
                 <ServerErrors />
 
                 <Typography sx={{ mb: 2 }}>
-                    <FormattedMessage id="admin.alerts.dialog.description" />
+                    <FormattedMessage id="alerts.config.dialog.description" />
                 </Typography>
 
                 <Grid

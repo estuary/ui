@@ -60,10 +60,10 @@ function Notifications() {
                 <Box>
                     <Typography component="div" variant="h6" sx={{ mb: 0.5 }}>
                         {intl.formatMessage({
-                            id: 'admin.notifications.title',
+                            id: 'alerts.config.title.',
                         })}
                     </Typography>
-                    {intl.formatMessage({ id: 'admin.notifications.message' })}
+                    {intl.formatMessage({ id: 'alerts.config.message.' })}
                 </Box>
 
                 <Divider />

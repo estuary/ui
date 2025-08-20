@@ -18,11 +18,11 @@ function AlertGenerateButton() {
                     setOpen(true);
                 }}
             >
-                <FormattedMessage id="admin.alerts.cta.addAlertMethod" />
+                <FormattedMessage id="alerts.config.cta.addAlertMethod" />
             </Button>
 
             <AlertSubscriptionDialog
-                headerId="admin.alerts.dialog.generate.header"
+                headerId="alerts.config.dialog.generate.header"
                 open={open}
                 setOpen={setOpen}
             />

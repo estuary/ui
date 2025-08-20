@@ -39,8 +39,6 @@ function AlertHistoryTable({
         [tablePrefix, tableSettings]
     );
 
-    console.log('columnsToShow', columnsToShow);
-
     // Get the data from the server
     const [{ fetching, data: fooData, error }] = useQuery(querySettings);
 

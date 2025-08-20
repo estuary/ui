@@ -238,7 +238,7 @@ function EmailSelector({
 
             {inputErrorExists ? (
                 <FormHelperText error={inputErrorExists}>
-                    <FormattedMessage id="admin.alerts.dialog.emailSelector.inputError" />
+                    <FormattedMessage id="alerts.config.dialog.emailSelector.inputError" />
                 </FormHelperText>
             ) : null}
         </FormControl>

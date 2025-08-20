@@ -1,6 +1,19 @@
 export const Alerts: Record<string, string> = {
-    'admin.notifications.title': `Active Alerts`,
-    'admin.notifications.message': `Below is all entities that have an active alert`,
+    'alerts.config.title.': `Active Alerts`,
+    'alerts.config.message.': `Below is all entities that have an active alert`,
+    'alerts.config.header.': `Organization Notifications`,
+    'alerts.config.cta.addAlertMethod': `Configure Notifications`,
+
+    'alerts.config.dialog.description': `Choose where you'd like notifications to be sent. To add an email address, select from the list of admin user emails or enter custom email addresses as a comma separated list.`,
+    'alerts.config.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
+    'alerts.config.dialog.generate.header': `Configure Notification Methods`,
+    'alerts.config.dialog.update.header': `Update Notification Methods`,
+
+    'alerts.config.table.aria.label': `Organization Notifications Table`,
+    'alerts.config.table.filterLabel': `Filter by Prefix or Email`,
+    'alerts.config.table.noContent.header': `No subscriptions found.`,
+    'alerts.config.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
+    'alerts.config.table.label.alertMethod': `Notification Method`,
 
     'alerts.table.data.firedAt': `Fired At`,
     'alerts.table.data.recipients': `Recipients`,
