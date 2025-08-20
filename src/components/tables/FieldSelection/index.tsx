@@ -23,6 +23,8 @@ import TableColumnSelector from 'src/components/tables/TableColumnSelector';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
 import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
@@ -43,6 +45,8 @@ export default function FieldSelectionTable({
     );
 
     const persistedDraftId = useEditorStore_persistedDraftId();
+
+    const formStatus = useFormStateStore_status();
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -179,7 +183,7 @@ export default function FieldSelectionTable({
                             noExistingDataContentIds={{
                                 header: 'fieldSelection.table.empty.header',
                                 message:
-                                    persistedDraftId && missingServerData
+                                    formStatus === FormStatus.FAILED
                                         ? 'fieldSelection.table.error.message'
                                         : !persistedDraftId
                                           ? 'fieldSelection.table.noDraft.message'
