@@ -279,13 +279,14 @@ export const updateBackfilledBindingState = (
 };
 
 export const stubBindingFieldSelection = (
+    existingSelections: BindingFieldSelectionDictionary,
     bindingUUIDs: string[],
     defaultStatus?: HydrationStatus
 ): BindingFieldSelectionDictionary => {
     const selections: BindingFieldSelectionDictionary = {};
 
     bindingUUIDs.forEach((bindingUUID) => {
-        if (!selections?.[bindingUUID]) {
+        if (!existingSelections?.[bindingUUID]) {
             selections[bindingUUID] = {
                 hasConflicts: false,
                 hydrating: defaultStatus ? isHydrating(defaultStatus) : false,
@@ -293,7 +294,11 @@ export const stubBindingFieldSelection = (
                 validationFailed: false,
                 value: {},
             };
+
+            return;
         }
+
+        selections[bindingUUID] = existingSelections[bindingUUID];
     });
 
     return selections;
@@ -357,7 +362,9 @@ export const hydrateSpecificationDependentState = async (
         bindingChanges = get().prefillBindingDependentState(
             entityType,
             liveSpec.bindings,
-            draftSpecs[0].spec.bindings
+            draftSpecs[0].spec.bindings,
+            undefined,
+            true
         );
 
         const targetInterval = draftSpecs[0].spec?.interval;
@@ -375,7 +382,10 @@ export const hydrateSpecificationDependentState = async (
     } else {
         bindingChanges = get().prefillBindingDependentState(
             entityType,
-            liveSpec.bindings
+            liveSpec.bindings,
+            undefined,
+            undefined,
+            true
         );
 
         get().setCaptureInterval(

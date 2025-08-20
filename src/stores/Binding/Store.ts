@@ -326,7 +326,8 @@ const getInitialState = (
         entityType,
         liveBindings,
         draftedBindings,
-        rehydrating
+        rehydrating,
+        requestFieldValidation
     ) => {
         set(
             produce((state: BindingState) => {
@@ -431,8 +432,9 @@ const getInitialState = (
                 );
 
                 state.selections = stubBindingFieldSelection(
+                    state.selections,
                     bindingUUIDs,
-                    'SERVER_UPDATING'
+                    requestFieldValidation ? 'SERVER_UPDATING' : undefined
                 );
             }),
             false,
@@ -549,7 +551,10 @@ const getInitialState = (
                 // See if the recently updated configs have errors
                 populateResourceConfigErrors(state, reducedResourceConfig);
 
-                state.selections = stubBindingFieldSelection(bindingUUIDs);
+                state.selections = stubBindingFieldSelection(
+                    state.selections,
+                    bindingUUIDs
+                );
             }),
             false,
             'Resource Config Prefilled'

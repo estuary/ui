@@ -80,7 +80,8 @@ export interface BindingState
         entityType: Entity,
         liveBindings: Schema[],
         draftedBindings?: Schema[],
-        rehydrating?: boolean
+        rehydrating?: boolean,
+        requestFieldValidation?: boolean
     ) => BindingChanges;
 
     // The analog of resource config store action, `preFillEmptyCollections`.

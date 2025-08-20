@@ -35,7 +35,8 @@ function useFieldSelectionRefresh() {
                 try {
                     evaluatedDraftId = await generateCatalog(
                         mutateDraftSpec,
-                        false // we don't want to skip all the extra updates
+                        false, // we don't want to skip all the extra updates
+                        true
                     ).finally(() => advanceHydrationStatus('RESET_REQUESTED'));
                 } catch (_error: unknown) {
                     setUpdating(false);
