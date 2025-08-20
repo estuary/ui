@@ -34,12 +34,11 @@ export default function SaveButton({
                         ? 0
                         : selectedAlgorithm === 'depthTwo'
                           ? 2
-                          : DEFAULT_RECOMMENDED_FLAG;
+                          : selectedAlgorithm === 'depthUnlimited'
+                            ? true
+                            : DEFAULT_RECOMMENDED_FLAG;
 
-                setRecommendFields(
-                    bindingUUID,
-                    recommendedFlag ?? DEFAULT_RECOMMENDED_FLAG
-                );
+                setRecommendFields(bindingUUID, recommendedFlag);
 
                 advanceHydrationStatus('HYDRATED');
                 close();
