@@ -81,89 +81,83 @@ function useDiscoverCapture(
         !isEdit && options?.initiateDiscovery
     );
 
-    const generateCatalog = useCallback(
-        async (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
-            updateFormStatus(FormStatus.GENERATING);
+    const generateCatalog = useCallback(async () => {
+        updateFormStatus(FormStatus.GENERATING);
 
-            if (
-                detailsFormsHasErrors ||
-                endpointConfigErrorsExist ||
-                resourceConfigErrorsExist
-            ) {
-                setFormState({
-                    status: FormStatus.FAILED,
-                    displayValidation: true,
-                });
+        if (
+            detailsFormsHasErrors ||
+            endpointConfigErrorsExist ||
+            resourceConfigErrorsExist
+        ) {
+            setFormState({
+                status: FormStatus.FAILED,
+                displayValidation: true,
+            });
 
-                return false;
-            }
-            resetEditorState(true);
-            setCatalogName(processedEntityName);
+            return false;
+        }
+        resetEditorState(true);
+        setCatalogName(processedEntityName);
 
-            const encryptedEndpointConfig = await configEncrypt(
-                serverUpdateRequired
-                    ? endpointConfigData
-                    : serverEndpointConfigData
+        const encryptedEndpointConfig = await configEncrypt(
+            serverUpdateRequired ? endpointConfigData : serverEndpointConfigData
+        );
+        if (encryptedEndpointConfig === false) {
+            return false;
+        }
+
+        const draftUpdateSuccess = await draftUpdate(
+            encryptedEndpointConfig.data
+        );
+        if (!draftUpdateSuccess) {
+            return false;
+        }
+
+        if (options?.initiateRediscovery || options?.initiateDiscovery) {
+            const discoveryStartSuccess = await startDiscovery(
+                processedEntityName,
+                encryptedEndpointConfig.data,
+                options.initiateRediscovery,
+                options.updateOnly,
+                dataPlaneName?.whole
             );
-            if (encryptedEndpointConfig === false) {
-                return false;
-            }
 
-            const draftUpdateSuccess = await draftUpdate(
-                encryptedEndpointConfig.data
-            );
-            if (!draftUpdateSuccess) {
-                return false;
-            }
+            return discoveryStartSuccess;
+        } else if (persistedDraftId) {
+            // if we got here we already did the update up above
+            setFormState({
+                status: FormStatus.GENERATED,
+            });
 
-            if (options?.initiateRediscovery || options?.initiateDiscovery) {
-                const discoveryStartSuccess = await startDiscovery(
-                    processedEntityName,
-                    encryptedEndpointConfig.data,
-                    options.initiateRediscovery,
-                    options.updateOnly,
-                    dataPlaneName?.whole
-                );
-
-                return discoveryStartSuccess;
-            } else if (persistedDraftId) {
-                // if we got here we already did the update up above
-                setFormState({
-                    status: FormStatus.GENERATED,
-                });
-
-                return true;
-            } else {
-                // TODO (optimization): This condition should be nearly impossible to reach, but we currently do not have a means to produce
-                //   an error in this scenario. ValidationErrorSummary is not suitable for this scenario and EntityError, the error component
-                //   that surfaces form state errors, is only rendered in the event a persisted draft ID is present. Since the likelihood of
-                //   reaching this code block is slim, I am going to add a solution in a fast-follow to the schema inference changes.
-                return false;
-            }
-        },
-        [
-            configEncrypt,
-            dataPlaneName?.whole,
-            detailsFormsHasErrors,
-            draftUpdate,
-            endpointConfigData,
-            endpointConfigErrorsExist,
-            options?.initiateDiscovery,
-            options?.initiateRediscovery,
-            options?.updateOnly,
-            persistedDraftId,
-            processedEntityName,
-            resetEditorState,
-            resourceConfigErrorsExist,
-            serverEndpointConfigData,
-            serverUpdateRequired,
-            setCatalogName,
-            setFormState,
-            startDiscovery,
-            updateFormStatus,
-        ]
-    );
+            return true;
+        } else {
+            // TODO (optimization): This condition should be nearly impossible to reach, but we currently do not have a means to produce
+            //   an error in this scenario. ValidationErrorSummary is not suitable for this scenario and EntityError, the error component
+            //   that surfaces form state errors, is only rendered in the event a persisted draft ID is present. Since the likelihood of
+            //   reaching this code block is slim, I am going to add a solution in a fast-follow to the schema inference changes.
+            return false;
+        }
+    }, [
+        configEncrypt,
+        dataPlaneName?.whole,
+        detailsFormsHasErrors,
+        draftUpdate,
+        endpointConfigData,
+        endpointConfigErrorsExist,
+        options?.initiateDiscovery,
+        options?.initiateRediscovery,
+        options?.updateOnly,
+        persistedDraftId,
+        processedEntityName,
+        resetEditorState,
+        resourceConfigErrorsExist,
+        serverEndpointConfigData,
+        serverUpdateRequired,
+        setCatalogName,
+        setFormState,
+        startDiscovery,
+        updateFormStatus,
+    ]);
 
     return useMemo(() => {
         return {

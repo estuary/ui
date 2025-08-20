@@ -9,6 +9,7 @@ import { CreditCard, Download } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import { getTenantInvoice } from 'src/api/billing';
+import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import Rows from 'src/components/tables/BillLineItems/Rows';
 import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -89,7 +90,10 @@ function BillingLineItemsTable() {
                     stickyHeader
                     sx={{
                         ...getTableHeaderWithoutHeaderColor(),
-                        minWidth: 350,
+                        'minWidth': 350,
+                        '& .MuiTableRow-root': {
+                            height: INVOICE_ROW_HEIGHT,
+                        },
                     }}
                 >
                     <EntityTableHeader columns={columns} />
