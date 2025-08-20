@@ -2,12 +2,10 @@ import type { ActiveOrResolvedCellsProps } from 'src/components/tables/cells/act
 
 import { useMemo } from 'react';
 
-import { chipClasses, TableCell, Tooltip } from '@mui/material';
+import { chipClasses, TableCell, Tooltip, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
-
-import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function DurationCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
     const intl = useIntl();
@@ -34,6 +32,7 @@ function DurationCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
 
         return [
             intl.formatMessage({ id: 'data.active' }),
+            // TODO (alert history) - need to get this content made
             intl.formatMessage({ id: 'data.alert is still active' }),
             null,
         ];
@@ -50,25 +49,19 @@ function DurationCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
             }}
         >
             <Tooltip title={resolvedTooltip} placement="top-end">
-                <OutlinedChip
-                    component="span"
-                    color={resolvedAt ? 'success' : 'warning'}
-                    label={
-                        duration
-                            ? duration
-                                  .shiftTo(
-                                      'months',
-                                      'days',
-                                      'hours',
-                                      'minutes',
-                                      'seconds'
-                                  )
-                                  .toHuman()
-                            : 'active'
-                    }
-                    size="small"
-                    variant="outlined"
-                />
+                <Typography>
+                    {duration
+                        ? duration
+                              .shiftTo(
+                                  'months',
+                                  'days',
+                                  'hours',
+                                  'minutes',
+                                  'seconds'
+                              )
+                              .toHuman()
+                        : intl.formatMessage({ id: 'data.active' })}
+                </Typography>
             </Tooltip>
         </TableCell>
     );

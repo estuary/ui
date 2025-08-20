@@ -6,6 +6,7 @@ import { Grid, LinearProgress } from '@mui/material';
 import { gql, useQuery } from 'urql';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import CardWrapper from 'src/components/shared/CardWrapper';
 import AlertCard from 'src/components/shared/Entity/Details/Alerts/AlertCard';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -47,28 +48,30 @@ function ActiveAlerts({}: ActiveAlertsProps) {
     }
 
     return (
-        <Grid container columns={{ xs: 4, md: 12 }} spacing={{ xs: 2 }}>
-            {!data || data.alerts.length === 0 ? (
-                <Grid item xs={12} md={3}>
-                    <AlertBox short severity="success">
-                        No Active Alerts
-                    </AlertBox>
-                </Grid>
-            ) : (
-                data.alerts.map((datum: any) => {
-                    return (
-                        <Grid
-                            item
-                            xs={12}
-                            md={3}
-                            key={`active_alerts_${datum.firedAt}`}
-                        >
-                            <AlertCard datum={datum} />
-                        </Grid>
-                    );
-                })
-            )}
-        </Grid>
+        <CardWrapper message="Active Alerts">
+            <Grid container spacing={{ xs: 2 }}>
+                {!data || data.alerts.length === 0 ? (
+                    <Grid item xs={12} md={3}>
+                        <AlertBox short severity="success">
+                            No Active Alerts
+                        </AlertBox>
+                    </Grid>
+                ) : (
+                    data.alerts.map((datum, index) => {
+                        return (
+                            <Grid
+                                item
+                                xs={12}
+                                md={6}
+                                key={`active_alerts_${datum.firedAt}_${index}`}
+                            >
+                                <AlertCard datum={datum} />
+                            </Grid>
+                        );
+                    })
+                )}
+            </Grid>
+        </CardWrapper>
     );
 }
 

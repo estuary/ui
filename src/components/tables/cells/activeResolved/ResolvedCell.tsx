@@ -2,12 +2,12 @@ import type { ActiveOrResolvedCellsProps } from 'src/components/tables/cells/act
 
 import { useMemo } from 'react';
 
-import { chipClasses, TableCell, Tooltip } from '@mui/material';
+import { chipClasses, TableCell, Tooltip, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
-import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
+import { toAbsHumanDuration } from 'src/services/luxon';
 
 function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
     const intl = useIntl();
@@ -17,25 +17,15 @@ function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
             const firedAtDate = DateTime.fromISO(firedAt).toUTC();
             const resolvedAtDate = DateTime.fromISO(resolvedAt).toUTC();
 
-            const sameDay = firedAtDate.hasSame(resolvedAtDate, 'day');
-
-            const foo = resolvedAtDate.diff(firedAtDate);
-
             return [
-                resolvedAtDate.toLocaleString(
-                    sameDay
-                        ? DateTime.TIME_WITH_SHORT_OFFSET
-                        : DateTime.DATETIME_FULL
-                ),
-                resolvedAt,
-                foo,
+                resolvedAtDate.toLocaleString(DateTime.DATETIME_FULL),
+                toAbsHumanDuration(resolvedAtDate, firedAtDate),
             ];
         }
 
         return [
             intl.formatMessage({ id: 'data.active' }),
             intl.formatMessage({ id: 'data.alert is still active' }),
-            null,
         ];
     }, [firedAt, intl, resolvedAt]);
 
@@ -48,13 +38,11 @@ function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
             }}
         >
             <Tooltip title={resolvedTooltip} placement="top-end">
-                <OutlinedChip
-                    component="span"
-                    color={'error'}
-                    label={resolvedOutput ? resolvedOutput : 'active'}
-                    size="small"
-                    variant="outlined"
-                />
+                <Typography component="span">
+                    {resolvedOutput
+                        ? resolvedOutput
+                        : intl.formatMessage({ id: 'data.active' })}{' '}
+                </Typography>
             </Tooltip>
         </TableCell>
     );

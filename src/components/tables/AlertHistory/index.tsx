@@ -39,6 +39,8 @@ function AlertHistoryTable({
         [tablePrefix, tableSettings]
     );
 
+    console.log('columnsToShow', columnsToShow);
+
     // Get the data from the server
     const [{ fetching, data: fooData, error }] = useQuery(querySettings);
 
@@ -92,7 +94,7 @@ function AlertHistoryTable({
                 size="small"
                 sx={{ minWidth: 350, borderCollapse: 'separate' }}
                 aria-label={intl.formatMessage({
-                    id: 'admin.notifications.table.label',
+                    id: 'alerts.table.label',
                 })}
             >
                 <EntityTableHeader columns={columnsToShow} selectData={true} />
@@ -100,10 +102,10 @@ function AlertHistoryTable({
                 <EntityTableBody
                     columns={columnsToShow}
                     noExistingDataContentIds={{
-                        header: 'admin.notifications.table.empty.header',
+                        header: 'alerts.table.empty.header',
                         message: failed
-                            ? 'admin.notifications.table.error.message'
-                            : 'admin.notifications.table.empty.message',
+                            ? 'alerts.table.error.message'
+                            : 'alerts.table.empty.message',
                         disableDoclink: true,
                     }}
                     tableState={tableState}

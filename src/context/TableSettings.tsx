@@ -33,7 +33,9 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
             LocalStorageKeys.TABLE_SETTINGS,
             {
                 [TablePrefixes.alertHistoryForEntity]: {
-                    shownOptionalColumns: [],
+                    shownOptionalColumns: [
+                        alertHistoryOptionalColumnIntlKeys.resolvedAt,
+                    ],
                 },
                 [TablePrefixes.alertHistoryForTenant]: {
                     shownOptionalColumns: [
@@ -72,7 +74,9 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
             setTableSettings({
                 ...tableSettings,
                 [TablePrefixes.alertHistoryForEntity]: {
-                    shownOptionalColumns: [],
+                    shownOptionalColumns: [
+                        alertHistoryOptionalColumnIntlKeys.resolvedAt,
+                    ],
                 },
             });
         }

@@ -6,57 +6,57 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
         detailKeys: [],
         docLink: 'https://docs.estuary.dev/reference/notifications',
         humanReadableIntlKey:
-            'admin.notifications.alertType.autodiscoverfailed',
+            'alerts.alertType.humanReadable.autodiscoverfailed',
         explanationIntlKey:
-            'admin.notifications.alertType.explanation.autodiscoverfailed',
+            'alerts.alertType.humanReadable.explanation.autodiscoverfailed',
     },
     shardfailed: {
         detailKeys: [],
         docLink: 'https://docs.estuary.dev/reference/notifications',
-        humanReadableIntlKey: 'admin.notifications.alertType.shardfailed',
+        humanReadableIntlKey: 'alerts.alertType.humanReadable.shardfailed',
         explanationIntlKey:
-            'admin.notifications.alertType.explanation.shardfailed',
+            'alerts.alertType.humanReadable.explanation.shardfailed',
     },
     datamovementstalled: {
         detailKeys: ['evaluation_interval'],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#data-movement-alerts',
         humanReadableIntlKey:
-            'admin.notifications.alertType.datamovementstalled',
+            'alerts.alertType.humanReadable.datamovementstalled',
         explanationIntlKey:
-            'admin.notifications.alertType.explanation.datamovementstalled',
+            'alerts.alertType.humanReadable.explanation.datamovementstalled',
     },
     freetrial: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
-        humanReadableIntlKey: 'admin.notifications.alertType.freetrial',
+        humanReadableIntlKey: 'alerts.alertType.humanReadable.freetrial',
         explanationIntlKey:
-            'admin.notifications.alertType.explanation.freetrial',
+            'alerts.alertType.humanReadable.explanation.freetrial',
     },
     freetrialending: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
-        humanReadableIntlKey: 'admin.notifications.alertType.freetrialending',
+        humanReadableIntlKey: 'alerts.alertType.humanReadable.freetrialending',
         explanationIntlKey:
-            'admin.notifications.alertType.explanation.freetrialending',
+            'alerts.alertType.humanReadable.explanation.freetrialending',
     },
     freetrialstalled: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
-        humanReadableIntlKey: 'admin.notifications.alertType.freetrialstalled',
+        humanReadableIntlKey: 'alerts.alertType.humanReadable.freetrialstalled',
         explanationIntlKey:
-            'admin.notifications.alertType.explanation.freetrialstalled',
+            'alerts.alertType.humanReadable.explanation.freetrialstalled',
     },
     missingpaymentmethod: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
         humanReadableIntlKey:
-            'admin.notifications.alertType.missingpaymentmethod',
+            'alerts.alertType.humanReadable.missingpaymentmethod',
         explanationIntlKey:
-            'admin.notifications.alertType.explanation.missingpaymentmethod',
+            'alerts.alertType.humanReadable.explanation.missingpaymentmethod',
     },
 };

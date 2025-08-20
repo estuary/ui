@@ -2,6 +2,7 @@ import type { TableColumns } from 'src/types';
 
 export const alertHistoryOptionalColumnIntlKeys = {
     entityName: 'entityTable.data.entity',
+    resolvedAt: 'alerts.table.data.resolvedAt',
 };
 
 export const optionalColumns = Object.values(
@@ -15,31 +16,24 @@ export const tableColumns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'admin.notifications.table.data.firedAt',
-        collapseHeader: true,
+        headerIntlKey: 'alerts.table.data.firedAt',
     },
     {
         field: null,
-        headerIntlKey: 'admin.notifications.table.data.resolvedAt',
-        collapseHeader: true,
+        headerIntlKey: alertHistoryOptionalColumnIntlKeys.resolvedAt,
     },
     {
         field: null,
-        headerIntlKey: 'admin.notifications.table.data.duration',
-        collapseHeader: true,
-    },
-    {
-        field: null,
-        headerIntlKey: 'admin.notifications.table.data.alertType',
+        headerIntlKey: 'alerts.table.data.alertType',
         collapseHeader: true,
         minWidth: 225,
     },
     {
         field: null,
-        headerIntlKey: 'admin.notifications.table.data.details',
+        headerIntlKey: 'alerts.table.data.details',
     },
     {
         field: null,
-        headerIntlKey: 'admin.notifications.table.data.recipients',
+        headerIntlKey: 'alerts.table.data.recipients',
     },
 ];

@@ -167,44 +167,4 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.generate.logsHeader': `Please wait while we save and apply your storage mapping.`,
     'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
     'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
-
-    'admin.notifications.title': `Alert History`,
-    'admin.notifications.message': `Below is all entities that have an active alert`,
-
-    'admin.notifications.table.data.firedAt': `Fired At`,
-    'admin.notifications.table.data.recipients': `Recipients`,
-    'admin.notifications.table.data.resolvedAt': `Resolved At`,
-    'admin.notifications.table.data.duration': `Duration`,
-    'admin.notifications.table.data.alertType': `Alert Type`,
-    'admin.notifications.table.data.details': `Details`,
-    'admin.notifications.table.label': `List of all alerts for tenant`,
-    'admin.notifications.table.empty.header': `No alerts found`,
-    'admin.notifications.table.empty.message': `This tenant has no historical alerts`,
-    'admin.notifications.table.error.message': `There was an error attempting to fetch alert history.`,
-
-    // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
-    'alertType.details.evaluation_interval': `Evaluation Interval`,
-    'alertType.details.recipients': `Notification Recipients`,
-    'alertType.details.spec_type': `Spec Type`,
-
-    'admin.notifications.alertType.autodiscoverfailed': `Auto Discover Failed`,
-    'admin.notifications.alertType.explanation.autodiscoverfailed': `The entity was unable to connect to the source system to automatically update the schema.`,
-
-    'admin.notifications.alertType.shardfailed': `Shard Failure`,
-    'admin.notifications.alertType.explanation.shardfailed': `Shard Failure explanation`,
-
-    'admin.notifications.alertType.datamovementstalled': `Data Movement Stalled`,
-    'admin.notifications.alertType.explanation.datamovementstalled': `The entity is still running but has not need data for some time.`,
-
-    'admin.notifications.alertType.freetrial': ``,
-    'admin.notifications.alertType.explanation.freetrial': ``,
-
-    'admin.notifications.alertType.freetrialending': `Free Trial Ending`,
-    'admin.notifications.alertType.explanation.freetrialending': `Free Trial Ending explanation`,
-
-    'admin.notifications.alertType.freetrialstalled': ``,
-    'admin.notifications.alertType.explanation.freetrialstalled': ``,
-
-    'admin.notifications.alertType.missingpaymentmethod': `Missing Payment Method`,
-    'admin.notifications.alertType.explanation.missingpaymentmethod': `Missing Payment Method explanation`,
 };

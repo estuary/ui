@@ -7,11 +7,13 @@ import type {
 
 import { useCallback } from 'react';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 
 import { gql } from 'urql';
 
+import CardWrapper from 'src/components/shared/CardWrapper';
 import ActiveAlerts from 'src/components/shared/Entity/Details/Alerts/ActiveAlerts';
+import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
@@ -56,6 +58,7 @@ function EntityAlerts() {
     const entityType = useEntityType();
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+    const isCollection = entityType === 'collection';
 
     const getDataFromResponse = useCallback(
         (data: any): AlertHistoryQueryResponse => {
@@ -81,24 +84,31 @@ function EntityAlerts() {
     );
 
     return (
-        <Stack spacing={2}>
-            <Box>
-                <Typography variant="h6">Active Alerts</Typography>
+        <Grid container spacing={2}>
+            <Grid item xs={12} md={!isCollection ? 8 : 12}>
                 <ActiveAlerts />
-            </Box>
-            <Box>
-                <Typography variant="h6">Previous Alerts</Typography>
-                <AlertHistoryTable
-                    getDataFromResponse={getDataFromResponse}
-                    tablePrefix={TablePrefixes.alertHistoryForEntity}
-                    querySettings={{
-                        query: testQuery,
-                        variables: { prefixes: [catalogName] },
-                        pause: !catalogName,
-                    }}
-                />
-            </Box>
-        </Stack>
+            </Grid>
+
+            {!isCollection && catalogName ? (
+                <Grid item xs={12} md={4}>
+                    <NotificationSettings taskName={catalogName} />
+                </Grid>
+            ) : null}
+
+            <Grid item xs={12}>
+                <CardWrapper message="Previous Alerts">
+                    <AlertHistoryTable
+                        getDataFromResponse={getDataFromResponse}
+                        tablePrefix={TablePrefixes.alertHistoryForEntity}
+                        querySettings={{
+                            query: testQuery,
+                            variables: { prefixes: [catalogName] },
+                            pause: !catalogName,
+                        }}
+                    />
+                </CardWrapper>
+            </Grid>
+        </Grid>
     );
 }
 

@@ -17,7 +17,7 @@ function useAlertTypeContent({ alertType, alertDetails }: Alert) {
                 ALERT_SETTING[alertType].detailKeys.forEach((detailKey) => {
                     details.push({
                         label: intl.formatMessage({
-                            id: `alertType.details.${detailKey}`,
+                            id: `alerts.alertType.details.humanReadable.${detailKey}`,
                         }),
                         dataVal: alertDetails[detailKey],
                         key: detailKey,

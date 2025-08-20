@@ -23,7 +23,7 @@ function AlertDetails({ datum }: AlertDetailsProps) {
         );
     }
 
-    return null;
+    return <>-</>;
 }
 
 export default AlertDetails;
