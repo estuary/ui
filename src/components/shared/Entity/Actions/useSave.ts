@@ -228,8 +228,12 @@ function useSave(
                         return;
                     }
 
-                    // If we want to skip just ignore this check - mainly for clean up
+                    // skip = disable clean up
+                    // If the user enabled `data flow reset` and then totally turns off backfill
+                    //  when we are cleaning up we want to make sure we remove the `reset` prop
+                    //  so we do not care if the collection is not being backfilled or not
                     if (!skipNonBackfilledCheck) {
+                        // don't skip = enable inital update
                         // If it is not being backfill we do not need to update. This is important for when
                         //  a user has run a re-discover and they have a bunch of collections on their draft
                         if (
