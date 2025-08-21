@@ -331,11 +331,18 @@ const getLiveSpecsByCatalogNames = async (
         index = index + CHUNK_SIZE;
     }
 
-    const res = await Promise.all(promises);
+    const responses = await Promise.all(promises);
 
-    const errors = res.filter((r) => r.error);
-
-    return errors[0] ?? res[0];
+    return {
+        responses: responses
+            .filter((r) => r.data)
+            .map((r) => r.data)
+            .flat(1),
+        errors: responses
+            .filter((r) => r.error)
+            .map((r) => r.error)
+            .flat(1),
+    };
 };
 
 const getLiveSpecsByConnectorId = async (
