@@ -18,6 +18,7 @@ import {
     escapeReservedCharacters,
     handleFailure,
     handleSuccess,
+    parsePagedFetchAllResponse,
     QUERY_PARAM_CONNECTOR_TITLE,
     SHARD_LABELS,
     SHARDS_DISABLE,
@@ -332,17 +333,9 @@ const getLiveSpecsByCatalogNames = async (
     }
 
     const responses = await Promise.all(promises);
-
-    return {
-        responses: responses
-            .filter((r) => r.data)
-            .map((r) => r.data)
-            .flat(1),
-        errors: responses
-            .filter((r) => r.error)
-            .map((r) => r.error)
-            .flat(1),
-    };
+    return parsePagedFetchAllResponse<LiveSpecsExtQuery_ByCatalogNames>(
+        responses
+    );
 };
 
 const getLiveSpecsByConnectorId = async (

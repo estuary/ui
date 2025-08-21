@@ -211,6 +211,7 @@ function useSave(
             draftId: string,
             collectionsOnDraft: DraftSpecsExtQuery_BySpecTypeReduced[] | null,
             collectionsBeingRemovedFromDraft: any,
+            skipNonBackfilledCheck: boolean,
             generateUpdatedSpec: (
                 draftSpec: DraftSpecsExtQuery_BySpecTypeReduced
             ) => MassUpdateMatchData | null
@@ -227,14 +228,17 @@ function useSave(
                         return;
                     }
 
-                    // If it is not being backfill we do not need to update. This is important for when
-                    //  a user has run a re-discover and they have a bunch of collections on their draft
-                    if (
-                        !collectionsBeingBackfilled.includes(
-                            draftSpec.catalog_name
-                        )
-                    ) {
-                        return;
+                    // If we want to skip just ignore this check - mainly for clean up
+                    if (!skipNonBackfilledCheck) {
+                        // If it is not being backfill we do not need to update. This is important for when
+                        //  a user has run a re-discover and they have a bunch of collections on their draft
+                        if (
+                            !collectionsBeingBackfilled.includes(
+                                draftSpec.catalog_name
+                            )
+                        ) {
+                            return;
+                        }
                     }
 
                     const updatedSpec = generateUpdatedSpec(draftSpec);
@@ -279,6 +283,7 @@ function useSave(
                     draftId,
                     collectionsOnDraft,
                     collectionsBeingRemovedFromDraft,
+                    true, // Do not skip non-backfilled options as we need to clean up everything
                     (draftSpec) => {
                         if (draftSpec?.spec?.reset === true) {
                             // Remove the reset setting
@@ -318,15 +323,15 @@ function useSave(
 
             if (collectionsMissingFromDraft.length > 0) {
                 // Fetch the live spec of all collections that aren't on the draft
-                const { errors, responses } = await getLiveSpecsByCatalogNames(
+                const { data, error } = await getLiveSpecsByCatalogNames(
                     'collection',
                     collectionsMissingFromDraft
                 );
-                if (errors && errors.length > 0) {
+                if (error || !data) {
                     onFailure({
                         error: {
                             title: 'captureEdit.generate.failedErrorTitle',
-                            error: errors[0],
+                            error: error,
                         },
                     });
 
@@ -334,24 +339,23 @@ function useSave(
                 }
 
                 // Add missing collections to the draft with the reset property set
-                const collectionsToInsert: MassCreateDraftSpecsData[] =
-                    responses
-                        .filter(
-                            (
-                                liveSpec
-                            ): liveSpec is LiveSpecsExtQuery_ByCatalogNames =>
-                                Boolean(liveSpec)
-                        )
-                        .map((liveSpec) => {
-                            return {
-                                catalog_name: liveSpec.catalog_name,
-                                expect_pub_id: liveSpec.last_pub_id,
-                                spec: {
-                                    ...liveSpec.spec,
-                                    reset: true,
-                                },
-                            };
-                        });
+                const collectionsToInsert: MassCreateDraftSpecsData[] = data
+                    .filter(
+                        (
+                            liveSpec
+                        ): liveSpec is LiveSpecsExtQuery_ByCatalogNames =>
+                            Boolean(liveSpec)
+                    )
+                    .map((liveSpec) => {
+                        return {
+                            catalog_name: liveSpec.catalog_name,
+                            expect_pub_id: liveSpec.last_pub_id,
+                            spec: {
+                                ...liveSpec.spec,
+                                reset: true,
+                            },
+                        };
+                    });
 
                 const massCreateResponse = await massCreateDraftSpecs(
                     draftId,
@@ -376,6 +380,7 @@ function useSave(
                 draftId,
                 collectionsOnDraft,
                 collectionsBeingRemovedFromDraft,
+                false, // do NOT skip checking if the items are backfilled or not
                 (draftSpec) => {
                     // If the spec is not already marked for reset go ahead and do it now
                     if (draftSpec?.spec?.reset !== true) {
