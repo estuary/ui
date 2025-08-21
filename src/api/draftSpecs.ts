@@ -4,6 +4,8 @@ import type {
     DraftSpecData,
     DraftSpecsExtQuery_BySpecTypeReduced,
     DraftSpecUpdateMatchData,
+    MassCreateDraftSpecsData,
+    MassUpdateMatchData,
 } from 'src/api/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { Entity } from 'src/types';
@@ -51,7 +53,7 @@ export const createDraftSpec = (
 export const massCreateDraftSpecs = async (
     draftId: string,
     specType: Entity,
-    specs: any[]
+    specs: MassCreateDraftSpecsData[]
 ) => {
     if (specs.length > 0) {
         const limiter = pLimit(3);
@@ -95,7 +97,7 @@ export const massCreateDraftSpecs = async (
 export const massUpdateDraftSpecs = async (
     draftId: string,
     specType: Entity,
-    specs: any[]
+    specs: MassUpdateMatchData[]
 ) => {
     if (specs.length > 0) {
         const limiter = pLimit(3);
@@ -185,8 +187,7 @@ export const getDraftSpecsBySpecType = async (
 
 export const getDraftSpecsBySpecTypeReduced = async (
     draftId: string,
-    specType: Entity,
-    fetchSpec?: boolean
+    specType: Entity
 ) => {
     const responses = await pagedFetchAll<DraftSpecsExtQuery_BySpecTypeReduced>(
         DEFAULT_PAGING_SIZE,
@@ -194,9 +195,7 @@ export const getDraftSpecsBySpecTypeReduced = async (
         (start) =>
             supabaseClient
                 .from(TABLES.DRAFT_SPECS_EXT)
-                .select(
-                    `draft_id,catalog_name,spec_type${fetchSpec ? ',spec' : ''}`
-                )
+                .select(`draft_id,catalog_name,spec_type,spec`)
                 .eq('draft_id', draftId)
                 .eq('spec_type', specType)
                 .range(start, start + DEFAULT_PAGING_SIZE - 1)
