@@ -2,7 +2,7 @@ import type { ErrorDetails } from 'src/components/shared/Error/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Stack, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -18,9 +18,6 @@ interface Props {
 }
 
 function NotificationSettings({ taskName }: Props) {
-    const theme = useTheme();
-    const aboveMd = useMediaQuery(theme.breakpoints.up('md'));
-
     const { createSubscription, getNotificationSubscription } =
         useInitializeTaskNotification(taskName);
 
@@ -107,7 +104,7 @@ function NotificationSettings({ taskName }: Props) {
                 ) : null}
             </Stack>
 
-            <Box sx={{ width: aboveMd ? 720 : 'unset' }}>
+            <Box>
                 <DataProcessingSetting
                     errored={updateSettingsError !== null}
                     loading={subscriptionExists === null}

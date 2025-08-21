@@ -1,10 +1,18 @@
 import type { OptionalColumn } from 'src/components/collection/Selector/Table/useCollectionsSelectorColumns';
 import type { TableIntlConfig } from 'src/types';
+import type { AlertDetails } from 'src/types/gql';
 
 interface TableSettings {
     noExistingDataContentIds: TableIntlConfig;
     filterIntlKey: string;
     headerIntlKey: string;
+}
+
+export interface AlertSetting {
+    detailKeys: (keyof AlertDetails)[];
+    docLink: string;
+    humanReadableIntlKey: string;
+    explanationIntlKey: string;
 }
 
 export interface DataPlaneSetting {
