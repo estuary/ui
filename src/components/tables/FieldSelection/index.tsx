@@ -43,6 +43,9 @@ export default function FieldSelectionTable({
     const selectionsHydrating = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.hydrating
     );
+    const selectionsRefreshing = useBindingStore(
+        (state) => state.selections?.[bindingUUID]?.status === 'RESET_REQUESTED'
+    );
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -87,7 +90,11 @@ export default function FieldSelectionTable({
 
     useEffect(() => {
         if (selectionsHydrating) {
-            displayLoadingState.current();
+            // Ensure that the loading state is displayed immediately
+            // when a field selection refresh is initiated.
+            selectionsRefreshing
+                ? setTableState({ status: TableStatuses.LOADING })
+                : displayLoadingState.current();
         } else if (processedSelections.length > 0) {
             displayLoadingState.current?.cancel();
             setTableState({
@@ -106,6 +113,7 @@ export default function FieldSelectionTable({
         processedSelections.length,
         searchQuery,
         selectionsHydrating,
+        selectionsRefreshing,
     ]);
 
     const loading = tableState.status === TableStatuses.LOADING;
