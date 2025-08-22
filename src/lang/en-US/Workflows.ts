@@ -63,7 +63,7 @@ export const Workflows: Record<string, string> = {
 
     'workflows.collectionSelector.footer.backfilled': `backfilled: {calculatedCount}`,
     'workflows.collectionSelector.footer.backfilled.all': `all backfilled`,
-    'workflows.collectionSelector.footer.backfilled.empty': ` `,
+    'workflows.collectionSelector.footer.backfilled.empty': `-`,
 
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,

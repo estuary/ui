@@ -81,5 +81,16 @@ export interface DraftSpecsExtQuery_BySpecTypeReduced {
     draft_id: string;
     catalog_name: string;
     spec_type: string;
-    spec?: any;
+    spec: any;
+}
+
+export interface MassUpdateMatchData {
+    catalog_name: string;
+    spec: any;
+}
+
+export interface MassCreateDraftSpecsData {
+    catalog_name: string;
+    expect_pub_id: string;
+    spec: any;
 }
