@@ -11,12 +11,13 @@ import type {
 export enum RejectReason {
     USER_EXCLUDES = 'UserExcludes',
     CONNECTOR_FORBIDS = 'ConnectorForbids',
-    CONNECTOR_UNSATISFIABLE = 'ConnectorUnsatisfiable',
+    CONNECTOR_INCOMPATIBLE = 'ConnectorIncompatible',
     COLLECTION_OMITS = 'CollectionOmits',
     CONNECTOR_OMITS = 'ConnectorOmits',
     DUPLICATE_FOLD = 'DuplicateFold',
     DUPLICATE_LOCATION = 'DuplicateLocation',
     COVERED_LOCATION = 'CoveredLocation',
+    EXCLUDED_PARENT = 'ExcludedParent',
     NOT_SELECTED = 'NotSelected',
 }
 
@@ -35,7 +36,7 @@ export enum SelectReason {
 
 export interface FieldOutcome {
     field: string;
-    isUnsatisfiable?: boolean;
+    isIncompatible?: boolean;
     reject?: RejectOutput;
     select?: SelectOutput;
 }

@@ -3,7 +3,7 @@ import type { Schema } from 'src/types';
 
 // The constraint types are ordered by severity, with one being the most severe and six the least.
 enum ConstraintTypes {
-    UNSATISFIABLE = 1,
+    INCOMPATIBLE = 1,
     FIELD_FORBIDDEN = 2,
     FIELD_OPTIONAL = 3,
     LOCATION_RECOMMENDED = 4,

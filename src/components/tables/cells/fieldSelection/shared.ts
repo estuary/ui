@@ -17,9 +17,9 @@ export const fieldOutcomeMessages: {
         id: 'fieldSelection.table.label.connectorOmits',
         translatedId: 'fieldSelection.table.label.translated.fieldOmitted',
     },
-    [RejectReason.CONNECTOR_UNSATISFIABLE]: {
-        id: 'fieldSelection.table.label.connectorUnsatisfiable',
-        translatedId: 'fieldSelection.table.label.translated.unsatisfiable',
+    [RejectReason.CONNECTOR_INCOMPATIBLE]: {
+        id: 'fieldSelection.table.label.connectorIncompatible',
+        translatedId: 'fieldSelection.table.label.translated.incompatible',
     },
     [RejectReason.COVERED_LOCATION]: {
         id: 'fieldSelection.table.label.coveredLocation',
@@ -31,6 +31,10 @@ export const fieldOutcomeMessages: {
     },
     [RejectReason.DUPLICATE_LOCATION]: {
         id: 'fieldSelection.table.label.duplicateLocation',
+        translatedId: '',
+    },
+    [RejectReason.EXCLUDED_PARENT]: {
+        id: 'fieldSelection.table.label.excludedParent',
         translatedId: '',
     },
     [RejectReason.NOT_SELECTED]: {
