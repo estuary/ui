@@ -26,7 +26,7 @@ function RefreshButton({ disabled, buttonLabelId }: Props) {
                 variant="text"
                 onClick={async () => {
                     logRocketEvent(CustomEvents.FIELD_SELECTION_REFRESH_MANUAL);
-                    await refresh();
+                    refresh();
                 }}
             >
                 <FormattedMessage id={buttonLabelId} />
