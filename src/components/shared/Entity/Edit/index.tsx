@@ -6,7 +6,9 @@ import { useEffect, useMemo } from 'react';
 
 import { Box, Collapse } from '@mui/material';
 
+import { closeSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 
 import CollectionConfig from 'src/components/collection/Config';
 import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
@@ -122,6 +124,10 @@ function EntityEdit({
         () => draftSpecs.filter(({ spec_type }) => spec_type === entityType),
         [draftSpecs, entityType]
     );
+
+    useUnmount(() => {
+        closeSnackbar();
+    });
 
     useEffect(() => {
         const resetDraftIdFlag =
