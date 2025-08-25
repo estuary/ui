@@ -9,6 +9,11 @@ import { useIntl } from 'react-intl';
 
 import MenuActions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuActions';
 import MenuOptions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuOptions';
+import {
+    defaultOutline,
+    paperBackground,
+    paperBackgroundImage,
+} from 'src/context/Theme';
 
 const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
     const intl = useIntl();
@@ -43,6 +48,18 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
                 anchorEl={anchorEl}
                 onClose={closeMenu}
                 open={openMenu}
+                PaperProps={{
+                    sx: {
+                        filter: 'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
+                        mt: 1.5,
+                        overflow: 'visible',
+                        bgcolor: (theme) => paperBackground[theme.palette.mode],
+                        backgroundImage: (theme) =>
+                            paperBackgroundImage[theme.palette.mode],
+                        border: (theme) => defaultOutline[theme.palette.mode],
+                        borderRadius: 3,
+                    },
+                }}
                 sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
             >
                 <MenuOptions />
