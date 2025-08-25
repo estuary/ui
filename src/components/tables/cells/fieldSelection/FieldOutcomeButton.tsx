@@ -34,7 +34,7 @@ const FieldOutcomeButton = ({
 
     return (
         <IconButtonWithPopper
-            buttonProps={{ style: { padding: 4 } }}
+            buttonProps={{ style: { cursor: 'default', padding: 4 } }}
             popper={
                 <FieldOutcomeOverview
                     bindingUUID={bindingUUID}
