@@ -3,7 +3,8 @@ import { Box, Button } from '@mui/material';
 import { Refresh } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
-import useFieldSelectionRefresh from 'src/components/editor/Bindings/FieldSelection/useFieldSelectionRefresh';
+import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import useFieldSelectionRefresh from 'src/hooks/fieldSelection/useFieldSelectionRefresh';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
@@ -15,15 +16,17 @@ interface Props {
 function RefreshButton({ disabled, buttonLabelId }: Props) {
     const { updating, refresh } = useFieldSelectionRefresh();
 
+    const persistedDraftId = useEditorStore_persistedDraftId();
+
     return (
         <Box>
             <Button
-                disabled={Boolean(updating || disabled)}
+                disabled={Boolean(updating || disabled || !persistedDraftId)}
                 startIcon={<Refresh style={{ fontSize: 12 }} />}
                 variant="text"
                 onClick={async () => {
                     logRocketEvent(CustomEvents.FIELD_SELECTION_REFRESH_MANUAL);
-                    await refresh();
+                    refresh();
                 }}
             >
                 <FormattedMessage id={buttonLabelId} />

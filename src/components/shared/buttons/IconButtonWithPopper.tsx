@@ -3,17 +3,17 @@ import type { ButtonWithPopperProps } from 'src/components/shared/buttons/types'
 
 import { useState } from 'react';
 
-import { Button } from '@mui/material';
+import { IconButton } from '@mui/material';
 
 import PopperWrapper from 'src/components/shared/PopperWrapper';
 
-function ButtonWithPopper({
+const IconButtonWithPopper = ({
     buttonProps,
     children,
     popper,
     popperProps,
     trigger = 'click',
-}: ButtonWithPopperProps) {
+}: ButtonWithPopperProps) => {
     const [open, setOpen] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -26,7 +26,7 @@ function ButtonWithPopper({
 
     return (
         <>
-            <Button
+            <IconButton
                 {...buttonProps}
                 onClick={
                     trigger === 'click' || trigger === undefined
@@ -45,7 +45,7 @@ function ButtonWithPopper({
                 }
             >
                 {children}
-            </Button>
+            </IconButton>
 
             <PopperWrapper
                 anchorEl={anchorEl}
@@ -57,6 +57,6 @@ function ButtonWithPopper({
             </PopperWrapper>
         </>
     );
-}
+};
 
-export default ButtonWithPopper;
+export default IconButtonWithPopper;
