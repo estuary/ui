@@ -163,7 +163,11 @@ export default function useValidateFieldSelection() {
             return;
         }
 
-        let rejectedRequests: { collection: string; uuid: string }[] = [];
+        let rejectedRequests: {
+            collection: string;
+            uuid: string;
+            validationEligible: boolean;
+        }[] = [];
 
         const validationRequests = Object.entries(resourceConfigs)
             .filter(([uuid, _config]) => targetBindingUUIDs.includes(uuid))
@@ -171,6 +175,9 @@ export default function useValidateFieldSelection() {
                 rejectedRequests.push({
                     collection: meta.collectionName,
                     uuid,
+                    validationEligible:
+                        meta.builtBindingIndex > -1 &&
+                        meta.validatedBindingIndex > -1,
                 });
 
                 advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
@@ -231,19 +238,27 @@ export default function useValidateFieldSelection() {
             )
             .finally(() => {
                 if (rejectedRequests.length > 0) {
-                    rejectedRequests.forEach(({ collection, uuid }) => {
-                        enqueueSnackbar(
-                            intl.formatMessage(
-                                {
-                                    id: 'fieldSelection.error.validationFailed',
-                                },
-                                { collection }
-                            ),
-                            { ...snackbarSettings, variant: 'error' }
-                        );
+                    rejectedRequests.forEach(
+                        ({ collection, uuid, validationEligible }) => {
+                            if (validationEligible) {
+                                enqueueSnackbar(
+                                    intl.formatMessage(
+                                        {
+                                            id: 'fieldSelection.error.validationFailed',
+                                        },
+                                        { collection }
+                                    ),
+                                    { ...snackbarSettings, variant: 'error' }
+                                );
 
-                        setValidationFailure(uuid);
-                    });
+                                setValidationFailure(uuid);
+
+                                return;
+                            }
+
+                            advanceHydrationStatus('VALIDATING', uuid);
+                        }
+                    );
                 }
             });
     }, [
