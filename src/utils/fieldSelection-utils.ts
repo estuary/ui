@@ -8,7 +8,8 @@ import type {
 } from 'src/types/schemaModels';
 import type { FieldOutcome } from 'src/types/wasm';
 
-export const DEFAULT_RECOMMENDED_FLAG: BaseMaterializationFields['recommended'] = 1;
+export const DEFAULT_RECOMMENDED_FLAG: BaseMaterializationFields['recommended'] =
+    true;
 
 export const isSelectedField = (outcome: FieldOutcome): boolean => {
     return Boolean(!outcome?.reject && outcome?.select);
