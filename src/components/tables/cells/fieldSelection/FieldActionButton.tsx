@@ -33,7 +33,9 @@ export default function FieldActionButton({
             (outcome.select && !outcome.reject) ||
             (!outcome.select && outcome.reject)
                 ? fieldOutcomeMessages[
-                      outcome.select?.reason ?? outcome.reject?.reason ?? ''
+                      outcome.select?.reason?.type ??
+                          outcome.reject?.reason?.type ??
+                          ''
                   ]?.translatedId
                 : '';
 

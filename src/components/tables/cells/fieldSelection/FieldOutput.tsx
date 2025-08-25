@@ -11,7 +11,7 @@ const FieldOutput = ({ indicateConflict, output }: FieldOutputProps) => {
 
     const titleId =
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        fieldOutcomeMessages[output?.reason]?.id ??
+        fieldOutcomeMessages[output?.reason?.type]?.id ??
         'fieldSelection.table.label.unknown';
 
     return (

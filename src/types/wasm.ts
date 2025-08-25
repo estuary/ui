@@ -70,10 +70,20 @@ export interface FieldSelectionResult {
 
 export interface RejectOutput {
     detail: string;
-    reason: RejectReason;
+    reason: RejectOutputReason;
+}
+
+interface RejectOutputReason {
+    type: RejectReason;
+    [key: string]: any;
 }
 
 export interface SelectOutput {
     detail: string;
-    reason: SelectReason;
+    reason: SelectOutputReason;
+}
+
+interface SelectOutputReason {
+    type: SelectReason;
+    [key: string]: any;
 }
