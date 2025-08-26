@@ -108,27 +108,6 @@ function Rows({ columnToSort, columns, data, sortDirection }: RowsProps) {
         );
     }
 
-    // if (columnToSort === 'constraint.type') {
-    //     return (
-    //         <>
-    //             {data
-    //                 .sort(
-    //                     (
-    //                         first: CompositeProjection,
-    //                         second: CompositeProjection
-    //                     ) => constraintTypeSort(first, second, sortDirection)
-    //                 )
-    //                 .map((record: CompositeProjection, index: number) => (
-    //                     <Row
-    //                         columns={columns}
-    //                         row={record}
-    //                         key={`field-selection-table-rows-${index}`}
-    //                     />
-    //                 ))}
-    //         </>
-    //     );
-    // }
-
     // Use the orderBy lodash function when not sorting fields.
     return (
         <>
