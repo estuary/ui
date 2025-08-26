@@ -79,9 +79,6 @@ export default function useValidateFieldSelection() {
         (state) => state.initializeSelections
     );
     const resourceConfigs = useBindingStore((state) => state.resourceConfigs);
-    const setRecommendFields = useBindingStore(
-        (state) => state.setRecommendFields
-    );
     const targetBindingUUIDs = useBindingStore(
         useShallow((state) =>
             Object.entries(state.selections)
@@ -281,7 +278,6 @@ export default function useValidateFieldSelection() {
         initializeSelections,
         intl,
         resourceConfigs,
-        setRecommendFields,
         setValidationFailure,
         targetBindingUUIDs,
         validateFieldSelection,
