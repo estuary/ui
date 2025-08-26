@@ -40,7 +40,7 @@ export default function SaveButton({
 
                 setRecommendFields(bindingUUID, recommendedFlag);
 
-                advanceHydrationStatus('HYDRATED');
+                advanceHydrationStatus('HYDRATED', bindingUUID);
                 close();
             }}
             size="small"
