@@ -23,7 +23,11 @@ export const useEntityStatusStore_autoDiscoverFailure = (
 ) => {
     const response = useEntityStatusStore_singleResponse(catalogName);
 
-    if (!response || !isCaptureControllerStatus(response.controller_status)) {
+    if (
+        !response ||
+        !response?.controller_status ||
+        !isCaptureControllerStatus(response.controller_status)
+    ) {
         return undefined;
     }
 
@@ -35,7 +39,11 @@ export const useEntityStatusStore_autoDiscoverLastSuccess = (
 ) => {
     const response = useEntityStatusStore_singleResponse(catalogName);
 
-    if (!response || !isCaptureControllerStatus(response.controller_status)) {
+    if (
+        !response ||
+        !response?.controller_status ||
+        !isCaptureControllerStatus(response.controller_status)
+    ) {
         return undefined;
     }
 

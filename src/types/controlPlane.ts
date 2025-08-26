@@ -75,10 +75,10 @@ export interface EntityStatusResponse {
     live_spec_id: string;
     live_spec_updated_at: string;
     spec_type: Entity;
-    controller_status: ControllerStatus;
     connector_status?: ConnectorStatus | null;
     controller_error?: string | null;
     controller_failures?: number;
+    controller_status?: ControllerStatus | null;
     disabled?: boolean;
 }
 
