@@ -29,7 +29,6 @@ import {
 } from 'src/utils/fieldSelection-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
-import { getRelatedBindings } from 'src/utils/workflow-utils';
 
 interface FieldSelectionValidationResponse {
     bindingUUID: string;
@@ -101,49 +100,24 @@ export default function useValidateFieldSelection() {
             draftSpecsRow: DraftSpecQuery,
             builtBindingIndex: number,
             draftedBindingIndex: number,
-            validatedBindingIndex: number,
-            collection: string
+            validatedBindingIndex: number
         ): Promise<FieldSelectionValidationResponse> => {
-            let builtBinding: BuiltBinding | undefined = undefined;
-            let draftedBinding: MaterializationBinding | undefined = undefined;
-            let validatedBinding: ValidatedBinding | undefined = undefined;
+            const builtBinding: BuiltBinding | undefined =
+                builtBindingIndex > -1
+                    ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
+                    : undefined;
 
-            if (
-                builtBindingIndex > -1 &&
-                draftedBindingIndex > -1 &&
+            const draftedBinding: MaterializationBinding | undefined =
+                draftedBindingIndex > -1
+                    ? draftSpecsRow.spec.bindings.at(draftedBindingIndex)
+                    : undefined;
+
+            const validatedBinding: ValidatedBinding | undefined =
                 validatedBindingIndex > -1
-            ) {
-                builtBinding =
-                    builtBindingIndex > -1
-                        ? draftSpecsRow.built_spec?.bindings.at(
-                              builtBindingIndex
-                          )
-                        : undefined;
-
-                draftedBinding =
-                    draftedBindingIndex > -1
-                        ? draftSpecsRow.spec.bindings.at(draftedBindingIndex)
-                        : undefined;
-
-                validatedBinding =
-                    validatedBindingIndex > -1
-                        ? draftSpecsRow.validated?.bindings.at(
-                              validatedBindingIndex
-                          )
-                        : undefined;
-            } else {
-                const relatedBindings = getRelatedBindings(
-                    draftSpecsRow.built_spec ?? {},
-                    draftSpecsRow.spec,
-                    draftedBindingIndex,
-                    collection,
-                    draftSpecsRow.validated ?? {}
-                );
-
-                builtBinding = relatedBindings.values.built;
-                draftedBinding = relatedBindings.values.drafted;
-                validatedBinding = relatedBindings.values.validated;
-            }
+                    ? draftSpecsRow.validated?.bindings.at(
+                          validatedBindingIndex
+                      )
+                    : undefined;
 
             if (!builtBinding || !draftedBinding || !validatedBinding) {
                 return Promise.reject(
@@ -205,32 +179,38 @@ export default function useValidateFieldSelection() {
         const validationRequests = Object.entries(resourceConfigs)
             .filter(([uuid, _config]) => targetBindingUUIDs.includes(uuid))
             .map(([uuid, { meta }]) => {
-                rejectedRequests.push({
-                    collection: meta.collectionName,
-                    uuid,
-                    validationEligible:
-                        meta.builtBindingIndex > -1 &&
-                        meta.validatedBindingIndex > -1,
-                });
+                const bindingsExists =
+                    meta.builtBindingIndex > -1 &&
+                    meta.validatedBindingIndex > -1;
 
-                advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
+                if (bindingsExists) {
+                    advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
 
-                return validateFieldSelection(
-                    uuid,
-                    draftSpecsRow,
-                    meta.builtBindingIndex,
-                    meta.bindingIndex,
-                    meta.validatedBindingIndex,
-                    meta.collectionName
-                );
-            });
+                    rejectedRequests.push({
+                        collection: meta.collectionName,
+                        uuid,
+                        validationEligible: bindingsExists,
+                    });
+
+                    return validateFieldSelection(
+                        uuid,
+                        draftSpecsRow,
+                        meta.builtBindingIndex,
+                        meta.bindingIndex,
+                        meta.validatedBindingIndex
+                    );
+                }
+
+                return null;
+            })
+            .filter((promise) => promise !== null);
 
         Promise.allSettled(validationRequests)
             .then(
                 (responses) => {
                     responses.forEach((response) => {
                         if (isPromiseFulfilledResult(response)) {
-                            if (!response.value.result) {
+                            if (!response.value || !response.value.result) {
                                 return;
                             }
 
