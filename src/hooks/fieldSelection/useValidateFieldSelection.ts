@@ -29,6 +29,7 @@ import {
 } from 'src/utils/fieldSelection-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
+import { getRelatedBindings } from 'src/utils/workflow-utils';
 
 interface FieldSelectionValidationResponse {
     bindingUUID: string;
@@ -100,24 +101,49 @@ export default function useValidateFieldSelection() {
             draftSpecsRow: DraftSpecQuery,
             builtBindingIndex: number,
             draftedBindingIndex: number,
-            validatedBindingIndex: number
+            validatedBindingIndex: number,
+            collection: string
         ): Promise<FieldSelectionValidationResponse> => {
-            const builtBinding: BuiltBinding | undefined =
-                builtBindingIndex > -1
-                    ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
-                    : undefined;
+            let builtBinding: BuiltBinding | undefined = undefined;
+            let draftedBinding: MaterializationBinding | undefined = undefined;
+            let validatedBinding: ValidatedBinding | undefined = undefined;
 
-            const draftedBinding: MaterializationBinding | undefined =
-                draftedBindingIndex > -1
-                    ? draftSpecsRow.spec.bindings.at(draftedBindingIndex)
-                    : undefined;
-
-            const validatedBinding: ValidatedBinding | undefined =
+            if (
+                builtBindingIndex > -1 &&
+                draftedBindingIndex > -1 &&
                 validatedBindingIndex > -1
-                    ? draftSpecsRow.validated?.bindings.at(
-                          validatedBindingIndex
-                      )
-                    : undefined;
+            ) {
+                builtBinding =
+                    builtBindingIndex > -1
+                        ? draftSpecsRow.built_spec?.bindings.at(
+                              builtBindingIndex
+                          )
+                        : undefined;
+
+                draftedBinding =
+                    draftedBindingIndex > -1
+                        ? draftSpecsRow.spec.bindings.at(draftedBindingIndex)
+                        : undefined;
+
+                validatedBinding =
+                    validatedBindingIndex > -1
+                        ? draftSpecsRow.validated?.bindings.at(
+                              validatedBindingIndex
+                          )
+                        : undefined;
+            } else {
+                const relatedBindings = getRelatedBindings(
+                    draftSpecsRow.built_spec ?? {},
+                    draftSpecsRow.spec,
+                    draftedBindingIndex,
+                    collection,
+                    draftSpecsRow.validated ?? {}
+                );
+
+                builtBinding = relatedBindings.values.built;
+                draftedBinding = relatedBindings.values.drafted;
+                validatedBinding = relatedBindings.values.validated;
+            }
 
             if (!builtBinding || !draftedBinding || !validatedBinding) {
                 return Promise.reject(
@@ -194,7 +220,8 @@ export default function useValidateFieldSelection() {
                     draftSpecsRow,
                     meta.builtBindingIndex,
                     meta.bindingIndex,
-                    meta.validatedBindingIndex
+                    meta.validatedBindingIndex,
+                    meta.collectionName
                 );
             });
 
