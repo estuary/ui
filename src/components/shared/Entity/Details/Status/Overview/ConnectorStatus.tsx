@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material';
 
-import StatusIndicator from 'src/components/shared/Entity/Details/Logs/Status/Overview/StatusIndicator';
+import StatusIndicator from 'src/components/shared/Entity/Details/Status/Overview/StatusIndicator';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';

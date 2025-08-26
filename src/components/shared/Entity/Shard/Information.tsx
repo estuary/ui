@@ -3,18 +3,25 @@ import type { TableColumns } from 'src/types';
 
 import { useState } from 'react';
 
-import { Grid, Stack, Table, TableContainer } from '@mui/material';
+import {
+    Box,
+    Grid,
+    Stack,
+    Table,
+    TableContainer,
+    Typography,
+} from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
-import CardWrapper from 'src/components/shared/CardWrapper';
 import ShardAlerts from 'src/components/shared/Entity/Shard/Alerts';
 import InformationTableBody from 'src/components/shared/Entity/Shard/TableBody';
 import InformationTableFooter from 'src/components/shared/Entity/Shard/TableFooter';
 import InformationTableHeader from 'src/components/shared/Entity/Shard/TableHeader';
 import Message from 'src/components/shared/Error/Message';
 import ExternalLink from 'src/components/shared/ExternalLink';
+import { cardHeaderSx } from 'src/context/Theme';
 import { useShardDetail_error } from 'src/stores/ShardDetail/hooks';
 
 interface Props {
@@ -43,20 +50,23 @@ function ShardInformation({ taskName, taskTypes }: Props) {
     const error = useShardDetail_error();
 
     return (
-        <CardWrapper
-            message={
-                <Stack direction="row" spacing={1}>
-                    <FormattedMessage id="detailsPanel.shardDetails.title" />
-                    <ExternalLink
-                        link={intl.formatMessage({
-                            id: 'detailsPanel.shardDetails.docPath',
-                        })}
-                    >
-                        <FormattedMessage id="terms.documentation" />
-                    </ExternalLink>
-                </Stack>
-            }
-        >
+        <Box style={{ flexGrow: 1 }}>
+            <Stack direction="row" spacing={1} style={{ marginBottom: 8 }}>
+                <Typography component="div" sx={{ ...cardHeaderSx, mr: 3 }}>
+                    {intl.formatMessage({
+                        id: 'detailsPanel.shardDetails.title',
+                    })}
+                </Typography>
+
+                <ExternalLink
+                    link={intl.formatMessage({
+                        id: 'detailsPanel.shardDetails.docPath',
+                    })}
+                >
+                    <FormattedMessage id="terms.documentation" />
+                </ExternalLink>
+            </Stack>
+
             {error ? (
                 <AlertBox
                     severity="error"
@@ -104,7 +114,7 @@ function ShardInformation({ taskName, taskTypes }: Props) {
                     </Grid>
                 </>
             )}
-        </CardWrapper>
+        </Box>
     );
 }
 
