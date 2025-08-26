@@ -68,7 +68,6 @@ export interface EntityControllerStatus extends PublicationControllerStatus {
 
 export interface EntityStatusResponse {
     catalog_name: string;
-    controller_failures: number;
     controller_next_run: string | null;
     controller_updated_at: string;
     last_build_id: string;
@@ -79,6 +78,7 @@ export interface EntityStatusResponse {
     controller_status: ControllerStatus;
     connector_status?: ConnectorStatus | null;
     controller_error?: string | null;
+    controller_failures?: number;
     disabled?: boolean;
 }
 
