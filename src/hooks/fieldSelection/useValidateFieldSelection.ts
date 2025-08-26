@@ -1,4 +1,5 @@
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
+import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
 import type {
     BuiltBinding,
     MaterializationBinding,
@@ -37,6 +38,13 @@ interface FieldSelectionValidationResponse {
         | MaterializationFields_Legacy
         | undefined;
     result: FieldSelectionResult | undefined;
+}
+
+export interface ValidationRequestMetadata {
+    hasConflicts: boolean;
+    recommended: boolean | number;
+    selections: FieldSelectionDictionary;
+    uuid: string;
 }
 
 // evaluate_field selection WASM routine documentation can be found here:
@@ -169,6 +177,8 @@ export default function useValidateFieldSelection() {
             validationEligible: boolean;
         }[] = [];
 
+        let validatedRequests: ValidationRequestMetadata[] = [];
+
         const validationRequests = Object.entries(resourceConfigs)
             .filter(([uuid, _config]) => targetBindingUUIDs.includes(uuid))
             .map(([uuid, { meta }]) => {
@@ -213,16 +223,14 @@ export default function useValidateFieldSelection() {
                                 builtBinding?.collection.projections
                             );
 
-                            setRecommendFields(
-                                bindingUUID,
-                                fieldStanza?.recommended ??
-                                    DEFAULT_RECOMMENDED_FLAG
-                            );
-                            initializeSelections(
-                                bindingUUID,
-                                updatedSelections,
-                                result.hasConflicts
-                            );
+                            validatedRequests.push({
+                                hasConflicts: result.hasConflicts,
+                                recommended:
+                                    fieldStanza?.recommended ??
+                                    DEFAULT_RECOMMENDED_FLAG,
+                                selections: updatedSelections,
+                                uuid: bindingUUID,
+                            });
 
                             rejectedRequests = rejectedRequests.filter(
                                 ({ uuid }) => uuid !== bindingUUID
@@ -237,6 +245,10 @@ export default function useValidateFieldSelection() {
                 }
             )
             .finally(() => {
+                if (validatedRequests.length > 0) {
+                    initializeSelections(validatedRequests);
+                }
+
                 if (rejectedRequests.length > 0) {
                     rejectedRequests.forEach(
                         ({ collection, uuid, validationEligible }) => {

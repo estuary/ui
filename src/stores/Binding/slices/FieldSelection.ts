@@ -1,4 +1,5 @@
 import type { FieldSelectionType } from 'src/components/fieldSelection/types';
+import type { ValidationRequestMetadata } from 'src/hooks/fieldSelection/useValidateFieldSelection';
 import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
@@ -50,11 +51,7 @@ export interface StoreWithFieldSelection {
     setRecommendFields: (bindingUUID: string, value: boolean | number) => void;
 
     selections: BindingFieldSelectionDictionary;
-    initializeSelections: (
-        bindingUUID: string,
-        selections: FieldSelectionDictionary,
-        hasConflicts: boolean
-    ) => void;
+    initializeSelections: (values: ValidationRequestMetadata[]) => void;
     setSingleSelection: (
         bindingUUID: string,
         field: string,
@@ -194,20 +191,26 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    initializeSelections: (bindingUUID, selections, hasConflicts) => {
+    initializeSelections: (values) => {
         set(
             produce((state: BindingState) => {
-                const evaluatedStatus = getHydrationStatus(
-                    state.selections[bindingUUID].status
-                );
+                values.forEach(
+                    ({ hasConflicts, recommended, selections, uuid }) => {
+                        const evaluatedStatus = getHydrationStatus(
+                            state.selections[uuid].status
+                        );
 
-                state.selections[bindingUUID] = {
-                    hasConflicts,
-                    hydrating: isHydrating(evaluatedStatus),
-                    status: evaluatedStatus,
-                    validationFailed: false,
-                    value: selections,
-                };
+                        state.recommendFields[uuid] = recommended;
+
+                        state.selections[uuid] = {
+                            hasConflicts,
+                            hydrating: isHydrating(evaluatedStatus),
+                            status: evaluatedStatus,
+                            validationFailed: false,
+                            value: selections,
+                        };
+                    }
+                );
             }),
             false,
             'Selections Initialized'
