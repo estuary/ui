@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import useConstant from 'use-constant';
 
 import { Box, Divider, Stack, Typography } from '@mui/material';
 
@@ -17,6 +18,8 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
+import EntityRelationshipsHydrator from 'src/stores/EntityRelationships/Hydrator';
+import { useEntityRelationshipStore } from 'src/stores/EntityRelationships/Store';
 import EntityStatusHydrator from 'src/stores/EntityStatus/Hydrator';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
 import { EditorStoreNames } from 'src/stores/names';
@@ -32,6 +35,8 @@ function EntityDetails() {
         []
     );
 
+    const lastChecked = useConstant(() => Date.now().toString());
+
     // Fetch params from URL
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
@@ -39,8 +44,13 @@ function EntityDetails() {
         (state) => state.resetState
     );
 
+    const resetEntityRelationshipState = useEntityRelationshipStore(
+        (state) => state.resetState
+    );
+
     useUnmount(() => {
         resetEntityStatusState();
+        resetEntityRelationshipState();
     });
 
     return (
@@ -48,37 +58,42 @@ function EntityDetails() {
             <LiveSpecsHydrator catalogName={catalogName} localZustandScope>
                 <ShardHydrator catalogName={catalogName}>
                     <EntityStatusHydrator catalogName={catalogName}>
-                        <Stack spacing={2} sx={{ m: 1 }}>
-                            <Stack
-                                direction="row"
-                                sx={{ justifyContent: 'space-between' }}
-                            >
-                                <Typography
-                                    component="span"
-                                    variant="h6"
-                                    sx={{
-                                        ...truncateTextSx,
-                                        alignItems: 'center',
-                                    }}
+                        <EntityRelationshipsHydrator
+                            catalogName={catalogName}
+                            lastChecked={lastChecked}
+                        >
+                            <Stack spacing={2} sx={{ m: 1 }}>
+                                <Stack
+                                    direction="row"
+                                    sx={{ justifyContent: 'space-between' }}
                                 >
-                                    {catalogName}
-                                </Typography>
+                                    <Typography
+                                        component="span"
+                                        variant="h6"
+                                        sx={{
+                                            ...truncateTextSx,
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        {catalogName}
+                                    </Typography>
 
-                                <Stack direction="row">
-                                    <EditButton buttonVariant="outlined" />
+                                    <Stack direction="row">
+                                        <EditButton buttonVariant="outlined" />
 
-                                    <MaterializeButton />
+                                        <MaterializeButton />
+                                    </Stack>
                                 </Stack>
+
+                                <Divider />
+
+                                <DetailTabs />
                             </Stack>
 
-                            <Divider />
-
-                            <DetailTabs />
-                        </Stack>
-
-                        <Box sx={{ m: 1 }}>
-                            <RenderTab />
-                        </Box>
+                            <Box sx={{ m: 1 }}>
+                                <RenderTab />
+                            </Box>
+                        </EntityRelationshipsHydrator>
                     </EntityStatusHydrator>
                 </ShardHydrator>
             </LiveSpecsHydrator>

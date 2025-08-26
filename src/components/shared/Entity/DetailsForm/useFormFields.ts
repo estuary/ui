@@ -1,4 +1,3 @@
-import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import type { Details } from 'src/stores/DetailsForm/types';
 import type { EntityWithCreateWorkflow } from 'src/types';
 
@@ -8,15 +7,15 @@ import { useIntl } from 'react-intl';
 
 import useConnectorField from 'src/components/shared/Entity/DetailsForm/useConnectorField';
 import useDataPlaneField from 'src/components/shared/Entity/DetailsForm/useDataPlaneField';
+import { useEvaluateStorageMapping } from 'src/components/shared/Entity/DetailsForm/useEvaluateStorageMapping';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { CATALOG_NAME_SCOPE } from 'src/forms/renderers/CatalogName';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { stripPathing } from 'src/utils/misc-utils';
 
-export default function useFormFields(
-    connectorTags: ConnectorWithTagDetailQuery[],
-    entityType: EntityWithCreateWorkflow
-) {
+export default function useFormFields(entityType: EntityWithCreateWorkflow) {
     const intl = useIntl();
     const isEdit = useEntityWorkflow_Editing();
 
@@ -28,10 +27,14 @@ export default function useFormFields(
         (state) => state.setDraftedEntityName
     );
 
-    const { connectorSchema, connectorUISchema, evaluateConnector } =
-        useConnectorField(connectorTags, entityType);
+    const setCatalogName = useWorkflowStore((state) => state.setCatalogName);
 
-    const { dataPlaneSchema, dataPlaneUISchema, evaluateDataPlane } =
+    const { evaluateStorageMapping } = useEvaluateStorageMapping();
+
+    const { connectorSchema, connectorUISchema, setConnector } =
+        useConnectorField(entityType);
+
+    const { dataPlaneSchema, dataPlaneUISchema, setDataPlane } =
         useDataPlaneField(entityType);
 
     const schema = useMemo(
@@ -72,12 +75,24 @@ export default function useFormFields(
     }, [connectorUISchema, dataPlaneUISchema, intl]);
 
     const updateDetails = (details: Details) => {
-        const selectedDataPlaneId = details.data.dataPlane?.id;
+        const tenant = stripPathing(details.data.entityName, true);
+        const dataPlaneOption = evaluateStorageMapping(
+            details.data.entityName,
+            details.data.dataPlane
+        );
 
-        evaluateDataPlane(details, selectedDataPlaneId);
-        evaluateConnector(details, selectedDataPlaneId);
-
+        // The field-specific functions below, `setDataPlane` and `setConnector`,
+        // set details form state that can be overridden by `setDetails`. Consequently,
+        // `setDetails` should always be called first.
         setDetails(details);
+
+        setDataPlane(details, dataPlaneOption);
+        setConnector(details, dataPlaneOption?.id);
+
+        setCatalogName({
+            root: details.data.entityName.substring(tenant.length),
+            tenant,
+        });
 
         // For edit we can set the Drafted Entity Name because the store sets the name
         //  and then set the entityNameChanged flag to false. Then we can reference

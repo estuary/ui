@@ -1,20 +1,17 @@
-import type { ChipProps } from '@mui/material';
+import type { ChipStatusProps } from 'src/components/tables/cells/types';
 
-import { Chip, TableCell } from '@mui/material';
+import { TableCell } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-interface Props {
-    messageId: string;
-    color: ChipProps['color'];
-}
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
-function ChipStatus({ messageId, color }: Props) {
+function ChipStatus({ messageId, color }: ChipStatusProps) {
     const intl = useIntl();
 
     return (
         <TableCell>
-            <Chip
+            <OutlinedChip
                 component="span"
                 color={color}
                 label={intl.formatMessage({ id: messageId })}

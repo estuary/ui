@@ -18,9 +18,18 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         pluralId: 'terms.sources.plural',
         routes: {
             connectorSelect: authenticatedRoutes.captures.create.fullPath,
+            createNewExpress:
+                authenticatedRoutes.express.captureCreate.new.fullPath,
             createNew: authenticatedRoutes.captures.create.new.fullPath,
             details: authenticatedRoutes.captures.details.overview.fullPath,
             viewAll: authenticatedRoutes.captures.fullPath,
+        },
+        details: {
+            relatedEntitiesContentIds: {
+                collections: 'data.writes_to',
+                readBy: undefined,
+                writtenBy: undefined,
+            },
         },
         selector: {
             disableMultiSelect: true,
@@ -41,6 +50,12 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             },
         },
         termId: 'terms.sources',
+        workFlows: {
+            bindingsEmptyTitleIntlKey:
+                'entityCreate.bindingsConfig.noRowsTitle.capture',
+            bindingsEmptyMessageIntlKey:
+                'entityCreate.bindingsConfig.noRows.capture',
+        },
     },
     collection: {
         Icon: DatabaseScript,
@@ -49,9 +64,17 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         pluralId: 'terms.collections.plural',
         routes: {
             connectorSelect: authenticatedRoutes.collections.create.fullPath,
+            createNewExpress: '',
             createNew: authenticatedRoutes.collections.create.new.fullPath,
             details: authenticatedRoutes.collections.details.overview.fullPath,
             viewAll: authenticatedRoutes.collections.fullPath,
+        },
+        details: {
+            relatedEntitiesContentIds: {
+                collections: undefined,
+                readBy: 'data.readBy',
+                writtenBy: 'data.writtenBy',
+            },
         },
         selector: {
             filterIntlKey: 'collectionsTable.filterLabel',
@@ -70,6 +93,11 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             },
         },
         termId: 'terms.collections',
+        workFlows: {
+            bindingsEmptyTitleIntlKey:
+                'entityCreate.bindingsConfig.noRowsTitle',
+            bindingsEmptyMessageIntlKey: 'entityCreate.bindingsConfig.noRows',
+        },
     },
     materialization: {
         Icon: CloudDownload,
@@ -79,10 +107,18 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         routes: {
             connectorSelect:
                 authenticatedRoutes.materializations.create.fullPath,
+            createNewExpress: '',
             createNew: authenticatedRoutes.materializations.create.new.fullPath,
             details:
                 authenticatedRoutes.materializations.details.overview.fullPath,
             viewAll: authenticatedRoutes.materializations.fullPath,
+        },
+        details: {
+            relatedEntitiesContentIds: {
+                collections: 'data.reads_from',
+                readBy: undefined,
+                writtenBy: undefined,
+            },
         },
         selector: {
             disableMultiSelect: true,
@@ -103,5 +139,10 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
             },
         },
         termId: 'terms.destinations',
+        workFlows: {
+            bindingsEmptyTitleIntlKey:
+                'entityCreate.bindingsConfig.noRowsTitle',
+            bindingsEmptyMessageIntlKey: 'entityCreate.bindingsConfig.noRows',
+        },
     },
 };

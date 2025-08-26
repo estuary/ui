@@ -38,6 +38,17 @@ export default defineConfig({
     // Need to allow more time because our discovers can take 30 seconds
     timeout: 60000,
 
+    expect: {
+        // Defaults on image matching are EXACT so lowering them a bit
+        toHaveScreenshot: {
+            maxDiffPixels: 10,
+        },
+
+        toMatchSnapshot: {
+            maxDiffPixelRatio: 0.05,
+        },
+    },
+
     /* Configure projects for major browsers */
     projects: [
         {

@@ -13,25 +13,25 @@ import ConstraintDetails from 'src/components/tables/cells/fieldSelection/Constr
 import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
 import {
     constraintTypeSort,
-    displayOptionalColumn,
     optionalColumnIntlKeys,
 } from 'src/components/tables/FieldSelection/shared';
 import {
     doubleElevationHoverBackground,
-    getStickyTableCell,
+    wrappingTableBodyCell,
 } from 'src/context/Theme';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { basicSort_string } from 'src/utils/misc-utils';
+import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ columns, row }: RowProps) {
     const currentBindingUUID = useBinding_currentBindingUUID();
 
-    const pointerColumnDisplayed = displayOptionalColumn(
+    const pointerColumnVisible = isColumnVisible(
         columns,
         optionalColumnIntlKeys.pointer
     );
 
-    const detailsColumnDisplayed = displayOptionalColumn(
+    const detailsColumnVisible = isColumnVisible(
         columns,
         optionalColumnIntlKeys.details
     );
@@ -45,12 +45,12 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            <TableCell sx={getStickyTableCell()}>
+            <TableCell sx={wrappingTableBodyCell}>
                 <Typography>{row.field}</Typography>
             </TableCell>
 
-            {pointerColumnDisplayed ? (
-                <TableCell>
+            {pointerColumnVisible ? (
+                <TableCell sx={wrappingTableBodyCell}>
                     <Typography>{row.ptr}</Typography>
                 </TableCell>
             ) : null}
@@ -61,7 +61,7 @@ function Row({ columns, row }: RowProps) {
                 <TableCell />
             )}
 
-            {detailsColumnDisplayed ? (
+            {detailsColumnVisible ? (
                 row.constraint ? (
                     <ConstraintDetails constraint={row.constraint} />
                 ) : (

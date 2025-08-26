@@ -2,17 +2,18 @@ import type { DataPlaneOption, Details } from 'src/stores/DetailsForm/types';
 import type { EntityWithCreateWorkflow } from 'src/types';
 
 import { useCallback, useMemo } from 'react';
+import { StringParam, useQueryParams } from 'use-query-params';
 
 import { useIntl } from 'react-intl';
 
-import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import { DATA_PLANE_SCOPE } from 'src/forms/renderers/DataPlanes';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { formatDataPlaneName } from 'src/utils/dataPlane-utils';
-import { hasLength } from 'src/utils/misc-utils';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import {
+    DATA_PLANE_OPTION_TEMPLATE,
+    formatDataPlaneName,
+} from 'src/utils/dataPlane-utils';
 
 interface OneOfElement {
     const: DataPlaneOption;
@@ -22,14 +23,16 @@ interface OneOfElement {
 export default function useDataPlaneField(
     entityType: EntityWithCreateWorkflow
 ) {
-    const dataPlaneIdInURL = useGlobalSearchParams(
-        GlobalSearchParams.DATA_PLANE_ID
-    );
+    const [query, setQuery] = useQueryParams({
+        [GlobalSearchParams.DATA_PLANE_ID]: StringParam,
+    });
+    const dataPlaneIdInURL = query[GlobalSearchParams.DATA_PLANE_ID];
 
     const intl = useIntl();
 
-    const navigateToCreate = useEntityCreateNavigate();
-
+    const entityName = useDetailsFormStore(
+        (state) => state.details.data.entityName
+    );
     const options = useDetailsFormStore((state) => state.dataPlaneOptions);
     const storedDataPlaneId = useDetailsFormStore(
         (state) => state.details.data.dataPlane?.id
@@ -41,6 +44,8 @@ export default function useDataPlaneField(
         (state) => state.setEntityNameChanged
     );
 
+    const objectRoles = useEntitiesStore_capabilities_adminable(true);
+
     const dataPlaneSchema = useMemo(() => {
         const dataPlanesOneOf: OneOfElement[] = [];
 
@@ -49,6 +54,15 @@ export default function useDataPlaneField(
                 const title = formatDataPlaneName(option.dataPlaneName);
 
                 dataPlanesOneOf.push({ const: option, title });
+            });
+        } else {
+            // The details form store hydrator does not fail loudly when no data-plane options are found
+            // and the create workflow does not have a fallback data-plane option to use in that scenario.
+            dataPlanesOneOf.push({
+                const: DATA_PLANE_OPTION_TEMPLATE,
+                title: intl.formatMessage({
+                    id: 'workflows.dataPlane.label.noOptionsFound',
+                }),
             });
         }
 
@@ -63,51 +77,50 @@ export default function useDataPlaneField(
         };
     }, [intl, options]);
 
-    const evaluateDataPlane = useCallback(
-        (details: Details, selectedDataPlaneId: string | undefined) => {
-            if (selectedDataPlaneId !== storedDataPlaneId) {
-                const selectedOption = options.find(
-                    (option) => option.id === (selectedDataPlaneId ?? '')
-                );
+    const dataPlaneUISchema = useMemo(
+        () => ({
+            label: intl.formatMessage({
+                id: 'workflows.dataPlane.label',
+            }),
+            scope: `#/properties/${DATA_PLANE_SCOPE}`,
+            type: 'Control',
+            options: {
+                readOnly: objectRoles.length > 1 && entityName.length === 0,
+            },
+        }),
+        [entityName.length, intl, objectRoles.length]
+    );
 
-                setDetails_dataPlane(selectedOption);
+    const setDataPlane = useCallback(
+        (
+            details: Details,
+            selectedDataPlaneOption: DataPlaneOption | undefined
+        ) => {
+            if (selectedDataPlaneOption?.id !== storedDataPlaneId) {
+                setDetails_dataPlane(selectedDataPlaneOption);
 
-                const evaluatedDataPlaneId = hasLength(selectedDataPlaneId)
-                    ? selectedDataPlaneId
-                    : null;
-
-                if (evaluatedDataPlaneId !== dataPlaneIdInURL) {
+                if (selectedDataPlaneOption?.id !== dataPlaneIdInURL) {
                     setEntityNameChanged(details.data.entityName);
 
-                    // TODO (data-plane): Set search param of interest instead of using navigate function.
-                    navigateToCreate(entityType, {
-                        id: details.data.connectorImage.connectorId,
-                        advanceToForm: true,
-                        dataPlaneId: selectedDataPlaneId ?? null,
+                    setQuery({
+                        [GlobalSearchParams.DATA_PLANE_ID]:
+                            selectedDataPlaneOption?.id ?? null,
                     });
                 }
             }
         },
         [
             dataPlaneIdInURL,
-            entityType,
-            navigateToCreate,
-            options,
             setDetails_dataPlane,
             setEntityNameChanged,
+            setQuery,
             storedDataPlaneId,
         ]
     );
 
     return {
         dataPlaneSchema,
-        dataPlaneUISchema: {
-            label: intl.formatMessage({
-                id: 'workflows.dataPlane.label',
-            }),
-            scope: `#/properties/${DATA_PLANE_SCOPE}`,
-            type: 'Control',
-        },
-        evaluateDataPlane,
+        dataPlaneUISchema,
+        setDataPlane,
     };
 }

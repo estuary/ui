@@ -1,6 +1,6 @@
 import type { CollectionSelectorProps } from 'src/components/collection/Selector/types';
 
-import { Box, Stack, Typography, useTheme } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -21,38 +21,35 @@ function CollectionSelector({
         itemType ?? intl.formatMessage({ id: 'terms.collections' });
 
     return (
-        <Box>
-            <Box sx={{ height: '100%', width: '100%' }}>
-                <Stack
-                    direction="row"
-                    sx={{
-                        justifyContent: 'space-between',
-                        borderBottom: defaultOutline[theme.palette.mode],
-                    }}
-                >
-                    <Typography
-                        component="div"
-                        sx={{
-                            p: 1,
-                            fontWeight: 500,
-                            textTransform: 'uppercase',
-                        }}
-                    >
-                        {collectionsLabel}
-                    </Typography>
+        <Stack
+            direction="row"
+            sx={{
+                flex: 0,
+                justifyContent: 'space-between',
+                borderBottom: defaultOutline[theme.palette.mode],
+            }}
+        >
+            <Typography
+                component="div"
+                sx={{
+                    p: 1,
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                }}
+            >
+                {collectionsLabel}
+            </Typography>
 
-                    <Stack direction="row">
-                        {RediscoverButton}
+            <Stack direction="row">
+                {RediscoverButton}
 
-                        <BindingsEditorAdd
-                            disabled={readOnly}
-                            selectedCollections={selectedCollections}
-                            AddSelectedButton={AddSelectedButton}
-                        />
-                    </Stack>
-                </Stack>
-            </Box>
-        </Box>
+                <BindingsEditorAdd
+                    disabled={readOnly}
+                    selectedCollections={selectedCollections}
+                    AddSelectedButton={AddSelectedButton}
+                />
+            </Stack>
+        </Stack>
     );
 }
 

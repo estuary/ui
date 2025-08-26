@@ -11,6 +11,7 @@ import type {
     DataPlaneOption,
 } from 'src/stores/DetailsForm/types';
 import type { Endpoint } from 'src/stores/ShardDetail/types';
+import type { StorageMappingDictionary } from 'src/types';
 
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 
@@ -40,6 +41,20 @@ export enum ErrorFlags {
     TOKEN_INVALID = 'Authentication failed',
     TOKEN_NOT_FOUND = 'Unauthenticated',
 }
+
+export const DATA_PLANE_OPTION_TEMPLATE: DataPlaneOption = {
+    dataPlaneName: {
+        cluster: '',
+        prefix: '',
+        provider: '',
+        region: '',
+        whole: 'template',
+    },
+    id: '',
+    isDefault: false,
+    reactorAddress: '',
+    scope: 'public',
+};
 
 export const shouldRefreshToken = (errorMessage?: string | null) => {
     return (
@@ -247,23 +262,54 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
     return formattedName.trim();
 };
 
-export const generateDataPlaneOption = ({
-    data_plane_name,
-    id,
-    reactor_address,
-    cidr_blocks,
-}: BaseDataPlaneQuery): DataPlaneOption => {
+// TODO (data-planes): Determine whether this function should always be called
+//   from a hook. Given the matched storage mapping must be matched to figure
+//   out what the default data-plane name is, it makes more sense to call this
+//   util from a hook that can reference storage mapping state directly.
+export const generateDataPlaneOption = (
+    { data_plane_name, id, reactor_address, cidr_blocks }: BaseDataPlaneQuery,
+    defaultDataPlaneName?: string
+): DataPlaneOption => {
     const scope = getDataPlaneScope(data_plane_name);
 
     const dataPlaneName = parseDataPlaneName(data_plane_name, scope);
 
     return {
+        cidrBlocks: cidr_blocks,
         dataPlaneName,
         id,
+        isDefault: defaultDataPlaneName
+            ? data_plane_name === defaultDataPlaneName
+            : false,
         reactorAddress: reactor_address,
-        cidrBlocks: cidr_blocks,
         scope,
     };
+};
+
+export const getDataPlaneInfo = (
+    storageMappings: StorageMappingDictionary,
+    catalogName: string | undefined
+): { dataPlaneNames: string[]; storageMappingPrefix: string | undefined } => {
+    let matchedPrefix: string | undefined;
+
+    const prefixOptions = Object.keys(storageMappings).filter((catalogPrefix) =>
+        catalogName?.startsWith(catalogPrefix)
+    );
+
+    if (prefixOptions.length > 1) {
+        matchedPrefix = prefixOptions.reduce((a, b) =>
+            a.length > b.length ? a : b
+        );
+    } else if (prefixOptions.length === 1) {
+        matchedPrefix = prefixOptions[0];
+    }
+
+    const dataPlaneNames =
+        matchedPrefix && storageMappings?.[matchedPrefix]
+            ? storageMappings[matchedPrefix].data_planes
+            : [];
+
+    return { dataPlaneNames, storageMappingPrefix: matchedPrefix };
 };
 
 // We increment the read window by this many bytes every time we get back

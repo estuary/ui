@@ -16,6 +16,7 @@ import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import { getSchema_Resource } from 'src/api/hydration';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { BASE_ERROR } from 'src/services/supabase';
+import { getInitialBackfillData } from 'src/stores/Binding/slices/Backfill';
 import { getInitialFieldSelectionData } from 'src/stores/Binding/slices/FieldSelection';
 import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
 import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
@@ -371,17 +372,11 @@ export const getInitialBindingData = (): Pick<
 
 export const getInitialMiscData = (): Pick<
     BindingState,
-    | 'backfilledBindings'
-    | 'backfillAllBindings'
-    | 'backfillDataFlow'
-    | 'backfillDataFlowTarget'
-    | 'backfillSupported'
     | 'captureInterval'
     | 'collectionMetadata'
     | 'collectionsRequiringRediscovery'
     | 'defaultCaptureInterval'
     | 'discoveredCollections'
-    | 'evolvedCollections'
     | 'onIncompatibleSchemaChange'
     | 'onIncompatibleSchemaChangeErrorExists'
     | 'rediscoveryRequired'
@@ -393,17 +388,11 @@ export const getInitialMiscData = (): Pick<
     | 'serverUpdateRequired'
     | 'resourceConfigPointers'
 > => ({
-    backfillAllBindings: false,
-    backfillDataFlowTarget: null,
-    backfillDataFlow: false,
-    backfillSupported: true,
-    backfilledBindings: [],
     captureInterval: null,
     collectionMetadata: {},
     collectionsRequiringRediscovery: [],
     defaultCaptureInterval: null,
     discoveredCollections: [],
-    evolvedCollections: [],
     onIncompatibleSchemaChange: undefined,
     onIncompatibleSchemaChangeErrorExists: {
         binding: false,
@@ -420,9 +409,17 @@ export const getInitialMiscData = (): Pick<
 });
 
 export const getInitialStoreData = () => ({
+    ...getInitialHydrationData(),
     ...getInitialBindingData(),
     ...getInitialFieldSelectionData(),
-    ...getInitialHydrationData(),
     ...getInitialMiscData(),
     ...getInitialTimeTravelData(),
+    ...getInitialBackfillData(),
+});
+
+export const getInitialStoreDataAndKeepBindings = () => ({
+    ...getInitialFieldSelectionData(),
+    ...getInitialMiscData(),
+    ...getInitialTimeTravelData(),
+    ...getInitialBackfillData(),
 });

@@ -144,8 +144,10 @@ export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
         response.deltaUpdates = false;
     }
 
-    if (!response.targetSchema) {
-        response.targetSchema = 'leaveEmpty';
+    // This matches the default provided by flow on the backend
+    //  flow/crates/models/src/source_capture.rs
+    if (!response.targetNaming) {
+        response.targetNaming = 'prefixNonDefaultSchema';
     }
 
     return response;
@@ -192,6 +194,7 @@ export const generateMaterializationResourceSpec = (
 
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
     } catch (e: any) {
+        console.error('generateMaterializationResourceSpec failed', e);
         return null;
     }
 };

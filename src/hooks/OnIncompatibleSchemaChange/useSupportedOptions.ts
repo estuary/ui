@@ -1,4 +1,4 @@
-import type { AutoCompleteOption } from 'src/components/incompatibleSchemaChange/types';
+import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/components/incompatibleSchemaChange/types';
 
 import { useMemo } from 'react';
 
@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import { choices } from 'src/components/incompatibleSchemaChange/shared';
 
-function useSupportedOptions(): AutoCompleteOption[] {
+function useSupportedOptions(): AutoCompleteOptionForIncompatibleSchemaChange[] {
     const intl = useIntl();
 
     return useMemo(

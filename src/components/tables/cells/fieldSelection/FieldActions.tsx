@@ -1,4 +1,4 @@
-import type { FieldActionsProps } from 'src/components/tables/cells/fieldSelection/types';
+import type { FieldActionsProps } from 'src/components/tables/cells/types';
 
 import { useMemo } from 'react';
 
@@ -54,7 +54,10 @@ function FieldActions({ bindingUUID, field, constraint }: FieldActionsProps) {
                     bindingUUID={bindingUUID}
                     color="success"
                     constraint={constraint}
-                    disabled={!recommendFields[bindingUUID]}
+                    disabled={
+                        !recommendFields[bindingUUID] ||
+                        constraint.type === ConstraintTypes.FIELD_OPTIONAL
+                    }
                     field={field}
                     labelId="fieldSelection.table.cta.selectField"
                     selection={selection}

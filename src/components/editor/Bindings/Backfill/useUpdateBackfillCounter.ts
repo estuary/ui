@@ -4,6 +4,7 @@ import type { BindingMetadata, Schema } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { cloneDeep } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
@@ -96,7 +97,7 @@ function useUpdateBackfillCounter() {
                     ? 'counterIncremented'
                     : 'counterDecremented';
 
-            const spec: Schema = draftSpec.spec;
+            const spec: Schema = cloneDeep(draftSpec.spec);
 
             if (bindingMetadataExists) {
                 bindingMetadata.forEach(({ bindingIndex, collection }) => {

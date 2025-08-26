@@ -10,17 +10,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import {
-    difference,
-    has,
-    isBoolean,
-    isEmpty,
-    isEqual,
-    omit,
-    omitBy,
-    pick,
-    union,
-} from 'lodash';
+import { difference, has, isEmpty, isEqual, omit, omitBy, pick } from 'lodash';
 
 import {
     getLiveSpecsById_writesTo,
@@ -38,8 +28,8 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
     getCollectionNames,
-    getInitialMiscData,
     getInitialStoreData,
+    getInitialStoreDataAndKeepBindings,
     hydrateConnectorTagDependentState,
     hydrateSpecificationDependentState,
     initializeAndGenerateUUID,
@@ -52,15 +42,13 @@ import {
     updateBackfilledBindingState,
     whatChanged,
 } from 'src/stores/Binding/shared';
+import { getStoreWithBackfillSettings } from 'src/stores/Binding/slices/Backfill';
+import { getStoreWithFieldSelectionSettings } from 'src/stores/Binding/slices/FieldSelection';
 import {
-    getInitialFieldSelectionData,
-    getStoreWithFieldSelectionSettings,
-} from 'src/stores/Binding/slices/FieldSelection';
-import {
-    getInitialTimeTravelData,
     getStoreWithTimeTravelSettings,
     initializeFullSourceConfig,
 } from 'src/stores/Binding/slices/TimeTravel';
+import { getStoreWithToggleDisableSettings } from 'src/stores/Binding/slices/ToggleDisable';
 import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
 import { BindingStoreNames } from 'src/stores/names';
 import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
@@ -81,6 +69,8 @@ const getInitialState = (
     ...getStoreWithFieldSelectionSettings(set),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithTimeTravelSettings(set),
+    ...getStoreWithToggleDisableSettings(set),
+    ...getStoreWithBackfillSettings(set),
 
     addEmptyBindings: (data, rehydrating) => {
         set(
@@ -276,21 +266,20 @@ const getInitialState = (
                 return Promise.reject(specHydrationResponse.error.message);
             }
 
-            const boundCollections = Object.keys(get().bindings);
+            if (entityType === 'materialization') {
+                const boundCollections = Object.keys(get().bindings);
 
-            if (
-                entityType === 'materialization' &&
-                hasLength(boundCollections)
-            ) {
-                const trialCollections = await evaluateTrialCollections(
-                    boundCollections,
-                    getTrialOnlyPrefixes
-                );
+                if (hasLength(boundCollections)) {
+                    const trialCollections = await evaluateTrialCollections(
+                        boundCollections,
+                        getTrialOnlyPrefixes
+                    );
 
-                get().setCollectionMetadata(
-                    trialCollections,
-                    specHydrationResponse.bindingChanges.addedCollections
-                );
+                    get().setCollectionMetadata(
+                        trialCollections,
+                        specHydrationResponse.bindingChanges.addedCollections
+                    );
+                }
             }
         } else {
             get().setCaptureInterval(
@@ -411,10 +400,18 @@ const getInitialState = (
                 state.resourceConfigs = sortedResourceConfigs;
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
-                state.backfillAllBindings =
-                    state.backfilledBindings.length > 0 &&
-                    state.backfilledBindings.length ===
+                if (state.backfilledBindings.length > 0) {
+                    if (entityType === 'capture') {
+                        // if they have anything marked for backfill make sure the setting is forced on
+                        state.backfillMode = 'reset';
+                    }
+
+                    state.backfillAllBindings =
+                        state.backfilledBindings.length ===
                         Object.keys(state.resourceConfigs).length;
+                } else {
+                    state.backfillAllBindings = false;
+                }
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(
@@ -498,6 +495,11 @@ const getInitialState = (
                         meta: {
                             bindingIndex: reducedBindingCount + index,
                             collectionName,
+                            // When adding default this so the first click on the binding
+                            //  does not cause extra renders
+                            disable: undefined,
+                            previouslyDisabled: undefined,
+                            onIncompatibleSchemaChange: undefined,
                         },
                     };
                 });
@@ -804,49 +806,39 @@ const getInitialState = (
     // to true when hydration is initiated and false once completed. Consequently, this property
     // value should be preserved by default when the `resetState` action is called.
     resetState: (keepCollections, resetActive) => {
-        const { active, ...currentState } = get();
+        if (resetActive) {
+            // If we are resetting active then we should fully replace state back to
+            //  the original state
+            const newState = {
+                ...getInitialStoreData(),
+                active: false,
+            };
 
-        const initState = keepCollections
-            ? {
-                  ...getInitialFieldSelectionData(),
-                  ...getInitialMiscData(),
-                  ...getInitialTimeTravelData(),
-              }
-            : getInitialStoreData();
+            set(newState, false, 'Binding State Reset');
+        } else {
+            // If we are not doing a full reset then we need to merge in the current state
+            //  that way any changes that have been happening are not lost.
+            // This is mainly to help BindingHydrator to be more resilient to ordering
+            //  once we move binding stuff into the general workflow hydrator we should
+            //  not need this split in logic
 
-        const newState = {
-            ...currentState,
-            ...initState,
-            active: resetActive ? false : active,
-        };
+            const initState = keepCollections
+                ? getInitialStoreDataAndKeepBindings()
+                : getInitialStoreData();
 
-        set(newState, false, 'Binding State Reset');
-    },
+            set(
+                produce((state: BindingState) => {
+                    const newState = {
+                        ...state,
+                        ...initState,
+                    };
 
-    setBackfilledBindings: (increment, targetBindingUUID) => {
-        set(
-            produce((state: BindingState) => {
-                const existingBindingUUIDs = Object.keys(state.resourceConfigs);
-
-                const bindingUUIDs = targetBindingUUID
-                    ? [targetBindingUUID]
-                    : existingBindingUUIDs;
-
-                state.backfilledBindings =
-                    increment === 'true'
-                        ? union(state.backfilledBindings, bindingUUIDs)
-                        : state.backfilledBindings.filter(
-                              (uuid) => !bindingUUIDs.includes(uuid)
-                          );
-
-                state.backfillAllBindings =
-                    hasLength(existingBindingUUIDs) &&
-                    existingBindingUUIDs.length ===
-                        state.backfilledBindings.length;
-            }),
-            false,
-            'Backfilled Collections Set'
-        );
+                    state = newState;
+                }),
+                false,
+                'Binding State Reset'
+            );
+        }
     },
 
     setBindingOnIncompatibleSchemaChange: (value, bindingUUID) => {
@@ -1057,115 +1049,6 @@ const getInitialState = (
         );
     },
 
-    // TODO (organization): Correct the location of store actions that are out-of-order.
-    setBackfillDataFlow: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillDataFlow = value;
-            }),
-            false,
-            'Backfill Dataflow Flag Changed'
-        );
-    },
-
-    setBackfillDataFlowTarget: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillDataFlowTarget = value;
-            }),
-            false,
-            'Backfill data flow target changed'
-        );
-    },
-
-    setBackfillSupported: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.backfillSupported = value;
-            }),
-            false,
-            'Backfill supported changed'
-        );
-    },
-
-    setEvolvedCollections: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.evolvedCollections = value;
-            }),
-            false,
-            'Evolved Collections List Set'
-        );
-    },
-
-    toggleDisable: (targetUUIDs, value) => {
-        let updatedCount = 0;
-
-        set(
-            produce((state: BindingState) => {
-                // Updating a single item
-                // A specific list (toggle page)
-                // Nothing specified (toggle all)
-                const evaluatedUUIDs: string[] =
-                    typeof targetUUIDs === 'string'
-                        ? [targetUUIDs]
-                        : Array.isArray(targetUUIDs)
-                          ? targetUUIDs
-                          : Object.keys(state.resourceConfigs);
-
-                evaluatedUUIDs.forEach((uuid) => {
-                    const { collectionName, disable, previouslyDisabled } =
-                        state.resourceConfigs[uuid].meta;
-
-                    const currValue = isBoolean(disable) ? disable : false;
-                    const evaluatedFlag = value ?? !currValue;
-
-                    if (value !== currValue) {
-                        updatedCount = updatedCount + 1;
-                    }
-
-                    if (evaluatedFlag) {
-                        state.resourceConfigs[uuid].meta.disable =
-                            evaluatedFlag;
-
-                        const existingIndex =
-                            state.collectionsRequiringRediscovery.findIndex(
-                                (collectionRequiringRediscovery) =>
-                                    collectionRequiringRediscovery ===
-                                    collectionName
-                            );
-
-                        if (existingIndex > -1) {
-                            state.collectionsRequiringRediscovery.splice(
-                                existingIndex,
-                                1
-                            );
-
-                            state.rediscoveryRequired = hasLength(
-                                state.collectionsRequiringRediscovery
-                            );
-                        }
-                    } else {
-                        delete state.resourceConfigs[uuid].meta.disable;
-
-                        if (previouslyDisabled) {
-                            state.collectionsRequiringRediscovery.push(
-                                collectionName
-                            );
-
-                            state.rediscoveryRequired = true;
-                        }
-                    }
-                });
-            }),
-            false,
-            'Binding Disable Flag Toggled'
-        );
-
-        // Return how many we updated
-        return updatedCount;
-    },
-
     updateResourceConfig: (
         targetCollection,
         targetBindingUUID,
@@ -1203,6 +1086,11 @@ const getInitialState = (
                     meta: {
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
                         collectionName: targetCollection,
+                        // When adding default this so the first click on the binding
+                        //  does not cause extra renders
+                        disable: undefined,
+                        previouslyDisabled: undefined,
+                        onIncompatibleSchemaChange: undefined,
                     },
                 };
 

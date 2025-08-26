@@ -1,10 +1,15 @@
 import type { FullSourceJsonForms } from 'src/stores/Binding/slices/TimeTravel';
 import type {
+    BindingState,
     CollectionMetadata,
     ResourceConfig,
 } from 'src/stores/Binding/types';
 
+import { useCallback, useRef } from 'react';
+
 import { useShallow } from 'zustand/react/shallow';
+
+import { useUnmount } from 'react-use';
 
 import {
     getCollectionNames,
@@ -101,10 +106,12 @@ export const useBinding_resourceConfigOfBindingProperty = (
     );
 };
 
-export const useBinding_resourceConfigOfMetaBindingProperty = (
-    bindingUUID: any,
-    property: keyof ResourceConfig['meta']
-) => {
+export const useBinding_resourceConfigOfMetaBindingProperty = <
+    K extends keyof ResourceConfig['meta'],
+>(
+    bindingUUID: string | undefined,
+    property: K
+): ResourceConfig['meta'][K] | null => {
     return useBindingStore(
         useShallow((state) => {
             if (!bindingUUID) {
@@ -163,10 +170,6 @@ export const useBinding_enabledCollections_count = () =>
         )
     );
 
-export const useBinding_toggleDisable = () => {
-    return useBindingStore((state) => state.toggleDisable);
-};
-
 export const useBinding_allBindingsDisabled = () => {
     return useBindingStore(
         useShallow((state) =>
@@ -177,12 +180,12 @@ export const useBinding_allBindingsDisabled = () => {
     );
 };
 
-export const useBinding_someBindingsDisabled = () => {
+export const useBinding_enabledBindings_count = () => {
     return useBindingStore(
         useShallow((state) =>
-            Object.values(state.resourceConfigs).some(
-                (config) => config.meta.disable
-            )
+            Object.values(state.resourceConfigs).reduce((count, config) => {
+                return config.meta?.disable ? count : count + 1;
+            }, 0)
         )
     );
 };
@@ -368,10 +371,20 @@ export const useBinding_backfillSupported = () =>
 export const useBinding_collectionsBeingBackfilled = () =>
     useBindingStore(
         useShallow((state) => {
-            return state.backfilledBindings.map((backfilledBinding) => {
-                return state.resourceConfigs[backfilledBinding].meta
-                    .collectionName;
-            });
+            return (
+                state.backfilledBindings
+                    // There is a chance that during rehydration that the resourceConfigs will be
+                    //  empty for a little bit. This happens during materialization when a user marks
+                    //  things for backfill, edits the endpoint config, and generates a new catalog.Z
+                    .filter((datum) =>
+                        Boolean(state.resourceConfigs?.[datum]?.meta)
+                    )
+                    .map(
+                        (backfilledBinding) =>
+                            state.resourceConfigs[backfilledBinding].meta
+                                .collectionName
+                    )
+            );
         })
     );
 
@@ -386,3 +399,38 @@ export const useBinding_sourceCaptureFlags = () =>
             ),
         }))
     );
+
+export const useBinding_setCurrentBindingWithTimeout = (
+    setCurrentBinding?: BindingState['setCurrentBinding']
+) => {
+    const hackyTimeout = useRef<number | null>(null);
+    const currentBindingUUID = useBinding_currentBindingUUID();
+
+    useUnmount(() => {
+        if (hackyTimeout.current) clearTimeout(hackyTimeout.current);
+    });
+
+    return useCallback(
+        (id?: string) => {
+            if (id === currentBindingUUID || !setCurrentBinding) {
+                return;
+            }
+
+            // TODO (JSONForms) This is hacky but it works.
+            // It clears out the current binding before switching.
+            //  If a user is typing quickly in a form and then selects a
+            //  different binding VERY quickly it could cause the updates
+            //  to go into the wrong form.
+            // Also, ...forms/renderers/Duration/AutoComplete.tsx will render wrong
+            //  without this. That needs fixed for sure
+            setCurrentBinding(null);
+
+            if (typeof id === 'string') {
+                hackyTimeout.current = window.setTimeout(() => {
+                    setCurrentBinding(id);
+                });
+            }
+        },
+        [currentBindingUUID, setCurrentBinding]
+    );
+};

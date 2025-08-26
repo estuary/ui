@@ -51,7 +51,10 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
 import { isDekafConnector } from 'src/utils/connector-utils';
 import { encryptEndpointConfig } from 'src/utils/sops-utils';
-import { generateTaskSpec } from 'src/utils/workflow-utils';
+import {
+    generateTaskSpec,
+    NEW_TASK_PUBLICATION_ID,
+} from 'src/utils/workflow-utils';
 
 const ENTITY_TYPE = 'materialization';
 
@@ -124,12 +127,13 @@ function useGenerateCatalog() {
     const fullSourceConfigs = useBinding_fullSourceConfigs();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
-    const specIncompatibleSchemaChange = useBindingStore(
+    const specOnIncompatibleSchemaChange = useBindingStore(
         (state) => state.onIncompatibleSchemaChange
     );
 
-    // Source Capture Store
-    const sourceCapture = useSourceCaptureStore_sourceCaptureDefinition();
+    // Fetch the entire definition for source capture so we have all the settings
+    const sourceCaptureDefinition =
+        useSourceCaptureStore_sourceCaptureDefinition();
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -238,9 +242,8 @@ function useGenerateCatalog() {
                     existingTaskData,
                     {
                         fullSource: fullSourceConfigs,
-                        sourceCapture,
-                        specOnIncompatibleSchemaChange:
-                            specIncompatibleSchemaChange,
+                        sourceCaptureDefinition,
+                        specOnIncompatibleSchemaChange,
                     }
                 );
 
@@ -263,7 +266,8 @@ function useGenerateCatalog() {
                               evaluatedDraftId,
                               processedEntityName,
                               draftSpec,
-                              ENTITY_TYPE
+                              ENTITY_TYPE,
+                              NEW_TASK_PUBLICATION_ID
                           );
 
                 if (draftSpecsResponse.error) {
@@ -310,7 +314,7 @@ function useGenerateCatalog() {
 
                 logRocketEvent(CustomEvents.DRAFT_ID_SET, {
                     newValue: evaluatedDraftId,
-                    component: 'useDiscoverStartDiscovery',
+                    component: 'useGenerateCatalog',
                 });
 
                 setDraftId(evaluatedDraftId);
@@ -363,8 +367,8 @@ function useGenerateCatalog() {
             setFormState,
             setPersistedDraftId,
             setPreviousEndpointConfig,
-            sourceCapture,
-            specIncompatibleSchemaChange,
+            sourceCaptureDefinition,
+            specOnIncompatibleSchemaChange,
             updateFormStatus,
         ]
     );

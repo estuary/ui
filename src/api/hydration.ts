@@ -1,4 +1,4 @@
-import type { ConnectorTag } from 'src/hooks/connectors/shared';
+import type { ConnectorTagResourceData } from 'src/api/types';
 import type {
     LiveSpecsExt_MaterializeOrTransform,
     LiveSpecsExtQuery,
@@ -13,35 +13,8 @@ import {
     TABLES,
 } from 'src/services/supabase';
 
-// TODO (optimization): Consider removing he tight coupling between this file and the stores.
+// TODO (optimization): Consider removing the tight coupling between this file and the stores.
 //  These APIs are truly general purpose. Perhaps break them out by supabase table.
-type ConnectorTagResourceData = Pick<
-    ConnectorTag,
-    | 'connector_id'
-    | 'default_capture_interval'
-    | 'disable_backfill'
-    | 'resource_spec_schema'
->;
-
-type ConnectorTagEndpointData = Pick<
-    ConnectorTag,
-    'connector_id' | 'endpoint_spec_schema'
->;
-
-export const getSchema_Endpoint = async (connectorTagId: string | null) => {
-    const endpointSchema = await supabaseRetry(
-        () =>
-            supabaseClient
-                .from(TABLES.CONNECTOR_TAGS)
-                .select(`endpoint_spec_schema`)
-                .eq('id', connectorTagId)
-                .single(),
-        'getSchema_Endpoint'
-    ).then(handleSuccess<ConnectorTagEndpointData>, handleFailure);
-
-    return endpointSchema;
-};
-
 export const getSchema_Resource = async (connectorTagId: string | null) => {
     const resourceSchema = await supabaseRetry(
         () =>

@@ -1,94 +1,86 @@
+import type { FixedSizeList } from 'react-window';
 import type {
-    GridColDef,
-    GridFilterModel,
-    GridRowId,
-    GridRowSelectionModel,
-} from '@mui/x-data-grid';
-import type { BindingState } from 'src/stores/Binding/types';
+    CollectionSelectorListProps,
+    CollectionSelectorMappedResourceConfig,
+} from 'src/components/collection/Selector/types';
+import type { ColumnProps } from 'src/components/tables/EntityTable/types';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
 
-import { Box, Popper } from '@mui/material';
-import {
-    DataGrid,
-    gridPaginatedVisibleSortedGridRowIdsSelector,
-    useGridApiRef,
-} from '@mui/x-data-grid';
+import { Box, Popper, TableContainer } from '@mui/material';
 
-import { isEmpty } from 'lodash';
+import { findAll } from 'highlight-words-core';
+import { debounce, isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
+import { usePrevious, useUnmount } from 'react-use';
 
+import CollectionSelectorBody from 'src/components/collection/Selector/List/CollectionSelectorBody';
+import CollectionSelectorFooter from 'src/components/collection/Selector/List/CollectionSelectorFooter';
+import CollectionSelectorTable from 'src/components/collection/Selector/List/CollectionSelectorTable';
 import CollectionSelectorHeaderName from 'src/components/collection/Selector/List/Header/Name';
 import CollectionSelectorHeaderRemove from 'src/components/collection/Selector/List/Header/Remove';
 import CollectionSelectorHeaderToggle from 'src/components/collection/Selector/List/Header/Toggle';
 import {
+    COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS,
     COLLECTION_SELECTOR_NAME_COL,
+    COLLECTION_SELECTOR_REMOVE,
     COLLECTION_SELECTOR_STRIPPED_PATH_NAME,
     COLLECTION_SELECTOR_TOGGLE_COL,
     COLLECTION_SELECTOR_UUID_COL,
-    getCollectionSelector,
+    DEFAULT_ROW_HEIGHT,
+    ENABLE_SCROLL_GAP,
+    ENABLE_SELECTION,
 } from 'src/components/collection/Selector/List/shared';
+import NoResults from 'src/components/editor/Bindings/NoResults';
 import SelectorEmpty from 'src/components/editor/Bindings/SelectorEmpty';
 import AlertBox from 'src/components/shared/AlertBox';
-import { useEntityType } from 'src/context/EntityContext';
-import { dataGridListStyling } from 'src/context/Theme';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { useBindingSelectorCells } from 'src/hooks/useBindingSelectorCells';
+import { useBindingSelectorNotification } from 'src/hooks/useBindingSelectorNotification';
+import { useReactWindowScrollbarGap } from 'src/hooks/useReactWindowScrollbarGap';
 import {
     useBinding_currentBindingUUID,
     useBinding_resourceConfigs,
+    useBinding_setCurrentBindingWithTimeout,
 } from 'src/stores/Binding/hooks';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { hasLength, stripPathing } from 'src/utils/misc-utils';
-
-interface Props {
-    disableActions?: boolean;
-    renderers: {
-        cell: {
-            name: (params: any) => void;
-            remove?: (params: any) => void;
-            toggle?: (params: any) => void;
-        };
-    };
-    header?: string;
-    height?: number | string;
-    removeCollections?: (rows: GridRowId[]) => void;
-    toggleCollections?: (rows: GridRowId[] | null, value: boolean) => Number;
-    setCurrentBinding?: BindingState['setCurrentBinding'];
-}
-
-const cellClass_noPadding = 'estuary-datagrid--cell--no-padding';
-
-const initialState = {
-    columns: {
-        columnVisibilityModel: {
-            spec_type: false,
-        },
-    },
-};
-
-const defaultFilterModel = {
-    items: [],
-};
+import { stripPathing } from 'src/utils/misc-utils';
+import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 function CollectionSelectorList({
     disableActions,
     header,
     height,
-    removeCollections,
-    toggleCollections,
-    renderers,
+    hideFooter,
     setCurrentBinding,
-}: Props) {
-    const apiRef = useGridApiRef();
+}: CollectionSelectorListProps) {
+    // Form State Store
+    const formStatus = useFormStateStore_status();
 
-    const entityType = useEntityType();
-    const isCapture = entityType === 'capture';
+    const selectionEnabled = Boolean(
+        setCurrentBinding && formStatus !== FormStatus.UPDATING
+    );
+    const setCurrentBindingWithTimeout =
+        useBinding_setCurrentBindingWithTimeout(setCurrentBinding);
 
-    const notificationAnchorEl = useRef<any | null>();
-    const popperTimeout = useRef<number | null>(null);
-    const hackyTimeout = useRef<number | null>(null);
+    const bindingSelectorCells = useBindingSelectorCells();
+    const {
+        displayNotification,
+        notificationAnchorEl,
+        notificationMessage,
+        showPopper,
+    } = useBindingSelectorNotification();
+
+    const [filterValue, setFilterValue] = useState('');
+    const [filterInputValue, setFilterInputValue] = useState('');
+    const previousFilterValue = usePrevious(filterValue);
+
+    const tableScroller = useRef<FixedSizeList | undefined>(undefined);
+    const { scrollGap, scrollingElementCallback, checkScrollbarVisibility } =
+        useReactWindowScrollbarGap<FixedSizeList>(tableScroller, true);
+
     const intl = useIntl();
     const collectionsLabel = useConstant(
         () =>
@@ -97,179 +89,238 @@ function CollectionSelectorList({
                 id: 'workflows.collectionSelector.label.listHeader',
             })
     );
-    const [filterValue, setFilterValue] = useState('');
-    const [notificationMessage, setNotificationMessage] = useState('');
-    const [showNotification, setShowNotification] = useState(false);
 
     // Binding Store
     const currentBindingUUID = useBinding_currentBindingUUID();
     const resourceConfigs = useBinding_resourceConfigs();
 
-    // Form State Store
-    const formStatus = useFormStateStore_status();
+    const mappedResourceConfigs: CollectionSelectorMappedResourceConfig[] =
+        useMemo(() => {
+            // If we have no bindings we can just return an empty array
+            if (isEmpty(resourceConfigs)) {
+                return [];
+            }
 
-    const selectionEnabled =
-        currentBindingUUID &&
-        setCurrentBinding &&
-        formStatus !== FormStatus.UPDATING;
+            // We have bindings so need to format them in a format that mui
+            //  datagrid will handle. At a minimum each object must have an
+            //  `id` property.
+            return Object.entries(resourceConfigs).map(
+                ([bindingUUID, config]) => {
+                    const collection = config.meta.collectionName;
 
-    const [filterModel, setFilterModel] =
-        useState<GridFilterModel>(defaultFilterModel);
+                    return {
+                        [COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS]: [],
+                        [COLLECTION_SELECTOR_TOGGLE_COL]: Boolean(
+                            config.meta.disable
+                        ),
+                        [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
+                        [COLLECTION_SELECTOR_NAME_COL]: collection,
+                        [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
+                            stripPathing(collection),
+                    };
+                }
+            );
+        }, [resourceConfigs]);
 
-    // We use mui`s selection model to store which collection was clicked on to display it
-    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
-        []
+    const debouncedFilter = useRef(
+        debounce((val) => {
+            setFilterValue(val);
+        }, QUICK_DEBOUNCE_WAIT)
     );
-    useEffect(() => {
-        // TODO (keep current binding) we need to handle filtering better.
-        //  Waiting on us to handle client side filtering on our own first.
-        //  After that we should make sure the thing we're selecting is actually
-        //  visible with the filters enabled.
-        if (currentBindingUUID) setSelectionModel([currentBindingUUID]);
-    }, [currentBindingUUID]);
+    useUnmount(() => {
+        debouncedFilter.current?.cancel();
+    });
 
-    const rows = useMemo(() => {
-        // If we have no bindings we can just return an empty array
-        if (isEmpty(resourceConfigs)) {
-            return [];
+    const filteredRows = useMemo(() => {
+        if (filterValue === '') {
+            return mappedResourceConfigs;
         }
 
-        // We have bindings so need to format them in a format that mui
-        //  datagrid will handle. At a minimum each object must have an
-        //  `id` property.
-        return Object.entries(resourceConfigs).map(([bindingUUID, config]) => {
-            const collection = config.meta.collectionName;
+        // If you want to match on multiple words you can. However, this search is as
+        //  inclusive as possible. So if a name only matches a _single_ searchWord it will
+        //  be returned. searchWords = filterValue.split(',').map((val) => val.trim());
+        const searchWords = [filterValue];
 
-            return {
-                [COLLECTION_SELECTOR_UUID_COL]: bindingUUID,
-                [COLLECTION_SELECTOR_NAME_COL]: collection,
-                [COLLECTION_SELECTOR_STRIPPED_PATH_NAME]:
-                    stripPathing(collection),
-            };
-        });
-    }, [resourceConfigs]);
+        return mappedResourceConfigs
+            .map((row) => {
+                row[COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS] = findAll({
+                    autoEscape: true,
+                    caseSensitive: false,
+                    searchWords,
+                    textToHighlight: row[COLLECTION_SELECTOR_NAME_COL],
+                });
 
-    const rowsEmpty = useMemo(() => !hasLength(rows), [rows]);
+                return row;
+            })
+            .filter((row) => {
+                return row[COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS].some(
+                    (chunk) => chunk.highlight
+                );
+            });
+    }, [filterValue, mappedResourceConfigs]);
+
+    useEffect(() => {
+        if (
+            // Selection disabled
+            !selectionEnabled ||
+            // Filter has not changed so we can skip. Otherwise while the bindings are filtered
+            //  if a user clicks manually on a binding then it will be selected and a split second
+            //  later this effect will run and set it back to a default value.
+            (filterValue.length > 0 &&
+                previousFilterValue &&
+                previousFilterValue.length > 0 &&
+                filterValue === previousFilterValue)
+        ) {
+            return;
+        }
+
+        if (filterValue !== '') {
+            // If we have filtered values then see if this is a first search and default
+            if (previousFilterValue === '') {
+                setCurrentBindingWithTimeout(
+                    filteredRows[0]?.[COLLECTION_SELECTOR_UUID_COL]
+                );
+            } else {
+                // If the current binding is still in the filtered down list
+                //  go ahead and leave it selected
+                if (
+                    filteredRows.find(
+                        (filteredRow) =>
+                            filteredRow[COLLECTION_SELECTOR_UUID_COL] ===
+                            currentBindingUUID
+                    )
+                ) {
+                    return;
+                } else {
+                    setCurrentBindingWithTimeout(
+                        filteredRows[0]?.[COLLECTION_SELECTOR_UUID_COL]
+                    );
+                }
+            }
+
+            return;
+        }
+
+        if (previousFilterValue !== '' && Boolean(mappedResourceConfigs[0])) {
+            setCurrentBindingWithTimeout(
+                mappedResourceConfigs[0]?.[COLLECTION_SELECTOR_UUID_COL]
+            );
+        }
+    }, [
+        currentBindingUUID,
+        filterValue,
+        filteredRows,
+        mappedResourceConfigs,
+        previousFilterValue,
+        selectionEnabled,
+        setCurrentBindingWithTimeout,
+    ]);
+
+    const resourceConfigsEmpty = useMemo(
+        () => mappedResourceConfigs.length <= 0,
+        [mappedResourceConfigs]
+    );
+    const rowsEmpty = useMemo(() => filteredRows.length <= 0, [filteredRows]);
 
     const disable = useMemo(
-        () => rowsEmpty || disableActions,
-        [disableActions, rowsEmpty]
+        () => resourceConfigsEmpty || disableActions,
+        [disableActions, resourceConfigsEmpty]
     );
 
-    const showPopper = useCallback((target: any, message: string) => {
-        setNotificationMessage(message);
-        setShowNotification(true);
-
-        if (popperTimeout.current) clearTimeout(popperTimeout.current);
-        popperTimeout.current = window.setTimeout(() => {
-            setShowNotification(false);
-        }, 1000);
-    }, []);
-
-    const collectionSelector = useMemo(
-        () => getCollectionSelector(isCapture),
-        [isCapture]
-    );
+    const someBindingsDisabled = useMemo(() => {
+        return Object.values(filteredRows).some((row) => {
+            return row.disable;
+        });
+    }, [filteredRows]);
 
     const columns = useMemo(() => {
-        const response: GridColDef[] = [
+        const response: ColumnProps[] = [
             {
-                cellClassName: cellClass_noPadding,
-                field: collectionSelector,
-                flex: 1,
-                headerName: collectionsLabel,
-                sortable: false,
-                renderHeader: (_params) => (
-                    <CollectionSelectorHeaderName
-                        disabled={disable}
-                        inputValue={filterValue}
-                        itemType={collectionsLabel}
-                        onChange={(value) => {
-                            setFilterValue(value);
-                            setFilterModel({
-                                items: [
-                                    {
-                                        id: 1,
-                                        field: collectionSelector,
-                                        value,
-                                        operator: 'contains',
-                                    },
-                                ],
-                            });
-                        }}
-                    />
-                ),
-                renderCell: renderers.cell.name,
+                field: COLLECTION_SELECTOR_NAME_COL,
+                renderInlineHeader: () => {
+                    return (
+                        <CollectionSelectorHeaderName
+                            disabled={disable}
+                            inputValue={filterInputValue}
+                            itemType={collectionsLabel}
+                            onChange={(value) => {
+                                setFilterInputValue(value);
+                                debouncedFilter.current(value);
+                            }}
+                        />
+                    );
+                },
+                renderCell: (params: any) =>
+                    bindingSelectorCells.name.cellRenderer(params, filterValue),
             },
         ];
 
-        if (toggleCollections) {
+        if (bindingSelectorCells.toggle) {
             response.unshift({
-                cellClassName: cellClass_noPadding,
-                headerClassName: cellClass_noPadding,
                 field: COLLECTION_SELECTOR_TOGGLE_COL,
-                sortable: false,
-                minWidth: 110,
-                maxWidth: 125,
-                renderCell: renderers.cell.toggle,
-                renderHeader: (_params) => (
+                renderCell: bindingSelectorCells.toggle.cellRenderer,
+                renderInlineHeader: () => (
                     <CollectionSelectorHeaderToggle
-                        disabled={disable}
+                        disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
-                        onClick={(event, value, scope) => {
-                            const count = toggleCollections(
-                                scope === 'page'
-                                    ? gridPaginatedVisibleSortedGridRowIdsSelector(
-                                          apiRef.current.state,
-                                          apiRef.current.instanceId
-                                      )
-                                    : null,
-                                value
-                            );
-
-                            showPopper(
-                                event.currentTarget,
-                                intl.formatMessage(
-                                    {
-                                        id: value
-                                            ? 'workflows.collectionSelector.notifications.toggle.disable'
-                                            : 'workflows.collectionSelector.notifications.toggle.enable',
-                                    },
-                                    {
-                                        count: `${count}`,
-                                        itemType: collectionsLabel,
-                                    }
+                        defaultValue={someBindingsDisabled}
+                        onClick={async (event, value, scope) => {
+                            return bindingSelectorCells.toggle
+                                ?.handler?.(
+                                    filteredRows.map((datum) => {
+                                        return datum[
+                                            COLLECTION_SELECTOR_UUID_COL
+                                        ];
+                                    }),
+                                    value
                                 )
-                            );
+                                .then((response) => {
+                                    showPopper(
+                                        event.currentTarget,
+                                        intl.formatMessage(
+                                            {
+                                                id: value
+                                                    ? 'workflows.collectionSelector.notifications.toggle.disable'
+                                                    : 'workflows.collectionSelector.notifications.toggle.enable',
+                                            },
+                                            {
+                                                count: `${response.length}`,
+                                                itemType: collectionsLabel,
+                                            }
+                                        )
+                                    );
+
+                                    return Promise.resolve(response);
+                                });
                         }}
                     />
                 ),
-                valueGetter: () => null,
             });
         }
 
-        if (removeCollections) {
+        if (bindingSelectorCells.remove) {
             response.push({
-                field: 'remove',
-                sortable: false,
-                minWidth: 52,
-                maxWidth: 52,
-                renderCell: renderers.cell.remove,
-                renderHeader: (_params) => (
+                align: 'right',
+                field: COLLECTION_SELECTOR_REMOVE,
+                preventSelect: true,
+                renderCell: bindingSelectorCells.remove.cellRenderer,
+                renderInlineHeader: () => (
                     <CollectionSelectorHeaderRemove
-                        disabled={disable}
+                        disabled={disable || rowsEmpty}
                         itemType={collectionsLabel}
                         onClick={(event) => {
-                            const filteredCollections =
-                                gridPaginatedVisibleSortedGridRowIdsSelector(
-                                    apiRef.current.state,
-                                    apiRef.current.instanceId
+                            if (filteredRows && filteredRows.length > 0) {
+                                bindingSelectorCells.remove?.handler?.(
+                                    filteredRows.map((datum) => {
+                                        return datum[
+                                            COLLECTION_SELECTOR_UUID_COL
+                                        ];
+                                    })
                                 );
 
-                            if (hasLength(filteredCollections)) {
-                                removeCollections(filteredCollections);
-                                setFilterModel(defaultFilterModel);
+                                // We need to clear out the filter
                                 setFilterValue('');
+                                setFilterInputValue('');
 
                                 showPopper(
                                     event.currentTarget,
@@ -278,7 +329,7 @@ function CollectionSelectorList({
                                             id: 'workflows.collectionSelector.notifications.remove',
                                         },
                                         {
-                                            count: filteredCollections.length,
+                                            count: filteredRows.length,
                                             itemType: collectionsLabel,
                                         }
                                     )
@@ -287,84 +338,84 @@ function CollectionSelectorList({
                         }}
                     />
                 ),
-                valueGetter: () => null,
             });
         }
         return response;
     }, [
-        apiRef,
-        collectionSelector,
+        bindingSelectorCells.name,
+        bindingSelectorCells.remove,
+        bindingSelectorCells.toggle,
         collectionsLabel,
+        someBindingsDisabled,
         disable,
+        filterInputValue,
         filterValue,
+        filteredRows,
         intl,
-        removeCollections,
-        renderers.cell.name,
-        renderers.cell.remove,
-        renderers.cell.toggle,
+        rowsEmpty,
         showPopper,
-        toggleCollections,
     ]);
 
-    useUnmount(() => {
-        if (hackyTimeout.current) clearTimeout(hackyTimeout.current);
-        if (popperTimeout.current) clearTimeout(popperTimeout.current);
-    });
-
     return (
-        <Box sx={{ height: height ?? 480 }} ref={notificationAnchorEl}>
+        <Box sx={{ flex: 1 }} ref={notificationAnchorEl}>
             <Popper
                 anchorEl={notificationAnchorEl.current}
-                open={Boolean(showNotification && notificationAnchorEl.current)}
+                open={displayNotification}
                 placement="top"
             >
                 <AlertBox hideIcon short severity="success" title={null}>
                     {notificationMessage}
                 </AlertBox>
             </Popper>
-            <DataGrid
-                apiRef={apiRef}
-                columns={columns}
-                components={{ NoRowsOverlay: SelectorEmpty }}
-                disableColumnMenu
-                disableColumnSelector
-                disableRowSelectionOnClick={!selectionEnabled}
-                filterModel={filterModel}
-                hideFooterPagination={rowsEmpty}
-                hideFooterSelectedRowCount
-                initialState={initialState}
-                rows={rows}
-                rowSelectionModel={
-                    selectionEnabled ? selectionModel : undefined
-                }
-                sx={{
-                    ...dataGridListStyling,
-                    border: 0,
-                    [`& .${cellClass_noPadding}`]: { padding: 0 },
-                }}
-                onCellClick={({ field, id }) => {
-                    if (
-                        selectionEnabled &&
-                        (field === COLLECTION_SELECTOR_STRIPPED_PATH_NAME ||
-                            field === COLLECTION_SELECTOR_NAME_COL ||
-                            field === COLLECTION_SELECTOR_TOGGLE_COL) &&
-                        id !== currentBindingUUID
-                    ) {
-                        // TODO (JSONForms) This is hacky but it works.
-                        // It clears out the current binding before switching.
-                        //  If a user is typing quickly in a form and then selects a
-                        //  different binding VERY quickly it could cause the updates
-                        //  to go into the wrong form.
-                        setCurrentBinding(null);
 
-                        if (typeof id === 'string') {
-                            hackyTimeout.current = window.setTimeout(() => {
-                                setCurrentBinding(id);
-                            });
-                        }
-                    }
+            <TableContainer
+                component={Box}
+                className={`${Boolean(scrollGap) ? ENABLE_SCROLL_GAP : ''} ${selectionEnabled ? ENABLE_SELECTION : ''}`}
+                sx={{
+                    height: '100%',
+                    width: '100%',
+                    // TODO (FireFox Height Hack) - added overflow so the scroll bar does not show up
+                    overflow: 'hidden',
                 }}
-            />
+            >
+                <CollectionSelectorTable>
+                    <EntityTableHeader
+                        columns={columns}
+                        disableBackground
+                        enableDivRendering
+                        height={DEFAULT_ROW_HEIGHT}
+                    />
+
+                    {mappedResourceConfigs.length === 0 ? (
+                        <SelectorEmpty />
+                    ) : filterValue.length > 0 && filteredRows.length === 0 ? (
+                        <NoResults />
+                    ) : null}
+
+                    <CollectionSelectorBody
+                        columns={columns}
+                        // TODO (FireFox Height Hack)
+                        // Magic number - it works and I hate it.
+                        // Do not copy this anywhere.
+                        // You need the height to hit some super magic special thing that makes no sense so FireFox will render the footer at the bottom.
+                        height={height - 120}
+                        filterValue={filterValue}
+                        rows={filteredRows}
+                        selectionEnabled={selectionEnabled}
+                        setCurrentBinding={setCurrentBinding}
+                        tableScroller={tableScroller}
+                        scrollingElementCallback={scrollingElementCallback}
+                        checkScrollbarVisibility={checkScrollbarVisibility}
+                    />
+
+                    {hideFooter ? null : (
+                        <CollectionSelectorFooter
+                            columnCount={columns.length}
+                            totalCount={mappedResourceConfigs.length}
+                        />
+                    )}
+                </CollectionSelectorTable>
+            </TableContainer>
         </Box>
     );
 }

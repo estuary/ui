@@ -1,98 +1,35 @@
-import type { SyntheticEvent } from 'react';
-import type { Scopes } from 'src/components/collection/Selector/List/Header/Toggle/types';
+import type { CollectionSelectorHeaderToggleProps } from 'src/components/collection/Selector/List/Header/Toggle/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { KeyboardArrowDown } from '@mui/icons-material';
-import { Box, Button, Menu, Tooltip } from '@mui/material';
+import { Box, Button, Switch, Tooltip } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import ScopeMenuContent from 'src/components/collection/Selector/List/Header/Toggle/MenuContent';
-import { useEntityType } from 'src/context/EntityContext';
 import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
-import { useBinding_someBindingsDisabled } from 'src/stores/Binding/hooks';
-
-interface Props {
-    itemType: string;
-    onClick: (event: SyntheticEvent, value: boolean, scope: Scopes) => void;
-    disabled?: boolean;
-}
 
 function CollectionSelectorHeaderToggle({
     disabled,
     itemType,
     onClick,
-}: Props) {
-    const entityType = useEntityType();
-
+    defaultValue,
+}: CollectionSelectorHeaderToggleProps) {
     const intl = useIntl();
 
-    const someBindingsDisabled = useBinding_someBindingsDisabled();
+    const [enabled, setEnabled] = useState(defaultValue);
 
-    const [enabled, setEnabled] = useState(someBindingsDisabled);
-    const [scope, setScope] = useState<Scopes>('page');
-
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const showMenu = Boolean(anchorEl);
-    const closeMenu = () => {
-        setAnchorEl(null);
-    };
-
-    const selectScope = (event: SyntheticEvent, newScope: Scopes) => {
-        setScope(newScope);
-        setEnabled(!enabled);
-        onClick(event, !enabled, newScope);
-
-        closeMenu();
-    };
-
-    useEffect(() => {
-        setEnabled(someBindingsDisabled);
-    }, [setEnabled, someBindingsDisabled]);
-
-    const tooltipTitle = useMemo(() => {
-        if (scope === 'page') {
-            return enabled
+    const tooltipTitle = intl.formatMessage(
+        {
+            id: enabled
                 ? 'workflows.collectionSelector.toggle.enable.tooltip'
-                : 'workflows.collectionSelector.toggle.disable.tooltip';
-        }
-
-        return enabled
-            ? 'workflows.collectionSelector.toggle.enable.all.tooltip'
-            : 'workflows.collectionSelector.toggle.disable.all.tooltip';
-    }, [enabled, scope]);
-
-    const buttonTitle = useMemo(
-        () => (enabled ? 'cta.enable' : 'cta.disable'),
-        [enabled]
+                : 'workflows.collectionSelector.toggle.disable.tooltip',
+        },
+        { itemType }
     );
 
-    const menuOptions = useMemo(() => {
-        if (enabled) {
-            return [
-                {
-                    title: 'workflows.collectionSelector.toggle.enable.all',
-                    desc: 'workflows.collectionSelector.toggle.enable.all.tooltip',
-                },
-                {
-                    title: 'workflows.collectionSelector.toggle.enable',
-                    desc: 'workflows.collectionSelector.toggle.enable.tooltip',
-                },
-            ];
-        }
-
-        return [
-            {
-                title: 'workflows.collectionSelector.toggle.disable.all',
-                desc: 'workflows.collectionSelector.toggle.disable.all.tooltip',
-            },
-            {
-                title: 'workflows.collectionSelector.toggle.disable',
-                desc: 'workflows.collectionSelector.toggle.disable.tooltip',
-            },
-        ];
-    }, [enabled]);
+    useEffect(() => {
+        setEnabled(defaultValue);
+    }, [setEnabled, defaultValue]);
 
     return (
         <Box
@@ -100,50 +37,34 @@ function CollectionSelectorHeaderToggle({
                 ...dataGridEntireCellButtonStyling,
             }}
         >
-            <Tooltip
-                title={intl.formatMessage(
-                    {
-                        id: tooltipTitle,
-                    },
-                    { itemType, entityType }
-                )}
-            >
+            <Tooltip title={tooltipTitle} placement="top">
                 <Button
+                    aria-label={tooltipTitle}
                     disabled={disabled}
-                    endIcon={<KeyboardArrowDown />}
-                    size="small"
+                    sx={dataGridEntireCellButtonStyling}
                     variant="text"
-                    sx={{
-                        ...dataGridEntireCellButtonStyling,
-                        py: 0,
-                        px: 0.5,
-                        textTransform: 'none',
-                    }}
-                    onClick={(event) => {
-                        event.stopPropagation();
-                        setAnchorEl(event.currentTarget);
+                    onClick={async (event) => {
+                        // Save off the previous value so we can reset it
+                        const previousValue = enabled;
+
+                        // Set the value right away so the toggles feels fast
+                        setEnabled(!enabled);
+
+                        onClick(event, !enabled, 'all').catch(() => {
+                            // If there was an error switch it back
+                            setEnabled(previousValue);
+                        });
                     }}
                 >
-                    {intl.formatMessage({
-                        id: buttonTitle,
-                    })}
+                    <Switch
+                        disabled={disabled}
+                        size="small"
+                        checked={!enabled}
+                        color="success"
+                        id="binding-toggle__all_bindings"
+                    />
                 </Button>
             </Tooltip>
-
-            <Menu
-                anchorEl={anchorEl}
-                onClose={closeMenu}
-                open={showMenu}
-                sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
-            >
-                <ScopeMenuContent
-                    closeMenu={closeMenu}
-                    initialScope={scope}
-                    itemType={itemType}
-                    menuOptions={menuOptions}
-                    updateScope={selectScope}
-                />
-            </Menu>
         </Box>
     );
 }

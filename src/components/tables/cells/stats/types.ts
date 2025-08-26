@@ -15,6 +15,6 @@ export interface StatsHeaderProps {
     selectableTableStoreName: SelectTableStoreNames;
     header?: string;
     hideFilter?: boolean;
-    firstHeaderSuffix?: 'data.written' | 'data.read' | 'data.in' | 'data.out';
-    secondHeaderSuffix?: 'data.written' | 'data.read' | 'data.in' | 'data.out';
+    firstHeaderSuffix?: 'data.written' | 'data.read' | 'data.in';
+    secondHeaderSuffix?: 'data.written' | 'data.out';
 }

@@ -42,6 +42,9 @@ export enum FormStatus {
 
     // USE WITH CAUTION - only for prompts right now (Q3 2024)
     LOCKED = 'LOCKED',
+
+    // Used when clicking test/save but the actual test/save has not started yet
+    PROCESSING = 'PROCESSING',
 }
 
 export interface EntityFormState {
@@ -55,9 +58,6 @@ export interface EntityFormState {
 
     liveSpec: Schema | null;
     setLiveSpec: (data: EntityFormState['liveSpec']) => void;
-
-    showSavePrompt: boolean;
-    setShowSavePrompt: (data: EntityFormState['showSavePrompt']) => void;
 
     updateStatus: (status: FormStatus, background?: boolean) => void;
 

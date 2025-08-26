@@ -18,6 +18,5 @@ export const checkIfPublishIsDone = (payload: any): [boolean | null, any] => {
         ];
     }
 
-    logRocketConsole('Poller : response : trying again');
     return [null, response];
 };

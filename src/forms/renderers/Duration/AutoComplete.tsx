@@ -53,6 +53,8 @@ const areOptionsEqual = (option?: any, value?: any) => {
     return (option?.id ?? option) === (value?.id ?? value);
 };
 
+// TODO (JSONForms) - this field will render incorrectly unless the `currentBinding` is set to null
+//  while switching bindings.
 export const DurationAutoComplete = ({
     className,
     data,

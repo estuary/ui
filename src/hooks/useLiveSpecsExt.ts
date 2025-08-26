@@ -131,6 +131,8 @@ export function useLiveSpecsExt_related(captureName: string) {
                     captureName
                 )},spec->sourceCapture->>capture.eq.${escapeReservedCharacters(
                     captureName
+                )},spec->source->>capture.eq.${escapeReservedCharacters(
+                    captureName
                 )}`
             )
             .returns<LiveSpecsExt_Related[]>()

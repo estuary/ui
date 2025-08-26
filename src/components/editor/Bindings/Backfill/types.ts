@@ -10,7 +10,7 @@ export interface BackfillCountProps {
     disabled?: boolean;
 }
 
-export interface BackfillDataflowOptionProps {
+export interface BackfillModeSelectorProps {
     disabled?: boolean;
 }
 

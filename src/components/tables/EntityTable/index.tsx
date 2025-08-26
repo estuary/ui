@@ -1,13 +1,7 @@
-import type { ChangeEvent, MouseEvent, ReactNode } from 'react';
-import type { Pagination } from 'src/services/supabase';
-import type { SelectTableStoreNames } from 'src/stores/names';
+import type { ChangeEvent, MouseEvent } from 'react';
+import type { EntityTableProps } from 'src/components/tables/EntityTable/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
-import type {
-    SortDirection,
-    TableColumns,
-    TableIntlConfig,
-    TableState,
-} from 'src/types';
+import type { TableState } from 'src/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -24,7 +18,7 @@ import {
 
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
-import { useEffectOnce } from 'react-use';
+import { useEffectOnce, useUnmount } from 'react-use';
 
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableFooter from 'src/components/tables/EntityTable/TableFooter';
@@ -34,45 +28,6 @@ import { useZustandStore } from 'src/context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { TableStatuses } from 'src/types';
 import { getPagination, getStartingPage } from 'src/utils/table-utils';
-
-export interface ColumnProps extends TableColumns {
-    renderHeader?: (
-        index: number,
-        storeName: SelectTableStoreNames
-    ) => ReactNode;
-}
-
-interface Props {
-    columns: ColumnProps[];
-    columnToSort: string;
-    filterLabel: string;
-    header: string | ReactNode | null;
-    noExistingDataContentIds: TableIntlConfig;
-    pagination: Pagination;
-    renderTableRows: (data: any, showEntityStatus: boolean) => ReactNode;
-    rowsPerPage: number;
-    searchQuery: string | null;
-    selectableTableStoreName: SelectTableStoreNames;
-    setColumnToSort: (data: any) => void;
-    setPagination: (data: any) => void;
-    setRowsPerPage: (data: any) => void;
-    setSearchQuery: (data: any) => void;
-    setSortDirection: (data: any) => void;
-    sortDirection: SortDirection;
-    hideFilter?: boolean;
-    hideHeaderAndFooter?: boolean;
-    keepSelectionOnFilterOrSearch?: boolean;
-    keepSelectionOnPagination?: boolean;
-    minWidth?: number;
-    rowsPerPageOptions?: number[];
-    showEntityStatus?: boolean;
-    showToolbar?: boolean;
-    toolbar?: ReactNode;
-    ExportComponent?: any;
-
-    // This is a HACK
-    tableAriaLabelKey?: string;
-}
 
 function EntityTable({
     columns,
@@ -102,7 +57,7 @@ function EntityTable({
     keepSelectionOnPagination,
     ExportComponent,
     tableAriaLabelKey,
-}: Props) {
+}: EntityTableProps) {
     const isFiltering = useRef(Boolean(searchQuery));
     const searchTextField = useRef<HTMLInputElement>(null);
 
@@ -273,6 +228,9 @@ function EntityTable({
             setPage(0);
         },
     };
+    useUnmount(() => {
+        handlers.filterTable.cancel();
+    });
 
     const dataRows = useMemo(
         () =>

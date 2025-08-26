@@ -37,7 +37,7 @@ import {
     useFormStateStore_status,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { getBindingIndex } from 'src/utils/workflow-utils';
+import { getBindingIndex, isRecommendedField } from 'src/utils/workflow-utils';
 
 interface Props {
     bindingUUID: string;
@@ -68,7 +68,11 @@ const mapConstraintsToProjections = (
               }
             : null;
 
-        let selectionType: FieldSelectionType | null = 'default';
+        let selectionType: FieldSelectionType | null =
+            constraint && isRecommendedField(constraint.type)
+                ? 'default'
+                : null;
+
         let selectionMetadata: Schema | undefined;
 
         if (fieldMetadata) {

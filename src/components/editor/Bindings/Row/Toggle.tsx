@@ -1,43 +1,96 @@
-import { Button, Switch } from '@mui/material';
+import type { BindingsSelectorToggleProps } from 'src/components/editor/Bindings/Row/types';
+
+import { useEffect, useState } from 'react';
+
+import { Button, Switch, Tooltip } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import { TOGGLE_RESET_TOOLTIP_ID } from 'src/components/editor/Bindings/Row/shared';
+import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import { dataGridEntireCellButtonStyling } from 'src/context/Theme';
-import {
-    useBinding_resourceConfigOfMetaBindingProperty,
-    useBinding_toggleDisable,
-} from 'src/stores/Binding/hooks';
+import useDisableUpdater from 'src/hooks/bindings/useDisableUpdater';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
-interface Props {
-    bindingUUID: string;
-    disableButton: boolean;
-}
-
-function BindingsSelectorToggle({ bindingUUID, disableButton }: Props) {
+function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
     const intl = useIntl();
 
-    const toggleDisable = useBinding_toggleDisable();
-    const disabled = useBinding_resourceConfigOfMetaBindingProperty(
-        bindingUUID,
-        'disable'
-    );
+    const formActive = useFormStateStore_isActive();
+
+    const [invalidSetting, setInvalidSetting] = useState(false);
+
+    const { currentSetting, updateDraft } = useDisableUpdater(bindingUUID);
+
+    useEffect(() => {
+        // If we are in the "toggle all" button skip checking
+        if (!bindingUUID) {
+            setInvalidSetting(false);
+            return;
+        }
+
+        // Check if there is nothing in the store OR in the draft
+        if (currentSetting === null || currentSetting === undefined) {
+            setInvalidSetting(false);
+            return;
+        }
+
+        // Make sure we have the type we want
+        if (typeof currentSetting !== 'boolean') {
+            setInvalidSetting(true);
+            return;
+        }
+
+        // Just adding this as a fallthrough to be safe
+        setInvalidSetting(false);
+    }, [bindingUUID, currentSetting]);
+
+    const labeledById = `${TOGGLE_RESET_TOOLTIP_ID}_bindingUUID`;
+
+    if (invalidSetting) {
+        return (
+            <Tooltip
+                arrow
+                id={labeledById}
+                placement="right"
+                title={
+                    <SpecPropInvalidSetting
+                        currentSetting={currentSetting}
+                        invalidSettingsMessageId="specPropUpdater.error.message.toggle"
+                        updateDraftedSetting={() =>
+                            updateDraft(bindingUUID, false, true)
+                        }
+                    />
+                }
+            >
+                <Button
+                    aria-labelledby={labeledById}
+                    color="error"
+                    disabled={formActive}
+                    sx={dataGridEntireCellButtonStyling}
+                    variant="text"
+                >
+                    {intl.formatMessage({
+                        id: 'common.invalid',
+                    })}
+                </Button>
+            </Tooltip>
+        );
+    }
 
     return (
         <Button
             aria-label={intl.formatMessage({
-                id: disabled ? 'common.disabled' : 'common.enabled',
+                id: currentSetting ? 'common.disabled' : 'common.enabled',
             })}
-            disabled={disableButton}
+            disabled={formActive}
             sx={dataGridEntireCellButtonStyling}
             variant="text"
-            onClick={() => {
-                toggleDisable(bindingUUID);
-            }}
+            onClick={() => updateDraft(bindingUUID)}
         >
             <Switch
-                disabled={disableButton}
+                disabled={formActive}
                 size="small"
-                checked={!disabled}
+                checked={!currentSetting}
                 color="success"
                 id={`binding-toggle__${bindingUUID}`}
             />

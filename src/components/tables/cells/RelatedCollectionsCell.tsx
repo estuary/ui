@@ -1,6 +1,6 @@
 import { TableCell } from '@mui/material';
 
-import RelatedCollections from 'src/components/shared/Entity/RelatedCollections';
+import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
 
 interface Props {
     values: string[];
@@ -9,7 +9,7 @@ interface Props {
 function RelatedCollectionsCell({ values }: Props) {
     return (
         <TableCell>
-            <RelatedCollections collections={values} />
+            <RelatedEntities entities={values} entityType="collection" />
         </TableCell>
     );
 }

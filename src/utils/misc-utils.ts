@@ -57,6 +57,13 @@ export const stripPathing = (stringVal: string, tenantOnly?: boolean) => {
     );
 };
 
+export const splitPathAndName = (stringVal: string): string[] => {
+    if (!stringVal) return [];
+
+    const lastSlash = stringVal.lastIndexOf('/') + 1;
+    return [stringVal.substring(0, lastSlash), stringVal.substring(lastSlash)];
+};
+
 export const hasLength = (val: string | any[] | null | undefined): boolean => {
     return Boolean(val && val.length > 0);
 };
@@ -216,14 +223,14 @@ export const configCanBeEmpty = (schema: any) => {
 export const isReactElement = (value: ReactNode): value is ReactElement =>
     isObject(value) && 'props' in value;
 
-export const isPostgrestFetcher = (
+export const isPostgrestFetcher = <T = any>(
     value:
-        | PostgrestFilterBuilder<any, any, any, any, any>
-        | PostgrestTransformBuilder<any, any, any, any, any>
+        | PostgrestFilterBuilder<any, any, T, any, any>
+        | PostgrestTransformBuilder<any, any, T, any, any>
         | Function
 ): value is
-    | PostgrestFilterBuilder<any, any, any, any, any>
-    | PostgrestTransformBuilder<any, any, any, any, any> =>
+    | PostgrestFilterBuilder<any, any, T, any, any>
+    | PostgrestTransformBuilder<any, any, T, any, any> =>
     isObject(value) && 'throwOnError' in value;
 
 export const isGrant_UserExt = (

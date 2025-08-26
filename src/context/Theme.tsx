@@ -342,6 +342,11 @@ export const defaultOutlineColor = {
     dark: `rgba(247, 249, 252, 0.12)`,
 };
 
+export const defaultOutlineColor_hovered = {
+    light: `rgba(11, 19, 30, 0.6)`,
+    dark: `rgba(247, 249, 252, 0.6)`,
+};
+
 // Light is an RGB translation of #0B131E; Dark is an RGB translation of #F7F9FC.
 export const intensifiedOutline = {
     light: `1px solid rgba(11, 19, 30, 0.25)`,
@@ -749,8 +754,27 @@ export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
                 : tableCellBackground[theme.palette.mode],
         borderRight: (theme) =>
             `3px solid ${defaultOutlineColor[theme.palette.mode]}`,
-        zIndex: zIndexIncrement,
+        zIndex: chipDeleteIndex + zIndexIncrement,
     };
+};
+
+export const wrappingTableCell = {
+    wordWrap: 'break-word',
+    // WARNING - the min width work as you might expect. The max width does NOT
+    //  It looks and feels good but the cell will for sure grow larger than just 300px
+    //  even though that is what the styling says.
+    minWidth: 10,
+    maxWidth: 400,
+};
+
+export const wrappingTableBodyCell: SxProps<Theme> = {
+    ...wrappingTableCell,
+    background: (theme) => tableCellBackground[theme.palette.mode],
+};
+
+export const wrappingTableBodyHeader: SxProps<Theme> = {
+    ...wrappingTableCell,
+    background: (theme) => theme.palette.background.default,
 };
 
 // RGB translation of #CA3B55.

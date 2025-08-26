@@ -1,30 +1,22 @@
-import type { ColumnProps } from 'src/components/tables/EntityTable/types';
-import type { SelectTableStoreNames } from 'src/stores/names';
-import type { SortDirection } from 'src/types';
+import type { EntityTableHeaderProps } from 'src/components/tables/EntityTable/types';
 
 import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
 
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
-import { getStickyTableCell } from 'src/context/Theme';
+import { TABLE_HEADER_CELL_CLASS_PREFIX } from 'src/components/tables/EntityTable/shared';
+import {
+    getStickyTableCell,
+    wrappingTableBodyHeader,
+    zIndexIncrement,
+} from 'src/context/Theme';
 import { getTableComponents } from 'src/utils/table-utils';
-
-interface Props {
-    columns: ColumnProps[];
-    headerClick?: (column: any) => (event: React.MouseEvent<unknown>) => void;
-    height?: number;
-    hide?: boolean;
-    columnToSort?: string;
-    selectData?: any;
-    selectableTableStoreName?: SelectTableStoreNames;
-    sortDirection?: SortDirection;
-    enableDivRendering?: boolean;
-}
 
 function EntityTableHeader({
     columns,
     columnToSort,
+    disableBackground,
     enableDivRendering,
     headerClick,
     height,
@@ -32,27 +24,49 @@ function EntityTableHeader({
     selectData,
     selectableTableStoreName,
     sortDirection,
-}: Props) {
+}: EntityTableHeaderProps) {
     const enableSort = Boolean(columnToSort && headerClick && sortDirection);
 
     const { theaderComponent, tdComponent, trComponent } =
         getTableComponents(enableDivRendering);
 
     return (
-        <TableHead component={theaderComponent}>
+        <TableHead component={theaderComponent} sx={{ height }}>
             <TableRow
                 component={trComponent}
                 sx={{
-                    background: (theme) => theme.palette.background.default,
+                    background: disableBackground
+                        ? 'transparent'
+                        : (theme) => theme.palette.background.default,
                     height,
+                    position: 'relative',
+                    zIndex: zIndexIncrement,
+                    ['& .MuiTableCell-root']: {
+                        background: disableBackground
+                            ? 'transparent'
+                            : undefined,
+                    },
                 }}
             >
                 {columns.map((column, index) => {
                     let tableCellSX = {};
 
+                    if (column.minWidth) {
+                        tableCellSX = {
+                            ...tableCellSX,
+                            minWidth: column.minWidth,
+                        };
+                    }
+
                     if (column.sticky) {
                         tableCellSX = {
                             ...getStickyTableCell(true),
+                        };
+                    }
+
+                    if (column.columnWraps) {
+                        tableCellSX = {
+                            ...wrappingTableBodyHeader,
                         };
                     }
 
@@ -95,6 +109,7 @@ function EntityTableHeader({
 
                     return (
                         <TableCell
+                            className={`${TABLE_HEADER_CELL_CLASS_PREFIX}${column.field}`}
                             component={tdComponent}
                             key={`${column.field}-${index}`}
                             align={column.align}
@@ -107,7 +122,9 @@ function EntityTableHeader({
                             }
                             sx={tableCellSX}
                         >
-                            {selectData && column.field && !hide ? (
+                            {column.renderInlineHeader && !hide ? (
+                                column.renderInlineHeader(index)
+                            ) : selectData && column.field && !hide ? (
                                 <TableSortLabel
                                     IconComponent={ArrowDown}
                                     active={columnToSort === column.field}

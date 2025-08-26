@@ -38,8 +38,13 @@
         "// Public Domain": "0.0.0",
         "jsonify": "0.0.1",
 
-        "// BSL": "0.0.0",
-        "flow-web": "0.5.0"
+        "// BSL (only when hacking it in)": "0.0.0",
+        "flow-web": "0.5.12",
+
+        "// LGPL - only used for image processing and easy to remove": "0.0.0",
+        "@img/sharp-libvips-linux-x64": "1.1.0",
+        "@img/sharp-libvips-linuxmusl-x64": "1.1.0",
+        "@img/sharp-libvips-darwin-arm64": "1.1.0"
     },
     "ignore": [{ "prefix": "@estuary" }]
 }

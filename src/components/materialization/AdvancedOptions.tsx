@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import OnIncompatibleSchemaChange from 'src/components/materialization/OnIncompatibleSchemaChange';
+import Backfill from 'src/components/shared/Entity/Backfill';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
@@ -38,6 +39,8 @@ export default function AdvancedOptions() {
                 <ErrorBoundryWrapper>
                     <OnIncompatibleSchemaChange />
                 </ErrorBoundryWrapper>
+
+                <Backfill />
             </WrapperWithHeader>
         </Box>
     );

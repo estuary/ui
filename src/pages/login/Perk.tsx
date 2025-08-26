@@ -1,31 +1,46 @@
+import type { RegisterPerkProps } from 'src/pages/login/types';
+
 import { Box, Stack } from '@mui/material';
 
-import { CheckCircleSolid } from 'iconoir-react';
+import { CheckCircleSolid, NavArrowRight } from 'iconoir-react';
 
 import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
-import { registerPerkCheck, registerPerkHighlight } from 'src/context/Theme';
+import {
+    diminishedTextColor,
+    registerPerkCheck,
+    registerPerkHighlight,
+} from 'src/context/Theme';
 
-interface Props {
-    messageID: string;
-}
-
-function RegisterPerk({ messageID }: Props) {
+function RegisterPerk({
+    disableEmphasisColor,
+    disableNoWrap,
+    messageID,
+}: RegisterPerkProps) {
     return (
         <Stack direction="row" spacing={1}>
             <Box
                 sx={{
-                    color: (theme) => registerPerkCheck[theme.palette.mode],
+                    alignContent: 'center',
+                    color: disableEmphasisColor
+                        ? undefined
+                        : (theme) => registerPerkCheck[theme.palette.mode],
                 }}
             >
-                <CheckCircleSolid />
+                {disableEmphasisColor ? (
+                    <NavArrowRight />
+                ) : (
+                    <CheckCircleSolid />
+                )}
             </Box>
 
             <Box
                 sx={{
-                    'whiteSpace': 'nowrap',
+                    'whiteSpace': disableNoWrap ? undefined : 'nowrap',
                     '& b': {
                         color: (theme) =>
-                            registerPerkHighlight[theme.palette.mode],
+                            disableEmphasisColor
+                                ? diminishedTextColor[theme.palette.mode]
+                                : registerPerkHighlight[theme.palette.mode],
                     },
                 }}
             >

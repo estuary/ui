@@ -34,7 +34,6 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.table.accessLinks.label.provisioningPrefix': `Provisioner`,
     'accessGrants.table.accessLinks.label.grantedPrefix': `Prefix`,
     'accessGrants.table.accessLinks.label.capability': `Capability`,
-    'accessGrants.table.accessLinks.label.url': `Invite Link`,
     'accessGrants.table.accessLinks.label.lastUpdated': `Last Updated`,
     'accessGrants.table.accessLinks.label.actions': `Actions`,
     'accessGrants.table.accessLinks.delete.confirm': `All items will be disabled and this action cannot be undone. Please review the list to continue.`,

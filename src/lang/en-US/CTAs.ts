@@ -50,12 +50,14 @@ export const CTAs: Record<string, string> = {
     'cta.remove': `Remove`,
     'cta.goToDetails': `See Details`,
     'cta.goToAll': `See all`,
+    'cta.reset': `Reset`,
     // These are dynamically created in the Save button
     'cta.saveEntity.active': `Saving and Publishing...`,
     'cta.testConfig.active': `Testing...`,
     'cta.contactUs': `Contact Us`,
     'cta.manualSelect': `Manually Select`,
-    'cta.resetDataFlow.hideDiff': `Hide spec changes`,
-    'cta.resetDataFlow.showDiff': `See spec changes`,
-    'cta.resetDataFlow.retry': `Retry`,
+    'cta.modify': `modify`,
+    'cta.exit': `Exit`,
+    'cta.rename': `Rename`,
+    'cta.inviteLink': `Invite Link`,
 };

@@ -57,7 +57,11 @@ const StatsHeader = ({
             ),
             intl.formatMessage(
                 {
-                    id: secondHeaderSuffix ? secondHeaderSuffix : 'data.read',
+                    id: secondHeaderSuffix
+                        ? secondHeaderSuffix
+                        : firstHeaderSuffix
+                          ? firstHeaderSuffix
+                          : 'data.read',
                 },
                 {
                     type: intl.formatMessage({

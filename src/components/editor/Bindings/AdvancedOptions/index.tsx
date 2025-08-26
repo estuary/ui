@@ -4,6 +4,7 @@ import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import Backfill from 'src/components/editor/Bindings/Backfill';
 import OnIncompatibleSchemaChange from 'src/components/editor/Bindings/OnIncompatibleSchemaChange';
 import TimeTravel from 'src/components/editor/Bindings/TimeTravel';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
@@ -15,6 +16,7 @@ export default function AdvancedOptions({
     bindingIndex,
     bindingUUID,
     collectionName,
+    collectionEnabled,
 }: AdvancedOptionsProps) {
     const intl = useIntl();
 
@@ -61,6 +63,13 @@ export default function AdvancedOptions({
                 <TimeTravel
                     bindingUUID={bindingUUID}
                     collectionName={collectionName}
+                />
+
+                {/*Capture shows this in ResourceConfig*/}
+                <Backfill
+                    bindingIndex={bindingIndex}
+                    collection={collectionName}
+                    collectionEnabled={Boolean(collectionEnabled)}
                 />
             </Stack>
         </WrapperWithHeader>

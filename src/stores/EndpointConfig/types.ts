@@ -1,11 +1,6 @@
 import type { StoreWithCustomErrors } from 'src/stores/extensions/CustomErrors';
 import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
-import type {
-    EntityWithCreateWorkflow,
-    EntityWorkflow,
-    JsonFormsData,
-    Schema,
-} from 'src/types';
+import type { JsonFormsData, Schema } from 'src/types';
 
 export interface EndpointConfigState
     extends StoreWithHydration,
@@ -45,13 +40,6 @@ export interface EndpointConfigState
     // Storing if the endpoint config is allowed to be empty
     endpointCanBeEmpty: boolean;
     setEndpointCanBeEmpty: (value: boolean) => void;
-
-    // Hydration
-    hydrateState: (
-        entityType: EntityWithCreateWorkflow,
-        workflow: EntityWorkflow | null,
-        connectorTagId: string
-    ) => Promise<void>;
 
     // Misc.
     resetState: () => void;

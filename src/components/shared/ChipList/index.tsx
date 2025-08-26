@@ -1,12 +1,12 @@
 import type { ChipListProps } from 'src/components/shared/ChipList/types';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 
-import { Box } from '@mui/material';
-
-import { useIntl } from 'react-intl';
+import { Box, ListItem, useTheme } from '@mui/material';
 
 import ChipWrapper from 'src/components/shared/ChipList/Wrapper';
+import { ExpandListChip } from 'src/styledComponents/chips/ExpandListChip';
+import { useCollapsableList } from 'src/styledComponents/chips/useCollapsableList';
 
 function ChipList({
     values,
@@ -15,9 +15,7 @@ function ChipList({
     stripPath,
     sx,
 }: ChipListProps) {
-    const intl = useIntl();
-
-    const listScroller = useRef<HTMLDivElement>(null);
+    const theme = useTheme();
 
     // Format data coming in so we can still pass in a list of strings
     const formattedValues = useMemo(() => {
@@ -29,35 +27,9 @@ function ChipList({
                 : value;
         });
     }, [values]);
-    const valueLength = useMemo(
-        () => formattedValues.length,
-        [formattedValues]
-    );
-    const [maxRender, setMaxRender] = useState(maxChips ?? valueLength);
 
-    // See how many values are hidden
-    const hiddenCount = useMemo(() => {
-        return valueLength - maxRender;
-    }, [maxRender, valueLength]);
-
-    // Slice off the right number of values to display
-    const renderList = useMemo(() => {
-        return formattedValues.slice(0, maxRender);
-    }, [maxRender, formattedValues]);
-
-    const showEntireList = () => {
-        setMaxRender(valueLength);
-    };
-
-    // When all chips are shown scroll down just a hair to try to make
-    //   sure the user knows that the list is scrollable
-    useEffect(() => {
-        if (!listScroller.current || maxRender !== valueLength) {
-            return;
-        }
-
-        listScroller.current.scrollTop += 20;
-    }, [maxRender, valueLength]);
+    const { hiddenCount, list, listScroller, showEntireList } =
+        useCollapsableList(formattedValues, maxChips);
 
     return (
         <Box
@@ -76,30 +48,30 @@ function ChipList({
             }}
             component="ul"
         >
-            {renderList.map((val, index) => {
+            {list.map((el, index) => {
                 return (
                     <ChipWrapper
-                        val={val}
-                        key={`chipList_${val.display}-${index}`}
+                        val={el}
+                        key={`chipList_${el.display}-${index}`}
                         disabled={disabled}
                         stripPath={stripPath ?? true}
                     />
                 );
             })}
-            {hiddenCount > 0 ? (
-                <ChipWrapper
-                    val={{
-                        display: intl.formatMessage(
-                            { id: 'entityTable.moreEntities' },
-                            {
-                                count: hiddenCount,
-                            }
-                        ),
-                    }}
-                    onClick={showEntireList}
-                    title={intl.formatMessage({ id: 'cta.showAll' })}
+
+            <ListItem
+                style={{
+                    margin: theme.spacing(0.5),
+                    padding: 0,
+                    width: 'fit-content',
+                }}
+            >
+                <ExpandListChip
+                    component="span"
+                    hiddenCount={hiddenCount}
+                    showEntireList={showEntireList}
                 />
-            ) : null}
+            </ListItem>
         </Box>
     );
 }

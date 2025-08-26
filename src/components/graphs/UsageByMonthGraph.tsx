@@ -193,7 +193,7 @@ function UsageByMonthGraph() {
                                 {
                                     value,
                                 }
-                            ) as string;
+                            ) as unknown as string;
                         },
                     },
                 },
@@ -216,7 +216,7 @@ function UsageByMonthGraph() {
                                 {
                                     value,
                                 }
-                            ) as string;
+                            ) as unknown as string;
                         },
                     },
                     yAxisIndex: 1,

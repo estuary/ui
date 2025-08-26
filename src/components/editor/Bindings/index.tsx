@@ -14,7 +14,7 @@ import BindingSelector from 'src/components/editor/Bindings/Selector';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import { createEditorStore } from 'src/components/editor/Store/create';
 import AdvancedOptions from 'src/components/materialization/AdvancedOptions';
-import SourceCapture from 'src/components/materialization/SourceCapture';
+import SourceCapture from 'src/components/materialization/source/Capture';
 import Backfill from 'src/components/shared/Entity/Backfill';
 import { useEntityType } from 'src/context/EntityContext';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
@@ -100,12 +100,6 @@ function BindingsMultiEditor({
 
     return (
         <LocalZustandProvider createStore={localStore}>
-            <Typography sx={{ mb: 2 }}>
-                <FormattedMessage
-                    id={`${messagePrefix}.collectionSelector.instructions`}
-                />
-            </Typography>
-
             <Stack spacing={5} sx={{ mb: 5 }}>
                 {entityType === 'capture' ? <AutoDiscoverySettings /> : null}
 
@@ -113,15 +107,21 @@ function BindingsMultiEditor({
 
                 {entityType === 'materialization' ? <SourceCapture /> : null}
 
-                <Backfill />
+                {/*Materializations show this in the advanced options*/}
+                {entityType === 'capture' ? <Backfill /> : null}
 
                 <AdvancedOptions />
             </Stack>
 
+            <Typography sx={{ mb: 2 }}>
+                <FormattedMessage
+                    id={`${messagePrefix}.collectionSelector.instructions`}
+                />
+            </Typography>
+
             <ListAndDetails
                 list={
                     <BindingSelector
-                        height={height - 25}
                         itemType={itemType}
                         readOnly={readOnly}
                         RediscoverButton={RediscoverButton}

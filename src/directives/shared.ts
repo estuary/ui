@@ -1,4 +1,8 @@
-import type { Directives, UserClaims } from 'src/directives/types';
+import type {
+    Directives,
+    JobStatusQueryData,
+    UserClaims,
+} from 'src/directives/types';
 import type { AppliedDirective } from 'src/types';
 
 import { isEmpty } from 'lodash';
@@ -23,7 +27,7 @@ export const claimSubmitted = (
     return appliedDirective?.user_claims !== null;
 };
 
-export const jobStatusQuery = (data: AppliedDirective<UserClaims>) => {
+export const jobStatusQuery = (data: JobStatusQueryData) => {
     return supabaseClient
         .from(TABLES.APPLIED_DIRECTIVES)
         .select(JOB_STATUS_COLUMNS)

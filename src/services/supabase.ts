@@ -17,12 +17,6 @@ import { logRocketEvent, retryAfterFailure } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
 // Little helper string that fetches the name from open graph
-export const CONNECTOR_NAME = `title->>en-US`;
-export const CONNECTOR_DETAILS = `detail`;
-export const CONNECTOR_RECOMMENDED = `recommended`;
-export const CONNECTOR_TITLE = `title:connector_title->>en-US`;
-export const CONNECTOR_IMAGE = `image:connector_logo_url->>en-US`;
-
 export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const SHARDS_DISABLE = `spec->shards->disable`;
@@ -49,11 +43,12 @@ export const tokenHasIssues = (errorMessage?: string) => {
     );
 };
 
-export const BASE_ERROR = {
+export const BASE_ERROR: PostgrestError = {
     code: '',
     details: '',
     hint: '',
     message: '',
+    name: '',
 };
 
 export enum TABLES {
@@ -154,13 +149,13 @@ export type Protocol<Data> = { column: keyof Data; value: string | null };
 
 // TODO (V2 typing) - query should take in filter builder better
 export const defaultTableFilter = <Response>(
-    query: any,
+    query: PostgrestFilterBuilder<any, any, any, any, any>,
     searchParam: Array<keyof Response | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     sorting: SortingProps<Response>[],
     pagination?: Pagination,
     protocol?: Protocol<Response>
-): PostgrestFilterBuilder<any, any, Response> => {
+): PostgrestFilterBuilder<any, any, Response, any, any> => {
     let queryBuilder = query as PostgrestFilterBuilder<any, any, Response>;
 
     if (searchQuery) {

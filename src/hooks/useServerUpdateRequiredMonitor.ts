@@ -12,7 +12,7 @@ import {
     useBinding_resourceConfigs,
     useBinding_setServerUpdateRequired,
 } from 'src/stores/Binding/hooks';
-import { getCollectionName, getDisableProps } from 'src/utils/workflow-utils';
+import { getCollectionName } from 'src/utils/workflow-utils';
 
 const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
     const bindings = useBinding_bindings();
@@ -31,7 +31,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                     ([collection, bindingUUIDs]) => {
                         return bindingUUIDs.some((bindingUUID) => {
                             const expectedBindingIndex =
-                                resourceConfigs[bindingUUID].meta.bindingIndex;
+                                resourceConfigs[bindingUUID]?.meta.bindingIndex;
 
                             if (expectedBindingIndex > -1) {
                                 const binding =
@@ -56,14 +56,7 @@ const useServerUpdateRequiredMonitor = (draftSpecs: DraftSpecQuery[]) => {
                                     return true;
                                 }
 
-                                // Do a quick simple disabled check before comparing the entire object
-                                if (
-                                    resourceConfigs[bindingUUID].meta
-                                        .disable !==
-                                    getDisableProps(binding?.disable).disable
-                                ) {
-                                    return true;
-                                }
+                                // No longer check disable here - disable directly updates the draft
 
                                 // Since we checked disabled up above we can not just check if the data changed
                                 return !isEqual(

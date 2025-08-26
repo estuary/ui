@@ -1,4 +1,12 @@
 import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
+import type {
+    DraftSpecCreateMatchData,
+    DraftSpecData,
+    DraftSpecsExtQuery_BySpecTypeReduced,
+    DraftSpecUpdateMatchData,
+    MassCreateDraftSpecsData,
+    MassUpdateMatchData,
+} from 'src/api/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { Entity } from 'src/types';
 
@@ -6,38 +14,19 @@ import pLimit from 'p-limit';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
+    DEFAULT_PAGING_SIZE,
     deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
+    pagedFetchAll,
+    parsePagedFetchAllResponse,
     RPCS,
     supabaseRetry,
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
 import { CHUNK_SIZE } from 'src/utils/misc-utils';
-
-interface CreateMatchData {
-    draft_id: string | null;
-    catalog_name: string;
-    spec: any;
-    spec_type?: Entity | null;
-    expect_pub_id?: string;
-}
-
-interface UpdateMatchData {
-    draft_id: string | null;
-    catalog_name?: string;
-    expect_pub_id?: string;
-    spec_type?: Entity | null;
-}
-
-interface DraftSpecData {
-    spec: any;
-    catalog_name?: string;
-    expect_pub_id?: string;
-    detail?: string;
-}
 
 export const createDraftSpec = (
     draftId: string | null,
@@ -47,7 +36,7 @@ export const createDraftSpec = (
     lastPubId?: string | null,
     noResponse?: boolean
 ) => {
-    let matchData: CreateMatchData = {
+    let matchData: DraftSpecCreateMatchData = {
         draft_id: draftId,
         catalog_name: catalogName,
         spec_type: specType ?? undefined,
@@ -61,11 +50,100 @@ export const createDraftSpec = (
     return insertSupabase(TABLES.DRAFT_SPECS, matchData, noResponse);
 };
 
+export const massCreateDraftSpecs = async (
+    draftId: string,
+    specType: Entity,
+    specs: MassCreateDraftSpecsData[]
+) => {
+    if (specs.length > 0) {
+        const limiter = pLimit(3);
+        const promises: Array<Promise<PostgrestSingleResponse<any>>> = [];
+        let index = 0;
+
+        // TODO (retry) promise generator
+        const insertPromiseGenerator = (idx: number) => {
+            return supabaseClient.from(TABLES.DRAFT_SPECS).insert(
+                specs.slice(idx, idx + CHUNK_SIZE).map((spec) => ({
+                    ...spec,
+                    draft_id: draftId,
+                    spec_type: specType,
+                    detail: 'Dashboard : collection reset : create',
+                }))
+            );
+        };
+
+        while (index < specs.length) {
+            const prom = insertPromiseGenerator(index);
+
+            promises.push(limiter(() => prom));
+
+            index = index + CHUNK_SIZE;
+        }
+
+        const res = await Promise.all(promises);
+
+        const errors = res.filter((r) => r.error);
+
+        return {
+            error: errors[0] ? errors[0].error : res[0].error,
+        };
+    } else {
+        return {
+            error: null,
+        };
+    }
+};
+
+export const massUpdateDraftSpecs = async (
+    draftId: string,
+    specType: Entity,
+    specs: MassUpdateMatchData[]
+) => {
+    if (specs.length > 0) {
+        const limiter = pLimit(3);
+        const promises: Array<Promise<PostgrestSingleResponse<any>>> = [];
+        let index = 0;
+
+        // TODO (retry) promise generator
+        const insertPromiseGenerator = (idx: number) => {
+            const currentSlice = specs.slice(idx, idx + CHUNK_SIZE);
+            return supabaseClient.from(TABLES.DRAFT_SPECS).upsert(
+                currentSlice.map((spec) => ({
+                    ...spec,
+                    draft_id: draftId,
+                    spec_type: specType,
+                    detail: 'Dashboard : collection reset : update',
+                })),
+                { onConflict: 'draft_id, catalog_name' }
+            );
+        };
+
+        while (index < specs.length) {
+            const prom = insertPromiseGenerator(index);
+
+            promises.push(limiter(() => prom));
+
+            index = index + CHUNK_SIZE;
+        }
+
+        const res = await Promise.all(promises);
+
+        const errors = res.filter((r) => r.error);
+
+        return {
+            error: errors[0] ? errors[0].error : res[0].error,
+        };
+    } else {
+        return {
+            error: null,
+        };
+    }
+};
+
 export const modifyDraftSpec = (
     draftSpec: any,
-    matchData: UpdateMatchData,
+    matchData: DraftSpecUpdateMatchData,
     catalogName?: string | null,
-    lastPubId?: string | null,
     detail?: string
 ) => {
     let data: DraftSpecData = { spec: draftSpec };
@@ -76,10 +154,6 @@ export const modifyDraftSpec = (
     // for a v1 Hubspot connector vs. '/source-hubspot' for a v2 Hubspot connector).
     if (catalogName) {
         data = { ...data, catalog_name: catalogName };
-    }
-
-    if (lastPubId) {
-        data = { ...data, expect_pub_id: lastPubId };
     }
 
     if (detail) {
@@ -111,30 +185,25 @@ export const getDraftSpecsBySpecType = async (
     ).then(handleSuccess<DraftSpecQuery[]>, handleFailure);
 };
 
-interface DraftSpecsExtQuery_BySpecTypeReduced {
-    draft_id: string;
-    catalog_name: string;
-    spec_type: string;
-}
-
 export const getDraftSpecsBySpecTypeReduced = async (
     draftId: string,
     specType: Entity
 ) => {
-    const data = await supabaseRetry(
-        () =>
+    const responses = await pagedFetchAll<DraftSpecsExtQuery_BySpecTypeReduced>(
+        DEFAULT_PAGING_SIZE,
+        'getDraftSpecsBySpecTypeReduced',
+        (start) =>
             supabaseClient
                 .from(TABLES.DRAFT_SPECS_EXT)
-                .select(`draft_id,catalog_name,spec_type`)
+                .select(`draft_id,catalog_name,spec_type,spec`)
                 .eq('draft_id', draftId)
-                .eq('spec_type', specType),
-        'getDraftSpecsBySpecTypeReduced'
-    ).then(
-        handleSuccess<DraftSpecsExtQuery_BySpecTypeReduced[]>,
-        handleFailure
+                .eq('spec_type', specType)
+                .range(start, start + DEFAULT_PAGING_SIZE - 1)
     );
 
-    return data;
+    return parsePagedFetchAllResponse<DraftSpecsExtQuery_BySpecTypeReduced>(
+        responses
+    );
 };
 
 // TODO (optimization | typing): This is temporary typing given the supabase package upgrade will

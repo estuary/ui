@@ -7,6 +7,8 @@ import { useEntityWorkflow } from 'src/context/Workflow';
 import { logRocketConsole } from 'src/services/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
+// TODO: Remove details form store hydrator and hydrateState action.
+//   It is only used by the test JSON forms page.
 export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const entityType = useEntityType();
     const workflow = useEntityWorkflow();
@@ -14,8 +16,8 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const hydrated = useDetailsFormStore((state) => state.hydrated);
     const setHydrated = useDetailsFormStore((state) => state.setHydrated);
     const setActive = useDetailsFormStore((state) => state.setActive);
-    const setHydrationErrorsExist = useDetailsFormStore(
-        (state) => state.setHydrationErrorsExist
+    const [setHydrationErrorsExist, dataPlaneOptions] = useDetailsFormStore(
+        (state) => [state.setHydrationErrorsExist, state.dataPlaneOptions]
     );
 
     const hydrateState = useDetailsFormStore((state) => state.hydrateState);
@@ -26,7 +28,7 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
             (entityType === 'capture' || entityType === 'materialization')
         ) {
             setActive(true);
-            hydrateState(workflow).then(
+            hydrateState(workflow, dataPlaneOptions).then(
                 () => {
                     setHydrated(true);
                 },

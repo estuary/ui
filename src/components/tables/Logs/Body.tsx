@@ -27,9 +27,9 @@ import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 import { TableStatuses } from 'src/types';
 
 interface Props {
-    outerRef: MutableRefObject<any>;
-    tableScroller: (node?: any) => VariableSizeList | null;
-    virtualRows: MutableRefObject<any>;
+    outerRef: MutableRefObject<HTMLDivElement | undefined>;
+    tableScroller: (node?: any) => VariableSizeList | undefined;
+    virtualRows: MutableRefObject<HTMLDivElement | undefined>;
 }
 
 function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {

@@ -25,17 +25,17 @@ import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEnti
 import { useFormHydrationChecker } from 'src/components/shared/Entity/hooks/useFormHydrationChecker';
 import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsavedChangesPrompt';
 import IncompatibleCollections from 'src/components/shared/Entity/IncompatibleCollections';
-import PreSavePrompt from 'src/components/shared/Entity/prompts/PreSave';
-import PromptsHydrator from 'src/components/shared/Entity/prompts/store/Hydrator';
 import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
-import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
+import {
+    useBinding_rediscoveryRequired,
+    useBinding_serverUpdateRequired,
+} from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_serverUpdateRequired,
@@ -80,15 +80,10 @@ function EntityEdit({
 
     const { resetState } = useEntityWorkflowHelpers();
 
-    const {
-        connectorTags,
-        error: connectorTagsError,
-        isValidating,
-    } = useConnectorWithTagDetail(entityType);
-
     // Binding Store
     const resourceConfigServerUpdateRequired =
         useBinding_serverUpdateRequired();
+    const rediscoveryRequired = useBinding_rediscoveryRequired();
 
     // Details Form Store
     const detailsHydrationError = useDetailsFormStore(
@@ -131,7 +126,8 @@ function EntityEdit({
     useEffect(() => {
         const resetDraftIdFlag =
             endpointConfigServerUpdateRequired ||
-            resourceConfigServerUpdateRequired;
+            resourceConfigServerUpdateRequired ||
+            rediscoveryRequired;
 
         const newValue = resetDraftIdFlag ? null : persistedDraftId;
 
@@ -146,6 +142,7 @@ function EntityEdit({
         endpointConfigServerUpdateRequired,
         persistedDraftId,
         resourceConfigServerUpdateRequired,
+        rediscoveryRequired,
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
@@ -164,94 +161,74 @@ function EntityEdit({
                 <ValidationErrorSummary />
             </Box>
 
-            {connectorTagsError || detailsHydrationError ? (
+            {detailsHydrationError ? (
                 <Error
                     condensed
-                    error={
-                        connectorTagsError ?? {
-                            ...BASE_ERROR,
-                            message: detailsHydrationError,
-                        }
-                    }
+                    error={{
+                        ...BASE_ERROR,
+                        message: detailsHydrationError,
+                    }}
                 />
             ) : !persistedDraftId || !storeHydrationComplete ? null : (
                 <DraftSpecEditorHydrator
                     entityType={entityType}
                     entityName={entityName}
                 >
-                    <PromptsHydrator>
-                        <Collapse in={formSubmitError !== null}>
-                            {formSubmitError ? (
-                                <EntityError
-                                    title={formSubmitError.title}
-                                    error={formSubmitError.error}
-                                    logToken={logToken}
-                                    draftId={persistedDraftId}
-                                />
-                            ) : null}
-                        </Collapse>
-
-                        <IncompatibleCollections />
-
-                        {draftInitializationError ? (
-                            <AlertBox
-                                short={false}
-                                severity={draftInitializationError.severity}
-                                sx={{
-                                    mb: 2,
-                                }}
-                            >
-                                {intl.formatMessage({
-                                    id: draftInitializationError.messageId,
-                                })}
-                            </AlertBox>
+                    <Collapse in={formSubmitError !== null}>
+                        {formSubmitError ? (
+                            <EntityError
+                                title={formSubmitError.title}
+                                error={formSubmitError.error}
+                                logToken={logToken}
+                                draftId={persistedDraftId}
+                            />
                         ) : null}
+                    </Collapse>
 
-                        {!isValidating && connectorTags.length === 0 ? (
-                            <AlertBox severity="warning" short>
-                                {intl.formatMessage({
-                                    id: `${messagePrefix}.missingConnectors`,
-                                })}
-                            </AlertBox>
-                        ) : connectorTags.length > 0 ? (
-                            <ErrorBoundryWrapper>
-                                <DetailsForm
-                                    connectorTags={connectorTags}
-                                    readOnly={readOnly.detailsForm}
-                                    entityType={entityType}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                    <IncompatibleCollections />
 
-                        {imageTag.connectorId ? (
-                            <ErrorBoundryWrapper>
-                                <EndpointConfig
-                                    connectorImage={imageTag.id}
-                                    readOnly={readOnly.endpointConfigForm}
-                                    hideBorder={
-                                        !hasLength(imageTag.connectorId)
-                                    }
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
+                    {draftInitializationError ? (
+                        <AlertBox
+                            short={false}
+                            severity={draftInitializationError.severity}
+                            sx={{
+                                mb: 2,
+                            }}
+                        >
+                            {intl.formatMessage({
+                                id: draftInitializationError.messageId,
+                            })}
+                        </AlertBox>
+                    ) : null}
 
-                        {hasLength(imageTag.connectorId) ? (
-                            <ErrorBoundryWrapper>
-                                <CollectionConfig
-                                    draftSpecs={taskDraftSpec}
-                                    readOnly={readOnly.resourceConfigForm}
-                                    hideBorder={!draftId}
-                                    RediscoverButton={RediscoverButton}
-                                />
-                            </ErrorBoundryWrapper>
-                        ) : null}
-
-                        <CatalogEditor
-                            messageId={`${messagePrefix}.finalReview.instructions`}
+                    <ErrorBoundryWrapper>
+                        <DetailsForm
+                            readOnly={readOnly.detailsForm}
+                            entityType={entityType}
                         />
+                    </ErrorBoundryWrapper>
 
-                        <PreSavePrompt />
-                    </PromptsHydrator>
+                    <ErrorBoundryWrapper>
+                        <EndpointConfig
+                            readOnly={readOnly.endpointConfigForm}
+                            hideBorder={!hasLength(imageTag.connectorId)}
+                        />
+                    </ErrorBoundryWrapper>
+
+                    {hasLength(imageTag.connectorId) ? (
+                        <ErrorBoundryWrapper>
+                            <CollectionConfig
+                                draftSpecs={taskDraftSpec}
+                                readOnly={readOnly.resourceConfigForm}
+                                hideBorder={!draftId}
+                                RediscoverButton={RediscoverButton}
+                            />
+                        </ErrorBoundryWrapper>
+                    ) : null}
+
+                    <CatalogEditor
+                        messageId={`${messagePrefix}.finalReview.instructions`}
+                    />
                 </DraftSpecEditorHydrator>
             )}
         </>

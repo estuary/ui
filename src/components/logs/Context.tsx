@@ -1,3 +1,4 @@
+import type { PostgrestResponseSuccess } from '@supabase/postgrest-js';
 import type { BaseComponentProps, ViewLogs_Line } from 'src/types';
 
 import {
@@ -58,6 +59,8 @@ const LogsContextProvider = ({
     const [networkFailure, setNetworkFailure] = useState(false);
     const [fetchingCanSafelyStop, setFetchingCanSafelyStop] = useState(false);
 
+    // TODO (typing) - cannot get the rpc to play nice with overrideTypes
+    //  ViewLogs_Line[] is what the type should be
     const fetchLogs = async (offsetVal: number) => {
         const queryParams = {
             bearer_token: token,
@@ -65,14 +68,12 @@ const LogsContextProvider = ({
         if (fetchAll) {
             return supabaseClient
                 .rpc(RPCS.VIEW_LOGS, queryParams)
-                .throwOnError()
-                .returns<ViewLogs_Line[]>();
+                .throwOnError();
         } else {
             return supabaseClient
                 .rpc(RPCS.VIEW_LOGS, queryParams)
-                .throwOnError()
                 .range(offsetVal, offsetVal + 10)
-                .returns<ViewLogs_Line[]>();
+                .throwOnError();
         }
     };
 
@@ -99,7 +100,9 @@ const LogsContextProvider = ({
 
         const makeApiCall = () => {
             return fetchLogs(offset.current).then(
-                (fetchLogsResponse) => {
+                (
+                    fetchLogsResponse: PostgrestResponseSuccess<ViewLogs_Line[]>
+                ) => {
                     timeoutCleanUp(timeoutRef.current);
 
                     if (fetchLogsResponse.error) {

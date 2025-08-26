@@ -1,6 +1,6 @@
 import type { EndpointConfigState } from 'src/stores/EndpointConfig/types';
 import type { CustomError } from 'src/stores/extensions/CustomErrors';
-import type { JsonFormsData, Schema } from 'src/types';
+import type { JsonFormsData } from 'src/types';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -10,12 +10,6 @@ import { devtools } from 'zustand/middleware';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
 
-import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
-import {
-    getLiveSpecsByLiveSpecId,
-    getSchema_Endpoint,
-} from 'src/api/hydration';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { createJSONFormDefaults } from 'src/services/ajv';
 import {
     fetchErrors,
@@ -27,13 +21,11 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
-import { getEndpointConfig } from 'src/utils/connector-utils';
 import {
     configCanBeEmpty,
     getDereffedSchema,
     hasLength,
 } from 'src/utils/misc-utils';
-import { parseEncryptedEndpointConfig } from 'src/utils/sops-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 const STORE_KEY = 'Endpoint Config';
@@ -204,70 +196,6 @@ const getInitialState = (
             false,
             'Endpoint Can Be Empty Changed'
         );
-    },
-
-    hydrateState: async (
-        entityType,
-        workflow,
-        connectorTagId
-    ): Promise<void> => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const liveSpecId = searchParams.get(GlobalSearchParams.LIVE_SPEC_ID);
-        const draftId = searchParams.get(GlobalSearchParams.DRAFT_ID);
-
-        get().setHydrated(false);
-
-        if (
-            workflow === 'capture_create' ||
-            workflow === 'materialization_create'
-        ) {
-            get().setServerUpdateRequired(true);
-        }
-
-        if (get().active && connectorTagId && connectorTagId.length > 0) {
-            const { data, error } = await getSchema_Endpoint(connectorTagId);
-
-            if (error) {
-                get().setHydrationErrorsExist(true);
-            }
-
-            if (get().active && data) {
-                await get().setEndpointSchema(
-                    data.endpoint_spec_schema as unknown as Schema
-                );
-            }
-        }
-
-        if (get().active && liveSpecId) {
-            const { data, error } = draftId
-                ? await getDraftSpecsByDraftId(draftId, entityType)
-                : await getLiveSpecsByLiveSpecId(liveSpecId, entityType);
-
-            if (error) {
-                get().setHydrationErrorsExist(true);
-            }
-
-            if (get().active && data && data.length > 0) {
-                const encryptedEndpointConfig = getEndpointConfig(data);
-
-                get().setEncryptedEndpointConfig({
-                    data: encryptedEndpointConfig,
-                });
-
-                get().setPublishedEndpointConfig({
-                    data: encryptedEndpointConfig,
-                });
-
-                const endpointConfig = parseEncryptedEndpointConfig(
-                    encryptedEndpointConfig,
-                    get().endpointSchema
-                );
-
-                get().setPreviousEndpointConfig(endpointConfig);
-
-                get().setEndpointConfig(endpointConfig);
-            }
-        }
     },
 
     resetState: () => {

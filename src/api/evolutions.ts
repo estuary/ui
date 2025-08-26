@@ -1,34 +1,11 @@
+import type {
+    IncompatibleCollections,
+    ValidHelpMessageId,
+} from 'src/components/shared/Entity/IncompatibleCollections/types';
+
 import { DEFAULT_FILTER } from 'src/services/shared';
 import { insertSupabase, TABLES } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
-import { suggestedName } from 'src/utils/name-utils';
-
-export type RequiresRecreation =
-    // The collection key in the draft differs from that of the live spec.
-    | 'keyChange'
-    // One or more collection partition fields in the draft differs from that of the live spec.
-    | 'partitionChange'
-    // A live spec with the same name has already been created and was subsequently deleted.
-    | 'prevDeletedSpec'
-    // This variant is deprecated and removed from the latest version of the agent. It's retained here
-    // only to temporarily ensure compatibility between the agent and the UI, and can be removed once
-    // the agent changes make it into production.
-    | 'authoritativeSourceSchema';
-
-export interface AffectedMaterialization {
-    name: string;
-    fields: {
-        field: string;
-        reason: string;
-    }[];
-}
-
-// Evolution starts by the publish returning this object in job_status['incompatible_collections']
-export interface IncompatibleCollections {
-    collection: string;
-    requires_recreation: RequiresRecreation[];
-    affected_materializations?: AffectedMaterialization[];
-}
 
 // Creates an EvolutionRequest from an IncompatibleCollection. This will automatically choose whether to
 // re-create the collection, based on the values of `requires_recreation`. If a new collection is to be
@@ -37,23 +14,31 @@ export function toEvolutionRequest(
     ic: IncompatibleCollections
 ): EvolutionRequest {
     const req: EvolutionRequest = { current_name: ic.collection };
+
     if (hasLength(ic.requires_recreation)) {
-        req.new_name = suggestedName(ic.collection);
+        req.reset = true;
     } else if (ic.affected_materializations) {
         // since we're _not_ re-creating the collection, restrict the evolution to only apply to
         // the materializations that were affected.
         req.materializations = ic.affected_materializations.map((m) => m.name);
     }
+
+    // if somehow there is no requires_recreations AND affected_materializations then we just pass
+    // a request of {"current_name": "a/b"}, and the evolutions handler will figure out which
+    // materializations to update (as of Q2 2025)
+
     return req;
 }
 
-// Evolution success will return this object in job_status['evolved_collections']
-export interface EvolvedCollections {
-    new_name: string;
-    old_name: string;
-    updated_captures: string[];
-    updated_materializations: string[];
-}
+export const getEvolutionMessageId = (
+    evolutionRequest: EvolutionRequest
+): ValidHelpMessageId => {
+    if (evolutionRequest.reset) {
+        return 'resetCollection';
+    }
+
+    return 'fallThrough';
+};
 
 // Represents the shape fo the inputs to the evolutions table.
 export interface EvolutionRequest {
@@ -66,6 +51,9 @@ export interface EvolutionRequest {
     // At most one of `new_name` or `materializations` may be specified, since
     // re-creating the collection must apply to all materializations.
     materializations?: string[];
+
+    // This triggers the backend to kick off `Collection Reset` and do a full proper backfill
+    reset?: boolean;
 }
 
 export const createEvolution = (

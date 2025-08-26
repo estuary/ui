@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl';
 
 import ResourceConfig from 'src/components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
+import DisabledWarning from 'src/components/collection/schema/Editor/DisabledWarning';
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 import ControlledEditor from 'src/components/editor/Bindings/ControlledEditor';
 import useBackgroundTest from 'src/components/editor/Bindings/FieldSelection/useBackgroundTest';
@@ -153,6 +154,8 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                     <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
                                 </Typography>
                             )}
+
+                            <DisabledWarning />
 
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (

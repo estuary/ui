@@ -44,10 +44,11 @@ export function useQueryPoller<T = any>(
                 logRocketConsole(`Poller : ${key} : start `, { pollerTimeout });
 
                 return (
-                    isPostgrestFetcher(query) ? query.throwOnError() : query()
+                    isPostgrestFetcher<T>(query)
+                        ? query.throwOnError()
+                        : query()
                 ).then(
                     (payload: any) => {
-                        logRocketConsole(`Poller : ${key} : response `);
                         timeoutCleanUp(pollerTimeout);
 
                         if (payload.error) {
@@ -74,8 +75,6 @@ export function useQueryPoller<T = any>(
                         }
                     },
                     (error: any) => {
-                        logRocketConsole(`Poller : ${key} : error `, error);
-
                         if (
                             attempts === 0 &&
                             typeof error?.message === 'string' &&
@@ -104,8 +103,6 @@ export function useQueryPoller<T = any>(
                     }
                 );
             };
-
-            logRocketConsole(`Poller : ${key} : init `);
 
             setPollerTimeout(
                 window.setTimeout(

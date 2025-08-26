@@ -1,12 +1,8 @@
-import type { ReactNode } from 'react';
-import type { DraftSpecSwrMetadata } from 'src/hooks/useDraftSpecs';
-import type { EntityWithCreateWorkflow } from 'src/types';
+import type { EntityCreateProps } from 'src/components/shared/Entity/Create/types';
 
 import { useEffect, useMemo } from 'react';
 
 import { Box, Collapse } from '@mui/material';
-
-import { FormattedMessage } from 'react-intl';
 
 import CollectionConfig from 'src/components/collection/Config';
 import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
@@ -15,7 +11,6 @@ import {
     useEditorStore_persistedDraftId,
     useEditorStore_setId,
 } from 'src/components/editor/Store/hooks';
-import AlertBox from 'src/components/shared/AlertBox';
 import CatalogEditor from 'src/components/shared/Entity/CatalogEditor';
 import DetailsForm from 'src/components/shared/Entity/DetailsForm';
 import EndpointConfig from 'src/components/shared/Entity/EndpointConfig';
@@ -26,7 +21,6 @@ import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsav
 import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
-import useConnectorWithTagDetail from 'src/hooks/connectors/useConnectorWithTagDetail';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -45,31 +39,15 @@ import {
 } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
-interface Props {
-    entityType: EntityWithCreateWorkflow;
-    draftSpecMetadata: Pick<
-        DraftSpecSwrMetadata,
-        'draftSpecs' | 'isValidating' | 'error'
-    >;
-    toolbar: ReactNode;
-    RediscoverButton?: ReactNode;
-}
-
 function EntityCreate({
     entityType,
     draftSpecMetadata,
-    toolbar,
+    Toolbar: toolbar,
     RediscoverButton,
-}: Props) {
+}: EntityCreateProps) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
     const { resetState } = useEntityWorkflowHelpers();
-
-    const {
-        connectorTags,
-        error: connectorTagsError,
-        isValidating,
-    } = useConnectorWithTagDetail(entityType);
 
     // Binding Store
     const bindingServerUpdateRequired = useBinding_serverUpdateRequired();
@@ -158,15 +136,13 @@ function EntityCreate({
 
     const storeHydrationComplete = useFormHydrationChecker();
 
-    return connectorTagsError || detailsHydrationError ? (
+    return detailsHydrationError ? (
         <Error
             condensed
-            error={
-                connectorTagsError ?? {
-                    ...BASE_ERROR,
-                    message: detailsHydrationError,
-                }
-            }
+            error={{
+                ...BASE_ERROR,
+                message: detailsHydrationError,
+            }}
         />
     ) : !storeHydrationComplete ? null : (
         <DraftSpecEditorHydrator
@@ -190,29 +166,13 @@ function EntityCreate({
                 ) : null}
             </Collapse>
 
-            {!isValidating && connectorTags.length === 0 ? (
-                <AlertBox short={false} severity="warning">
-                    <FormattedMessage
-                        id={`${messagePrefix}.missingConnectors`}
-                    />
-                </AlertBox>
-            ) : connectorTags.length > 0 ? (
-                <ErrorBoundryWrapper>
-                    <DetailsForm
-                        connectorTags={connectorTags}
-                        entityType={entityType}
-                    />
-                </ErrorBoundryWrapper>
-            ) : null}
+            <ErrorBoundryWrapper>
+                <DetailsForm entityType={entityType} />
+            </ErrorBoundryWrapper>
 
-            {imageTag.connectorId ? (
-                <ErrorBoundryWrapper>
-                    <EndpointConfig
-                        connectorImage={imageTag.id}
-                        hideBorder={!displayResourceConfig}
-                    />
-                </ErrorBoundryWrapper>
-            ) : null}
+            <ErrorBoundryWrapper>
+                <EndpointConfig hideBorder={!displayResourceConfig} />
+            </ErrorBoundryWrapper>
 
             {displayResourceConfig ? (
                 <ErrorBoundryWrapper>

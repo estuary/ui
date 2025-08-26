@@ -4,6 +4,7 @@ import type { Entity } from 'src/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { debounce, get, has, isEqual, set } from 'lodash';
+import { useUnmount } from 'react-use';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
@@ -53,7 +54,7 @@ function useDraftSpecEditor(
             // If there is a schema scope make sure it exists first
             //  otherwise we will fall back to the schema prop
             // This is just being super safe
-            spec = has(draftSpec.spec, editorSchemaScope)
+            spec = has<any>(draftSpec.spec, editorSchemaScope)
                 ? get(draftSpec.spec, editorSchemaScope)
                 : draftSpec.spec.schema;
         }
@@ -96,7 +97,6 @@ function useDraftSpecEditor(
                         catalog_name: catalogName,
                         spec_type: specType,
                     },
-                    undefined,
                     undefined,
                     'Manually Edited'
                 );
@@ -150,6 +150,9 @@ function useDraftSpecEditor(
             setCurrentCatalogSyncing(false);
         }, DEFAULT_DEBOUNCE_WAIT)
     );
+    useUnmount(() => {
+        debouncedUpdate.current?.cancel();
+    });
 
     useEffect(() => {
         if (

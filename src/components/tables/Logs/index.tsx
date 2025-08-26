@@ -1,6 +1,6 @@
 import type { VariableSizeList } from 'react-window';
 
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 import { Box, Table, TableContainer } from '@mui/material';
 
@@ -10,9 +10,10 @@ import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import LogsTableBody from 'src/components/tables/Logs/Body';
 import useLogColumns from 'src/components/tables/Logs/useLogColumns';
 import { defaultOutlineColor } from 'src/context/Theme';
+import { useReactWindowReadyToScroll } from 'src/hooks/useReactWindowReadyToScroll';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
-const TABLE_HEIGHT = 500;
+const TABLE_HEIGHT = 600;
 
 function LogsTable() {
     const intl = useIntl();
@@ -25,22 +26,13 @@ function LogsTable() {
             state.scrollToWhenDone,
         ]);
 
-    const tableScroller = useRef<any>(null);
-    const outerRef = useRef<any>(null);
-    const virtualRows = useRef<any>(null);
+    const tableScroller = useRef<VariableSizeList | undefined>(undefined);
+    const outerRef = useRef<HTMLDivElement | undefined>(undefined);
+    const virtualRows = useRef<HTMLDivElement | undefined>(undefined);
     const enableFetchingMore = useRef<boolean>(true);
-    const [readyToScroll, setReadyToScroll] = useState(false);
 
-    const tableScrollerCallback = useCallback((node?: VariableSizeList) => {
-        // If we get a node store that off and trigger a flag so we can do the initial scrolling
-        //  This is gross but it works with the virtualization library we have and it let me get the job done
-        if (node) {
-            tableScroller.current = node;
-            setReadyToScroll(true);
-        }
-
-        return tableScroller.current;
-    }, []);
+    const { readyToScroll, scrollingElementCallback } =
+        useReactWindowReadyToScroll<VariableSizeList>(tableScroller);
 
     useLayoutEffect(() => {
         if (readyToScroll && scrollToIndex > 0 && tableScroller.current) {
@@ -99,7 +91,7 @@ function LogsTable() {
 
                     <LogsTableBody
                         outerRef={outerRef}
-                        tableScroller={tableScrollerCallback}
+                        tableScroller={scrollingElementCallback}
                         virtualRows={virtualRows}
                     />
                 </Table>

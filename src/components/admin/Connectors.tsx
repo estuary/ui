@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import AdminTabs from 'src/components/admin/Tabs';
-import ConnectorTiles from 'src/components/connectors/ConnectorTiles';
+import ConnectorGrid from 'src/components/connectors/Grid';
 import usePageTitle from 'src/hooks/usePageTitle';
 
 const AdminConnectors = () => {
@@ -24,7 +24,7 @@ const AdminConnectors = () => {
                 </Stack>
             </Toolbar>
 
-            <ConnectorTiles />
+            <ConnectorGrid />
         </>
     );
 };

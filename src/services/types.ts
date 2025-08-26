@@ -1,5 +1,9 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 
+export type KnownEvents = 'SourceCapture' | 'ResetInvalidSetting';
+
+// TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
+//  KnownEvents type
 export enum CustomEvents {
     AUTHORIZE_TASK = 'AuthorizeTask',
     AUTH_SIGNOUT = 'Auth_Signout',
@@ -17,9 +21,10 @@ export enum CustomEvents {
     CAPTURE_MATERIALIZE_SUCCESS = 'Capture_Materialize_Success',
     CAPTURE_TEST = 'Capture_Test',
     COLLECTION_CREATE = 'Collection_Create',
+    COLLECTION_SCHEMA = 'CollectionSchema',
     CONNECTOR_VERSION_MISSING = 'Connector_Version:Missing',
     CONNECTOR_VERSION_UNSUPPORTED = 'Connector_Version:Unsupported',
-    DATA_PLANE_SELECTOR = 'Data_Pane_Selector',
+    DATA_PLANE_SELECTOR = 'Data_Plane_Selector',
     DATE_TIME_PICKER_CHANGE = 'Date_Time_Picker:Change',
     DIRECTIVE = 'Directive',
     DIRECTIVE_EXCHANGE_TOKEN = 'Directive:ExchangeToken',
@@ -28,6 +33,7 @@ export enum CustomEvents {
     ENTITY_NOT_FOUND = 'Entity_Not_Found',
     ENTITY_SAVE = 'Entity_Save',
     ENTITY_STATUS = 'EntityStatus',
+    ENTITY_RELATIONSHIPS = 'EntityRelationships',
     ERROR_BOUNDARY_DISPLAYED = 'Error_Boundary_Displayed',
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     ERROR_DISPLAYED = 'Error_Displayed',
@@ -60,6 +66,8 @@ export enum CustomEvents {
     OAUTH_SUCCESS_HANDLER = 'Oauth_Success_Handler',
     OAUTH_WINDOW_OPENING = 'Oauth_Window_Opening',
     OAUTH_WINDOW_OPENER = 'Oauth_Window_Opener',
+    ONBOARDING = 'Onboarding',
+    PROJECTION = 'Projection',
     REPUBLISH_PREFIX_FAILED = 'Republish_Prefix:Failed',
     STRIPE_FORM_LOADING_FAILED = 'Stripe_Form_Loading_Failed',
     SYNC_SCHEDULE = 'Sync_Schedule',

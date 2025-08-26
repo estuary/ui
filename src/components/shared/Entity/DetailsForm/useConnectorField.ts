@@ -1,4 +1,3 @@
-import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
 import type { Details } from 'src/stores/DetailsForm/types';
 import type { EntityWithCreateWorkflow } from 'src/types';
 import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
@@ -15,6 +14,7 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsForm_changed_connectorId } from 'src/stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import {
     evaluateConnectorVersions,
     getConnectorMetadata,
@@ -23,7 +23,6 @@ import { hasLength } from 'src/utils/misc-utils';
 import { MAC_ADDR_RE } from 'src/validation';
 
 export default function useConnectorField(
-    connectorTags: ConnectorWithTagDetailQuery[],
     entityType: EntityWithCreateWorkflow
 ) {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
@@ -46,6 +45,8 @@ export default function useConnectorField(
     const setEntityNameChanged = useDetailsFormStore(
         (state) => state.setEntityNameChanged
     );
+
+    const connectorTags = useWorkflowStore((state) => state.connectorMetadata);
 
     useEffect(() => {
         if (connectorId && hasLength(connectorTags) && connectorIdChanged) {
@@ -121,7 +122,7 @@ export default function useConnectorField(
         },
     };
 
-    const evaluateConnector = useCallback(
+    const setConnector = useCallback(
         (details: Details, selectedDataPlaneId: string | undefined) => {
             const selectedConnectorId = details.data.connectorImage.connectorId;
 
@@ -153,5 +154,5 @@ export default function useConnectorField(
         ]
     );
 
-    return { connectorSchema, connectorUISchema, evaluateConnector };
+    return { connectorSchema, connectorUISchema, setConnector };
 }

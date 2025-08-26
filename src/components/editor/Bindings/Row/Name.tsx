@@ -2,25 +2,20 @@ import type { SelectorNameProps } from 'src/components/editor/Bindings/Row/types
 
 import { Button, Typography } from '@mui/material';
 
-import BindingsSelectorErrorIndicator from 'src/components/editor/Bindings/Row/ErrorIndicator';
+import Highlighter from 'src/components/editor/Bindings/Row/Highlighter';
+import { HIGHLIGHT_CLASS_NAME } from 'src/components/editor/Bindings/Row/shared';
 import { typographyTruncation } from 'src/context/Theme';
-import { stripPathing } from 'src/utils/misc-utils';
 
 function BindingsSelectorName({
-    bindingUUID,
     collection,
-    shortenName,
+    highlightChunks,
+    filterValue,
+    buttonProps = {},
 }: SelectorNameProps) {
     return (
         <Button
             variant="text"
             disableFocusRipple
-            startIcon={
-                <BindingsSelectorErrorIndicator
-                    bindingUUID={bindingUUID}
-                    collection={collection}
-                />
-            }
             sx={{
                 'color': (theme) => theme.palette.text.primary,
                 'height': '100%',
@@ -30,10 +25,19 @@ function BindingsSelectorName({
                 '&:focus, &:hover': {
                     bgcolor: 'transparent',
                 },
+                [`& .${HIGHLIGHT_CLASS_NAME}`]: {
+                    background: 'none',
+                    fontWeight: 700,
+                    mx: 0.25,
+                },
             }}
+            {...buttonProps}
         >
-            <Typography {...typographyTruncation}>
-                {shortenName ? stripPathing(collection) : collection}
+            <Typography component="span" {...typographyTruncation}>
+                <Highlighter
+                    chunks={highlightChunks}
+                    output={collection.join('')}
+                />
             </Typography>
         </Button>
     );

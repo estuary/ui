@@ -1,4 +1,5 @@
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
+import type { SourceCaptureDef } from 'src/types';
 
 import { useState } from 'react';
 
@@ -14,8 +15,10 @@ import {
     useBinding_discoveredCollections,
     useBinding_prefillResourceConfigs,
     useBinding_setRestrictedDiscoveredCollections,
+    useBinding_sourceCaptureFlags,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
@@ -34,6 +37,16 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         (state) => state.setCollectionMetadata
     );
 
+    const {
+        sourceCaptureDeltaUpdatesSupported,
+        sourceCaptureTargetSchemaSupported,
+    } = useBinding_sourceCaptureFlags();
+
+    const [deltaUpdates, targetSchema] = useSourceCaptureStore((state) => [
+        state.deltaUpdates,
+        state.targetSchema,
+    ]);
+
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
     const discoveredCollections = useBinding_discoveredCollections();
 
@@ -49,9 +62,23 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             };
         });
 
+        // Get the SourceCapture settings prepared but ignore
+        const sourceCaptureSettings: SourceCaptureDef = {
+            // Never use the sourceCapture here because the user is manually adding collections
+            //  and we should use their names to base things on
+            capture: '',
+        };
+        if (sourceCaptureDeltaUpdatesSupported) {
+            sourceCaptureSettings.deltaUpdates = deltaUpdates;
+        }
+
+        if (sourceCaptureTargetSchemaSupported) {
+            sourceCaptureSettings.targetNaming = targetSchema;
+        }
+
         const collections = value.map(({ name }) => name);
 
-        prefillResourceConfigs(collections, true);
+        prefillResourceConfigs(collections, true, sourceCaptureSettings);
 
         evaluateTrialCollections(collections).then(
             (response) => {

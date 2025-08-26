@@ -41,8 +41,10 @@ function MaterializationCreate() {
     const persistedDraftId = useEditorStore_persistedDraftId();
     const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
-    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } =
-        useDraftSpecs(persistedDraftId);
+    const { mutate: mutateDraftSpecs, ...draftSpecsMetadata } = useDraftSpecs(
+        persistedDraftId,
+        entityType
+    );
 
     const updateDraftSpecs = useCallback(async () => {
         await mutateDraftSpecs();
@@ -62,7 +64,7 @@ function MaterializationCreate() {
                 <EntityCreate
                     entityType={entityType}
                     draftSpecMetadata={draftSpecsMetadata}
-                    toolbar={
+                    Toolbar={
                         <EntityToolbar
                             GenerateButton={
                                 <MaterializeGenerateButton

@@ -2,7 +2,7 @@ import type {
     PostgrestFilterBuilder,
     PostgrestSingleResponse,
 } from '@supabase/postgrest-js';
-import type { AppliedDirective, JoinedAppliedDirective } from 'src/types';
+import type { AppliedDirective } from 'src/types';
 import type { KeyedMutator } from 'swr';
 
 // THESE MUST STAY IN SYNC WITH THE DB
@@ -13,6 +13,11 @@ export interface Directives {
     grant: DirectiveSettings<GrantClaim>;
     storageMappings: DirectiveSettings<StorageMappingsClaim>;
 }
+
+export type JobStatusQueryData = Pick<
+    AppliedDirective<UserClaims>,
+    'logs_token' | 'directive_id' | 'id'
+>;
 
 export interface ActionsProps {
     primaryMessageId: string;
@@ -74,5 +79,6 @@ export interface DirectiveSettings<T> {
 export interface DirectiveProps {
     directive: any;
     status: DirectiveStates;
-    mutate: KeyedMutator<PostgrestSingleResponse<JoinedAppliedDirective[]>>;
+    // TODO (typing) - should be JoinedAppliedDirective
+    mutate: KeyedMutator<PostgrestSingleResponse<any>>;
 }

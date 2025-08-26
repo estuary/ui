@@ -13,7 +13,6 @@ export const getLiveSpecFlowBySource = (
     liveSpecId: string,
     specType: Entity
 ) => {
-    console.log('specType', specType);
     return supabaseClient
         .from(TABLES.LIVE_SPEC_FLOWS)
         .select(`flow_type, target_id`)

@@ -33,8 +33,8 @@ function EntityCreateSave({
         <Button
             disabled={disabled || isSaving || formActive}
             sx={entityHeaderButtonSx}
-            onClick={async () => {
-                await save(draftId);
+            onClick={() => {
+                void save(draftId);
             }}
         >
             {intl.formatMessage({

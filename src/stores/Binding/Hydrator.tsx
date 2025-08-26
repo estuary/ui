@@ -10,6 +10,7 @@ import {
 import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
 import { logRocketConsole } from 'src/services/shared';
 import {
+    useBinding_hydrated,
     useBinding_hydrateState,
     useBinding_setActive,
     useBinding_setHydrated,
@@ -33,6 +34,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         (state) => state.details.data.connectorImage.id
     );
 
+    const hydrated = useBinding_hydrated();
     const setHydrated = useBinding_setHydrated();
     const setHydrationErrorsExist = useBinding_setHydrationErrorsExist();
     const setActive = useBinding_setActive();
@@ -48,6 +50,10 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
             workflow === 'collection_create'
         ) {
             setActive(true);
+
+            // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
+            //  make sure that we allow resetting everything in the store except for the bindings
+            //  themselves. That way `hydrateState` won't have to call `resetState` with a bunch of flags... hopefully
             hydrateState(
                 editWorkflow,
                 entityType,
@@ -94,6 +100,10 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         setPrefilledCapture,
         workflow,
     ]);
+
+    if (!hydrated) {
+        return null;
+    }
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

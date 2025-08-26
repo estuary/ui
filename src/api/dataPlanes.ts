@@ -41,13 +41,18 @@ const COLUMNS = [
 
 const QUERY = COLUMNS.join(',');
 
-const getDataPlaneOptions = async () => {
+const getDataPlaneOptions = async (dataPlaneNames?: string[]) => {
+    let queryBuilder = supabaseClient
+        .from(TABLES.DATA_PLANES)
+        .select(QUERY)
+        .order('data_plane_name');
+
+    if (dataPlaneNames && dataPlaneNames.length > 0) {
+        queryBuilder = queryBuilder.in('data_plane_name', dataPlaneNames);
+    }
+
     const data = await supabaseRetry(
-        () =>
-            supabaseClient
-                .from(TABLES.DATA_PLANES)
-                .select(QUERY)
-                .order('data_plane_name'),
+        () => queryBuilder,
         'getDataPlaneOptions'
     ).then(handleSuccess<BaseDataPlaneQuery[]>, handleFailure);
 

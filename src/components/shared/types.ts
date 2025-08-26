@@ -19,3 +19,15 @@ export interface RadioMenuItemProps {
     label: string;
     value: string;
 }
+
+interface ButtonLinkAttributes {
+    href: string;
+    target: string;
+    rel: string;
+}
+
+export interface TileProps extends BaseComponentProps {
+    clickHandler?: () => void;
+    externalLink?: ButtonLinkAttributes;
+    fullHeight?: boolean;
+}

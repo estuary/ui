@@ -37,9 +37,7 @@ export default function SaveButton({
             onClick={() => {
                 if (projections && selectedAlgorithm) {
                     const selectedValue =
-                        selectedAlgorithm === 'excludeAll'
-                            ? 'exclude'
-                            : 'default';
+                        selectedAlgorithm === 'excludeAll' ? 'exclude' : null;
 
                     const updatedFields = evaluateUpdatedFields(
                         projections,

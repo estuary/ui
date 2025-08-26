@@ -4,7 +4,7 @@ import type {
     EntityTestButtonProps,
 } from 'src/components/shared/Entity/Actions/types';
 import type { DataPlaneOption } from 'src/stores/DetailsForm/types';
-import type { Entity } from 'src/types';
+import type { BaseComponentProps, Entity } from 'src/types';
 
 export interface AddCollectionDialogCTAProps {
     entity?: Entity;
@@ -31,6 +31,7 @@ export interface EntityToolbarProps {
     GenerateButton: ReactNode;
     primaryButtonProps: EntitySaveButtonProps | any;
     secondaryButtonProps: EntityTestButtonProps | any;
+    expressWorkflow?: boolean;
     PrimaryButtonComponent?: any;
     SecondaryButtonComponent?: any;
     hideLogs?: boolean;
@@ -41,6 +42,7 @@ export interface EntityToolbarProps {
 
 export type EntityToolbarActionProps = Pick<
     EntityToolbarProps,
+    | 'expressWorkflow'
     | 'GenerateButton'
     | 'PrimaryButtonComponent'
     | 'SecondaryButtonComponent'
@@ -60,4 +62,8 @@ export interface TableHydratorProps {
     disableQueryParamHack?: boolean;
     entity?: Entity;
     selectedCollections: string[];
+}
+
+export interface WorkflowInitializerProps extends BaseComponentProps {
+    expressWorkflow?: boolean;
 }

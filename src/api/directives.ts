@@ -183,7 +183,7 @@ const getDirectivesByType = (
                 count: 'exact',
             })
             .eq('spec->>type', directiveType)
-            .or(`uses_remaining.eq.1,uses_remaining.is.null`),
+            .or(`uses_remaining.gt.0,uses_remaining.is.null`),
         ['catalog_prefix', `spec->>capability`, `spec->>grantedPrefix`],
         searchQuery,
         sorting,

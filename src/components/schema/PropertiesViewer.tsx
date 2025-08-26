@@ -15,6 +15,10 @@ import MonacoEditor from 'src/components/editor/MonacoEditor';
 import ExistFilter from 'src/components/schema/ExistFilter';
 import AlertBox from 'src/components/shared/AlertBox';
 import SchemaPropertiesTable from 'src/components/tables/Schema';
+import { optionalColumns } from 'src/components/tables/Schema/shared';
+import TableColumnSelector from 'src/components/tables/TableColumnSelector';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
 
 interface Props {
     disabled: boolean;
@@ -24,6 +28,10 @@ interface Props {
 const EDITOR_HEIGHT = 404;
 
 function PropertiesViewer({ disabled, editorProps }: Props) {
+    const workflow = useEntityWorkflow();
+    const isCaptureWorkflow =
+        workflow === 'capture_create' || workflow === 'capture_edit';
+
     const inferSchemaError = useBindingsEditorStore_inferSchemaResponseError();
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
@@ -48,13 +56,26 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 </Typography>
 
                 {disabled ? (
-                    <Box style={{ width: 150 }}>
-                        <ExistFilter
-                            fieldFilter={fieldFilter}
-                            setFieldFilter={setFieldFilter}
-                            disabled={inferSchemaResponseEmpty}
-                        />
-                    </Box>
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ alignItems: 'center' }}
+                    >
+                        <Box style={{ width: 150 }}>
+                            <ExistFilter
+                                fieldFilter={fieldFilter}
+                                setFieldFilter={setFieldFilter}
+                                disabled={inferSchemaResponseEmpty}
+                            />
+                        </Box>
+
+                        {isCaptureWorkflow ? (
+                            <TableColumnSelector
+                                optionalColumns={optionalColumns}
+                                tablePrefix={TablePrefixes.schemaViewer}
+                            />
+                        ) : null}
+                    </Stack>
                 ) : null}
             </Stack>
 

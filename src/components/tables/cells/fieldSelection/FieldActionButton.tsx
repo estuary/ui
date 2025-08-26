@@ -1,4 +1,4 @@
-import type { FieldActionButtonProps } from 'src/components/tables/cells/fieldSelection/types';
+import type { FieldActionButtonProps } from 'src/components/tables/cells/types';
 
 import { Tooltip } from '@mui/material';
 
@@ -51,7 +51,11 @@ export default function FieldActionButton({
                         {...props}
                         disabled={disabled}
                         onClick={(_event, value) =>
-                            updateSingleSelection(value, selection)
+                            updateSingleSelection(
+                                value,
+                                selection,
+                                constraint.type
+                            )
                         }
                     >
                         {intl.formatMessage({ id: labelId })}
@@ -66,7 +70,9 @@ export default function FieldActionButton({
             {...props}
             className={TOGGLE_BUTTON_CLASS}
             disabled={disabled}
-            onClick={(_event, value) => updateSingleSelection(value, selection)}
+            onClick={(_event, value) =>
+                updateSingleSelection(value, selection, constraint.type)
+            }
         >
             {intl.formatMessage({ id: labelId })}
         </OutlinedToggleButton>

@@ -21,9 +21,17 @@ export interface EntitySetting {
     pluralId: string;
     routes: {
         connectorSelect: string;
+        createNewExpress: string;
         createNew: string;
         details: string;
         viewAll: string;
+    };
+    details: {
+        relatedEntitiesContentIds: {
+            writtenBy: string | undefined;
+            collections: string | undefined;
+            readBy: string | undefined;
+        };
     };
     selector: {
         noExistingDataContentIds: TableIntlConfig;
@@ -31,6 +39,10 @@ export interface EntitySetting {
         headerIntlKey: string | null;
         disableMultiSelect?: boolean;
         optionalColumns?: OptionalColumn;
+    };
+    workFlows: {
+        bindingsEmptyTitleIntlKey: string;
+        bindingsEmptyMessageIntlKey: string;
     };
     table: TableSettings;
     termId: string;

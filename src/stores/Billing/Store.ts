@@ -1,21 +1,17 @@
-import type { BillingState, DataVolumeByTask } from 'src/stores/Billing/types';
+import type { BillingState } from 'src/stores/Billing/types';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import { isArray, isEqual } from 'lodash';
+import { isArray } from 'lodash';
 
 import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
-import {
-    evaluateSpecType,
-    invoiceId,
-    stripTimeFromDate,
-} from 'src/utils/billing-utils';
+import { invoiceId } from 'src/utils/billing-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
@@ -23,7 +19,6 @@ const getInitialStateData = (): Pick<
     BillingState,
     | 'invoices'
     | 'invoicesInitialized'
-    | 'dataByTaskGraphDetails'
     | 'paymentMethodExists'
     | 'selectedInvoiceId'
 > => {
@@ -31,7 +26,6 @@ const getInitialStateData = (): Pick<
         selectedInvoiceId: null,
         invoices: [],
         invoicesInitialized: false,
-        dataByTaskGraphDetails: [],
         paymentMethodExists: null,
     };
 };
@@ -73,46 +67,6 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
                 }),
                 false,
                 'Billing History Initialized'
-            );
-        },
-
-        setDataByTaskGraphDetails: (value) => {
-            set(
-                produce((state: BillingState) => {
-                    const taskStatData = value.filter((query) =>
-                        Object.hasOwn(query.flow_document, 'taskStats')
-                    );
-
-                    taskStatData.forEach((query) => {
-                        const dataVolumeByTask: DataVolumeByTask = {
-                            catalogName: query.catalog_name,
-                            date: stripTimeFromDate(query.ts),
-                            dataVolume:
-                                query.bytes_written_by_me +
-                                query.bytes_read_by_me,
-                            specType: evaluateSpecType(query),
-                        };
-
-                        const existingStatIndex =
-                            state.dataByTaskGraphDetails.findIndex(
-                                (stat) =>
-                                    query.catalog_name === stat.catalogName &&
-                                    isEqual(
-                                        stat.date,
-                                        stripTimeFromDate(query.ts)
-                                    )
-                            );
-
-                        if (existingStatIndex === -1) {
-                            state.dataByTaskGraphDetails.push(dataVolumeByTask);
-                        } else {
-                            state.dataByTaskGraphDetails[existingStatIndex] =
-                                dataVolumeByTask;
-                        }
-                    });
-                }),
-                false,
-                'Data By Task Graph Details Set'
             );
         },
 

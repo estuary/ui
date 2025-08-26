@@ -39,6 +39,7 @@ import {
     isGroup,
     isLayout,
     resolveSchema,
+    RuleEffect,
     toDataPath,
     toDataPathSegments,
 } from '@jsonforms/core';
@@ -183,6 +184,9 @@ const getNullableType = (schema: JsonSchema): null | string => {
 
 const isOAuthConfig = (schema: JsonSchema): boolean =>
     Object.hasOwn(schema, Annotations.oAuthProvider);
+
+const isHiddenField = (schema: JsonSchema): boolean =>
+    Object.hasOwn(schema, Annotations.hiddenField);
 
 // TODO (reset section) might want to know if there are multiple children in future
 // const getChildObjectCount = (schema: JsonSchema) => {
@@ -468,7 +472,31 @@ const generateUISchema = (
     const isRequired = isRequiredField(schemaName, rootSchema);
 
     if (isPlainObject(jsonSchema)) {
-        if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
+        // We know we never want to show the meta on ResourceConfigs or
+        //  any field marked as hidden
+        if (schemaName === '_meta' || isHiddenField(jsonSchema)) {
+            // This is kind of overkill - but making sure they stay as a control or a group
+            //  is the more proper thing to do. Even though they'll be hidden.
+            const groupOrControl: GroupLayout | ControlElement = isCombinator(
+                jsonSchema
+            )
+                ? {
+                      type: 'Group',
+                      elements: [],
+                  }
+                : createControlElement(currentRef);
+
+            // Add in the rule to always hide. JSONForms currently (Q2 2025) always returns true if the
+            //  `type` is one they are not expecting.
+            groupOrControl.rule = {
+                effect: RuleEffect.HIDE,
+                condition: {
+                    type: 'fake-to-hopefully-always-return-true',
+                },
+            };
+
+            return groupOrControl;
+        } else if (isCombinator(jsonSchema) && isAdvancedConfig(jsonSchema)) {
             // Always create a Group for "advanced" configuration objects, so that we can collapse it and
             // see the label.
 

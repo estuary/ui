@@ -1,5 +1,9 @@
 name: UI Build
 
+permissions:
+    contents: read
+    packages: read # needed for `npm install` of `@estuary/flow-web
+
 on:
     push:
         branches: [main]
@@ -66,6 +70,9 @@ jobs:
 
             - name: Test
               run: npm run test
+
+            - name: Build
+              run: npm run build
 
     # Deployment steps undertaken on a merge to `main`.
     deploy:

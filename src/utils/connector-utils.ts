@@ -5,12 +5,12 @@
 
 import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import type { ConnectorConfig } from 'deps/flow/flow';
-import type {
-    ConnectorsQuery_DetailsForm,
-    ConnectorTag_Base,
-} from 'src/api/connectors';
 import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
-import type { ConnectorWithTagDetailQuery } from 'src/hooks/connectors/shared';
+import type {
+    BaseConnectorTag,
+    ConnectorsQuery_DetailsForm,
+    ConnectorWithTagQuery,
+} from 'src/api/types';
 import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import type {
     ConnectorMetadata,
@@ -39,9 +39,9 @@ export interface ConnectorVersionEvaluationOptions {
 }
 
 export function evaluateConnectorVersions(
-    connector: ConnectorWithTagDetailQuery | ConnectorsQuery_DetailsForm,
+    connector: ConnectorWithTagQuery | ConnectorsQuery_DetailsForm,
     options?: ConnectorVersionEvaluationOptions
-): ConnectorTag_Base {
+): BaseConnectorTag {
     // Return the version of the connector that is used by the existing task in an edit workflow.
     if (options && options.connectorId === connector.id) {
         const connectorsInUse = connector.connector_tags.filter(
@@ -64,7 +64,7 @@ export function evaluateConnectorVersions(
 // TODO (typing): Align `connectors` and `connector_tags` query interfaces.
 //   Renamed table columns need to be given the same name to avoid type conflicts.
 export function getConnectorMetadata(
-    connector: ConnectorsQuery_DetailsForm | ConnectorWithTagDetailQuery,
+    connector: ConnectorsQuery_DetailsForm | ConnectorWithTagQuery,
     options?: ConnectorVersionEvaluationOptions
 ): Details['data']['connectorImage'] {
     const { id: connectorTagId, image_tag } = evaluateConnectorVersions(
@@ -102,9 +102,9 @@ export const getEndpointConfig = (
 
 // TODO (V2 typing) - query should take in filter builder better
 export const requiredConnectorColumnsExist = <Response>(
-    query: any,
+    query: PostgrestFilterBuilder<any, any, any, any, any>,
     columnPrefix?: string
-): PostgrestFilterBuilder<any, any, Response> => {
+): PostgrestFilterBuilder<any, any, Response, any, any> => {
     return query
         .not(`${columnPrefix ? `${columnPrefix}.` : ''}image_tag`, 'is', null)
         .not(

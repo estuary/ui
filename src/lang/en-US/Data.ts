@@ -15,6 +15,8 @@ export const Data: Record<string, string> = {
     'data.field': `Field`,
     'data.writes_to': `Writes To`,
     'data.reads_from': `Reads From`,
+    'data.writtenBy': `Written By`,
+    'data.readBy': `Read By`,
     'data.data': `Data`,
     'data.docs': `Docs`,
     'data.read': `{type} Read`,
@@ -36,4 +38,6 @@ export const Data: Record<string, string> = {
     'data.completed': `Completed`,
     'data.ipv4': `IPv4`,
     'data.ipv6': `IPv6`,
+    'data.connectorStatus': `Connector Status`,
+    'data.location': `Location`,
 };

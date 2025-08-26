@@ -2,9 +2,11 @@ import type { DraftErrorProps } from 'src/components/shared/Entity/Error/DraftEr
 import type { ErrorLogsProps } from 'src/components/shared/Entity/Error/Logs';
 import type { ErrorProps } from 'src/components/shared/Error';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { Box, Divider, Stack } from '@mui/material';
+
+import { useEffectOnce } from 'react-use';
 
 import { useEditorStore_discoveredDraftId } from 'src/components/editor/Store/hooks';
 import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
@@ -36,7 +38,7 @@ function EntityError({ logToken, error, title, draftId }: Props) {
 
     // The parent component hides this unless there is an error to show so we should be
     //  fine only calling this once.
-    useEffect(() => {
+    useEffectOnce(() => {
         scrollIntoView(scrollToTarget);
     });
 

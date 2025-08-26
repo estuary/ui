@@ -13,13 +13,13 @@ import { devtools } from 'zustand/middleware';
 import produce from 'immer';
 import { isEmpty } from 'lodash';
 
-import { getConnectors_detailsForm } from 'src/api/connectors';
-import { getDataPlaneOptions } from 'src/api/dataPlanes';
+import { getConnectors_detailsFormTestPage } from 'src/api/connectors';
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
+import { initialDetails } from 'src/stores/DetailsForm/shared';
 import {
     fetchErrors,
     filterErrors,
@@ -32,7 +32,6 @@ import {
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
 import { getConnectorMetadata } from 'src/utils/connector-utils';
-import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
@@ -44,7 +43,8 @@ const getConnectorImage = async (
     connectorId: string,
     existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
 ): Promise<Details['data']['connectorImage'] | null> => {
-    const { data, error } = await getConnectors_detailsForm(connectorId);
+    const { data, error } =
+        await getConnectors_detailsFormTestPage(connectorId);
 
     if (!error && data && data.length > 0) {
         const connector = data[0];
@@ -105,27 +105,13 @@ const getDataPlane = (
     return defaultOption ?? null;
 };
 
-const initialDetails: Details = {
-    data: {
-        connectorImage: {
-            connectorId: '',
-            id: '',
-            iconPath: '',
-            imageName: '',
-            imagePath: '',
-            imageTag: '',
-        },
-        entityName: '',
-    },
-    errors: [],
-};
-
 const getInitialStateData = (): Pick<
     DetailsFormState,
     | 'connectors'
     | 'dataPlaneOptions'
     | 'details'
     | 'errorsExist'
+    | 'existingDataPlaneOption'
     | 'draftedEntityName'
     | 'entityNameChanged'
     | 'previousDetails'
@@ -134,6 +120,7 @@ const getInitialStateData = (): Pick<
     connectors: [],
 
     dataPlaneOptions: [],
+    existingDataPlaneOption: undefined,
 
     details: initialDetails,
     errorsExist: true,
@@ -195,9 +182,7 @@ export const getInitialState = (
 
                 // Check if there are any errors from the forms
                 const endpointConfigErrors = filterErrors(fetchErrors(val)).map(
-                    (message) => ({
-                        message,
-                    })
+                    (message) => ({ message })
                 );
 
                 // Set the flag for error checking
@@ -226,6 +211,10 @@ export const getInitialState = (
     },
 
     setDetails_dataPlane: (value) => {
+        if (value === null) {
+            return;
+        }
+
         set(
             produce((state: DetailsFormState) => {
                 state.details.data.dataPlane = value;
@@ -297,6 +286,16 @@ export const getInitialState = (
         );
     },
 
+    setExistingDataPlaneOption: (value) => {
+        set(
+            produce((state: DetailsFormState) => {
+                state.existingDataPlaneOption = value;
+            }),
+            false,
+            'Existing Data Plane Option Set'
+        );
+    },
+
     setPreviousDetails: (value) => {
         set(
             produce((state: DetailsFormState) => {
@@ -307,7 +306,7 @@ export const getInitialState = (
         );
     },
 
-    hydrateState: async (workflow): Promise<void> => {
+    hydrateState: async (workflow, dataPlaneOptions): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
         const connectorId = searchParams.get(GlobalSearchParams.CONNECTOR_ID);
         const dataPlaneId = searchParams.get(GlobalSearchParams.DATA_PLANE_ID);
@@ -318,27 +317,6 @@ export const getInitialState = (
             workflow === 'materialization_create';
 
         if (connectorId) {
-            let dataPlaneOptions: DataPlaneOption[] = [];
-
-            const dataPlaneResponse = await getDataPlaneOptions();
-
-            if (
-                !dataPlaneResponse.error &&
-                dataPlaneResponse.data &&
-                dataPlaneResponse.data.length > 0
-            ) {
-                dataPlaneOptions = dataPlaneResponse.data.map(
-                    generateDataPlaneOption
-                );
-
-                get().setDataPlaneOptions(dataPlaneOptions);
-            } else {
-                get().setHydrationError(
-                    dataPlaneResponse.error?.message ??
-                        'An error was encountered initializing the details form. If the issue persists, please contact support.'
-                );
-            }
-
             if (createWorkflow) {
                 const connectorImage = await getConnectorImage(connectorId);
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);

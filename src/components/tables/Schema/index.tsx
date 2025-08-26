@@ -1,5 +1,5 @@
-import type { FieldFilter } from 'src/components/schema/types';
-import type { SortDirection, TableColumns, TableState } from 'src/types';
+import type { SchemaPropertiesTableProps } from 'src/components/tables/Schema/types';
+import type { SortDirection, TableState } from 'src/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -15,34 +15,24 @@ import {
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/Schema/Rows';
+import {
+    actionColumn,
+    columns,
+    optionalColumns,
+} from 'src/components/tables/Schema/shared';
+import { useDisplayTableColumns } from 'src/context/TableSettings';
+import { useEntityWorkflow } from 'src/context/Workflow';
+import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableStatuses } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
+import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
-export const columns: TableColumns[] = [
-    {
-        field: 'name',
-        headerIntlKey: 'data.field',
-    },
-    {
-        field: 'pointer',
-        headerIntlKey: 'data.pointer',
-    },
-    {
-        field: null,
-        headerIntlKey: 'data.type',
-    },
-    {
-        field: null,
-        headerIntlKey: 'data.details',
-    },
-];
-
-interface Props {
-    filter: FieldFilter;
-}
-
-function SchemaPropertiesTable({ filter }: Props) {
+function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     const intl = useIntl();
+
+    const workflow = useEntityWorkflow();
+    const isCaptureWorkflow =
+        workflow === 'capture_create' || workflow === 'capture_edit';
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
@@ -93,18 +83,34 @@ function SchemaPropertiesTable({ filter }: Props) {
         return inferSchemaResponse.filter((datum) => datum.exists === filter);
     }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
 
+    const { tableSettings } = useDisplayTableColumns();
+
+    const columnsToShow = useMemo(() => {
+        const evaluatedColumns = isCaptureWorkflow
+            ? columns.concat([actionColumn])
+            : columns;
+
+        return evaluateColumnsToShow(
+            optionalColumns,
+            evaluatedColumns,
+            TablePrefixes.schemaViewer,
+            tableSettings,
+            !isCaptureWorkflow
+        );
+    }, [isCaptureWorkflow, tableSettings]);
+
     return (
         <Box>
             <TableContainer component={Box}>
                 <Table
                     size="small"
-                    sx={{ minWidth: 350 }}
+                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
                     aria-label={intl.formatMessage({
                         id: 'entityTable.title',
                     })}
                 >
                     <EntityTableHeader
-                        columns={columns}
+                        columns={columnsToShow}
                         columnToSort={columnToSort}
                         sortDirection={sortDirection}
                         headerClick={handlers.sort}
@@ -112,7 +118,7 @@ function SchemaPropertiesTable({ filter }: Props) {
                     />
 
                     <EntityTableBody
-                        columns={columns}
+                        columns={columnsToShow}
                         noExistingDataContentIds={{
                             header: 'schemaEditor.table.empty.header',
                             message: inferSchemaResponseEmpty
@@ -125,6 +131,7 @@ function SchemaPropertiesTable({ filter }: Props) {
                         rows={
                             hasLength(data) ? (
                                 <Rows
+                                    columns={columnsToShow}
                                     data={data}
                                     sortDirection={sortDirection}
                                     columnToSort={columnToSort}

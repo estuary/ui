@@ -1,4 +1,4 @@
-import type { EmotionJSX } from '@emotion/react/types/jsx-namespace';
+import type { EmotionJSX } from '@emotion/react/dist/declarations/src/jsx-namespace';
 import type {
     LoginButtonProps,
     ProviderButtonProps,
