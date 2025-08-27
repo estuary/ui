@@ -994,11 +994,7 @@ const getInitialState = (
                     ([
                         uuid,
                         {
-                            meta: {
-                                collectionName,
-                                disable,
-                                liveBuiltBindingIndex,
-                            },
+                            meta: { collectionName, disable },
                         },
                     ]) => {
                         if (disable) {
@@ -1012,38 +1008,63 @@ const getInitialState = (
                             return;
                         }
 
-                        const builtBindingIndex = builtSpec
+                        let liveBuiltBindingIndex = builtSpec
                             ? getBuiltBindingIndex(builtSpec, collectionName)
                             : -1;
 
-                        const builtBinding:
+                        const liveBuiltBinding =
+                            liveBuiltBindingIndex > -1
+                                ? liveBuiltSpec?.bindings.at(
+                                      liveBuiltBindingIndex
+                                  )
+                                : undefined;
+
+                        const draftedBuiltBindingIndex = builtSpec
+                            ? getBuiltBindingIndex(builtSpec, collectionName)
+                            : -1;
+
+                        const draftedBuiltBinding:
                             | MaterializationBuiltBinding
                             | undefined =
-                            builtBindingIndex > -1
-                                ? builtSpec?.bindings.at(builtBindingIndex)
+                            draftedBuiltBindingIndex > -1
+                                ? builtSpec?.bindings.at(
+                                      draftedBuiltBindingIndex
+                                  )
                                 : undefined;
 
                         let validatedBindingIndex = -1;
 
-                        if (builtBinding && validationResponse) {
-                            validatedBindingIndex =
+                        if (validationResponse) {
+                            // Evaluate whether the validation response contains a binding that matches
+                            // the live and drafted built bindings.
+                            const liveValidatedBindingIndex =
                                 getBindingIndexByResourcePath<ValidatedBinding>(
-                                    builtBinding?.resourcePath ?? [],
+                                    liveBuiltBinding?.resourcePath ?? [],
                                     validationResponse
                                 );
-                        }
 
-                        if (liveBuiltSpec && liveBuiltBindingIndex === -1) {
-                            state.resourceConfigs[
-                                uuid
-                            ].meta.liveBuiltBindingIndex = getBuiltBindingIndex(
-                                liveBuiltSpec,
-                                collectionName
-                            );
+                            const draftedValidatedBindingIndex =
+                                getBindingIndexByResourcePath<ValidatedBinding>(
+                                    draftedBuiltBinding?.resourcePath ?? [],
+                                    validationResponse
+                                );
+
+                            liveBuiltBindingIndex =
+                                liveValidatedBindingIndex > -1
+                                    ? liveBuiltBindingIndex
+                                    : -1;
+
+                            validatedBindingIndex =
+                                liveValidatedBindingIndex > -1
+                                    ? liveValidatedBindingIndex
+                                    : draftedValidatedBindingIndex;
                         }
 
                         state.resourceConfigs[uuid].meta.builtBindingIndex =
-                            builtBindingIndex;
+                            draftedBuiltBindingIndex;
+
+                        state.resourceConfigs[uuid].meta.liveBuiltBindingIndex =
+                            liveBuiltBindingIndex;
 
                         state.resourceConfigs[uuid].meta.validatedBindingIndex =
                             validatedBindingIndex;
