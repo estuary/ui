@@ -32,11 +32,13 @@ export default function SaveButton({
                 const recommendedFlag =
                     selectedAlgorithm === 'depthZero'
                         ? 0
-                        : selectedAlgorithm === 'depthTwo'
-                          ? 2
-                          : selectedAlgorithm === 'depthUnlimited'
-                            ? true
-                            : DEFAULT_RECOMMENDED_FLAG;
+                        : selectedAlgorithm === 'depthOne'
+                          ? 1
+                          : selectedAlgorithm === 'depthTwo'
+                            ? 2
+                            : selectedAlgorithm === 'depthUnlimited'
+                              ? true
+                              : DEFAULT_RECOMMENDED_FLAG;
 
                 setRecommendFields(bindingUUID, recommendedFlag);
 
