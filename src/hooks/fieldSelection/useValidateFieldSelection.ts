@@ -25,6 +25,7 @@ import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import {
     DEFAULT_RECOMMENDED_FLAG,
@@ -75,6 +76,7 @@ export default function useValidateFieldSelection() {
     const entityType = useEntityType();
     const isEdit = useEntityWorkflow_Editing();
 
+    const currentBindingUUID = useBinding_currentBindingUUID();
     const advanceHydrationStatus = useBindingStore(
         (state) => state.advanceHydrationStatus
     );
@@ -290,6 +292,7 @@ export default function useValidateFieldSelection() {
             });
     }, [
         advanceHydrationStatus,
+        currentBindingUUID,
         draftSpecsRows,
         enqueueSnackbar,
         entityType,
