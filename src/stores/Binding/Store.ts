@@ -3,7 +3,10 @@ import type {
     BindingState,
     ResourceConfig,
 } from 'src/stores/Binding/types';
-import type { BuiltBinding, ValidatedBinding } from 'src/types/schemaModels';
+import type {
+    MaterializationBuiltBinding,
+    ValidatedBinding,
+} from 'src/types/schemaModels';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -149,6 +152,7 @@ const getInitialState = (
                                         bindingIndex,
                                         builtBindingIndex: -1,
                                         collectionName,
+                                        liveBuiltBindingIndex: -1,
                                         validatedBindingIndex: -1,
                                     },
                                 };
@@ -513,6 +517,7 @@ const getInitialState = (
                             bindingIndex: reducedBindingCount + index,
                             builtBindingIndex: -1,
                             collectionName,
+                            liveBuiltBindingIndex: -1,
                             validatedBindingIndex: -1,
                             // When adding default this so the first click on the binding
                             //  does not cause extra renders
@@ -974,7 +979,11 @@ const getInitialState = (
         );
     },
 
-    setRelatedBindingIndices: (builtSpec, validationResponse) => {
+    setRelatedBindingIndices: (
+        builtSpec,
+        validationResponse,
+        liveBuiltSpec
+    ) => {
         if (!builtSpec || !validationResponse) {
             return;
         }
@@ -985,7 +994,11 @@ const getInitialState = (
                     ([
                         uuid,
                         {
-                            meta: { collectionName, disable },
+                            meta: {
+                                collectionName,
+                                disable,
+                                liveBuiltBindingIndex,
+                            },
                         },
                     ]) => {
                         if (disable) {
@@ -1003,7 +1016,9 @@ const getInitialState = (
                             ? getBuiltBindingIndex(builtSpec, collectionName)
                             : -1;
 
-                        const builtBinding: BuiltBinding | undefined =
+                        const builtBinding:
+                            | MaterializationBuiltBinding
+                            | undefined =
                             builtBindingIndex > -1
                                 ? builtSpec?.bindings.at(builtBindingIndex)
                                 : undefined;
@@ -1016,6 +1031,15 @@ const getInitialState = (
                                     builtBinding?.resourcePath ?? [],
                                     validationResponse
                                 );
+                        }
+
+                        if (liveBuiltSpec && liveBuiltBindingIndex === -1) {
+                            state.resourceConfigs[
+                                uuid
+                            ].meta.liveBuiltBindingIndex = getBuiltBindingIndex(
+                                liveBuiltSpec,
+                                collectionName
+                            );
                         }
 
                         state.resourceConfigs[uuid].meta.builtBindingIndex =
@@ -1169,6 +1193,8 @@ const getInitialState = (
                         builtBindingIndex:
                             targetResourceConfig.meta.builtBindingIndex,
                         collectionName: targetCollection,
+                        liveBuiltBindingIndex:
+                            targetResourceConfig.meta.liveBuiltBindingIndex,
                         validatedBindingIndex:
                             targetResourceConfig.meta.validatedBindingIndex,
                         // When adding default this so the first click on the binding

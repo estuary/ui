@@ -1,7 +1,7 @@
 import type {
-    BuiltBinding,
     BuiltProjection,
     MaterializationBinding,
+    MaterializationBuiltBinding,
     ValidatedBinding,
 } from 'src/types/schemaModels';
 
@@ -59,7 +59,7 @@ export interface FieldSelectionInput {
     collectionProjections: BuiltProjection[];
     model: MaterializationBinding;
     validated: ValidatedBinding;
-    liveSpec?: BuiltBinding;
+    liveSpec?: MaterializationBuiltBinding;
 }
 
 export interface FieldSelectionResult {

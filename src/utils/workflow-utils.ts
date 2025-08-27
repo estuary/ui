@@ -17,7 +17,7 @@ import type {
     Schema,
     SourceCaptureDef,
 } from 'src/types';
-import type { BuiltBinding } from 'src/types/schemaModels';
+import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
 
 import { isBoolean, isEmpty, isEqual } from 'lodash';
 
@@ -383,7 +383,8 @@ export const getBuiltBindingIndex = (
     builtSpec: Schema,
     targetCollection: string
 ): number => {
-    const builtBindings: BuiltBinding[] = builtSpec.bindings ?? [];
+    const builtBindings: MaterializationBuiltBinding[] =
+        builtSpec.bindings ?? [];
 
     return builtBindings.findIndex(
         (binding) => binding.collection.name === targetCollection

@@ -1,8 +1,8 @@
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
 import type {
-    BuiltBinding,
     MaterializationBinding,
+    MaterializationBuiltBinding,
     MaterializationFields,
     MaterializationFields_Legacy,
     ValidatedBinding,
@@ -17,7 +17,10 @@ import { evaluate_field_selection } from '@estuary/flow-web';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
-import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import {
+    useEditorStore_liveBuiltSpec,
+    useEditorStore_queryResponse_draftSpecs,
+} from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
@@ -32,7 +35,7 @@ import { snackbarSettings } from 'src/utils/notification-utils';
 
 interface FieldSelectionValidationResponse {
     bindingUUID: string;
-    builtBinding: BuiltBinding;
+    builtBinding: MaterializationBuiltBinding;
     fieldStanza:
         | MaterializationFields
         | MaterializationFields_Legacy
@@ -93,6 +96,7 @@ export default function useValidateFieldSelection() {
     );
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
+    const liveBuiltSpec = useEditorStore_liveBuiltSpec();
 
     const validateFieldSelection = useCallback(
         async (
@@ -100,9 +104,10 @@ export default function useValidateFieldSelection() {
             draftSpecsRow: DraftSpecQuery,
             builtBindingIndex: number,
             draftedBindingIndex: number,
-            validatedBindingIndex: number
+            validatedBindingIndex: number,
+            liveBuiltBindingIndex: number
         ): Promise<FieldSelectionValidationResponse> => {
-            const builtBinding: BuiltBinding | undefined =
+            const builtBinding: MaterializationBuiltBinding | undefined =
                 builtBindingIndex > -1
                     ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
                     : undefined;
@@ -119,6 +124,11 @@ export default function useValidateFieldSelection() {
                       )
                     : undefined;
 
+            const liveBuiltBinding: MaterializationBuiltBinding | undefined =
+                liveBuiltBindingIndex > -1
+                    ? liveBuiltSpec?.bindings.at(liveBuiltBindingIndex)
+                    : undefined;
+
             if (!builtBinding || !draftedBinding || !validatedBinding) {
                 return Promise.reject(
                     'data not found: built spec binding, drafted binding, or validation binding'
@@ -131,7 +141,7 @@ export default function useValidateFieldSelection() {
                 result = await evaluateFieldSelection({
                     collectionKey: builtBinding.collection.key,
                     collectionProjections: builtBinding.collection.projections,
-                    liveSpec: isEdit ? builtBinding : undefined,
+                    liveSpec: isEdit ? liveBuiltBinding : undefined,
                     model: draftedBinding,
                     validated: validatedBinding,
                 });
@@ -146,7 +156,7 @@ export default function useValidateFieldSelection() {
                 result,
             };
         },
-        [isEdit]
+        [isEdit, liveBuiltSpec]
     );
 
     useEffect(() => {
@@ -197,7 +207,8 @@ export default function useValidateFieldSelection() {
                         draftSpecsRow,
                         meta.builtBindingIndex,
                         meta.bindingIndex,
-                        meta.validatedBindingIndex
+                        meta.validatedBindingIndex,
+                        meta.liveBuiltBindingIndex
                     );
                 }
 

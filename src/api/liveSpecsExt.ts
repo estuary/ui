@@ -6,6 +6,7 @@ import type {
     Entity,
     EntityWithCreateWorkflow,
     LiveSpecsExtBaseQuery,
+    Schema,
 } from 'src/types';
 
 import { DateTime } from 'luxon';
@@ -378,6 +379,7 @@ const getLiveSpecsByConnectorId = async (
 };
 
 export interface LiveSpecsExtQuery_ByLiveSpecId {
+    built_spec: Schema | null;
     catalog_name: string;
     id: string;
     spec_type: Entity;
@@ -392,7 +394,7 @@ const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
             supabaseClient
                 .from(TABLES.LIVE_SPECS_EXT)
                 .select(
-                    'catalog_name,id,spec_type,last_pub_id,spec,connector_id'
+                    'built_spec,catalog_name,id,spec_type,last_pub_id,spec,connector_id'
                 )
                 .eq('id', liveSpecId),
         'getLiveSpecsByLiveSpecId'

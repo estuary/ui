@@ -19,16 +19,6 @@ export interface BaseMaterializationFields {
     groupBy?: string[];
 }
 
-// The definition of a binding in the built specification.
-export interface BuiltBinding {
-    collection: BuiltCollection;
-    fieldSelection: FieldSelection;
-    journalReadSuffix: string;
-    partitionSelector: any;
-    resourceConfig: any;
-    resourcePath: string[];
-}
-
 interface BuiltCollection {
     ackTemplate: any;
     key: string[];
@@ -70,6 +60,16 @@ export interface MaterializationBinding {
     fields?: MaterializationFields | MaterializationFields_Legacy;
     onIncompatibleSchemaChange?: string;
     priority?: number;
+}
+
+// The definition of a binding in the built specification for a materialization.
+export interface MaterializationBuiltBinding {
+    collection: BuiltCollection;
+    fieldSelection: FieldSelection;
+    journalReadSuffix: string;
+    partitionSelector: any;
+    resourceConfig: any;
+    resourcePath: string[];
 }
 
 export interface MaterializationFields extends BaseMaterializationFields {

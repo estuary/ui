@@ -194,9 +194,10 @@ const getResourceConfig = (
         errors: [],
         meta: {
             ...disableProp,
+            bindingIndex,
             builtBindingIndex: -1,
             collectionName,
-            bindingIndex,
+            liveBuiltBindingIndex: -1,
             onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,
             validatedBindingIndex: -1,
         },

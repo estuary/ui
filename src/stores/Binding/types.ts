@@ -44,6 +44,7 @@ export interface ResourceConfig extends JsonFormsData {
         bindingIndex: number;
         builtBindingIndex: number;
         collectionName: string;
+        liveBuiltBindingIndex: number;
         validatedBindingIndex: number;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
@@ -183,7 +184,8 @@ export interface BindingState
     ) => void;
     setRelatedBindingIndices: (
         builtSpec: Schema | null,
-        validationResponse: Schema | null
+        validationResponse: Schema | null,
+        liveBuiltSpec: Schema | null
     ) => void;
 
     resourceConfigErrorsExist: boolean;
