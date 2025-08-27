@@ -7,21 +7,39 @@ import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hoo
 import useFieldSelectionRefresh from 'src/hooks/fieldSelection/useFieldSelectionRefresh';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import {
+    useFormStateStore_isActive,
+    useFormStateStore_status,
+} from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {
     buttonLabelId: string;
-    disabled?: boolean;
 }
 
-function RefreshButton({ disabled, buttonLabelId }: Props) {
+function RefreshButton({ buttonLabelId }: Props) {
     const { updating, refresh } = useFieldSelectionRefresh();
 
+    const selectionsHydrating = useBindingStore((state) =>
+        Object.values(state.selections).some(({ hydrating }) => hydrating)
+    );
+
     const persistedDraftId = useEditorStore_persistedDraftId();
+
+    const formActive = useFormStateStore_isActive();
+    const formStatus = useFormStateStore_status();
 
     return (
         <Box>
             <Button
-                disabled={Boolean(updating || disabled || !persistedDraftId)}
+                disabled={Boolean(
+                    updating ||
+                        selectionsHydrating ||
+                        formActive ||
+                        formStatus === FormStatus.TESTING_BACKGROUND ||
+                        !persistedDraftId
+                )}
                 startIcon={<Refresh style={{ fontSize: 12 }} />}
                 variant="text"
                 onClick={async () => {

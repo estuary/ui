@@ -14,11 +14,7 @@ import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
 import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import {
-    useFormStateStore_isActive,
-    useFormStateStore_setFormState,
-    useFormStateStore_status,
-} from 'src/stores/FormState/hooks';
+import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
@@ -54,8 +50,6 @@ function FieldSelectionViewer({
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
 
     // Form State Store
-    const formActive = useFormStateStore_isActive();
-    const formStatus = useFormStateStore_status();
     const setFormState = useFormStateStore_setFormState();
 
     const serverDataExists = useMemo(
@@ -134,11 +128,6 @@ function FieldSelectionViewer({
         setValidationFailure,
     ]);
 
-    const loading =
-        bindingSelection?.hydrating ||
-        formActive ||
-        formStatus === FormStatus.TESTING_BACKGROUND;
-
     return (
         <Box sx={{ my: 3 }}>
             <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
@@ -151,10 +140,7 @@ function FieldSelectionViewer({
                             <FormattedMessage id="fieldSelection.header" />
                         </Typography>
 
-                        <RefreshButton
-                            buttonLabelId="cta.refresh"
-                            disabled={loading}
-                        />
+                        <RefreshButton buttonLabelId="cta.refresh" />
                     </Stack>
 
                     <RefreshStatus show={refreshRequired ? true : undefined} />
