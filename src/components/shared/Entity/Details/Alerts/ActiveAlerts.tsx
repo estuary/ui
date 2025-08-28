@@ -37,20 +37,16 @@ function ActiveAlerts({}: ActiveAlertsProps) {
         return <LinearProgress />;
     }
 
-    if (error) {
-        return (
-            <AlertBox
-                short
-                title="failed to fetch active alerts"
-                severity="error"
-            />
-        );
-    }
-
     return (
         <CardWrapper message="Active Alerts">
             <Grid container spacing={{ xs: 2 }}>
-                {!data || data.alerts.length === 0 ? (
+                {error ? (
+                    <Grid item xs={12} md={3}>
+                        <AlertBox short severity="error">
+                            {error.message}
+                        </AlertBox>
+                    </Grid>
+                ) : !data || data.alerts.length === 0 ? (
                     <Grid item xs={12} md={3}>
                         <AlertBox short severity="success">
                             No Active Alerts
