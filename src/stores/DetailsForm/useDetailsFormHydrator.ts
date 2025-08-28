@@ -32,7 +32,6 @@ export const useDetailsFormHydrator = () => {
 
     const workflow = useEntityWorkflow();
 
-    const resetState = useDetailsFormStore((state) => state.resetState);
     const setActive = useDetailsFormStore((state) => state.setActive);
     const setDetails = useDetailsFormStore((state) => state.setDetails);
     const setDetails_connector = useDetailsFormStore(
@@ -58,7 +57,6 @@ export const useDetailsFormHydrator = () => {
             connectorMetadata: ConnectorWithTagQuery,
             baseEntityName?: string
         ) => {
-            resetState();
             setActive(true);
 
             const createWorkflow =
@@ -191,7 +189,6 @@ export const useDetailsFormHydrator = () => {
             evaluateDataPlaneOptions,
             getDataPlane,
             liveSpecId,
-            resetState,
             setActive,
             setDetails,
             setDetails_connector,

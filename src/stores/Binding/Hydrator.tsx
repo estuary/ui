@@ -12,7 +12,6 @@ import { logRocketConsole } from 'src/services/shared';
 import {
     useBinding_hydrated,
     useBinding_hydrateState,
-    useBinding_resetState,
     useBinding_setActive,
     useBinding_setHydrated,
     useBinding_setHydrationErrorsExist,
@@ -35,8 +34,6 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         (state) => state.details.data.connectorImage.id
     );
 
-    const resetState = useBinding_resetState();
-
     const hydrated = useBinding_hydrated();
     const setHydrated = useBinding_setHydrated();
     const setHydrationErrorsExist = useBinding_setHydrationErrorsExist();
@@ -52,7 +49,6 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
             (workflow && connectorTagId.length > 0) ||
             workflow === 'collection_create'
         ) {
-            resetState(false, true);
             setActive(true);
 
             // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
@@ -98,7 +94,6 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         entityType,
         getTrialPrefixes,
         hydrateState,
-        resetState,
         setActive,
         setHydrated,
         setHydrationErrorsExist,

@@ -121,7 +121,6 @@ export const useEndpointConfigHydrator = () => {
 
     const workflow = useEntityWorkflow();
 
-    const resetState = useEndpointConfigStore((state) => state.resetState);
     const setActive = useEndpointConfigStore((state) => state.setActive);
     const setHydrated = useEndpointConfigStore((state) => state.setHydrated);
     const setHydrationErrorsExist = useEndpointConfigStore(
@@ -140,7 +139,6 @@ export const useEndpointConfigHydrator = () => {
             connectorTagId: string | null,
             connectorTags: ConnectorTag[]
         ) => {
-            resetState();
             setActive(true);
 
             if (!connectorTagId || connectorTagId.length === 0) {
@@ -192,7 +190,6 @@ export const useEndpointConfigHydrator = () => {
             draftId,
             hydrateEndpointConfigDependentState,
             liveSpecId,
-            resetState,
             setActive,
             setHydrated,
             setHydrationErrorsExist,
