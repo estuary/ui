@@ -242,3 +242,6 @@ export const getAuthHeader = (token?: string) => {
         Authorization: `Bearer ${token}`,
     };
 };
+export const isPromiseFulfilledResult = <T>(
+    value: PromiseSettledResult<T>
+): value is PromiseFulfilledResult<T> => value.status === 'fulfilled';

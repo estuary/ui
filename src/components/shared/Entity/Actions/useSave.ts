@@ -1,4 +1,9 @@
-import type { DraftSpecsExtQuery_BySpecTypeReduced } from 'src/api/types';
+import type { LiveSpecsExtQuery_ByCatalogNames } from 'src/api/liveSpecsExt';
+import type {
+    DraftSpecsExtQuery_BySpecTypeReduced,
+    MassCreateDraftSpecsData,
+    MassUpdateMatchData,
+} from 'src/api/types';
 import type { CustomEvents } from 'src/services/types';
 
 import { useCallback, useMemo } from 'react';
@@ -97,7 +102,12 @@ function useSave(
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     const waitForPublishToFinish = useCallback(
-        (publicationId: string, hideNotification?: boolean) => {
+        (
+            publicationId: string,
+            hideNotification?: boolean,
+            onFinish?: (dryRun: boolean | undefined) => void,
+            onError?: (dryRun: boolean | undefined) => void
+        ) => {
             updateFormStatus(status, hideNotification);
             jobStatusPoller(
                 getPublicationByIdQuery(publicationId),
@@ -135,10 +145,14 @@ function useSave(
                         title = `${messagePrefix}.testNotification.title`;
 
                         // Materialization field selection sources content from the built spec and validation response
-                        // generated on each successful publication.
+                        // generated on each publication.
                         if (mutateDraftSpecs) {
                             void mutateDraftSpecs();
                         }
+                    }
+
+                    if (onFinish) {
+                        onFinish(dryRun);
                     }
 
                     if (!hideNotification) {
@@ -156,6 +170,22 @@ function useSave(
                     trackEvent(logEvent, payload);
                 },
                 async (payload: any) => {
+                    if (dryRun) {
+                        // Materialization field selection sources content from the built spec and validation response
+                        // generated on each publication.
+                        if (mutateDraftSpecs) {
+                            void mutateDraftSpecs();
+                        }
+                    }
+
+                    if (onFinish) {
+                        onFinish(dryRun);
+                    }
+
+                    if (onError) {
+                        onError(dryRun);
+                    }
+
                     trackEvent(logEvent, payload);
 
                     const incompatibleCollections =
@@ -201,6 +231,72 @@ function useSave(
         [backfillMode, collectionsBeingBackfilled.length, entityType]
     );
 
+    const updateResetOnCollections = useCallback(
+        async (
+            draftId: string,
+            collectionsOnDraft: DraftSpecsExtQuery_BySpecTypeReduced[] | null,
+            collectionsBeingRemovedFromDraft: any,
+            skipNonBackfilledCheck: boolean,
+            generateUpdatedSpec: (
+                draftSpec: DraftSpecsExtQuery_BySpecTypeReduced
+            ) => MassUpdateMatchData | null
+        ) => {
+            const collectionsToUpdate: MassUpdateMatchData[] = [];
+            if (collectionsOnDraft) {
+                collectionsOnDraft.forEach((draftSpec) => {
+                    // If we are removing it we do not need to update
+                    if (
+                        collectionsBeingRemovedFromDraft.includes(
+                            draftSpec.catalog_name
+                        )
+                    ) {
+                        return;
+                    }
+
+                    // skip = disable clean up
+                    // If the user enabled `data flow reset` and then totally turns off backfill
+                    //  when we are cleaning up we want to make sure we remove the `reset` prop
+                    //  so we do not care if the collection is not being backfilled or not
+                    if (!skipNonBackfilledCheck) {
+                        // don't skip = enable inital update
+                        // If it is not being backfill we do not need to update. This is important for when
+                        //  a user has run a re-discover and they have a bunch of collections on their draft
+                        if (
+                            !collectionsBeingBackfilled.includes(
+                                draftSpec.catalog_name
+                            )
+                        ) {
+                            return;
+                        }
+                    }
+
+                    const updatedSpec = generateUpdatedSpec(draftSpec);
+
+                    if (updatedSpec) {
+                        collectionsToUpdate.push(updatedSpec);
+                    }
+                });
+            }
+            const massUpdateResponse = await massUpdateDraftSpecs(
+                draftId,
+                'collection',
+                collectionsToUpdate
+            );
+            if (massUpdateResponse.error) {
+                onFailure({
+                    error: {
+                        title: 'captureEdit.generate.failedErrorTitle',
+                        error: massUpdateResponse.error,
+                    },
+                });
+                return false;
+            }
+
+            return true;
+        },
+        [collectionsBeingBackfilled, onFailure]
+    );
+
     const handleCollectionReset = useCallback(
         async (
             draftId: string,
@@ -209,7 +305,32 @@ function useSave(
             collectionsBeingRemovedFromDraft: any
         ) => {
             if (!collectionResetEnabled) {
-                return true;
+                // Go through and clean up the reset flag on all the collections
+                //  we do not want to simply remove these because the user may have
+                //  re-discovered or they edited the collection while backfilling
+                const response = await updateResetOnCollections(
+                    draftId,
+                    collectionsOnDraft,
+                    collectionsBeingRemovedFromDraft,
+                    true, // Do not skip non-backfilled options as we need to clean up everything
+                    (draftSpec) => {
+                        if (draftSpec?.spec?.reset === true) {
+                            // Remove the reset setting
+                            const { reset, ...theRest } = draftSpec.spec;
+
+                            return {
+                                catalog_name: draftSpec.catalog_name,
+                                spec: {
+                                    ...theRest,
+                                },
+                            };
+                        }
+
+                        return null;
+                    }
+                );
+
+                return response;
             }
 
             let collectionsMissingFromDraft: string[] = [];
@@ -231,15 +352,15 @@ function useSave(
 
             if (collectionsMissingFromDraft.length > 0) {
                 // Fetch the live spec of all collections that aren't on the draft
-                const collectionLiveSpecs = await getLiveSpecsByCatalogNames(
+                const { data, error } = await getLiveSpecsByCatalogNames(
                     'collection',
                     collectionsMissingFromDraft
                 );
-                if (collectionLiveSpecs.error) {
+                if (error || !data) {
                     onFailure({
                         error: {
                             title: 'captureEdit.generate.failedErrorTitle',
-                            error: collectionLiveSpecs.error,
+                            error: error,
                         },
                     });
 
@@ -247,8 +368,14 @@ function useSave(
                 }
 
                 // Add missing collections to the draft with the reset property set
-                const collectionsToInsert = collectionLiveSpecs.data.map(
-                    (liveSpec) => {
+                const collectionsToInsert: MassCreateDraftSpecsData[] = data
+                    .filter(
+                        (
+                            liveSpec
+                        ): liveSpec is LiveSpecsExtQuery_ByCatalogNames =>
+                            Boolean(liveSpec)
+                    )
+                    .map((liveSpec) => {
                         return {
                             catalog_name: liveSpec.catalog_name,
                             expect_pub_id: liveSpec.last_pub_id,
@@ -257,8 +384,8 @@ function useSave(
                                 reset: true,
                             },
                         };
-                    }
-                );
+                    });
+
                 const massCreateResponse = await massCreateDraftSpecs(
                     draftId,
                     'collection',
@@ -278,58 +405,34 @@ function useSave(
             // Update collections on the draft with the reset property set
             //  Make sure to merge in `reset` with the current spec as they
             //  may have edited other things as well.
-            const collectionsToUpdate: any[] = [];
-            if (collectionsOnDraft) {
-                collectionsOnDraft.forEach((draftSpec) => {
-                    // If we are removing it we do not need to update
-                    if (
-                        collectionsBeingRemovedFromDraft.includes(
-                            draftSpec.catalog_name
-                        )
-                    ) {
-                        return;
-                    }
-
-                    // If it is not being backfill we do not need to update. This is important for when
-                    //  a user has run a re-discover and they have a bunch of collections on their draft
-                    if (
-                        !collectionsBeingBackfilled.includes(
-                            draftSpec.catalog_name
-                        )
-                    ) {
-                        return;
-                    }
-
+            const response = await updateResetOnCollections(
+                draftId,
+                collectionsOnDraft,
+                collectionsBeingRemovedFromDraft,
+                false, // do NOT skip checking if the items are backfilled or not
+                (draftSpec) => {
                     // If the spec is not already marked for reset go ahead and do it now
-                    if (draftSpec.spec.reset !== true) {
-                        collectionsToUpdate.push({
+                    if (draftSpec?.spec?.reset !== true) {
+                        return {
                             catalog_name: draftSpec.catalog_name,
                             spec: {
                                 ...draftSpec.spec,
                                 reset: true,
                             },
-                        });
+                        };
                     }
-                });
-            }
-            const massUpdateResponse = await massUpdateDraftSpecs(
-                draftId,
-                'collection',
-                collectionsToUpdate
-            );
-            if (massUpdateResponse.error) {
-                onFailure({
-                    error: {
-                        title: 'captureEdit.generate.failedErrorTitle',
-                        error: massUpdateResponse.error,
-                    },
-                });
-                return false;
-            }
 
-            return true;
+                    return null;
+                }
+            );
+            return response;
         },
-        [collectionResetEnabled, collectionsBeingBackfilled, onFailure]
+        [
+            collectionResetEnabled,
+            collectionsBeingBackfilled,
+            onFailure,
+            updateResetOnCollections,
+        ]
     );
 
     const handleCollections = useCallback(
@@ -338,11 +441,7 @@ function useSave(
 
             // Look for every collection on the draft.
             const collectionsOnDraftSpecResponse =
-                await getDraftSpecsBySpecTypeReduced(
-                    draftId,
-                    'collection',
-                    collectionResetEnabled
-                );
+                await getDraftSpecsBySpecTypeReduced(draftId, 'collection');
             if (collectionsOnDraftSpecResponse.error) {
                 onFailure({
                     error: {
@@ -423,7 +522,6 @@ function useSave(
             return handleCollectionResetResponse;
         },
         [
-            collectionResetEnabled,
             collections,
             draftSpecs,
             dryRun,
@@ -435,7 +533,16 @@ function useSave(
     );
 
     return useCallback(
-        async (draftId: string | null, hideLogs?: boolean) => {
+        async (
+            draftId: string | null,
+            hideLogs?: boolean,
+            onFinish?: (dryRun: boolean | undefined) => void,
+            onError?: (dryRun: boolean | undefined) => void
+        ) => {
+            setFormState({
+                status: FormStatus.PROCESSING,
+            });
+
             // FullSource updates the draft directly and does not require a new generation so
             //  need to check for errors. We might want to add all the errors here just to be safe or
             //  in the future when we directly update drafts
@@ -489,7 +596,12 @@ function useSave(
             }
 
             setIncompatibleCollections([]);
-            waitForPublishToFinish(response.data[0].id, hideLogs);
+            waitForPublishToFinish(
+                response.data[0].id,
+                hideLogs,
+                onFinish,
+                onError
+            );
             setFormState({
                 logToken: response.data[0].logs_token,
                 showLogs: !hideLogs,

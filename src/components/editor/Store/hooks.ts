@@ -14,6 +14,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDraftSpecs_forEditor } from 'src/hooks/useDraftSpecs';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { EditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
@@ -601,6 +602,40 @@ export const useEditorStore_resetState = (
     >(storeName(entityType, localScope), (state) => state.resetState);
 };
 
+export const useEditorStore_liveBuiltSpec = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['liveBuiltSpec']
+    >(storeName(entityType, localScope), (state) => state.liveBuiltSpec);
+};
+
+export const useEditorStore_setLiveBuiltSpec = (
+    params?: SelectorParams | undefined
+) => {
+    const localScope = params?.localScope;
+
+    const useZustandStore = localScope
+        ? useLocalZustandStore
+        : useGlobalZustandStore;
+
+    const entityType = useEntityType();
+
+    return useZustandStore<
+        EditorStoreState<DraftSpecQuery>,
+        EditorStoreState<DraftSpecQuery>['setLiveBuiltSpec']
+    >(storeName(entityType, localScope), (state) => state.setLiveBuiltSpec);
+};
+
 export const useHydrateEditorState = (
     specType: Entity,
     catalogName?: string,
@@ -608,9 +643,14 @@ export const useHydrateEditorState = (
 ) => {
     const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
 
+    const setRelatedBindingIndices = useBindingStore(
+        (state) => state.setRelatedBindingIndices
+    );
+
     const draftId = useEditorStore_id({ localScope });
     const persistedDraftId = useEditorStore_persistedDraftId({ localScope });
     const setQueryResponse = useEditorStore_setQueryResponse({ localScope });
+    const liveBuiltSpec = useEditorStore_liveBuiltSpec({ localScope });
 
     // This fallback chain of draft IDs is required because of how the global editor store
     // differs in keeping record of the draft ID from its local counterpart. Notable component
@@ -626,6 +666,14 @@ export const useHydrateEditorState = (
     useEffect(() => {
         if (!response.isValidating) {
             setQueryResponse(response);
+
+            if (response.draftSpecs.length > 0) {
+                setRelatedBindingIndices(
+                    response.draftSpecs[0].built_spec,
+                    response.draftSpecs[0].validated,
+                    liveBuiltSpec
+                );
+            }
         }
-    }, [setQueryResponse, response]);
+    }, [liveBuiltSpec, setQueryResponse, setRelatedBindingIndices, response]);
 };

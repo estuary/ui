@@ -1,6 +1,10 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import type {
+    BindingFieldSelectionDictionary,
+    HydrationStatus,
+} from 'src/stores/Binding/slices/FieldSelection';
+import type {
     BindingChanges,
     Bindings,
     BindingState,
@@ -17,7 +21,10 @@ import { getSchema_Resource } from 'src/api/hydration';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { BASE_ERROR } from 'src/services/supabase';
 import { getInitialBackfillData } from 'src/stores/Binding/slices/Backfill';
-import { getInitialFieldSelectionData } from 'src/stores/Binding/slices/FieldSelection';
+import {
+    getInitialFieldSelectionData,
+    isHydrating,
+} from 'src/stores/Binding/slices/FieldSelection';
 import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
 import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
 import { populateErrors } from 'src/stores/utils';
@@ -171,7 +178,7 @@ export const initializeCurrentBinding = (
     };
 };
 
-export const getResourceConfig = (
+const getResourceConfig = (
     binding: any,
     bindingIndex: number
 ): ResourceConfig => {
@@ -187,9 +194,12 @@ export const getResourceConfig = (
         errors: [],
         meta: {
             ...disableProp,
-            collectionName,
             bindingIndex,
+            builtBindingIndex: -1,
+            collectionName,
+            liveBuiltBindingIndex: -1,
             onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,
+            validatedBindingIndex: -1,
         },
     };
 };
@@ -269,6 +279,32 @@ export const updateBackfilledBindingState = (
     }
 };
 
+export const stubBindingFieldSelection = (
+    existingSelections: BindingFieldSelectionDictionary,
+    bindingUUIDs: string[],
+    defaultStatus?: HydrationStatus
+): BindingFieldSelectionDictionary => {
+    const selections: BindingFieldSelectionDictionary = {};
+
+    bindingUUIDs.forEach((bindingUUID) => {
+        if (!existingSelections?.[bindingUUID]) {
+            selections[bindingUUID] = {
+                hasConflicts: false,
+                hydrating: defaultStatus ? isHydrating(defaultStatus) : false,
+                status: defaultStatus ?? 'HYDRATED',
+                validationFailed: false,
+                value: {},
+            };
+
+            return;
+        }
+
+        selections[bindingUUID] = existingSelections[bindingUUID];
+    });
+
+    return selections;
+};
+
 export const STORE_KEY = 'Bindings';
 
 export const hydrateConnectorTagDependentState = async (
@@ -327,7 +363,9 @@ export const hydrateSpecificationDependentState = async (
         bindingChanges = get().prefillBindingDependentState(
             entityType,
             liveSpec.bindings,
-            draftSpecs[0].spec.bindings
+            draftSpecs[0].spec.bindings,
+            undefined,
+            true
         );
 
         const targetInterval = draftSpecs[0].spec?.interval;
@@ -345,7 +383,10 @@ export const hydrateSpecificationDependentState = async (
     } else {
         bindingChanges = get().prefillBindingDependentState(
             entityType,
-            liveSpec.bindings
+            liveSpec.bindings,
+            undefined,
+            undefined,
+            true
         );
 
         get().setCaptureInterval(

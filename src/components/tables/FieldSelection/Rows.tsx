@@ -1,20 +1,18 @@
-import type { CompositeProjection } from 'src/components/editor/Bindings/FieldSelection/types';
 import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/FieldSelection/types';
+import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
-import { TableCell, TableRow, Typography } from '@mui/material';
+import { TableCell, TableRow } from '@mui/material';
 
 import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
-import ConstraintDetails from 'src/components/tables/cells/fieldSelection/ConstraintDetails';
 import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
-import {
-    constraintTypeSort,
-    optionalColumnIntlKeys,
-} from 'src/components/tables/FieldSelection/shared';
+import FieldName from 'src/components/tables/cells/fieldSelection/FieldName';
+import FieldOutcome from 'src/components/tables/cells/fieldSelection/FieldOutcome';
+import { optionalColumnIntlKeys } from 'src/components/tables/FieldSelection/shared';
 import {
     doubleElevationHoverBackground,
     wrappingTableBodyCell,
@@ -31,11 +29,6 @@ function Row({ columns, row }: RowProps) {
         optionalColumnIntlKeys.pointer
     );
 
-    const detailsColumnVisible = isColumnVisible(
-        columns,
-        optionalColumnIntlKeys.details
-    );
-
     return (
         <TableRow
             sx={{
@@ -45,40 +38,42 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            <TableCell sx={wrappingTableBodyCell}>
-                <Typography>{row.field}</Typography>
-            </TableCell>
+            <FieldName
+                bindingUUID={currentBindingUUID}
+                field={row.field}
+                outcome={row.outcome}
+            />
 
             {pointerColumnVisible ? (
                 <TableCell sx={wrappingTableBodyCell}>
-                    <Typography>{row.ptr}</Typography>
+                    <code>{row?.projection?.ptr}</code>
                 </TableCell>
             ) : null}
 
-            {row.inference?.types ? (
-                <ChipListCell values={row.inference.types} stripPath={false} />
-            ) : (
-                <TableCell />
-            )}
-
-            {detailsColumnVisible ? (
-                row.constraint ? (
-                    <ConstraintDetails constraint={row.constraint} />
-                ) : (
-                    <TableCell />
-                )
-            ) : null}
-
-            {currentBindingUUID && row.constraint ? (
-                <FieldActions
-                    bindingUUID={currentBindingUUID}
-                    field={row.field}
-                    constraint={row.constraint}
-                    selectionType={row.selectionType}
+            {row?.projection?.inference?.types ? (
+                <ChipListCell
+                    values={row?.projection?.inference?.types}
+                    stripPath={false}
                 />
             ) : (
                 <TableCell />
             )}
+
+            {currentBindingUUID ? (
+                <FieldActions
+                    bindingUUID={currentBindingUUID}
+                    field={row.field}
+                    outcome={row.outcome}
+                    selectionType={row.mode}
+                />
+            ) : (
+                <TableCell />
+            )}
+
+            <FieldOutcome
+                bindingUUID={currentBindingUUID}
+                outcome={row.outcome}
+            />
         </TableRow>
     );
 }
@@ -90,43 +85,19 @@ function Rows({ columnToSort, columns, data, sortDirection }: RowsProps) {
     //  We're probably safe always using the method below but made them
     //  different so we can have special control when sorting the fields
     //  in case we want to make more customizations
+
     if (columnToSort === 'field') {
         return (
             <>
                 {data
-                    .sort(
-                        (
-                            first: CompositeProjection,
-                            second: CompositeProjection
-                        ) =>
-                            basicSort_string(
-                                first.field,
-                                second.field,
-                                sortDirection
-                            )
+                    .sort((first: FieldSelection, second: FieldSelection) =>
+                        basicSort_string(
+                            first.field,
+                            second.field,
+                            sortDirection
+                        )
                     )
-                    .map((record: CompositeProjection, index: number) => (
-                        <Row
-                            columns={columns}
-                            row={record}
-                            key={`field-selection-table-rows-${index}`}
-                        />
-                    ))}
-            </>
-        );
-    }
-
-    if (columnToSort === 'constraint.type') {
-        return (
-            <>
-                {data
-                    .sort(
-                        (
-                            first: CompositeProjection,
-                            second: CompositeProjection
-                        ) => constraintTypeSort(first, second, sortDirection)
-                    )
-                    .map((record: CompositeProjection, index: number) => (
+                    .map((record: FieldSelection, index: number) => (
                         <Row
                             columns={columns}
                             row={record}

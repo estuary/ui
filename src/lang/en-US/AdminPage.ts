@@ -37,9 +37,13 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.error.undefinedPricingTier.docLink': `${CTAs['cta.support']}`,
     'admin.billing.error.undefinedPricingTier.docPath': `${CommonMessages['support.email']}`,
     'admin.billing.label.tiers': `Pricing Tier`,
+
     'admin.billing.label.lineItems': `Your bill for:`,
     'admin.billing.label.lineItems.empty': `No bill to display`,
     'admin.billing.label.lineItems.loading': `Loading your bill`,
+    'admin.billing.label.lineItems.tooltip': `A connector (AKA "task") is billed based on the pro-rated portion of a month during which it was enabled, as measured in "task-hours". Approximately 720 task-hours accrue for a connector that is running nonstop for an entire month.`,
+    'admin.billing.label.lineItems.tooltip.title': `Each active connector counts as a task`,
+
     'admin.billing.tier.free': `Free`,
     'admin.billing.tier.personal': `Cloud`,
     'admin.billing.tier.enterprise': `Enterprise`,

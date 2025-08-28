@@ -27,22 +27,42 @@ export default function MenuOptions() {
         >
             <RadioMenuItem
                 description={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.recommended.description',
+                    id: 'fieldSelection.massActionMenu.depthZero.description',
                 })}
                 label={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.recommended.label',
+                    id: 'fieldSelection.massActionMenu.depthZero.label',
                 })}
-                value="recommended"
+                value="depthZero"
             />
 
             <RadioMenuItem
                 description={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.excludeAll.description',
+                    id: 'fieldSelection.massActionMenu.depthOne.description',
                 })}
                 label={intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.excludeAll.label',
+                    id: 'fieldSelection.massActionMenu.depthOne.label',
                 })}
-                value="excludeAll"
+                value="depthOne"
+            />
+
+            <RadioMenuItem
+                description={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.depthTwo.description',
+                })}
+                label={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.depthTwo.label',
+                })}
+                value="depthTwo"
+            />
+
+            <RadioMenuItem
+                description={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.depthUnlimited.description',
+                })}
+                label={intl.formatMessage({
+                    id: 'fieldSelection.massActionMenu.depthUnlimited.label',
+                })}
+                value="depthUnlimited"
             />
         </RadioGroup>
     );

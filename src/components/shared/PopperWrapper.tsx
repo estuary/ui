@@ -10,7 +10,12 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { paperBackground, popperIndex } from 'src/context/Theme';
+import {
+    defaultOutline,
+    paperBackground,
+    paperBackgroundImage,
+    popperIndex,
+} from 'src/context/Theme';
 
 interface Props {
     children: ReactNode;
@@ -44,18 +49,27 @@ function PopperWrapper({
             open={open}
             anchorEl={anchorEl}
             transition
-            sx={{ zIndex: popperIndex }}
+            sx={
+                popperProps?.sx
+                    ? { ...popperProps.sx, zIndex: popperIndex }
+                    : { zIndex: popperIndex }
+            }
         >
             {({ TransitionProps }) => (
                 <ClickAwayListener onClickAway={externalAreaClicked}>
                     <Fade {...TransitionProps} timeout={350}>
                         <Box
                             sx={{
-                                maxWidth: belowMd ? 450 : 650,
-                                p: 2,
+                                backgroundImage: (theme) =>
+                                    paperBackgroundImage[theme.palette.mode],
+                                bgcolor: paperBackground[theme.palette.mode],
+                                border: (theme) =>
+                                    defaultOutline[theme.palette.mode],
                                 borderRadius: 3,
                                 boxShadow: 2,
-                                bgcolor: paperBackground[theme.palette.mode],
+                                filter: 'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
+                                maxWidth: belowMd ? 450 : 650,
+                                p: 2,
                             }}
                         >
                             {children}

@@ -16,6 +16,7 @@ import {
     useEditorStore_setCatalogName,
     useEditorStore_setDraftInitializationError,
     useEditorStore_setId,
+    useEditorStore_setLiveBuiltSpec,
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
 import useEntityEditNavigate from 'src/components/shared/Entity/hooks/useEntityEditNavigate';
@@ -59,6 +60,7 @@ function useInitializeTaskDraft() {
     const setDraftInitializationError =
         useEditorStore_setDraftInitializationError();
     const setCatalogName = useEditorStore_setCatalogName();
+    const setLiveBuiltSpec = useEditorStore_setLiveBuiltSpec();
 
     // const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
@@ -73,6 +75,8 @@ function useInitializeTaskDraft() {
 
             if (liveSpecResponse.data && liveSpecResponse.data.length > 0) {
                 setCatalogName(liveSpecResponse.data[0].catalog_name);
+                setLiveBuiltSpec(liveSpecResponse.data[0].built_spec);
+
                 return liveSpecResponse.data[0];
             } else {
                 setDraftInitializationError({
@@ -82,7 +86,12 @@ function useInitializeTaskDraft() {
 
                 return null;
             }
-        }, [liveSpecId, setCatalogName, setDraftInitializationError]);
+        }, [
+            liveSpecId,
+            setCatalogName,
+            setDraftInitializationError,
+            setLiveBuiltSpec,
+        ]);
 
     const getTaskDraft = useCallback(
         async ({

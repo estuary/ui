@@ -77,15 +77,13 @@ function CaptureGenerateButton({
         selectedConnectorId,
     ]);
 
-    const processFormData = async (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-
-        await generateCatalog(event);
-    };
-
     return (
         <Button
-            onClick={processFormData}
+            onClick={(event) => {
+                event.preventDefault();
+
+                void generateCatalog();
+            }}
             disabled={disabled || isSaving || formActive}
             sx={entityHeaderButtonSx}
         >

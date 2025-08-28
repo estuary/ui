@@ -7,10 +7,12 @@ import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField
 import useBackfillModeOptions from 'src/hooks/bindings/useBackfillModeOptions';
 import { useBinding_backfilledBindings_count } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function BackfillModeSelector({ disabled }: BackfillModeSelectorProps) {
     const intl = useIntl();
     const backfillCount = useBinding_backfilledBindings_count();
+    const formActive = useFormStateStore_isActive();
 
     const [setBackfillMode] = useBindingStore((state) => [
         state.setBackfillMode,
@@ -35,6 +37,7 @@ function BackfillModeSelector({ disabled }: BackfillModeSelectorProps) {
             }}
             autocompleteSx={{ flexGrow: 1 }}
             AutoCompleteOptions={{
+                disabled: formActive,
                 isOptionEqualToValue,
                 renderOption: (renderOptionProps, option: any) => {
                     return (

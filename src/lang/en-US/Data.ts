@@ -40,4 +40,5 @@ export const Data: Record<string, string> = {
     'data.ipv6': `IPv6`,
     'data.connectorStatus': `Connector Status`,
     'data.location': `Location`,
+    'data.outcome': `Outcome`,
 };

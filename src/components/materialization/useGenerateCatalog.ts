@@ -151,7 +151,11 @@ function useGenerateCatalog() {
     );
 
     return useCallback(
-        async (mutateDraftSpecs: Function, skipStoreUpdates?: boolean) => {
+        async (
+            mutateDraftSpecs: Function,
+            skipStoreUpdates?: boolean,
+            requestFieldValidation?: boolean
+        ) => {
             updateFormStatus(FormStatus.GENERATING);
 
             if (
@@ -292,7 +296,8 @@ function useGenerateCatalog() {
                     ENTITY_TYPE,
                     [],
                     draftSpecsResponse.data[0].spec.bindings,
-                    true
+                    true,
+                    requestFieldValidation
                 );
 
                 // Mutate the draft first so that we are not running
