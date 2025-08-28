@@ -15,7 +15,7 @@ interface Props {
 }
 
 function RefreshButton({ buttonLabelId }: Props) {
-    const { updating, refresh } = useFieldSelectionRefresh();
+    const { refresh } = useFieldSelectionRefresh();
 
     const selectionsHydrating = useBindingStore((state) =>
         Object.values(state.selections).some(({ hydrating }) => hydrating)
@@ -29,16 +29,13 @@ function RefreshButton({ buttonLabelId }: Props) {
         <Box>
             <Button
                 disabled={Boolean(
-                    updating ||
-                        selectionsHydrating ||
-                        formActive ||
-                        !persistedDraftId
+                    selectionsHydrating || formActive || !persistedDraftId
                 )}
                 startIcon={<Refresh style={{ fontSize: 12 }} />}
                 variant="text"
-                onClick={async () => {
+                onClick={() => {
                     logRocketEvent(CustomEvents.FIELD_SELECTION_REFRESH_MANUAL);
-                    refresh();
+                    void refresh();
                 }}
             >
                 <FormattedMessage id={buttonLabelId} />

@@ -1,15 +1,14 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import useGenerateCatalog from 'src/components/materialization/useGenerateCatalog';
 import useSave from 'src/components/shared/Entity/Actions/useSave';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
 import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpecContext';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 function useFieldSelectionRefresh() {
-    const [updating, setUpdating] = useState(false);
-
     const { callFailed } = useEntityWorkflowHelpers();
 
     const generateCatalog = useGenerateCatalog();
@@ -27,7 +26,6 @@ function useFieldSelectionRefresh() {
 
     const refresh = useCallback(
         async (draftIdToUse?: string | null) => {
-            setUpdating(true);
             advanceHydrationStatus('HYDRATED', undefined, true);
 
             let evaluatedDraftId = draftIdToUse;
@@ -38,8 +36,11 @@ function useFieldSelectionRefresh() {
                         false, // we don't want to skip all the extra updates
                         true
                     ).finally(() => advanceHydrationStatus('RESET_REQUESTED'));
-                } catch (_error: unknown) {
-                    setUpdating(false);
+                } catch (error: unknown) {
+                    logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                        error: true,
+                    });
+                    logRocketConsole('field selection error', error);
                 }
             }
 
@@ -56,19 +57,18 @@ function useFieldSelectionRefresh() {
                     };
 
                     await saveCatalog(evaluatedDraftId, true, onFinish);
-                } catch (_error: unknown) {
-                    setUpdating(false);
+                } catch (error: unknown) {
+                    logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                        error: true,
+                    });
+                    logRocketConsole('field selection error', error);
                 }
             }
-
-            // I do not think this is truly needed but being safe so the user is not stuck with a disabled button
-            setUpdating(false);
         },
         [advanceHydrationStatus, generateCatalog, mutateDraftSpec, saveCatalog]
     );
 
     return {
-        updating,
         refresh,
     };
 }
