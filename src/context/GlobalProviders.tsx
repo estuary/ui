@@ -100,6 +100,9 @@ function GlobalProviders({ children }: BaseComponentProps) {
                     },
                 };
             }),
+            // retryExchange({
+            //     maxNumberAttempts: 3,
+            // }),
             fetchExchange,
         ],
     });
