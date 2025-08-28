@@ -48,6 +48,19 @@ function useFieldSelectionRefresh() {
             //  if this is not returned then the function itself handled showing an error
             if (evaluatedDraftId) {
                 try {
+                    const onError = (dryRun: boolean | undefined) => {
+                        if (!dryRun) {
+                            return;
+                        }
+
+                        advanceHydrationStatus(
+                            'SERVER_UPDATING',
+                            undefined,
+                            undefined,
+                            true
+                        );
+                    };
+
                     const onFinish = (dryRun: boolean | undefined) => {
                         if (!dryRun) {
                             return;
@@ -56,7 +69,12 @@ function useFieldSelectionRefresh() {
                         advanceHydrationStatus('SERVER_UPDATING');
                     };
 
-                    await saveCatalog(evaluatedDraftId, true, onFinish);
+                    await saveCatalog(
+                        evaluatedDraftId,
+                        true,
+                        onFinish,
+                        onError
+                    );
                 } catch (error: unknown) {
                     logRocketEvent(CustomEvents.FIELD_SELECTION, {
                         error: true,

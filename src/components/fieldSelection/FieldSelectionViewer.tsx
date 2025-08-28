@@ -111,7 +111,7 @@ function FieldSelectionViewer({
                         { ...snackbarSettings, variant: 'error' }
                     );
 
-                    setValidationFailure(bindingUUID, true);
+                    setValidationFailure([bindingUUID], true);
                 }
             );
         }

@@ -105,7 +105,8 @@ function useSave(
         (
             publicationId: string,
             hideNotification?: boolean,
-            onFinish?: Function
+            onFinish?: (dryRun: boolean | undefined) => void,
+            onError?: (dryRun: boolean | undefined) => void
         ) => {
             updateFormStatus(status, hideNotification);
             jobStatusPoller(
@@ -179,6 +180,10 @@ function useSave(
 
                     if (onFinish) {
                         onFinish(dryRun);
+                    }
+
+                    if (onError) {
+                        onError(dryRun);
                     }
 
                     trackEvent(logEvent, payload);
@@ -531,7 +536,8 @@ function useSave(
         async (
             draftId: string | null,
             hideLogs?: boolean,
-            onFinish?: Function
+            onFinish?: (dryRun: boolean | undefined) => void,
+            onError?: (dryRun: boolean | undefined) => void
         ) => {
             setFormState({
                 status: FormStatus.PROCESSING,
@@ -590,7 +596,12 @@ function useSave(
             }
 
             setIncompatibleCollections([]);
-            waitForPublishToFinish(response.data[0].id, hideLogs, onFinish);
+            waitForPublishToFinish(
+                response.data[0].id,
+                hideLogs,
+                onFinish,
+                onError
+            );
             setFormState({
                 logToken: response.data[0].logs_token,
                 showLogs: !hideLogs,

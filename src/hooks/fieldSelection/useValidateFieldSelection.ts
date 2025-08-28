@@ -9,7 +9,7 @@ import type {
 } from 'src/types/schemaModels';
 import type { FieldSelectionInput, FieldSelectionResult } from 'src/types/wasm';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -27,6 +27,8 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_status } from 'src/stores/FormState/hooks';
+import { FormStatus } from 'src/stores/FormState/types';
 import {
     DEFAULT_RECOMMENDED_FLAG,
     getFieldSelection,
@@ -100,6 +102,8 @@ export default function useValidateFieldSelection() {
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
     const liveBuiltSpec = useEditorStore_liveBuiltSpec();
 
+    const formStatus = useFormStateStore_status();
+
     const validateFieldSelection = useCallback(
         async (
             bindingUUID: string,
@@ -161,6 +165,11 @@ export default function useValidateFieldSelection() {
         [isEdit, liveBuiltSpec]
     );
 
+    const failureDetected = useMemo(
+        () => formStatus === FormStatus.FAILED,
+        [formStatus]
+    );
+
     useEffect(() => {
         if (
             entityType !== 'materialization' ||
@@ -177,6 +186,10 @@ export default function useValidateFieldSelection() {
             !draftSpecsRow.built_spec ||
             !draftSpecsRow.validated
         ) {
+            if (failureDetected) {
+                setValidationFailure(targetBindingUUIDs, true);
+            }
+
             return;
         }
 
@@ -280,7 +293,7 @@ export default function useValidateFieldSelection() {
                                     { ...snackbarSettings, variant: 'error' }
                                 );
 
-                                setValidationFailure(uuid);
+                                setValidationFailure([uuid]);
 
                                 return;
                             }
@@ -296,6 +309,7 @@ export default function useValidateFieldSelection() {
         draftSpecsRows,
         enqueueSnackbar,
         entityType,
+        failureDetected,
         initializeSelections,
         intl,
         resourceConfigs,

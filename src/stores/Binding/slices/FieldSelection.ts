@@ -71,7 +71,7 @@ export interface StoreWithFieldSelection {
         validationRequested?: boolean
     ) => void;
     setValidationFailure: (
-        bindingUUID: string,
+        bindingUUIDs: string[],
         serverUpdateFailed?: boolean
     ) => void;
 
@@ -305,20 +305,22 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setValidationFailure: (bindingUUID, serverUpdateFailed) => {
+    setValidationFailure: (bindingUUIDs, serverUpdateFailed) => {
         set(
             produce((state: BindingState) => {
-                const { status } = state.selections[bindingUUID];
+                bindingUUIDs.forEach((uuid) => {
+                    const { status } = state.selections[uuid];
 
-                state.selections[bindingUUID].validationFailed = true;
+                    state.selections[uuid].validationFailed = true;
 
-                setBindingHydrationStatus(
-                    state,
-                    bindingUUID,
-                    status,
-                    undefined,
-                    serverUpdateFailed ? 'HYDRATED' : undefined
-                );
+                    setBindingHydrationStatus(
+                        state,
+                        uuid,
+                        status,
+                        undefined,
+                        serverUpdateFailed ? 'HYDRATED' : undefined
+                    );
+                });
             }),
             false,
             'Validation Failures Tracked'
