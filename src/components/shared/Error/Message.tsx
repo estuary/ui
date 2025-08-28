@@ -30,14 +30,16 @@ function Message({ error, linkOptions }: Props) {
     const intl = useIntl();
     const failedAfterRetry = retryAfterFailure(error?.message ?? error);
 
-    // Check if we have retried making the call or if we think the message object
-    //      is from Supabase
     //  Initially was going to write a RegEx that detects if the mesaage
     //      needs translated. However, Our shortest keys (cta.foo)
     //      can also look a lot like how Supabase returns
     //      errors when fetching wrong keys from a table (tableName.col).
     const displayErrorOnly =
+        // supabase error
         (typeof error === 'object' && error.hasOwnProperty('code')) ||
+        // graphql error
+        (typeof error === 'object' && error.hasOwnProperty('networkError')) ||
+        // retry error
         failedAfterRetry;
 
     // There is a small chance this can happen so adding custom event to track it

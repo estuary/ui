@@ -26,6 +26,11 @@ export const Alerts: Record<string, string> = {
     'alerts.table.empty.message': `This tenant has no historical alerts`,
     'alerts.table.error.message': `There was an error attempting to fetch alert history.`,
 
+    'alert.active.fetchError.title': `Unable to fetch active alerts`,
+
+    'alert.active.noAlerts.title': `No alerts found`,
+    'alert.active.noAlerts.message': `There are no active alerts for this task.`,
+
     // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
     'alerts.alertType.humanReadable.autodiscoverfailed': `Auto Discover Failed`,
     'alerts.alertType.humanReadable.explanation.autodiscoverfailed': `The entity was unable to connect to the source system to automatically update the schema.`,
