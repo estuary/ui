@@ -1,7 +1,7 @@
 import type { AlertColor } from '@mui/material';
 import type { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
 import type { DraftSpec, DraftSpecQuery } from 'src/hooks/useDraftSpecs';
-import type { BaseComponentProps } from 'src/types';
+import type { BaseComponentProps, Schema } from 'src/types';
 import type { KeyedMutator } from 'swr';
 
 export interface DraftSpecResponse {
@@ -48,6 +48,9 @@ export interface EditorStoreState<T> {
 
     specs: T[] | null;
     setSpecs: (newVal: EditorStoreState<T>['specs']) => void;
+
+    liveBuiltSpec: Schema | null;
+    setLiveBuiltSpec: (builtSpec: Schema | null) => void;
 
     // TODO (editor store) Confirm that a server update will always be a DraftSpecQuery.
     serverUpdate: any | null;

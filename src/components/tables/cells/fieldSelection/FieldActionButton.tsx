@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import {
-    constraintMessages,
+    fieldOutcomeMessages,
     TOGGLE_BUTTON_CLASS,
 } from 'src/components/tables/cells/fieldSelection/shared';
 import useOnFieldActionClick from 'src/hooks/fieldSelection/useOnFieldActionClick';
@@ -14,10 +14,10 @@ import { useFormStateStore_isIdle } from 'src/stores/FormState/hooks';
 
 export default function FieldActionButton({
     bindingUUID,
-    constraint,
     disabled,
     field,
     labelId,
+    outcome,
     selection,
     tooltipProps,
     ...props
@@ -30,32 +30,32 @@ export default function FieldActionButton({
 
     if (tooltipProps && disabled && formIdle) {
         const tooltipReasonId =
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            constraintMessages[constraint.type]?.translatedId ??
-            'fieldSelection.table.label.unknown';
+            (outcome.select && !outcome.reject) ||
+            (!outcome.select && outcome.reject)
+                ? fieldOutcomeMessages[
+                      outcome.select?.reason?.type ??
+                          outcome.reject?.reason?.type ??
+                          ''
+                  ]?.translatedId
+                : '';
 
         return (
             <Tooltip
                 {...tooltipProps}
-                title={intl.formatMessage(
-                    { id: 'fieldSelection.table.tooltip.disabledRowAction' },
-                    {
-                        reason: intl.formatMessage({
-                            id: tooltipReasonId,
-                        }),
-                    }
-                )}
+                title={
+                    tooltipReasonId.length > 0
+                        ? intl.formatMessage({
+                              id: tooltipReasonId,
+                          })
+                        : null
+                }
             >
                 <span className={TOGGLE_BUTTON_CLASS}>
                     <OutlinedToggleButton
                         {...props}
                         disabled={disabled}
                         onClick={(_event, value) =>
-                            updateSingleSelection(
-                                value,
-                                selection,
-                                constraint.type
-                            )
+                            updateSingleSelection(value, selection, outcome)
                         }
                     >
                         {intl.formatMessage({ id: labelId })}
@@ -71,7 +71,7 @@ export default function FieldActionButton({
             className={TOGGLE_BUTTON_CLASS}
             disabled={disabled}
             onClick={(_event, value) =>
-                updateSingleSelection(value, selection, constraint.type)
+                updateSingleSelection(value, selection, outcome)
             }
         >
             {intl.formatMessage({ id: labelId })}

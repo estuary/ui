@@ -4,6 +4,9 @@ import { useEffect, useMemo } from 'react';
 
 import { Box, Collapse } from '@mui/material';
 
+import { closeSnackbar } from 'notistack';
+import { useUnmount } from 'react-use';
+
 import CollectionConfig from 'src/components/collection/Config';
 import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
@@ -90,6 +93,10 @@ function EntityCreate({
         () => draftSpecs.filter(({ spec_type }) => spec_type === entityType),
         [draftSpecs, entityType]
     );
+
+    useUnmount(() => {
+        closeSnackbar();
+    });
 
     // Reset the catalog if the connector changes
     useEffect(() => {

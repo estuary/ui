@@ -6,29 +6,21 @@ import { useNavigate } from 'react-router-dom';
 
 import { getLiveSpecIdByPublication } from 'src/api/publicationSpecsExt';
 import { authenticatedRoutes } from 'src/app/routes';
-import { useBindingsEditorStore_resetState } from 'src/components/editor/Bindings/Store/hooks';
 import {
     useEditorStore_catalogName,
     useEditorStore_pubId,
-    useEditorStore_resetState,
 } from 'src/components/editor/Store/hooks';
+import useBaseEntityStoreReset from 'src/components/shared/Entity/hooks/useBaseEntityStoreReset';
 import { useEntityType } from 'src/context/EntityContext';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useBinding_resetState } from 'src/stores/Binding/hooks';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useEndpointConfigStore_reset } from 'src/stores/EndpointConfig/hooks';
 import {
     useFormStateStore_exitWhenLogsClose,
-    useFormStateStore_resetState,
     useFormStateStore_setFormState,
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { useSchemaEvolution_resetState } from 'src/stores/SchemaEvolution/hooks';
-import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
@@ -41,66 +33,27 @@ function useEntityWorkflowHelpers() {
     const entityType = useEntityType();
     const intl = useIntl();
 
-    // Binding Store
-    const resetBindingState = useBinding_resetState();
+    // Calls _most_ store resets needed
+    const baseEntityStoreReset = useBaseEntityStoreReset();
 
-    // Bindings Editor Store
-    const resetBindingsEditorStore = useBindingsEditorStore_resetState();
-
-    // Details Form Store
-    const resetDetailsFormState = useDetailsFormStore(
-        (state) => state.resetState
-    );
     // Draft Editor Store
     const pubId = useEditorStore_pubId();
-    const resetEditorStore = useEditorStore_resetState();
     const catalogName = useEditorStore_catalogName();
-
-    // Endpoint Config Store
-    const resetEndpointConfigState = useEndpointConfigStore_reset();
 
     // Form State Store
     const setFormState = useFormStateStore_setFormState();
-    const resetFormState = useFormStateStore_resetState();
     const exitWhenLogsClose = useFormStateStore_exitWhenLogsClose();
-
-    // Schema Evolution Store
-    const resetSchemaEvolutionState = useSchemaEvolution_resetState();
-
-    // Source Capture Store
-    const resetSourceCapture = useSourceCaptureStore(
-        (state) => state.resetState
-    );
-
-    // Transformation Create Store
-    const resetTransformationCreateState = useTransformationCreate_resetState();
 
     // Workflow Store
     const resetWorkflowStore = useWorkflowStore((state) => state.resetState);
 
     const resetState = useCallback(() => {
-        resetFormState();
-        resetEndpointConfigState();
-        resetDetailsFormState();
-        resetBindingState(undefined, true);
-        resetEditorStore();
-        resetBindingsEditorStore();
-        resetSchemaEvolutionState();
-        resetSourceCapture();
-        resetTransformationCreateState();
+        logRocketEvent('StoreCleaner', {
+            unmount: true,
+        });
+        baseEntityStoreReset();
         resetWorkflowStore();
-    }, [
-        resetBindingState,
-        resetBindingsEditorStore,
-        resetDetailsFormState,
-        resetEditorStore,
-        resetEndpointConfigState,
-        resetFormState,
-        resetSchemaEvolutionState,
-        resetSourceCapture,
-        resetTransformationCreateState,
-        resetWorkflowStore,
-    ]);
+    }, [baseEntityStoreReset, resetWorkflowStore]);
 
     const callFailed = useCallback(
         (formState: any) => {

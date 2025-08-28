@@ -102,7 +102,12 @@ function useSave(
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     const waitForPublishToFinish = useCallback(
-        (publicationId: string, hideNotification?: boolean) => {
+        (
+            publicationId: string,
+            hideNotification?: boolean,
+            onFinish?: (dryRun: boolean | undefined) => void,
+            onError?: (dryRun: boolean | undefined) => void
+        ) => {
             updateFormStatus(status, hideNotification);
             jobStatusPoller(
                 getPublicationByIdQuery(publicationId),
@@ -140,10 +145,14 @@ function useSave(
                         title = `${messagePrefix}.testNotification.title`;
 
                         // Materialization field selection sources content from the built spec and validation response
-                        // generated on each successful publication.
+                        // generated on each publication.
                         if (mutateDraftSpecs) {
                             void mutateDraftSpecs();
                         }
+                    }
+
+                    if (onFinish) {
+                        onFinish(dryRun);
                     }
 
                     if (!hideNotification) {
@@ -161,6 +170,22 @@ function useSave(
                     trackEvent(logEvent, payload);
                 },
                 async (payload: any) => {
+                    if (dryRun) {
+                        // Materialization field selection sources content from the built spec and validation response
+                        // generated on each publication.
+                        if (mutateDraftSpecs) {
+                            void mutateDraftSpecs();
+                        }
+                    }
+
+                    if (onFinish) {
+                        onFinish(dryRun);
+                    }
+
+                    if (onError) {
+                        onError(dryRun);
+                    }
+
                     trackEvent(logEvent, payload);
 
                     const incompatibleCollections =
@@ -508,7 +533,12 @@ function useSave(
     );
 
     return useCallback(
-        async (draftId: string | null, hideLogs?: boolean) => {
+        async (
+            draftId: string | null,
+            hideLogs?: boolean,
+            onFinish?: (dryRun: boolean | undefined) => void,
+            onError?: (dryRun: boolean | undefined) => void
+        ) => {
             setFormState({
                 status: FormStatus.PROCESSING,
             });
@@ -566,7 +596,12 @@ function useSave(
             }
 
             setIncompatibleCollections([]);
-            waitForPublishToFinish(response.data[0].id, hideLogs);
+            waitForPublishToFinish(
+                response.data[0].id,
+                hideLogs,
+                onFinish,
+                onError
+            );
             setFormState({
                 logToken: response.data[0].logs_token,
                 showLogs: !hideLogs,

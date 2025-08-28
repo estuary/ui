@@ -1,6 +1,5 @@
 import type { ConnectorConfig } from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
-import type { FieldSelectionType } from 'src/components/editor/Bindings/FieldSelection/types';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { CallSupabaseResponse } from 'src/services/supabase';
 import type {
@@ -18,11 +17,11 @@ import type {
     Schema,
     SourceCaptureDef,
 } from 'src/types';
+import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
 
-import { isBoolean, isEmpty } from 'lodash';
+import { isBoolean, isEmpty, isEqual } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
-import { ConstraintTypes } from 'src/components/editor/Bindings/FieldSelection/types';
 import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
@@ -380,33 +379,39 @@ export const modifyExistingCaptureDraftSpec = async (
     });
 };
 
-// Common materialization field selection checks
-export const isRequireOnlyField = (
-    constraintType: ConstraintTypes
-): boolean => {
-    return (
-        constraintType === ConstraintTypes.FIELD_REQUIRED ||
-        constraintType === ConstraintTypes.LOCATION_REQUIRED
+export const getBuiltBindingIndex = (
+    builtSpec: Schema,
+    targetCollection: string
+): number => {
+    const builtBindings: MaterializationBuiltBinding[] =
+        builtSpec.bindings ?? [];
+
+    return builtBindings.findIndex(
+        (binding) => binding.collection.name === targetCollection
     );
 };
 
-export const isRecommendedField = (
-    constraintType: ConstraintTypes
-): boolean => {
-    const required = isRequireOnlyField(constraintType);
+export const getBindingIndexByResourcePath = <T extends Schema>(
+    resourcePath: string[],
+    schema: Schema
+): number => {
+    if (resourcePath.length === 0) {
+        return -1;
+    }
 
-    return required || constraintType === ConstraintTypes.LOCATION_RECOMMENDED;
+    const bindings: T[] = schema.bindings;
+
+    return bindings.findIndex((binding) => {
+        let bindingResourcePath: string[] = [];
+
+        if (binding?.resourcePath) {
+            bindingResourcePath = binding.resourcePath;
+        } else if (binding?.resource?._meta?.path) {
+            bindingResourcePath = binding.resource._meta.path;
+        }
+
+        return bindingResourcePath.length > 0
+            ? isEqual(bindingResourcePath, resourcePath)
+            : false;
+    });
 };
-
-export const isExcludeOnlyField = (
-    constraintType: ConstraintTypes
-): boolean => {
-    return (
-        constraintType === ConstraintTypes.FIELD_FORBIDDEN ||
-        constraintType === ConstraintTypes.UNSATISFIABLE
-    );
-};
-
-export const isFieldSelectionType = (value: any): value is FieldSelectionType =>
-    typeof value === 'string' &&
-    (value === 'default' || value === 'exclude' || value === 'require');

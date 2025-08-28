@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
-import useFieldSelectionRefresh from 'src/components/editor/Bindings/FieldSelection/useFieldSelectionRefresh';
 import {
     useEditorStore_id,
     useEditorStore_queryResponse_draftSpecs,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useFieldSelectionRefresh from 'src/hooks/fieldSelection/useFieldSelectionRefresh';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
