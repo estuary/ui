@@ -4,7 +4,6 @@ import { Refresh } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
-import useFieldSelectionRefresh from 'src/hooks/fieldSelection/useFieldSelectionRefresh';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBindingStore } from 'src/stores/Binding/Store';
@@ -12,11 +11,10 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 interface Props {
     buttonLabelId: string;
+    refresh: Function;
 }
 
-function RefreshButton({ buttonLabelId }: Props) {
-    const { refresh } = useFieldSelectionRefresh();
-
+function RefreshButton({ buttonLabelId, refresh }: Props) {
     const selectionsHydrating = useBindingStore((state) =>
         Object.values(state.selections).some(({ hydrating }) => hydrating)
     );

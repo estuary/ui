@@ -22,12 +22,14 @@ interface Props {
     bindingUUID: string;
     collectionName: string;
     refreshRequired: boolean;
+    refresh: Function;
 }
 
 function FieldSelectionViewer({
     bindingUUID,
     collectionName,
     refreshRequired,
+    refresh,
 }: Props) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -140,7 +142,10 @@ function FieldSelectionViewer({
                             <FormattedMessage id="fieldSelection.header" />
                         </Typography>
 
-                        <RefreshButton buttonLabelId="cta.refresh" />
+                        <RefreshButton
+                            buttonLabelId="cta.refresh"
+                            refresh={refresh}
+                        />
                     </Stack>
 
                     <RefreshStatus show={refreshRequired ? true : undefined} />

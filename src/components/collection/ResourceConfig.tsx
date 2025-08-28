@@ -22,6 +22,7 @@ interface Props {
     bindingUUID: string;
     collectionName: string;
     refreshRequired: boolean;
+    refresh: Function;
     readOnly?: boolean;
 }
 
@@ -29,6 +30,7 @@ function ResourceConfig({
     bindingUUID,
     collectionName,
     refreshRequired,
+    refresh,
     readOnly = false,
 }: Props) {
     const entityType = useEntityType();
@@ -107,6 +109,7 @@ function ResourceConfig({
                     bindingUUID={bindingUUID}
                     collectionName={collectionName}
                     refreshRequired={refreshRequired}
+                    refresh={refresh}
                 />
             ) : null}
 
