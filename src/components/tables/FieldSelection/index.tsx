@@ -7,6 +7,7 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
@@ -87,6 +88,10 @@ export default function FieldSelectionTable({
     const displayLoadingState = useRef(
         debounce(() => setTableState({ status: TableStatuses.LOADING }), 750)
     );
+
+    useUnmount(() => {
+        displayLoadingState.current?.cancel();
+    });
 
     useEffect(() => {
         if (selectionsHydrating) {
