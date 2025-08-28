@@ -21,12 +21,19 @@ import {
 } from 'src/context/Theme';
 
 interface Props extends BaseComponentProps {
+    disablePadding?: boolean;
     message?: string | ReactNode;
     tooltipMessageId?: string;
     height?: string | number;
 }
 
-function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
+function CardWrapper({
+    children,
+    disablePadding,
+    height,
+    message,
+    tooltipMessageId,
+}: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
@@ -36,7 +43,7 @@ function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
             sx={{
                 ...eChartsTooltipSX,
                 height,
-                p: 2,
+                p: disablePadding ? undefined : 2,
                 display: 'flex',
                 flexDirection: 'column',
                 background: semiTransparentBackground[theme.palette.mode],
