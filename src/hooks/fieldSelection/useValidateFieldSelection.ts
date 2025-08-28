@@ -178,12 +178,6 @@ export default function useValidateFieldSelection() {
             return;
         }
 
-        if (failureDetected) {
-            setValidationFailure(targetBindingUUIDs, true);
-
-            return;
-        }
-
         const draftSpecsRow =
             draftSpecsRows.length !== 0 ? draftSpecsRows[0] : undefined;
 
@@ -192,6 +186,15 @@ export default function useValidateFieldSelection() {
             !draftSpecsRow.built_spec ||
             !draftSpecsRow.validated
         ) {
+            if (failureDetected) {
+                setValidationFailure(targetBindingUUIDs, true);
+
+                logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                    formFailureDetected: failureDetected,
+                    missingServerData: true,
+                });
+            }
+
             return;
         }
 
@@ -227,6 +230,14 @@ export default function useValidateFieldSelection() {
                         meta.validatedBindingIndex,
                         meta.liveBuiltBindingIndex
                     );
+                } else if (failureDetected) {
+                    setValidationFailure([uuid], true);
+
+                    logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                        formFailureDetected: failureDetected,
+                        missingServerData: true,
+                        targetCollection: meta.collectionName,
+                    });
                 }
 
                 return null;
