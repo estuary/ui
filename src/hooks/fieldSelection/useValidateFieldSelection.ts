@@ -178,6 +178,12 @@ export default function useValidateFieldSelection() {
             return;
         }
 
+        if (failureDetected) {
+            setValidationFailure(targetBindingUUIDs, true);
+
+            return;
+        }
+
         const draftSpecsRow =
             draftSpecsRows.length !== 0 ? draftSpecsRows[0] : undefined;
 
@@ -186,10 +192,6 @@ export default function useValidateFieldSelection() {
             !draftSpecsRow.built_spec ||
             !draftSpecsRow.validated
         ) {
-            if (failureDetected) {
-                setValidationFailure(targetBindingUUIDs, true);
-            }
-
             return;
         }
 
