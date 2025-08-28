@@ -15,14 +15,14 @@ function useFieldSelectionRefresh() {
     const generateCatalog = useGenerateCatalog();
     const mutateDraftSpec = useMutateDraftSpec();
 
+    const advanceHydrationStatus = useBindingStore(
+        (state) => state.advanceHydrationStatus
+    );
+
     const saveCatalog = useSave(
         CustomEvents.MATERIALIZATION_TEST,
         callFailed,
         true
-    );
-
-    const advanceHydrationStatus = useBindingStore(
-        (state) => state.advanceHydrationStatus
     );
 
     const refresh = useCallback(
@@ -47,9 +47,15 @@ function useFieldSelectionRefresh() {
             //  if this is not returned then the function itself handled showing an error
             if (evaluatedDraftId) {
                 try {
-                    await saveCatalog(evaluatedDraftId, true).finally(() =>
-                        advanceHydrationStatus('SERVER_UPDATING')
-                    );
+                    const onFinish = (dryRun: boolean | undefined) => {
+                        if (!dryRun) {
+                            return;
+                        }
+
+                        advanceHydrationStatus('SERVER_UPDATING');
+                    };
+
+                    await saveCatalog(evaluatedDraftId, true, onFinish);
                 } catch (_error: unknown) {
                     setUpdating(false);
                 }

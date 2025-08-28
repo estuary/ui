@@ -8,11 +8,7 @@ import useFieldSelectionRefresh from 'src/hooks/fieldSelection/useFieldSelection
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import {
-    useFormStateStore_isActive,
-    useFormStateStore_status,
-} from 'src/stores/FormState/hooks';
-import { FormStatus } from 'src/stores/FormState/types';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 interface Props {
     buttonLabelId: string;
@@ -28,7 +24,6 @@ function RefreshButton({ buttonLabelId }: Props) {
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     const formActive = useFormStateStore_isActive();
-    const formStatus = useFormStateStore_status();
 
     return (
         <Box>
@@ -37,7 +32,6 @@ function RefreshButton({ buttonLabelId }: Props) {
                     updating ||
                         selectionsHydrating ||
                         formActive ||
-                        formStatus === FormStatus.TESTING_BACKGROUND ||
                         !persistedDraftId
                 )}
                 startIcon={<Refresh style={{ fontSize: 12 }} />}

@@ -102,7 +102,11 @@ function useSave(
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
 
     const waitForPublishToFinish = useCallback(
-        (publicationId: string, hideNotification?: boolean) => {
+        (
+            publicationId: string,
+            hideNotification?: boolean,
+            onFinish?: Function
+        ) => {
             updateFormStatus(status, hideNotification);
             jobStatusPoller(
                 getPublicationByIdQuery(publicationId),
@@ -146,6 +150,10 @@ function useSave(
                         }
                     }
 
+                    if (onFinish) {
+                        onFinish(dryRun);
+                    }
+
                     if (!hideNotification) {
                         showNotification({
                             description: intl.formatMessage({
@@ -167,6 +175,10 @@ function useSave(
                         if (mutateDraftSpecs) {
                             void mutateDraftSpecs();
                         }
+                    }
+
+                    if (onFinish) {
+                        onFinish(dryRun);
                     }
 
                     trackEvent(logEvent, payload);
@@ -516,7 +528,11 @@ function useSave(
     );
 
     return useCallback(
-        async (draftId: string | null, hideLogs?: boolean) => {
+        async (
+            draftId: string | null,
+            hideLogs?: boolean,
+            onFinish?: Function
+        ) => {
             setFormState({
                 status: FormStatus.PROCESSING,
             });
@@ -574,7 +590,7 @@ function useSave(
             }
 
             setIncompatibleCollections([]);
-            waitForPublishToFinish(response.data[0].id, hideLogs);
+            waitForPublishToFinish(response.data[0].id, hideLogs, onFinish);
             setFormState({
                 logToken: response.data[0].logs_token,
                 showLogs: !hideLogs,
