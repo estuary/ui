@@ -80,10 +80,10 @@ function useEntityWorkflowHelpers() {
 
     const resetState = useCallback(() => {
         resetFormState();
-        resetEndpointConfigState();
-        resetDetailsFormState();
-        resetBindingState(undefined, true);
-        resetEditorStore();
+        resetEndpointConfigState(); // done
+        resetDetailsFormState(); // done
+        resetBindingState(undefined, true); // done
+        resetEditorStore(); // done
         resetBindingsEditorStore();
         resetSchemaEvolutionState();
         resetSourceCapture();

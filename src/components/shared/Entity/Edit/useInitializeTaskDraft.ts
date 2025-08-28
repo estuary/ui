@@ -13,6 +13,7 @@ import {
 } from 'src/api/draftSpecs';
 import { getLiveSpecsByLiveSpecId } from 'src/api/liveSpecsExt';
 import {
+    useEditorStore_resetState,
     useEditorStore_setCatalogName,
     useEditorStore_setDraftInitializationError,
     useEditorStore_setId,
@@ -56,6 +57,7 @@ function useInitializeTaskDraft() {
     const taskSpecType = useEntityType();
 
     // Draft Editor Store
+    const resetState = useEditorStore_resetState();
     const setDraftId = useEditorStore_setId();
     const setDraftInitializationError =
         useEditorStore_setDraftInitializationError();
@@ -71,6 +73,8 @@ function useInitializeTaskDraft() {
     // Get catalog name and task spec from live specs
     const getTask =
         useCallback(async (): Promise<LiveSpecsExtQuery_ByLiveSpecId | null> => {
+            resetState();
+
             const liveSpecResponse = await getLiveSpecsByLiveSpecId(liveSpecId);
 
             if (liveSpecResponse.data && liveSpecResponse.data.length > 0) {
@@ -88,6 +92,7 @@ function useInitializeTaskDraft() {
             }
         }, [
             liveSpecId,
+            resetState,
             setCatalogName,
             setDraftInitializationError,
             setLiveBuiltSpec,
