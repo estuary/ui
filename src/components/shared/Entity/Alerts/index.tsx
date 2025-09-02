@@ -85,12 +85,17 @@ function EntityAlerts() {
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={12} md={!isCollection ? 8 : 12}>
+            <Grid
+                item
+                xs={12}
+                md={!isCollection ? 6 : 12}
+                lg={!isCollection ? 8 : 12}
+            >
                 <ActiveAlerts />
             </Grid>
 
             {!isCollection && catalogName ? (
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6} lg={4}>
                     <NotificationSettings taskName={catalogName} />
                 </Grid>
             ) : null}

@@ -17,8 +17,8 @@ import useGlobalSearchParams, {
 const testQuery = gql<ActiveAlertsQueryResponse, AlertsVariables>`
     query ActiveAlertsQuery($prefixes: [String!]!) {
         alerts(prefixes: $prefixes) {
-            alertType
             alertDetails: arguments
+            alertType
             catalogName
             firedAt
             resolvedAt
