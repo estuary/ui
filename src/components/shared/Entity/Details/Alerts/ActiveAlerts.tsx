@@ -66,7 +66,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                         </AlertBox>
                     </Grid>
                 ) : !data || data.alerts.length === 0 ? (
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={10} lg={8}>
                         <AlertBox
                             severity="success"
                             short

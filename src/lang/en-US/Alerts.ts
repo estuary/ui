@@ -28,7 +28,7 @@ export const Alerts: Record<string, string> = {
 
     'alert.active.fetchError.title': `Unable to fetch active alerts`,
 
-    'alert.active.noAlerts.title': `No alerts found`,
+    'alert.active.noAlerts.title': `All Clear!`,
     'alert.active.noAlerts.message': `There are no active alerts for this task.`,
 
     // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
