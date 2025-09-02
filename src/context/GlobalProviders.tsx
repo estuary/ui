@@ -50,6 +50,8 @@ function GlobalProviders({ children }: BaseComponentProps) {
 
     const gqlClient = new Client({
         url: import.meta.env.VITE_GQL_URL,
+        // We right now have a backend that wants POSTs to be used
+        preferGetMethod: false,
         exchanges: [
             // ORDER IS IMPORTANT
             cacheExchange,
