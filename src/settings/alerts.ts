@@ -22,41 +22,43 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
         docLink:
             'https://docs.estuary.dev/reference/notifications/#data-movement-alerts',
         humanReadableIntlKey:
-            'alerts.alertType.humanReadable.datamovementstalled',
+            'alerts.alertType.humanReadable.data_movement_stalled',
         explanationIntlKey:
-            'alerts.alertType.humanReadable.explanation.datamovementstalled',
+            'alerts.alertType.humanReadable.explanation.data_movement_stalled',
     },
     free_trial: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
-        humanReadableIntlKey: 'alerts.alertType.humanReadable.freetrial',
+        humanReadableIntlKey: 'alerts.alertType.humanReadable.free_trial',
         explanationIntlKey:
-            'alerts.alertType.humanReadable.explanation.freetrial',
+            'alerts.alertType.humanReadable.explanation.free_trial',
     },
     free_trial_ending: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
-        humanReadableIntlKey: 'alerts.alertType.humanReadable.freetrialending',
+        humanReadableIntlKey:
+            'alerts.alertType.humanReadable.free_trial_ending',
         explanationIntlKey:
-            'alerts.alertType.humanReadable.explanation.freetrialending',
+            'alerts.alertType.humanReadable.explanation.free_trial_ending',
     },
     free_trial_stalled: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
-        humanReadableIntlKey: 'alerts.alertType.humanReadable.freetrialstalled',
+        humanReadableIntlKey:
+            'alerts.alertType.humanReadable.free_trial_stalled',
         explanationIntlKey:
-            'alerts.alertType.humanReadable.explanation.freetrialstalled',
+            'alerts.alertType.humanReadable.explanation.free_trial_stalled',
     },
     missing_payment_method: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
         humanReadableIntlKey:
-            'alerts.alertType.humanReadable.missingpaymentmethod',
+            'alerts.alertType.humanReadable.missing_payment_method',
         explanationIntlKey:
-            'alerts.alertType.humanReadable.explanation.missingpaymentmethod',
+            'alerts.alertType.humanReadable.explanation.missing_payment_method',
     },
 };

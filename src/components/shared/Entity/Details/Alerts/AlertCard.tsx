@@ -1,6 +1,6 @@
 import type { AlertCardProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
-import { Alert, AlertTitle, Box } from '@mui/material';
+import { Alert, AlertTitle, Box, Divider } from '@mui/material';
 
 import { DateTime } from 'luxon';
 
@@ -52,6 +52,7 @@ function AlertCard({ datum }: AlertCardProps) {
                         },
                     ]}
                 />
+                <Divider />
                 <AlertDetails datum={datum} />
             </Box>
         </CardWrapper>
