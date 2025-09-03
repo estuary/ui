@@ -1,9 +1,12 @@
 import type { AlertSetting } from 'src/settings/types';
 import type { AlertType } from 'src/types/gql';
 
+import DataMovementStalledDetail from 'src/components/shared/Entity/Details/Alerts/Details/DataMovementStalledDetail';
+
 export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
     auto_discover_failed: {
         detailKeys: ['error'],
+        detailSection: DataMovementStalledDetail,
         docLink: 'https://docs.estuary.dev/reference/notifications',
         humanReadableIntlKey:
             'alerts.alertType.humanReadable.auto_discover_failed',
@@ -11,7 +14,8 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
             'alerts.alertType.humanReadable.explanation.auto_discover_failed',
     },
     shard_failed: {
-        detailKeys: [],
+        detailKeys: ['error'],
+        detailSection: DataMovementStalledDetail,
         docLink: 'https://docs.estuary.dev/reference/notifications',
         humanReadableIntlKey: 'alerts.alertType.humanReadable.shard_failed',
         explanationIntlKey:

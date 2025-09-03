@@ -4,7 +4,11 @@ import KeyValueList from 'src/components/shared/KeyValueList';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertDetails({ datum }: AlertDetailsProps) {
-    const { details } = useAlertTypeContent(datum);
+    const { details, DetailSection } = useAlertTypeContent(datum);
+
+    if (DetailSection) {
+        return <DetailSection datum={datum} details={details} />;
+    }
 
     if (details.length > 0) {
         return (

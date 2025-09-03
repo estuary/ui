@@ -11,6 +11,7 @@ function useAlertTypeContent({ alertType, alertDetails }: Alert) {
 
     return useMemo(() => {
         if (alertType && ALERT_SETTING[alertType]) {
+            let DetailSection: any = null;
             const details: any[] = [];
 
             if (ALERT_SETTING[alertType].detailKeys.length > 0) {
@@ -25,7 +26,12 @@ function useAlertTypeContent({ alertType, alertDetails }: Alert) {
                 });
             }
 
+            if (ALERT_SETTING[alertType].detailSection) {
+                DetailSection = ALERT_SETTING[alertType].detailSection;
+            }
+
             return {
+                DetailSection,
                 details,
                 docLink: ALERT_SETTING[alertType].docLink,
                 humanReadable: intl.formatMessage({
