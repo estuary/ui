@@ -4,7 +4,7 @@ import PrefixAlertTable from 'src/components/tables/PrefixAlerts';
 function PrefixAlerts() {
     return (
         <>
-            <StandAloneTableTitle titleIntlKey="alerts.config.header." />
+            <StandAloneTableTitle titleIntlKey="alerts.config.header" />
             <PrefixAlertTable />
         </>
     );

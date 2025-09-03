@@ -1,39 +1,16 @@
-import type { AlertHistoryQueryResponse, AlertsVariables } from 'src/types/gql';
-
-import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
-
-import { useIntl } from 'react-intl';
-import { gql } from 'urql';
+import { Grid } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
 import AdminTabs from 'src/components/admin/Tabs';
 import TenantSelector from 'src/components/shared/TenantSelector';
-import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import usePageTitle from 'src/hooks/usePageTitle';
-import { TablePrefixes } from 'src/stores/Tables/hooks';
-import { useTenantStore } from 'src/stores/Tenant/Store';
-
-const alertHistoryQuery = gql<AlertHistoryQueryResponse, AlertsVariables>`
-    query AlertHistory($prefixes: [String!]!) {
-        alerts(prefixes: $prefixes) {
-            catalogName
-            firedAt
-            alertType
-            alertDetails: arguments
-            resolvedAt
-        }
-    }
-`;
 
 function Notifications() {
     usePageTitle({
         header: authenticatedRoutes.admin.notifications.title,
         headerLink: 'https://docs.estuary.dev/reference/notifications/',
     });
-
-    const intl = useIntl();
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     return (
         <>
@@ -55,28 +32,6 @@ function Notifications() {
             </Grid>
 
             <PrefixAlerts />
-
-            <Stack spacing={2} sx={{ m: 2 }}>
-                <Box>
-                    <Typography component="div" variant="h6" sx={{ mb: 0.5 }}>
-                        {intl.formatMessage({
-                            id: 'alerts.config.title.',
-                        })}
-                    </Typography>
-                    {intl.formatMessage({ id: 'alerts.config.message.' })}
-                </Box>
-
-                <Divider />
-                <AlertHistoryTable
-                    tablePrefix={TablePrefixes.alertHistoryForTenant}
-                    querySettings={{
-                        query: alertHistoryQuery,
-                        variables: {
-                            prefixes: [selectedTenant],
-                        },
-                    }}
-                />
-            </Stack>
         </>
     );
 }

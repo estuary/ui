@@ -3,7 +3,6 @@ import type { NavigationTabProps } from 'src/components/shared/NavigationTabs/ty
 import { useMemo } from 'react';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import AlertsAreActiveBadge from 'src/components/shared/AlertsAreActiveBadge';
 import NavigationTabs from 'src/components/shared/NavigationTabs';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useTenantStore } from 'src/stores/Tenant/Store';
@@ -20,10 +19,6 @@ function AdminTabs() {
                 path: authenticatedRoutes.admin.accessGrants.fullPath,
             },
             {
-                Wrapper: AlertsAreActiveBadge,
-                wrapperProps: {
-                    prefixes: [selectedTenant],
-                },
                 labelMessageId: 'admin.tabs.notifications',
                 path: authenticatedRoutes.admin.notifications.fullPath,
             },
