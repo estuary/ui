@@ -2,22 +2,22 @@ import type { AlertSetting } from 'src/settings/types';
 import type { AlertType } from 'src/types/gql';
 
 export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
-    autodiscoverfailed: {
-        detailKeys: [],
+    auto_discover_failed: {
+        detailKeys: ['error'],
         docLink: 'https://docs.estuary.dev/reference/notifications',
         humanReadableIntlKey:
-            'alerts.alertType.humanReadable.autodiscoverfailed',
+            'alerts.alertType.humanReadable.auto_discover_failed',
         explanationIntlKey:
-            'alerts.alertType.humanReadable.explanation.autodiscoverfailed',
+            'alerts.alertType.humanReadable.explanation.auto_discover_failed',
     },
-    shardfailed: {
+    shard_failed: {
         detailKeys: [],
         docLink: 'https://docs.estuary.dev/reference/notifications',
-        humanReadableIntlKey: 'alerts.alertType.humanReadable.shardfailed',
+        humanReadableIntlKey: 'alerts.alertType.humanReadable.shard_failed',
         explanationIntlKey:
-            'alerts.alertType.humanReadable.explanation.shardfailed',
+            'alerts.alertType.humanReadable.explanation.shard_failed',
     },
-    datamovementstalled: {
+    data_movement_stalled: {
         detailKeys: ['evaluation_interval'],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#data-movement-alerts',
@@ -26,7 +26,7 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
         explanationIntlKey:
             'alerts.alertType.humanReadable.explanation.datamovementstalled',
     },
-    freetrial: {
+    free_trial: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
@@ -34,7 +34,7 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
         explanationIntlKey:
             'alerts.alertType.humanReadable.explanation.freetrial',
     },
-    freetrialending: {
+    free_trial_ending: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
@@ -42,7 +42,7 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
         explanationIntlKey:
             'alerts.alertType.humanReadable.explanation.freetrialending',
     },
-    freetrialstalled: {
+    free_trial_stalled: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
@@ -50,7 +50,7 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
         explanationIntlKey:
             'alerts.alertType.humanReadable.explanation.freetrialstalled',
     },
-    missingpaymentmethod: {
+    missing_payment_method: {
         detailKeys: [],
         docLink:
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',

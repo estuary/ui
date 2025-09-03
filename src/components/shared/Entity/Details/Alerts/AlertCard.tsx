@@ -1,6 +1,6 @@
 import type { AlertCardProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
-import { Alert, AlertTitle, Box, Grid } from '@mui/material';
+import { Alert, AlertTitle, Box } from '@mui/material';
 
 import { DateTime } from 'luxon';
 
@@ -38,28 +38,21 @@ function AlertCard({ datum }: AlertCardProps) {
             }
         >
             <Box sx={{ px: 2, pb: 2 }}>
-                <Grid container>
-                    <Grid item xs={8}>
-                        <KeyValueList
-                            data={[
-                                {
-                                    title: `What's Happening?`,
-                                    val: explanation,
-                                },
-                                {
-                                    title: 'Fired At',
-                                    val: DateTime.fromISO(datum.firedAt)
-                                        .toUTC()
-                                        .toLocaleString(DateTime.DATETIME_FULL),
-                                },
-                            ]}
-                        />
-                    </Grid>
-
-                    <Grid item xs={4}>
-                        <AlertDetails datum={datum} />
-                    </Grid>
-                </Grid>
+                <KeyValueList
+                    data={[
+                        {
+                            title: `What's Happening?`,
+                            val: explanation,
+                        },
+                        {
+                            title: 'Fired At',
+                            val: DateTime.fromISO(datum.firedAt)
+                                .toUTC()
+                                .toLocaleString(DateTime.DATETIME_FULL),
+                        },
+                    ]}
+                />
+                <AlertDetails datum={datum} />
             </Box>
         </CardWrapper>
 

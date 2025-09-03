@@ -85,7 +85,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                             <Grid
                                 item
                                 xs={12}
-                                md={6}
+                                lg={4}
                                 key={`active_alerts_${datum.firedAt}_${index}`}
                             >
                                 <AlertCard datum={datum} />
