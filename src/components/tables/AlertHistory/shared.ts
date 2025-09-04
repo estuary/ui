@@ -32,8 +32,4 @@ export const tableColumns: TableColumns[] = [
         field: null,
         headerIntlKey: 'alerts.table.data.details',
     },
-    {
-        field: null,
-        headerIntlKey: 'alerts.table.data.recipients',
-    },
 ];

@@ -10,7 +10,8 @@ import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 function AlertCardHeader({ datum }: AlertCardHeaderProps) {
     const intl = useIntl();
 
-    const { docLink, humanReadable } = useAlertTypeContent(datum);
+    const getAlertTypeContent = useAlertTypeContent();
+    const { docLink, humanReadable } = getAlertTypeContent(datum);
 
     return (
         <Stack

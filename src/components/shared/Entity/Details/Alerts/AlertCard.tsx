@@ -11,7 +11,8 @@ import KeyValueList from 'src/components/shared/KeyValueList';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCard({ datum }: AlertCardProps) {
-    const { explanation } = useAlertTypeContent(datum);
+    const getAlertTypeContent = useAlertTypeContent();
+    const { explanation } = getAlertTypeContent(datum);
 
     return (
         <CardWrapper

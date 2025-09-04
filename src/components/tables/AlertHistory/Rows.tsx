@@ -9,7 +9,6 @@ import { authenticatedRoutes } from 'src/app/routes';
 import AlertDetails from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
 import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
 import ActiveOrResolvedCells from 'src/components/tables/cells/activeResolved/Cells';
-import ChipList from 'src/components/tables/cells/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
@@ -18,7 +17,8 @@ import { isColumnVisible } from 'src/utils/table-utils';
 function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
     const { catalogName, firedAt, resolvedAt, alertDetails } = row;
 
-    const { humanReadable } = useAlertTypeContent(row);
+    const getAlertTypeContent = useAlertTypeContent();
+    const { humanReadable } = getAlertTypeContent(row);
 
     const { generatePath } = useDetailsNavigator(
         alertDetails.spec_type === 'capture'
@@ -54,14 +54,14 @@ function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
                 <AlertDetails datum={row} />
             </TableCell>
 
-            <ChipList
+            {/*            <ChipList
                 stripPath={false}
                 values={
                     alertDetails.recipients?.map(
                         (recipient: any) => recipient.email
                     ) ?? []
                 }
-            />
+            />*/}
         </TableRow>
     );
 }
