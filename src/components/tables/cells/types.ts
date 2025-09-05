@@ -1,4 +1,9 @@
-import type { ChipProps, ToggleButtonProps, TooltipProps } from '@mui/material';
+import type {
+    ChipProps,
+    TableCellProps,
+    ToggleButtonProps,
+    TooltipProps,
+} from '@mui/material';
 import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
@@ -11,6 +16,7 @@ export interface BaseFieldOutcomeProps {
 export interface ChipStatusProps {
     messageId: string;
     color: ChipProps['color'];
+    TableCellProps?: Partial<TableCellProps>;
 }
 
 export interface FieldActionButtonProps extends ToggleButtonProps {

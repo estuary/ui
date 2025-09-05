@@ -1,5 +1,6 @@
 import { Box, Grid } from '@mui/material';
 
+import AlertingOverviewNotificationStyle from 'src/components/home/dashboard/AlertingOverview/NotificationStyle';
 import EntityStatOverview from 'src/components/home/dashboard/EntityStatOverview';
 import TenantSelector from 'src/components/shared/TenantSelector';
 
@@ -16,7 +17,11 @@ export default function Dashboard() {
                 </Box>
             </Grid>
 
+            {/*<AlertingOverview entityType="capture" />*/}
+
             <EntityStatOverview />
+
+            <AlertingOverviewNotificationStyle entityType="capture" />
         </Grid>
     );
 }

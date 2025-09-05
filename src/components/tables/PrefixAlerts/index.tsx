@@ -23,7 +23,7 @@ const columns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'admin.alerts.table.label.alertMethod',
+        headerIntlKey: 'alerts.config.table.label.alertMethod',
     },
     {
         field: null,
@@ -73,8 +73,8 @@ function PrefixAlertTable() {
         >
             <EntityTable
                 noExistingDataContentIds={{
-                    header: 'admin.alerts.table.noContent.header',
-                    message: 'admin.alerts.table.noContent.message',
+                    header: 'alerts.config.table.noContent.header',
+                    message: 'alerts.config.table.noContent.message',
                     disableDoclink: true,
                 }}
                 columns={columns}
@@ -90,11 +90,11 @@ function PrefixAlertTable() {
                 columnToSort={columnToSort}
                 setColumnToSort={setColumnToSort}
                 header={null}
-                filterLabel="admin.alerts.table.filterLabel"
+                filterLabel="alerts.config.table.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
                 showToolbar
                 toolbar={<AlertGenerateButton />}
-                tableAriaLabelKey="admin.alerts.table.aria.label"
+                tableAriaLabelKey="alerts.config.table.aria.label"
             />
         </TableHydrator>
     );

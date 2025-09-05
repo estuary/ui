@@ -1,10 +1,20 @@
 import type { OptionalColumn } from 'src/components/collection/Selector/Table/useCollectionsSelectorColumns';
+import type { DetailsComponent } from 'src/components/shared/Entity/Details/Alerts/types';
 import type { TableIntlConfig } from 'src/types';
+import type { AlertDetails } from 'src/types/gql';
 
 interface TableSettings {
     noExistingDataContentIds: TableIntlConfig;
     filterIntlKey: string;
     headerIntlKey: string;
+}
+
+export interface AlertSetting {
+    detailKeys: (keyof AlertDetails)[];
+    detailSection?: DetailsComponent;
+    docLink: string;
+    humanReadableIntlKey: string;
+    explanationIntlKey: string;
 }
 
 export interface DataPlaneSetting {
