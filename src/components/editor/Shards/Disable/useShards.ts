@@ -11,6 +11,7 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
+import { taskIsDisabled } from 'src/utils/spec-utils';
 
 function useShards() {
     const taskSpecType = useEntityType();
@@ -54,10 +55,7 @@ function useShards() {
     );
 
     const shardDisabled = useMemo(
-        () =>
-            draftSpecs[0]
-                ? Boolean(draftSpecs[0].spec?.shards?.disable)
-                : false,
+        () => (draftSpecs[0] ? taskIsDisabled(draftSpecs[0].spec) : false),
         [draftSpecs]
     );
 

@@ -2,7 +2,7 @@ import type { DetailsSectionProps } from 'src/components/shared/Entity/Details/O
 
 import { useMemo } from 'react';
 
-import { CircularProgress, Skeleton, Typography } from '@mui/material';
+import { CircularProgress, Skeleton } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -10,10 +10,10 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
 import ConnectorSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/ConnectorSection';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
+import StatusSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/StatusSection';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
 import useRelatedEntities from 'src/hooks/details/useRelatedEntities';
-import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
 import {
     formatDataPlaneName,
     getDataPlaneScope,
@@ -25,10 +25,6 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     const intl = useIntl();
 
     const entityType = useEntityType();
-
-    const latestConnectorStatus =
-        useEntityStatusStore_singleResponse(entityName)?.connector_status
-            ?.message;
 
     const relatedEntities = useRelatedEntities();
 
@@ -68,11 +64,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                 title: intl.formatMessage({
                     id: 'data.connectorStatus',
                 }),
-                val: (
-                    <Typography component="div">
-                        {latestConnectorStatus ?? '--'}
-                    </Typography>
-                ),
+                val: <StatusSection entityName={entityName} />,
             });
         }
 
@@ -117,7 +109,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         });
 
         return response;
-    }, [entityType, intl, latestConnectorStatus, latestLiveSpec]);
+    }, [entityName, entityType, intl, latestLiveSpec]);
 
     return (
         <CardWrapper

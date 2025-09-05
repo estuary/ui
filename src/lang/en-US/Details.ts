@@ -84,4 +84,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.graph.syncDelay': `Reporting can be delayed by up to {reportingDelay} for this materialization`,
     'detailsPanel.graph.syncDelay.default': `Reporting can be delayed due to update delay for this materialization`,
     'detailsPanel.graph.syncDelay.tooltip': `Reporting can be delayed by up to 2x the set update delay in the configuration.`,
+
+    'detailsPanel.status.taskDisabled.title': `Stopped`,
+    'detailsPanel.status.taskDisabled.message': `Task currently disabled`,
 };

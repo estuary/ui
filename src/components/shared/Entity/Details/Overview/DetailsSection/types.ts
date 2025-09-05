@@ -9,3 +9,7 @@ export interface DetailsSectionProps {
 export interface ConnectorSectionProps {
     latestLiveSpec: LiveSpecsQuery_details;
 }
+
+export interface StatusSectionProps {
+    entityName: DetailsSectionProps['entityName'];
+}

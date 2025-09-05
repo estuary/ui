@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 import useConstant from 'use-constant';
 
-import { Box } from '@mui/material';
+import { Box, Divider, Stack } from '@mui/material';
 
 import { useUnmount } from 'react-use';
 
 import { createEditorStore } from 'src/components/editor/Store/create';
 import LiveSpecsHydrator from 'src/components/editor/Store/LiveSpecsHydrator';
 import RenderTab from 'src/components/shared/Entity/Details/RenderTab';
+import DetailTabs from 'src/components/shared/Entity/Details/Tabs';
 import DetailsToolBar from 'src/components/shared/Entity/Details/ToolBar';
 import ShardHydrator from 'src/components/shared/Entity/Shard/Hydrator';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
@@ -59,7 +60,11 @@ function EntityDetails() {
                             catalogName={catalogName}
                             lastChecked={lastChecked}
                         >
-                            <DetailsToolBar />
+                            <Stack spacing={2} sx={{ m: 1 }}>
+                                <DetailsToolBar />
+                                <Divider />
+                                <DetailTabs />
+                            </Stack>
 
                             <Box sx={{ m: 1 }}>
                                 <RenderTab />
