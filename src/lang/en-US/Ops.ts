@@ -1,3 +1,6 @@
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
+
 export const Ops: Record<string, string> = {
     'ops.logsTable.label.level': `Level`,
     'ops.logsTable.label.ts': `Timestamp`,
@@ -14,7 +17,13 @@ export const Ops: Record<string, string> = {
     'ops.logsTable.hydrationError.message': `Please check your network connection and try again.`,
     'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
 
-    // These keys get generated inside the WaitingForRowBase
+    'ops.errors.offsetNot.title': `Logs not yet available (OFFSET_NOT_YET_AVAILABLE)`,
+    'ops.errors.offsetNot.details': `This usually means the task is still starting up, or it hasn’t been able to start because of a configuration issue (for example, an invalid storage mapping).`,
+    'ops.errors.offsetNot.instructions': `If the task just started, logs should appear within a few minutes. If you don’t see them after 10 minutes, please contact {docLink} for help.`,
+    'ops.errors.offsetNot.instructions.docLink': `${CTAs['cta.support']}`,
+    'ops.errors.offsetNot.instructions.docPath': `${CommonMessages['support.email']}`,
+
+    // Keys generated inside WaitingForRowBase
     'ops.logsTable.waitingForLogs.old.failed': `A network error occurred. Please reload.`,
     'ops.logsTable.waitingForLogs.new.failed': `A network error occurred. Please reload.`,
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,

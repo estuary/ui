@@ -21,23 +21,29 @@ export const RESPONSE_DATA_LIMIT = 1000;
 // Default size used when splitting up larged promises
 export const CHUNK_SIZE = 10;
 
+// Alpha ordered - but keeping most common at the top
 const JOURNAL_READ_ERRORS = [
-    'JOURNAL_NOT_FOUND',
-    'NO_JOURNAL_PRIMARY_BROKER',
-    'NOT_JOURNAL_PRIMARY_BROKER',
-    'NOT_JOURNAL_BROKER',
-    'INSUFFICIENT_JOURNAL_BROKERS',
     'OFFSET_NOT_YET_AVAILABLE',
-    'WRONG_ROUTE',
-    'PROPOSAL_MISMATCH',
+
     'ETCD_TRANSACTION_FAILED',
-    'NOT_ALLOWED',
-    'WRONG_APPEND_OFFSET',
     'INDEX_HAS_GREATER_OFFSET',
+    'INSUFFICIENT_JOURNAL_BROKERS',
+    'JOURNAL_NOT_FOUND',
+    'NOT_ALLOWED',
+    'NOT_JOURNAL_BROKER',
+    'NOT_JOURNAL_PRIMARY_BROKER',
+    'NO_JOURNAL_PRIMARY_BROKER',
+    'PROPOSAL_MISMATCH',
     'REGISTER_MISMATCH',
+    'WRONG_APPEND_OFFSET',
+    'WRONG_ROUTE',
 ];
 export const journalStatusIsError = (status: string | undefined) => {
-    return status ? JOURNAL_READ_ERRORS.includes(status) : false;
+    console.log('JOURNAL_READ_ERRORS', JOURNAL_READ_ERRORS);
+    // TODO SWITCH BACK BEFORE MERGE
+    return true;
+    // return status ? JOURNAL_READ_ERRORS.includes(status) : false;
+    // TODO SWITCH BACK BEFORE MERGE
 };
 
 // Max time stored in
