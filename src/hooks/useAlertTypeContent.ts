@@ -2,6 +2,7 @@ import type { Alert } from 'src/types/gql';
 
 import { useCallback } from 'react';
 
+import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
 import { ALERT_SETTING } from 'src/settings/alerts';
@@ -10,7 +11,7 @@ function useAlertTypeContent() {
     const intl = useIntl();
 
     return useCallback(
-        ({ alertType, alertDetails }: Alert) => {
+        ({ alertType, alertDetails, firedAt }: Alert) => {
             if (alertType && ALERT_SETTING[alertType]) {
                 let DetailSection: any = null;
                 const details: any[] = [];
@@ -41,6 +42,9 @@ function useAlertTypeContent() {
                     explanation: intl.formatMessage({
                         id: ALERT_SETTING[alertType].explanationIntlKey,
                     }),
+                    readableTime: DateTime.fromISO(firedAt)
+                        .toUTC()
+                        .toLocaleString(DateTime.DATETIME_FULL),
                 };
             }
 
@@ -48,6 +52,7 @@ function useAlertTypeContent() {
                 details: [],
                 humanReadable: '',
                 explanation: '',
+                readableTime: '',
             };
         },
         [intl]

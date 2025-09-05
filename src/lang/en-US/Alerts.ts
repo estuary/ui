@@ -1,6 +1,6 @@
 export const Alerts: Record<string, string> = {
     'alerts.config.title': `Active Alerts`,
-    'alerts.config.message': `Below is all entities that have an active alert`,
+    'alerts.config.message': `Below are tasks with an active alert. If you have taken steps to fix they may take some time to clear.`,
     'alerts.config.header': `Organization Notifications`,
     'alerts.config.cta.addAlertMethod': `Configure Notifications`,
 
