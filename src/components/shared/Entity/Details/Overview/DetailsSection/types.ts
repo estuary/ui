@@ -5,3 +5,7 @@ export interface DetailsSectionProps {
     latestLiveSpec: LiveSpecsQuery_details | null;
     loading: boolean;
 }
+
+export interface ConnectorSectionProps {
+    latestLiveSpec: LiveSpecsQuery_details;
+}

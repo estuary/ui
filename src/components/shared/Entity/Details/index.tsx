@@ -8,7 +8,7 @@ import { useUnmount } from 'react-use';
 import { createEditorStore } from 'src/components/editor/Store/create';
 import LiveSpecsHydrator from 'src/components/editor/Store/LiveSpecsHydrator';
 import RenderTab from 'src/components/shared/Entity/Details/RenderTab';
-import TaskName from 'src/components/shared/Entity/Details/TaskName';
+import DetailsToolBar from 'src/components/shared/Entity/Details/ToolBar';
 import ShardHydrator from 'src/components/shared/Entity/Shard/Hydrator';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
 import useGlobalSearchParams, {
@@ -59,7 +59,7 @@ function EntityDetails() {
                             catalogName={catalogName}
                             lastChecked={lastChecked}
                         >
-                            <TaskName />
+                            <DetailsToolBar />
 
                             <Box sx={{ m: 1 }}>
                                 <RenderTab />

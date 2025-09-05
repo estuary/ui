@@ -1,13 +1,13 @@
 import { Stack, Typography } from '@mui/material';
 
-import EditButton from 'src/components/shared/Entity/Details/EditButton';
-import MaterializeButton from 'src/components/shared/Entity/Details/MaterializeButton';
+import EditButton from 'src/components/shared/Entity/Details/ToolBar/EditButton';
+import MaterializeButton from 'src/components/shared/Entity/Details/ToolBar/MaterializeButton';
 import { truncateTextSx } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 
-function TaskName() {
+function DetailsToolBar() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     return (
@@ -32,4 +32,4 @@ function TaskName() {
     );
 }
 
-export default TaskName;
+export default DetailsToolBar;
