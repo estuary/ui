@@ -4,32 +4,23 @@ import { Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityStatusStore_singleResponse } from 'src/stores/EntityStatus/hooks';
-import { taskIsDisabled } from 'src/utils/spec-utils';
 
 function StatusSection({ entityName }: StatusSectionProps) {
+    const statusSingleResponse =
+        useEntityStatusStore_singleResponse(entityName);
+
     const latestConnectorStatus =
-        useEntityStatusStore_singleResponse(entityName)?.connector_status
-            ?.message;
+        statusSingleResponse?.connector_status?.message;
+
+    const taskIsDisable = Boolean(statusSingleResponse?.disabled);
 
     const intl = useIntl();
 
-    const currentCatalog = useEditorStore_currentCatalog({
-        localScope: true,
-    });
-
-    if (taskIsDisabled(currentCatalog?.spec)) {
+    if (taskIsDisable) {
         return (
-            <AlertBox
-                // title={intl.formatMessage({
-                //     id: 'detailsPanel.status.taskDisabled.title',
-                // })}
-                severity="warning"
-                short
-                sx={{ maxWidth: 'fit-content' }}
-            >
+            <AlertBox severity="warning" short sx={{ maxWidth: 'fit-content' }}>
                 {intl.formatMessage({
                     id: 'detailsPanel.status.taskDisabled.message',
                 })}
