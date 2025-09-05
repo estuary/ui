@@ -3,10 +3,10 @@ import { Box, Stack } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
-import useDetailsEntityTaskTypes from 'src/components/shared/Entity/Details/useDetailsEntityTaskTypes';
-import useEntityShouldShowLogs from 'src/components/shared/Entity/Details/useEntityShouldShowLogs';
 import Message from 'src/components/shared/Error/Message';
 import LogsTable from 'src/components/tables/Logs';
+import useDetailsEntityTaskTypes from 'src/hooks/details/useDetailsEntityTaskTypes';
+import useEntityShouldShowLogs from 'src/hooks/details/useEntityShouldShowLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';

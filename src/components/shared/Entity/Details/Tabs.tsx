@@ -5,8 +5,8 @@ import { Box, Tab, Tabs } from '@mui/material';
 import { useIntl } from 'react-intl';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
-import useEntityShouldShowLogs from 'src/components/shared/Entity/Details/useEntityShouldShowLogs';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import useEntityShouldShowLogs from 'src/hooks/details/useEntityShouldShowLogs';
 
 function DetailTabs() {
     const intl = useIntl();
