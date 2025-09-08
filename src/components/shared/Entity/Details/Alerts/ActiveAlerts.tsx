@@ -38,7 +38,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
     });
 
     return (
-        <CardWrapper message="Active Alerts">
+        <CardWrapper message="Unresolved Alerts">
             <Grid container spacing={{ xs: 2 }}>
                 {fetching ? (
                     // TODO (alerts) - need to make a proper skeleton of cards

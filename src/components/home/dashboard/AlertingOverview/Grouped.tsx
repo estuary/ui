@@ -93,7 +93,7 @@ export default function AlertingOverviewGrouped({ entityType }: Props) {
 
     return (
         <Grid item xs={12}>
-            <CardWrapper message="Alerting Tasks">
+            <CardWrapper message="Unresolved Alerts">
                 {fetching ? <LinearProgress /> : null}
                 {/*{renderedAlerts}*/}
                 {Object.entries(filteredData).length > 0 ? (
@@ -120,7 +120,7 @@ export default function AlertingOverviewGrouped({ entityType }: Props) {
                                         Task
                                     </TableCell>
                                     <TableCell sx={{ flexGrow: 1 }}>
-                                        Active Alerts
+                                        Unresolved Alerts
                                     </TableCell>
                                     <TableCell sx={{ flexGrow: 1 }}>
                                         Fired At

@@ -101,7 +101,7 @@ function EntityAlerts() {
             ) : null}
 
             <Grid item xs={12}>
-                <CardWrapper message="Previous Alerts">
+                <CardWrapper message="Resolved Alerts">
                     <AlertHistoryTable
                         getDataFromResponse={getDataFromResponse}
                         tablePrefix={TablePrefixes.alertHistoryForEntity}

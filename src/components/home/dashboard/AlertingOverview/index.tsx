@@ -97,7 +97,6 @@ export default function AlertingOverview({ entityType }: Props) {
         <Grid item xs={12}>
             <CardWrapper message="Alerting Tasks">
                 {fetching ? <LinearProgress /> : null}
-                {/*{renderedAlerts}*/}
                 {Object.entries(filteredData).length > 0 ? (
                     <TableContainer component={Box}>
                         <Table
@@ -120,7 +119,7 @@ export default function AlertingOverview({ entityType }: Props) {
                                     >
                                         Task
                                     </TableCell>
-                                    <TableCell>Active Alerts</TableCell>
+                                    <TableCell>Recent Alerts</TableCell>
                                 </TableRow>
                             </TableHead>
 

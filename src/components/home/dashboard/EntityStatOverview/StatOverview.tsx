@@ -5,6 +5,7 @@ import { Stack, Typography } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
+import AlertingOverview from 'src/components/home/dashboard/AlertingOverview';
 import ActiveEntityCount from 'src/components/home/dashboard/EntityStatOverview/ActiveEntityCount';
 import Statistic from 'src/components/home/dashboard/EntityStatOverview/Statistic';
 import LinkWrapper from 'src/components/shared/LinkWrapper';
@@ -76,16 +77,10 @@ export default function StatOverview({
                     style={{
                         alignContent: 'center',
                         justifyContent: 'space-between',
+                        marginBottom: 10,
                     }}
                 >
                     <ActiveEntityCount entityType={entityType} />
-
-                    <Statistic
-                        label="Alerting"
-                        loading={monthlyUsageLoading ?? false}
-                        tooltip=""
-                        value={2}
-                    />
 
                     {typeof monthlyUsage === 'number' ? (
                         <Statistic
@@ -106,6 +101,8 @@ export default function StatOverview({
                         />
                     ) : null}
                 </Stack>
+
+                <AlertingOverview entityType="capture" />
             </Stack>
         </Stack>
     );

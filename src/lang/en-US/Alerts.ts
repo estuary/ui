@@ -1,5 +1,5 @@
 export const Alerts: Record<string, string> = {
-    'alerts.config.title': `Active Alerts`,
+    'alerts.config.title': `Alerts`,
     'alerts.config.message': `Below are tasks with an active alert. If you have taken steps to fix they may take some time to clear.`,
     'alerts.config.header': `Organization Notifications`,
     'alerts.config.cta.addAlertMethod': `Configure Notifications`,
@@ -26,10 +26,10 @@ export const Alerts: Record<string, string> = {
     'alerts.table.empty.message': `This tenant has no historical alerts`,
     'alerts.table.error.message': `There was an error attempting to fetch alert history.`,
 
-    'alert.active.fetchError.title': `Unable to fetch active alerts`,
+    'alert.active.fetchError.title': `Unable to fetch unresolved alerts`,
 
     'alert.active.noAlerts.title': `All Clear!`,
-    'alert.active.noAlerts.message': `There are no active alerts for this task.`,
+    'alert.active.noAlerts.message': `There are no unresolved alerts for this task.`,
 
     // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
     'alerts.alertType.humanReadable.auto_discover_failed': `Auto Discover Failed`,
