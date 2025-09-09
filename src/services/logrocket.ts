@@ -40,24 +40,19 @@ const maskEverythingURLs = [
     'google.com',
     'doubleclick.net',
     'googleapis.com',
+    'googletagmanager.com',
+    'stripe.com',
+    'stripe.network',
+
+    // If it is a source file we do not really care about the contents
+    'static/',
+
+    // Same as above but jsut for local
+    'src/',
 ];
 
-const ignoredFileTypes = [
-    // This file can get huge and we just need to know if it loaded
-    '.wasm',
-
-    // We just need to know the files loaded... not the actual content
-    '.css',
-    '.js',
-
-    // Included for local testing
-    '.ts',
-    '.tsx',
-];
 const shouldMaskEverything = (url?: string) =>
     maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
-const shouldIgnoreType = (url?: string) =>
-    ignoredFileTypes.some((el) => url?.toLowerCase().endsWith(el));
 
 const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
 const shouldMaskEverythingInOperation = (operation?: string) =>
@@ -149,10 +144,7 @@ const maskContent = (requestResponse: any) => {
 
     // Sometimes we need to see if we hsould mask everything just to be safe. Things like the
     //   SOPs encryption endpoint we don't really want to accidently leak anything.
-    if (
-        shouldMaskEverything(requestResponse.url) ||
-        shouldIgnoreType(requestResponse.url)
-    ) {
+    if (shouldMaskEverything(requestResponse.url)) {
         requestResponse.body = MASKED;
     } else {
         // If we are not masking everything then we need to check if the operation being called
