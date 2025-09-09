@@ -30,7 +30,23 @@ export const MISSING = '**MISSING**';
 export const MASKED = '**MASKED**';
 
 // for endspoints where we want nothing ever logged
-const maskEverythingURLs = ['config-encryption.estuary.dev'];
+const maskEverythingURLs = [
+    // When calling encryption stuff we never want to leak anything
+    'config-encryption.estuary.dev',
+
+    // Support staf make A LOT of these and we do not need them
+    'auth_roles?offset',
+
+    // This file can get huge and we just need to know if it loaded
+    '.wasm',
+    'flow_web',
+
+    // We just need to know the files loaded... not the actual content
+    '.css',
+    '.js',
+    '.ts',
+    '.tsx',
+];
 const shouldMaskEverything = (url?: string) =>
     maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
 
@@ -172,6 +188,7 @@ export const initLogRocket = () => {
         const settings: Settings = {
             release: __ESTUARY_UI_COMMIT_ID__,
             dom: {
+                isEnabled: false,
                 disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,
                 textSanitizer: logRocketSettings.sanitize.text,
