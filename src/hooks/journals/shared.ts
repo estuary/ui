@@ -105,10 +105,7 @@ export async function loadDocuments({
                 missingErrorStatus: 'metadataResponse',
             });
         }
-        // TODO SWITCH BACK BEFORE MERGE
-        throw new Error('OFFSET_NOT_YET_AVAILABLE');
-        // throw new Error(metadataResponse.status);
-        // TODO SWITCH BACK BEFORE MERGE
+        throw new Error(metadataResponse.status);
     }
 
     const head = parseInt(metadataResponse.writeHead, 10);

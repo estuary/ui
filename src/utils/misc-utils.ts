@@ -39,11 +39,7 @@ const JOURNAL_READ_ERRORS = [
     'WRONG_ROUTE',
 ];
 export const journalStatusIsError = (status: string | undefined) => {
-    console.log('JOURNAL_READ_ERRORS', JOURNAL_READ_ERRORS);
-    // TODO SWITCH BACK BEFORE MERGE
-    return true;
-    // return status ? JOURNAL_READ_ERRORS.includes(status) : false;
-    // TODO SWITCH BACK BEFORE MERGE
+    return status ? JOURNAL_READ_ERRORS.includes(status) : false;
 };
 
 // Max time stored in
