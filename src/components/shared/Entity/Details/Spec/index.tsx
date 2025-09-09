@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import LiveSpecEditor from 'src/components/editor/LiveSpec';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import CardWrapper from 'src/components/shared/CardWrapper';
+import { HEIGHT } from 'src/components/shared/Entity/Details/History/shared';
 import CollectionSpecViews from 'src/components/shared/Entity/Details/Spec/CollectionViews';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
@@ -103,7 +104,11 @@ function Spec() {
                         {entityType === 'collection' ? (
                             <CollectionSpecViews presentation={presentation} />
                         ) : (
-                            <LiveSpecEditor localZustandScope singleSpec />
+                            <LiveSpecEditor
+                                localZustandScope
+                                singleSpec
+                                height={HEIGHT}
+                            />
                         )}
                     </Stack>
                 </Grid>
