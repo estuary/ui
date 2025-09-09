@@ -1,8 +1,8 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { Entity } from 'src/types';
 import type {
-    ActiveAlertsQueryResponse,
     Alert,
+    AlertingOverviewQueryResponse,
     AlertsVariables,
 } from 'src/types/gql';
 
@@ -41,14 +41,18 @@ interface Props {
     monthlyUsageLoading?: boolean;
 }
 
-const testQuery = gql<ActiveAlertsQueryResponse, AlertsVariables>`
-    query ActiveAlertsQuery($prefixes: [String!]!) {
-        alerts(prefixes: $prefixes) {
-            alertDetails: arguments
-            alertType
-            catalogName
-            firedAt
-            resolvedAt
+const testQuery = gql<AlertingOverviewQueryResponse, AlertsVariables>`
+    query AlertingOverviewQuery($prefix: String!) {
+        alerts(prefix: $prefix, firing: true) {
+            edges {
+                node {
+                    alertType
+                    firedAt
+                    catalogName
+                    alertDetails: arguments
+                    resolvedAt
+                }
+            }
         }
     }
 `;
@@ -63,7 +67,7 @@ export default function AlertingOverview({ entityType }: Props) {
 
     const [{ fetching, data }] = useQuery({
         query: testQuery,
-        variables: { prefixes: [selectedTenant] },
+        variables: { prefix: selectedTenant },
         pause: !selectedTenant,
     });
 
@@ -78,20 +82,20 @@ export default function AlertingOverview({ entityType }: Props) {
     );
 
     const filteredData = useMemo(() => {
-        const entityData = data?.alerts.filter((datum) => {
-            return datum.alertDetails.spec_type === entityType;
+        const entityData = data?.alerts?.edges.filter((datum) => {
+            return datum.node.alertDetails.spec_type === entityType;
         });
 
         const response: { [catalogName: string]: Alert[] } = {};
 
         entityData?.forEach((datum, index) => {
-            response[datum.catalogName] ??= [];
+            response[datum.node.catalogName] ??= [];
 
-            response[datum.catalogName].push(datum);
+            response[datum.node.catalogName].push(datum.node);
         });
 
         return response;
-    }, [data?.alerts, entityType]);
+    }, [data?.alerts?.edges, entityType]);
 
     return (
         <Grid item xs={12}>

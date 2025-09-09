@@ -25,12 +25,17 @@ export interface Alert {
 }
 
 export interface AlertsVariables {
-    prefixes: string[] | undefined;
+    prefix: string | undefined;
 }
 
+export type AlertingOverviewQueryResponse = AlertHistoryQueryResponse;
 export type ActiveAlertsQueryResponse = AlertHistoryQueryResponse;
 export interface AlertHistoryQueryResponse {
-    alerts: Alert[];
+    alerts: {
+        edges: {
+            node: Alert;
+        }[];
+    };
 }
 
 export interface EntityHistoryQueryResponse {
@@ -39,5 +44,9 @@ export interface EntityHistoryQueryResponse {
 }
 
 export interface LatestAlertQueryResponse {
-    alerts: Pick<Alert, 'alertType'>[];
+    alerts: {
+        edges: {
+            cursor: string;
+        }[];
+    };
 }

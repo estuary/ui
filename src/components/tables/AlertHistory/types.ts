@@ -19,7 +19,7 @@ export interface ActiveAlertsProps {}
 
 export interface RowsProps {
     columns: TableColumns[];
-    data: AlertHistoryQueryResponse['alerts'];
+    data: AlertHistoryQueryResponse['alerts']['edges'];
 }
 
 export interface RowProps {

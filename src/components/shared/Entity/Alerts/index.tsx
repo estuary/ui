@@ -22,8 +22,8 @@ import useGlobalSearchParams, {
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 
 const testQuery = gql<EntityHistoryQueryResponse, AlertsVariables>`
-    query EntityAlertsQuery($prefixes: [String!]!) {
-        capture: captures(prefixes: $prefixes) {
+    query EntityAlertsQuery($prefix: String!) {
+        capture: captures(prefix: $prefix, firing: true) {
             alerts: alertHistory(last: 10) {
                 pageInfo {
                     startCursor
@@ -37,7 +37,7 @@ const testQuery = gql<EntityHistoryQueryResponse, AlertsVariables>`
                 }
             }
         }
-        materialization: materializations(prefixes: $prefixes) {
+        materialization: materializations(prefix: $prefix) {
             alerts: alertHistory(last: 10) {
                 pageInfo {
                     startCursor
@@ -63,22 +63,32 @@ function EntityAlerts() {
     const getDataFromResponse = useCallback(
         (data: any): AlertHistoryQueryResponse => {
             if (!data) {
-                return { alerts: [] };
+                return {
+                    alerts: {
+                        edges: [],
+                    },
+                };
             }
 
             if (Object.hasOwn(data, entityType)) {
                 const response: AlertHistoryQueryResponse = {
-                    alerts: [],
+                    alerts: {
+                        edges: [],
+                    },
                 };
 
-                response.alerts = data[entityType][0].alerts.nodes.filter(
+                response.alerts.edges = data[entityType][0].alerts.edges.filter(
                     (datum: Alert) => Boolean(datum.resolvedAt)
                 );
 
                 return response;
             }
 
-            return { alerts: [] };
+            return {
+                alerts: {
+                    edges: [],
+                },
+            };
         },
         [entityType]
     );
@@ -107,7 +117,7 @@ function EntityAlerts() {
                         tablePrefix={TablePrefixes.alertHistoryForEntity}
                         querySettings={{
                             query: testQuery,
-                            variables: { prefixes: [catalogName] },
+                            variables: { prefix: catalogName },
                             pause: !catalogName,
                         }}
                     />

@@ -6,24 +6,25 @@ import { Badge, badgeClasses } from '@mui/material';
 import { gql, useQuery } from 'urql';
 
 const LatestAlertQuery = gql<LatestAlertQueryResponse, AlertsVariables>`
-    query LatestAlert($prefixes: [String!]!) {
-        alerts(prefixes: $prefixes) {
-            alertType
+    query LatestAlert($prefix: String!) {
+        alerts(prefix: $prefix, firing: true) {
+            edges {
+                cursor
+            }
         }
     }
 `;
 
-function AlertsAreActiveBadge({
-    children,
-    prefixes,
-}: AlertsAreActiveBadgeProps) {
+function AlertsAreActiveBadge({ children, prefix }: AlertsAreActiveBadgeProps) {
     const [{ fetching, data, error }] = useQuery({
         query: LatestAlertQuery,
-        variables: { prefixes },
-        pause: !prefixes,
+        variables: { prefix },
+        pause: !prefix,
     });
 
-    const activeAlertCount = data?.alerts.length ?? 0;
+    console.log('data', data);
+
+    const activeAlertCount = data?.alerts.edges.length ?? 0;
     const hasActiveAlerts = activeAlertCount > 0;
 
     return (

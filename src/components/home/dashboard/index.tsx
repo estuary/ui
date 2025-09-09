@@ -17,8 +17,6 @@ export default function Dashboard() {
             </Grid>
 
             <EntityStatOverview />
-
-            {/*<AlertingOverviewNotificationStyle entityType="capture" />*/}
         </Grid>
     );
 }

@@ -15,13 +15,17 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 
 const testQuery = gql<ActiveAlertsQueryResponse, AlertsVariables>`
-    query ActiveAlertsQuery($prefixes: [String!]!) {
-        alerts(prefixes: $prefixes) {
-            alertDetails: arguments
-            alertType
-            catalogName
-            firedAt
-            resolvedAt
+    query ActiveAlertsQuery($prefix: String!) {
+        alerts(prefix: $prefix, firing: true) {
+            edges {
+                node {
+                    alertType
+                    firedAt
+                    catalogName
+                    alertDetails: arguments
+                    resolvedAt
+                }
+            }
         }
     }
 `;
@@ -33,7 +37,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
 
     const [{ fetching, data, error }] = useQuery({
         query: testQuery,
-        variables: { prefixes: [catalogName] },
+        variables: { prefix: catalogName },
         pause: !catalogName,
     });
 
@@ -65,7 +69,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                             <Message error={error} />
                         </AlertBox>
                     </Grid>
-                ) : !data || data.alerts.length === 0 ? (
+                ) : !data || data.alerts.edges.length === 0 ? (
                     <Grid item xs={12} md={10} lg={8}>
                         <AlertBox
                             severity="success"
@@ -80,15 +84,15 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                         </AlertBox>
                     </Grid>
                 ) : (
-                    data.alerts.map((datum, index) => {
+                    data.alerts.edges.map((datum, index) => {
                         return (
                             <Grid
                                 item
                                 xs={12}
                                 lg={4}
-                                key={`active_alerts_${datum.firedAt}_${index}`}
+                                key={`active_alerts_${datum.node.firedAt}_${index}`}
                             >
-                                <AlertCard datum={datum} />
+                                <AlertCard datum={datum.node} />
                             </Grid>
                         );
                     })

@@ -42,7 +42,7 @@ function DetailTabs() {
             {
                 Wrapper: AlertsAreActiveBadge,
                 wrapperProps: {
-                    prefixes: [catalogName],
+                    prefix: catalogName,
                 },
                 labelMessageId: 'details.tabs.alerts',
                 path: 'alerts',

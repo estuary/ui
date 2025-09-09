@@ -79,11 +79,11 @@ function Rows({ columns, data }: RowsProps) {
 
     return (
         <>
-            {data.map((row: any, index: number) => (
+            {data.map((row, index) => (
                 <Row
                     key={`alertHistoryTable_${index}`}
                     columns={columns}
-                    row={row}
+                    row={row.node}
                     hideEntityName={!showEntityName}
                     hideResolvedAt={!showResolvedAt}
                 />

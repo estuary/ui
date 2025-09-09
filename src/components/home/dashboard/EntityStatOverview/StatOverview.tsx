@@ -102,7 +102,9 @@ export default function StatOverview({
                     ) : null}
                 </Stack>
 
-                <AlertingOverview entityType="capture" />
+                {entityType === 'collection' ? null : (
+                    <AlertingOverview entityType={entityType} />
+                )}
             </Stack>
         </Stack>
     );

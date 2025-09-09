@@ -68,7 +68,7 @@ function AlertHistoryTable({
             }
             return;
         }
-        if (data?.alerts && data.alerts.length > 0) {
+        if (data?.alerts?.edges && data.alerts.edges.length > 0) {
             setTableState({
                 status: TableStatuses.DATA_FETCHED,
             });
@@ -109,8 +109,11 @@ function AlertHistoryTable({
                     tableState={tableState}
                     loading={loading}
                     rows={
-                        hasData && data?.alerts ? (
-                            <Rows columns={columnsToShow} data={data?.alerts} />
+                        hasData && data?.alerts?.edges ? (
+                            <Rows
+                                columns={columnsToShow}
+                                data={data.alerts.edges}
+                            />
                         ) : null
                     }
                 />

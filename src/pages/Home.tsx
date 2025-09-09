@@ -17,13 +17,17 @@ import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
 const alertHistoryQuery = gql<AlertHistoryQueryResponse, AlertsVariables>`
-    query AlertHistory($prefixes: [String!]!) {
-        alerts(prefixes: $prefixes) {
-            catalogName
-            firedAt
-            alertType
-            alertDetails: arguments
-            resolvedAt
+    query AlertHistory($prefix: String!) {
+        alerts(prefix: $prefix, firing: true) {
+            edges {
+                node {
+                    catalogName
+                    firedAt
+                    alertType
+                    alertDetails: arguments
+                    resolvedAt
+                }
+            }
         }
     }
 `;
@@ -58,7 +62,7 @@ const Home = () => {
                     querySettings={{
                         query: alertHistoryQuery,
                         variables: {
-                            prefixes: [selectedTenant],
+                            prefix: selectedTenant,
                         },
                     }}
                 />
