@@ -3,7 +3,6 @@ import type { User } from '@supabase/supabase-js';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
 
 import { OAUTH_OPERATIONS } from 'src/api/shared';
 import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
@@ -37,18 +36,28 @@ const maskEverythingURLs = [
     // Support staf make A LOT of these and we do not need them
     'auth_roles?offset',
 
+    // We do not need to track analytics specifically
+    'google.com',
+    'doubleclick.net',
+    'googleapis.com',
+];
+
+const ignoredFileTypes = [
     // This file can get huge and we just need to know if it loaded
     '.wasm',
-    'flow_web',
 
     // We just need to know the files loaded... not the actual content
     '.css',
     '.js',
+
+    // Included for local testing
     '.ts',
     '.tsx',
 ];
 const shouldMaskEverything = (url?: string) =>
     maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
+const shouldIgnoreType = (url?: string) =>
+    ignoredFileTypes.some((el) => url?.toLowerCase().endsWith(el));
 
 const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
 const shouldMaskEverythingInOperation = (operation?: string) =>
@@ -140,7 +149,10 @@ const maskContent = (requestResponse: any) => {
 
     // Sometimes we need to see if we hsould mask everything just to be safe. Things like the
     //   SOPs encryption endpoint we don't really want to accidently leak anything.
-    if (shouldMaskEverything(requestResponse.url)) {
+    if (
+        shouldMaskEverything(requestResponse.url) ||
+        shouldIgnoreType(requestResponse.url)
+    ) {
         requestResponse.body = MASKED;
     } else {
         // If we are not masking everything then we need to check if the operation being called
@@ -204,20 +216,17 @@ export const initLogRocket = () => {
         ) {
             settings.network = {};
             if (logRocketSettings.sanitize.response) {
-                settings.network.responseSanitizer = (response: any) => {
-                    return maskContent(response);
-                };
+                settings.network.responseSanitizer = (response: any) =>
+                    maskContent(response);
             }
 
             if (logRocketSettings.sanitize.request) {
-                settings.network.requestSanitizer = (request: any) => {
-                    return maskContent(request);
-                };
+                settings.network.requestSanitizer = (request: any) =>
+                    maskContent(request);
             }
         }
 
         LogRocket.init(logRocketSettings.appID, settings);
-        setupLogRocketReact(LogRocket);
     }
 };
 
