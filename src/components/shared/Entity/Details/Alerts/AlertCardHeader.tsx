@@ -5,6 +5,7 @@ import { Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import ExternalLink from 'src/components/shared/ExternalLink';
+import { cardHeaderSx } from 'src/context/Theme';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCardHeader({ datum }: AlertCardHeaderProps) {
@@ -18,6 +19,7 @@ function AlertCardHeader({ datum }: AlertCardHeaderProps) {
             direction="row"
             spacing={1}
             sx={{
+                ...cardHeaderSx,
                 alignItems: 'center',
                 justifyContent: 'space-between',
             }}
