@@ -15,6 +15,8 @@ import {
 import Error from 'src/components/shared/Error';
 import {
     editorToolBarSx,
+    historyCompareBorder,
+    historyCompareColors,
     monacoEditorComponentBackground,
 } from 'src/context/Theme';
 import { useHistoryDiffQueries } from 'src/hooks/useHistoryDiffQueries';
@@ -105,7 +107,14 @@ function DiffViewer() {
                 }}
             >
                 <Grid item xs={6}>
-                    <Box>
+                    <Box
+                        sx={{
+                            borderLeft: `${historyCompareBorder} ${
+                                historyCompareColors[theme.palette.mode][0]
+                            }`,
+                            pl: 1,
+                        }}
+                    >
                         <Typography>
                             {originalPublishedAt
                                 ? formatDate(originalPublishedAt)
@@ -114,11 +123,20 @@ function DiffViewer() {
                     </Box>
                 </Grid>
                 <Grid item xs={6}>
-                    <Typography sx={{ fontWeight: 500 }}>
-                        {modifiedPublishedAt
-                            ? formatDate(modifiedPublishedAt)
-                            : ''}
-                    </Typography>
+                    <Box
+                        sx={{
+                            borderLeft: `${historyCompareBorder} ${
+                                historyCompareColors[theme.palette.mode][1]
+                            }`,
+                            pl: 1,
+                        }}
+                    >
+                        <Typography>
+                            {modifiedPublishedAt
+                                ? formatDate(modifiedPublishedAt)
+                                : ''}
+                        </Typography>
+                    </Box>
                 </Grid>
             </Grid>
             {pubSpecs.error ? (
