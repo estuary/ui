@@ -2,6 +2,7 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Ops: Record<string, string> = {
+    'ops.logsTable.label': `Task Logs`,
     'ops.logsTable.label.level': `Level`,
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,

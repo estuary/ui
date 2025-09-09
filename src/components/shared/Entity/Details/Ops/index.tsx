@@ -3,6 +3,7 @@ import { Box, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import CardWrapper from 'src/components/shared/CardWrapper';
 import HydrationErrorAlert from 'src/components/shared/Entity/Details/Ops/HydrationErrorAlert';
 import LogsTable from 'src/components/tables/Logs';
 import useDetailsEntityTaskTypes from 'src/hooks/details/useDetailsEntityTaskTypes';
@@ -37,24 +38,30 @@ function Ops() {
     }
 
     return (
-        <JournalHydrator
-            catalogName={catalogName}
-            isCollection={taskTypes.length === 0}
+        <CardWrapper
+            message={intl.formatMessage({
+                id: 'ops.logsTable.label',
+            })}
         >
-            <JournalDataLogsHydrator>
-                <Stack spacing={2}>
-                    <Box>
-                        {hydrationError ? (
-                            <HydrationErrorAlert
-                                hydrationError={hydrationError}
-                            />
-                        ) : (
-                            <LogsTable />
-                        )}
-                    </Box>
-                </Stack>
-            </JournalDataLogsHydrator>
-        </JournalHydrator>
+            <JournalHydrator
+                catalogName={catalogName}
+                isCollection={taskTypes.length === 0}
+            >
+                <JournalDataLogsHydrator>
+                    <Stack spacing={2}>
+                        <Box>
+                            {hydrationError ? (
+                                <HydrationErrorAlert
+                                    hydrationError={hydrationError}
+                                />
+                            ) : (
+                                <LogsTable />
+                            )}
+                        </Box>
+                    </Stack>
+                </JournalDataLogsHydrator>
+            </JournalHydrator>
+        </CardWrapper>
     );
 }
 

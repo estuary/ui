@@ -59,7 +59,7 @@ function LogsTable() {
             >
                 <Table
                     aria-label={intl.formatMessage({
-                        id: 'entityTable.title',
+                        id: 'ops.logsTable.label',
                     })}
                     component={Box}
                     size="small"
