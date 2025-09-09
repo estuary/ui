@@ -47,8 +47,9 @@ const maskEverythingURLs = [
     // If it is a source file we do not really care about the contents
     'static/',
 
-    // Same as above but jsut for local
+    // Same as above but just for local
     'src/',
+    'node_modules/',
 ];
 
 const shouldMaskEverything = (url?: string) =>
@@ -192,9 +193,11 @@ export const initLogRocket = () => {
         const settings: Settings = {
             release: __ESTUARY_UI_COMMIT_ID__,
             dom: {
+                // isEnabled: false,
                 disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,
                 textSanitizer: logRocketSettings.sanitize.text,
+                privateAttributeBlocklist: ['data-emotion'],
             },
         };
 
