@@ -188,7 +188,6 @@ export const initLogRocket = () => {
         const settings: Settings = {
             release: __ESTUARY_UI_COMMIT_ID__,
             dom: {
-                isEnabled: false,
                 disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,
                 textSanitizer: logRocketSettings.sanitize.text,
