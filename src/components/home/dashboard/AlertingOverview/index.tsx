@@ -24,7 +24,6 @@ import { useIntl } from 'react-intl';
 import { gql, useQuery } from 'urql';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import ChipList from 'src/components/shared/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
@@ -97,86 +96,95 @@ export default function AlertingOverview({ entityType }: Props) {
         return response;
     }, [data?.alerts?.edges, entityType]);
 
+    const bodyContent = useMemo(() => {
+        const filteredDataArray = Object.entries(filteredData);
+
+        if (filteredDataArray.length === 0) {
+            return null;
+        }
+
+        return (
+            <TableContainer component={Box}>
+                <Table
+                    size="small"
+                    sx={{
+                        minWidth: 350,
+                        borderCollapse: 'separate',
+                    }}
+                    aria-label={intl.formatMessage({
+                        id: 'alerts.table.label',
+                    })}
+                >
+                    <TableHead component={theaderComponent}>
+                        <TableRow>
+                            <TableCell
+                                sx={{
+                                    minWidth: 250,
+                                    maxWidth: 'min-content',
+                                }}
+                            >
+                                Task
+                            </TableCell>
+                            <TableCell>Recent Alerts</TableCell>
+                        </TableRow>
+                    </TableHead>
+
+                    <TableBody component={tbodyComponent}>
+                        {filteredDataArray.map(
+                            ([catalogName, datum], index) => {
+                                return (
+                                    <TableRow
+                                        component={trComponent}
+                                        key={`alert-${datum[0].catalogName}-${index}`}
+                                    >
+                                        <EntityNameLink
+                                            name={catalogName}
+                                            showEntityStatus={false}
+                                            detailsLink={generatePath({
+                                                catalog_name: catalogName,
+                                            })}
+                                            entityStatusTypes={[entityType]}
+                                        />
+
+                                        <TableCell component={tdComponent}>
+                                            <ChipList
+                                                stripPath={false}
+                                                values={datum.map((foo) => {
+                                                    const { humanReadable } =
+                                                        getAlertTypeContent(
+                                                            foo
+                                                        );
+                                                    return `${humanReadable}`;
+                                                })}
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            }
+                        )}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        );
+    }, [
+        entityType,
+        filteredData,
+        generatePath,
+        getAlertTypeContent,
+        intl,
+        tbodyComponent,
+        tdComponent,
+        theaderComponent,
+        trComponent,
+    ]);
+
     return (
         <Grid item xs={12}>
-            <CardWrapper message="Alerting Tasks">
+            <CardWrapper
+                message={bodyContent ? 'Alerting Tasks' : 'No Alerting Tasks'}
+            >
                 {fetching ? <LinearProgress /> : null}
-                {Object.entries(filteredData).length > 0 ? (
-                    <TableContainer component={Box}>
-                        <Table
-                            size="small"
-                            sx={{
-                                minWidth: 350,
-                                borderCollapse: 'separate',
-                            }}
-                            aria-label={intl.formatMessage({
-                                id: 'alerts.table.label',
-                            })}
-                        >
-                            <TableHead component={theaderComponent}>
-                                <TableRow>
-                                    <TableCell
-                                        sx={{
-                                            minWidth: 250,
-                                            maxWidth: 'min-content',
-                                        }}
-                                    >
-                                        Task
-                                    </TableCell>
-                                    <TableCell>Recent Alerts</TableCell>
-                                </TableRow>
-                            </TableHead>
-
-                            <TableBody component={tbodyComponent}>
-                                {Object.entries(filteredData).map(
-                                    ([catalogName, datum], index) => {
-                                        return (
-                                            <TableRow
-                                                component={trComponent}
-                                                key={`alert-${datum[0].catalogName}-${index}`}
-                                            >
-                                                <EntityNameLink
-                                                    name={catalogName}
-                                                    showEntityStatus={false}
-                                                    detailsLink={generatePath({
-                                                        catalog_name:
-                                                            catalogName,
-                                                    })}
-                                                    entityStatusTypes={[
-                                                        entityType,
-                                                    ]}
-                                                />
-
-                                                <TableCell
-                                                    component={tdComponent}
-                                                >
-                                                    <ChipList
-                                                        stripPath={false}
-                                                        values={datum.map(
-                                                            (foo) => {
-                                                                const {
-                                                                    humanReadable,
-                                                                } =
-                                                                    getAlertTypeContent(
-                                                                        foo
-                                                                    );
-                                                                return `${humanReadable}`;
-                                                            }
-                                                        )}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    }
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                ) : (
-                    <AlertBox short severity="success">
-                        No Alerts!
-                    </AlertBox>
-                )}
+                {bodyContent}
             </CardWrapper>
         </Grid>
     );
