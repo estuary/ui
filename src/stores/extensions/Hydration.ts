@@ -14,6 +14,7 @@ export interface StoreWithHydration {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
+    // TODO (hydration errors) - type with JOURNAL_READ_ERRORS
     hydrationError: string | null;
     setHydrationError: (value: string | null) => void;
 

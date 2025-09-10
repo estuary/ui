@@ -21,22 +21,40 @@ export const RESPONSE_DATA_LIMIT = 1000;
 // Default size used when splitting up larged promises
 export const CHUNK_SIZE = 10;
 
+// Descriptions of these
+// https://github.com/gazette/core/blob/2580071332a6bf7f9302af1e513391f8c6539f5d/broker/protocol/protocol.proto#L20
 // Alpha ordered - but keeping most common at the top
 const JOURNAL_READ_ERRORS = [
+    // has custom messages
     'OFFSET_NOT_YET_AVAILABLE',
+    'FRAGMENT_STORE_UNHEALTHY',
 
-    'ETCD_TRANSACTION_FAILED',
-    'INDEX_HAS_GREATER_OFFSET',
-    'INSUFFICIENT_JOURNAL_BROKERS',
-    'JOURNAL_NOT_FOUND',
-    'NOT_ALLOWED',
-    'NOT_JOURNAL_BROKER',
-    'NOT_JOURNAL_PRIMARY_BROKER',
+    // temporary and quickly resolved
     'NO_JOURNAL_PRIMARY_BROKER',
-    'PROPOSAL_MISMATCH',
-    'REGISTER_MISMATCH',
-    'WRONG_APPEND_OFFSET',
+
+    // journal is suspended
+    'SUSPENDED',
+
+    // misc journal stuff
+    'NOT_JOURNAL_PRIMARY_BROKER',
+    'NOT_JOURNAL_BROKER',
+    'INSUFFICIENT_JOURNAL_BROKERS',
+
+    // peer disagreements
     'WRONG_ROUTE',
+    'PROPOSAL_MISMATCH',
+
+    // transaction failure
+    'ETCD_TRANSACTION_FAILED',
+
+    // access error
+    'NOT_ALLOWED',
+
+    // read failure
+    'WRONG_APPEND_OFFSET',
+    'INDEX_HAS_GREATER_OFFSET',
+    'REGISTER_MISMATCH',
+    'JOURNAL_NOT_FOUND',
 ];
 export const journalStatusIsError = (status: string | undefined) => {
     return status ? JOURNAL_READ_ERRORS.includes(status) : false;

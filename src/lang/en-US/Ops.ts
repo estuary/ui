@@ -24,6 +24,12 @@ export const Ops: Record<string, string> = {
     'ops.errors.offsetNot.instructions.docLink': `${CTAs['cta.support']}`,
     'ops.errors.offsetNot.instructions.docPath': `${CommonMessages['support.email']}`,
 
+    'ops.errors.fragmentUnhealthy.title': `Logs not available (FRAGMENT_STORE_UNHEALTHY)`,
+    'ops.errors.fragmentUnhealthy.details': `Unable to read logs due to failed health checks. This usually means there are misconfigured permissions in your storage buckets.`,
+    'ops.errors.fragmentUnhealthy.instructions': `Please review the permissions on your storage provider. If this does not help, please contact {docLink} for help.`,
+    'ops.errors.fragmentUnhealthy.instructions.docLink': `${CTAs['cta.support']}`,
+    'ops.errors.fragmentUnhealthy.instructions.docPath': `${CommonMessages['support.email']}`,
+
     // Keys generated inside WaitingForRowBase
     'ops.logsTable.waitingForLogs.old.failed': `A network error occurred. Please reload.`,
     'ops.logsTable.waitingForLogs.new.failed': `A network error occurred. Please reload.`,
