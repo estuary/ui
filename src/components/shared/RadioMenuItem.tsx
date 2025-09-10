@@ -4,6 +4,7 @@ import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
 
 export default function RadioMenuItem({
     description,
+    descriptionTextTransform,
     label,
     value,
 }: RadioMenuItemProps) {
@@ -24,7 +25,8 @@ export default function RadioMenuItem({
 
                     <Typography
                         sx={{
-                            'textTransform': 'lowercase',
+                            'textTransform':
+                                descriptionTextTransform ?? 'lowercase',
                             '&.MuiTypography-root:first-letter': {
                                 textTransform: 'uppercase',
                             },

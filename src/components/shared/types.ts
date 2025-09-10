@@ -1,5 +1,5 @@
 import type { AlertColor, SxProps } from '@mui/material';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { BaseComponentProps } from 'src/types';
 
 // TODO (AlertBox) we defaulted short to false at the start. That was a mistake
@@ -18,6 +18,7 @@ export interface RadioMenuItemProps {
     description: string;
     label: string;
     value: string;
+    descriptionTextTransform?: CSSProperties['textTransform'];
 }
 
 interface ButtonLinkAttributes {

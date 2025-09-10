@@ -14,9 +14,14 @@ import {
     paperBackground,
     paperBackgroundImage,
 } from 'src/context/Theme';
+import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 
 const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
     const intl = useIntl();
+
+    const { currentSetting: fieldsRecommended } = useSourceSetting<
+        boolean | number
+    >('fieldsRecommended');
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const openMenu = Boolean(anchorEl);
@@ -62,13 +67,14 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
                 }}
                 sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
             >
-                <MenuOptions />
+                <MenuOptions fieldsRecommended={fieldsRecommended} />
 
                 <Divider style={{ marginTop: 4, marginBottom: 12 }} />
 
                 <MenuActions
                     bindingUUID={bindingUUID}
                     closeMenu={closeMenu}
+                    fieldsRecommended={fieldsRecommended}
                     loading={loading}
                     selections={selections}
                 />

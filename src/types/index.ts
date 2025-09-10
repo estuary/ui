@@ -484,6 +484,7 @@ export interface DekafConfig {
 export interface SourceCaptureDef {
     capture?: string;
     deltaUpdates?: boolean;
+    fieldsRecommended?: boolean | number;
     targetSchema?: TargetSchemas; // targetSchema was renamed to targetNaming
     targetNaming?: TargetSchemas;
 }

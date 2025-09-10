@@ -220,6 +220,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.massActionMenu.depthTwo.description': `Select object fields with two degrees of nesting`,
     'fieldSelection.massActionMenu.depthUnlimited.label': `Unlimited Depth`,
     'fieldSelection.massActionMenu.depthUnlimited.description': `Select all fields`,
+    'fieldSelection.massActionMenu.depthDefault.label': `Default Depth`,
+    'fieldSelection.massActionMenu.depthDefault.description': `Select object fields with {depth} {depth, plural, one {degree} other {degrees}} of nesting.`,
     'fieldSelection.reviewDialog.header': `Review Field Selections`,
     'fieldSelection.reviewDialog.description': `Review how the algorithm will impact your field selections.`,
     'fieldSelection.reviewDialog.label.exclude': `Exclude: {count}`,

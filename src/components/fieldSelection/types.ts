@@ -13,9 +13,15 @@ export interface BaseProps {
 
 export interface MenuActionProps extends BaseProps {
     closeMenu: () => void;
+    fieldsRecommended: boolean | number | undefined;
+}
+
+export interface MenuOptionsProps {
+    fieldsRecommended: boolean | number | undefined;
 }
 
 export interface SaveButtonProps extends BaseProps {
     close: () => void;
+    fieldsRecommended: boolean | number | undefined;
     selectedAlgorithm: SelectionAlgorithm | null;
 }
