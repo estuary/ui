@@ -8,6 +8,7 @@ import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import MenuActions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuActions';
+import MenuHeader from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuHeader';
 import MenuOptions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuOptions';
 import {
     defaultOutline,
@@ -67,6 +68,8 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
                 }}
                 sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
             >
+                <MenuHeader fieldsRecommended={fieldsRecommended} />
+
                 <MenuOptions fieldsRecommended={fieldsRecommended} />
 
                 <Divider style={{ marginTop: 4, marginBottom: 12 }} />

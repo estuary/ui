@@ -1,4 +1,4 @@
-import type { MenuOptionsProps } from 'src/components/fieldSelection/types';
+import type { BaseMenuProps } from 'src/components/fieldSelection/types';
 import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 
 import { RadioGroup } from '@mui/material';
@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl';
 import RadioMenuItem from 'src/components/shared/RadioMenuItem';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
-export default function MenuOptions({ fieldsRecommended }: MenuOptionsProps) {
+export default function MenuOptions({ fieldsRecommended }: BaseMenuProps) {
     const intl = useIntl();
 
     const selectionAlgorithm = useBindingStore(

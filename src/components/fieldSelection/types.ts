@@ -5,6 +5,10 @@ import type {
 
 export type FieldSelectionType = 'default' | 'require' | 'exclude';
 
+export interface BaseMenuProps {
+    fieldsRecommended: boolean | number | undefined;
+}
+
 export interface BaseProps {
     bindingUUID: string;
     loading: boolean;
@@ -13,10 +17,6 @@ export interface BaseProps {
 
 export interface MenuActionProps extends BaseProps {
     closeMenu: () => void;
-    fieldsRecommended: boolean | number | undefined;
-}
-
-export interface MenuOptionsProps {
     fieldsRecommended: boolean | number | undefined;
 }
 
