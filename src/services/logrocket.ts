@@ -3,7 +3,6 @@ import type { User } from '@supabase/supabase-js';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
 
 import { OAUTH_OPERATIONS } from 'src/api/shared';
 import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
@@ -30,7 +29,29 @@ export const MISSING = '**MISSING**';
 export const MASKED = '**MASKED**';
 
 // for endspoints where we want nothing ever logged
-const maskEverythingURLs = ['config-encryption.estuary.dev'];
+const maskEverythingURLs = [
+    // When calling encryption stuff we never want to leak anything
+    'config-encryption.estuary.dev',
+
+    // Support staf make A LOT of these and we do not need them
+    'auth_roles?offset',
+
+    // We do not need to track analytics specifically
+    'google.com',
+    'doubleclick.net',
+    'googleapis.com',
+    'googletagmanager.com',
+    'stripe.com',
+    'stripe.network',
+
+    // If it is a source file we do not really care about the contents
+    'static/',
+
+    // Same as above but just for local
+    'src/',
+    'node_modules/',
+];
+
 const shouldMaskEverything = (url?: string) =>
     maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
 
@@ -172,9 +193,11 @@ export const initLogRocket = () => {
         const settings: Settings = {
             release: __ESTUARY_UI_COMMIT_ID__,
             dom: {
+                // isEnabled: false,
                 disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,
                 textSanitizer: logRocketSettings.sanitize.text,
+                privateAttributeBlocklist: ['data-emotion'],
             },
         };
 
@@ -188,20 +211,17 @@ export const initLogRocket = () => {
         ) {
             settings.network = {};
             if (logRocketSettings.sanitize.response) {
-                settings.network.responseSanitizer = (response: any) => {
-                    return maskContent(response);
-                };
+                settings.network.responseSanitizer = (response: any) =>
+                    maskContent(response);
             }
 
             if (logRocketSettings.sanitize.request) {
-                settings.network.requestSanitizer = (request: any) => {
-                    return maskContent(request);
-                };
+                settings.network.requestSanitizer = (request: any) =>
+                    maskContent(request);
             }
         }
 
         LogRocket.init(logRocketSettings.appID, settings);
-        setupLogRocketReact(LogRocket);
     }
 };
 
