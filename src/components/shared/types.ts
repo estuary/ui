@@ -31,3 +31,9 @@ export interface TileProps extends BaseComponentProps {
     externalLink?: ButtonLinkAttributes;
     fullHeight?: boolean;
 }
+
+export interface CardWrapperProps extends BaseComponentProps {
+    message?: string | ReactNode;
+    tooltipMessageId?: string;
+    height?: string | number;
+}
