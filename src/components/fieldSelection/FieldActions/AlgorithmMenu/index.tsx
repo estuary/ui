@@ -16,6 +16,7 @@ import {
     paperBackgroundImage,
 } from 'src/context/Theme';
 import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
+import { useBindingStore } from 'src/stores/Binding/Store';
 
 const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
     const intl = useIntl();
@@ -24,10 +25,15 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
         boolean | number
     >('fieldsRecommended');
 
+    const setSelectionAlgorithm = useBindingStore(
+        (state) => state.setSelectionAlgorithm
+    );
+
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const openMenu = Boolean(anchorEl);
     const closeMenu = () => {
         setAnchorEl(null);
+        setSelectionAlgorithm(null);
     };
 
     return (
