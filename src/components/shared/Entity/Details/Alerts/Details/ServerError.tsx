@@ -36,14 +36,17 @@ function ServerError({ datum, details }: FooDetailsProps) {
                     height: 100,
                     maxHeight: 100,
                     [`& > button`]: {
-                        bottom: 20,
-                        height: 25,
+                        [`&:hover, &:focus`]: {
+                            opacity: 1,
+                        },
+                        opacity: 0.55,
                         minWidth: 'fit-content',
-                        opacity: 0.65,
                         p: 0.25,
                         position: 'absolute',
-                        right: 15,
                         width: 25,
+                        height: 25,
+                        right: 0,
+                        bottom: 10,
                         zIndex: zIndexIncrement + zIndexIncrement,
                     },
                     [`& > section`]: {
