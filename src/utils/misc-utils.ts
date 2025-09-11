@@ -3,6 +3,7 @@ import type {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
+import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { ReactElement, ReactNode } from 'react';
 import type { BaseGrant, Grant_UserExt } from 'src/types';
 
@@ -23,12 +24,8 @@ export const CHUNK_SIZE = 10;
 
 // Descriptions of these
 // https://github.com/gazette/core/blob/2580071332a6bf7f9302af1e513391f8c6539f5d/broker/protocol/protocol.proto#L20
-// Alpha ordered - but keeping most common at the top
-const JOURNAL_READ_ERRORS = [
-    // has custom messages
-    'OFFSET_NOT_YET_AVAILABLE',
-    'FRAGMENT_STORE_UNHEALTHY',
-
+export const JOURNAL_READ_WARNINGS = ['OFFSET_NOT_YET_AVAILABLE'];
+export const JOURNAL_READ_ERRORS = [
     // temporary and quickly resolved
     'NO_JOURNAL_PRIMARY_BROKER',
 
@@ -56,6 +53,9 @@ const JOURNAL_READ_ERRORS = [
     'REGISTER_MISMATCH',
     'JOURNAL_NOT_FOUND',
 ];
+export const journalStatusIsWarning = (status: ProtocolStatus | undefined) => {
+    return status ? JOURNAL_READ_WARNINGS.includes(status) : false;
+};
 export const journalStatusIsError = (status: string | undefined) => {
     return status ? JOURNAL_READ_ERRORS.includes(status) : false;
 };

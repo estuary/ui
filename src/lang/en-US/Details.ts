@@ -9,8 +9,8 @@ export const Details: Record<string, string> = {
 
     'details.history.noPublications': `No publications were found.`,
     'details.history.diffFailed': `Unable to get specs to compare.`,
-    'details.history.title': `Specification History`,
-    'details.history.list.title': `Publications`,
+    'details.history.title': `Change History`,
+    'details.history.list.title': `Changes`,
 
     'details.ops.status.cta.formatted': `Dashboard`,
     'details.ops.status.cta.raw': `Code`,

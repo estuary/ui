@@ -2,12 +2,13 @@ import type { VariableSizeList } from 'react-window';
 
 import { useLayoutEffect, useRef } from 'react';
 
-import { Box, Table, TableContainer } from '@mui/material';
+import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import LogsTableBody from 'src/components/tables/Logs/Body';
+import HydrationWarning from 'src/components/tables/Logs/HydrationWarning';
 import useLogColumns from 'src/components/tables/Logs/useLogColumns';
 import { defaultOutlineColor } from 'src/context/Theme';
 import { useReactWindowReadyToScroll } from 'src/hooks/useReactWindowReadyToScroll';
@@ -48,7 +49,8 @@ function LogsTable() {
     }, [setAllowFetchingMore, scrollToIndex, scrollToPosition, readyToScroll]);
 
     return (
-        <Box>
+        <Stack spacing={2}>
+            <HydrationWarning />
             <TableContainer
                 component={Box}
                 width="100%"
@@ -97,7 +99,7 @@ function LogsTable() {
                 </Table>
             </TableContainer>
             {/*<TailNewLogs />*/}
-        </Box>
+        </Stack>
     );
 }
 
