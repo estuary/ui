@@ -42,10 +42,7 @@ export default function StatOverview({
                 sx={{
                     background: (theme) => background[theme.palette.mode],
                     borderRadius: 3,
-                    pb: 2,
-                    pl: 2,
-                    pr: 1,
-                    pt: 1,
+                    p: 2,
                 }}
             >
                 <Stack
