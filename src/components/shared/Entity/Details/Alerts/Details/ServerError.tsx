@@ -2,7 +2,7 @@ import type { FooDetailsProps } from 'src/components/shared/Entity/Details/Alert
 
 import { useState } from 'react';
 
-import { Box, Dialog, DialogContent, IconButton, Paper } from '@mui/material';
+import { Box, Button, Dialog, DialogContent, Paper } from '@mui/material';
 
 import { Expand } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -36,9 +36,14 @@ function ServerError({ datum, details }: FooDetailsProps) {
                     height: 100,
                     maxHeight: 100,
                     [`& > button`]: {
+                        bottom: 20,
+                        height: 25,
+                        minWidth: 'fit-content',
+                        opacity: 0.65,
+                        p: 0.25,
                         position: 'absolute',
-                        right: 0,
-                        bottom: 0,
+                        right: 15,
+                        width: 25,
                         zIndex: zIndexIncrement + zIndexIncrement,
                     },
                     [`& > section`]: {
@@ -50,9 +55,13 @@ function ServerError({ datum, details }: FooDetailsProps) {
             >
                 <ServerErrorDetail val={shortDataVal} />
                 {dataValIsLong ? (
-                    <IconButton onClick={() => setOpen(true)}>
+                    <Button
+                        onClick={() => setOpen(true)}
+                        variant="contained"
+                        color="secondary"
+                    >
                         <Expand />
-                    </IconButton>
+                    </Button>
                 ) : null}
             </Paper>
             <Dialog open={open} fullWidth maxWidth="lg" onClose={closeDialog}>
