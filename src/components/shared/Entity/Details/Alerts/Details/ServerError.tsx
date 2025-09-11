@@ -43,7 +43,7 @@ function ServerError({ datum, details }: FooDetailsProps) {
                 {details[0].dataVal}
                 <Button onClick={() => setOpen(true)}>open</Button>
             </Paper>
-            <Dialog open={open} maxWidth="lg" onClose={closeDialog}>
+            <Dialog open={open} fullWidth maxWidth="lg" onClose={closeDialog}>
                 <DialogTitleWithClose
                     id={detailsDialogId}
                     onClose={() => setOpen(false)}
@@ -55,7 +55,7 @@ function ServerError({ datum, details }: FooDetailsProps) {
                     <Box
                         sx={{
                             height: '75vh',
-                            width: '75vw',
+                            width: '100%',
                             [`& .something`]: {
                                 flewGrow: 1,
                             },
