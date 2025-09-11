@@ -23,10 +23,15 @@ function CardWrapper({
     height,
     message,
     tooltipMessageId,
+    customBackground,
 }: CardWrapperProps) {
     const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
+
+    const background = customBackground
+        ? customBackground[theme.palette.mode]
+        : null;
 
     return (
         <Stack
@@ -36,8 +41,9 @@ function CardWrapper({
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                background: semiTransparentBackground[theme.palette.mode],
-                boxShadow: defaultBoxShadow,
+                background:
+                    background ?? semiTransparentBackground[theme.palette.mode],
+                boxShadow: customBackground ? undefined : defaultBoxShadow,
                 borderRadius: 3,
                 minWidth: 'min-content',
                 rowGap: 2,

@@ -1,5 +1,6 @@
 import type { AlertColor, SxProps } from '@mui/material';
 import type { ReactNode } from 'react';
+import type { EntitySetting } from 'src/settings/types';
 import type { BaseComponentProps } from 'src/types';
 
 // TODO (AlertBox) we defaulted short to false at the start. That was a mistake
@@ -36,4 +37,5 @@ export interface CardWrapperProps extends BaseComponentProps {
     message?: string | ReactNode;
     tooltipMessageId?: string;
     height?: string | number;
+    customBackground?: EntitySetting['backgroundNesting'];
 }

@@ -332,6 +332,11 @@ export const defaultOutline = {
     dark: `1px solid rgba(247, 249, 252, 0.12)`,
 };
 
+export const foo = {
+    light: `#bce3e0`,
+    dark: undefined,
+};
+
 export const defaultOutline_hovered = {
     light: `1px solid rgba(11, 19, 30, 0.6)`,
     dark: `1px solid rgba(247, 249, 252, 0.6)`,
@@ -465,6 +470,10 @@ export const semiTransparentBackground_blue = {
     light: '#F4F6FF',
     dark: 'rgba(194, 205, 255, 0.12)',
 };
+export const semiTransparentBackground_blue_nesting = {
+    light: '#d8dcf2',
+    dark: undefined,
+};
 
 // RGB translation of #BAEDF2.
 export const semiTransparentBackground_teal = {
@@ -472,10 +481,19 @@ export const semiTransparentBackground_teal = {
     dark: 'rgba(186, 237, 242, 0.12)',
 };
 
+export const semiTransparentBackground_teal_nesting = {
+    light: '#d4eae8',
+    dark: undefined,
+};
+
 // RGB translation of #D6C2FF.
 export const semiTransparentBackground_purple = {
     light: '#F7F3FF',
     dark: 'rgba(214, 194, 255, 0.12)',
+};
+export const semiTransparentBackground_purple_nesting = {
+    light: '#ddd1f6',
+    dark: undefined,
 };
 
 export const primaryColoredBackground_hovered = {

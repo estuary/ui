@@ -26,6 +26,7 @@ export interface EntitySetting {
         Omit<React.SVGProps<SVGSVGElement>, 'ref'>
     >;
     background: { light: string; dark: string };
+    backgroundNesting: { light: string | undefined; dark: string | undefined };
     bindingTermId: string;
     pluralId: string;
     routes: {

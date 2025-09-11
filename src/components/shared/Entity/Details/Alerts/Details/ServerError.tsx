@@ -102,9 +102,6 @@ function ServerError({ datum, details }: FooDetailsProps) {
                         sx={{
                             height: '65vh',
                             width: '100%',
-                            [`& .something`]: {
-                                flewGrow: 1,
-                            },
                         }}
                     >
                         <ServerErrorDetail val={dataVal} />
