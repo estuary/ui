@@ -18,6 +18,8 @@ import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { defaultOutline, zIndexIncrement } from 'src/context/Theme';
 
+const maxLengthDetail = 350;
+
 function ServerError({ datum, details }: FooDetailsProps) {
     const intl = useIntl();
     const theme = useTheme();
@@ -32,9 +34,9 @@ function ServerError({ datum, details }: FooDetailsProps) {
 
     const detailsDialogId = `alert-details-${datum.firedAt}_${datum.alertType}`;
 
-    const dataValIsLong = dataVal.length > 250;
+    const dataValIsLong = dataVal.length > maxLengthDetail;
     const shortDataVal = dataValIsLong
-        ? `${dataVal.substring(0, 250)}...`
+        ? `${dataVal.substring(0, maxLengthDetail)}...`
         : dataVal;
 
     return (
@@ -42,8 +44,8 @@ function ServerError({ datum, details }: FooDetailsProps) {
             <Paper
                 sx={{
                     border: defaultOutline[theme.palette.mode],
-                    height: 100,
-                    maxHeight: 100,
+                    height: 150,
+                    maxHeight: 150,
                     [`&:hover > button,  &:focus > button`]: {
                         opacity: 0.5,
                         transition: `750ms`,
