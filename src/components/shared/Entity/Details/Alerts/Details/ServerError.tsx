@@ -2,24 +2,19 @@ import type { FooDetailsProps } from 'src/components/shared/Entity/Details/Alert
 
 import { useState } from 'react';
 
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogContent,
-    Paper,
-    useTheme,
-} from '@mui/material';
+import { Box, Dialog, DialogContent, IconButton, Paper } from '@mui/material';
 
-import Editor from '@monaco-editor/react';
+import { Expand } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
-import { unescapeString } from 'src/utils/misc-utils';
+import { zIndexIncrement } from 'src/context/Theme';
 
 function ServerError({ datum, details }: FooDetailsProps) {
     const intl = useIntl();
-    const theme = useTheme();
+
+    const { dataVal } = details[0];
 
     const [open, setOpen] = useState(false);
 
@@ -29,19 +24,36 @@ function ServerError({ datum, details }: FooDetailsProps) {
 
     const detailsDialogId = `alert-details-${datum.firedAt}_${datum.alertType}`;
 
+    const dataValIsLong = dataVal.length > 250;
+    const shortDataVal = dataValIsLong
+        ? `${dataVal.substring(0, 250)}...`
+        : dataVal;
+
     return (
         <>
             <Paper
-                variant="outlined"
                 sx={{
-                    p: 1,
-                    minHeight: 100,
+                    height: 100,
                     maxHeight: 100,
-                    fontFamily: `'Monaco', monospace`,
+                    [`& > button`]: {
+                        position: 'absolute',
+                        right: 0,
+                        bottom: 0,
+                        zIndex: zIndexIncrement + zIndexIncrement,
+                    },
+                    [`& > section`]: {
+                        width: '100%',
+                        position: 'absolute',
+                        zIndex: zIndexIncrement,
+                    },
                 }}
             >
-                {details[0].dataVal}
-                <Button onClick={() => setOpen(true)}>open</Button>
+                <ServerErrorDetail val={shortDataVal} />
+                {dataValIsLong ? (
+                    <IconButton onClick={() => setOpen(true)}>
+                        <Expand />
+                    </IconButton>
+                ) : null}
             </Paper>
             <Dialog open={open} fullWidth maxWidth="lg" onClose={closeDialog}>
                 <DialogTitleWithClose
@@ -61,28 +73,7 @@ function ServerError({ datum, details }: FooDetailsProps) {
                             },
                         }}
                     >
-                        <Editor
-                            defaultLanguage=""
-                            theme={
-                                theme.palette.mode === 'light'
-                                    ? 'vs'
-                                    : 'vs-dark'
-                            }
-                            options={{
-                                lineNumbers: 'off',
-                                minimap: {
-                                    enabled: false,
-                                },
-                                readOnly: true,
-                                scrollBeyondLastLine: false,
-                            }}
-                            value={unescapeString(
-                                details[0].dataVal
-                                // .join(NEW_LINE)
-                                // .split(/\\n/)
-                                // .join(NEW_LINE)
-                            )}
-                        />
+                        <ServerErrorDetail val={dataVal} />
                     </Box>
                 </DialogContent>
             </Dialog>
