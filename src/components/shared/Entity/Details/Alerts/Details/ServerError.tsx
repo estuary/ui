@@ -2,17 +2,25 @@ import type { FooDetailsProps } from 'src/components/shared/Entity/Details/Alert
 
 import { useState } from 'react';
 
-import { Box, Button, Dialog, DialogContent, Paper } from '@mui/material';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogContent,
+    Paper,
+    useTheme,
+} from '@mui/material';
 
 import { Expand } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
-import { zIndexIncrement } from 'src/context/Theme';
+import { defaultOutline, zIndexIncrement } from 'src/context/Theme';
 
 function ServerError({ datum, details }: FooDetailsProps) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const { dataVal } = details[0];
 
@@ -33,20 +41,27 @@ function ServerError({ datum, details }: FooDetailsProps) {
         <>
             <Paper
                 sx={{
+                    border: defaultOutline[theme.palette.mode],
                     height: 100,
                     maxHeight: 100,
+                    [`&:hover > button,  &:focus > button`]: {
+                        opacity: 0.5,
+                        transition: `750ms`,
+                    },
                     [`& > button`]: {
                         [`&:hover, &:focus`]: {
                             opacity: 1,
+                            transition: `750ms`,
                         },
-                        opacity: 0.55,
+                        bottom: 10,
+                        height: 25,
                         minWidth: 'fit-content',
+                        opacity: 0,
+                        transition: `750ms`,
                         p: 0.25,
                         position: 'absolute',
-                        width: 25,
-                        height: 25,
                         right: 0,
-                        bottom: 10,
+                        width: 25,
                         zIndex: zIndexIncrement + zIndexIncrement,
                     },
                     [`& > section`]: {

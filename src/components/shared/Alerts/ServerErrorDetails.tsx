@@ -16,6 +16,9 @@ function ServerErrorDetail({ val }: ServerErrorDetailProps) {
             defaultLanguage=""
             theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
             options={{
+                // Undocumented see https://github.com/Microsoft/vscode/issues/30795#issuecomment-410998882
+                lineDecorationsWidth: 2,
+                folding: false,
                 lineNumbers: 'off',
                 minimap: {
                     enabled: false,
