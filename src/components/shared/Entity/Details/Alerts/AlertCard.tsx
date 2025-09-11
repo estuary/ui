@@ -2,8 +2,6 @@ import type { AlertCardProps } from 'src/components/shared/Entity/Details/Alerts
 
 import { Box } from '@mui/material';
 
-import { DateTime } from 'luxon';
-
 import CardWrapper from 'src/components/shared/CardWrapper';
 import AlertCardHeader from 'src/components/shared/Entity/Details/Alerts/AlertCardHeader';
 import AlertDetails from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
@@ -12,7 +10,7 @@ import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCard({ datum }: AlertCardProps) {
     const getAlertTypeContent = useAlertTypeContent();
-    const { explanation } = getAlertTypeContent(datum);
+    const { firedAtReadable } = getAlertTypeContent(datum);
 
     return (
         <CardWrapper message={<AlertCardHeader datum={datum} />}>
@@ -21,13 +19,7 @@ function AlertCard({ datum }: AlertCardProps) {
                     data={[
                         {
                             title: 'Fired At',
-                            val: DateTime.fromISO(datum.firedAt)
-                                .toUTC()
-                                .toLocaleString(DateTime.DATETIME_FULL),
-                        },
-                        {
-                            title: `Explanation`,
-                            val: explanation,
+                            val: firedAtReadable,
                         },
                     ]}
                 />

@@ -19,12 +19,17 @@ function AlertCardHeader({ datum }: AlertCardHeaderProps) {
             direction="row"
             spacing={1}
             sx={{
-                ...cardHeaderSx,
                 alignItems: 'center',
                 justifyContent: 'space-between',
             }}
         >
-            <Typography variant="h6">{humanReadable}</Typography>
+            <Typography
+                sx={{
+                    ...cardHeaderSx,
+                }}
+            >
+                {humanReadable}
+            </Typography>
 
             {docLink ? (
                 <ExternalLink link={docLink}>

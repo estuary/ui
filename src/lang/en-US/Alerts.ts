@@ -15,6 +15,11 @@ export const Alerts: Record<string, string> = {
     'alerts.config.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
     'alerts.config.table.label.alertMethod': `Notification Method`,
 
+    'alerts.overview.title.active': `Active Alerts`,
+    'alerts.overview.title.activeEmpty': `No Active Alerts`,
+    'alerts.overview.recentAlerts': `Recent Alerts`,
+    'alerts.overview.label': `List of most recent alerts grouped by name`,
+
     'alerts.table.data.firedAt': `Fired At`,
     'alerts.table.data.recipients': `Recipients`,
     'alerts.table.data.resolvedAt': `Resolved At`,
@@ -26,10 +31,10 @@ export const Alerts: Record<string, string> = {
     'alerts.table.empty.message': `This tenant has no historical alerts`,
     'alerts.table.error.message': `There was an error attempting to fetch alert history.`,
 
-    'alert.active.fetchError.title': `Unable to fetch unresolved alerts`,
+    'alert.active.fetchError.title': `Unable to fetch active alerts`,
 
     'alert.active.noAlerts.title': `All Clear!`,
-    'alert.active.noAlerts.message': `There are no unresolved alerts for this task.`,
+    'alert.active.noAlerts.message': `No active alerts.`,
 
     // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
     'alerts.alertType.humanReadable.auto_discover_failed': `Auto Discover Failed`,

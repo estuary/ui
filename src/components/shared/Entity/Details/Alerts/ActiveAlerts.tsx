@@ -42,7 +42,11 @@ function ActiveAlerts({}: ActiveAlertsProps) {
     });
 
     return (
-        <CardWrapper message="Unresolved Alerts">
+        <CardWrapper
+            message={intl.formatMessage({
+                id: 'alerts.overview.title.active',
+            })}
+        >
             <Grid container spacing={{ xs: 2 }}>
                 {fetching ? (
                     // TODO (alerts) - need to make a proper skeleton of cards

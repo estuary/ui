@@ -11,7 +11,7 @@ function useAlertTypeContent() {
     const intl = useIntl();
 
     return useCallback(
-        ({ alertType, alertDetails, firedAt }: Alert) => {
+        ({ alertType, alertDetails, firedAt, resolvedAt }: Alert) => {
             if (alertType && ALERT_SETTING[alertType]) {
                 let DetailSection: any = null;
                 const details: any[] = [];
@@ -42,9 +42,14 @@ function useAlertTypeContent() {
                     explanation: intl.formatMessage({
                         id: ALERT_SETTING[alertType].explanationIntlKey,
                     }),
-                    readableTime: DateTime.fromISO(firedAt)
+                    firedAtReadable: DateTime.fromISO(firedAt)
                         .toUTC()
                         .toLocaleString(DateTime.DATETIME_FULL),
+                    resolvedAtReadable: !resolvedAt
+                        ? ''
+                        : DateTime.fromISO(resolvedAt)
+                              .toUTC()
+                              .toLocaleString(DateTime.DATETIME_FULL),
                 };
             }
 
@@ -52,7 +57,8 @@ function useAlertTypeContent() {
                 details: [],
                 humanReadable: '',
                 explanation: '',
-                readableTime: '',
+                firedAtReadable: '',
+                resolvedAtReadable: '',
             };
         },
         [intl]

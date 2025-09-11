@@ -1,4 +1,5 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
+import type { ChipDisplay } from 'src/components/shared/ChipList/types';
 import type { Entity } from 'src/types';
 import type {
     Alert,
@@ -89,7 +90,6 @@ export default function AlertingOverview({ entityType }: Props) {
 
         entityData?.forEach((datum, index) => {
             response[datum.node.catalogName] ??= [];
-
             response[datum.node.catalogName].push(datum.node);
         });
 
@@ -108,11 +108,11 @@ export default function AlertingOverview({ entityType }: Props) {
                 <Table
                     size="small"
                     sx={{
-                        minWidth: 350,
+                        minWidth: 300,
                         borderCollapse: 'separate',
                     }}
                     aria-label={intl.formatMessage({
-                        id: 'alerts.table.label',
+                        id: 'alerts.overview.label',
                     })}
                 >
                     <TableHead component={theaderComponent}>
@@ -123,9 +123,15 @@ export default function AlertingOverview({ entityType }: Props) {
                                     maxWidth: 'min-content',
                                 }}
                             >
-                                Task
+                                {intl.formatMessage({
+                                    id: 'entityName.label',
+                                })}
                             </TableCell>
-                            <TableCell>Recent Alerts</TableCell>
+                            <TableCell>
+                                {intl.formatMessage({
+                                    id: 'alerts.overview.recentAlerts',
+                                })}
+                            </TableCell>
                         </TableRow>
                     </TableHead>
 
@@ -148,14 +154,28 @@ export default function AlertingOverview({ entityType }: Props) {
 
                                         <TableCell component={tdComponent}>
                                             <ChipList
+                                                forceTooltip
                                                 stripPath={false}
-                                                values={datum.map((foo) => {
-                                                    const { humanReadable } =
-                                                        getAlertTypeContent(
-                                                            foo
-                                                        );
-                                                    return `${humanReadable}`;
-                                                })}
+                                                values={datum.map(
+                                                    (
+                                                        alertData
+                                                    ): ChipDisplay => {
+                                                        const {
+                                                            humanReadable,
+                                                            firedAtReadable:
+                                                                readableTime,
+                                                        } =
+                                                            getAlertTypeContent(
+                                                                alertData
+                                                            );
+
+                                                        return {
+                                                            display:
+                                                                humanReadable,
+                                                            title: readableTime,
+                                                        };
+                                                    }
+                                                )}
                                             />
                                         </TableCell>
                                     </TableRow>
@@ -181,7 +201,11 @@ export default function AlertingOverview({ entityType }: Props) {
     return (
         <Grid item xs={12}>
             <CardWrapper
-                message={bodyContent ? 'Alerting Tasks' : 'No Alerting Tasks'}
+                message={intl.formatMessage({
+                    id: bodyContent
+                        ? 'alerts.overview.title.active'
+                        : 'alerts.overview.title.activeEmpty',
+                })}
             >
                 {fetching ? <LinearProgress /> : null}
                 {bodyContent}
