@@ -71,7 +71,12 @@ function ServerError({ datum, details }: FooDetailsProps) {
                     },
                 }}
             >
-                <ServerErrorDetail val={shortDataVal} />
+                <ServerErrorDetail
+                    options={{
+                        renderLineHighlight: 'none',
+                    }}
+                    val={shortDataVal}
+                />
                 {dataValIsLong ? (
                     <Button
                         onClick={() => setOpen(true)}
@@ -93,7 +98,7 @@ function ServerError({ datum, details }: FooDetailsProps) {
                 <DialogContent>
                     <Box
                         sx={{
-                            height: '75vh',
+                            height: '65vh',
                             width: '100%',
                             [`& .something`]: {
                                 flewGrow: 1,

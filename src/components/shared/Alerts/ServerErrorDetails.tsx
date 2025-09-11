@@ -8,7 +8,7 @@ import { unescapeString } from 'src/utils/misc-utils';
 
 const NEW_LINE = '\r\n';
 
-function ServerErrorDetail({ val }: ServerErrorDetailProps) {
+function ServerErrorDetail({ options, val }: ServerErrorDetailProps) {
     const theme = useTheme();
 
     return (
@@ -17,14 +17,16 @@ function ServerErrorDetail({ val }: ServerErrorDetailProps) {
             theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
             options={{
                 // Undocumented see https://github.com/Microsoft/vscode/issues/30795#issuecomment-410998882
-                lineDecorationsWidth: 2,
+                lineDecorationsWidth: 0,
                 folding: false,
                 lineNumbers: 'off',
                 minimap: {
                     enabled: false,
                 },
+                domReadOnly: true,
                 readOnly: true,
                 scrollBeyondLastLine: false,
+                ...(options ?? {}),
             }}
             value={unescapeString(
                 typeof val === 'string'
