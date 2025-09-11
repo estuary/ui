@@ -1,3 +1,4 @@
+import type { AlertTypeContent } from 'src/components/shared/Entity/Details/Alerts/types';
 import type { Alert } from 'src/types/gql';
 
 import { useCallback } from 'react';
@@ -11,11 +12,14 @@ function useAlertTypeContent() {
     const intl = useIntl();
 
     return useCallback(
-        ({ alertType, alertDetails, firedAt, resolvedAt }: Alert) => {
+        ({
+            alertType,
+            alertDetails,
+            firedAt,
+            resolvedAt,
+        }: Alert): AlertTypeContent => {
             if (alertType && ALERT_SETTING[alertType]) {
-                let DetailSection: any = null;
                 const details: any[] = [];
-
                 if (ALERT_SETTING[alertType].detailKeys.length > 0) {
                     ALERT_SETTING[alertType].detailKeys.forEach((detailKey) => {
                         details.push({
@@ -28,19 +32,11 @@ function useAlertTypeContent() {
                     });
                 }
 
-                if (ALERT_SETTING[alertType].detailSection) {
-                    DetailSection = ALERT_SETTING[alertType].detailSection;
-                }
-
-                return {
-                    DetailSection,
+                const response: AlertTypeContent = {
                     details,
                     docLink: ALERT_SETTING[alertType].docLink,
                     humanReadable: intl.formatMessage({
                         id: ALERT_SETTING[alertType].humanReadableIntlKey,
-                    }),
-                    explanation: intl.formatMessage({
-                        id: ALERT_SETTING[alertType].explanationIntlKey,
                     }),
                     firedAtReadable: DateTime.fromISO(firedAt)
                         .toUTC()
@@ -51,12 +47,18 @@ function useAlertTypeContent() {
                               .toUTC()
                               .toLocaleString(DateTime.DATETIME_FULL),
                 };
+
+                if (ALERT_SETTING[alertType].detailSection) {
+                    response.DetailSection =
+                        ALERT_SETTING[alertType].detailSection;
+                }
+
+                return response;
             }
 
             return {
                 details: [],
                 humanReadable: '',
-                explanation: '',
                 firedAtReadable: '',
                 resolvedAtReadable: '',
             };

@@ -20,6 +20,8 @@ export const Alerts: Record<string, string> = {
     'alerts.overview.recentAlerts': `Recent Alerts`,
     'alerts.overview.label': `List of most recent alerts grouped by name`,
 
+    'alerts.details.title': `Alert Details`,
+
     'alerts.table.data.firedAt': `Fired At`,
     'alerts.table.data.recipients': `Recipients`,
     'alerts.table.data.resolvedAt': `Resolved At`,
@@ -38,27 +40,14 @@ export const Alerts: Record<string, string> = {
 
     // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
     'alerts.alertType.humanReadable.auto_discover_failed': `Auto Discover Failed`,
-    'alerts.alertType.humanReadable.explanation.auto_discover_failed': `There wasn an issue when we tried to automatically update the schema for the task.`,
-
     'alerts.alertType.humanReadable.shard_failed': `Shard Failure`,
-    'alerts.alertType.humanReadable.explanation.shard_failed': `Shard Failure explanation`,
-
     'alerts.alertType.humanReadable.data_movement_stalled': `Data Movement Stalled`,
-    'alerts.alertType.humanReadable.explanation.data_movement_stalled': `The entity is still running but has not need data for some time.`,
-
     'alerts.alertType.humanReadable.free_trial': ``,
-    'alerts.alertType.humanReadable.explanation.free_trial': ``,
-
     'alerts.alertType.humanReadable.free_trial_ending': `Free Trial Ending`,
-    'alerts.alertType.humanReadable.explanation.free_trial_ending': `Free Trial Ending explanation`,
-
     'alerts.alertType.humanReadable.free_trial_stalled': ``,
-    'alerts.alertType.humanReadable.explanation.free_trial_stalled': ``,
-
     'alerts.alertType.humanReadable.missing_payment_method': `Missing Payment Method`,
-    'alerts.alertType.humanReadable.explanation.missing_payment_method': `Missing Payment Method explanation`,
 
-    'alerts.alertType.details.humanReadable.error': `Server Error`,
+    'alerts.alertType.details.humanReadable.error': `Details`,
     'alerts.alertType.details.humanReadable.evaluation_interval': `Evaluation Interval`,
     'alerts.alertType.details.humanReadable.recipients': `Notification Recipients`,
     'alerts.alertType.details.humanReadable.spec_type': `Spec Type`,

@@ -14,7 +14,6 @@ export interface AlertSetting {
     detailSection?: DetailsComponent;
     docLink: string;
     humanReadableIntlKey: string;
-    explanationIntlKey: string;
 }
 
 export interface DataPlaneSetting {

@@ -17,3 +17,12 @@ export interface FooDetailsProps extends AlertDetailsProps {
     details: any[];
 }
 export type DetailsComponent = (props: FooDetailsProps) => EmotionJSX.Element;
+
+export interface AlertTypeContent {
+    details: any[];
+    humanReadable: string;
+    firedAtReadable: string;
+    resolvedAtReadable: string;
+    docLink?: string;
+    DetailSection?: DetailsComponent;
+}
