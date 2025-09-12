@@ -38,9 +38,12 @@ export interface AlertHistoryQueryResponse {
     };
 }
 
-export interface EntityHistoryQueryResponse {
-    capture: AlertHistoryQueryResponse;
-    materialization: AlertHistoryQueryResponse;
+export interface ResolvedAlertsForTaskQuery {
+    alerts: {
+        edges: {
+            node: Alert;
+        }[];
+    };
 }
 
 export interface LatestAlertQueryResponse {

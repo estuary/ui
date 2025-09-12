@@ -30,7 +30,6 @@ import ChipList from 'src/components/shared/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
-import { ENTITY_SETTINGS } from 'src/settings/entity';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { getTableComponents } from 'src/utils/table-utils';
 
@@ -60,8 +59,6 @@ const testQuery = gql<AlertingOverviewQueryResponse, AlertsVariables>`
 
 export default function AlertingOverview({ entityType }: Props) {
     const intl = useIntl();
-
-    const { backgroundNesting } = ENTITY_SETTINGS[entityType];
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
@@ -204,7 +201,7 @@ export default function AlertingOverview({ entityType }: Props) {
     return (
         <Grid item xs={12}>
             <CardWrapper
-                customBackground={backgroundNesting}
+                disableElevation
                 message={intl.formatMessage({
                     id: bodyContent
                         ? 'alerts.overview.title.active'

@@ -15,6 +15,7 @@ import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
 import {
     cardHeaderSx,
     defaultBoxShadow,
+    intensifiedOutline,
     semiTransparentBackground,
 } from 'src/context/Theme';
 
@@ -23,15 +24,11 @@ function CardWrapper({
     height,
     message,
     tooltipMessageId,
-    customBackground,
+    disableElevation,
 }: CardWrapperProps) {
     const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
-
-    const background = customBackground
-        ? customBackground[theme.palette.mode]
-        : null;
 
     return (
         <Stack
@@ -41,9 +38,13 @@ function CardWrapper({
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                background:
-                    background ?? semiTransparentBackground[theme.palette.mode],
-                boxShadow: customBackground ? undefined : defaultBoxShadow,
+                // ? `5px solid ${semiTransparentBackgroundIntensified[theme.palette.mode]}`
+                borderLeft: disableElevation
+                    ? intensifiedOutline[theme.palette.mode]
+                    : undefined,
+                borderLeftWidth: 5,
+                background: semiTransparentBackground[theme.palette.mode],
+                boxShadow: disableElevation ? undefined : defaultBoxShadow,
                 borderRadius: 3,
                 minWidth: 'min-content',
                 rowGap: 2,

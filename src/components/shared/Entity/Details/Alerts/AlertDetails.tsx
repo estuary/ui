@@ -1,8 +1,8 @@
-import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
+import type { AlertDetailsWrapperProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
-function AlertDetails({ datum }: AlertDetailsProps) {
+function AlertDetailsWrapper({ datum }: AlertDetailsWrapperProps) {
     const getAlertTypeContent = useAlertTypeContent();
     const { details, DetailSection } = getAlertTypeContent(datum);
 
@@ -13,4 +13,4 @@ function AlertDetails({ datum }: AlertDetailsProps) {
     return <>-</>;
 }
 
-export default AlertDetails;
+export default AlertDetailsWrapper;

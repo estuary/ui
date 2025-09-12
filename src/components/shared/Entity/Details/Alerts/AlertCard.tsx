@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
 import AlertCardHeader from 'src/components/shared/Entity/Details/Alerts/AlertCardHeader';
-import AlertDetails from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
+import AlertDetailsWrapper from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
@@ -29,7 +29,7 @@ function AlertCard({ datum }: AlertCardProps) {
                     ]}
                 />
 
-                <AlertDetails datum={datum} />
+                <AlertDetailsWrapper datum={datum} />
             </Box>
         </CardWrapper>
     );

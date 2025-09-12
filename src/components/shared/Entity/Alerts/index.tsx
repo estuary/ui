@@ -1,14 +1,11 @@
 import type {
-    Alert,
-    AlertHistoryQueryResponse,
     AlertsVariables,
-    EntityHistoryQueryResponse,
+    ResolvedAlertsForTaskQuery,
 } from 'src/types/gql';
-
-import { useCallback } from 'react';
 
 import { Grid } from '@mui/material';
 
+import { useIntl } from 'react-intl';
 import { gql } from 'urql';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
@@ -21,33 +18,19 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 
-const testQuery = gql<EntityHistoryQueryResponse, AlertsVariables>`
-    query EntityAlertsQuery($prefix: String!) {
-        capture: captures(prefix: $prefix, firing: true) {
-            alerts: alertHistory(last: 10) {
-                pageInfo {
-                    startCursor
-                    endCursor
-                }
-                nodes {
+const resolvedAlertsForTaskQuery = gql<
+    ResolvedAlertsForTaskQuery,
+    AlertsVariables
+>`
+    query ResolvedAlertsForTaskQuery($prefix: String!) {
+        alerts(prefix: $prefix, firing: false) {
+            edges {
+                node {
                     alertType
-                    firedAt
-                    resolvedAt
                     alertDetails: arguments
-                }
-            }
-        }
-        materialization: materializations(prefix: $prefix) {
-            alerts: alertHistory(last: 10) {
-                pageInfo {
-                    startCursor
-                    endCursor
-                }
-                nodes {
-                    alertType
                     firedAt
+                    catalogName
                     resolvedAt
-                    alertDetails: arguments
                 }
             }
         }
@@ -55,43 +38,11 @@ const testQuery = gql<EntityHistoryQueryResponse, AlertsVariables>`
 `;
 
 function EntityAlerts() {
+    const intl = useIntl();
     const entityType = useEntityType();
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
     const isCollection = entityType === 'collection';
-
-    const getDataFromResponse = useCallback(
-        (data: any): AlertHistoryQueryResponse => {
-            if (!data) {
-                return {
-                    alerts: {
-                        edges: [],
-                    },
-                };
-            }
-
-            if (Object.hasOwn(data, entityType)) {
-                const response: AlertHistoryQueryResponse = {
-                    alerts: {
-                        edges: [],
-                    },
-                };
-
-                response.alerts.edges = data[entityType][0].alerts.edges.filter(
-                    (datum: Alert) => Boolean(datum.resolvedAt)
-                );
-
-                return response;
-            }
-
-            return {
-                alerts: {
-                    edges: [],
-                },
-            };
-        },
-        [entityType]
-    );
 
     return (
         <Grid container spacing={2}>
@@ -111,12 +62,15 @@ function EntityAlerts() {
             ) : null}
 
             <Grid item xs={12}>
-                <CardWrapper message="Resolved Alerts">
+                <CardWrapper
+                    message={intl.formatMessage({
+                        id: 'alerts.history.title.active',
+                    })}
+                >
                     <AlertHistoryTable
-                        getDataFromResponse={getDataFromResponse}
                         tablePrefix={TablePrefixes.alertHistoryForEntity}
                         querySettings={{
-                            query: testQuery,
+                            query: resolvedAlertsForTaskQuery,
                             variables: { prefix: catalogName },
                             pause: !catalogName,
                         }}

@@ -37,11 +37,6 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
                         alertHistoryOptionalColumnIntlKeys.resolvedAt,
                     ],
                 },
-                [TablePrefixes.alertHistoryForTenant]: {
-                    shownOptionalColumns: [
-                        alertHistoryOptionalColumnIntlKeys.entityName,
-                    ],
-                },
                 [TablePrefixes.fieldSelection]: {
                     shownOptionalColumns: [],
                 },
@@ -84,11 +79,6 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
         if (!tableSettings?.[TablePrefixes.alertHistoryForTenant]) {
             setTableSettings({
                 ...tableSettings,
-                [TablePrefixes.alertHistoryForTenant]: {
-                    shownOptionalColumns: [
-                        alertHistoryOptionalColumnIntlKeys.entityName,
-                    ],
-                },
             });
         }
     });

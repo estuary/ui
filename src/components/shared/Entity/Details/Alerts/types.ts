@@ -9,14 +9,14 @@ export interface AlertCardHeaderProps {
     datum: Alert;
 }
 
-export interface AlertDetailsProps {
+export interface AlertDetailsWrapperProps {
     datum: Alert;
 }
 
-export interface FooDetailsProps extends AlertDetailsProps {
+export interface AlertDetailsProps extends AlertDetailsWrapperProps {
     details: any[];
 }
-export type DetailsComponent = (props: FooDetailsProps) => EmotionJSX.Element;
+export type DetailsComponent = (props: AlertDetailsProps) => EmotionJSX.Element;
 
 export interface AlertTypeContent {
     details: any[];

@@ -1,10 +1,12 @@
-import type { FooDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
+import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
 import ServerError from 'src/components/shared/Entity/Details/Alerts/Details/ServerError';
 import KeyValueList from 'src/components/shared/KeyValueList';
 
-function DataMovementStalledDetail(props: FooDetailsProps) {
+function DataMovementStalledDetail(props: AlertDetailsProps) {
     const { details } = props;
+
+    console.log('props', props);
 
     return (
         <KeyValueList

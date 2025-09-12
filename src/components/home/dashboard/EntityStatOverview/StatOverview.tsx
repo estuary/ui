@@ -3,7 +3,7 @@ import type { Entity } from 'src/types';
 
 import { Stack, Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AlertingOverview from 'src/components/home/dashboard/AlertingOverview';
 import ActiveEntityCount from 'src/components/home/dashboard/EntityStatOverview/ActiveEntityCount';
@@ -30,7 +30,7 @@ export default function StatOverview({
 
     const {
         routes: { viewAll },
-        termId: titleId,
+        termId,
         background,
         Icon,
     } = ENTITY_SETTINGS[entityType];
@@ -60,12 +60,12 @@ export default function StatOverview({
                         <Icon style={{ fontSize: 12 }} />
 
                         <Typography style={{ fontWeight: 500 }}>
-                            <FormattedMessage id={titleId} />
+                            {intl.formatMessage({ id: termId })}
                         </Typography>
                     </Stack>
 
                     <LinkWrapper link={viewAll}>
-                        <FormattedMessage id="cta.goToAll" />
+                        {intl.formatMessage({ id: 'cta.goToAll' })}
                     </LinkWrapper>
                 </Stack>
 

@@ -20,7 +20,6 @@ import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 function AlertHistoryTable({
-    getDataFromResponse,
     querySettings,
     tablePrefix,
 }: AlertHistoryTableProps) {
@@ -40,15 +39,9 @@ function AlertHistoryTable({
     );
 
     // Get the data from the server
-    const [{ fetching, data: fooData, error }] = useQuery(querySettings);
+    const [{ fetching, data, error }] = useQuery(querySettings);
 
-    const data = useMemo(() => {
-        if (getDataFromResponse) {
-            return getDataFromResponse(fooData);
-        }
-
-        return fooData;
-    }, [fooData, getDataFromResponse]);
+    console.log('data', data);
 
     // Manage table state
     const [tableState, setTableState] = useState<TableState>({
@@ -79,6 +72,7 @@ function AlertHistoryTable({
             status: TableStatuses.NO_EXISTING_DATA,
         });
     }, [data, error, fetching]);
+
     const failed =
         tableState.status === TableStatuses.TECHNICAL_DIFFICULTIES ||
         tableState.status === TableStatuses.NETWORK_FAILED;

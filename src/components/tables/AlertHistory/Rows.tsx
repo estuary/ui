@@ -6,7 +6,7 @@ import type {
 import { TableCell, TableRow } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import AlertDetails from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
+import AlertDetailsWrapper from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
 import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
 import ActiveOrResolvedCells from 'src/components/tables/cells/activeResolved/Cells';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
@@ -51,7 +51,7 @@ function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
             <TableCell>{humanReadable}</TableCell>
 
             <TableCell>
-                <AlertDetails datum={row} />
+                <AlertDetailsWrapper datum={row} />
             </TableCell>
 
             {/*            <ChipList
@@ -81,7 +81,7 @@ function Rows({ columns, data }: RowsProps) {
         <>
             {data.map((row, index) => (
                 <Row
-                    key={`alertHistoryTable_${index}`}
+                    key={`${row.node.alertType}_${index}`}
                     columns={columns}
                     row={row.node}
                     hideEntityName={!showEntityName}

@@ -22,6 +22,7 @@ export const Alerts: Record<string, string> = {
 
     'alerts.details.title': `Alert Details`,
 
+    'alerts.history.title.active': `Resolved Alerts`,
     'alerts.table.data.firedAt': `Fired At`,
     'alerts.table.data.recipients': `Recipients`,
     'alerts.table.data.resolvedAt': `Resolved At`,
@@ -30,8 +31,8 @@ export const Alerts: Record<string, string> = {
     'alerts.table.data.details': `Details`,
     'alerts.table.label': `List of all alerts for tenant`,
     'alerts.table.empty.header': `No alerts found`,
-    'alerts.table.empty.message': `This tenant has no historical alerts`,
-    'alerts.table.error.message': `There was an error attempting to fetch alert history.`,
+    'alerts.table.empty.message': `No resolved alerts`,
+    'alerts.table.error.message': `There was an error attempting to fetch resolved alerts.`,
 
     'alert.active.fetchError.title': `Unable to fetch active alerts`,
 
