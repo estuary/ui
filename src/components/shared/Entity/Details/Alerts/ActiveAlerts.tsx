@@ -1,5 +1,8 @@
 import type { ActiveAlertsProps } from 'src/components/tables/AlertHistory/types';
-import type { ActiveAlertsQueryResponse, AlertsVariables } from 'src/types/gql';
+import type {
+    ActiveAlertsForTaskQueryResponse,
+    AlertsVariables,
+} from 'src/types/gql';
 
 import { Grid, Skeleton } from '@mui/material';
 
@@ -14,7 +17,10 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 
-const testQuery = gql<ActiveAlertsQueryResponse, AlertsVariables>`
+const activeAlertsForTaskQuery = gql<
+    ActiveAlertsForTaskQueryResponse,
+    AlertsVariables
+>`
     query ActiveAlertsQuery($prefix: String!) {
         alerts(prefix: $prefix, firing: true) {
             edges {
@@ -36,7 +42,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
     const intl = useIntl();
 
     const [{ fetching, data, error }] = useQuery({
-        query: testQuery,
+        query: activeAlertsForTaskQuery,
         variables: { prefix: catalogName },
         pause: !catalogName,
     });

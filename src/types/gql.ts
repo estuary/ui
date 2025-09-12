@@ -28,24 +28,13 @@ export interface AlertsVariables {
     prefix: string | undefined;
 }
 
-export type AlertingOverviewQueryResponse = AlertHistoryQueryResponse;
-export type ActiveAlertsQueryResponse = AlertHistoryQueryResponse;
-export interface AlertHistoryQueryResponse {
+export type DefaultAlertingQueryResponse = {
     alerts: {
         edges: {
             node: Alert;
         }[];
     };
-}
-
-export interface ResolvedAlertsForTaskQuery {
-    alerts: {
-        edges: {
-            node: Alert;
-        }[];
-    };
-}
-
+};
 export interface LatestAlertQueryResponse {
     alerts: {
         edges: {
@@ -53,3 +42,8 @@ export interface LatestAlertQueryResponse {
         }[];
     };
 }
+
+export type AlertingOverviewQueryResponse = AlertHistoryQueryResponse;
+export type ActiveAlertsForTaskQueryResponse = AlertHistoryQueryResponse;
+export type AlertHistoryQueryResponse = DefaultAlertingQueryResponse;
+export type ResolvedAlertsForTaskQuery = DefaultAlertingQueryResponse;

@@ -1,6 +1,5 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
+import type { AlertingOverviewProps } from 'src/components/home/dashboard/AlertingOverview/types';
 import type { ChipDisplay } from 'src/components/shared/ChipList/types';
-import type { Entity } from 'src/types';
 import type {
     Alert,
     AlertingOverviewQueryResponse,
@@ -33,15 +32,10 @@ import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { getTableComponents } from 'src/utils/table-utils';
 
-interface Props {
-    entityType: Entity;
-    monthlyUsage?: number;
-    monthlyUsageError?: PostgrestError;
-    monthlyUsageIndeterminate?: boolean;
-    monthlyUsageLoading?: boolean;
-}
-
-const testQuery = gql<AlertingOverviewQueryResponse, AlertsVariables>`
+const alertingOverviewQuery = gql<
+    AlertingOverviewQueryResponse,
+    AlertsVariables
+>`
     query AlertingOverviewQuery($prefix: String!) {
         alerts(prefix: $prefix, firing: true) {
             edges {
@@ -57,7 +51,9 @@ const testQuery = gql<AlertingOverviewQueryResponse, AlertsVariables>`
     }
 `;
 
-export default function AlertingOverview({ entityType }: Props) {
+export default function AlertingOverview({
+    entityType,
+}: AlertingOverviewProps) {
     const intl = useIntl();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
@@ -66,7 +62,7 @@ export default function AlertingOverview({ entityType }: Props) {
         getTableComponents(false);
 
     const [{ fetching, data }] = useQuery({
-        query: testQuery,
+        query: alertingOverviewQuery,
         variables: { prefix: selectedTenant },
         pause: !selectedTenant,
     });
