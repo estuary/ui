@@ -15,15 +15,10 @@ import {
     paperBackground,
     paperBackgroundImage,
 } from 'src/context/Theme';
-import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
     const intl = useIntl();
-
-    const { currentSetting: fieldsRecommended } = useSourceSetting<
-        boolean | number
-    >('fieldsRecommended');
 
     const setSelectionAlgorithm = useBindingStore(
         (state) => state.setSelectionAlgorithm
@@ -74,16 +69,15 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
                 }}
                 sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
             >
-                <MenuHeader fieldsRecommended={fieldsRecommended} />
+                <MenuHeader />
 
-                <MenuOptions fieldsRecommended={fieldsRecommended} />
+                <MenuOptions />
 
                 <Divider style={{ marginTop: 4, marginBottom: 12 }} />
 
                 <MenuActions
                     bindingUUID={bindingUUID}
                     closeMenu={closeMenu}
-                    fieldsRecommended={fieldsRecommended}
                     loading={loading}
                     selections={selections}
                 />

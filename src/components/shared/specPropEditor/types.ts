@@ -7,6 +7,7 @@ export interface BaseFormProps {
     currentSetting: any;
     scope: FormScope;
     updateDraftedSetting: (selectedOption?: any) => Promise<any>;
+    freeSolo?: boolean;
 }
 
 export interface BaseAutoCompleteOption<T = any> {

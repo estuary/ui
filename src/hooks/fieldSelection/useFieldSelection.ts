@@ -13,6 +13,7 @@ import {
 } from 'src/components/editor/Store/hooks';
 import { useBinding_currentBindingIndex } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
@@ -26,6 +27,10 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
     // Draft Editor Store
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
+
+    const fieldsRecommended = useSourceCaptureStore(
+        (state) => state.fieldsRecommended
+    );
 
     const applyFieldSelection = useCallback(
         async (draftSpec: DraftSpecQuery) => {
@@ -46,7 +51,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
 
             const recommended = Object.hasOwn(recommendFields, bindingUUID)
                 ? recommendFields[bindingUUID]
-                : DEFAULT_RECOMMENDED_FLAG;
+                : (fieldsRecommended ?? DEFAULT_RECOMMENDED_FLAG);
 
             spec.bindings[bindingIndex].fields = {
                 recommended,
@@ -112,6 +117,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             bindingUUID,
             collectionName,
             draftId,
+            fieldsRecommended,
             mutateDraftSpecs,
             recommendFields,
             selections,

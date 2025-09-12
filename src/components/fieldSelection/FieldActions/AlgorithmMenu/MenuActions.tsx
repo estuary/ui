@@ -10,7 +10,6 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 export default function MenuActions({
     bindingUUID,
     closeMenu,
-    fieldsRecommended,
     loading,
     selections,
 }: MenuActionProps) {
@@ -40,7 +39,6 @@ export default function MenuActions({
             <SaveButton
                 bindingUUID={bindingUUID}
                 close={closeMenu}
-                fieldsRecommended={fieldsRecommended}
                 loading={loading}
                 selections={selections}
                 selectedAlgorithm={selectionAlgorithm}

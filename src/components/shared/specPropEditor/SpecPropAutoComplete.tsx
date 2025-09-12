@@ -13,15 +13,16 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 export default function SpecPropAutoComplete({
     currentSetting,
+    // freeSolo,
     inputLabelId,
     invalidSettingsMessageId = 'specPropUpdater.error.message',
+    isOptionEqualToValue,
     options,
     renderOption,
     scope,
     setErrorExists,
-    updateDraftedSetting,
-    isOptionEqualToValue,
     sx,
+    updateDraftedSetting,
 }: SpecPropAutoCompleteProps) {
     const intl = useIntl();
 
@@ -82,6 +83,7 @@ export default function SpecPropAutoComplete({
             <Autocomplete
                 {...autoCompleteDefaultProps}
                 disabled={formActive}
+                // freeSolo={freeSolo}
                 getOptionLabel={(option) => option.label}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {

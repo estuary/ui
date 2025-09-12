@@ -1,4 +1,3 @@
-import type { BaseMenuProps } from 'src/components/fieldSelection/types';
 import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 
 import { RadioGroup } from '@mui/material';
@@ -8,7 +7,7 @@ import { useIntl } from 'react-intl';
 import RadioMenuItem from 'src/components/shared/RadioMenuItem';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
-export default function MenuOptions({ fieldsRecommended }: BaseMenuProps) {
+export default function MenuOptions() {
     const intl = useIntl();
 
     const selectionAlgorithm = useBindingStore(
@@ -58,35 +57,6 @@ export default function MenuOptions({ fieldsRecommended }: BaseMenuProps) {
                 })}
                 value="depthTwo"
             />
-
-            {fieldsRecommended === undefined ? null : (
-                <RadioMenuItem
-                    description={
-                        typeof fieldsRecommended === 'number' &&
-                        fieldsRecommended > 0
-                            ? intl.formatMessage(
-                                  {
-                                      id: 'fieldSelection.massActionMenu.depthDefault.description',
-                                  },
-                                  {
-                                      depth: fieldsRecommended,
-                                  }
-                              )
-                            : intl.formatMessage({
-                                  id:
-                                      fieldsRecommended === 0 ||
-                                      fieldsRecommended === false
-                                          ? 'fieldSelection.massActionMenu.depthZero.description'
-                                          : 'fieldSelection.massActionMenu.depthUnlimited.description',
-                              })
-                    }
-                    descriptionTextTransform="none"
-                    label={intl.formatMessage({
-                        id: 'fieldSelection.massActionMenu.depthDefault.label',
-                    })}
-                    value="depthDefault"
-                />
-            )}
 
             <RadioMenuItem
                 description={intl.formatMessage({

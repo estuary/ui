@@ -220,8 +220,6 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.massActionMenu.depthTwo.description': `Select object fields with two degrees of nesting`,
     'fieldSelection.massActionMenu.depthUnlimited.label': `Unlimited Depth`,
     'fieldSelection.massActionMenu.depthUnlimited.description': `Select all fields`,
-    'fieldSelection.massActionMenu.depthDefault.label': `Default Depth`,
-    'fieldSelection.massActionMenu.depthDefault.description': `Select object fields with {depth} {depth, plural, one {degree} other {degrees}} of nesting.`,
     'fieldSelection.massActionMenu.description.numeric': `Object fields with {depth} {depth, plural, one {degree} other {degrees}} of nesting will currently be selected.`,
     'fieldSelection.massActionMenu.description.unlimited': `All fields will currently be selected.`,
     'fieldSelection.massActionMenu.description.zero': `Top-level fields will currently be selected.`,
@@ -290,6 +288,9 @@ export const Workflows: Record<string, string> = {
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
     'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
+
+    // Fields Recommended
+    'fieldsRecommended.input.label': `Default Materialized Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,

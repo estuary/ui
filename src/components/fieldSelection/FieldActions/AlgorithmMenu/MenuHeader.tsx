@@ -1,17 +1,20 @@
-import type { BaseMenuProps } from 'src/components/fieldSelection/types';
-
 import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
-const MenuHeader = ({ fieldsRecommended }: BaseMenuProps) => {
+const MenuHeader = () => {
     const intl = useIntl();
 
     const bindingUUID = useBinding_currentBindingUUID();
     const recommendFields = useBindingStore((state) => state.recommendFields);
+
+    const fieldsRecommended = useSourceCaptureStore(
+        (state) => state.fieldsRecommended
+    );
 
     const recommended =
         bindingUUID && Object.hasOwn(recommendFields, bindingUUID)

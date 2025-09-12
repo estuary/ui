@@ -17,7 +17,6 @@ export type HydrationStatus =
     | 'VALIDATING';
 
 export type SelectionAlgorithm =
-    | 'depthDefault'
     | 'depthZero'
     | 'depthOne'
     | 'depthTwo'
