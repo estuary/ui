@@ -19,10 +19,9 @@ export const Ops: Record<string, string> = {
     'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
 
     // Dynamically generated in /src/components/tables/Logs/HydrationWarning.tsx
-    'ops.hydrationWarning.OFFSET_NOT_YET_AVAILABLE.title': `Logs not yet available`,
+    'ops.hydrationWarning.OFFSET_NOT_YET_AVAILABLE.title': `No logs available`,
 
-    'ops.hydrationWarning.offsetNot.details': `This usually means the task is still starting up, or it hasn’t been able to start because of a configuration issue (for example, an invalid storage mapping).`,
-    'ops.hydrationWarning.offsetNot.instructions': `If the task just started, logs should appear within a few minutes. If you don’t see them after 10 minutes, please contact {docLink} for help.`,
+    'ops.hydrationWarning.offsetNot.instructions': `Usually this means that your task hasn’t processed any data, usually because of a configuration issue (Ex. an invalid storage mapping).  Please {docLink} if you need any help determining why your task isn’t producing logs.`,
     'ops.hydrationWarning.offsetNot.instructions.docLink': `${CTAs['cta.support']}`,
     'ops.hydrationWarning.offsetNot.instructions.docPath': `${CommonMessages['support.email']}`,
 
