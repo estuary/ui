@@ -15,8 +15,8 @@ import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import JournalAlerts from 'src/components/journals/Alerts';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
-import useIsCollectionDerivation from 'src/components/shared/Entity/Details/useIsCollectionDerivation';
 import Error from 'src/components/shared/Error';
+import useIsCollectionDerivation from 'src/hooks/details/useIsCollectionDerivation';
 import {
     useJournalData,
     useJournalsForCollection,

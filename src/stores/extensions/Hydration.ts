@@ -1,4 +1,5 @@
 import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
+import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
@@ -14,8 +15,12 @@ export interface StoreWithHydration {
     hydrationErrorsExist: boolean;
     setHydrationErrorsExist: (value: boolean) => void;
 
+    // TODO (hydration errors) - type with JOURNAL_READ_ERRORS
     hydrationError: string | null;
     setHydrationError: (value: string | null) => void;
+
+    hydrationWarning: ProtocolStatus | null;
+    setHydrationWarning: (value: ProtocolStatus | null) => void;
 
     // TODO (store hydration) we need to make store hydration better
     // Used to keep track if the store should be getting hydrated
@@ -31,6 +36,7 @@ export const getInitialHydrationData = (): Pick<
     | 'hydrated'
     | 'hydrationError'
     | 'hydrationErrorsExist'
+    | 'hydrationWarning'
     | 'active'
     | 'networkFailed'
 > => ({
@@ -38,6 +44,7 @@ export const getInitialHydrationData = (): Pick<
     hydrated: false,
     hydrationError: null,
     hydrationErrorsExist: false,
+    hydrationWarning: null,
     networkFailed: false,
 });
 
@@ -70,6 +77,17 @@ export const getStoreWithHydrationSettings = (
                 }),
                 false,
                 `${key} Hydration Errors Detected`
+            );
+        },
+
+        setHydrationWarning: (value) => {
+            set(
+                produce((state: StoreWithHydration) => {
+                    state.hydrationWarning =
+                        value && state.active ? value : null;
+                }),
+                false,
+                `${key} Hydration Warning Set`
             );
         },
 

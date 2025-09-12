@@ -11,9 +11,9 @@ import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
 import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
 import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import Usage from 'src/components/shared/Entity/Details/Usage';
-import useDetailsEntityTaskTypes from 'src/components/shared/Entity/Details/useDetailsEntityTaskTypes';
 import ShardInformation from 'src/components/shared/Entity/Shard/Information';
 import { useEntityType } from 'src/context/EntityContext';
+import useDetailsEntityTaskTypes from 'src/hooks/details/useDetailsEntityTaskTypes';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';

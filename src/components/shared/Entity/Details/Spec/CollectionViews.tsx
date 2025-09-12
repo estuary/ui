@@ -12,6 +12,7 @@ import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorS
 import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
 import ReadOnly from 'src/components/schema/KeyAutoComplete/ReadOnly';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
+import { HEIGHT } from 'src/components/shared/Entity/Details/History/shared';
 import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -63,7 +64,7 @@ function CollectionSpecViews({ presentation }: Props) {
         );
     } else {
         return inferSchemaResponseDoneProcessing ? (
-            <LiveSpecEditor localZustandScope singleSpec />
+            <LiveSpecEditor localZustandScope singleSpec height={HEIGHT} />
         ) : (
             <MonacoEditorSkeleton />
         );

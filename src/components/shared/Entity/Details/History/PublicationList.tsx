@@ -6,6 +6,7 @@ import {
     ListItemText,
     Stack,
     Typography,
+    useTheme,
 } from '@mui/material';
 
 import { findIndex } from 'lodash';
@@ -14,6 +15,7 @@ import { useIntl } from 'react-intl';
 import { DataGridRowSkeleton } from 'src/components/collection/CollectionSkeletons';
 import { formatDate } from 'src/components/shared/Entity/Details/History/shared';
 import Error from 'src/components/shared/Error';
+import { historyCompareBorder, historyCompareColors } from 'src/context/Theme';
 import { useHistoryDiffQueries } from 'src/hooks/useHistoryDiffQueries';
 import useScrollIntoView from 'src/hooks/useScrollIntoView';
 import { BASE_ERROR } from 'src/services/supabase';
@@ -21,6 +23,7 @@ import { hasLength } from 'src/utils/misc-utils';
 
 function PublicationList() {
     const intl = useIntl();
+    const theme = useTheme();
 
     const {
         modifiedPubId,
@@ -76,8 +79,15 @@ function PublicationList() {
 
     return (
         <>
-            <Typography variant="subtitle1" sx={{ p: 1 }}>
-                {intl.formatMessage({ id: 'details.history.title' })}
+            <Typography
+                component="div"
+                sx={{
+                    p: 1,
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                }}
+            >
+                {intl.formatMessage({ id: 'details.history.list.title' })}
             </Typography>
 
             {isValidating ? (
@@ -101,8 +111,22 @@ function PublicationList() {
                     }
                 />
             ) : (
-                <List>
-                    {publications?.map((publication) => {
+                <List
+                    sx={{
+                        ['& li.Mui-selected']: {
+                            cursor: 'unset',
+                            borderLeft: `${historyCompareBorder} ${
+                                historyCompareColors[theme.palette.mode][1]
+                            }`,
+                        },
+                        [`& li.Mui-selected + li`]: {
+                            borderLeft: `${historyCompareBorder} ${
+                                historyCompareColors[theme.palette.mode][0]
+                            }`,
+                        },
+                    }}
+                >
+                    {publications?.map((publication, index) => {
                         const selected =
                             selectedPublication === publication.pub_id;
 
@@ -112,9 +136,6 @@ function PublicationList() {
                                 key={`history-timeline-${publication.pub_id}`}
                                 onClick={() => {
                                     setSelectedPublication(publication.pub_id);
-                                }}
-                                sx={{
-                                    cursor: selected ? 'unset' : undefined,
                                 }}
                                 selected={selected}
                             >
