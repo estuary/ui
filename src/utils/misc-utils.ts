@@ -22,7 +22,7 @@ export const RESPONSE_DATA_LIMIT = 1000;
 // Default size used when splitting up larged promises
 export const CHUNK_SIZE = 10;
 
-// Descriptions of these
+// Descriptions of these:
 // https://github.com/gazette/core/blob/2580071332a6bf7f9302af1e513391f8c6539f5d/broker/protocol/protocol.proto#L20
 export const JOURNAL_READ_WARNINGS = ['OFFSET_NOT_YET_AVAILABLE'];
 export const JOURNAL_READ_ERRORS = [
