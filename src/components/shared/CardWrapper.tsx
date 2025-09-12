@@ -25,6 +25,7 @@ function CardWrapper({
     message,
     tooltipMessageId,
     disableElevation,
+    sx,
 }: CardWrapperProps) {
     const intl = useIntl();
     const theme = useTheme();
@@ -48,6 +49,7 @@ function CardWrapper({
                 borderRadius: 3,
                 minWidth: 'min-content',
                 rowGap: 2,
+                ...((sx as any) ?? {}),
             }}
         >
             {Boolean(message || tooltipMessageId) ? (

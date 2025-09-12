@@ -52,8 +52,21 @@ function ActiveAlerts({}: ActiveAlertsProps) {
             message={intl.formatMessage({
                 id: 'alerts.overview.title.active',
             })}
+            sx={{
+                display: 'flex',
+                alignItems: 'stretch',
+                justifyItems: 'stretch',
+                flexGrow: 1,
+            }}
         >
-            <Grid container spacing={{ xs: 2 }}>
+            <Grid
+                container
+                spacing={{ xs: 2 }}
+                sx={{
+                    alignItems: 'center',
+                    justifyItem: 'center',
+                }}
+            >
                 {fetching ? (
                     // TODO (alerts) - need to make a proper skeleton of cards
                     <>
@@ -80,7 +93,16 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                         </AlertBox>
                     </Grid>
                 ) : !data || data.alerts.edges.length === 0 ? (
-                    <Grid item xs={12} md={10} lg={8}>
+                    <Grid
+                        item
+                        xs={12}
+                        md={10}
+                        lg={8}
+                        sx={{
+                            alignItems: 'center',
+                            justifyItem: 'center',
+                        }}
+                    >
                         <AlertBox
                             severity="success"
                             short

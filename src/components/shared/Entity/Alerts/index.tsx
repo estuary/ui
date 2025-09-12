@@ -51,6 +51,9 @@ function EntityAlerts() {
                 xs={12}
                 md={!isCollection ? 6 : 12}
                 lg={!isCollection ? 8 : 12}
+                sx={{
+                    display: 'flex',
+                }}
             >
                 <ActiveAlerts />
             </Grid>

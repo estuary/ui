@@ -37,4 +37,5 @@ export interface CardWrapperProps extends BaseComponentProps {
     tooltipMessageId?: string;
     height?: string | number;
     disableElevation?: boolean;
+    sx?: SxProps;
 }
