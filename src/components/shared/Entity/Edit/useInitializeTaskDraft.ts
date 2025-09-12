@@ -28,7 +28,7 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { taskIsDisabled } from 'src/utils/spec-utils';
+import { taskIsDisabled } from 'src/utils/entity-utils';
 
 interface SupabaseConfig {
     createNew: boolean;

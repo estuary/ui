@@ -11,7 +11,7 @@ import {
     useEditorStore_queryResponse_mutate,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import { taskIsDisabled } from 'src/utils/spec-utils';
+import { taskIsDisabled } from 'src/utils/entity-utils';
 
 function useShards() {
     const taskSpecType = useEntityType();
