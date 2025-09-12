@@ -14,11 +14,11 @@ function StatusSection({ entityName }: StatusSectionProps) {
     const latestConnectorStatus =
         statusSingleResponse?.connector_status?.message;
 
-    const taskIsDisable = Boolean(statusSingleResponse?.disabled);
+    const disabled = Boolean(statusSingleResponse?.disabled);
 
     const intl = useIntl();
 
-    if (taskIsDisable) {
+    if (disabled) {
         return (
             <AlertBox severity="warning" short sx={{ maxWidth: 'fit-content' }}>
                 {intl.formatMessage({
