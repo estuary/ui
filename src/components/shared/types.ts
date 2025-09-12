@@ -36,6 +36,6 @@ export interface CardWrapperProps extends BaseComponentProps {
     message?: string | ReactNode;
     tooltipMessageId?: string;
     height?: string | number;
-    disableElevation?: boolean;
+    opaqueLightMode?: boolean;
     sx?: SxProps;
 }

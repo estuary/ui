@@ -15,7 +15,8 @@ import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
 import {
     cardHeaderSx,
     defaultBoxShadow,
-    intensifiedOutline,
+    opaqueLightModeBackground,
+    opaqueLightModeBorder,
     semiTransparentBackground,
 } from 'src/context/Theme';
 
@@ -24,12 +25,16 @@ function CardWrapper({
     height,
     message,
     tooltipMessageId,
-    disableElevation,
+    opaqueLightMode,
     sx,
 }: CardWrapperProps) {
     const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
+
+    // TODO (opaqueLightMode) - do we even need this? I feel like we do not often
+    //  have cards displaying with stuff behind them so there should be no real change on
+    //  any of the parts that use white on white cardWrappers
 
     return (
         <Stack
@@ -39,16 +44,16 @@ function CardWrapper({
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                // ? `5px solid ${semiTransparentBackgroundIntensified[theme.palette.mode]}`
-                borderLeft: disableElevation
-                    ? intensifiedOutline[theme.palette.mode]
-                    : undefined,
-                borderLeftWidth: 5,
-                background: semiTransparentBackground[theme.palette.mode],
-                boxShadow: disableElevation ? undefined : defaultBoxShadow,
+                boxShadow: defaultBoxShadow,
                 borderRadius: 3,
                 minWidth: 'min-content',
                 rowGap: 2,
+                background: opaqueLightMode
+                    ? opaqueLightModeBackground[theme.palette.mode]
+                    : semiTransparentBackground[theme.palette.mode],
+                border: opaqueLightMode
+                    ? opaqueLightModeBorder[theme.palette.mode]
+                    : undefined,
                 ...((sx as any) ?? {}),
             }}
         >
