@@ -12,20 +12,17 @@ import {
     useTheme,
 } from '@mui/material';
 
-import Editor from '@monaco-editor/react';
 import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
+import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import { useShardDetail_readDictionary } from 'src/stores/ShardDetail/hooks';
-import { unescapeString } from 'src/utils/misc-utils';
 
 interface Props {
     showWarnings?: boolean;
     taskTypes: ShardEntityTypes[];
     taskName: string;
 }
-
-const NEW_LINE = '\r\n';
 
 function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
     const theme = useTheme();
@@ -88,28 +85,7 @@ function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
 
                                 <AccordionDetails>
                                     <Box sx={{ height: 250 }}>
-                                        <Editor
-                                            defaultLanguage=""
-                                            theme={
-                                                theme.palette.mode === 'light'
-                                                    ? 'vs'
-                                                    : 'vs-dark'
-                                            }
-                                            options={{
-                                                lineNumbers: 'off',
-                                                readOnly: true,
-                                                scrollBeyondLastLine: false,
-                                                minimap: {
-                                                    enabled: false,
-                                                },
-                                            }}
-                                            value={unescapeString(
-                                                listToUse
-                                                    .join(NEW_LINE)
-                                                    .split(/\\n/)
-                                                    .join(NEW_LINE)
-                                            )}
-                                        />
+                                        <ServerErrorDetail val={listToUse} />
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>

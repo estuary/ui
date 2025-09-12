@@ -6,14 +6,18 @@ import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
 import { authenticatedRoutes } from 'src/app/routes';
 import {
     semiTransparentBackground_blue,
+    semiTransparentBackground_blue_nesting,
     semiTransparentBackground_purple,
+    semiTransparentBackground_purple_nesting,
     semiTransparentBackground_teal,
+    semiTransparentBackground_teal_nesting,
 } from 'src/context/Theme';
 
 export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
     capture: {
         Icon: CloudUpload,
         background: semiTransparentBackground_teal,
+        backgroundNesting: semiTransparentBackground_teal_nesting,
         bindingTermId: 'terms.bindings.plural',
         pluralId: 'terms.sources.plural',
         routes: {
@@ -60,6 +64,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
     collection: {
         Icon: DatabaseScript,
         background: semiTransparentBackground_blue,
+        backgroundNesting: semiTransparentBackground_blue_nesting,
         bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.collections.plural',
         routes: {
@@ -102,6 +107,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
     materialization: {
         Icon: CloudDownload,
         background: semiTransparentBackground_purple,
+        backgroundNesting: semiTransparentBackground_purple_nesting,
         bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.destinations.plural',
         routes: {

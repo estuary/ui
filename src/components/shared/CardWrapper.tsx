@@ -1,8 +1,6 @@
-import type { ReactNode } from 'react';
-import type { BaseComponentProps } from 'src/types';
+import type { CardWrapperProps } from 'src/components/shared/types';
 
 import {
-    Box,
     Stack,
     Tooltip,
     Typography,
@@ -17,39 +15,48 @@ import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
 import {
     cardHeaderSx,
     defaultBoxShadow,
+    intensifiedOutline,
     semiTransparentBackground,
 } from 'src/context/Theme';
 
-interface Props extends BaseComponentProps {
-    message?: string | ReactNode;
-    tooltipMessageId?: string;
-    height?: string | number;
-}
-
-function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
+function CardWrapper({
+    children,
+    height,
+    message,
+    tooltipMessageId,
+    disableElevation,
+    sx,
+}: CardWrapperProps) {
     const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
 
     return (
-        <Box
+        <Stack
             sx={{
                 ...eChartsTooltipSX,
                 height,
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
+                // ? `5px solid ${semiTransparentBackgroundIntensified[theme.palette.mode]}`
+                borderLeft: disableElevation
+                    ? intensifiedOutline[theme.palette.mode]
+                    : undefined,
+                borderLeftWidth: 5,
                 background: semiTransparentBackground[theme.palette.mode],
-                boxShadow: defaultBoxShadow,
+                boxShadow: disableElevation ? undefined : defaultBoxShadow,
                 borderRadius: 3,
                 minWidth: 'min-content',
+                rowGap: 2,
+                ...((sx as any) ?? {}),
             }}
         >
             {Boolean(message || tooltipMessageId) ? (
                 <Stack
                     direction="row"
                     spacing={1}
-                    sx={{ mb: 2, alignItems: 'center' }}
+                    sx={{ alignItems: 'center' }}
                 >
                     {message ? (
                         <Typography
@@ -85,7 +92,7 @@ function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
             ) : null}
 
             {children}
-        </Box>
+        </Stack>
     );
 }
 

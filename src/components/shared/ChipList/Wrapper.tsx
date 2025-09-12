@@ -18,6 +18,7 @@ const ListItem = styled('li')(({ theme }) => ({
 
 function ChipWrapper({
     disabled,
+    forceTooltip,
     onClick,
     stripPath,
     title,
@@ -95,13 +96,15 @@ function ChipWrapper({
         return chip;
     }, [chip, val.link, val.newWindow]);
 
+    const disableTooltip = forceTooltip ? false : !stripPath;
+
     return (
         <ListItem>
             <Tooltip
                 title={tooltipTitle}
-                disableFocusListener={!stripPath}
-                disableHoverListener={!stripPath}
-                disableTouchListener={!stripPath}
+                disableFocusListener={disableTooltip}
+                disableHoverListener={disableTooltip}
+                disableTouchListener={disableTooltip}
             >
                 <Box>{wrappedChip}</Box>
             </Tooltip>

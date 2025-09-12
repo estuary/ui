@@ -2,6 +2,7 @@ import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Details: Record<string, string> = {
     'details.tabs.overview': `Overview`,
+    'details.tabs.alerts': `Alerts`,
     'details.tabs.spec': `Spec`,
     'details.tabs.shardStatus': `Status`,
     'details.tabs.history': `History`,
