@@ -1,8 +1,8 @@
 import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
-import { Paper, useTheme } from '@mui/material';
+import { List, Paper, Stack, useTheme } from '@mui/material';
 
-import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
+import LogLine from 'src/components/logs/Line';
 import ServerErrorDialog from 'src/components/shared/Entity/Details/Alerts/Details/ServerErrorDialog';
 import { defaultOutline, zIndexIncrement } from 'src/context/Theme';
 
@@ -19,9 +19,10 @@ function ServerError(props: AlertDetailsProps) {
     }
 
     const dataValIsLong = dataVal.length > maxLengthDetail;
-    const shortDataVal = dataValIsLong
-        ? `${dataVal.substring(0, maxLengthDetail)}...`
-        : dataVal;
+    const logs = dataVal.split('\n').slice(0, 5);
+
+    console.log('dataVal', dataVal);
+    console.log('logs', logs);
 
     return (
         <Paper
@@ -49,19 +50,34 @@ function ServerError(props: AlertDetailsProps) {
                     width: 25,
                     zIndex: zIndexIncrement + zIndexIncrement,
                 },
-                [`& > section`]: {
+                [`& > ul`]: {
+                    fontFamily: `'Monaco', monospace`,
+                    whiteSpace: 'pre',
                     width: '100%',
-                    position: 'absolute',
-                    zIndex: zIndexIncrement,
                 },
             }}
         >
-            <ServerErrorDetail
-                options={{
-                    renderLineHighlight: 'none',
-                }}
-                val={shortDataVal}
-            />
+            <Stack spacing={2}>
+                <List
+                    dense
+                    sx={{
+                        background: '#121212',
+                        color: '#E1E9F4',
+                        position: 'absolute',
+                        zIndex: zIndexIncrement,
+                    }}
+                >
+                    {logs.map((line: any, index: number) => (
+                        <LogLine
+                            key={`logLine-${index}`}
+                            line={line}
+                            lineNumber={index}
+                            disableSelect
+                            disableLineNumber
+                        />
+                    ))}
+                </List>
+            </Stack>
             {dataValIsLong ? <ServerErrorDialog {...props} /> : null}
         </Paper>
     );
