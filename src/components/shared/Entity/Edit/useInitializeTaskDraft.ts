@@ -28,7 +28,7 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
-import { taskIsDisabled } from 'src/utils/entity-utils';
+import { isTaskDisabled } from 'src/utils/entity-utils';
 
 interface SupabaseConfig {
     createNew: boolean;
@@ -227,7 +227,7 @@ function useInitializeTaskDraft() {
                     // Force disabled materializations enabled. This way when a test is ran
                     //  there will not be an error and the backend will connect to the connector
                     const forceEnabled =
-                        taskIsDisabled(task.spec) &&
+                        isTaskDisabled(task.spec) &&
                         taskSpecType === 'materialization';
                     if (forceEnabled) {
                         task.spec.shards.disable = false;
