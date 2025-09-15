@@ -16,7 +16,13 @@ const PopperComponent = styled(Popper)({
     },
 }) as any;
 
-const autoCompleteDefaults: AutocompleteProps<any, any, false, false, 'div'> = {
+const autoCompleteDefaults: AutocompleteProps<
+    any,
+    any,
+    false,
+    boolean | undefined,
+    'div'
+> = {
     // MUST provide
     options: [],
     renderInput: () => null,
@@ -30,7 +36,7 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     any,
     any,
     false,
-    false,
+    boolean | undefined,
     'div'
 > = {
     ...autoCompleteDefaults,
@@ -69,7 +75,7 @@ export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
     any,
     true,
     false,
-    false,
+    boolean | undefined,
     'div'
 > = {
     ...autoCompleteDefaults_Virtual,
@@ -81,6 +87,6 @@ export const getTypedAutoCompleteDefaults = <T = any,>(): AutocompleteProps<
     T,
     false,
     false,
-    false,
+    boolean | undefined,
     'div'
 > => autoCompleteDefaults;

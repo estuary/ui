@@ -1,9 +1,6 @@
-import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
-import { useEffect, useRef, useState } from 'react';
-
-import { Autocomplete, FormControl, Stack, TextField } from '@mui/material';
+import { useEffect, useRef } from 'react';
 
 import { useIntl } from 'react-intl';
 
@@ -28,8 +25,6 @@ const FieldsRecommendedForm = ({
             state.setFieldsRecommended,
         ]);
 
-    const [inputValue, setInputValue] = useState('');
-
     useEffect(() => {
         if (defaultValue.current) {
             if (currentSetting) {
@@ -41,84 +36,33 @@ const FieldsRecommendedForm = ({
     }, [currentSetting, setFieldsRecommended]);
 
     const autoCompleteOptions = [
-        0,
-        1,
-        2,
-        intl.formatMessage({ id: 'common.unlimited' }),
+        { label: '0', val: 0 },
+        { label: '1', val: 1 },
+        { label: '2', val: 2 },
+        { label: intl.formatMessage({ id: 'common.unlimited' }), val: true },
     ];
 
     return (
-        <Stack spacing={1}>
-            <FormControl fullWidth>
-                <Autocomplete
-                    // disabled={disabled}
-                    disableCloseOnSelect
-                    freeSolo
-                    handleHomeEndKeys
-                    inputValue={inputValue}
-                    onChange={(_event, values, reason) => {
-                        const creating = reason === 'createOption';
-
-                        if (creating) {
-                            updateDraftedSetting(values);
-                        }
-                    }}
-                    onInputChange={(_event, value) => {
-                        setInputValue(value);
-                    }}
-                    options={autoCompleteOptions}
-                    renderInput={({
-                        InputProps,
-                        ...params
-                    }: AutocompleteRenderInputParams) => (
-                        <TextField
-                            {...params}
-                            InputProps={{
-                                ...InputProps,
-                                sx: { borderRadius: 3 },
-                            }}
-                            // error={inputErrorExists}
-                            label={intl.formatMessage({
-                                id: 'fieldsRecommended.input.label',
-                            })}
-                            size="small"
-                        />
-                    )}
-                    sx={{ flexGrow: 1 }}
-                    value={currentSetting}
-                />
-
-                {/* 
-            {inputErrorExists ? (
-                <FormHelperText error={inputErrorExists}>
-                    {intl.formatMessage({
-                        id: '',
-                    })}
-                </FormHelperText>
-            ) : null} */}
-            </FormControl>
-
-            <SpecPropAutoComplete
-                currentSetting={currentSetting}
-                freeSolo
-                inputLabelId="fieldsRecommended.input.label"
-                options={autoCompleteOptions}
-                renderOption={(
-                    renderOptionProps,
-                    option: number | boolean | string
-                ) => {
-                    return <li {...renderOptionProps}>{option}</li>;
-                }}
-                updateDraftedSetting={updateDraftedSetting}
-                setErrorExists={(errorExists) => {
-                    setDeltaUpdatesHasError(errorExists);
-                }}
-                scope={scope}
-                sx={{
-                    maxWidth: 700,
-                }}
-            />
-        </Stack>
+        <SpecPropAutoComplete
+            currentSetting={currentSetting}
+            freeSolo
+            inputLabelId="fieldsRecommended.input.label"
+            options={autoCompleteOptions}
+            renderOption={(
+                renderOptionProps,
+                option: { label: string; val: number | boolean }
+            ) => {
+                return <li {...renderOptionProps}>{option.label}</li>;
+            }}
+            scope={scope}
+            setErrorExists={(errorExists) => {
+                setDeltaUpdatesHasError(errorExists);
+            }}
+            sx={{
+                maxWidth: 700,
+            }}
+            updateDraftedSetting={updateDraftedSetting}
+        />
     );
 };
 

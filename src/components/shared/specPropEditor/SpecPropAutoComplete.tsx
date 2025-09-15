@@ -13,7 +13,7 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 export default function SpecPropAutoComplete({
     currentSetting,
-    // freeSolo,
+    freeSolo,
     inputLabelId,
     invalidSettingsMessageId = 'specPropUpdater.error.message',
     isOptionEqualToValue,
@@ -32,7 +32,7 @@ export default function SpecPropAutoComplete({
     const formActive = useFormStateStore_isActive();
 
     const selection = useMemo(() => {
-        if (!currentSetting || typeof currentSetting !== 'string') {
+        if (!currentSetting) {
             return null;
         }
 
@@ -83,7 +83,7 @@ export default function SpecPropAutoComplete({
             <Autocomplete
                 {...autoCompleteDefaultProps}
                 disabled={formActive}
-                // freeSolo={freeSolo}
+                freeSolo={freeSolo}
                 getOptionLabel={(option) => option.label}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
