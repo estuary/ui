@@ -1,5 +1,7 @@
 import type { BaseComponentProps } from 'src/types';
 
+import { useMemo } from 'react';
+
 import { createClient } from '@supabase/supabase-js';
 import { authExchange } from '@urql/exchange-auth';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
@@ -47,70 +49,73 @@ export const supabaseClient = createClient(
 function GlobalProviders({ children }: BaseComponentProps) {
     const initialized = useUserStore((state) => state.initialized);
 
-    const session = useUserStore((state) => state.session);
+    const accessToken = useUserStore((state) => state.session?.access_token);
 
-    const gqlClient = new Client({
-        url: import.meta.env.VITE_GQL_URL,
-        // Sticking with POST calls for now
-        preferGetMethod: false,
-        exchanges: [
-            // ORDER IS IMPORTANT
-            requestPolicyExchange({
-                // We want to refetch things pretty aggressively but not so
-                //  aggresive that de-dupes won't happen.
-                ttl: 1000,
-            }),
-            cacheExchange,
-            authExchange(async (utils) => {
-                // called on initial launch,
-                // fetch the auth state from storage (local storage, async storage etc)
-                // let refreshToken = localStorage.getItem('refreshToken');
+    const gqlClient = useMemo(() => {
+        console.log('getting GQL client', accessToken);
+        return new Client({
+            url: import.meta.env.VITE_GQL_URL,
+            // Sticking with POST calls for now
+            preferGetMethod: false,
+            exchanges: [
+                // ORDER IS IMPORTANT
+                requestPolicyExchange({
+                    // We want to refetch things pretty aggressively but not so
+                    //  aggresive that de-dupes won't happen.
+                    ttl: 1000,
+                }),
+                cacheExchange,
+                authExchange(async (utils) => {
+                    // called on initial launch,
+                    // fetch the auth state from storage (local storage, async storage etc)
+                    // let refreshToken = localStorage.getItem('refreshToken');
 
-                return {
-                    addAuthToOperation(operation) {
-                        if (session?.access_token) {
-                            return utils.appendHeaders(
-                                operation,
-                                getAuthHeader(session?.access_token)
+                    return {
+                        addAuthToOperation(operation) {
+                            if (accessToken) {
+                                return utils.appendHeaders(
+                                    operation,
+                                    getAuthHeader(accessToken)
+                                );
+                            }
+                            return operation;
+                        },
+                        willAuthError(_operation) {
+                            // e.g. check for expiration, existence of auth etc
+                            return !accessToken;
+                        },
+                        didAuthError(error, _operation) {
+                            // check if the error was an auth error
+                            // this can be implemented in various ways, e.g. 401 or a special error code
+                            return error.graphQLErrors.some(
+                                (e) => e.extensions?.code === 'FORBIDDEN'
                             );
-                        }
-                        return operation;
-                    },
-                    willAuthError(_operation) {
-                        // e.g. check for expiration, existence of auth etc
-                        return !session?.access_token;
-                    },
-                    didAuthError(error, _operation) {
-                        // check if the error was an auth error
-                        // this can be implemented in various ways, e.g. 401 or a special error code
-                        return error.graphQLErrors.some(
-                            (e) => e.extensions?.code === 'FORBIDDEN'
-                        );
-                    },
-                    async refreshAuth() {
-                        // called when auth error has occurred
-                        // we should refresh the token with a GraphQL mutation or a fetch call,
-                        // depending on what the API supports
-                        // const result = await mutate(refreshMutation, {
-                        //     token: authState?.refreshToken,
-                        // });
-                        // if (result.data?.refreshLogin) {
-                        //     // save the new tokens in storage for next restart
-                        //     token = result.data.refreshLogin.token;
-                        //     refreshToken = result.data.refreshLogin.refreshToken;
-                        //     localStorage.setItem('token', token);
-                        //     localStorage.setItem('refreshToken', refreshToken);
-                        // } else {
-                        //     // otherwise, if refresh fails, log clear storage and log out
-                        //     localStorage.clear();
-                        //     logout();
-                        // }
-                    },
-                };
-            }),
-            fetchExchange,
-        ],
-    });
+                        },
+                        async refreshAuth() {
+                            // called when auth error has occurred
+                            // we should refresh the token with a GraphQL mutation or a fetch call,
+                            // depending on what the API supports
+                            // const result = await mutate(refreshMutation, {
+                            //     token: authState?.refreshToken,
+                            // });
+                            // if (result.data?.refreshLogin) {
+                            //     // save the new tokens in storage for next restart
+                            //     token = result.data.refreshLogin.token;
+                            //     refreshToken = result.data.refreshLogin.refreshToken;
+                            //     localStorage.setItem('token', token);
+                            //     localStorage.setItem('refreshToken', refreshToken);
+                            // } else {
+                            //     // otherwise, if refresh fails, log clear storage and log out
+                            //     localStorage.clear();
+                            //     logout();
+                            // }
+                        },
+                    };
+                }),
+                fetchExchange,
+            ],
+        });
+    }, [accessToken]);
 
     if (!initialized) {
         return <FullPageSpinner />;
