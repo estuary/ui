@@ -8,40 +8,37 @@ import { DateTime } from 'luxon';
 import { cacheExchange, Client, fetchExchange, Provider } from 'urql';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
-import { AUTH_ERROR } from 'src/services/client';
+import useDataFetchErrorHandling from 'src/hooks/useDataFetchErrorHandling';
 import { getAuthHeader } from 'src/utils/misc-utils';
 
 function UrqlConfigProvider({ children }: BaseComponentProps) {
-    const [accessToken, expiresAt, refreshToken] = useUserStore((state) => [
+    const { checkIfAuthInvalid, forceUserToSignOut } =
+        useDataFetchErrorHandling();
+
+    const [accessToken, expiresAt] = useUserStore((state) => [
         state.session?.access_token,
         state.session?.expires_at,
-        state.session?.refresh_token,
     ]);
 
     const gqlClient = useMemo(() => {
         return new Client({
             url: import.meta.env.VITE_GQL_URL,
-            // Sticking with POST calls for now
             preferGetMethod: false,
             exchanges: [
-                // ORDER IS IMPORTANT
+                // WARNING - order is important on exchanges
+
                 requestPolicyExchange({
-                    // We want to refetch things pretty aggressively but not so
-                    //  aggresive that de-dupes won't happen.
+                    // Want to refetch pretty aggressively while still getting de-dupe functionality.
                     ttl: 1000,
                 }),
                 cacheExchange,
                 authExchange(async (utils) => {
-                    // called on initial launch,
-                    // fetch the auth state from storage (local storage, async storage etc)
-                    // let refreshToken = localStorage.getItem('refreshToken');
-
                     return {
                         addAuthToOperation(operation) {
                             if (accessToken) {
                                 return utils.appendHeaders(
                                     operation,
-                                    getAuthHeader(`${accessToken}`)
+                                    getAuthHeader(accessToken)
                                 );
                             }
                             return operation;
@@ -57,11 +54,13 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                                 );
                             }
 
-                            // e.g. check for expiration, existence of auth etc
                             return true;
                         },
                         didAuthError(error, _operation) {
-                            if (error.response.status === 401) {
+                            if (
+                                error.response.status === 401 ||
+                                checkIfAuthInvalid(error.message)
+                            ) {
                                 return true;
                             }
 
@@ -72,33 +71,14 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             );
                         },
                         async refreshAuth() {
-                            console.log('refreshAuth >>', refreshToken);
-
-                            return Promise.reject({ message: AUTH_ERROR });
-                            // called when auth error has occurred
-                            // we should refresh the token with a GraphQL mutation or a fetch call,
-                            // depending on what the API supports
-                            // const result = await mutate(refreshMutation, {
-                            //     token: authState?.refreshToken,
-                            // });
-                            // if (result.data?.refreshLogin) {
-                            //     // save the new tokens in storage for next restart
-                            //     token = result.data.refreshLogin.token;
-                            //     refreshToken = result.data.refreshLogin.refreshToken;
-                            //     localStorage.setItem('token', token);
-                            //     localStorage.setItem('refreshToken', refreshToken);
-                            // } else {
-                            //     // otherwise, if refresh fails, log clear storage and log out
-                            //     localStorage.clear();
-                            //     logout();
-                            // }
+                            return forceUserToSignOut('gql');
                         },
                     };
                 }),
                 fetchExchange,
             ],
         });
-    }, [accessToken, expiresAt, refreshToken]);
+    }, [accessToken, checkIfAuthInvalid, expiresAt, forceUserToSignOut]);
 
     return <Provider value={gqlClient}>{children}</Provider>;
 }

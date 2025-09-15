@@ -22,8 +22,8 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                         <ErrorBoundryWrapper>
                             <NotificationProvider>
                                 <SwrConfigProvider>
-                                    <UserStoreProvider>
-                                        <UrqlConfigProvider>
+                                    <UrqlConfigProvider>
+                                        <UserStoreProvider>
                                             <GlobalProviders>
                                                 <SidePanelDocsProvider>
                                                     <TableSettingsProvider>
@@ -31,8 +31,8 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                                                     </TableSettingsProvider>
                                                 </SidePanelDocsProvider>
                                             </GlobalProviders>
-                                        </UrqlConfigProvider>
-                                    </UserStoreProvider>
+                                        </UserStoreProvider>
+                                    </UrqlConfigProvider>
                                 </SwrConfigProvider>
                             </NotificationProvider>
                         </ErrorBoundryWrapper>
