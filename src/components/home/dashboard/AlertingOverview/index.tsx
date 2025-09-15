@@ -46,15 +46,11 @@ export default function AlertingOverview({
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const [queryResponse] = useQuery({
+    const [{ fetching, data, error }] = useQuery({
         query: alertingOverviewQuery,
         variables: { prefix: selectedTenant },
         pause: !selectedTenant,
     });
-
-    console.log('queryResponse', queryResponse);
-
-    const { fetching, data, error } = queryResponse;
 
     const filteredAndGroupedAlerts = useMemo<FilteredAndGroupedAlerts>(() => {
         const entityData = data?.alerts?.edges.filter((datum) => {

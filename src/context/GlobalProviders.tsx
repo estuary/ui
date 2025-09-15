@@ -6,6 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import { authExchange } from '@urql/exchange-auth';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { enableMapSet, setAutoFreeze } from 'immer';
+import { DateTime } from 'luxon';
 import { cacheExchange, Client, fetchExchange, Provider } from 'urql';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
@@ -49,10 +50,12 @@ export const supabaseClient = createClient(
 function GlobalProviders({ children }: BaseComponentProps) {
     const initialized = useUserStore((state) => state.initialized);
 
-    const accessToken = useUserStore((state) => state.session?.access_token);
+    const [accessToken, expiresAt] = useUserStore((state) => [
+        state.session?.access_token,
+        state.session?.expires_at,
+    ]);
 
     const gqlClient = useMemo(() => {
-        console.log('getting GQL client', accessToken);
         return new Client({
             url: import.meta.env.VITE_GQL_URL,
             // Sticking with POST calls for now
@@ -81,8 +84,18 @@ function GlobalProviders({ children }: BaseComponentProps) {
                             return operation;
                         },
                         willAuthError(_operation) {
+                            if (expiresAt && accessToken) {
+                                return (
+                                    DateTime.now().plus({
+                                        // So we can refresh just a bit before we'll
+                                        //  compare the expiration to 30 seconds from now
+                                        seconds: 30,
+                                    }) >= DateTime.fromSeconds(expiresAt)
+                                );
+                            }
+
                             // e.g. check for expiration, existence of auth etc
-                            return !accessToken;
+                            return true;
                         },
                         didAuthError(error, _operation) {
                             // check if the error was an auth error
@@ -115,7 +128,7 @@ function GlobalProviders({ children }: BaseComponentProps) {
                 fetchExchange,
             ],
         });
-    }, [accessToken]);
+    }, [accessToken, expiresAt]);
 
     if (!initialized) {
         return <FullPageSpinner />;
