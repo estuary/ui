@@ -28,13 +28,13 @@ const FieldsRecommendedUpdateWrapper = () => {
     >('fieldsRecommended');
 
     const updateServer = useCallback(
-        async (option?: boolean) => {
+        async (option?: { label: string; val: number | boolean }) => {
             setSaving(true);
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            updateSourceSetting(option)
+            updateSourceSetting(option?.val)
                 .then(() => {
-                    setFieldsRecommended(Boolean(option));
+                    setFieldsRecommended(option?.val);
 
                     setFormState({ status: FormStatus.UPDATED });
                 })

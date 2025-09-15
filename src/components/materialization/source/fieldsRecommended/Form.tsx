@@ -47,6 +47,18 @@ const FieldsRecommendedForm = ({
             currentSetting={currentSetting}
             freeSolo
             inputLabelId="fieldsRecommended.input.label"
+            isOptionEqualToValue={(option, targetOption) => {
+                const targetValue =
+                    typeof targetOption.val === 'object'
+                        ? targetOption.val.val
+                        : targetOption.val;
+
+                if (option.val === 0 && targetValue === false) {
+                    return true;
+                }
+
+                return option.val === targetValue;
+            }}
             options={autoCompleteOptions}
             renderOption={(
                 renderOptionProps,
