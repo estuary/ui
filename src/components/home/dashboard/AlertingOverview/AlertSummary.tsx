@@ -29,7 +29,7 @@ export default function AlertSummary({
     const intl = useIntl();
 
     const { tbodyComponent, tdComponent, trComponent, theaderComponent } =
-        getTableComponents(false);
+        getTableComponents(true);
 
     const getAlertTypeContent = useAlertTypeContent();
 
@@ -44,6 +44,7 @@ export default function AlertSummary({
     return (
         <TableContainer component={Box}>
             <Table
+                component={Box}
                 size="small"
                 sx={{
                     minWidth: 300,
@@ -54,8 +55,9 @@ export default function AlertSummary({
                 })}
             >
                 <TableHead component={theaderComponent}>
-                    <TableRow>
+                    <TableRow component={trComponent}>
                         <TableCell
+                            component={tdComponent}
                             sx={{
                                 minWidth: 250,
                                 maxWidth: 'min-content',
@@ -65,7 +67,7 @@ export default function AlertSummary({
                                 id: 'entityName.label',
                             })}
                         </TableCell>
-                        <TableCell>
+                        <TableCell component={tdComponent}>
                             {intl.formatMessage({
                                 id: 'alerts.overview.recentAlerts',
                             })}
@@ -87,6 +89,7 @@ export default function AlertSummary({
                                     key={`alert-summary-${datum[0].catalogName}-${index}`}
                                 >
                                     <EntityNameLink
+                                        enableDivRendering
                                         name={catalogName}
                                         showEntityStatus={false}
                                         detailsLink={generatePath({

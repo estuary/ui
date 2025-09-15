@@ -49,7 +49,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                                     DateTime.now().plus({
                                         // So we can refresh just a bit before we'll
                                         //  compare the expiration to 30 seconds from now
-                                        seconds: 30,
+                                        seconds: 15,
                                     }) >= DateTime.fromSeconds(expiresAt)
                                 );
                             }
@@ -64,8 +64,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                                 return true;
                             }
 
-                            // check if the error was an auth error
-                            // this can be implemented in various ways, e.g. 401 or a special error code
+                            // TODO (GQL) - what other error handling do we need?
                             return error.graphQLErrors.some(
                                 (e) => e.extensions?.code === 'FORBIDDEN'
                             );

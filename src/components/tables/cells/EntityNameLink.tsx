@@ -4,12 +4,14 @@ import { Stack, TableCell } from '@mui/material';
 
 import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetailsLink';
 import EntityStatus from 'src/components/tables/cells/EntityStatus';
+import { getTableComponents } from 'src/utils/table-utils';
 
 interface Props {
     name: string;
     showEntityStatus: boolean;
     entityStatusTypes: ShardEntityTypes[];
     detailsLink: string;
+    enableDivRendering?: boolean;
 }
 
 function EntityNameLink({
@@ -17,9 +19,12 @@ function EntityNameLink({
     detailsLink,
     entityStatusTypes,
     showEntityStatus,
+    enableDivRendering,
 }: Props) {
+    const { tdComponent } = getTableComponents(enableDivRendering);
     return (
         <TableCell
+            component={tdComponent}
             sx={{
                 minWidth: 250,
                 maxWidth: 'min-content',
