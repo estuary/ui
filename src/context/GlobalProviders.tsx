@@ -2,6 +2,7 @@ import type { BaseComponentProps } from 'src/types';
 
 import { createClient } from '@supabase/supabase-js';
 import { authExchange } from '@urql/exchange-auth';
+import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { enableMapSet, setAutoFreeze } from 'immer';
 import { cacheExchange, Client, fetchExchange, Provider } from 'urql';
 
@@ -52,11 +53,13 @@ function GlobalProviders({ children }: BaseComponentProps) {
         url: import.meta.env.VITE_GQL_URL,
         // Sticking with POST calls for now
         preferGetMethod: false,
-        // TODO : Figure out cache vs network and refocus fetching
-        // We _often_ want to fetch data fresh on a "page load"
-        // requestPolicy: 'cache-and-network',
         exchanges: [
             // ORDER IS IMPORTANT
+            requestPolicyExchange({
+                // We want to refetch things pretty aggressively but not so
+                //  aggresive that de-dupes won't happen.
+                ttl: 1000,
+            }),
             cacheExchange,
             authExchange(async (utils) => {
                 // called on initial launch,
