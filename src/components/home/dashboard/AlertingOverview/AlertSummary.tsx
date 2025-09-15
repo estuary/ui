@@ -24,7 +24,7 @@ import { getTableComponents } from 'src/utils/table-utils';
 export default function AlertSummary({
     entityType,
     fetching,
-    filteredDataArray,
+    filteredAndGroupedAlerts: filteredDataArray,
 }: AlertSummaryProps) {
     const intl = useIntl();
 

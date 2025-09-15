@@ -15,9 +15,10 @@ export const Alerts: Record<string, string> = {
     'alerts.config.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
     'alerts.config.table.label.alertMethod': `Notification Method`,
 
-    'alerts.overview.title.fetching': `Fetching Active Alerts...`,
+    'alerts.overview.title.fetching': `Fetching active alerts...`,
     'alerts.overview.title.active': `Active Alerts`,
     'alerts.overview.title.activeEmpty': `No Active Alerts`,
+
     'alerts.overview.recentAlerts': `Recent Alerts`,
     'alerts.overview.label': `List of most recent alerts grouped by name`,
 

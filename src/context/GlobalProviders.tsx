@@ -50,8 +50,11 @@ function GlobalProviders({ children }: BaseComponentProps) {
 
     const gqlClient = new Client({
         url: import.meta.env.VITE_GQL_URL,
-        // We right now have a backend that wants POSTs to be used
+        // Sticking with POST calls for now
         preferGetMethod: false,
+        // TODO : Figure out cache vs network and refocus fetching
+        // We _often_ want to fetch data fresh on a "page load"
+        // requestPolicy: 'cache-and-network',
         exchanges: [
             // ORDER IS IMPORTANT
             cacheExchange,
@@ -102,9 +105,6 @@ function GlobalProviders({ children }: BaseComponentProps) {
                     },
                 };
             }),
-            // retryExchange({
-            //     maxNumberAttempts: 3,
-            // }),
             fetchExchange,
         ],
     });
