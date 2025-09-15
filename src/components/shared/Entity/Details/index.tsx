@@ -1,19 +1,17 @@
 import { useMemo } from 'react';
 import useConstant from 'use-constant';
 
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import { Box, Divider, Stack } from '@mui/material';
 
 import { useUnmount } from 'react-use';
 
 import { createEditorStore } from 'src/components/editor/Store/create';
 import LiveSpecsHydrator from 'src/components/editor/Store/LiveSpecsHydrator';
-import EditButton from 'src/components/shared/Entity/Details/EditButton';
-import MaterializeButton from 'src/components/shared/Entity/Details/MaterializeButton';
 import RenderTab from 'src/components/shared/Entity/Details/RenderTab';
 import DetailTabs from 'src/components/shared/Entity/Details/Tabs';
+import DetailsToolBar from 'src/components/shared/Entity/Details/ToolBar';
 import ShardHydrator from 'src/components/shared/Entity/Shard/Hydrator';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
-import { truncateTextSx } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -63,30 +61,8 @@ function EntityDetails() {
                             lastChecked={lastChecked}
                         >
                             <Stack spacing={2} sx={{ m: 1 }}>
-                                <Stack
-                                    direction="row"
-                                    sx={{ justifyContent: 'space-between' }}
-                                >
-                                    <Typography
-                                        component="span"
-                                        variant="h6"
-                                        sx={{
-                                            ...truncateTextSx,
-                                            alignItems: 'center',
-                                        }}
-                                    >
-                                        {catalogName}
-                                    </Typography>
-
-                                    <Stack direction="row">
-                                        <EditButton buttonVariant="outlined" />
-
-                                        <MaterializeButton />
-                                    </Stack>
-                                </Stack>
-
+                                <DetailsToolBar />
                                 <Divider />
-
                                 <DetailTabs />
                             </Stack>
 

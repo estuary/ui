@@ -1,4 +1,5 @@
 import type { JournalClient } from 'data-plane-gateway';
+import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { OpsLogFlowDocument } from 'src/types';
 
 export type JournalRecord<B extends {} = Record<string, any>> = B & {
@@ -15,11 +16,11 @@ export interface LoadDocumentsOffsets {
 }
 
 export interface LoadDocumentsProps {
-    offsets?: LoadDocumentsOffsets;
-    journalName?: string;
+    maxBytes: number;
     client?: JournalClient;
     documentCount?: number;
-    maxBytes: number;
+    journalName?: string;
+    offsets?: LoadDocumentsOffsets;
 }
 
 export interface LoadDocumentsResponse {
@@ -28,6 +29,7 @@ export interface LoadDocumentsResponse {
     tooManyBytes: boolean;
     meta?: {
         range: JournalByteRange;
+        status: ProtocolStatus | undefined;
     };
 }
 

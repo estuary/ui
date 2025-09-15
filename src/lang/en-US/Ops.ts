@@ -1,4 +1,8 @@
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
+import { CTAs } from 'src/lang/en-US/CTAs';
+
 export const Ops: Record<string, string> = {
+    'ops.logsTable.label': `Task Logs`,
     'ops.logsTable.label.level': `Level`,
     'ops.logsTable.label.ts': `Timestamp`,
     'ops.logsTable.label.message': `Message`,
@@ -14,7 +18,14 @@ export const Ops: Record<string, string> = {
     'ops.logsTable.hydrationError.message': `Please check your network connection and try again.`,
     'ops.logsTable.tailNewLogs': `stay at bottom as new logs load`,
 
-    // These keys get generated inside the WaitingForRowBase
+    // Dynamically generated in /src/components/tables/Logs/HydrationWarning.tsx
+    'ops.hydrationWarning.OFFSET_NOT_YET_AVAILABLE.title': `No logs available`,
+
+    'ops.hydrationWarning.offsetNot.instructions': `Usually this means that your task hasn’t processed any data, usually because of a configuration issue (Ex. an invalid storage mapping).  Please {docLink} if you need any help determining why your task isn’t producing logs.`,
+    'ops.hydrationWarning.offsetNot.instructions.docLink': `${CTAs['cta.support']}`,
+    'ops.hydrationWarning.offsetNot.instructions.docPath': `${CommonMessages['support.email']}`,
+
+    // Keys generated inside WaitingForRowBase
     'ops.logsTable.waitingForLogs.old.failed': `A network error occurred. Please reload.`,
     'ops.logsTable.waitingForLogs.new.failed': `A network error occurred. Please reload.`,
     'ops.logsTable.waitingForLogs.old.complete': `All older logs read`,

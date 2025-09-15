@@ -1,3 +1,4 @@
+import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type {
     LoadDocumentsOffsets,
     UseOpsLogsDocs,
@@ -13,6 +14,9 @@ import useJournalStore from 'src/stores/JournalData/Store';
 function useOpsLogs() {
     const journalName = useJournalStore((state) => state.opsLogsJournal);
 
+    const [readStatus, setReadStatus] = useState<ProtocolStatus | undefined>(
+        undefined
+    );
     const [nothingInLastFetch, setNothingInLastFetch] = useState(false);
     const [oldestParsed, setOldestParsed] = useState<number>(-1);
     const [newestParsed, setNewestParsed] = useState<number>(-1);
@@ -46,6 +50,9 @@ function useOpsLogs() {
         if (end === null || start === null) {
             return;
         }
+
+        // Set the status as we know when to show information text to user about edge cases
+        setReadStatus(meta?.status);
 
         // This means there was nothing new to fetch and the fetching was skipped
         //  Usually because we are fetching newer logs and there is nothing new written
@@ -98,6 +105,7 @@ function useOpsLogs() {
             oldestParsed,
             loading,
             nothingInLastFetch,
+            readStatus,
             refresh: runRefresh,
         }),
         [
@@ -107,6 +115,7 @@ function useOpsLogs() {
             newestParsed,
             nothingInLastFetch,
             oldestParsed,
+            readStatus,
             runRefresh,
         ]
     );

@@ -843,6 +843,13 @@ export const eChartsColors = {
     medium: ['#5353cc', '#208c51'],
 };
 
+export const historyCompareColors = {
+    light: ['#f96864', '#aed359'],
+    dark: ['#cf0d0a', '#526628'],
+};
+
+export const historyCompareBorder = `3px solid `;
+
 // If you have custom `sx` on your chip you'll need to import this
 //  and spread it into your custom styling. Or just style with `style`
 export const chipOutlinedStyling: SxProps<Theme> = {

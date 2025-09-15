@@ -148,3 +148,7 @@ export const getExistingPartition = (
 
     return existingProjection[1].partition;
 };
+
+export const isTaskDisabled = (spec: any) => {
+    return Boolean(spec?.shards?.disable);
+};
