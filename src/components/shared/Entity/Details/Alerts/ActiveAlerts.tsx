@@ -53,19 +53,15 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                 id: 'alerts.overview.title.active',
             })}
             sx={{
-                display: 'flex',
                 alignItems: 'stretch',
-                justifyItems: 'stretch',
                 flexGrow: 1,
             }}
         >
             <Grid
                 container
                 spacing={{ xs: 2 }}
-                sx={{
-                    alignItems: 'center',
-                    justifyItem: 'center',
-                }}
+                justifyContent="space-around"
+                alignItems="stretch"
             >
                 {fetching ? (
                     // TODO (alerts) - need to make a proper skeleton of cards
@@ -123,6 +119,8 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                                 xs={12}
                                 lg={4}
                                 key={`active_alerts_${datum.node.firedAt}_${index}`}
+                                justifyContent="center"
+                                alignItems="stretch"
                             >
                                 <AlertCard datum={datum.node} />
                             </Grid>

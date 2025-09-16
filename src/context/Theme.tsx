@@ -648,6 +648,13 @@ export const truncateTextSx: SxProps<Theme> = {
     textOverflow: 'ellipsis',
 };
 
+export const flexGrowToSiblingsSx: SxProps<Theme> = {
+    display: 'flex',
+    alignItems: 'stretch',
+    justifyItems: 'stretch',
+    flexGrow: 1,
+};
+
 const baseBackground = {
     styleOverrides: {
         root: {

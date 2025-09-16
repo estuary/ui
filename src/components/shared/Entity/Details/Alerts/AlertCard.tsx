@@ -1,13 +1,13 @@
 import type { AlertCardProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
-import { Box } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
 import AlertCardHeader from 'src/components/shared/Entity/Details/Alerts/AlertCardHeader';
 import AlertDetailsWrapper from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
-import KeyValueList from 'src/components/shared/KeyValueList';
+import { truncateTextSx } from 'src/context/Theme';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 
 function AlertCard({ datum }: AlertCardProps) {
@@ -16,21 +16,24 @@ function AlertCard({ datum }: AlertCardProps) {
     const { firedAtReadable } = getAlertTypeContent(datum);
 
     return (
-        <CardWrapper message={<AlertCardHeader datum={datum} />}>
-            <Box sx={{ px: 2, pb: 2 }}>
-                <KeyValueList
-                    data={[
-                        {
-                            title: intl.formatMessage({
-                                id: 'alerts.table.data.firedAt',
-                            }),
-                            val: firedAtReadable,
-                        },
-                    ]}
-                />
+        <CardWrapper
+            message={<AlertCardHeader datum={datum} />}
+            sx={{ minWidth: 0, height: '100%' }}
+        >
+            <Stack spacing={2} sx={{ px: 2, pb: 2 }}>
+                <Stack>
+                    <Typography>
+                        {intl.formatMessage({
+                            id: 'alerts.table.data.firedAt',
+                        })}
+                    </Typography>
+                    <Typography sx={truncateTextSx}>
+                        {firedAtReadable}
+                    </Typography>
+                </Stack>
 
                 <AlertDetailsWrapper datum={datum} />
-            </Box>
+            </Stack>
         </CardWrapper>
     );
 }
