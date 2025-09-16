@@ -60,7 +60,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
             <Grid
                 container
                 spacing={{ xs: 2 }}
-                justifyContent="space-around"
+                justifyContent="start"
                 alignItems="stretch"
             >
                 {fetching ? (
