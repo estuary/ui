@@ -1,20 +1,17 @@
 import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
+import { Stack, Typography } from '@mui/material';
+
 import ServerError from 'src/components/shared/Entity/Details/Alerts/Details/ServerError';
-import KeyValueList from 'src/components/shared/KeyValueList';
 
 function AutoDiscoverFailedDetail(props: AlertDetailsProps) {
     const { details } = props;
 
     return (
-        <KeyValueList
-            data={[
-                {
-                    title: details[0].label,
-                    val: <ServerError {...props} />,
-                },
-            ]}
-        />
+        <Stack>
+            <Typography>{details[0].label}</Typography>
+            <ServerError {...props} />
+        </Stack>
     );
 }
 

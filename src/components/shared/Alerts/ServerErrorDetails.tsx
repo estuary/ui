@@ -13,17 +13,20 @@ function ServerErrorDetail({ options, val }: ServerErrorDetailProps) {
 
     return (
         <Editor
-            defaultLanguage=""
+            language="plaintext"
+            defaultLanguage="plaintext"
             theme={theme.palette.mode === 'light' ? 'vs' : 'vs-dark'}
             options={{
                 folding: false,
-                lineNumbers: 'off',
-                minimap: {
-                    enabled: false,
-                },
                 domReadOnly: true,
+                glyphMargin: false,
+                hideCursorInOverviewRuler: true,
+                lineNumbers: 'off',
+                minimap: { enabled: false },
+                overviewRulerLanes: 0,
                 readOnly: true,
-                scrollBeyondLastLine: false,
+                renderLineHighlight: 'none',
+                renderValidationDecorations: 'off',
                 ...(options ?? {}),
             }}
             value={unescapeString(

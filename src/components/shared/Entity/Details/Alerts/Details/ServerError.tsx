@@ -1,12 +1,13 @@
 import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
-import { List, Paper, Stack, useTheme } from '@mui/material';
+import { Box, boxClasses, Paper, useTheme } from '@mui/material';
 
-import LogLine from 'src/components/logs/Line';
+import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import ServerErrorDialog from 'src/components/shared/Entity/Details/Alerts/Details/ServerErrorDialog';
-import { defaultOutline, zIndexIncrement } from 'src/context/Theme';
+import { BUTTON_TRANSITION_TIME } from 'src/components/shared/Entity/Details/Alerts/Details/shared';
+import { defaultOutline } from 'src/context/Theme';
 
-const maxLengthDetail = 350;
+const maxLineForPreview = 6;
 
 function ServerError(props: AlertDetailsProps) {
     const { details } = props;
@@ -18,67 +19,50 @@ function ServerError(props: AlertDetailsProps) {
         return null;
     }
 
-    const dataValIsLong = dataVal.length > maxLengthDetail;
-    const logs = dataVal.split('\n').slice(0, 5);
-
-    console.log('dataVal', dataVal);
-    console.log('logs', logs);
+    const previewLines = dataVal.split('\n');
+    const dataValIsLong = previewLines.length > maxLineForPreview;
 
     return (
         <Paper
             sx={{
                 border: defaultOutline[theme.palette.mode],
+                display: 'grid',
                 height: 150,
                 maxHeight: 150,
-                [`&:hover > button,  &:focus > button`]: {
-                    opacity: 0.5,
-                    transition: `750ms`,
+                [`& > button,& > .${boxClasses.root}`]: {
+                    gridColumn: 1,
+                    gridRow: 1,
                 },
                 [`& > button`]: {
-                    [`&:hover, &:focus`]: {
-                        opacity: 1,
-                        transition: `750ms`,
-                    },
-                    bottom: 10,
-                    height: 25,
-                    minWidth: 'fit-content',
-                    opacity: 0,
-                    transition: `750ms`,
-                    p: 0.25,
-                    position: 'absolute',
-                    right: 0,
-                    width: 25,
-                    zIndex: zIndexIncrement + zIndexIncrement,
+                    alignSelf: 'end',
+                    justifySelf: 'end',
                 },
-                [`& > ul`]: {
-                    fontFamily: `'Monaco', monospace`,
-                    whiteSpace: 'pre',
-                    width: '100%',
+                [`&:hover > button,  &:focus > button`]: {
+                    opacity: 0.5,
+                    transition: BUTTON_TRANSITION_TIME,
                 },
             }}
         >
-            <Stack spacing={2}>
-                <List
-                    dense
-                    sx={{
-                        background: '#121212',
-                        color: '#E1E9F4',
-                        position: 'absolute',
-                        zIndex: zIndexIncrement,
+            <Box
+                // This box is here so the editor showing details resizes correctly
+                sx={{
+                    flex: 1,
+                    minWidth: 0,
+                }}
+            >
+                <ServerErrorDetail
+                    options={{
+                        automaticLayout: true,
+                        scrollBeyondLastLine: false,
                     }}
-                >
-                    {logs.map((line: any, index: number) => (
-                        <LogLine
-                            key={`logLine-${index}`}
-                            line={line}
-                            lineNumber={index}
-                            disableSelect
-                            disableLineNumber
-                        />
-                    ))}
-                </List>
-            </Stack>
-            {dataValIsLong ? <ServerErrorDialog {...props} /> : null}
+                    val={
+                        dataValIsLong
+                            ? `${previewLines.splice(0, maxLineForPreview).join('\n')}\n...`
+                            : dataVal
+                    }
+                />
+            </Box>
+            <ServerErrorDialog {...props} />
         </Paper>
     );
 }
