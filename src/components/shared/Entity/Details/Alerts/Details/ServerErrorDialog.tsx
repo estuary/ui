@@ -33,10 +33,8 @@ function ServerErrorDialog({ datum, details }: AlertDetailsProps) {
             <Button
                 onClick={() => setOpen(true)}
                 variant="contained"
-                color="secondary"
                 sx={{
                     [`&:hover, &:focus`]: {
-                        border: '1px solid red',
                         opacity: 1,
                         transition: BUTTON_TRANSITION_TIME,
                     },
