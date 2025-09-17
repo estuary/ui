@@ -23,7 +23,7 @@ const resolvedAlertsForTaskQuery = gql<
     AlertsVariables
 >`
     query ResolvedAlertsForTaskQuery($prefix: String!) {
-        alerts(prefix: $prefix, firing: false) {
+        alerts(prefix: $prefix, active: false) {
             edges {
                 node {
                     alertType

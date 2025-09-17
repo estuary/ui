@@ -17,7 +17,7 @@ const ActiveAlertCountQuery = gql<
     AlertsVariables
 >`
     query ActiveAlertCount($prefix: String!) {
-        alerts(prefix: $prefix, firing: true) {
+        alerts(prefix: $prefix, active: true) {
             edges {
                 cursor
             }
