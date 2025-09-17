@@ -8,9 +8,18 @@ import SectionFormatter from 'src/components/shared/Entity/Details/Logs/Status/S
 import SectionViews from 'src/components/shared/Entity/Details/Logs/Status/SectionViews';
 import ServerError from 'src/components/shared/Entity/Details/Logs/Status/ServerError';
 import UnderDev from 'src/components/shared/UnderDev';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 
 export default function Status() {
     const intl = useIntl();
+
+    const hasSupportRole = useUserInfoSummaryStore(
+        (state) => state.hasSupportAccess
+    );
+
+    if (!hasSupportRole) {
+        return null;
+    }
 
     return (
         <Stack spacing={2} style={{ marginTop: 40 }}>
