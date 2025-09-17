@@ -2,6 +2,8 @@ import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Ale
 
 import { Box, boxClasses, Paper, useTheme } from '@mui/material';
 
+import { useIntl } from 'react-intl';
+
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import ServerErrorDialog from 'src/components/shared/Entity/Details/Alerts/Details/ServerErrorDialog';
 import { BUTTON_TRANSITION_TIME } from 'src/components/shared/Entity/Details/Alerts/Details/shared';
@@ -12,6 +14,7 @@ const maxLineForPreview = 6;
 function ServerError(props: AlertDetailsProps) {
     const { details } = props;
     const { dataVal } = details[0];
+    const intl = useIntl();
     const theme = useTheme();
 
     // Just being safe on the rare case we do not get the data we're expecting
@@ -20,7 +23,17 @@ function ServerError(props: AlertDetailsProps) {
     }
 
     const previewLines = dataVal.split('\n');
-    const dataValIsLong = previewLines.length > maxLineForPreview;
+    const previewLineCount = previewLines.length;
+    const dataValIsLong = previewLineCount > maxLineForPreview;
+
+    const previewContent = !dataValIsLong
+        ? dataVal
+        : `${previewLines.splice(0, maxLineForPreview).join('\n')}\n${intl.formatMessage(
+              { id: 'alerts.details.preview' },
+              {
+                  lineCount: previewLineCount - maxLineForPreview,
+              }
+          )}`;
 
     return (
         <Paper
@@ -55,11 +68,7 @@ function ServerError(props: AlertDetailsProps) {
                         automaticLayout: true,
                         scrollBeyondLastLine: false,
                     }}
-                    val={
-                        dataValIsLong
-                            ? `${previewLines.splice(0, maxLineForPreview).join('\n')}\n...`
-                            : dataVal
-                    }
+                    val={previewContent}
                 />
             </Box>
             <ServerErrorDialog {...props} />
