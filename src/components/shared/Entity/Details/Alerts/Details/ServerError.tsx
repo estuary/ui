@@ -23,11 +23,6 @@ function ServerError(props: ServerErrorProps) {
     const intl = useIntl();
     const theme = useTheme();
 
-    // Just being safe on the rare case we do not get the data we're expecting
-    if (!dataVal) {
-        return null;
-    }
-
     const height = short ? shortHeight : defaultHeight;
     const previewLinesLength = short ? shortPreviewLines : defaultPreviewLines;
 

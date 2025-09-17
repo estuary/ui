@@ -5,16 +5,21 @@ import type {
 
 import { TableCell, TableRow } from '@mui/material';
 
+import { useIntl } from 'react-intl';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import AlertDetailsWrapper from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
 import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
 import ActiveOrResolvedCells from 'src/components/tables/cells/activeResolved/Cells';
+import ChipListCell from 'src/components/tables/cells/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
 import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
+    const intl = useIntl();
+
     const { catalogName, firedAt, resolvedAt, alertDetails } = row;
 
     const getAlertTypeContent = useAlertTypeContent();
@@ -50,18 +55,26 @@ function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
 
             <TableCell>{humanReadable}</TableCell>
 
+            <ChipListCell
+                stripPath={false}
+                maxChips={5}
+                values={
+                    alertDetails.recipients &&
+                    alertDetails.recipients.length > 0
+                        ? alertDetails.recipients.map(
+                              (recipient: any) => recipient.email
+                          )
+                        : [
+                              intl.formatMessage({
+                                  id: 'alerts.table.recipients.empty',
+                              }),
+                          ]
+                }
+            />
+
             <TableCell>
                 <AlertDetailsWrapper datum={row} hideLabel short />
             </TableCell>
-
-            {/*            <ChipList
-                stripPath={false}
-                values={
-                    alertDetails.recipients?.map(
-                        (recipient: any) => recipient.email
-                    ) ?? []
-                }
-            />*/}
         </TableRow>
     );
 }

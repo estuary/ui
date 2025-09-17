@@ -13,7 +13,8 @@ function AlertDetailsWrapper({
     const getAlertTypeContent = useAlertTypeContent();
     const { detail } = getAlertTypeContent(datum);
 
-    if (!detail) {
+    // being safe on the rare case we get data back that is not right
+    if (!detail || !detail.dataVal) {
         return null;
     }
 

@@ -9,10 +9,13 @@ import { useCallback } from 'react';
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
+import useSettingIntervalOptions from 'src/components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
 import { ALERT_SETTING } from 'src/settings/alerts';
 
 function useAlertTypeContent() {
     const intl = useIntl();
+
+    const { options } = useSettingIntervalOptions();
 
     return useCallback(
         ({
@@ -26,12 +29,29 @@ function useAlertTypeContent() {
 
                 const { detailKey } = ALERT_SETTING[alertType];
                 if (detailKey) {
+                    let dataVal = alertDetails[detailKey];
+                    // This is an older alert so needs special handling.
+                    //  Make a "fake" server error
+                    if (detailKey === 'evaluation_interval' && dataVal) {
+                        const interval = options[dataVal];
+                        if (interval) {
+                            dataVal = intl.formatMessage(
+                                {
+                                    id: 'alerts.alertType.details.humanReadable.serverError.evaluation_interval',
+                                },
+                                {
+                                    interval,
+                                }
+                            );
+                        }
+                    }
+
                     detail = {
+                        dataVal,
+                        key: detailKey,
                         label: intl.formatMessage({
                             id: `alerts.alertType.details.humanReadable.${detailKey}`,
                         }),
-                        dataVal: alertDetails[detailKey],
-                        key: detailKey,
                     };
                 }
 
@@ -61,7 +81,7 @@ function useAlertTypeContent() {
                 resolvedAtReadable: '',
             };
         },
-        [intl]
+        [intl, options]
     );
 }
 

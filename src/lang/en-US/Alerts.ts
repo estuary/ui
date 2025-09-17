@@ -38,13 +38,14 @@ export const Alerts: Record<string, string> = {
     'alerts.table.error.message': `There was an error attempting to fetch resolved alerts.`,
 
     'alert.active.fetchError.title': `Unable to fetch active alerts`,
+    'alerts.table.recipients.empty': `none configured`,
 
     'alert.active.noAlerts.title': `All Clear!`,
     'alert.active.noAlerts.message': `No active alerts.`,
 
     // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
     'alerts.alertType.humanReadable.auto_discover_failed': `Auto Discover Failed`,
-    'alerts.alertType.humanReadable.shard_failed': `Shard Failure`,
+    'alerts.alertType.humanReadable.shard_failed': `Task Failure`,
     'alerts.alertType.humanReadable.data_movement_stalled': `Data Movement Stalled`,
     'alerts.alertType.humanReadable.free_trial': ``,
     'alerts.alertType.humanReadable.free_trial_ending': `Free Trial Ending`,
@@ -53,6 +54,7 @@ export const Alerts: Record<string, string> = {
 
     'alerts.alertType.details.humanReadable.error': `Details`,
     'alerts.alertType.details.humanReadable.evaluation_interval': `Details`,
+    'alerts.alertType.details.humanReadable.serverError.evaluation_interval': `There has been zero data movement for the configured timeframe of {interval}.`,
     'alerts.alertType.details.humanReadable.recipients': `Notification Recipients`,
     'alerts.alertType.details.humanReadable.spec_type': `Spec Type`,
 };

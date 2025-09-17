@@ -30,6 +30,11 @@ export const tableColumns: TableColumns[] = [
     },
     {
         field: null,
+        headerIntlKey: 'alerts.table.data.recipients',
+        width: 460,
+    },
+    {
+        field: null,
         headerIntlKey: 'alerts.table.data.details',
     },
 ];

@@ -9,7 +9,7 @@ interface TableSettings {
 }
 
 export interface AlertSetting {
-    detailKey: keyof AlertDetails | null;
+    detailKey: keyof Pick<AlertDetails, 'error' | 'evaluation_interval'> | null;
     docLink: string;
     humanReadableIntlKey: string;
 }
