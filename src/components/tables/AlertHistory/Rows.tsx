@@ -51,7 +51,7 @@ function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
             <TableCell>{humanReadable}</TableCell>
 
             <TableCell>
-                <AlertDetailsWrapper datum={row} />
+                <AlertDetailsWrapper datum={row} hideLabel short />
             </TableCell>
 
             {/*            <ChipList

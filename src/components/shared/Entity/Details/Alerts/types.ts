@@ -18,14 +18,22 @@ export interface AlertCardProps {
     datum: Alert;
 }
 
-export interface AlertCardHeaderProps {
-    datum: Alert;
-}
+export type AlertCardHeaderProps = AlertCardProps;
 
 export interface AlertDetailsWrapperProps {
     datum: Alert;
+    hideLabel?: boolean;
+    short?: boolean;
 }
 
 export interface AlertDetailsProps extends AlertDetailsWrapperProps {
     detail: AlertDetail;
 }
+
+export interface ServerErrorProps {
+    datum: Alert;
+    detail: AlertDetail;
+    short?: boolean;
+}
+
+export type ServerErrorDialogProps = AlertDetailsProps;

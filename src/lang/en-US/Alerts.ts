@@ -52,7 +52,7 @@ export const Alerts: Record<string, string> = {
     'alerts.alertType.humanReadable.missing_payment_method': `Missing Payment Method`,
 
     'alerts.alertType.details.humanReadable.error': `Details`,
-    'alerts.alertType.details.humanReadable.evaluation_interval': `Evaluation Interval`,
+    'alerts.alertType.details.humanReadable.evaluation_interval': `Details`,
     'alerts.alertType.details.humanReadable.recipients': `Notification Recipients`,
     'alerts.alertType.details.humanReadable.spec_type': `Spec Type`,
 };

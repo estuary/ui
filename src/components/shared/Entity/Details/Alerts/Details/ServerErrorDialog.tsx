@@ -1,21 +1,26 @@
-import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
+import type { ServerErrorDialogProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
 import { useState } from 'react';
 
-import { Box, Button, Dialog, DialogContent } from '@mui/material';
+import { Box, Button, Dialog, DialogContent, useTheme } from '@mui/material';
 
 import { Expand } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import { defaultOutline } from 'src/context/Theme';
 
-function ServerErrorDialog({ datum, detail: { dataVal } }: AlertDetailsProps) {
+function ServerErrorDialog({
+    datum,
+    detail: { dataVal },
+}: ServerErrorDialogProps) {
     const intl = useIntl();
+    const theme = useTheme();
 
     const [open, setOpen] = useState(false);
 
-    const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
+    const closeDialog = () => {
         setOpen(false);
     };
 
@@ -30,7 +35,6 @@ function ServerErrorDialog({ datum, detail: { dataVal } }: AlertDetailsProps) {
                 onClick={() => setOpen(true)}
                 variant="contained"
                 sx={{
-                    display: 'flex',
                     height: 25,
                     minWidth: 'fit-content',
                     p: 0.25,
@@ -42,7 +46,7 @@ function ServerErrorDialog({ datum, detail: { dataVal } }: AlertDetailsProps) {
             <Dialog open={open} fullWidth maxWidth="lg" onClose={closeDialog}>
                 <DialogTitleWithClose
                     id={`alert-details-${datum.firedAt}_${datum.alertType}`}
-                    onClose={() => setOpen(false)}
+                    onClose={closeDialog}
                 >
                     {intl.formatMessage({ id: 'alerts.details.title' })}
                 </DialogTitleWithClose>
@@ -50,6 +54,7 @@ function ServerErrorDialog({ datum, detail: { dataVal } }: AlertDetailsProps) {
                 <DialogContent>
                     <Box
                         sx={{
+                            border: defaultOutline[theme.palette.mode],
                             height: '65vh',
                             width: '100%',
                         }}

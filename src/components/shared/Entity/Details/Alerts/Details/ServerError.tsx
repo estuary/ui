@@ -1,6 +1,6 @@
-import type { AlertDetailsProps } from 'src/components/shared/Entity/Details/Alerts/types';
+import type { ServerErrorProps } from 'src/components/shared/Entity/Details/Alerts/types';
 
-import { Box, boxClasses, Paper, useTheme } from '@mui/material';
+import { Box, boxClasses, useTheme } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -9,11 +9,16 @@ import ServerErrorDialog from 'src/components/shared/Entity/Details/Alerts/Detai
 import { BUTTON_TRANSITION_TIME } from 'src/components/shared/Entity/Details/Alerts/Details/shared';
 import { defaultOutline } from 'src/context/Theme';
 
-const maxLineForPreview = 6;
+const defaultPreviewLines = 6;
+const defaultHeight = 145;
 
-function ServerError(props: AlertDetailsProps) {
+const shortPreviewLines = 3;
+const shortHeight = 80;
+
+function ServerError(props: ServerErrorProps) {
     const {
         detail: { dataVal },
+        short,
     } = props;
     const intl = useIntl();
     const theme = useTheme();
@@ -23,35 +28,39 @@ function ServerError(props: AlertDetailsProps) {
         return null;
     }
 
+    const height = short ? shortHeight : defaultHeight;
+    const previewLinesLength = short ? shortPreviewLines : defaultPreviewLines;
+
     const previewLines = dataVal.split('\n');
     const previewLineCount = previewLines.length;
-    const dataValIsLong = previewLineCount > maxLineForPreview;
+    const dataValIsLong = previewLineCount > previewLinesLength;
 
     const previewContent = !dataValIsLong
         ? dataVal
-        : `${previewLines.splice(0, maxLineForPreview).join('\n')}\n${intl.formatMessage(
+        : `${previewLines.splice(0, previewLinesLength).join('\n')}\n${intl.formatMessage(
               { id: 'alerts.details.preview' },
               {
-                  lineCount: previewLineCount - maxLineForPreview,
+                  lineCount: previewLineCount - previewLinesLength,
               }
           )}`;
 
     return (
-        <Paper
+        <Box
             sx={{
                 // Need to keep all the transition related stuff in a single SX
                 //  to keep the specificity consistent so the settings can be
                 //  "overwritten" properly
                 border: defaultOutline[theme.palette.mode],
                 display: 'grid',
-                height: 150,
-                maxHeight: 150,
+                height,
+                maxHeight: height,
                 [`& > button,& > .${boxClasses.root}`]: {
                     gridColumn: 1,
                     gridRow: 1,
                 },
                 [`& > button`]: {
                     alignSelf: 'end',
+                    display: 'flex',
                     justifySelf: 'end',
                     opacity: 0,
                     transition: BUTTON_TRANSITION_TIME,
@@ -82,7 +91,7 @@ function ServerError(props: AlertDetailsProps) {
                 />
             </Box>
             <ServerErrorDialog {...props} />
-        </Paper>
+        </Box>
     );
 }
 

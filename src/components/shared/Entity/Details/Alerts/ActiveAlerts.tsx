@@ -117,7 +117,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                             <Grid
                                 item
                                 xs={12}
-                                lg={4}
+                                lg={true}
                                 key={`active_alerts_${datum.node.firedAt}_${index}`}
                                 justifyContent="center"
                                 alignItems="stretch"

@@ -27,6 +27,9 @@ function ServerErrorDetail({ options, val }: ServerErrorDetailProps) {
                 readOnly: true,
                 renderLineHighlight: 'none',
                 renderValidationDecorations: 'off',
+                padding: {
+                    top: 5,
+                },
                 ...(options ?? {}),
             }}
             value={unescapeString(
