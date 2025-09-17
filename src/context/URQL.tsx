@@ -58,7 +58,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         },
                         didAuthError(error, _operation) {
                             if (
-                                error.response.status === 401 ||
+                                error.response?.status === 401 ||
                                 checkIfAuthInvalid(error.message)
                             ) {
                                 return true;
