@@ -1,3 +1,4 @@
+import type { ChipDisplay } from 'src/components/shared/ChipList/types';
 import type { Alert } from 'src/types/gql';
 
 export interface AlertDetail {
@@ -10,6 +11,7 @@ export interface AlertTypeContent {
     detail: AlertDetail | null;
     humanReadable: string;
     firedAtReadable: string;
+    recipientList: ChipDisplay[];
     resolvedAtReadable: string;
     docLink?: string;
 }

@@ -1,3 +1,4 @@
+import type { ChipDisplay } from 'src/components/shared/ChipList/types';
 import type {
     AlertDetail,
     AlertTypeContent,
@@ -61,6 +62,25 @@ function useAlertTypeContent() {
                     humanReadable: intl.formatMessage({
                         id: ALERT_SETTING[alertType].humanReadableIntlKey,
                     }),
+                    recipientList:
+                        alertDetails.recipients &&
+                        alertDetails.recipients.length > 0
+                            ? alertDetails.recipients.map(
+                                  (recipient): ChipDisplay => ({
+                                      display: recipient.email,
+                                      title: recipient.full_name,
+                                  })
+                              )
+                            : [
+                                  {
+                                      display: intl.formatMessage({
+                                          id: 'alerts.table.recipients.empty',
+                                      }),
+                                      title: intl.formatMessage({
+                                          id: 'alerts.table.recipients.empty.tooltip',
+                                      }),
+                                  },
+                              ],
                     firedAtReadable: DateTime.fromISO(firedAt)
                         .toUTC()
                         .toLocaleString(DateTime.DATETIME_FULL),
@@ -78,6 +98,7 @@ function useAlertTypeContent() {
                 detail: null,
                 humanReadable: '',
                 firedAtReadable: '',
+                recipientList: [],
                 resolvedAtReadable: '',
             };
         },

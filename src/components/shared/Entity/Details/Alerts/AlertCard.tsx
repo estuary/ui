@@ -5,6 +5,7 @@ import { Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
+import ChipList from 'src/components/shared/ChipList';
 import AlertCardHeader from 'src/components/shared/Entity/Details/Alerts/AlertCardHeader';
 import AlertDetailsWrapper from 'src/components/shared/Entity/Details/Alerts/AlertDetails';
 import { truncateTextSx } from 'src/context/Theme';
@@ -13,7 +14,7 @@ import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 function AlertCard({ datum }: AlertCardProps) {
     const intl = useIntl();
     const getAlertTypeContent = useAlertTypeContent();
-    const { firedAtReadable } = getAlertTypeContent(datum);
+    const { firedAtReadable, recipientList } = getAlertTypeContent(datum);
 
     return (
         <CardWrapper
@@ -30,6 +31,23 @@ function AlertCard({ datum }: AlertCardProps) {
                     <Typography sx={truncateTextSx}>
                         {firedAtReadable}
                     </Typography>
+                </Stack>
+
+                <Stack>
+                    <Typography>
+                        {intl.formatMessage({
+                            id: 'alerts.table.data.recipients',
+                        })}
+                    </Typography>
+                    <ChipList
+                        forceTooltip
+                        maxChips={5}
+                        stripPath={false}
+                        values={recipientList}
+                        sx={{
+                            maxHeight: 75,
+                        }}
+                    />
                 </Stack>
 
                 <AlertDetailsWrapper datum={datum} />

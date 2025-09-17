@@ -9,11 +9,16 @@ export type AlertType =
     | 'free_trial_stalled'
     | 'missing_payment_method';
 
+export interface AlertDetailsRecipients {
+    email: string;
+    full_name?: string;
+}
+
 export interface AlertDetails {
     spec_type: ShardEntityTypes;
     error?: string;
     evaluation_interval?: string;
-    recipients?: string[];
+    recipients?: AlertDetailsRecipients[];
 }
 
 export interface Alert {

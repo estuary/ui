@@ -39,6 +39,7 @@ export const Alerts: Record<string, string> = {
 
     'alert.active.fetchError.title': `Unable to fetch active alerts`,
     'alerts.table.recipients.empty': `none configured`,
+    'alerts.table.recipients.empty.tooltip': `No emails were configured to be notified.`,
 
     'alert.active.noAlerts.title': `All Clear!`,
     'alert.active.noAlerts.message': `No active alerts.`,
