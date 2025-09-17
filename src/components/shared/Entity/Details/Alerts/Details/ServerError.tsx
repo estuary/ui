@@ -63,10 +63,12 @@ function ServerError(props: ServerErrorProps) {
                     display: 'flex',
                     justifySelf: 'end',
                     opacity: 0,
+                    bottom: 14,
+                    right: 14,
                     transition: BUTTON_TRANSITION_TIME,
                 },
                 [`&:hover > button,  &:focus > button`]: {
-                    opacity: 0.5,
+                    opacity: 0.7,
                     transition: BUTTON_TRANSITION_TIME,
                 },
                 [`& > button:hover, & > button:focus`]: {

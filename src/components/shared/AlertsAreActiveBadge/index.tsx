@@ -35,7 +35,6 @@ function AlertsAreActiveBadge({ children, prefix }: AlertsAreActiveBadgeProps) {
     useEffect(() => {
         if (fetching) return;
 
-        // Set up to refetch in one second, if the query is idle
         const timerId = setTimeout(() => {
             reexecuteQuery({ requestPolicy: 'network-only' });
         }, POLLING_INTERVAL);
