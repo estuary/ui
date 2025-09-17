@@ -7,6 +7,8 @@ import { Badge, badgeClasses } from '@mui/material';
 
 import { gql, useQuery } from 'urql';
 
+const POLLING_INTERVAL = 10000;
+
 const LatestAlertQuery = gql<LatestAlertQueryResponse, AlertsVariables>`
     query LatestAlert($prefix: String!) {
         alerts(prefix: $prefix, firing: true) {
@@ -17,10 +19,8 @@ const LatestAlertQuery = gql<LatestAlertQueryResponse, AlertsVariables>`
     }
 `;
 
-const POLLING_INTERVAL = 10000;
-
 function AlertsAreActiveBadge({ children, prefix }: AlertsAreActiveBadgeProps) {
-    const [{ fetching, data, error }, reexecuteQuery] = useQuery({
+    const [{ fetching, data }, reexecuteQuery] = useQuery({
         query: LatestAlertQuery,
         variables: { prefix },
         pause: !prefix,
@@ -38,12 +38,11 @@ function AlertsAreActiveBadge({ children, prefix }: AlertsAreActiveBadgeProps) {
     }, [fetching, reexecuteQuery]);
 
     const activeAlertCount = data?.alerts.edges.length ?? 0;
-    const hasActiveAlerts = activeAlertCount > 0;
 
     return (
         <Badge
             badgeContent={activeAlertCount}
-            color={error || hasActiveAlerts ? 'warning' : 'success'}
+            color="warning"
             invisible={fetching}
             overlap="rectangular"
             sx={{
