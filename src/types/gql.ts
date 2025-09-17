@@ -35,7 +35,7 @@ export type DefaultAlertingQueryResponse = {
         }[];
     };
 };
-export interface LatestAlertQueryResponse {
+export interface ActiveAlertCountQueryResponse {
     alerts: {
         edges: {
             cursor: string;

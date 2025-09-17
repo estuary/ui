@@ -1,5 +1,8 @@
 import type { AlertsAreActiveBadgeProps } from 'src/components/shared/AlertsAreActiveBadge/types';
-import type { AlertsVariables, LatestAlertQueryResponse } from 'src/types/gql';
+import type {
+    ActiveAlertCountQueryResponse,
+    AlertsVariables,
+} from 'src/types/gql';
 
 import { useEffect } from 'react';
 
@@ -9,8 +12,11 @@ import { gql, useQuery } from 'urql';
 
 const POLLING_INTERVAL = 10000;
 
-const LatestAlertQuery = gql<LatestAlertQueryResponse, AlertsVariables>`
-    query LatestAlert($prefix: String!) {
+const ActiveAlertCountQuery = gql<
+    ActiveAlertCountQueryResponse,
+    AlertsVariables
+>`
+    query ActiveAlertCount($prefix: String!) {
         alerts(prefix: $prefix, firing: true) {
             edges {
                 cursor
@@ -21,7 +27,7 @@ const LatestAlertQuery = gql<LatestAlertQueryResponse, AlertsVariables>`
 
 function AlertsAreActiveBadge({ children, prefix }: AlertsAreActiveBadgeProps) {
     const [{ fetching, data }, reexecuteQuery] = useQuery({
-        query: LatestAlertQuery,
+        query: ActiveAlertCountQuery,
         variables: { prefix },
         pause: !prefix,
     });
