@@ -43,20 +43,17 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             }
                             return operation;
                         },
-                        willAuthError(_operation) {
+                        willAuthError() {
                             if (expiresAt && accessToken) {
                                 return (
-                                    DateTime.now().plus({
-                                        // So we can refresh just a bit before we'll
-                                        //  compare the expiration to 30 seconds from now
-                                        seconds: 15,
-                                    }) >= DateTime.fromSeconds(expiresAt)
+                                    DateTime.now() >=
+                                    DateTime.fromSeconds(expiresAt)
                                 );
                             }
 
                             return true;
                         },
-                        didAuthError(error, _operation) {
+                        didAuthError(error) {
                             if (
                                 error.response?.status === 401 ||
                                 checkIfAuthInvalid(error.message)
