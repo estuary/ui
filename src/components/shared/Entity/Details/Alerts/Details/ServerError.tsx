@@ -12,8 +12,9 @@ import { defaultOutline } from 'src/context/Theme';
 const maxLineForPreview = 6;
 
 function ServerError(props: AlertDetailsProps) {
-    const { details } = props;
-    const { dataVal } = details[0];
+    const {
+        detail: { dataVal },
+    } = props;
     const intl = useIntl();
     const theme = useTheme();
 

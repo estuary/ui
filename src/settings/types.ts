@@ -1,5 +1,4 @@
 import type { OptionalColumn } from 'src/components/collection/Selector/Table/useCollectionsSelectorColumns';
-import type { DetailsComponent } from 'src/components/shared/Entity/Details/Alerts/types';
 import type { TableIntlConfig } from 'src/types';
 import type { AlertDetails } from 'src/types/gql';
 
@@ -10,8 +9,7 @@ interface TableSettings {
 }
 
 export interface AlertSetting {
-    detailKeys: (keyof AlertDetails)[];
-    detailSection?: DetailsComponent;
+    detailKey: keyof AlertDetails | null;
     docLink: string;
     humanReadableIntlKey: string;
 }

@@ -11,10 +11,7 @@ import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { BUTTON_TRANSITION_TIME } from 'src/components/shared/Entity/Details/Alerts/Details/shared';
 
-function ServerErrorDialog({ datum, details }: AlertDetailsProps) {
-    const detailsDialogId = `alert-details-${datum.firedAt}_${datum.alertType}`;
-    const { dataVal } = details[0];
-
+function ServerErrorDialog({ datum, detail: { dataVal } }: AlertDetailsProps) {
     const intl = useIntl();
 
     const [open, setOpen] = useState(false);
@@ -51,7 +48,7 @@ function ServerErrorDialog({ datum, details }: AlertDetailsProps) {
             </Button>
             <Dialog open={open} fullWidth maxWidth="lg" onClose={closeDialog}>
                 <DialogTitleWithClose
-                    id={detailsDialogId}
+                    id={`alert-details-${datum.firedAt}_${datum.alertType}`}
                     onClose={() => setOpen(false)}
                 >
                     {intl.formatMessage({ id: 'alerts.details.title' })}

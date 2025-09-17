@@ -1,4 +1,7 @@
-import type { AlertTypeContent } from 'src/components/shared/Entity/Details/Alerts/types';
+import type {
+    AlertDetail,
+    AlertTypeContent,
+} from 'src/components/shared/Entity/Details/Alerts/types';
 import type { Alert } from 'src/types/gql';
 
 import { useCallback } from 'react';
@@ -19,21 +22,21 @@ function useAlertTypeContent() {
             resolvedAt,
         }: Alert): AlertTypeContent => {
             if (alertType && ALERT_SETTING[alertType]) {
-                const details: any[] = [];
-                if (ALERT_SETTING[alertType].detailKeys.length > 0) {
-                    ALERT_SETTING[alertType].detailKeys.forEach((detailKey) => {
-                        details.push({
-                            label: intl.formatMessage({
-                                id: `alerts.alertType.details.humanReadable.${detailKey}`,
-                            }),
-                            dataVal: alertDetails[detailKey],
-                            key: detailKey,
-                        });
-                    });
+                let detail: AlertDetail | null = null;
+
+                const { detailKey } = ALERT_SETTING[alertType];
+                if (detailKey) {
+                    detail = {
+                        label: intl.formatMessage({
+                            id: `alerts.alertType.details.humanReadable.${detailKey}`,
+                        }),
+                        dataVal: alertDetails[detailKey],
+                        key: detailKey,
+                    };
                 }
 
                 const response: AlertTypeContent = {
-                    details,
+                    detail,
                     docLink: ALERT_SETTING[alertType].docLink,
                     humanReadable: intl.formatMessage({
                         id: ALERT_SETTING[alertType].humanReadableIntlKey,
@@ -48,16 +51,11 @@ function useAlertTypeContent() {
                               .toLocaleString(DateTime.DATETIME_FULL),
                 };
 
-                if (ALERT_SETTING[alertType].detailSection) {
-                    response.DetailSection =
-                        ALERT_SETTING[alertType].detailSection;
-                }
-
                 return response;
             }
 
             return {
-                details: [],
+                detail: null,
                 humanReadable: '',
                 firedAtReadable: '',
                 resolvedAtReadable: '',
