@@ -39,6 +39,9 @@ function ServerError(props: AlertDetailsProps) {
     return (
         <Paper
             sx={{
+                // Need to keep all the transition related stuff in a single SX
+                //  to keep the specificity consistent so the settings can be
+                //  "overwritten" properly
                 border: defaultOutline[theme.palette.mode],
                 display: 'grid',
                 height: 150,
@@ -50,9 +53,15 @@ function ServerError(props: AlertDetailsProps) {
                 [`& > button`]: {
                     alignSelf: 'end',
                     justifySelf: 'end',
+                    opacity: 0,
+                    transition: BUTTON_TRANSITION_TIME,
                 },
                 [`&:hover > button,  &:focus > button`]: {
                     opacity: 0.5,
+                    transition: BUTTON_TRANSITION_TIME,
+                },
+                [`& > button:hover, & > button:focus`]: {
+                    opacity: 1,
                     transition: BUTTON_TRANSITION_TIME,
                 },
             }}

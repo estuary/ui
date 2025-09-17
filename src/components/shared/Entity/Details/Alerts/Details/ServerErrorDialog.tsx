@@ -9,7 +9,6 @@ import { useIntl } from 'react-intl';
 
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
-import { BUTTON_TRANSITION_TIME } from 'src/components/shared/Entity/Details/Alerts/Details/shared';
 
 function ServerErrorDialog({ datum, detail: { dataVal } }: AlertDetailsProps) {
     const intl = useIntl();
@@ -31,16 +30,10 @@ function ServerErrorDialog({ datum, detail: { dataVal } }: AlertDetailsProps) {
                 onClick={() => setOpen(true)}
                 variant="contained"
                 sx={{
-                    [`&:hover, &:focus`]: {
-                        opacity: 1,
-                        transition: BUTTON_TRANSITION_TIME,
-                    },
                     display: 'flex',
                     height: 25,
                     minWidth: 'fit-content',
-                    opacity: 0,
                     p: 0.25,
-                    transition: BUTTON_TRANSITION_TIME,
                     width: 25,
                 }}
             >
