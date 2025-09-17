@@ -12,7 +12,9 @@ export interface AlertHistoryTableProps {
     tablePrefix: TablePrefixes.alertHistoryForEntity;
 }
 
-export interface ActiveAlertsProps {}
+export interface AlertTruncationMessageProps {
+    alertCount: number;
+}
 
 export interface RowsProps {
     columns: TableColumns[];

@@ -16,8 +16,11 @@ export const Alerts: Record<string, string> = {
     'alerts.config.table.label.alertMethod': `Notification Method`,
 
     'alerts.overview.title.fetching': `Fetching active alerts...`,
-    'alerts.overview.title.active': `Active Alerts`,
+    'alerts.overview.title.active': `Active Alerts Summary`,
+    'alerts.overview.title.active.all': `All Active Alerts`,
     'alerts.overview.title.activeEmpty': `No Active Alerts`,
+    'alerts.overview.listTruncated': `There are {alertCount} alerts that are active. The most recent {maxCount} are shown below.`,
+    'alerts.overview.listTruncated.cta': `See all active alerts`,
 
     'alerts.overview.recentAlerts': `Recent Alerts`,
     'alerts.overview.label': `List of most recent alerts grouped by name`,

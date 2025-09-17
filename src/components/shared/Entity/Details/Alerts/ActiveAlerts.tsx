@@ -1,4 +1,3 @@
-import type { ActiveAlertsProps } from 'src/components/tables/AlertHistory/types';
 import type {
     ActiveAlertsForTaskQueryResponse,
     AlertsVariables,
@@ -11,7 +10,9 @@ import { gql, useQuery } from 'urql';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
-import AlertCard from 'src/components/shared/Entity/Details/Alerts/AlertCard';
+import AlertCardGrid from 'src/components/shared/Entity/Details/Alerts/AlertCardGrid';
+import AlertTruncationMessage from 'src/components/shared/Entity/Details/Alerts/AlertTruncationMessage';
+import { MAX_ALERTS_TO_SHOW } from 'src/components/shared/Entity/Details/Alerts/shared';
 import Message from 'src/components/shared/Error/Message';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -36,7 +37,7 @@ const activeAlertsForTaskQuery = gql<
     }
 `;
 
-function ActiveAlerts({}: ActiveAlertsProps) {
+function ActiveAlerts() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const intl = useIntl();
@@ -46,6 +47,8 @@ function ActiveAlerts({}: ActiveAlertsProps) {
         variables: { prefix: catalogName },
         pause: !catalogName,
     });
+
+    const alertCount = data?.alerts.edges.length ?? 0;
 
     return (
         <CardWrapper
@@ -57,6 +60,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                 flexGrow: 1,
             }}
         >
+            <AlertTruncationMessage alertCount={alertCount} />
             <Grid
                 container
                 spacing={{ xs: 2 }}
@@ -88,7 +92,7 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                             <Message error={error} />
                         </AlertBox>
                     </Grid>
-                ) : !data || data.alerts.edges.length === 0 ? (
+                ) : !data || alertCount === 0 ? (
                     <Grid
                         item
                         xs={12}
@@ -112,20 +116,9 @@ function ActiveAlerts({}: ActiveAlertsProps) {
                         </AlertBox>
                     </Grid>
                 ) : (
-                    data.alerts.edges.map((datum, index) => {
-                        return (
-                            <Grid
-                                item
-                                xs={12}
-                                lg={true}
-                                key={`active_alerts_${datum.node.firedAt}_${index}`}
-                                justifyContent="center"
-                                alignItems="stretch"
-                            >
-                                <AlertCard datum={datum.node} />
-                            </Grid>
-                        );
-                    })
+                    <AlertCardGrid
+                        edges={data.alerts.edges.slice(0, MAX_ALERTS_TO_SHOW)}
+                    />
                 )}
             </Grid>
         </CardWrapper>

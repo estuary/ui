@@ -1,5 +1,5 @@
 import type { ChipDisplay } from 'src/components/shared/ChipList/types';
-import type { Alert } from 'src/types/gql';
+import type { Alert, DefaultAlertingQueryResponse } from 'src/types/gql';
 
 export interface AlertDetail {
     label: string;
@@ -36,6 +36,10 @@ export interface ServerErrorProps {
     datum: Alert;
     detail: AlertDetail;
     short?: boolean;
+}
+
+export interface AlertCardGridProps {
+    edges: DefaultAlertingQueryResponse['alerts']['edges'];
 }
 
 export type ServerErrorDialogProps = AlertDetailsProps;

@@ -52,6 +52,7 @@ function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
             <TableCell>{humanReadable}</TableCell>
 
             <ChipListCell
+                forceTooltip
                 stripPath={false}
                 maxChips={5}
                 values={recipientList}
