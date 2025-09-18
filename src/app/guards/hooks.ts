@@ -42,7 +42,6 @@ const useDirectiveGuard = (
             return null;
         }
 
-        setServerError(error ?? null);
         if (error) {
             return 'errored';
         }
@@ -60,6 +59,10 @@ const useDirectiveGuard = (
         options?.token,
         serverError,
     ]);
+
+    useEffect(() => {
+        setServerError(error ?? null);
+    }, [error]);
 
     // The memo above was getting called more often than planned and I think it might have
     //  been part of https://github.com/estuary/ui/issues/999. So the thinking here is that
