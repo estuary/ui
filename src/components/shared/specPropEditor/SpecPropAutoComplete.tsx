@@ -11,8 +11,11 @@ import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPro
 import { stringifyJSON } from 'src/services/stringify';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
+const DigitRegEx = new RegExp(/\d/);
+
 export default function SpecPropAutoComplete({
     currentSetting,
+    filterOptions,
     freeSolo,
     inputLabelId,
     invalidSettingsMessageId = 'specPropUpdater.error.message',
@@ -62,9 +65,13 @@ export default function SpecPropAutoComplete({
             return;
         }
 
+        if (freeSolo && selection && !DigitRegEx.test(selection)) {
+            setInvalidSetting(true);
+        }
+
         setInputValue(selection.label);
         setInvalidSetting(false);
-    }, [currentSetting, selection]);
+    }, [currentSetting, freeSolo, selection]);
 
     useEffect(() => {
         setErrorExists(invalidSetting, scope);
@@ -83,6 +90,11 @@ export default function SpecPropAutoComplete({
             <Autocomplete
                 {...autoCompleteDefaultProps}
                 disabled={formActive}
+                filterOptions={
+                    filterOptions
+                        ? (options) => filterOptions(options, inputValue)
+                        : undefined
+                }
                 freeSolo={freeSolo}
                 getOptionLabel={(option) => option.label}
                 inputValue={inputValue}
@@ -105,10 +117,28 @@ export default function SpecPropAutoComplete({
                             : optionValue.val)
                     );
                 }}
-                onChange={(_state, newVal) => {
-                    updateDraftedSetting(newVal).catch(() => {
-                        setInputValue(selection?.label ?? '');
-                    });
+                onChange={(_event, newVal, reason) => {
+                    console.log('>>> value', newVal);
+                    console.log('>>> reason', reason);
+
+                    if (
+                        reason === 'createOption' ||
+                        reason === 'selectOption'
+                    ) {
+                        options.push({
+                            label: newVal,
+                            val: Number(newVal),
+                        });
+                    }
+
+                    if (
+                        !freeSolo ||
+                        (freeSolo && newVal && !DigitRegEx.test(newVal))
+                    ) {
+                        updateDraftedSetting(newVal).catch(() => {
+                            setInputValue(selection?.label ?? '');
+                        });
+                    }
                 }}
                 onInputChange={(event, newInputValue) => {
                     // Set the input value component state only when an option is clicked

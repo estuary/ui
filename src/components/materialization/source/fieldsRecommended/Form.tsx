@@ -1,6 +1,6 @@
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useIntl } from 'react-intl';
 
@@ -19,11 +19,26 @@ const FieldsRecommendedForm = ({
     // If we are editing make sure we store the current value into the store "on load"
     const defaultValue = useRef(workflow === 'materialization_edit');
 
+    const baseOptions: { label: string; val: boolean | number | string }[] = [
+        { label: '0', val: 0 },
+        { label: '1', val: 1 },
+        { label: '2', val: 2 },
+        {
+            label: intl.formatMessage({ id: 'common.unlimited' }),
+            val: true,
+        },
+    ];
+
     const [setDeltaUpdatesHasError, setFieldsRecommended] =
         useSourceCaptureStore((state) => [
             state.setDeltaUpdatesHasError,
             state.setFieldsRecommended,
         ]);
+
+    const [autoCompleteOptions, _setAutoCompleteOptions] =
+        useState<{ label: string; val: boolean | number | string }[]>(
+            baseOptions
+        );
 
     useEffect(() => {
         if (defaultValue.current) {
@@ -35,16 +50,56 @@ const FieldsRecommendedForm = ({
         }
     }, [currentSetting, setFieldsRecommended]);
 
-    const autoCompleteOptions = [
-        { label: '0', val: 0 },
-        { label: '1', val: 1 },
-        { label: '2', val: 2 },
-        { label: intl.formatMessage({ id: 'common.unlimited' }), val: true },
-    ];
+    // const autoCompleteOptions = useMemo(() => {
+    //     const options = [
+    //         { label: '0', val: 0 },
+    //         { label: '1', val: 1 },
+    //         { label: '2', val: 2 },
+    //         {
+    //             label: intl.formatMessage({ id: 'common.unlimited' }),
+    //             val: true,
+    //         },
+    //     ];
+
+    //     if (isNumber(currentSetting)) {
+    //         options.push({
+    //             label: currentSetting.toString(),
+    //             val: currentSetting,
+    //         });
+    //     }
+
+    //     return options;
+    // }, [currentSetting, intl]);
 
     return (
         <SpecPropAutoComplete
             currentSetting={currentSetting}
+            filterOptions={(options, inputValue) => {
+                const filteredOptions = options.filter(
+                    (option) =>
+                        option.label.startsWith(inputValue) ||
+                        option.label.toLowerCase().startsWith(inputValue)
+                );
+
+                // if (filteredOptions.length === 0) {
+                //     setAutoCompleteOptions([
+                //         ...baseOptions,
+                //         {
+                //             label: `${inputValue}`,
+                //             val: inputValue,
+                //         },
+                //     ]);
+                // }
+
+                return filteredOptions.length === 0
+                    ? [
+                          {
+                              label: `${inputValue}`,
+                              val: inputValue,
+                          },
+                      ]
+                    : filteredOptions;
+            }}
             freeSolo
             inputLabelId="fieldsRecommended.input.label"
             isOptionEqualToValue={(option, targetOption) => {

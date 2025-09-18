@@ -33,6 +33,7 @@ export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
         props: React.HTMLAttributes<HTMLLIElement> & { key: any },
         option: any
     ) => React.ReactNode;
+    filterOptions?: (options: any[], inputValue: string) => any[];
     isOptionEqualToValue?: (option: any, optionValue: any) => boolean;
     sx?: SxProps<Theme>;
 }
