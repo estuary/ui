@@ -9,7 +9,7 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 
 import { startCase } from 'lodash';
 import GoogleButton from 'react-google-button';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
@@ -207,10 +207,10 @@ const OAuthproviderRenderer = ({
 
             <Stack direction="column" spacing={2}>
                 <Typography>
-                    <FormattedMessage
-                        id="oauth.instructions"
-                        values={{ provider }}
-                    />
+                    {intl.formatMessage(
+                        { id: 'oauth.instructions' },
+                        { provider }
+                    )}
                 </Typography>
 
                 {isEdit ? (
@@ -220,7 +220,7 @@ const OAuthproviderRenderer = ({
                             maxWidth: '50%',
                         }}
                     >
-                        <FormattedMessage id="oauth.edit.message" />
+                        {intl.formatMessage({ id: 'oauth.edit.message' })}
                     </Alert>
                 ) : null}
 
@@ -252,27 +252,27 @@ const OAuthproviderRenderer = ({
                             disabled={!enabled || loading}
                             onClick={openPopUp}
                         >
-                            <FormattedMessage
-                                id="oauth.authenticate"
-                                values={{ provider }}
-                            />
+                            {intl.formatMessage(
+                                { id: 'oauth.authenticate' },
+                                { provider }
+                            )}
                         </Button>
                     )}
 
                     {showAuthenticated ? (
                         <Chip
                             disabled={!enabled || loading}
-                            label={
-                                <FormattedMessage id="oauth.authenticated" />
-                            }
+                            label={intl.formatMessage({
+                                id: 'oauth.authenticated',
+                            })}
                             color="success"
                             onDelete={setConfigToDefault}
                         />
                     ) : (
                         <Chip
-                            label={
-                                <FormattedMessage id="oauth.unauthenticated" />
-                            }
+                            label={intl.formatMessage({
+                                id: 'oauth.unauthenticated',
+                            })}
                             color="warning"
                         />
                     )}
