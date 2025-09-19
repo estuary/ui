@@ -51,7 +51,7 @@ const getInitialState = (
     setFieldsRecommendedErrorExists: (value: SourceCaptureState['error']) => {
         set(
             produce((state: SourceCaptureState) => {
-                state.deltaUpdatesHasError = value;
+                state.fieldsRecommendedErrorExists = value;
             }),
             false,
             'setFieldsRecommendedErrorExists'
