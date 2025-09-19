@@ -6,6 +6,14 @@ import { styled } from '@mui/material/styles';
 
 import ListboxComponent from 'src/components/shared/AutoComplete/VirtualizedList';
 
+export type BaseAutocompleteProps<T = any> = AutocompleteProps<
+    T,
+    false,
+    false,
+    boolean | undefined,
+    'div'
+>;
+
 const PopperComponent = styled(Popper)({
     [`& .${autocompleteClasses.listbox}`]: {
         'boxSizing': 'border-box',
@@ -16,13 +24,7 @@ const PopperComponent = styled(Popper)({
     },
 }) as any;
 
-const autoCompleteDefaults: AutocompleteProps<
-    any,
-    any,
-    false,
-    boolean | undefined,
-    'div'
-> = {
+const autoCompleteDefaults: BaseAutocompleteProps = {
     // MUST provide
     options: [],
     renderInput: () => null,
@@ -83,10 +85,6 @@ export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
     blurOnSelect: false,
 };
 
-export const getTypedAutoCompleteDefaults = <T = any,>(): AutocompleteProps<
-    T,
-    false,
-    false,
-    boolean | undefined,
-    'div'
-> => autoCompleteDefaults;
+export const getTypedAutoCompleteDefaults = <
+    T = any,
+>(): BaseAutocompleteProps<T> => autoCompleteDefaults;

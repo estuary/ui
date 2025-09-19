@@ -10,8 +10,7 @@ import { autoCompleteDefaultProps } from 'src/components/incompatibleSchemaChang
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import { stringifyJSON } from 'src/services/stringify';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-
-const DigitRegEx = new RegExp(/\d/);
+import { NUMERIC_RE } from 'src/validation';
 
 export default function SpecPropAutoComplete({
     currentSetting,
@@ -39,6 +38,8 @@ export default function SpecPropAutoComplete({
             return null;
         }
 
+        console.log('>>> options', options);
+
         // Use the custom matcher if it was provided - otherwise just do a simple compare
         return (
             options.find((option) =>
@@ -65,8 +66,10 @@ export default function SpecPropAutoComplete({
             return;
         }
 
-        if (freeSolo && selection && !DigitRegEx.test(selection)) {
+        if (freeSolo && !NUMERIC_RE.test(selection?.val)) {
+            setInputValue('');
             setInvalidSetting(true);
+            return;
         }
 
         setInputValue(selection.label);
@@ -96,7 +99,18 @@ export default function SpecPropAutoComplete({
                         : undefined
                 }
                 freeSolo={freeSolo}
-                getOptionLabel={(option) => option.label}
+                getOptionLabel={(option) => {
+                    // Value selected with enter, right from the input
+                    if (typeof option === 'string') {
+                        return option;
+                    }
+                    // Add "xxx" option created dynamically
+                    if (option.inputValue) {
+                        return option.inputValue;
+                    }
+                    // Regular option
+                    return option.label;
+                }}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
                     // We force an undefined some times when we need to clear out the option
@@ -122,18 +136,8 @@ export default function SpecPropAutoComplete({
                     console.log('>>> reason', reason);
 
                     if (
-                        reason === 'createOption' ||
-                        reason === 'selectOption'
-                    ) {
-                        options.push({
-                            label: newVal,
-                            val: Number(newVal),
-                        });
-                    }
-
-                    if (
                         !freeSolo ||
-                        (freeSolo && newVal && !DigitRegEx.test(newVal))
+                        (freeSolo && newVal && NUMERIC_RE.test(newVal))
                     ) {
                         updateDraftedSetting(newVal).catch(() => {
                             setInputValue(selection?.label ?? '');

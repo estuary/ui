@@ -12,6 +12,7 @@ const getInitialStateData = (): Pick<
     SourceCaptureState,
     | 'error'
     | 'fieldsRecommended'
+    | 'fieldsRecommendedErrorExists'
     | 'sourceCapture'
     | 'saving'
     | 'prefilledCapture'
@@ -22,6 +23,7 @@ const getInitialStateData = (): Pick<
 > => ({
     error: null,
     fieldsRecommended: undefined,
+    fieldsRecommendedErrorExists: false,
     sourceCapture: undefined,
     saving: false,
     prefilledCapture: undefined,
@@ -43,6 +45,16 @@ const getInitialState = (
             }),
             false,
             'Fields Recommended Set'
+        );
+    },
+
+    setFieldsRecommendedErrorExists: (value: SourceCaptureState['error']) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.deltaUpdatesHasError = value;
+            }),
+            false,
+            'setFieldsRecommendedErrorExists'
         );
     },
 

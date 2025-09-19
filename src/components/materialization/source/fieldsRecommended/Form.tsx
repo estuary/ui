@@ -1,12 +1,13 @@
 import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useIntl } from 'react-intl';
 
 import SpecPropAutoComplete from 'src/components/shared/specPropEditor/SpecPropAutoComplete';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { toBoolean, toNumber } from 'src/utils/misc-utils';
 
 const FieldsRecommendedForm = ({
     currentSetting,
@@ -19,23 +20,27 @@ const FieldsRecommendedForm = ({
     // If we are editing make sure we store the current value into the store "on load"
     const defaultValue = useRef(workflow === 'materialization_edit');
 
-    const baseOptions: { label: string; val: boolean | number | string }[] = [
-        { label: '0', val: 0 },
-        { label: '1', val: 1 },
-        { label: '2', val: 2 },
-        {
-            label: intl.formatMessage({ id: 'common.unlimited' }),
-            val: true,
-        },
-    ];
+    const baseOptions: { label: string; val: boolean | number | string }[] =
+        useMemo(
+            () => [
+                { label: '0', val: 0 },
+                { label: '1', val: 1 },
+                { label: '2', val: 2 },
+                {
+                    label: intl.formatMessage({ id: 'common.unlimited' }),
+                    val: true,
+                },
+            ],
+            [intl]
+        );
 
-    const [setDeltaUpdatesHasError, setFieldsRecommended] =
+    const [setFieldsRecommendedErrorExists, setFieldsRecommended] =
         useSourceCaptureStore((state) => [
-            state.setDeltaUpdatesHasError,
+            state.setFieldsRecommendedErrorExists,
             state.setFieldsRecommended,
         ]);
 
-    const [autoCompleteOptions, _setAutoCompleteOptions] =
+    const [autoCompleteOptions, setAutoCompleteOptions] =
         useState<{ label: string; val: boolean | number | string }[]>(
             baseOptions
         );
@@ -45,60 +50,62 @@ const FieldsRecommendedForm = ({
             if (currentSetting) {
                 setFieldsRecommended(currentSetting);
 
+                if (
+                    baseOptions.every((option) => option.val !== currentSetting)
+                ) {
+                    setAutoCompleteOptions([
+                        ...baseOptions,
+                        {
+                            label: currentSetting.toString(),
+                            val: currentSetting,
+                        },
+                    ]);
+                }
+
                 defaultValue.current = false;
             }
         }
-    }, [currentSetting, setFieldsRecommended]);
-
-    // const autoCompleteOptions = useMemo(() => {
-    //     const options = [
-    //         { label: '0', val: 0 },
-    //         { label: '1', val: 1 },
-    //         { label: '2', val: 2 },
-    //         {
-    //             label: intl.formatMessage({ id: 'common.unlimited' }),
-    //             val: true,
-    //         },
-    //     ];
-
-    //     if (isNumber(currentSetting)) {
-    //         options.push({
-    //             label: currentSetting.toString(),
-    //             val: currentSetting,
-    //         });
-    //     }
-
-    //     return options;
-    // }, [currentSetting, intl]);
+    }, [
+        baseOptions,
+        currentSetting,
+        setAutoCompleteOptions,
+        setFieldsRecommended,
+    ]);
 
     return (
         <SpecPropAutoComplete
             currentSetting={currentSetting}
             filterOptions={(options, inputValue) => {
-                const filteredOptions = options.filter(
+                const filteredBaseOptions: {
+                    label: string;
+                    val: boolean | number | string;
+                }[] = baseOptions.filter(
                     (option) =>
                         option.label.startsWith(inputValue) ||
                         option.label.toLowerCase().startsWith(inputValue)
                 );
 
-                // if (filteredOptions.length === 0) {
-                //     setAutoCompleteOptions([
-                //         ...baseOptions,
-                //         {
-                //             label: `${inputValue}`,
-                //             val: inputValue,
-                //         },
-                //     ]);
-                // }
-
-                return filteredOptions.length === 0
-                    ? [
-                          {
+                const newOption:
+                    | {
+                          label: string;
+                          val: boolean | number | string;
+                      }
+                    | undefined =
+                    filteredBaseOptions.length === 0
+                        ? {
                               label: `${inputValue}`,
-                              val: inputValue,
-                          },
-                      ]
-                    : filteredOptions;
+                              val:
+                                  toNumber(inputValue) ??
+                                  toBoolean(inputValue) ??
+                                  inputValue,
+                          }
+                        : undefined;
+
+                if (newOption) {
+                    options.push(newOption);
+                }
+
+                return newOption ? [newOption] : filteredBaseOptions;
             }}
             freeSolo
             inputLabelId="fieldsRecommended.input.label"
@@ -117,17 +124,15 @@ const FieldsRecommendedForm = ({
             options={autoCompleteOptions}
             renderOption={(
                 renderOptionProps,
-                option: { label: string; val: number | boolean }
+                option: { label: string; val: number | boolean | string }
             ) => {
                 return <li {...renderOptionProps}>{option.label}</li>;
             }}
             scope={scope}
             setErrorExists={(errorExists) => {
-                setDeltaUpdatesHasError(errorExists);
+                setFieldsRecommendedErrorExists(errorExists);
             }}
-            sx={{
-                maxWidth: 700,
-            }}
+            sx={{ maxWidth: 700 }}
             updateDraftedSetting={updateDraftedSetting}
         />
     );

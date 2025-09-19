@@ -29,6 +29,10 @@ export interface SourceCaptureState {
     setFieldsRecommended: (
         value: SourceCaptureState['fieldsRecommended']
     ) => void;
+    fieldsRecommendedErrorExists: boolean;
+    setFieldsRecommendedErrorExists: (
+        value: SourceCaptureState['deltaUpdatesHasError']
+    ) => void;
 
     saving: boolean;
     setSaving: (value: SourceCaptureState['saving']) => void;

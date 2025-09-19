@@ -13,6 +13,7 @@ import { createSearchParams } from 'react-router-dom';
 import { derefSchema } from 'src/services/jsonforms';
 import { logRocketConsole } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { NUMERIC_RE } from 'src/validation';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -260,3 +261,41 @@ export const isGrant_UserExt = (
 export const isPromiseFulfilledResult = <T>(
     value: PromiseSettledResult<T>
 ): value is PromiseFulfilledResult<T> => value.status === 'fulfilled';
+
+export const toBoolean = (
+    value: null | string | undefined
+): boolean | undefined => {
+    if (value === 'true') {
+        return true;
+    }
+
+    if (value === 'false') {
+        return false;
+    }
+
+    return undefined;
+};
+
+export const toNumber = (
+    value: boolean | number | null | string | undefined
+): number | undefined => {
+    if (!value) {
+        return undefined;
+    }
+
+    if (typeof value === 'number') {
+        return value;
+    }
+
+    if (typeof value === 'boolean') {
+        return value ? undefined : 0;
+    }
+
+    if (!NUMERIC_RE.test(value)) {
+        return undefined;
+    }
+
+    const transformedValue = Number(value);
+
+    return isFinite(transformedValue) ? transformedValue : undefined;
+};

@@ -8,6 +8,7 @@ import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { toBoolean, toNumber } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 const FieldsRecommendedUpdateWrapper = () => {
@@ -28,14 +29,19 @@ const FieldsRecommendedUpdateWrapper = () => {
     >('fieldsRecommended');
 
     const updateServer = useCallback(
-        async (option?: { label: string; val: number | boolean | string }) => {
+        async (
+            option?: string | { label: string; val: number | boolean | string }
+        ) => {
             setSaving(true);
             setFormState({ status: FormStatus.UPDATING, error: null });
 
+            const optionValue =
+                typeof option === 'string' ? option : option?.val;
+
             const formattedValue: number | boolean | undefined =
-                typeof option?.val === 'string'
-                    ? Number(option.val)
-                    : option?.val;
+                typeof optionValue === 'string'
+                    ? (toNumber(optionValue) ?? toBoolean(optionValue))
+                    : optionValue;
 
             console.log('>>> formattedValue', formattedValue);
 
