@@ -10,6 +10,7 @@ import { autoCompleteDefaultProps } from 'src/components/incompatibleSchemaChang
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import { stringifyJSON } from 'src/services/stringify';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { hasLength } from 'src/utils/misc-utils';
 import { NUMERIC_RE } from 'src/validation';
 
 export default function SpecPropAutoComplete({
@@ -53,7 +54,10 @@ export default function SpecPropAutoComplete({
 
     useEffect(() => {
         // No setting at all so we're good
-        if (typeof currentSetting === 'undefined') {
+        if (
+            typeof currentSetting === 'undefined' ||
+            !hasLength(currentSetting)
+        ) {
             setInputValue('');
             setInvalidSetting(false);
             return;
