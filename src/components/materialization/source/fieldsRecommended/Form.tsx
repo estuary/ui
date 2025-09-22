@@ -8,6 +8,7 @@ import SpecPropAutoComplete from 'src/components/shared/specPropEditor/SpecPropA
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { toBoolean, toNumber } from 'src/utils/misc-utils';
+import { NUMERIC_RE } from 'src/validation';
 
 const FieldsRecommendedForm = ({
     currentSetting,
@@ -140,6 +141,13 @@ const FieldsRecommendedForm = ({
 
                 return option.val === targetValue;
             }}
+            isSelectionInvalid={(value) =>
+                typeof value === 'string'
+                    ? !NUMERIC_RE.test(value)
+                    : typeof value !== 'boolean' &&
+                      typeof value !== 'number' &&
+                      typeof value !== 'undefined'
+            }
             options={autoCompleteOptions}
             renderOption={(
                 renderOptionProps,

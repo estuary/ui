@@ -37,6 +37,9 @@ export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
     freeSolo?: boolean;
     handleChange?: BaseAutocompleteProps['onChange'];
     isOptionEqualToValue?: (option: any, optionValue: any) => boolean;
+    isSelectionInvalid?: (
+        value?: boolean | number | string | undefined
+    ) => boolean;
     sx?: SxProps<Theme>;
 }
 

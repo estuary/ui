@@ -11,7 +11,6 @@ import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPro
 import { stringifyJSON } from 'src/services/stringify';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { hasLength } from 'src/utils/misc-utils';
-import { NUMERIC_RE } from 'src/validation';
 
 export default function SpecPropAutoComplete({
     currentSetting,
@@ -21,6 +20,7 @@ export default function SpecPropAutoComplete({
     inputLabelId,
     invalidSettingsMessageId = 'specPropUpdater.error.message',
     isOptionEqualToValue,
+    isSelectionInvalid,
     options,
     renderOption,
     scope,
@@ -54,7 +54,9 @@ export default function SpecPropAutoComplete({
         // No setting at all so we're good
         if (
             typeof currentSetting === 'undefined' ||
-            !hasLength(currentSetting)
+            (!freeSolo &&
+                typeof currentSetting === 'string' &&
+                !hasLength(currentSetting))
         ) {
             setInputValue('');
             setInvalidSetting(false);
@@ -64,17 +66,6 @@ export default function SpecPropAutoComplete({
         // We have a setting but could not find a matching option
         //  Set a flag to show an error and empty out the input
         if (!selection) {
-            setInputValue('');
-            setInvalidSetting(true);
-            return;
-        }
-
-        if (
-            freeSolo &&
-            !NUMERIC_RE.test(selection?.val) &&
-            selection?.val !== true &&
-            selection?.val !== false
-        ) {
             setInputValue('');
             setInvalidSetting(true);
             return;
@@ -90,7 +81,7 @@ export default function SpecPropAutoComplete({
 
     return (
         <Stack spacing={1}>
-            {invalidSetting ? (
+            {invalidSetting && !inputValue ? (
                 <SpecPropInvalidSetting
                     currentSetting={currentSetting}
                     invalidSettingsMessageId={invalidSettingsMessageId}
@@ -140,15 +131,46 @@ export default function SpecPropAutoComplete({
                         handleChange(event, newVal, reason);
                     }
 
-                    updateDraftedSetting(newVal).catch(() => {
-                        setInputValue(selection?.label ?? '');
-                    });
+                    let isInvalid: boolean = false;
+
+                    if (
+                        freeSolo &&
+                        (reason === 'createOption' || reason === 'selectOption')
+                    ) {
+                        const targetValue:
+                            | boolean
+                            | number
+                            | string
+                            | undefined =
+                            typeof newVal === 'string' ? newVal : newVal?.val;
+
+                        isInvalid = Boolean(isSelectionInvalid?.(targetValue));
+
+                        setInvalidSetting(isInvalid);
+                    }
+
+                    if (!isInvalid) {
+                        updateDraftedSetting(newVal).catch(() => {
+                            setInputValue(selection?.label ?? '');
+                        });
+                    }
                 }}
-                onInputChange={(event, newInputValue) => {
+                onInputChange={(event, newInputValue, reason) => {
                     // Set the input value component state only when an option is clicked
                     // to avoid clashing with the effect which also updates this state.
                     if (Boolean(event)) {
                         setInputValue(newInputValue);
+                    }
+
+                    if (
+                        freeSolo &&
+                        isSelectionInvalid &&
+                        (reason === 'clear' ||
+                            reason === 'reset' ||
+                            newInputValue.length === 0)
+                    ) {
+                        setInvalidSetting(false);
+                        return;
                     }
                 }}
                 options={options}
@@ -166,12 +188,14 @@ export default function SpecPropAutoComplete({
                                           },
                                           {
                                               currentSetting:
-                                                  typeof currentSetting ===
-                                                  'string'
-                                                      ? currentSetting
-                                                      : stringifyJSON(
-                                                            currentSetting
-                                                        ),
+                                                  inputValue.length > 0
+                                                      ? inputValue
+                                                      : typeof currentSetting ===
+                                                          'string'
+                                                        ? currentSetting
+                                                        : stringifyJSON(
+                                                              currentSetting
+                                                          ),
                                           }
                                       )
                                     : undefined
