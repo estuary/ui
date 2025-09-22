@@ -31,8 +31,6 @@ function SourceConfiguration() {
             </Typography>
 
             <Stack spacing={3}>
-                <FieldsRecommendedUpdateWrapper />
-
                 {sourceCaptureDeltaUpdatesSupported ? (
                     <DeltaUpdatesUpdateWrapper />
                 ) : null}
@@ -48,6 +46,8 @@ function SourceConfiguration() {
                         <TargetSchemaUpdateWrapper />
                     </Stack>
                 ) : null}
+
+                <FieldsRecommendedUpdateWrapper />
             </Stack>
         </Stack>
     );
