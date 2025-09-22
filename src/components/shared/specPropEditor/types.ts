@@ -8,7 +8,6 @@ export interface BaseFormProps {
     currentSetting: any;
     scope: FormScope;
     updateDraftedSetting: (selectedOption?: any) => Promise<any>;
-    freeSolo?: boolean;
 }
 
 export interface BaseAutoCompleteOption<T = any> {
@@ -35,8 +34,9 @@ export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
         option: any
     ) => React.ReactNode;
     filterOptions?: BaseAutocompleteProps['filterOptions'];
+    freeSolo?: boolean;
+    handleChange?: BaseAutocompleteProps['onChange'];
     isOptionEqualToValue?: (option: any, optionValue: any) => boolean;
-    onChange?: BaseAutocompleteProps['onChange'];
     sx?: SxProps<Theme>;
 }
 

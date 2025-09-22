@@ -16,10 +16,10 @@ export default function SpecPropAutoComplete({
     currentSetting,
     filterOptions,
     freeSolo,
+    handleChange,
     inputLabelId,
     invalidSettingsMessageId = 'specPropUpdater.error.message',
     isOptionEqualToValue,
-    onChange,
     options,
     renderOption,
     scope,
@@ -134,8 +134,8 @@ export default function SpecPropAutoComplete({
                     );
                 }}
                 onChange={(event, newVal, reason) => {
-                    if (onChange) {
-                        onChange(event, newVal, reason);
+                    if (handleChange) {
+                        handleChange(event, newVal, reason);
                     }
 
                     updateDraftedSetting(newVal).catch(() => {

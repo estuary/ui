@@ -103,20 +103,7 @@ const FieldsRecommendedForm = ({
                 return newOption ? [newOption] : filteredBaseOptions;
             }}
             freeSolo
-            inputLabelId="fieldsRecommended.input.label"
-            isOptionEqualToValue={(option, targetOption) => {
-                const targetValue =
-                    typeof targetOption.val === 'object'
-                        ? targetOption.val.val
-                        : targetOption.val;
-
-                if (option.val === 0 && targetValue === false) {
-                    return true;
-                }
-
-                return option.val === targetValue;
-            }}
-            onChange={(_event, value, reason) => {
+            handleChange={(_event, value, reason) => {
                 console.log('>>> value', value);
                 console.log('>>> reason', reason);
 
@@ -142,6 +129,19 @@ const FieldsRecommendedForm = ({
 
                     setAutoCompleteOptions([...autoCompleteOptions, newOption]);
                 }
+            }}
+            inputLabelId="fieldsRecommended.input.label"
+            isOptionEqualToValue={(option, targetOption) => {
+                const targetValue =
+                    typeof targetOption.val === 'object'
+                        ? targetOption.val.val
+                        : targetOption.val;
+
+                if (option.val === 0 && targetValue === false) {
+                    return true;
+                }
+
+                return option.val === targetValue;
             }}
             options={autoCompleteOptions}
             renderOption={(

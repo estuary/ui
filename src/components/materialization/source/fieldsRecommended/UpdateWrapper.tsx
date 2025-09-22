@@ -43,8 +43,6 @@ const FieldsRecommendedUpdateWrapper = () => {
                     ? (toNumber(optionValue) ?? toBoolean(optionValue))
                     : optionValue;
 
-            console.log('>>> formattedValue', formattedValue);
-
             updateSourceSetting(formattedValue)
                 .then(() => {
                     setFieldsRecommended(formattedValue);
