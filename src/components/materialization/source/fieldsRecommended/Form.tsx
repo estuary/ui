@@ -104,9 +104,6 @@ const FieldsRecommendedForm = ({
             }}
             freeSolo
             handleChange={(_event, value, reason) => {
-                console.log('>>> value', value);
-                console.log('>>> reason', reason);
-
                 const valueLabel: string | undefined =
                     typeof value === 'string' ? value : value?.label;
 

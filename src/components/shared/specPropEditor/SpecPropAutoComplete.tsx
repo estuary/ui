@@ -40,8 +40,6 @@ export default function SpecPropAutoComplete({
             return null;
         }
 
-        console.log('>>> options', options);
-
         // Use the custom matcher if it was provided - otherwise just do a simple compare
         return (
             options.find((option) =>
