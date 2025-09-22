@@ -1,5 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { ReactNode } from 'react';
+import type { BaseAutocompleteProps } from 'src/components/shared/AutoComplete/DefaultProps';
 
 type FormScope = 'binding' | 'spec';
 
@@ -33,8 +34,9 @@ export interface SpecPropAutoCompleteProps extends SpecPropInputProps {
         props: React.HTMLAttributes<HTMLLIElement> & { key: any },
         option: any
     ) => React.ReactNode;
-    filterOptions?: (options: any[], inputValue: string) => any[];
+    filterOptions?: BaseAutocompleteProps['filterOptions'];
     isOptionEqualToValue?: (option: any, optionValue: any) => boolean;
+    onChange?: BaseAutocompleteProps['onChange'];
     sx?: SxProps<Theme>;
 }
 

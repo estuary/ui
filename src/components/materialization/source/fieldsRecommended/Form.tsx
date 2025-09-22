@@ -75,7 +75,9 @@ const FieldsRecommendedForm = ({
     return (
         <SpecPropAutoComplete
             currentSetting={currentSetting}
-            filterOptions={(options, inputValue) => {
+            filterOptions={(_options, params) => {
+                const { inputValue } = params;
+
                 const filteredBaseOptions: {
                     label: string;
                     val: boolean | number | string;
@@ -86,10 +88,7 @@ const FieldsRecommendedForm = ({
                 );
 
                 const newOption:
-                    | {
-                          label: string;
-                          val: boolean | number | string;
-                      }
+                    | { label: string; val: boolean | number | string }
                     | undefined =
                     filteredBaseOptions.length === 0
                         ? {
@@ -100,10 +99,6 @@ const FieldsRecommendedForm = ({
                                   inputValue,
                           }
                         : undefined;
-
-                if (newOption) {
-                    options.push(newOption);
-                }
 
                 return newOption ? [newOption] : filteredBaseOptions;
             }}
@@ -120,6 +115,33 @@ const FieldsRecommendedForm = ({
                 }
 
                 return option.val === targetValue;
+            }}
+            onChange={(_event, value, reason) => {
+                console.log('>>> value', value);
+                console.log('>>> reason', reason);
+
+                const valueLabel: string | undefined =
+                    typeof value === 'string' ? value : value?.label;
+
+                if (
+                    (reason === 'createOption' || reason === 'selectOption') &&
+                    !autoCompleteOptions.some((option) =>
+                        valueLabel ? option.label === valueLabel : false
+                    )
+                ) {
+                    const newOption =
+                        typeof value === 'string'
+                            ? {
+                                  label: `${value}`,
+                                  val:
+                                      toNumber(value) ??
+                                      toBoolean(value) ??
+                                      value,
+                              }
+                            : value;
+
+                    setAutoCompleteOptions([...autoCompleteOptions, newOption]);
+                }
             }}
             options={autoCompleteOptions}
             renderOption={(

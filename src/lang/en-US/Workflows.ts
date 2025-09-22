@@ -291,6 +291,7 @@ export const Workflows: Record<string, string> = {
 
     // Fields Recommended
     'fieldsRecommended.input.label': `Default Materialized Field Depth`,
+    'fieldsRecommended.option.label.custom': `Custom`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,

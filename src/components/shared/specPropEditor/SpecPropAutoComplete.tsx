@@ -19,6 +19,7 @@ export default function SpecPropAutoComplete({
     inputLabelId,
     invalidSettingsMessageId = 'specPropUpdater.error.message',
     isOptionEqualToValue,
+    onChange,
     options,
     renderOption,
     scope,
@@ -34,7 +35,7 @@ export default function SpecPropAutoComplete({
     const formActive = useFormStateStore_isActive();
 
     const selection = useMemo(() => {
-        if (!currentSetting) {
+        if (typeof currentSetting === 'undefined') {
             return null;
         }
 
@@ -52,7 +53,7 @@ export default function SpecPropAutoComplete({
 
     useEffect(() => {
         // No setting at all so we're good
-        if (!currentSetting) {
+        if (typeof currentSetting === 'undefined') {
             setInputValue('');
             setInvalidSetting(false);
             return;
@@ -66,7 +67,12 @@ export default function SpecPropAutoComplete({
             return;
         }
 
-        if (freeSolo && !NUMERIC_RE.test(selection?.val)) {
+        if (
+            freeSolo &&
+            !NUMERIC_RE.test(selection?.val) &&
+            selection?.val !== true &&
+            selection?.val !== false
+        ) {
             setInputValue('');
             setInvalidSetting(true);
             return;
@@ -93,11 +99,7 @@ export default function SpecPropAutoComplete({
             <Autocomplete
                 {...autoCompleteDefaultProps}
                 disabled={formActive}
-                filterOptions={
-                    filterOptions
-                        ? (options) => filterOptions(options, inputValue)
-                        : undefined
-                }
+                filterOptions={filterOptions ? filterOptions : undefined}
                 freeSolo={freeSolo}
                 getOptionLabel={(option) => {
                     // Value selected with enter, right from the input
@@ -131,18 +133,14 @@ export default function SpecPropAutoComplete({
                             : optionValue.val)
                     );
                 }}
-                onChange={(_event, newVal, reason) => {
-                    console.log('>>> value', newVal);
-                    console.log('>>> reason', reason);
-
-                    if (
-                        !freeSolo ||
-                        (freeSolo && newVal && NUMERIC_RE.test(newVal))
-                    ) {
-                        updateDraftedSetting(newVal).catch(() => {
-                            setInputValue(selection?.label ?? '');
-                        });
+                onChange={(event, newVal, reason) => {
+                    if (onChange) {
+                        onChange(event, newVal, reason);
                     }
+
+                    updateDraftedSetting(newVal).catch(() => {
+                        setInputValue(selection?.label ?? '');
+                    });
                 }}
                 onInputChange={(event, newInputValue) => {
                     // Set the input value component state only when an option is clicked
