@@ -274,7 +274,7 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
     // Source Settings
-    'workflows.sourceCapture.optionalSettings.header': `Collection Settings`,
+    'workflows.sourceCapture.optionalSettings.header': `Default Collection Settings`,
     'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Enable delta updates on newly added collections`,
     'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
@@ -284,13 +284,13 @@ export const Workflows: Record<string, string> = {
 
     // Schema Mode
     'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the non-default second-to-last part of the collection name.`,
-    'schemaMode.input.label': `Target Resource Naming Convention`,
+    'schemaMode.input.label': `Default Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
     'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
 
     // Fields Recommended
-    'fieldsRecommended.input.label': `Default Materialized Field Depth`,
+    'fieldsRecommended.input.label': `Default Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,

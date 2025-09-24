@@ -36,15 +36,7 @@ function SourceConfiguration() {
                 ) : null}
 
                 {sourceCaptureTargetSchemaSupported ? (
-                    <Stack>
-                        <Typography sx={{ mb: 2 }}>
-                            {intl.formatMessage({
-                                id: 'schemaMode.message',
-                            })}
-                        </Typography>
-
-                        <TargetSchemaUpdateWrapper />
-                    </Stack>
+                    <TargetSchemaUpdateWrapper />
                 ) : null}
 
                 <FieldsRecommendedUpdateWrapper />
