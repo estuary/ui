@@ -40,7 +40,10 @@ export default function MenuActions({
             </Button>
 
             <SaveButton
-                close={close}
+                close={() => {
+                    close();
+                    setSelectionAlgorithm(null);
+                }}
                 handleClick={handleClick}
                 disabled={disabled}
                 selectedAlgorithm={selectionAlgorithm}
