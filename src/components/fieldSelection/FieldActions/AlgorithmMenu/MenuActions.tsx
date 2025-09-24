@@ -8,15 +8,17 @@ import SaveButton from 'src/components/fieldSelection/FieldActions/AlgorithmMenu
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function MenuActions({
-    bindingUUID,
-    closeMenu,
+    close,
+    handleClick,
     loading,
-    selections,
 }: MenuActionProps) {
     const intl = useIntl();
 
     const selectionAlgorithm = useBindingStore(
         (state) => state.selectionAlgorithm
+    );
+    const setSelectionAlgorithm = useBindingStore(
+        (state) => state.setSelectionAlgorithm
     );
 
     return (
@@ -29,7 +31,8 @@ export default function MenuActions({
                 component={Box}
                 disabled={loading}
                 onClick={() => {
-                    closeMenu();
+                    close();
+                    setSelectionAlgorithm(null);
                 }}
                 variant="text"
             >
@@ -37,10 +40,9 @@ export default function MenuActions({
             </Button>
 
             <SaveButton
-                bindingUUID={bindingUUID}
-                close={closeMenu}
+                close={close}
+                handleClick={handleClick}
                 loading={loading}
-                selections={selections}
                 selectedAlgorithm={selectionAlgorithm}
             />
         </Stack>

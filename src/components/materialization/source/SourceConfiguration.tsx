@@ -3,6 +3,7 @@ import { Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import DeltaUpdatesUpdateWrapper from 'src/components/materialization/source/deltaUpdates/UpdateWrapper';
+import FieldsRecommendedUpdateWrapper from 'src/components/materialization/source/fieldsRecommended/UpdateWrapper';
 import TargetSchemaUpdateWrapper from 'src/components/materialization/source/targetSchema/UpdateWrapper';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 
@@ -45,6 +46,8 @@ function SourceConfiguration() {
                         <TargetSchemaUpdateWrapper />
                     </Stack>
                 ) : null}
+
+                <FieldsRecommendedUpdateWrapper />
             </Stack>
         </Stack>
     );

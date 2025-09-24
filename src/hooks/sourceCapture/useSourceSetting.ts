@@ -8,7 +8,11 @@ import {
 } from 'src/utils/entity-utils';
 
 export default function useSourceSetting<T = any>(
-    settingKey: 'targetNaming' | 'deltaUpdates' | 'capture'
+    settingKey:
+        | 'capture'
+        | 'deltaUpdates'
+        | 'fieldsRecommended'
+        | 'targetNaming'
 ) {
     const draftUpdater = useDraftUpdater();
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();

@@ -47,6 +47,12 @@ export default function FieldSelectionTable({
     const selectionsRefreshing = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.status === 'RESET_REQUESTED'
     );
+    const advanceHydrationStatus = useBindingStore(
+        (state) => state.advanceHydrationStatus
+    );
+    const setRecommendFields = useBindingStore(
+        (state) => state.setRecommendFields
+    );
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -148,9 +154,11 @@ export default function FieldSelectionTable({
                 }}
             >
                 <AlgorithmMenu
-                    bindingUUID={bindingUUID}
+                    handleClick={(recommended) => {
+                        setRecommendFields(bindingUUID, recommended);
+                        advanceHydrationStatus('HYDRATED', bindingUUID);
+                    }}
                     loading={loading}
-                    selections={selections}
                 />
 
                 <Stack

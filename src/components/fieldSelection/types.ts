@@ -5,17 +5,25 @@ import type {
 
 export type FieldSelectionType = 'default' | 'require' | 'exclude';
 
-export interface BaseProps {
+export interface AlgorithmMenuProps extends BaseMenuProps {
+    targetFieldsRecommended?: boolean;
+}
+
+interface BaseMenuProps {
+    handleClick: (recommended: boolean | number) => void;
+    loading: boolean;
+}
+
+export interface ExcludeAllButtonProps {
     bindingUUID: string;
     loading: boolean;
     selections: FieldSelection[] | null | undefined;
 }
 
-export interface MenuActionProps extends BaseProps {
-    closeMenu: () => void;
+export interface MenuActionProps extends BaseMenuProps {
+    close: () => void;
 }
 
-export interface SaveButtonProps extends BaseProps {
-    close: () => void;
+export interface SaveButtonProps extends MenuActionProps {
     selectedAlgorithm: SelectionAlgorithm | null;
 }

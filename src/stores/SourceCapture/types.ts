@@ -25,6 +25,11 @@ export interface SourceCaptureState {
         value: SourceCaptureState['targetSchemaHasError']
     ) => void;
 
+    fieldsRecommended: boolean | number | undefined;
+    setFieldsRecommended: (
+        value: SourceCaptureState['fieldsRecommended']
+    ) => void;
+
     saving: boolean;
     setSaving: (value: SourceCaptureState['saving']) => void;
 

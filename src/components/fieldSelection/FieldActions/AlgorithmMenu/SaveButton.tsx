@@ -4,26 +4,25 @@ import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { useBindingStore } from 'src/stores/Binding/Store';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 
 export default function SaveButton({
-    bindingUUID,
     close,
+    handleClick,
     loading,
     selectedAlgorithm,
 }: SaveButtonProps) {
     const intl = useIntl();
 
-    const advanceHydrationStatus = useBindingStore(
-        (state) => state.advanceHydrationStatus
-    );
-    const setRecommendFields = useBindingStore(
-        (state) => state.setRecommendFields
-    );
-
     const formActive = useFormStateStore_isActive();
+
+    const fieldsRecommended = useSourceCaptureStore(
+        (state) => state.fieldsRecommended
+    );
 
     return (
         <Button
@@ -38,11 +37,15 @@ export default function SaveButton({
                             ? 2
                             : selectedAlgorithm === 'depthUnlimited'
                               ? true
-                              : DEFAULT_RECOMMENDED_FLAG;
+                              : (fieldsRecommended ?? DEFAULT_RECOMMENDED_FLAG);
 
-                setRecommendFields(bindingUUID, recommendedFlag);
+                logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                    fieldsRecommended,
+                    recommendedFlag,
+                    selectedAlgorithm,
+                });
 
-                advanceHydrationStatus('HYDRATED', bindingUUID);
+                handleClick(recommendedFlag);
                 close();
             }}
             size="small"
