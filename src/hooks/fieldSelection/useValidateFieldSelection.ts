@@ -263,7 +263,8 @@ export default function useValidateFieldSelection() {
                             const updatedSelections = getFieldSelection(
                                 result.outcomes,
                                 fieldStanza,
-                                builtBinding?.collection.projections
+                                builtBinding?.collection.projections,
+                                builtBinding?.collection.key
                             );
 
                             validatedRequests.push({

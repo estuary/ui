@@ -22,8 +22,14 @@ export type SelectionAlgorithm =
     | 'depthTwo'
     | 'depthUnlimited';
 
+export interface GroupKeyMetadata {
+    explicit: boolean;
+    implicit: boolean;
+}
+
 export interface FieldSelection {
     field: string;
+    groupBy: GroupKeyMetadata;
     mode: FieldSelectionType | null;
     outcome: FieldOutcome;
     meta?: Schema;
