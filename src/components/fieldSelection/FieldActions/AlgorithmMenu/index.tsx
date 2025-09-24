@@ -2,7 +2,7 @@ import type { BaseProps } from 'src/components/fieldSelection/types';
 
 import { useState } from 'react';
 
-import { Button, Divider, Menu } from '@mui/material';
+import { Button, Divider, Menu, Tooltip } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -15,6 +15,7 @@ import {
     paperBackground,
     paperBackgroundImage,
 } from 'src/context/Theme';
+import { useBinding_resourceConfigOfMetaBindingProperty } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
@@ -23,6 +24,15 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
     const setSelectionAlgorithm = useBindingStore(
         (state) => state.setSelectionAlgorithm
     );
+    const builtBindingIndex = useBinding_resourceConfigOfMetaBindingProperty(
+        bindingUUID,
+        'builtBindingIndex'
+    );
+    const validatedBindingIndex =
+        useBinding_resourceConfigOfMetaBindingProperty(
+            bindingUUID,
+            'validatedBindingIndex'
+        );
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const openMenu = Boolean(anchorEl);
@@ -31,25 +41,46 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
         setSelectionAlgorithm(null);
     };
 
+    const draftSpecAssetsMissing =
+        typeof builtBindingIndex !== 'number' ||
+        builtBindingIndex < 0 ||
+        typeof validatedBindingIndex !== 'number' ||
+        validatedBindingIndex < 0;
+
     return (
         <>
-            <Button
-                disabled={loading}
-                endIcon={
-                    <NavArrowDown style={{ fontSize: 14, fontWeight: 500 }} />
+            <Tooltip
+                placement="top-start"
+                title={
+                    draftSpecAssetsMissing
+                        ? intl.formatMessage({
+                              id: 'fieldSelection.table.empty.message',
+                          })
+                        : ''
                 }
-                onClick={(event) => {
-                    event.stopPropagation();
-                    setAnchorEl(event.currentTarget);
-                }}
-                size="small"
-                style={{ minWidth: 'fit-content' }}
-                variant="outlined"
             >
-                {intl.formatMessage({
-                    id: 'fieldSelection.cta.selectAlgorithm',
-                })}
-            </Button>
+                <span>
+                    <Button
+                        disabled={loading || draftSpecAssetsMissing}
+                        endIcon={
+                            <NavArrowDown
+                                style={{ fontSize: 14, fontWeight: 500 }}
+                            />
+                        }
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            setAnchorEl(event.currentTarget);
+                        }}
+                        size="small"
+                        style={{ minWidth: 'fit-content' }}
+                        variant="outlined"
+                    >
+                        {intl.formatMessage({
+                            id: 'fieldSelection.cta.selectAlgorithm',
+                        })}
+                    </Button>
+                </span>
+            </Tooltip>
 
             <Menu
                 anchorEl={anchorEl}
