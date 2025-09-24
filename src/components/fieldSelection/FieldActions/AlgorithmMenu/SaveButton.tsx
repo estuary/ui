@@ -13,7 +13,7 @@ import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 export default function SaveButton({
     close,
     handleClick,
-    loading,
+    disabled,
     selectedAlgorithm,
 }: SaveButtonProps) {
     const intl = useIntl();
@@ -26,7 +26,7 @@ export default function SaveButton({
 
     return (
         <Button
-            disabled={loading || formActive || !selectedAlgorithm}
+            disabled={disabled || formActive || !selectedAlgorithm}
             onClick={() => {
                 const recommendedFlag =
                     selectedAlgorithm === 'depthZero'

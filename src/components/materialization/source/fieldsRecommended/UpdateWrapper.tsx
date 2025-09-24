@@ -65,7 +65,7 @@ const FieldsRecommendedUpdateWrapper = () => {
         <Box>
             <AlgorithmMenu
                 handleClick={(recommended) => updateServer(recommended)}
-                loading={saving}
+                disabled={saving}
                 targetFieldsRecommended
             />
         </Box>

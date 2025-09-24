@@ -11,7 +11,7 @@ export interface AlgorithmMenuProps extends BaseMenuProps {
 
 interface BaseMenuProps {
     handleClick: (recommended: boolean | number) => void;
-    loading: boolean;
+    disabled: boolean;
 }
 
 export interface ExcludeAllButtonProps {

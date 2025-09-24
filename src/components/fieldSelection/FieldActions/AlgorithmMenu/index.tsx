@@ -17,7 +17,7 @@ import {
 
 const AlgorithmMenu = ({
     handleClick,
-    loading,
+    disabled,
     targetFieldsRecommended,
 }: AlgorithmMenuProps) => {
     const intl = useIntl();
@@ -31,7 +31,7 @@ const AlgorithmMenu = ({
     return (
         <>
             <Button
-                disabled={loading}
+                disabled={disabled}
                 endIcon={
                     <NavArrowDown style={{ fontSize: 14, fontWeight: 500 }} />
                 }
@@ -75,7 +75,7 @@ const AlgorithmMenu = ({
                 <MenuActions
                     close={closeMenu}
                     handleClick={handleClick}
-                    loading={loading}
+                    disabled={disabled}
                 />
             </Menu>
         </>

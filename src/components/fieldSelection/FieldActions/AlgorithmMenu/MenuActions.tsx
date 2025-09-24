@@ -10,7 +10,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 export default function MenuActions({
     close,
     handleClick,
-    loading,
+    disabled,
 }: MenuActionProps) {
     const intl = useIntl();
 
@@ -29,7 +29,7 @@ export default function MenuActions({
         >
             <Button
                 component={Box}
-                disabled={loading}
+                disabled={disabled}
                 onClick={() => {
                     close();
                     setSelectionAlgorithm(null);
@@ -42,7 +42,7 @@ export default function MenuActions({
             <SaveButton
                 close={close}
                 handleClick={handleClick}
-                loading={loading}
+                disabled={disabled}
                 selectedAlgorithm={selectionAlgorithm}
             />
         </Stack>
