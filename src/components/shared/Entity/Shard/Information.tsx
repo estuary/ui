@@ -7,13 +7,12 @@ import { Grid, Stack, Table, TableContainer } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import ShardAlerts from 'src/components/shared/Entity/Shard/Alerts';
+import HydrationError from 'src/components/shared/Entity/Shard/HydrationError';
 import InformationTableBody from 'src/components/shared/Entity/Shard/TableBody';
 import InformationTableFooter from 'src/components/shared/Entity/Shard/TableFooter';
 import InformationTableHeader from 'src/components/shared/Entity/Shard/TableHeader';
-import Message from 'src/components/shared/Error/Message';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useShardDetail_error } from 'src/stores/ShardDetail/hooks';
 
@@ -52,21 +51,15 @@ function ShardInformation({ taskName, taskTypes }: Props) {
                             id: 'detailsPanel.shardDetails.docPath',
                         })}
                     >
-                        <FormattedMessage id="terms.documentation" />
+                        {intl.formatMessage({
+                            id: 'terms.documentation',
+                        })}
                     </ExternalLink>
                 </Stack>
             }
         >
             {error ? (
-                <AlertBox
-                    severity="error"
-                    short
-                    title={
-                        <FormattedMessage id="detailsPanel.shardDetails.fetchError" />
-                    }
-                >
-                    <Message error={error} />
-                </AlertBox>
+                <HydrationError error={error} />
             ) : (
                 <>
                     <ShardAlerts taskName={taskName} taskTypes={taskTypes} />
