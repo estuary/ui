@@ -10,7 +10,7 @@ import Error from 'src/components/shared/Error';
 function HydrationError({ readError }: HydrationErrorProps) {
     const intl = useIntl();
 
-    if (readError?.message === 'Server Error') {
+    if (readError?.message === 'SUSPENDED') {
         return (
             <AlertBox
                 severity="info"
