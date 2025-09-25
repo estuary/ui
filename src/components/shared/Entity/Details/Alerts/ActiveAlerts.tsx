@@ -23,7 +23,7 @@ const activeAlertsForTaskQuery = gql<
     AlertsVariables
 >`
     query ActiveAlertsQuery($prefix: String!) {
-        alerts(prefix: $prefix, active: true) {
+        alerts(by: { prefix: $prefix, active: true }) {
             edges {
                 node {
                     alertType

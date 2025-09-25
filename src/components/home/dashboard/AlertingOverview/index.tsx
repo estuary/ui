@@ -25,7 +25,7 @@ const alertingOverviewQuery = gql<
     AlertsVariables
 >`
     query AlertingOverviewQuery($prefix: String!) {
-        alerts(prefix: $prefix, active: true) {
+        alerts(by: { prefix: $prefix, active: true }) {
             edges {
                 node {
                     alertType
