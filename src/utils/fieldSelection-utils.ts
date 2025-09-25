@@ -1,5 +1,8 @@
 import type { FieldSelectionType } from 'src/components/fieldSelection/types';
-import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
+import type {
+    FieldSelectionDictionary,
+    GroupKeyMetadata,
+} from 'src/stores/Binding/slices/FieldSelection';
 import type {
     BaseMaterializationFields,
     BuiltProjection,
@@ -32,7 +35,8 @@ const isMaterializationFields = (
 export const getFieldSelection = (
     outcomes: FieldOutcome[],
     fieldsStanza?: MaterializationFields | MaterializationFields_Legacy,
-    projections?: BuiltProjection[]
+    projections?: BuiltProjection[],
+    collectionKeys?: string[]
 ): FieldSelectionDictionary => {
     const updatedSelections: FieldSelectionDictionary = {};
 
@@ -41,12 +45,26 @@ export const getFieldSelection = (
             ({ field }) => field === outcome.field
         );
 
+        const groupBy: GroupKeyMetadata = {
+            explicit:
+                projection &&
+                fieldsStanza?.groupBy &&
+                fieldsStanza.groupBy.length > 0
+                    ? fieldsStanza.groupBy.includes(projection.field)
+                    : false,
+            implicit:
+                projection && collectionKeys && collectionKeys.length > 0
+                    ? collectionKeys.includes(`/${projection.field}`)
+                    : false,
+        };
+
         if (
             fieldsStanza?.exclude &&
             fieldsStanza.exclude.includes(outcome.field)
         ) {
             updatedSelections[outcome.field] = {
                 field: outcome.field,
+                groupBy,
                 mode: 'exclude',
                 outcome,
                 projection,
@@ -67,6 +85,7 @@ export const getFieldSelection = (
             if (meta !== undefined) {
                 updatedSelections[outcome.field] = {
                     field: outcome.field,
+                    groupBy,
                     meta,
                     mode: 'require',
                     outcome,
@@ -89,6 +108,7 @@ export const getFieldSelection = (
             if (meta !== undefined) {
                 updatedSelections[outcome.field] = {
                     field: outcome.field,
+                    groupBy,
                     meta,
                     mode: 'require',
                     outcome,
@@ -101,6 +121,7 @@ export const getFieldSelection = (
 
         updatedSelections[outcome.field] = {
             field: outcome.field,
+            groupBy,
             mode: isSelectedField(outcome) ? 'default' : null,
             outcome,
             projection,

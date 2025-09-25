@@ -12,6 +12,7 @@ import { useUnmount } from 'react-use';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
 import ExcludeAllButton from 'src/components/fieldSelection/FieldActions/ExcludeAllButton';
+import GroupByKeys from 'src/components/fieldSelection/FieldActions/GroupByKeys';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import FieldFilter from 'src/components/tables/FieldSelection/FieldFilter';
@@ -147,11 +148,23 @@ export default function FieldSelectionTable({
                     justifyContent: 'space-between',
                 }}
             >
-                <AlgorithmMenu
-                    bindingUUID={bindingUUID}
-                    loading={loading}
-                    selections={selections}
-                />
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <AlgorithmMenu
+                        bindingUUID={bindingUUID}
+                        loading={loading}
+                        selections={selections}
+                    />
+
+                    <GroupByKeys
+                        bindingUUID={bindingUUID}
+                        loading={loading}
+                        selections={selections}
+                    />
+                </Stack>
 
                 <Stack
                     direction="row"

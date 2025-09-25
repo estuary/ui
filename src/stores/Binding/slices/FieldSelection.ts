@@ -22,8 +22,14 @@ export type SelectionAlgorithm =
     | 'depthTwo'
     | 'depthUnlimited';
 
+export interface GroupKeyMetadata {
+    explicit: boolean;
+    implicit: boolean;
+}
+
 export interface FieldSelection {
     field: string;
+    groupBy: GroupKeyMetadata;
     mode: FieldSelectionType | null;
     outcome: FieldOutcome;
     meta?: Schema;
@@ -74,6 +80,7 @@ export interface StoreWithFieldSelection {
         bindingUUIDs: string[],
         serverUpdateFailed?: boolean
     ) => void;
+    setSingleGroupBy: (bindingUUID: string, targetKeys: string[]) => void;
 
     selectionAlgorithm: SelectionAlgorithm | null;
     setSelectionAlgorithm: (
@@ -217,6 +224,29 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
+    setMultiSelection: (bindingUUID, targetFields, targetMode) => {
+        set(
+            produce((state: BindingState) => {
+                const evaluatedStatus = getHydrationStatus(
+                    state.selections[bindingUUID].status
+                );
+
+                state.selections[bindingUUID].hydrating =
+                    isHydrating(evaluatedStatus);
+                state.selections[bindingUUID].status = evaluatedStatus;
+
+                Object.values(state.selections[bindingUUID].value)
+                    .filter(({ field }) => targetFields.includes(field))
+                    .forEach(({ field }) => {
+                        state.selections[bindingUUID].value[field].mode =
+                            targetMode;
+                    });
+            }),
+            false,
+            'Multiple Field Selections Set'
+        );
+    },
+
     setRecommendFields: (bindingUUID, value) => {
         set(
             produce((state: BindingState) => {
@@ -247,26 +277,19 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setMultiSelection: (bindingUUID, targetFields, targetMode) => {
+    setSingleGroupBy: (bindingUUID, targetKeys) => {
         set(
             produce((state: BindingState) => {
-                const evaluatedStatus = getHydrationStatus(
-                    state.selections[bindingUUID].status
+                Object.keys(state.selections[bindingUUID].value).forEach(
+                    (field) => {
+                        state.selections[bindingUUID].value[
+                            field
+                        ].groupBy.explicit = targetKeys.includes(field);
+                    }
                 );
-
-                state.selections[bindingUUID].hydrating =
-                    isHydrating(evaluatedStatus);
-                state.selections[bindingUUID].status = evaluatedStatus;
-
-                Object.values(state.selections[bindingUUID].value)
-                    .filter(({ field }) => targetFields.includes(field))
-                    .forEach(({ field }) => {
-                        state.selections[bindingUUID].value[field].mode =
-                            targetMode;
-                    });
             }),
             false,
-            'Multiple Field Selections Set'
+            'Single GroupBy Set'
         );
     },
 
