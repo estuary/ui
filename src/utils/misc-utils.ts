@@ -30,6 +30,7 @@ export const JOURNAL_READ_ERRORS = [
     'NO_JOURNAL_PRIMARY_BROKER',
 
     // journal is suspended
+    // checked for data preview - ui/src/components/collection/DataPreview/HydrationWarning.tsx
     'SUSPENDED',
 
     // misc journal stuff
