@@ -8,18 +8,15 @@ import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import { loginButtonStyling } from 'src/context/Theme';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
-import { getPathWithParams } from 'src/utils/misc-utils';
+import useLinkWithGrantToken from 'src/hooks/login/useLinkWithGrantToken';
 
 function SSOButton({ isRegister }: LoginProps) {
-    const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
-
     const intl = useIntl();
     const theme = useTheme();
 
-    let href: string = unauthenticatedRoutes.sso.login.fullPath;
+    let href: string = useLinkWithGrantToken(
+        unauthenticatedRoutes.sso.login.fullPath
+    );
     let endIcon: ReactNode | undefined;
     let startIcon: ReactNode | undefined = <Lock />;
     let labelMessageId: string = 'cta.login.sso';
@@ -36,12 +33,6 @@ function SSOButton({ isRegister }: LoginProps) {
         startIcon = undefined;
         labelMessageId = 'login.sso.register.message.help';
         target = '_blank';
-    }
-
-    if (grantToken) {
-        href = getPathWithParams(href, {
-            [GlobalSearchParams.GRANT_TOKEN]: grantToken,
-        });
     }
 
     return (
