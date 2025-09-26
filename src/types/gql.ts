@@ -38,6 +38,7 @@ export type DefaultAlertingQueryResponse = {
         edges: {
             node: Alert;
         }[];
+        pageInfo: any;
     };
 };
 export interface ActiveAlertCountQueryResponse {

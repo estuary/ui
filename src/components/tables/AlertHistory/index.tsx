@@ -54,6 +54,11 @@ const resolvedAlertsForTaskQuery = gql<
                     resolvedAt
                 }
             }
+            pageInfo {
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
         }
     }
 `;
@@ -77,13 +82,29 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
     );
 
     // Get the data from the server
-    const [{ fetching, data, error }] = useQuery({
+    const [{ fetching, data, error }, executeQuery] = useQuery({
         query: resolvedAlertsForTaskQuery,
         variables: { prefix: catalogName },
         pause: !catalogName,
     });
 
+    console.log('fetching >>>', fetching);
     console.log('data >>> ', data);
+
+    const loadMore = () => {
+        console.log('loadMore >>>');
+        if (data?.alerts?.pageInfo?.hasPreviousPage) {
+            console.log('loadMore execute >>>');
+
+            executeQuery({
+                requestPolicy: 'cache-and-network',
+                variables: {
+                    prefix: catalogName,
+                    before: data.alerts.pageInfo.startCursor,
+                },
+            });
+        }
+    };
 
     // Manage table state
     const [tableState, setTableState] = useState<TableState>({
@@ -169,6 +190,7 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                                 page={0}
                                 onPageChange={(_event, page) => {
                                     console.log('onPageChange', page);
+                                    loadMore();
                                 }}
                             />
                         ) : null}
