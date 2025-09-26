@@ -8,10 +8,14 @@ import { useIntl } from 'react-intl';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
 import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import RegisterMarketing from 'src/pages/login/RegisterMarketing';
 import RegisterPerks from 'src/pages/login/RegisterPerks';
 import LoginTabs from 'src/pages/login/Tabs';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 const LoginWrapper = ({
     children,
@@ -24,6 +28,14 @@ const LoginWrapper = ({
     useLoginBodyClass();
 
     const intl = useIntl();
+    const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
+
+    let backHref = unauthenticatedRoutes.login.path;
+    if (grantToken) {
+        backHref = getPathWithParams(backHref, {
+            [GlobalSearchParams.GRANT_TOKEN]: grantToken,
+        });
+    }
 
     return (
         <FullPageDialog
@@ -50,7 +62,7 @@ const LoginWrapper = ({
                 >
                     {showBack ? (
                         <Button
-                            href={unauthenticatedRoutes.login.path}
+                            href={backHref}
                             startIcon={<NavArrowLeft />}
                             style={{ alignSelf: 'start' }}
                             variant="text"
