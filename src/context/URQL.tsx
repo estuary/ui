@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange } from '@urql/exchange-graphcache';
+import { relayPagination } from '@urql/exchange-graphcache/extras';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { DateTime } from 'luxon';
 import { Client, fetchExchange, Provider } from 'urql';
@@ -32,12 +33,20 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     // Want to refetch pretty aggressively while still getting de-dupe functionality.
                     ttl: 1000,
                 }),
-                // {
-                //     Query: {
-                //         alerts: relayPagination(),
-                //     },
-                // }
-                cacheExchange(),
+                cacheExchange({
+                    resolvers: {
+                        Query: {
+                            alerts: relayPagination(),
+                        },
+                    },
+                    keys: {
+                        Alert: (data) => {
+                            console.log('AlertNode >>> ', data);
+
+                            return `${data.catalogName}_${data.alertType}_${data.firedAt}`;
+                        },
+                    },
+                }),
                 authExchange(async (utils) => {
                     return {
                         addAuthToOperation(operation) {

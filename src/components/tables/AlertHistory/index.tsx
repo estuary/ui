@@ -45,7 +45,7 @@ const resolvedAlertsForTaskQuery = gql<
             before: $before
         ) {
             edges {
-                _id: cursor
+                cursor
                 node {
                     alertType
                     alertDetails: arguments
@@ -53,11 +53,6 @@ const resolvedAlertsForTaskQuery = gql<
                     catalogName
                     resolvedAt
                 }
-            }
-            pageInfo {
-                endCursor
-                hasNextPage
-                hasPreviousPage
             }
         }
     }
@@ -88,7 +83,7 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
         pause: !catalogName,
     });
 
-    console.log('data', data);
+    console.log('data >>> ', data);
 
     // Manage table state
     const [tableState, setTableState] = useState<TableState>({
