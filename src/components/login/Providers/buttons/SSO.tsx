@@ -8,8 +8,14 @@ import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import { loginButtonStyling } from 'src/context/Theme';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { getPathWithParams } from 'src/utils/misc-utils';
 
 function SSOButton({ isRegister }: LoginProps) {
+    const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
+
     const intl = useIntl();
     const theme = useTheme();
 
@@ -30,6 +36,12 @@ function SSOButton({ isRegister }: LoginProps) {
         startIcon = undefined;
         labelMessageId = 'login.sso.register.message.help';
         target = '_blank';
+    }
+
+    if (grantToken) {
+        href = getPathWithParams(href, {
+            [GlobalSearchParams.GRANT_TOKEN]: grantToken,
+        });
     }
 
     return (
