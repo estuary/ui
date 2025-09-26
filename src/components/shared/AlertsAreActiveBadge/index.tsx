@@ -10,7 +10,7 @@ import { Badge, badgeClasses } from '@mui/material';
 
 import { gql, useQuery } from 'urql';
 
-const POLLING_INTERVAL = 10000;
+const POLLING_INTERVAL = 45000;
 
 const ActiveAlertCountQuery = gql<
     ActiveAlertCountQueryResponse,

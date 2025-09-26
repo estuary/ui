@@ -31,6 +31,7 @@ import { semiTransparentBackground } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { PAGE_INFO_FRAGMENT } from 'src/services/gql';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
@@ -41,7 +42,7 @@ const resolvedAlertsForTaskQuery = gql<
     query ResolvedAlertsForTaskQuery($prefix: String!, $before: String) {
         alerts(
             by: { prefix: $prefix, active: false }
-            last: 2
+            last: 3
             before: $before
         ) {
             edges {
@@ -55,12 +56,11 @@ const resolvedAlertsForTaskQuery = gql<
                 }
             }
             pageInfo {
-                endCursor
-                hasNextPage
-                hasPreviousPage
+                ...PageInfo
             }
         }
     }
+    ${PAGE_INFO_FRAGMENT}
 `;
 
 function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
@@ -69,6 +69,43 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const { tableSettings } = useDisplayTableColumns();
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const [beforeCursor, setBeforeCursor] = useState<string | undefined>(
+        undefined
+    );
+
+    const [{ fetching, data, error }, executeQuery] = useQuery({
+        query: resolvedAlertsForTaskQuery,
+        variables: { prefix: catalogName, before: beforeCursor },
+        pause: !catalogName,
+    });
+
+    const loadMore = (page: number) => {
+        if (page > currentPage) {
+            // Next page - use endCursor as the new after cursor
+            if (
+                data?.alerts?.pageInfo?.hasPreviousPage &&
+                data?.alerts?.pageInfo?.endCursor
+            ) {
+                setBeforeCursor(data.alerts.pageInfo.endCursor);
+                setCurrentPage(page);
+            }
+        } else if (page < currentPage) {
+            if (page === 0) {
+                setBeforeCursor(undefined);
+                setCurrentPage(0);
+            } else if (
+                data?.alerts?.pageInfo?.hasNextPage &&
+                data?.alerts?.pageInfo?.startCursor
+            ) {
+                setBeforeCursor(data.alerts.pageInfo.startCursor);
+                setCurrentPage(page);
+            }
+        }
+
+        executeQuery();
+    };
 
     const columnsToShow = useMemo(
         () =>
@@ -81,30 +118,7 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
         [tablePrefix, tableSettings]
     );
 
-    // Get the data from the server
-    const [{ fetching, data, error }, executeQuery] = useQuery({
-        query: resolvedAlertsForTaskQuery,
-        variables: { prefix: catalogName },
-        pause: !catalogName,
-    });
-
     console.log('fetching >>>', fetching);
-    console.log('data >>> ', data);
-
-    const loadMore = () => {
-        console.log('loadMore >>>');
-        if (data?.alerts?.pageInfo?.hasPreviousPage) {
-            console.log('loadMore execute >>>');
-
-            executeQuery({
-                requestPolicy: 'cache-and-network',
-                variables: {
-                    prefix: catalogName,
-                    before: data.alerts.pageInfo.startCursor,
-                },
-            });
-        }
-    };
 
     // Manage table state
     const [tableState, setTableState] = useState<TableState>({
@@ -142,6 +156,14 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
     const loading = tableState.status === TableStatuses.LOADING;
     const hasData =
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
+
+    console.log('loading >>> ', {
+        loading,
+        data,
+        hasData,
+        failed,
+        status: tableState.status,
+    });
 
     return (
         <TableContainer component={Box}>
@@ -185,12 +207,24 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                         {hasData ? (
                             <TablePagination
                                 count={-1}
-                                rowsPerPageOptions={[2]}
-                                rowsPerPage={2}
-                                page={0}
+                                rowsPerPageOptions={[3]}
+                                rowsPerPage={3}
+                                page={currentPage}
                                 onPageChange={(_event, page) => {
-                                    console.log('onPageChange', page);
-                                    loadMore();
+                                    console.log('onPageChange >>> ', page);
+                                    loadMore(page);
+                                }}
+                                slotProps={{
+                                    actions: {
+                                        previousButton: {
+                                            disabled: currentPage === 0,
+                                        },
+                                        nextButton: {
+                                            disabled:
+                                                !data?.alerts?.pageInfo
+                                                    ?.hasPreviousPage,
+                                        },
+                                    },
                                 }}
                             />
                         ) : null}

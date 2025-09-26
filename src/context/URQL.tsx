@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange } from '@urql/exchange-graphcache';
-import { relayPagination } from '@urql/exchange-graphcache/extras';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { DateTime } from 'luxon';
 import { Client, fetchExchange, Provider } from 'urql';
@@ -34,16 +33,20 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     ttl: 1000,
                 }),
                 cacheExchange({
-                    resolvers: {
-                        Query: {
-                            alerts: relayPagination(),
-                        },
-                    },
+                    // directives: {
+                    //     relayPagination: (options) =>
+                    //         relayPagination({ ...options }),
+                    // },
+                    // resolvers: {
+                    //     Query: {
+                    //         alerts: relayPagination(),
+                    //     },
+                    // },
                     keys: {
                         Alert: (data) => {
                             console.log('AlertNode >>> ', data);
 
-                            return `${data.catalogName}_${data.alertType}_${data.firedAt}`;
+                            return `${data.catalogName}_${data.alertType}_${data.firedAt}_${data.resolvedAt}`;
                         },
                     },
                 }),
