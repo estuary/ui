@@ -40,6 +40,8 @@ export const Alerts: Record<string, string> = {
     'alerts.table.empty.message': `No resolved alerts`,
     'alerts.table.error.message': `There was an error attempting to fetch resolved alerts.`,
 
+    'alerts.table.resolvedAt.tooltip': `alert resolved {alertDuration}`,
+
     'alert.active.fetchError.title': `Unable to fetch active alerts`,
     'alerts.table.recipients.empty': `none configured`,
     'alerts.table.recipients.empty.tooltip': `No emails were configured to be notified.`,

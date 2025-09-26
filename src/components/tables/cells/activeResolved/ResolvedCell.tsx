@@ -19,14 +19,19 @@ function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
 
             return [
                 resolvedAtDate.toLocaleString(DateTime.DATETIME_FULL),
-                toAbsHumanDuration(resolvedAtDate, firedAtDate),
+                intl.formatMessage(
+                    { id: 'alerts.table.resolvedAt.tooltip' },
+                    {
+                        alertDuration: toAbsHumanDuration(
+                            resolvedAtDate,
+                            firedAtDate
+                        ),
+                    }
+                ),
             ];
         }
 
-        return [
-            intl.formatMessage({ id: 'data.active' }),
-            intl.formatMessage({ id: 'data.alert is still active' }),
-        ];
+        return [intl.formatMessage({ id: 'data.active' }), null];
     }, [firedAt, intl, resolvedAt]);
 
     return (
