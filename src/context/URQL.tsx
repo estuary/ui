@@ -30,7 +30,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
 
                 requestPolicyExchange({
                     // Want to refetch pretty aggressively while still getting de-dupe functionality.
-                    ttl: 1000,
+                    ttl: 30000,
                 }),
                 cacheExchange({
                     // directives: {
