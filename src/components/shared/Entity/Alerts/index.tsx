@@ -1,12 +1,6 @@
-import type {
-    AlertsVariables,
-    ResolvedAlertsForTaskQuery,
-} from 'src/types/gql';
-
 import { Grid } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import { gql } from 'urql';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
 import ActiveAlerts from 'src/components/shared/Entity/Details/Alerts/ActiveAlerts';
@@ -17,25 +11,6 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
-
-const resolvedAlertsForTaskQuery = gql<
-    ResolvedAlertsForTaskQuery,
-    AlertsVariables
->`
-    query ResolvedAlertsForTaskQuery($prefix: String!) {
-        alerts(by: { prefix: $prefix, active: false }) {
-            edges {
-                node {
-                    alertType
-                    alertDetails: arguments
-                    firedAt
-                    catalogName
-                    resolvedAt
-                }
-            }
-        }
-    }
-`;
 
 function EntityAlerts() {
     const intl = useIntl();
@@ -72,11 +47,6 @@ function EntityAlerts() {
                 >
                     <AlertHistoryTable
                         tablePrefix={TablePrefixes.alertHistoryForEntity}
-                        querySettings={{
-                            query: resolvedAlertsForTaskQuery,
-                            variables: { prefix: catalogName },
-                            pause: !catalogName,
-                        }}
                     />
                 </CardWrapper>
             </Grid>

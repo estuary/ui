@@ -1,14 +1,8 @@
 import type { TablePrefixes } from 'src/stores/Tables/hooks';
 import type { TableColumns } from 'src/types';
-import type {
-    Alert,
-    AlertsVariables,
-    ResolvedAlertsForTaskQuery,
-} from 'src/types/gql';
-import type { UseQueryArgs } from 'urql';
+import type { Alert, ResolvedAlertsForTaskQuery } from 'src/types/gql';
 
 export interface AlertHistoryTableProps {
-    querySettings: UseQueryArgs<AlertsVariables, ResolvedAlertsForTaskQuery>;
     tablePrefix: TablePrefixes.alertHistoryForEntity;
 }
 

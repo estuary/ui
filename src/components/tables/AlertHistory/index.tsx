@@ -1,12 +1,23 @@
 import type { AlertHistoryTableProps } from 'src/components/tables/AlertHistory/types';
 import type { TableState } from 'src/types';
+import type {
+    AlertsVariables,
+    ResolvedAlertsForTaskQuery,
+} from 'src/types/gql';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Table, TableContainer } from '@mui/material';
+import {
+    Box,
+    Table,
+    TableContainer,
+    TableFooter,
+    TablePagination,
+    TableRow,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import { useQuery } from 'urql';
+import { gql, useQuery } from 'urql';
 
 import Rows from 'src/components/tables/AlertHistory/Rows';
 import {
@@ -16,14 +27,46 @@ import {
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
+import { semiTransparentBackground } from 'src/context/Theme';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
-function AlertHistoryTable({
-    querySettings,
-    tablePrefix,
-}: AlertHistoryTableProps) {
+const resolvedAlertsForTaskQuery = gql<
+    ResolvedAlertsForTaskQuery,
+    AlertsVariables
+>`
+    query ResolvedAlertsForTaskQuery($prefix: String!, $before: String) {
+        alerts(
+            by: { prefix: $prefix, active: false }
+            last: 2
+            before: $before
+        ) {
+            edges {
+                _id: cursor
+                node {
+                    alertType
+                    alertDetails: arguments
+                    firedAt
+                    catalogName
+                    resolvedAt
+                }
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+                hasPreviousPage
+            }
+        }
+    }
+`;
+
+function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
     const intl = useIntl();
+
+    const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
     const { tableSettings } = useDisplayTableColumns();
 
@@ -39,7 +82,11 @@ function AlertHistoryTable({
     );
 
     // Get the data from the server
-    const [{ fetching, data, error }] = useQuery(querySettings);
+    const [{ fetching, data, error }] = useQuery({
+        query: resolvedAlertsForTaskQuery,
+        variables: { prefix: catalogName },
+        pause: !catalogName,
+    });
 
     console.log('data', data);
 
@@ -111,6 +158,27 @@ function AlertHistoryTable({
                         ) : null
                     }
                 />
+
+                <TableFooter>
+                    <TableRow
+                        sx={{
+                            bgcolor: (theme) =>
+                                semiTransparentBackground[theme.palette.mode],
+                        }}
+                    >
+                        {hasData ? (
+                            <TablePagination
+                                count={-1}
+                                rowsPerPageOptions={[2]}
+                                rowsPerPage={2}
+                                page={0}
+                                onPageChange={(_event, page) => {
+                                    console.log('onPageChange', page);
+                                }}
+                            />
+                        ) : null}
+                    </TableRow>
+                </TableFooter>
             </Table>
         </TableContainer>
     );

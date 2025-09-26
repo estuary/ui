@@ -3,9 +3,10 @@ import type { BaseComponentProps } from 'src/types';
 import { useMemo } from 'react';
 
 import { authExchange } from '@urql/exchange-auth';
+import { cacheExchange } from '@urql/exchange-graphcache';
 import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { DateTime } from 'luxon';
-import { cacheExchange, Client, fetchExchange, Provider } from 'urql';
+import { Client, fetchExchange, Provider } from 'urql';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import useDataFetchErrorHandling from 'src/hooks/useDataFetchErrorHandling';
@@ -31,7 +32,12 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     // Want to refetch pretty aggressively while still getting de-dupe functionality.
                     ttl: 1000,
                 }),
-                cacheExchange,
+                // {
+                //     Query: {
+                //         alerts: relayPagination(),
+                //     },
+                // }
+                cacheExchange(),
                 authExchange(async (utils) => {
                     return {
                         addAuthToOperation(operation) {
