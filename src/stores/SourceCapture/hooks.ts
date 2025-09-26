@@ -38,6 +38,13 @@ export const useSourceCaptureStore_sourceCaptureDefinition =
                         response.targetNaming = state.targetSchema;
                     }
 
+                    if (
+                        typeof state.fieldsRecommended === 'number' ||
+                        typeof state.fieldsRecommended === 'boolean'
+                    ) {
+                        response.fieldsRecommended = state.fieldsRecommended;
+                    }
+
                     return response;
                 }
 

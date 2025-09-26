@@ -212,14 +212,18 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.translated.incompatible': `field is incompatible`,
     'fieldSelection.table.label.filter': `Filter fields`,
     'fieldSelection.table.tooltip.disabledRowAction': `Action disabled: {reason}.`,
-    'fieldSelection.massActionMenu.depthZero.label': `Depth Zero`,
-    'fieldSelection.massActionMenu.depthZero.description': `Select top-level fields`,
-    'fieldSelection.massActionMenu.depthOne.label': `Depth One`,
-    'fieldSelection.massActionMenu.depthOne.description': `Select object fields with one degree of nesting`,
-    'fieldSelection.massActionMenu.depthTwo.label': `Depth Two`,
-    'fieldSelection.massActionMenu.depthTwo.description': `Select object fields with two degrees of nesting`,
+    'fieldSelection.massActionMenu.depthZero.label': `Required Only`,
+    'fieldSelection.massActionMenu.depthZero.description': `Select only required fields`,
+    'fieldSelection.massActionMenu.depthOne.label': `Depth 1`,
+    'fieldSelection.massActionMenu.depthOne.description': `Select all top-level fields`,
+    'fieldSelection.massActionMenu.depthTwo.label': `Depth 2`,
+    'fieldSelection.massActionMenu.depthTwo.description': `Select fields at levels one and two`,
     'fieldSelection.massActionMenu.depthUnlimited.label': `Unlimited Depth`,
     'fieldSelection.massActionMenu.depthUnlimited.description': `Select all fields`,
+    'fieldSelection.massActionMenu.description.numeric': `Fields within {depth} {depth, plural, one {level} other {levels}} will currently be selected.`,
+    'fieldSelection.massActionMenu.description.unlimited': `All fields will currently be selected.`,
+    'fieldSelection.massActionMenu.description.zero': `Only required fields will currently be selected.`,
+    'fieldSelection.massActionMenu.header': `Selection Modes`,
     'fieldSelection.reviewDialog.header': `Review Field Selections`,
     'fieldSelection.reviewDialog.description': `Review how the algorithm will impact your field selections.`,
     'fieldSelection.reviewDialog.label.exclude': `Exclude: {count}`,
@@ -270,7 +274,7 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
     // Source Settings
-    'workflows.sourceCapture.optionalSettings.header': `Collection Settings`,
+    'workflows.sourceCapture.optionalSettings.header': `Default Collection Settings`,
     'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Enable delta updates on newly added collections`,
     'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
@@ -280,10 +284,13 @@ export const Workflows: Record<string, string> = {
 
     // Schema Mode
     'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the non-default second-to-last part of the collection name.`,
-    'schemaMode.input.label': `Target Resource Naming Convention`,
+    'schemaMode.input.label': `Default Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
     'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
+
+    // Fields Recommended
+    'fieldsRecommended.input.label': `Default Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,

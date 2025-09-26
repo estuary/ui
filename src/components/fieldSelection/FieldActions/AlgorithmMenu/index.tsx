@@ -1,4 +1,4 @@
-import type { BaseProps } from 'src/components/fieldSelection/types';
+import type { AlgorithmMenuProps } from 'src/components/fieldSelection/types';
 
 import { useState } from 'react';
 
@@ -15,7 +15,11 @@ import {
     paperBackgroundImage,
 } from 'src/context/Theme';
 
-const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
+const AlgorithmMenu = ({
+    handleClick,
+    disabled,
+    targetFieldsRecommended,
+}: AlgorithmMenuProps) => {
     const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -27,7 +31,7 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
     return (
         <>
             <Button
-                disabled={loading}
+                disabled={disabled}
                 endIcon={
                     <NavArrowDown style={{ fontSize: 14, fontWeight: 500 }} />
                 }
@@ -40,7 +44,9 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
                 variant="outlined"
             >
                 {intl.formatMessage({
-                    id: 'fieldSelection.cta.selectAlgorithm',
+                    id: targetFieldsRecommended
+                        ? 'fieldsRecommended.input.label'
+                        : 'fieldSelection.cta.selectAlgorithm',
                 })}
             </Button>
 
@@ -67,10 +73,9 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
                 <Divider style={{ marginTop: 4, marginBottom: 12 }} />
 
                 <MenuActions
-                    bindingUUID={bindingUUID}
-                    closeMenu={closeMenu}
-                    loading={loading}
-                    selections={selections}
+                    close={closeMenu}
+                    handleClick={handleClick}
+                    disabled={disabled}
                 />
             </Menu>
         </>
