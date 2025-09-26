@@ -232,8 +232,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.outcomeButton.select.header.conflict': `A reason to include this field is:`,
     'fieldSelection.outcomeButton.tooltip': `Click to view outcome`,
     'fieldSelection.outcomeButton.tooltip.conflict': `Click to review conflict`,
-    'fieldSelection.cta.groupBy': `Grouped Keys`,
-    'fieldSelection.groupBy.header': `Configure Grouped Keys`,
+    'fieldSelection.cta.groupBy': `Group By`,
+    'fieldSelection.groupBy.header': `Configure Grouped By`,
     'fieldSelection.groupBy.description': `Here is a placeholder for a description.`,
 
     // Messages from binding editing

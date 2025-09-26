@@ -151,7 +151,7 @@ export default function FieldSelectionTable({
                 <Stack
                     direction="row"
                     spacing={1}
-                    sx={{ alignItems: 'center' }}
+                    style={{ alignItems: 'center', paddingRight: 16 }}
                 >
                     <AlgorithmMenu
                         bindingUUID={bindingUUID}

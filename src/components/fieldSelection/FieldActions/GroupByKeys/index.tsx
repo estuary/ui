@@ -36,6 +36,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseProps) => {
                 onClick={() => {
                     setOpen(true);
                 }}
+                style={{ minWidth: 'fit-content' }}
                 variant="outlined"
             >
                 {intl.formatMessage({ id: 'fieldSelection.cta.groupBy' })}
