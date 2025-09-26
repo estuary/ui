@@ -2,7 +2,6 @@ import type { TableColumns } from 'src/types';
 
 export const alertHistoryOptionalColumnIntlKeys = {
     entityName: 'entityTable.data.entity',
-    resolvedAt: 'alerts.table.data.resolvedAt',
 };
 
 export const optionalColumns = Object.values(
@@ -20,7 +19,7 @@ export const tableColumns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: alertHistoryOptionalColumnIntlKeys.resolvedAt,
+        headerIntlKey: 'alerts.table.data.resolvedAt',
     },
     {
         field: null,

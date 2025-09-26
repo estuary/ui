@@ -15,7 +15,7 @@ import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { isColumnVisible } from 'src/utils/table-utils';
 
-function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
+function Row({ hideEntityName, row }: RowProps) {
     const { catalogName, firedAt, resolvedAt, alertDetails } = row;
 
     const getAlertTypeContent = useAlertTypeContent();
@@ -46,7 +46,7 @@ function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
                 firedAt={firedAt}
                 resolvedAt={resolvedAt}
                 currentlyActive={Boolean(hideEntityName)}
-                hideResolvedAt={hideResolvedAt}
+                hideResolvedAt={false}
             />
 
             <TableCell>{humanReadable}</TableCell>
@@ -71,11 +71,6 @@ function Rows({ columns, data }: RowsProps) {
         alertHistoryOptionalColumnIntlKeys.entityName
     );
 
-    const showResolvedAt = isColumnVisible(
-        columns,
-        alertHistoryOptionalColumnIntlKeys.resolvedAt
-    );
-
     return (
         <>
             {data.map((row, index) => (
@@ -84,7 +79,6 @@ function Rows({ columns, data }: RowsProps) {
                     columns={columns}
                     row={row.node}
                     hideEntityName={!showEntityName}
-                    hideResolvedAt={!showResolvedAt}
                 />
             ))}
         </>

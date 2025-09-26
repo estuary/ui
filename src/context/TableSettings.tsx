@@ -6,7 +6,6 @@ import { createContext, useCallback, useContext } from 'react';
 
 import { useLocalStorage, useMount } from 'react-use';
 
-import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
@@ -33,9 +32,7 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
             LocalStorageKeys.TABLE_SETTINGS,
             {
                 [TablePrefixes.alertHistoryForEntity]: {
-                    shownOptionalColumns: [
-                        alertHistoryOptionalColumnIntlKeys.resolvedAt,
-                    ],
+                    shownOptionalColumns: [],
                 },
                 [TablePrefixes.fieldSelection]: {
                     shownOptionalColumns: [],
@@ -69,9 +66,7 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
             setTableSettings({
                 ...tableSettings,
                 [TablePrefixes.alertHistoryForEntity]: {
-                    shownOptionalColumns: [
-                        alertHistoryOptionalColumnIntlKeys.resolvedAt,
-                    ],
+                    shownOptionalColumns: [],
                 },
             });
         }

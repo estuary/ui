@@ -19,7 +19,6 @@ export interface RowProps {
     columns: TableColumns[];
     row: Alert;
     hideEntityName?: boolean;
-    hideResolvedAt?: boolean;
 }
 
 export interface DetailsPaneProps {

@@ -75,7 +75,7 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
         undefined
     );
 
-    const [{ fetching, data, error }, executeQuery] = useQuery({
+    const [{ fetching, data, error }] = useQuery({
         query: resolvedAlertsForTaskQuery,
         variables: { prefix: catalogName, before: beforeCursor },
         pause: !catalogName,
@@ -103,8 +103,6 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                 setCurrentPage(page);
             }
         }
-
-        executeQuery();
     };
 
     const columnsToShow = useMemo(
@@ -117,8 +115,6 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
             ),
         [tablePrefix, tableSettings]
     );
-
-    console.log('fetching >>>', fetching);
 
     // Manage table state
     const [tableState, setTableState] = useState<TableState>({
@@ -156,14 +152,6 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
     const loading = tableState.status === TableStatuses.LOADING;
     const hasData =
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
-
-    console.log('loading >>> ', {
-        loading,
-        data,
-        hasData,
-        failed,
-        status: tableState.status,
-    });
 
     return (
         <TableContainer component={Box}>

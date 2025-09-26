@@ -43,11 +43,8 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     //     },
                     // },
                     keys: {
-                        Alert: (data) => {
-                            console.log('AlertNode >>> ', data);
-
-                            return `${data.catalogName}_${data.alertType}_${data.firedAt}_${data.resolvedAt}`;
-                        },
+                        Alert: (data) =>
+                            `${data.resolvedAt};${data.firedAt};${data.alertType};${data.catalogName}`,
                     },
                 }),
                 authExchange(async (utils) => {
