@@ -8,12 +8,15 @@ import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import { loginButtonStyling } from 'src/context/Theme';
+import useLinkWithGrantToken from 'src/hooks/login/useLinkWithGrantToken';
 
 function SSOButton({ isRegister }: LoginProps) {
     const intl = useIntl();
     const theme = useTheme();
 
-    let href: string = unauthenticatedRoutes.sso.login.fullPath;
+    let href: string = useLinkWithGrantToken(
+        unauthenticatedRoutes.sso.login.fullPath
+    );
     let endIcon: ReactNode | undefined;
     let startIcon: ReactNode | undefined = <Lock />;
     let labelMessageId: string = 'cta.login.sso';
