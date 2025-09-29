@@ -24,6 +24,10 @@ export interface MenuActionProps extends BaseMenuProps {
     close: () => void;
 }
 
+export interface MenuHeaderProps {
+    targetFieldsRecommended?: boolean;
+}
+
 export interface SaveButtonProps extends MenuActionProps {
     selectedAlgorithm: SelectionAlgorithm | null;
 }
