@@ -5,7 +5,7 @@ import type {
     ResolvedAlertsForTaskQuery,
 } from 'src/types/gql';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
     Box,
@@ -21,6 +21,7 @@ import { gql, useQuery } from 'urql';
 
 import Rows from 'src/components/tables/AlertHistory/Rows';
 import {
+    ALERT_HISTORY_LOADING_DELAY,
     optionalColumns,
     tableColumns,
 } from 'src/components/tables/AlertHistory/shared';
@@ -116,15 +117,37 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
         [tablePrefix, tableSettings]
     );
 
+    // Track if this is the first load
+    const hasLoadedOnce = useRef(false);
+    const loadingTimeoutRef = useRef<number | null>(null);
+
     // Manage table state
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
+
     useEffect(() => {
+        // Clear any existing timeout
+        if (loadingTimeoutRef.current) {
+            clearTimeout(loadingTimeoutRef.current);
+            loadingTimeoutRef.current = null;
+        }
+
         if (fetching) {
-            setTableState({ status: TableStatuses.LOADING });
+            // If this is the first load or we don't have data yet, show loading immediately
+            if (!hasLoadedOnce.current || !data?.alerts?.edges?.length) {
+                setTableState({ status: TableStatuses.LOADING });
+            } else {
+                // For subsequent loads, wait 100ms before showing loading state
+                loadingTimeoutRef.current = window.setTimeout(() => {
+                    setTableState({ status: TableStatuses.LOADING });
+                }, ALERT_HISTORY_LOADING_DELAY);
+            }
             return;
         }
+
+        // Mark that we've completed at least one load
+        hasLoadedOnce.current = true;
 
         if (error) {
             if (error.networkError) {
@@ -144,6 +167,13 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
         setTableState({
             status: TableStatuses.NO_EXISTING_DATA,
         });
+
+        // Cleanup timeout on unmount
+        return () => {
+            if (loadingTimeoutRef.current) {
+                clearTimeout(loadingTimeoutRef.current);
+            }
+        };
     }, [data, error, fetching]);
 
     const failed =

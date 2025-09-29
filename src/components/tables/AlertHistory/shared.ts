@@ -1,5 +1,7 @@
 import type { TableColumns } from 'src/types';
 
+export const ALERT_HISTORY_LOADING_DELAY = 195;
+
 export const alertHistoryOptionalColumnIntlKeys = {
     entityName: 'entityTable.data.entity',
 };
