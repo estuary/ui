@@ -8,7 +8,7 @@ import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
-const MenuHeader = ({ targetFieldsRecommended }: MenuHeaderProps) => {
+const MenuHeader = ({ headerId, targetFieldsRecommended }: MenuHeaderProps) => {
     const intl = useIntl();
 
     const bindingUUID = useBinding_currentBindingUUID();
@@ -31,7 +31,7 @@ const MenuHeader = ({ targetFieldsRecommended }: MenuHeaderProps) => {
                 style={{ fontSize: 16, fontWeight: 500, marginBottom: 4 }}
             >
                 {intl.formatMessage({
-                    id: 'fieldSelection.massActionMenu.header',
+                    id: headerId,
                 })}
             </Typography>
 

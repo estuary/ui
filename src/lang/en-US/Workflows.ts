@@ -169,7 +169,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.message.docLink': `see the docs`,
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
 
-    'fieldSelection.cta.selectAlgorithm': `Mode`,
+    'fieldSelection.cta.selectAlgorithm': `Field Depth`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.error.serverUpdateFailed': `Field selection update failed`,
@@ -223,7 +223,6 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.massActionMenu.description.numeric': `Fields within {depth} {depth, plural, one {level} other {levels}} will currently be selected.`,
     'fieldSelection.massActionMenu.description.unlimited': `All fields will currently be selected.`,
     'fieldSelection.massActionMenu.description.zero': `Only required fields will currently be selected.`,
-    'fieldSelection.massActionMenu.header': `Selection Modes`,
     'fieldSelection.reviewDialog.header': `Review Field Selections`,
     'fieldSelection.reviewDialog.description': `Review how the algorithm will impact your field selections.`,
     'fieldSelection.reviewDialog.label.exclude': `Exclude: {count}`,
@@ -290,7 +289,7 @@ export const Workflows: Record<string, string> = {
     'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
 
     // Fields Recommended
-    'fieldsRecommended.input.label': `Default Field Depth`,
+    'fieldsRecommended.cta.selectAlgorithm': `Default Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,

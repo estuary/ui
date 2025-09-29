@@ -25,6 +25,7 @@ export interface MenuActionProps extends BaseMenuProps {
 }
 
 export interface MenuHeaderProps {
+    headerId: string;
     targetFieldsRecommended?: boolean;
 }
 

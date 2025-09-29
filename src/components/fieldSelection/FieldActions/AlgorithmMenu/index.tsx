@@ -29,6 +29,10 @@ const AlgorithmMenu = ({
         setAnchorEl(null);
     };
 
+    const contentId = targetFieldsRecommended
+        ? 'fieldsRecommended.cta.selectAlgorithm'
+        : 'fieldSelection.cta.selectAlgorithm';
+
     return (
         <>
             <Button
@@ -45,9 +49,7 @@ const AlgorithmMenu = ({
                 variant="outlined"
             >
                 {intl.formatMessage({
-                    id: targetFieldsRecommended
-                        ? 'fieldsRecommended.input.label'
-                        : 'fieldSelection.cta.selectAlgorithm',
+                    id: contentId,
                 })}
             </Button>
 
@@ -69,7 +71,10 @@ const AlgorithmMenu = ({
                 }}
                 sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
             >
-                <MenuHeader targetFieldsRecommended={targetFieldsRecommended} />
+                <MenuHeader
+                    headerId={contentId}
+                    targetFieldsRecommended={targetFieldsRecommended}
+                />
 
                 <MenuOptions />
 
