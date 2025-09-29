@@ -158,7 +158,7 @@ export const setFieldsStanzaRecommended = (
     source: SourceCaptureDef | null
 ) => {
     const value: boolean | number | undefined =
-        source && source?.fieldsRecommended
+        source && Object.keys(source).includes('fieldsRecommended')
             ? source.fieldsRecommended
             : undefined;
 
