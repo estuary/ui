@@ -152,3 +152,19 @@ export const getExistingPartition = (
 export const isTaskDisabled = (spec: any) => {
     return Boolean(spec?.shards?.disable);
 };
+
+export const setFieldsStanzaRecommended = (
+    binding: Schema,
+    source: SourceCaptureDef | null
+) => {
+    const value: boolean | number | undefined =
+        source && source?.fieldsRecommended
+            ? source.fieldsRecommended
+            : undefined;
+
+    if (typeof value !== 'undefined' && !binding?.fields) {
+        binding.fields = { recommended: value };
+    }
+
+    return binding;
+};
