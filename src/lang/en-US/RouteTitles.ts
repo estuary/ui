@@ -8,7 +8,6 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.connectors': `Connectors`,
-    'routeTitle.admin.notifications': `Notifications`,
     'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,

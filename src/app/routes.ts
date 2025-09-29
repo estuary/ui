@@ -36,11 +36,6 @@ const admin = {
             fullPath: '/admin/billing/paymentMethod/new',
         },
     },
-    notifications: {
-        title: 'routeTitle.admin.notifications',
-        path: 'notifications',
-        fullPath: '/admin/notifications',
-    },
     settings: {
         title: 'routeTitle.admin.settings',
         path: 'settings',
