@@ -29,6 +29,13 @@ export interface Alert {
     catalogName: string;
 }
 
+export interface PageInfo {
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+    startCursor: string;
+    endCursor: string;
+}
+
 export interface AlertsVariables {
     prefix: string | undefined;
 }
@@ -38,7 +45,7 @@ export type DefaultAlertingQueryResponse = {
         edges: {
             node: Alert;
         }[];
-        pageInfo: any;
+        pageInfo?: PageInfo;
     };
 };
 export interface ActiveAlertCountQueryResponse {

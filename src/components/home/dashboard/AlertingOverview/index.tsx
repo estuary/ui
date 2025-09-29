@@ -20,6 +20,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
+// TODO (GQL) - would like to limit the alertDetails/arguments data
 const alertingOverviewQuery = gql<
     AlertingOverviewQueryResponse,
     AlertsVariables
