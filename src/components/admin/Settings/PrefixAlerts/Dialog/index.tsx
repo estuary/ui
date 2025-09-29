@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/EmailListField';
 import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
@@ -36,6 +36,7 @@ function AlertSubscriptionDialog({
     setOpen,
     staticPrefix,
 }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const resetSubscriptionState = useAlertSubscriptionsStore(
@@ -58,7 +59,7 @@ function AlertSubscriptionDialog({
                 }}
             >
                 <Typography variant="h6">
-                    <FormattedMessage id={headerId} />
+                    {intl.formatMessage({ id: headerId })}
                 </Typography>
 
                 <IconButton
@@ -81,7 +82,9 @@ function AlertSubscriptionDialog({
                 <ServerErrors />
 
                 <Typography sx={{ mb: 2 }}>
-                    <FormattedMessage id="alerts.config.dialog.description" />
+                    {intl.formatMessage({
+                        id: 'alerts.config.dialog.description',
+                    })}
                 </Typography>
 
                 <Grid
@@ -109,7 +112,7 @@ function AlertSubscriptionDialog({
                         closeDialog();
                     }}
                 >
-                    <FormattedMessage id="cta.cancel" />
+                    {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
 
                 <SaveButton closeDialog={closeDialog} />
