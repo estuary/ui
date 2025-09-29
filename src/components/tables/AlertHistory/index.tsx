@@ -214,45 +214,46 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                     }
                 />
 
-                <TableFooter>
-                    <TableRow>
-                        <TablePagination
-                            count={-1}
-                            disabled={!hasData}
-                            rowsPerPageOptions={[3]}
-                            rowsPerPage={3}
-                            page={currentPage}
-                            onPageChange={(_event, page) => {
-                                loadMore(page);
-                            }}
-                            showFirstButton
-                            labelDisplayedRows={({ from, to }) => {
-                                return (
-                                    <>
-                                        {intl.formatMessage(
-                                            {
-                                                id: 'alerts.table.pagination.displayedRows',
-                                            },
-                                            { from, to }
-                                        )}
-                                    </>
-                                );
-                            }}
-                            slotProps={{
-                                actions: {
-                                    previousButton: {
-                                        disabled: currentPage === 0,
+                {hasData ? (
+                    <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                                count={-1}
+                                rowsPerPageOptions={[3]}
+                                rowsPerPage={3}
+                                page={currentPage}
+                                onPageChange={(_event, page) => {
+                                    loadMore(page);
+                                }}
+                                showFirstButton
+                                labelDisplayedRows={({ from, to }) => {
+                                    return (
+                                        <>
+                                            {intl.formatMessage(
+                                                {
+                                                    id: 'alerts.table.pagination.displayedRows',
+                                                },
+                                                { from, to }
+                                            )}
+                                        </>
+                                    );
+                                }}
+                                slotProps={{
+                                    actions: {
+                                        previousButton: {
+                                            disabled: currentPage === 0,
+                                        },
+                                        nextButton: {
+                                            disabled:
+                                                !data?.alerts?.pageInfo
+                                                    ?.hasPreviousPage,
+                                        },
                                     },
-                                    nextButton: {
-                                        disabled:
-                                            !data?.alerts?.pageInfo
-                                                ?.hasPreviousPage,
-                                    },
-                                },
-                            }}
-                        />
-                    </TableRow>
-                </TableFooter>
+                                }}
+                            />
+                        </TableRow>
+                    </TableFooter>
+                ) : null}
             </Table>
         </TableContainer>
     );
