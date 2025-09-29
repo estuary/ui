@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
@@ -18,13 +18,28 @@ const FieldsRecommendedUpdateWrapper = () => {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [setFieldsRecommended, setSaving, saving] = useSourceCaptureStore(
-        (state) => [state.setFieldsRecommended, state.setSaving, state.saving]
-    );
+    const [setFieldsRecommended, fieldsRecommended, setSaving, saving] =
+        useSourceCaptureStore((state) => [
+            state.setFieldsRecommended,
+            state.fieldsRecommended,
+            state.setSaving,
+            state.saving,
+        ]);
 
     const { currentSetting, updateSourceSetting } = useSourceSetting<
         boolean | number
     >('fieldsRecommended');
+
+    const storeUpdateRequired = useMemo(
+        () => fieldsRecommended !== currentSetting,
+        [currentSetting, fieldsRecommended]
+    );
+
+    useEffect(() => {
+        if (!saving && storeUpdateRequired) {
+            setFieldsRecommended(currentSetting);
+        }
+    }, [currentSetting, saving, setFieldsRecommended, storeUpdateRequired]);
 
     const updateServer = useCallback(
         async (value: number | boolean) => {
