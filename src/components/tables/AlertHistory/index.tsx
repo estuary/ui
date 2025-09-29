@@ -216,30 +216,41 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
 
                 <TableFooter>
                     <TableRow>
-                        {hasData ? (
-                            <TablePagination
-                                count={-1}
-                                rowsPerPageOptions={[3]}
-                                rowsPerPage={3}
-                                page={currentPage}
-                                onPageChange={(_event, page) => {
-                                    loadMore(page);
-                                }}
-                                showFirstButton
-                                slotProps={{
-                                    actions: {
-                                        previousButton: {
-                                            disabled: currentPage === 0,
-                                        },
-                                        nextButton: {
-                                            disabled:
-                                                !data?.alerts?.pageInfo
-                                                    ?.hasPreviousPage,
-                                        },
+                        <TablePagination
+                            count={-1}
+                            disabled={!hasData}
+                            rowsPerPageOptions={[3]}
+                            rowsPerPage={3}
+                            page={currentPage}
+                            onPageChange={(_event, page) => {
+                                loadMore(page);
+                            }}
+                            showFirstButton
+                            labelDisplayedRows={({ from, to }) => {
+                                return (
+                                    <>
+                                        {intl.formatMessage(
+                                            {
+                                                id: 'alerts.table.pagination.displayedRows',
+                                            },
+                                            { from, to }
+                                        )}
+                                    </>
+                                );
+                            }}
+                            slotProps={{
+                                actions: {
+                                    previousButton: {
+                                        disabled: currentPage === 0,
                                     },
-                                }}
-                            />
-                        ) : null}
+                                    nextButton: {
+                                        disabled:
+                                            !data?.alerts?.pageInfo
+                                                ?.hasPreviousPage,
+                                    },
+                                },
+                            }}
+                        />
                     </TableRow>
                 </TableFooter>
             </Table>
