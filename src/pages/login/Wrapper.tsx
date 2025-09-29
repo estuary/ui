@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
+import useLinkWithGrantToken from 'src/hooks/login/useLinkWithGrantToken';
 import useLoginBodyClass from 'src/hooks/login/useLoginBodyClass';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import RegisterMarketing from 'src/pages/login/RegisterMarketing';
@@ -24,6 +25,7 @@ const LoginWrapper = ({
     useLoginBodyClass();
 
     const intl = useIntl();
+    const backHref = useLinkWithGrantToken(unauthenticatedRoutes.login.path);
 
     return (
         <FullPageDialog
@@ -50,7 +52,7 @@ const LoginWrapper = ({
                 >
                     {showBack ? (
                         <Button
-                            href={unauthenticatedRoutes.login.path}
+                            href={backHref}
                             startIcon={<NavArrowLeft />}
                             style={{ alignSelf: 'start' }}
                             variant="text"
