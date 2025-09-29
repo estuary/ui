@@ -28,7 +28,6 @@ import {
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
-import { semiTransparentBackground } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -216,12 +215,7 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                 />
 
                 <TableFooter>
-                    <TableRow
-                        sx={{
-                            bgcolor: (theme) =>
-                                semiTransparentBackground[theme.palette.mode],
-                        }}
-                    >
+                    <TableRow>
                         {hasData ? (
                             <TablePagination
                                 count={-1}
