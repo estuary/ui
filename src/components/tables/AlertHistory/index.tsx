@@ -199,9 +199,9 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                                 rowsPerPage={3}
                                 page={currentPage}
                                 onPageChange={(_event, page) => {
-                                    console.log('onPageChange >>> ', page);
                                     loadMore(page);
                                 }}
+                                showFirstButton
                                 slotProps={{
                                     actions: {
                                         previousButton: {
