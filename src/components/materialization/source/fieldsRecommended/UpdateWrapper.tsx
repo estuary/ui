@@ -5,6 +5,7 @@ import { Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
+import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
 import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
@@ -15,6 +16,8 @@ import { snackbarSettings } from 'src/utils/notification-utils';
 const FieldsRecommendedUpdateWrapper = () => {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+
+    const persistedDraftId = useEditorStore_persistedDraftId();
 
     const setFormState = useFormStateStore_setFormState();
 
@@ -36,10 +39,16 @@ const FieldsRecommendedUpdateWrapper = () => {
     );
 
     useEffect(() => {
-        if (!saving && storeUpdateRequired) {
+        if (persistedDraftId && !saving && storeUpdateRequired) {
             setFieldsRecommended(currentSetting);
         }
-    }, [currentSetting, saving, setFieldsRecommended, storeUpdateRequired]);
+    }, [
+        currentSetting,
+        persistedDraftId,
+        saving,
+        setFieldsRecommended,
+        storeUpdateRequired,
+    ]);
 
     const updateServer = useCallback(
         async (value: number | boolean) => {
