@@ -235,6 +235,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.cta.groupBy': `Group By`,
     'fieldSelection.groupBy.header': `Configure Grouped By`,
     'fieldSelection.groupBy.description': `Here is a placeholder for a description.`,
+    'fieldSelection.groupBy.tooltip.implicitKey': `This field is a key of the source collection.`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,

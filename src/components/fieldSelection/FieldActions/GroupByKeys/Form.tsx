@@ -8,19 +8,21 @@ import {
     Box,
     Stack,
     TextField,
+    Tooltip,
     Typography,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { Check } from 'iconoir-react';
+import { Check, Key } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
-import FieldOutcomeButton from 'src/components/tables/cells/fieldSelection/FieldOutcomeButton';
 import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
 
-const GroupByKeysForm = ({ bindingUUID, selections }: BaseProps) => {
+const GroupByKeysForm = ({ selections }: BaseProps) => {
+    const intl = useIntl();
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -43,7 +45,7 @@ const GroupByKeysForm = ({ bindingUUID, selections }: BaseProps) => {
                 return <TextField {...params} variant="standard" />;
             }}
             renderOption={(renderOptionProps, option, state) => {
-                const { field, outcome, projection } = option;
+                const { field, groupBy, projection } = option;
                 const { key, ...optionProps } = renderOptionProps;
 
                 const fieldTypes: string[] = projection?.inference?.types ?? [];
@@ -110,10 +112,25 @@ const GroupByKeysForm = ({ bindingUUID, selections }: BaseProps) => {
                             ) : null}
                         </Stack>
 
-                        <FieldOutcomeButton
+                        {groupBy.implicit ? (
+                            <Tooltip
+                                placement="left"
+                                title={intl.formatMessage({
+                                    id: 'fieldSelection.groupBy.tooltip.implicitKey',
+                                })}
+                            >
+                                <Key
+                                    style={{
+                                        color: theme.palette.text.primary,
+                                    }}
+                                />
+                            </Tooltip>
+                        ) : null}
+
+                        {/* <FieldOutcomeButton
                             bindingUUID={bindingUUID}
                             outcome={outcome}
-                        />
+                        /> */}
                     </Box>
                 );
             }}
