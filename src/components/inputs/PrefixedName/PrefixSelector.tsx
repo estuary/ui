@@ -51,7 +51,6 @@ function PrefixSelector({
                     required
                     size="small"
                     sx={{
-                        maxWidth: 250,
                         minWidth: 100,
                     }}
                     variant={variantString}
