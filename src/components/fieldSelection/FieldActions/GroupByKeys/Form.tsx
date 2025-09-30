@@ -1,7 +1,7 @@
-import type { BaseProps } from 'src/components/fieldSelection/types';
+import type { GroupByKeysFormProps } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import {
     Autocomplete,
@@ -21,14 +21,15 @@ import { useIntl } from 'react-intl';
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
 
-const GroupByKeysForm = ({ selections }: BaseProps) => {
+const GroupByKeysForm = ({
+    groupBy,
+    localValues,
+    options,
+    setLocalValues,
+}: GroupByKeysFormProps) => {
     const intl = useIntl();
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
-
-    const [localCopyValue, setLocalCopyValue] = useState<FieldSelection[]>(
-        selections?.filter(({ groupBy }) => groupBy.implicit) ?? []
-    );
 
     const fieldWidth = useMemo(() => (belowMd ? 400 : 700), [belowMd]);
 
@@ -38,14 +39,14 @@ const GroupByKeysForm = ({ selections }: BaseProps) => {
             getOptionLabel={({ field }) => field}
             multiple
             onChange={(_event, values) => {
-                setLocalCopyValue(values);
+                setLocalValues(values);
             }}
-            options={selections ?? []}
+            options={options}
             renderInput={(params) => {
                 return <TextField {...params} variant="standard" />;
             }}
             renderOption={(renderOptionProps, option, state) => {
-                const { field, groupBy, projection } = option;
+                const { field, projection } = option;
                 const { key, ...optionProps } = renderOptionProps;
 
                 const fieldTypes: string[] = projection?.inference?.types ?? [];
@@ -112,7 +113,7 @@ const GroupByKeysForm = ({ selections }: BaseProps) => {
                             ) : null}
                         </Stack>
 
-                        {groupBy.implicit ? (
+                        {groupBy.implicit.includes(field) ? (
                             <Tooltip
                                 placement="left"
                                 title={intl.formatMessage({
@@ -139,7 +140,7 @@ const GroupByKeysForm = ({ selections }: BaseProps) => {
                     <SortableTags
                         getTagProps={getTagProps}
                         onOrderChange={async (activeId, overId) => {
-                            const selectedFields = localCopyValue.map(
+                            const selectedFields = localValues.map(
                                 ({ field }) => field
                             );
 
@@ -147,12 +148,12 @@ const GroupByKeysForm = ({ selections }: BaseProps) => {
                             const newIndex = selectedFields.indexOf(overId);
 
                             const updatedArray = arrayMove<FieldSelection>(
-                                localCopyValue,
+                                localValues,
                                 oldIndex,
                                 newIndex
                             );
 
-                            setLocalCopyValue(updatedArray);
+                            setLocalValues(updatedArray);
                         }}
                         ownerState={ownerState}
                         values={tagValues.map(({ field }) => field)}
@@ -160,7 +161,7 @@ const GroupByKeysForm = ({ selections }: BaseProps) => {
                 );
             }}
             style={{ width: fieldWidth }}
-            value={localCopyValue}
+            value={localValues}
         />
     );
 };

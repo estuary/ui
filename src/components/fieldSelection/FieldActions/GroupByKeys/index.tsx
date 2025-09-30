@@ -1,6 +1,7 @@
 import type { BaseProps } from 'src/components/fieldSelection/types';
+import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Box,
@@ -17,13 +18,39 @@ import { useIntl } from 'react-intl';
 
 import GroupByKeysForm from 'src/components/fieldSelection/FieldActions/GroupByKeys/Form';
 import SaveButton from 'src/components/fieldSelection/FieldActions/GroupByKeys/SaveButton';
+import { useBindingStore } from 'src/stores/Binding/Store';
 
 const TITLE_ID = 'configure-groupBy-keys-title';
 
 const GroupByKeys = ({ bindingUUID, loading, selections }: BaseProps) => {
     const intl = useIntl();
 
+    const groupBy = useBindingStore(
+        (state) =>
+            state.selections?.[bindingUUID].groupBy ?? {
+                explicit: [],
+                implicit: [],
+            }
+    );
+
     const [open, setOpen] = useState(false);
+    const [localValues, setLocalValues] = useState<FieldSelection[]>([]);
+
+    useEffect(() => {
+        const { explicit, implicit } = groupBy;
+
+        if (!selections) {
+            return;
+        }
+
+        setLocalValues(
+            explicit.length > 0
+                ? selections.filter(({ field }) => explicit.includes(field))
+                : implicit.length > 0
+                  ? selections.filter(({ field }) => implicit.includes(field))
+                  : []
+        );
+    }, [groupBy, selections]);
 
     return (
         <>
@@ -52,9 +79,10 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseProps) => {
                     </Typography>
 
                     <GroupByKeysForm
-                        bindingUUID={bindingUUID}
-                        loading={loading}
-                        selections={selections}
+                        groupBy={groupBy}
+                        localValues={localValues}
+                        options={selections ?? []}
+                        setLocalValues={setLocalValues}
                     />
                 </DialogContent>
 
@@ -73,8 +101,9 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseProps) => {
 
                         <SaveButton
                             bindingUUID={bindingUUID}
+                            close={() => setOpen(false)}
                             loading={loading}
-                            selections={selections}
+                            selections={localValues}
                         />
                     </Stack>
                 </DialogActions>
