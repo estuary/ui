@@ -43,11 +43,25 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseProps) => {
             return;
         }
 
+        const explicitKeys = explicit
+            .map((field) =>
+                selections.findIndex((selection) => selection.field === field)
+            )
+            .filter((index) => index > -1)
+            .map((index) => selections[index]);
+
+        const implicitKeys = implicit
+            .map((field) =>
+                selections.findIndex((selection) => selection.field === field)
+            )
+            .filter((index) => index > -1)
+            .map((index) => selections[index]);
+
         setLocalValues(
-            explicit.length > 0
-                ? selections.filter(({ field }) => explicit.includes(field))
-                : implicit.length > 0
-                  ? selections.filter(({ field }) => implicit.includes(field))
+            explicitKeys.length > 0
+                ? explicitKeys
+                : implicitKeys.length > 0
+                  ? implicitKeys
                   : []
         );
     }, [groupBy, selections]);
