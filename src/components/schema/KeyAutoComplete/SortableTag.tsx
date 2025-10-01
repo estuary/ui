@@ -46,6 +46,20 @@ function SortableTag({ tagProps, label, validOption }: Props) {
             {...attributes}
         >
             {validOption ? (
+                // <OutlinedChip
+                //     {...tagProps}
+                //     icon={
+                //         <IconButton
+                //             ref={setActivatorNodeRef}
+                //             {...listeners}
+                //             size="small"
+                //         >
+                //             <MoreVert />
+                //         </IconButton>
+                //     }
+                //     label={label}
+                //     variant="outlined"
+                // />
                 <StyledChip
                     componentProps={{
                         chip: tagProps,
