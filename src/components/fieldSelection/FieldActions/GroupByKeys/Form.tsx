@@ -49,7 +49,17 @@ const GroupByKeysForm = ({
                 const { field, projection } = option;
                 const { key, ...optionProps } = renderOptionProps;
 
-                const fieldTypes: string[] = projection?.inference?.types ?? [];
+                const fieldTypes: string[] =
+                    projection?.inference?.types.map((fieldType: string) => {
+                        if (
+                            fieldType === 'string' &&
+                            projection.inference?.string?.format
+                        ) {
+                            return `${fieldType}: ${projection.inference.string.format}`;
+                        }
+
+                        return fieldType;
+                    }) ?? [];
 
                 return (
                     <Box
