@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
 const MenuHeader = ({ headerId, targetFieldsRecommended }: MenuHeaderProps) => {
     const intl = useIntl();
@@ -21,7 +22,7 @@ const MenuHeader = ({ headerId, targetFieldsRecommended }: MenuHeaderProps) => {
     const recommended =
         !targetFieldsRecommended &&
         bindingUUID &&
-        Object.hasOwn(recommendFields, bindingUUID)
+        hasOwnProperty(recommendFields, bindingUUID)
             ? recommendFields[bindingUUID]
             : fieldsRecommended;
 
