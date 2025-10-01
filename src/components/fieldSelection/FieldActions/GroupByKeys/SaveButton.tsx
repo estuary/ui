@@ -6,7 +6,6 @@ import { useIntl } from 'react-intl';
 
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import { hasLength } from 'src/utils/misc-utils';
 
 const SaveButton = ({
     bindingUUID,
@@ -27,7 +26,7 @@ const SaveButton = ({
 
     return (
         <Button
-            disabled={loading || formActive || !hasLength(selections)}
+            disabled={loading || formActive}
             onClick={() => {
                 if (!selections) {
                     // TODO: display error.
