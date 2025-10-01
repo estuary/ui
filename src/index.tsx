@@ -1,8 +1,6 @@
 import 'src/index.css';
 import 'src/polyfills/transformStream';
 
-import type { Environment } from 'monaco-editor';
-
 import React from 'react';
 
 import { loader } from '@monaco-editor/react';
@@ -15,14 +13,14 @@ import AppProviders from 'src/context';
 import ApplicationRouter from 'src/context/Router';
 
 // Setup Monaco - not in GlobalProviders to make test setup easier for now
-(self as any).MonacoEnvironment = {
+self.MonacoEnvironment = {
     getWorker(_, label) {
         if (label === 'json') {
             return new JsonWorker();
         }
         return new EditorWorker();
     },
-} as Environment;
+};
 loader.config({ monaco });
 
 ReactDOM.render(

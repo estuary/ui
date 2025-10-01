@@ -1,3 +1,5 @@
+import type { Environment } from 'monaco-editor';
+
 declare global {
     interface Window {
         Estuary: {
@@ -7,6 +9,7 @@ declare global {
         } | null;
         dataLayer?: any[]; // Must match name we pass to GTM in index.html
         monaco: any;
+        MonacoEnvironment: Environment;
         __REDUX_DEVTOOLS_EXTENSION__: any;
         // TODO (integrity | logrocket)
         // When we load in LogRocket with a script tag we'll want this
