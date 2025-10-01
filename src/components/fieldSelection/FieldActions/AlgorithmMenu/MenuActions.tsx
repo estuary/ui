@@ -21,6 +21,11 @@ export default function MenuActions({
         (state) => state.setSelectionAlgorithm
     );
 
+    const closeMenu = () => {
+        close();
+        setSelectionAlgorithm(null);
+    };
+
     return (
         <Stack
             direction="row"
@@ -30,20 +35,14 @@ export default function MenuActions({
             <Button
                 component={Box}
                 disabled={disabled}
-                onClick={() => {
-                    close();
-                    setSelectionAlgorithm(null);
-                }}
+                onClick={closeMenu}
                 variant="text"
             >
                 {intl.formatMessage({ id: 'cta.cancel' })}
             </Button>
 
             <SaveButton
-                close={() => {
-                    close();
-                    setSelectionAlgorithm(null);
-                }}
+                close={closeMenu}
                 handleClick={handleClick}
                 disabled={disabled}
                 selectedAlgorithm={selectionAlgorithm}
