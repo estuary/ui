@@ -45,6 +45,7 @@ function Spec() {
 
     return (
         <CardWrapper
+            disableMinWidth
             message={
                 <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
                     <Stack direction="row" spacing={1}>
