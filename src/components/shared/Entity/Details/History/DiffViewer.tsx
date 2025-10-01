@@ -21,6 +21,7 @@ import {
     monacoEditorComponentBackground,
 } from 'src/context/Theme';
 import { useHistoryDiffQueries } from 'src/hooks/useHistoryDiffQueries';
+import { logRocketConsole } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 
 // Go to next diff action has an issue -> https://github.com/Microsoft/monaco-editor/issues/2556
@@ -71,7 +72,6 @@ function DiffViewer() {
     useEffect(() => {
         return () => {
             const cleanUpEditorRef = (editorRef: MutableRefObject<any>) => {
-                console.log('cleanUpEditorRef', editorRef);
                 if (editorRef?.current) {
                     try {
                         if (editorRef.current.setModel) {
@@ -81,7 +81,9 @@ function DiffViewer() {
                             editorRef.current.dispose();
                         }
                     } catch (error) {
-                        console.error('Error disposing editor:', error);
+                        logRocketConsole('Error disposing editor', {
+                            error,
+                        });
                     }
                     editorRef.current = null;
                 }
