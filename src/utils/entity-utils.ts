@@ -3,7 +3,11 @@ import type { Projections } from 'src/types/schemaModels';
 
 import produce from 'immer';
 
-import { hasLength, specContainsDerivation } from 'src/utils/misc-utils';
+import {
+    hasLength,
+    hasOwnProperty,
+    specContainsDerivation,
+} from 'src/utils/misc-utils';
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
     draftSpec.shards ??= {};
@@ -158,7 +162,7 @@ export const setFieldsStanzaRecommended = (
     source: SourceCaptureDef | null
 ) => {
     const value: boolean | number | undefined =
-        source && Object.keys(source).includes('fieldsRecommended')
+        source && hasOwnProperty(source, 'fieldsRecommended')
             ? source.fieldsRecommended
             : undefined;
 

@@ -312,14 +312,6 @@ export const generateTaskSpec = (
             draftSpec,
             options.specOnIncompatibleSchemaChange
         );
-
-        if (
-            options.sourceCaptureDefinition &&
-            Object.keys(options.sourceCaptureDefinition).includes(
-                'fieldsRecommended'
-            )
-        ) {
-        }
     }
 
     return draftSpec;
