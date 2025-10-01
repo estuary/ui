@@ -103,7 +103,7 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all collections from the source when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to the destination when published. `,
-    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings.warning': `We recommend doing a backfill with “Dataflow Reset” selected from the source instead, as this results in sending only the full current dataset (faster), rather than the complete history of changes (slower).`,
+    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings.warning': `We recommend doing a backfill from the source using “Dataflow Reset” since it uses less data and is faster.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
     'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} will be backfilled`,
     'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,

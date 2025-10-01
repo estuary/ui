@@ -235,13 +235,12 @@ function BackfillButton({
     }
 
     return (
-        <Box style={{ maxWidth: 700 }}>
+        <Box style={{ maxWidth: 730 }}>
             <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography component="div">{description}</Typography>
 
                 {!backfillSupported ? <BackfillNotSupportedAlert /> : null}
             </Stack>
-
             <Stack spacing={4}>
                 <Stack direction="row" spacing={2}>
                     <BooleanToggleButton
