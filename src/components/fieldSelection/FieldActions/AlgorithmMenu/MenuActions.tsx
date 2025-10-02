@@ -9,8 +9,8 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function MenuActions({
     close,
-    handleClick,
     disabled,
+    handleClick,
 }: MenuActionProps) {
     const intl = useIntl();
 
@@ -43,8 +43,8 @@ export default function MenuActions({
 
             <SaveButton
                 close={closeMenu}
-                handleClick={handleClick}
                 disabled={disabled}
+                handleClick={handleClick}
                 selectedAlgorithm={selectionAlgorithm}
             />
         </Stack>

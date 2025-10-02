@@ -12,8 +12,8 @@ import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
 
 export default function SaveButton({
     close,
-    handleClick,
     disabled,
+    handleClick,
     selectedAlgorithm,
 }: SaveButtonProps) {
     const intl = useIntl();

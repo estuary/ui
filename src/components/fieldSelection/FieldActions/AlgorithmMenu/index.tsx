@@ -17,8 +17,8 @@ import {
 } from 'src/context/Theme';
 
 const AlgorithmMenu = ({
-    handleClick,
     disabled,
+    handleClick,
     targetFieldsRecommended,
 }: AlgorithmMenuProps) => {
     const intl = useIntl();
@@ -82,8 +82,8 @@ const AlgorithmMenu = ({
 
                 <MenuActions
                     close={closeMenu}
-                    handleClick={handleClick}
                     disabled={disabled}
+                    handleClick={handleClick}
                 />
             </Menu>
         </>
