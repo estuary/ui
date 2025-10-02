@@ -235,6 +235,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.cta.groupBy': `Group By`,
     'fieldSelection.groupBy.header': `Configure Grouped By`,
     'fieldSelection.groupBy.description': `Here is a placeholder for a description.`,
+    'fieldSelection.groupBy.label.explicitKeys': `This collection is currently ordered by:`,
+    'fieldSelection.groupBy.label.implicitKeys': `This collection is naturally ordered by:`,
     'fieldSelection.groupBy.tooltip.implicitKey': `This field is a key of the source collection.`,
 
     // Messages from binding editing
