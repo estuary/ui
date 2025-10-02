@@ -1,4 +1,4 @@
-import type { BaseProps } from 'src/components/fieldSelection/types';
+import type { AlgorithmMenuProps } from 'src/components/fieldSelection/types';
 
 import { useState } from 'react';
 
@@ -8,6 +8,7 @@ import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import MenuActions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuActions';
+import MenuHeader from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuHeader';
 import MenuOptions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuOptions';
 import {
     defaultOutline,
@@ -15,7 +16,11 @@ import {
     paperBackgroundImage,
 } from 'src/context/Theme';
 
-const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
+const AlgorithmMenu = ({
+    disabled,
+    handleClick,
+    targetFieldsRecommended,
+}: AlgorithmMenuProps) => {
     const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -24,10 +29,14 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
         setAnchorEl(null);
     };
 
+    const contentId = targetFieldsRecommended
+        ? 'fieldsRecommended.cta.selectAlgorithm'
+        : 'fieldSelection.cta.selectAlgorithm';
+
     return (
         <>
             <Button
-                disabled={loading}
+                disabled={disabled}
                 endIcon={
                     <NavArrowDown style={{ fontSize: 14, fontWeight: 500 }} />
                 }
@@ -40,7 +49,7 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
                 variant="outlined"
             >
                 {intl.formatMessage({
-                    id: 'fieldSelection.cta.selectAlgorithm',
+                    id: contentId,
                 })}
             </Button>
 
@@ -62,15 +71,19 @@ const AlgorithmMenu = ({ bindingUUID, loading, selections }: BaseProps) => {
                 }}
                 sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
             >
+                <MenuHeader
+                    headerId={contentId}
+                    targetFieldsRecommended={targetFieldsRecommended}
+                />
+
                 <MenuOptions />
 
                 <Divider style={{ marginTop: 4, marginBottom: 12 }} />
 
                 <MenuActions
-                    bindingUUID={bindingUUID}
-                    closeMenu={closeMenu}
-                    loading={loading}
-                    selections={selections}
+                    close={closeMenu}
+                    disabled={disabled}
+                    handleClick={handleClick}
                 />
             </Menu>
         </>

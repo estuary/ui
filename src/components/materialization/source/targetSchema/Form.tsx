@@ -3,6 +3,10 @@ import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
 import { useEffect, useRef } from 'react';
 
+import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+
+import { InfoCircle } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import SelectorOption from 'src/components/materialization/source/targetSchema/SelectorOption';
@@ -17,6 +21,9 @@ export default function TargetSchemaForm({
     scope,
     updateDraftedSetting,
 }: BaseFormProps) {
+    const intl = useIntl();
+    const theme = useTheme();
+
     const workflow = useEntityWorkflow();
 
     const [setTargetSchemaHasError, setTargetSchema] = useSourceCaptureStore(
@@ -43,29 +50,55 @@ export default function TargetSchemaForm({
     }, [currentSetting, setTargetSchema]);
 
     return (
-        <SpecPropAutoComplete
-            currentSetting={currentSetting}
-            inputLabelId="schemaMode.input.label"
-            options={options}
-            scope={scope}
-            isOptionEqualToValue={compareOptionsIncludingAliases}
-            renderOption={(
-                renderOptionProps,
-                option: AutoCompleteOptionForTargetSchema
-            ) => {
-                return (
-                    <li {...renderOptionProps}>
-                        <SelectorOption option={option} />
-                    </li>
-                );
-            }}
-            updateDraftedSetting={updateDraftedSetting}
-            setErrorExists={(errorExists) => {
-                setTargetSchemaHasError(errorExists);
-            }}
-            sx={{
-                maxWidth: 700,
-            }}
-        />
+        <Box>
+            <Stack
+                component="label"
+                direction="row"
+                spacing={1}
+                style={{ alignItems: 'center', marginBottom: 12 }}
+            >
+                <Typography style={{ fontWeight: 500 }}>
+                    {intl.formatMessage({ id: 'schemaMode.input.label' })}
+                </Typography>
+
+                <Tooltip
+                    placement="right"
+                    title={intl.formatMessage({
+                        id: 'schemaMode.message',
+                    })}
+                >
+                    <InfoCircle
+                        style={{
+                            color: theme.palette.text.primary,
+                            fontSize: 12,
+                        }}
+                    />
+                </Tooltip>
+            </Stack>
+
+            <SpecPropAutoComplete
+                currentSetting={currentSetting}
+                options={options}
+                scope={scope}
+                isOptionEqualToValue={compareOptionsIncludingAliases}
+                renderOption={(
+                    renderOptionProps,
+                    option: AutoCompleteOptionForTargetSchema
+                ) => {
+                    return (
+                        <li {...renderOptionProps}>
+                            <SelectorOption option={option} />
+                        </li>
+                    );
+                }}
+                updateDraftedSetting={updateDraftedSetting}
+                setErrorExists={(errorExists) => {
+                    setTargetSchemaHasError(errorExists);
+                }}
+                sx={{
+                    maxWidth: 700,
+                }}
+            />
+        </Box>
     );
 }
