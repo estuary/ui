@@ -74,7 +74,7 @@
         "luxon": "^3.4.3",
         "material-ui-popup-state": "^5.0.10",
         "mnemonist": "^0.39.8",
-        "monaco-editor": "^0.34.1",
+        "monaco-editor": "^0.53.0",
         "notistack": "^3.0.1",
         "p-limit": "^5.0.0",
         "pretty-bytes": "^6.1.0",
