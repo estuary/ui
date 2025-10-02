@@ -80,7 +80,9 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
             return inferSchemaResponse;
         }
 
-        return inferSchemaResponse.filter((datum) => datum.exists === filter);
+        return inferSchemaResponse.filter(
+            (datum) => datum.inference.exists === filter
+        );
     }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
 
     const { tableSettings } = useDisplayTableColumns();

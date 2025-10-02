@@ -4,6 +4,7 @@ import type { PostgrestError } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 export type fake = 'fake';
 
@@ -390,10 +391,11 @@ export type ParsedStream =
     | 'activate';
 
 export interface InferSchemaResponse {
-    properties: InferSchemaResponseProperty[];
+    errors: any[];
+    projections: BuiltProjection[];
 }
 
-export type FieldExistence = 'may' | 'must' | 'cannot' | 'implicit';
+export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
 
 export interface InferSchemaResponseProperty {
     is_pattern_property: boolean;
@@ -409,8 +411,7 @@ export interface InferSchemaResponseProperty {
     string_format?: string;
 }
 
-export interface InferSchemaPropertyForRender
-    extends InferSchemaResponseProperty {
+export interface InferSchemaPropertyForRender extends BuiltProjection {
     allowedToBeKey: boolean;
 }
 

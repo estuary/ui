@@ -3,7 +3,6 @@ import type { CollectionData } from 'src/components/editor/Bindings/types';
 import type {
     InferSchemaPropertyForRender,
     InferSchemaResponse,
-    Schema,
 } from 'src/types';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
@@ -11,14 +10,12 @@ import type { NamedSet } from 'zustand/middleware';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { extend_read_bundle, infer } from '@estuary/flow-web';
+import { skim_collection_projections } from '@estuary/flow-web';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
-import { fetchInferredSchema } from 'src/api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
-import { logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import {
@@ -91,33 +88,33 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
 };
 
 // Call into the flow WASM handler that will inline the write/inferred schema if necessary
-const updateReadSchema = async (
-    read: Schema,
-    write: Schema,
-    entityName: string
-) => {
-    // Try fetching the inferred schema... possible TODO handle errors better
-    const inferredSchemaResponse = await fetchInferredSchema(entityName);
-    const inferred = inferredSchemaResponse.data?.[0]?.schema
-        ? inferredSchemaResponse.data[0].schema
-        : {};
+// const updateReadSchema = async (
+//     read: Schema,
+//     write: Schema,
+//     entityName: string
+// ) => {
+//     // Try fetching the inferred schema... possible TODO handle errors better
+//     const inferredSchemaResponse = await fetchInferredSchema(entityName);
+//     const inferred = inferredSchemaResponse.data?.[0]?.schema
+//         ? inferredSchemaResponse.data[0].schema
+//         : {};
 
-    let response;
-    try {
-        response = extend_read_bundle({
-            read,
-            write,
-            inferred,
-        });
-        // We can catch any error here so that any issue causes an empty response and the
-        //  component will show an error... though not the most useful one.
-        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-    } catch (e: any) {
-        logRocketEvent('extend_read_bundle:failed', e);
-        response = {};
-    }
-    return response;
-};
+//     let response;
+//     try {
+//         response = extend_read_bundle({
+//             read,
+//             write,
+//             inferred,
+//         });
+//         // We can catch any error here so that any issue causes an empty response and the
+//         //  component will show an error... though not the most useful one.
+//         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+//     } catch (e: any) {
+//         logRocketEvent('extend_read_bundle:failed', e);
+//         response = {};
+//     }
+//     return response;
+// };
 
 const getInitialMiscData = (): Pick<
     BindingsEditorState,
@@ -282,7 +279,7 @@ const getInitialState = (
     // That was removed but might be needed in the future
     //  so we left things running through loops in case we need
     //  to support that again
-    populateInferSchemaResponse: async (spec, entityName) => {
+    populateInferSchemaResponse: async (spec, entityName, liveSpec) => {
         const populateState = (
             dataVal: InferSchemaResponse[] | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
@@ -350,28 +347,37 @@ const getInitialState = (
             if (usingReadSchema) {
                 // We MUST make this call before calling `infer` below
                 //  This will inline the write/inferred schema in the `$defs` if needed
-                schemasToTest[0] = await updateReadSchema(
-                    schemasToTest[0],
-                    spec.writeSchema ?? {},
-                    entityName
-                );
+                // schemasToTest[0] = await updateReadSchema(
+                //     schemasToTest[0],
+                //     spec.writeSchema ?? {},
+                //     entityName
+                // );
             }
 
             // Run infer against schema
-            const responses = schemasToTest.map((schema) => infer(schema));
+            const responses = schemasToTest.map((schema) =>
+                skim_collection_projections({
+                    collection: entityName,
+                    model: {
+                        schema: liveSpec.schema,
+                        key: liveSpec.key,
+                        projections: {},
+                    },
+                })
+            );
 
             // Make sure all the responses are valid
             const allResponsesValid = responses.every((inferResponse) => {
-                const { properties } = inferResponse;
+                const { projections } = inferResponse;
 
                 // Make sure there is a response
-                if (properties?.length === 0) {
+                if (projections?.length === 0) {
                     populateState(null, 'no fields inferred from schema');
                     return false;
                 }
 
                 // Make sure we did not ONLY get the root object back as a pointer
-                if (properties.length === 1 && properties[0].pointer === '') {
+                if (projections.length === 1 && projections[0].ptr === '') {
                     populateState(
                         null,
                         'no usable fields inferred from schema'

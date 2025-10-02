@@ -70,7 +70,13 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
             // Infer schema and pass in spec so the function can handle
             //  if there is a read/write or just plain schema
-            populateInferSchemaResponse(draftSpec.spec, entityName);
+
+            // TODO (skim) need to replace draft spec with live spec when editing
+            populateInferSchemaResponse(
+                draftSpec.spec,
+                entityName,
+                draftSpec.spec
+            );
 
             // Need to keep the collection data updated so that the schema
             //  inference and CLI buttons work

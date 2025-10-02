@@ -68,10 +68,10 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 ? orderBy(
                       // Filter so only valid keys are displayed
                       filter(Object.values(inferSchemaResponse), (field) =>
-                          keyIsValidOption(validKeys, field.pointer)
+                          keyIsValidOption(validKeys, field.ptr)
                       ),
                       // Order first by exists so groups do not duplicate in the dropdown
-                      ['exists', 'pointer'],
+                      ['inference.exists', 'inference.ptr'],
                       ['desc', 'asc']
                   )
                 : [],

@@ -1,5 +1,5 @@
 import type { RowProps, RowsProps } from 'src/components/tables/Schema/types';
-import type { InferSchemaResponseProperty } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { useMemo } from 'react';
 
@@ -28,17 +28,17 @@ function Row({ columns, row }: RowProps) {
         workflow === 'capture_create' || workflow === 'capture_edit';
 
     const formattedTypes = useMemo(() => {
-        if (row.string_format) {
-            const stringIndex = row.types.findIndex(
-                (rowType) => rowType === ROW_TYPE_STRING
+        if (row.inference.string?.format && row.inference.types) {
+            const stringIndex = row.inference.types.findIndex(
+                (rowType: string) => rowType === ROW_TYPE_STRING
             );
             if (stringIndex > -1) {
-                row.types[stringIndex] =
-                    `${ROW_TYPE_STRING}: ${row.string_format}`;
+                row.inference.types[stringIndex] =
+                    `${ROW_TYPE_STRING}: ${row.inference.string.format}`;
             }
         }
 
-        return row.types;
+        return row.inference.types;
     }, [row]);
 
     const detailsColumnVisible =
@@ -54,11 +54,11 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            {row.name ? (
+            {row.field ? (
                 <FieldList
                     editable={isCaptureWorkflow}
-                    field={row.name}
-                    pointer={row.pointer}
+                    field={row.field}
+                    pointer={row.ptr}
                     sticky
                 />
             ) : (
@@ -66,7 +66,7 @@ function Row({ columns, row }: RowProps) {
             )}
 
             <TableCell>
-                <code>{row.pointer}</code>
+                <code>{row.ptr}</code>
             </TableCell>
 
             <ChipListCell
@@ -78,14 +78,18 @@ function Row({ columns, row }: RowProps) {
             {detailsColumnVisible ? (
                 <TableCell>
                     <Stack component="span" spacing={1}>
-                        {row.title ? <Box>{row.title}</Box> : null}
-                        {row.description ? <Box>{row.description}</Box> : null}
+                        {row.inference.title ? (
+                            <Box>{row.inference.title}</Box>
+                        ) : null}
+                        {row.inference.description ? (
+                            <Box>{row.inference.description}</Box>
+                        ) : null}
                     </Stack>
                 </TableCell>
             ) : null}
 
-            {isCaptureWorkflow && row.name ? (
-                <ProjectionActions field={row.name} pointer={row.pointer} />
+            {isCaptureWorkflow && row.field ? (
+                <ProjectionActions field={row.field} pointer={row.ptr} />
             ) : isCaptureWorkflow ? (
                 <TableCell />
             ) : null}
@@ -107,32 +111,24 @@ function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
             <>
                 {data
                     .filter(
-                        (datum: InferSchemaResponseProperty) =>
-                            datum.exists === 'may' || datum.exists === 'must'
+                        (datum: BuiltProjection) =>
+                            datum.inference.exists === 'MAY' ||
+                            datum.inference.exists === 'MUST'
                     )
-                    .sort(
-                        (
-                            first: InferSchemaResponseProperty,
-                            second: InferSchemaResponseProperty
-                        ) =>
-                            basicSort_string(
-                                first.name ?? '',
-                                second.name ?? '',
-                                sortDirection
-                            )
-                    )
-                    .map(
-                        (
-                            record: InferSchemaResponseProperty,
-                            index: number
-                        ) => (
-                            <Row
-                                columns={columns}
-                                row={record}
-                                key={`schema-table-rows-${index}`}
-                            />
+                    .sort((first: BuiltProjection, second: BuiltProjection) =>
+                        basicSort_string(
+                            first.field ?? '',
+                            second.field ?? '',
+                            sortDirection
                         )
-                    )}
+                    )
+                    .map((record: BuiltProjection, index: number) => (
+                        <Row
+                            columns={columns}
+                            row={record}
+                            key={`schema-table-rows-${record.ptr}-${index}`}
+                        />
+                    ))}
             </>
         );
     }
@@ -145,7 +141,7 @@ function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
                     <Row
                         columns={columns}
                         row={record}
-                        key={`schema-table-rows-${index}`}
+                        key={`schema-table-rows-${record.ptr}-${index}`}
                     />
                 )
             )}
