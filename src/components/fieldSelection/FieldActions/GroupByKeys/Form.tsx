@@ -137,11 +137,6 @@ const GroupByKeysForm = ({
                                 />
                             </Tooltip>
                         ) : null}
-
-                        {/* <FieldOutcomeButton
-                            bindingUUID={bindingUUID}
-                            outcome={outcome}
-                        /> */}
                     </Box>
                 );
             }}

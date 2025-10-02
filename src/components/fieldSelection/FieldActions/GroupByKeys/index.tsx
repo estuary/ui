@@ -37,7 +37,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseProps) => {
     const [localValues, setLocalValues] = useState<FieldSelection[]>([]);
 
     useEffect(() => {
-        const { explicit, implicit } = groupBy;
+        const { explicit } = groupBy;
 
         if (!selections) {
             return;
@@ -50,20 +50,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseProps) => {
             .filter((index) => index > -1)
             .map((index) => selections[index]);
 
-        const implicitKeys = implicit
-            .map((field) =>
-                selections.findIndex((selection) => selection.field === field)
-            )
-            .filter((index) => index > -1)
-            .map((index) => selections[index]);
-
-        setLocalValues(
-            explicitKeys.length > 0
-                ? explicitKeys
-                : implicitKeys.length > 0
-                  ? implicitKeys
-                  : []
-        );
+        setLocalValues(explicitKeys.length > 0 ? explicitKeys : []);
     }, [groupBy, selections]);
 
     return (
