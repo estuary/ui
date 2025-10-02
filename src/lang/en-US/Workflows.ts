@@ -233,6 +233,12 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.outcomeButton.select.header.conflict': `A reason to include this field is:`,
     'fieldSelection.outcomeButton.tooltip': `Click to view outcome`,
     'fieldSelection.outcomeButton.tooltip.conflict': `Click to review conflict`,
+    'fieldSelection.cta.groupBy': `Group By`,
+    'fieldSelection.groupBy.header': `Configure Grouped By`,
+    'fieldSelection.groupBy.description': `Here is a placeholder for a description.`,
+    'fieldSelection.groupBy.label.explicitKeys': `This collection is currently ordered by:`,
+    'fieldSelection.groupBy.label.implicitKeys': `This collection is naturally ordered by:`,
+    'fieldSelection.groupBy.tooltip.implicitKey': `This field is a key of the source collection.`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,

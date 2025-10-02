@@ -37,6 +37,7 @@ export interface FieldListProps {
 }
 
 export interface FieldNameProps extends BaseFieldOutcomeProps {
+    bindingUUID: string | null;
     field: string;
 }
 
