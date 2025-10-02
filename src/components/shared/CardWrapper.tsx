@@ -24,9 +24,16 @@ interface Props extends BaseComponentProps {
     message?: string | ReactNode;
     tooltipMessageId?: string;
     height?: string | number;
+    disableMinWidth?: boolean;
 }
 
-function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
+function CardWrapper({
+    children,
+    disableMinWidth,
+    height,
+    message,
+    tooltipMessageId,
+}: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
@@ -42,7 +49,7 @@ function CardWrapper({ children, height, message, tooltipMessageId }: Props) {
                 background: semiTransparentBackground[theme.palette.mode],
                 boxShadow: defaultBoxShadow,
                 borderRadius: 3,
-                minWidth: 'min-content',
+                minWidth: disableMinWidth ? undefined : 'min-content',
             }}
         >
             {Boolean(message || tooltipMessageId) ? (

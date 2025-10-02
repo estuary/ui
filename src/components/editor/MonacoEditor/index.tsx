@@ -130,7 +130,7 @@ function MonacoEditor({
                 //  where your cursor position stays where it was and is moved with the new format
                 void editorRef.current
                     ?.getAction('editor.action.formatDocument')
-                    .run();
+                    ?.run();
             }
         },
         [setStatus, evaluatedPath]

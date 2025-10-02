@@ -1,4 +1,5 @@
 import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
+import type { MutableRefObject } from 'react';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -20,6 +21,7 @@ import {
     monacoEditorComponentBackground,
 } from 'src/context/Theme';
 import { useHistoryDiffQueries } from 'src/hooks/useHistoryDiffQueries';
+import { logRocketConsole } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 
 // Go to next diff action has an issue -> https://github.com/Microsoft/monaco-editor/issues/2556
@@ -38,6 +40,8 @@ function DiffViewer() {
 
     // Editor State management
     const [editorReady, setEditorReady] = useState(false);
+    const diffEditorRef =
+        useRef<monacoEditor.editor.IStandaloneDiffEditor | null>(null);
     const originalModel = useRef<monacoEditor.editor.ITextModel | null>(null);
     const modifiedModel = useRef<monacoEditor.editor.ITextModel | null>(null);
 
@@ -45,6 +49,9 @@ function DiffViewer() {
         editor: monacoEditor.editor.IStandaloneDiffEditor,
         monaco: typeof monacoEditor
     ) => {
+        // Store the editor reference
+        diffEditorRef.current = editor;
+
         // Create a model so we can keep the value updates and not have to
         //  recreate these again
         originalModel.current = monaco.editor.createModel('', 'json');
@@ -60,6 +67,43 @@ function DiffViewer() {
         //  this is mainly here for when a users uses the browser back button.
         setEditorReady(true);
     };
+
+    // Cleanup effect - dispose in the correct order
+    useEffect(() => {
+        return () => {
+            const cleanUpEditorRef = (editorRef: MutableRefObject<any>) => {
+                if (editorRef?.current) {
+                    try {
+                        if (editorRef.current.setModel) {
+                            editorRef.current.setModel(null);
+                        }
+                        if (editorRef.current.dispose) {
+                            editorRef.current.dispose();
+                        }
+                    } catch (error) {
+                        logRocketConsole('Error disposing editor', {
+                            error,
+                        });
+                    }
+                    editorRef.current = null;
+                }
+            };
+
+            // Reset editor model first to release references
+            if (diffEditorRef.current) {
+                cleanUpEditorRef(diffEditorRef);
+            }
+
+            // Now safe to dispose the text models
+            if (originalModel.current) {
+                cleanUpEditorRef(originalModel);
+            }
+
+            if (modifiedModel.current) {
+                cleanUpEditorRef(modifiedModel);
+            }
+        };
+    }, []);
 
     // Keep the column headers up to date
     const [modifiedPublishedAt, originalPublishedAt] = useMemo(
