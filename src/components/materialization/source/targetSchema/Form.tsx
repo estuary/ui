@@ -3,7 +3,14 @@ import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
 import { useEffect, useRef } from 'react';
 
-import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    FormLabel,
+    Stack,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { InfoCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -51,12 +58,21 @@ export default function TargetSchemaForm({
 
     return (
         <Box>
-            <Stack
-                direction="row"
-                spacing={1}
-                style={{ alignItems: 'center', marginBottom: 12 }}
+            <FormLabel
+                component={Stack}
+                style={{
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    marginBottom: 12,
+                }}
             >
-                <Typography style={{ fontWeight: 500 }}>
+                <Typography
+                    style={{
+                        color: theme.palette.text.primary,
+                        fontWeight: 500,
+                        marginRight: 8,
+                    }}
+                >
                     {intl.formatMessage({ id: 'schemaMode.input.label' })}
                 </Typography>
 
@@ -73,7 +89,7 @@ export default function TargetSchemaForm({
                         }}
                     />
                 </Tooltip>
-            </Stack>
+            </FormLabel>
 
             <SpecPropAutoComplete
                 currentSetting={currentSetting}
