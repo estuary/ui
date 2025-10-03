@@ -39,8 +39,6 @@ interface Props {
     ) => PromiseLike<any>;
 }
 
-// Hardcoded and figured out by rendering the content and inspecting heigh
-//  due to virtualization we need to be specific here.
 const tallHeight = 71;
 const getValue = (option: BuiltProjection) => option.ptr ?? '';
 
@@ -170,7 +168,6 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                     );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
-                    console.log('option ...........', option);
                     const { ptr, inference } = option;
 
                     // We do this logic here to pass the specific component (Stack with custom prop)
