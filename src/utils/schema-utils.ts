@@ -37,18 +37,19 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
     const validKeys: string[] = [];
 
     if (schema) {
-        const { properties } = schema;
+        const { projections } = schema;
 
-        fields = properties
-            .filter((inferredProperty: any) => {
+        fields = projections
+            .filter((inferredProperty) => {
                 // If there is a blank pointer it cannot be used
-                return hasLength(inferredProperty.pointer);
+                return hasLength(inferredProperty.ptr);
             })
-            .map((inferredProperty: any) => {
-                const inferredPropertyTypes: string[] = inferredProperty.types;
+            .map((inferredProperty) => {
+                const inferredPropertyTypes: string[] =
+                    inferredProperty.inference.types;
                 const isValidKey = Boolean(
                     // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
-                    inferredProperty.exists !== 'cannot' &&
+                    inferredProperty.inference.exists !== 'cannot' &&
                         // Make sure we only have a single type besides null
                         inferredPropertyTypes.filter((type) => type !== 'null')
                             .length === 1 &&
@@ -58,12 +59,14 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
                         )
                 );
 
-                if (isValidKey) {
-                    validKeys.push(inferredProperty.pointer);
+                if (isValidKey && inferredProperty.ptr) {
+                    validKeys.push(inferredProperty.ptr);
                 }
 
-                inferredProperty.allowedToBeKey = isValidKey;
-                return inferredProperty;
+                return {
+                    ...inferredProperty,
+                    allowedToBeKey: isValidKey,
+                };
             });
     }
 

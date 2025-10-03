@@ -40,7 +40,11 @@ function CollectionSpecViews({ presentation }: Props) {
 
     useEffect(() => {
         if (entityType === 'collection' && currentCatalog) {
-            populateInferSchemaResponse(currentCatalog.spec, catalogName);
+            populateInferSchemaResponse(
+                currentCatalog.spec,
+                catalogName,
+                currentCatalog.spec
+            );
         }
 
         return () => {

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -38,10 +39,8 @@ interface Props {
     ) => PromiseLike<any>;
 }
 
-// Hardcoded and figured out by rendering the content and inspecting heigh
-//  due to virtualization we need to be specific here.
 const tallHeight = 71;
-const getValue = (option: any) => option.pointer;
+const getValue = (option: BuiltProjection) => option.ptr ?? '';
 
 function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const intl = useIntl();
@@ -68,10 +67,10 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 ? orderBy(
                       // Filter so only valid keys are displayed
                       filter(Object.values(inferSchemaResponse), (field) =>
-                          keyIsValidOption(validKeys, field.pointer)
+                          keyIsValidOption(validKeys, field.ptr)
                       ),
                       // Order first by exists so groups do not duplicate in the dropdown
-                      ['exists', 'pointer'],
+                      ['inference.exists', 'inference.ptr'],
                       ['desc', 'asc']
                   )
                 : [],
@@ -113,7 +112,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 groupBy={(option) => option.exists}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    return option.pointer === optionValue;
+                    return option.ptr === optionValue;
                 }}
                 options={keys}
                 readOnly={disableInput}
@@ -139,7 +138,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 renderGroup={({ key, group, children }) => {
                     const readableGroup = intl.formatMessage({
                         id:
-                            group === 'must'
+                            group === 'MUST'
                                 ? 'keyAutoComplete.keys.group.must'
                                 : 'keyAutoComplete.keys.group.may',
                     });
@@ -169,19 +168,22 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                     );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
-                    const { description, pointer, types } = option;
+                    const { ptr, inference } = option;
 
                     // We do this logic here to pass the specific component (Stack with custom prop)
                     //  into the virtualized renderer. That way we can easily read off the custom prop.
                     let RowContent;
-                    if (description) {
+                    if (inference?.description) {
                         RowContent = (
                             <Stack
                                 component="span"
                                 spacing={1}
                                 x-react-window-item-height={tallHeight}
                             >
-                                <BasicOption pointer={pointer} types={types} />
+                                <BasicOption
+                                    pointer={ptr}
+                                    types={inference.types}
+                                />
                                 <Typography
                                     component="span"
                                     variant="caption"
@@ -190,13 +192,16 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                                         pl: 1.5,
                                     }}
                                 >
-                                    {description}
+                                    {inference.description}
                                 </Typography>
                             </Stack>
                         );
                     } else {
                         RowContent = (
-                            <BasicOption pointer={pointer} types={types} />
+                            <BasicOption
+                                pointer={ptr}
+                                types={inference.types}
+                            />
                         );
                     }
 

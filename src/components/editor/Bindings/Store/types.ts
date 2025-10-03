@@ -50,7 +50,8 @@ export interface BindingsEditorState {
     inferSchemaResponseEmpty: boolean;
     populateInferSchemaResponse: (
         value: any | undefined,
-        entityName: string
+        entityName: string,
+        liveSpec: any
     ) => void;
 
     // Schema Evolution
