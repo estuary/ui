@@ -112,7 +112,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 groupBy={(option) => option.exists}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    return option.pointer === optionValue;
+                    return option.ptr === optionValue;
                 }}
                 options={keys}
                 readOnly={disableInput}
