@@ -102,7 +102,8 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.message.capture': `Trigger a backfill of this collection from the source when published.`,
     'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all collections from the source when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
     'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
-    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to their materialized resource when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
+    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to the destination when published. `,
+    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings.warning': `We recommend doing a backfill from the source using “Dataflow Reset” since it uses less data and is faster.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
     'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} will be backfilled`,
     'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,
@@ -169,7 +170,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.message.docLink': `see the docs`,
     'fieldSelection.message.docPath': `https://docs.estuary.dev/guides/customize-materialization-fields/`,
 
-    'fieldSelection.cta.selectAlgorithm': `Mode`,
+    'fieldSelection.cta.selectAlgorithm': `Field Depth`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.error.serverUpdateFailed': `Field selection update failed`,
@@ -212,14 +213,17 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.translated.incompatible': `field is incompatible`,
     'fieldSelection.table.label.filter': `Filter fields`,
     'fieldSelection.table.tooltip.disabledRowAction': `Action disabled: {reason}.`,
-    'fieldSelection.massActionMenu.depthZero.label': `Depth Zero`,
-    'fieldSelection.massActionMenu.depthZero.description': `Select top-level fields`,
-    'fieldSelection.massActionMenu.depthOne.label': `Depth One`,
-    'fieldSelection.massActionMenu.depthOne.description': `Select object fields with one degree of nesting`,
-    'fieldSelection.massActionMenu.depthTwo.label': `Depth Two`,
-    'fieldSelection.massActionMenu.depthTwo.description': `Select object fields with two degrees of nesting`,
+    'fieldSelection.massActionMenu.depthZero.label': `Required Only`,
+    'fieldSelection.massActionMenu.depthZero.description': `Select only required fields`,
+    'fieldSelection.massActionMenu.depthOne.label': `Depth 1`,
+    'fieldSelection.massActionMenu.depthOne.description': `Select all top-level fields`,
+    'fieldSelection.massActionMenu.depthTwo.label': `Depth 2`,
+    'fieldSelection.massActionMenu.depthTwo.description': `Select fields at levels one and two`,
     'fieldSelection.massActionMenu.depthUnlimited.label': `Unlimited Depth`,
     'fieldSelection.massActionMenu.depthUnlimited.description': `Select all fields`,
+    'fieldSelection.massActionMenu.description.numeric': `Fields within {depth} {depth, plural, one {level} other {levels}} will currently be selected.`,
+    'fieldSelection.massActionMenu.description.unlimited': `All fields will currently be selected.`,
+    'fieldSelection.massActionMenu.description.zero': `Only required fields will currently be selected.`,
     'fieldSelection.reviewDialog.header': `Review Field Selections`,
     'fieldSelection.reviewDialog.description': `Review how the algorithm will impact your field selections.`,
     'fieldSelection.reviewDialog.label.exclude': `Exclude: {count}`,
@@ -276,7 +280,7 @@ export const Workflows: Record<string, string> = {
     'incompatibleSchemaChange.options.disableTask.description': `Disable the entire task, preventing it from running until it is re-enabled.`,
 
     // Source Settings
-    'workflows.sourceCapture.optionalSettings.header': `Collection Settings`,
+    'workflows.sourceCapture.optionalSettings.header': `Default Collection Settings`,
     'workflows.sourceCapture.optionalSettings.deltaUpdates.control': `Enable delta updates on newly added collections`,
     'workflows.sourceCapture.optionalSettings.targetSchema.control': `Infer schema name from linked data source for new collections`,
 
@@ -286,10 +290,13 @@ export const Workflows: Record<string, string> = {
 
     // Schema Mode
     'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the non-default second-to-last part of the collection name.`,
-    'schemaMode.input.label': `Target Resource Naming Convention`,
+    'schemaMode.input.label': `Default Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
     'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
+
+    // Fields Recommended
+    'fieldsRecommended.cta.selectAlgorithm': `Default Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
     'schemaMode.data.table': `Table:`,

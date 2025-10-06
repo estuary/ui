@@ -1,4 +1,4 @@
-import type { BaseProps } from 'src/components/fieldSelection/types';
+import type { BaseButtonProps } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 import { useEffect, useState } from 'react';
@@ -23,7 +23,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 
 const TITLE_ID = 'configure-groupBy-keys-title';
 
-const GroupByKeys = ({ bindingUUID, loading, selections }: BaseProps) => {
+const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
     const intl = useIntl();
 
     const groupBy = useBindingStore(

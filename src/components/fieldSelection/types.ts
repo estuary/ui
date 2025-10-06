@@ -7,10 +7,19 @@ import type {
 
 export type FieldSelectionType = 'default' | 'require' | 'exclude';
 
-export interface BaseProps {
+export interface AlgorithmMenuProps extends BaseMenuProps {
+    targetFieldsRecommended?: boolean;
+}
+
+export interface BaseButtonProps {
     bindingUUID: string;
     loading: boolean;
     selections: FieldSelection[] | null | undefined;
+}
+
+interface BaseMenuProps {
+    handleClick: (recommended: boolean | number) => void;
+    disabled: boolean;
 }
 
 export interface GroupByKeysFormProps {
@@ -20,15 +29,19 @@ export interface GroupByKeysFormProps {
     setLocalValues: Dispatch<SetStateAction<FieldSelection[]>>;
 }
 
-export interface GroupByKeysSaveButtonProps extends BaseProps {
+export interface GroupByKeysSaveButtonProps extends BaseButtonProps {
     close: () => void;
 }
 
-export interface MenuActionProps extends BaseProps {
-    closeMenu: () => void;
+export interface MenuActionProps extends BaseMenuProps {
+    close: () => void;
 }
 
-export interface SaveButtonProps extends BaseProps {
-    close: () => void;
+export interface MenuHeaderProps {
+    headerId: string;
+    targetFieldsRecommended?: boolean;
+}
+
+export interface SaveButtonProps extends MenuActionProps {
     selectedAlgorithm: SelectionAlgorithm | null;
 }

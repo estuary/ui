@@ -32,6 +32,7 @@ import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import {
     DEFAULT_RECOMMENDED_FLAG,
     getFieldSelection,
@@ -107,6 +108,10 @@ export default function useValidateFieldSelection() {
     const liveBuiltSpec = useEditorStore_liveBuiltSpec();
 
     const formStatus = useFormStateStore_status();
+
+    const fieldsRecommended = useSourceCaptureStore(
+        (state) => state.fieldsRecommended
+    );
 
     const validateFieldSelection = useCallback(
         async (
@@ -284,6 +289,7 @@ export default function useValidateFieldSelection() {
                                 hasConflicts: result.hasConflicts,
                                 recommended:
                                     fieldStanza?.recommended ??
+                                    fieldsRecommended ??
                                     DEFAULT_RECOMMENDED_FLAG,
                                 selections: updatedSelections,
                                 uuid: bindingUUID,
@@ -337,6 +343,7 @@ export default function useValidateFieldSelection() {
         enqueueSnackbar,
         entityType,
         failureDetected,
+        fieldsRecommended,
         initializeSelections,
         intl,
         resourceConfigs,

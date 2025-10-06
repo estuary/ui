@@ -3,7 +3,7 @@ import type { SortDirection, TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Box, Stack, Table, TableContainer } from '@mui/material';
+import { Box, Stack, Table, TableContainer, Tooltip } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
@@ -23,7 +23,10 @@ import {
 } from 'src/components/tables/FieldSelection/shared';
 import TableColumnSelector from 'src/components/tables/TableColumnSelector';
 import { useDisplayTableColumns } from 'src/context/TableSettings';
-import { useBinding_searchQuery } from 'src/stores/Binding/hooks';
+import {
+    useBinding_resourceConfigOfMetaBindingProperty,
+    useBinding_searchQuery,
+} from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -48,6 +51,21 @@ export default function FieldSelectionTable({
     const selectionsRefreshing = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.status === 'RESET_REQUESTED'
     );
+    const advanceHydrationStatus = useBindingStore(
+        (state) => state.advanceHydrationStatus
+    );
+    const setRecommendFields = useBindingStore(
+        (state) => state.setRecommendFields
+    );
+    const builtBindingIndex = useBinding_resourceConfigOfMetaBindingProperty(
+        bindingUUID,
+        'builtBindingIndex'
+    );
+    const validatedBindingIndex =
+        useBinding_resourceConfigOfMetaBindingProperty(
+            bindingUUID,
+            'validatedBindingIndex'
+        );
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -137,6 +155,12 @@ export default function FieldSelectionTable({
         [tableSettings]
     );
 
+    const draftSpecAssetsMissing =
+        typeof builtBindingIndex !== 'number' ||
+        builtBindingIndex < 0 ||
+        typeof validatedBindingIndex !== 'number' ||
+        validatedBindingIndex < 0;
+
     return (
         <>
             <Stack
@@ -153,11 +177,32 @@ export default function FieldSelectionTable({
                     spacing={1}
                     style={{ alignItems: 'center', paddingRight: 16 }}
                 >
-                    <AlgorithmMenu
-                        bindingUUID={bindingUUID}
-                        loading={loading}
-                        selections={selections}
-                    />
+                    <Tooltip
+                        placement="top-start"
+                        title={
+                            draftSpecAssetsMissing
+                                ? intl.formatMessage({
+                                      id: 'fieldSelection.table.empty.message',
+                                  })
+                                : ''
+                        }
+                    >
+                        <span>
+                            <AlgorithmMenu
+                                handleClick={(recommended) => {
+                                    setRecommendFields(
+                                        bindingUUID,
+                                        recommended
+                                    );
+                                    advanceHydrationStatus(
+                                        'HYDRATED',
+                                        bindingUUID
+                                    );
+                                }}
+                                disabled={loading || draftSpecAssetsMissing}
+                            />
+                        </span>
+                    </Tooltip>
 
                     <GroupByKeys
                         bindingUUID={bindingUUID}

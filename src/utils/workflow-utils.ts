@@ -26,6 +26,7 @@ import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
     addOrRemoveSourceCapture,
+    setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -191,7 +192,7 @@ export const generateTaskSpec = (
 
     if (!isEmpty(resourceConfigs) && !isEmpty(bindings)) {
         const collectionNameProp = getCollectionNameProp(entityType);
-        const { fullSource } = options;
+        const { fullSource, sourceCaptureDefinition } = options;
 
         Object.entries(bindings).forEach(([_collection, bindingUUIDs]) => {
             bindingUUIDs.forEach((bindingUUID, iteratedIndex) => {
@@ -201,6 +202,7 @@ export const generateTaskSpec = (
                     bindingIndex,
                     collectionName,
                     disable,
+                    liveBuiltBindingIndex,
                     onIncompatibleSchemaChange,
                 } = resourceConfigs[bindingUUID].meta;
 
@@ -232,6 +234,14 @@ export const generateTaskSpec = (
                             draftSpec.bindings[existingBindingIndex],
                             onIncompatibleSchemaChange
                         );
+
+                        // Set the value of the recommended flag of a new binding to that of `fieldsRecommended`.
+                        if (liveBuiltBindingIndex === -1) {
+                            setFieldsStanzaRecommended(
+                                draftSpec.bindings[existingBindingIndex],
+                                sourceCaptureDefinition
+                            );
+                        }
                     }
 
                     // Only update if there is a fullSource to populate. Otherwise just set the name.
@@ -267,6 +277,14 @@ export const generateTaskSpec = (
                             newBinding,
                             onIncompatibleSchemaChange
                         );
+
+                        // Set the value of the recommended flag of a new binding to that of `fieldsRecommended`.
+                        if (liveBuiltBindingIndex === -1) {
+                            setFieldsStanzaRecommended(
+                                newBinding,
+                                sourceCaptureDefinition
+                            );
+                        }
                     }
 
                     draftSpec.bindings.push(newBinding);
