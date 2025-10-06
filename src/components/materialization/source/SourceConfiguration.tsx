@@ -15,16 +15,18 @@ function SourceConfiguration() {
         sourceCaptureTargetSchemaSupported,
     } = useBinding_sourceCaptureFlags();
 
-    if (
-        !sourceCaptureDeltaUpdatesSupported &&
-        !sourceCaptureTargetSchemaSupported
-    ) {
-        return null;
-    }
-
     return (
         <Stack spacing={1} sx={{ pb: 2, maxWidth: '50%' }}>
-            <Typography variant="formSectionHeader">
+            <Typography
+                variant="formSectionHeader"
+                style={{
+                    marginBottom:
+                        !sourceCaptureDeltaUpdatesSupported &&
+                        !sourceCaptureTargetSchemaSupported
+                            ? 6
+                            : undefined,
+                }}
+            >
                 {intl.formatMessage({
                     id: 'workflows.sourceCapture.optionalSettings.header',
                 })}
