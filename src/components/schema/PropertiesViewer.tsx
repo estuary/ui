@@ -80,7 +80,10 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
             </Stack>
 
             <Collapse
-                in={inferSchemaResponseEmpty}
+                in={Boolean(
+                    inferSchemaResponseEmpty ||
+                        (inferSchemaError && inferSchemaError.length > 0)
+                )}
                 sx={{
                     mt: 2,
                     mb: inferSchemaResponseEmpty ? 2 : undefined,
@@ -91,7 +94,9 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                     severity="error"
                     title={<FormattedMessage id="schemaEditor.error.title" />}
                 >
-                    {inferSchemaError}
+                    {inferSchemaError?.map((error) => {
+                        return error;
+                    })}
                 </AlertBox>
             </Collapse>
 

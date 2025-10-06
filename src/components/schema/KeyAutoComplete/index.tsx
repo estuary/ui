@@ -40,7 +40,9 @@ interface Props {
 }
 
 const tallHeight = 71;
-const getValue = (option: BuiltProjection) => option.ptr ?? '';
+const getValue = (option: BuiltProjection) => {
+    return option.ptr ?? '';
+};
 
 function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const intl = useIntl();
@@ -119,9 +121,16 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 value={localCopyValue}
                 onChange={async (event, newValues, reason) => {
                     if (changeHandler) {
+                        console.log('changeHandler', [
+                            event,
+                            newValues,
+                            reason,
+                        ]);
+
                         await changeHandler(
                             event,
                             newValues.map((newValue) => {
+                                console.log('newValue', newValue);
                                 if (typeof newValue === 'string') {
                                     return newValue;
                                 } else {

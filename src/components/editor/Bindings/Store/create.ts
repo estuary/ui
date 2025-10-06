@@ -3,6 +3,7 @@ import type { CollectionData } from 'src/components/editor/Bindings/types';
 import type {
     InferSchemaPropertyForRender,
     InferSchemaResponse,
+    Schema,
 } from 'src/types';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
@@ -15,7 +16,9 @@ import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
+import { fetchInferredSchema } from 'src/api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
+import { logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import {
@@ -54,6 +57,7 @@ const evaluateCollectionData = async (
 
 // Used to properly populate the inferSchemaResponse related state
 const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
+    let errors: string[] = [];
     let updatedVal: InferSchemaPropertyForRender[] | null, validKeys: string[];
 
     const hasResponse = dataVal && dataVal.length > 0;
@@ -68,6 +72,7 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
             const response = filterInferSchemaResponse(val);
             filteredKeys.push(response.validKeys);
             filteredFields.push(response.fields);
+            errors = union(val.errors);
         });
 
         // Find the keys that are valid in BOTH read/write schema
@@ -76,45 +81,57 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
         // Put the read/write output together so all keys are rendered
         updatedVal = union(...filteredFields);
     } else {
+        errors = [];
         updatedVal = null;
         validKeys = [];
     }
 
     return {
+        errors,
+        hasResponse,
         updatedVal,
         validKeys,
-        hasResponse,
     };
 };
 
 // Call into the flow WASM handler that will inline the write/inferred schema if necessary
-// const updateReadSchema = async (
-//     read: Schema,
-//     write: Schema,
-//     entityName: string
-// ) => {
-//     // Try fetching the inferred schema... possible TODO handle errors better
-//     const inferredSchemaResponse = await fetchInferredSchema(entityName);
-//     const inferred = inferredSchemaResponse.data?.[0]?.schema
-//         ? inferredSchemaResponse.data[0].schema
-//         : {};
+const updateReadSchema = async (
+    read: Schema,
+    write: Schema,
+    entityName: string
+) => {
+    // Try fetching the inferred schema... possible TODO handle errors better
+    const inferredSchemaResponse = await fetchInferredSchema(entityName);
+    const inferred = inferredSchemaResponse.data?.[0]?.schema
+        ? inferredSchemaResponse.data[0].schema
+        : {};
 
-//     let response;
-//     try {
-//         response = extend_read_bundle({
-//             read,
-//             write,
-//             inferred,
-//         });
-//         // We can catch any error here so that any issue causes an empty response and the
-//         //  component will show an error... though not the most useful one.
-//         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-//     } catch (e: any) {
-//         logRocketEvent('extend_read_bundle:failed', e);
-//         response = {};
-//     }
-//     return response;
-// };
+    let response;
+    try {
+        // response = extend_read_bundle({
+        //     read,
+        //     write,
+        //     inferred,
+        // });
+
+        response = {
+            ...read,
+            ...write,
+            ...inferred,
+        };
+
+        // We can catch any error here so that any issue causes an empty response and the
+        //  component will show an error... though not the most useful one.
+        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
+    } catch (e: any) {
+        logRocketEvent('extend_read_bundle:failed', e);
+        response = {};
+    }
+
+    console.log('updateReadSchema response >>> ', response);
+
+    return response;
+};
 
 const getInitialMiscData = (): Pick<
     BindingsEditorState,
@@ -284,13 +301,13 @@ const getInitialState = (
             dataVal: InferSchemaResponse[] | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
         ) => {
-            const { hasResponse, updatedVal, validKeys } =
+            const { hasResponse, updatedVal, validKeys, errors } =
                 evaluateInferSchemaResponse(dataVal);
 
             // Save the values into the store
             set(
                 produce((state: BindingsEditorState) => {
-                    state.inferSchemaResponseError = errorVal;
+                    state.inferSchemaResponseError = errorVal ?? errors;
                     state.inferSchemaResponse = updatedVal;
                     state.inferSchemaResponseEmpty = !hasResponse;
                     state.inferSchemaResponse_Keys = validKeys;
@@ -338,7 +355,7 @@ const getInitialState = (
 
         // Make sure we have an object
         if (!schemasToTest.every((schema) => isPlainObject(schema))) {
-            populateState(null, 'schema must be an object');
+            populateState(null, ['schema must be an object']);
             return;
         }
 
@@ -347,11 +364,11 @@ const getInitialState = (
             if (usingReadSchema) {
                 // We MUST make this call before calling `infer` below
                 //  This will inline the write/inferred schema in the `$defs` if needed
-                // schemasToTest[0] = await updateReadSchema(
-                //     schemasToTest[0],
-                //     spec.writeSchema ?? {},
-                //     entityName
-                // );
+                schemasToTest[0] = await updateReadSchema(
+                    schemasToTest[0],
+                    spec.writeSchema ?? {},
+                    entityName
+                );
             }
 
             // Run infer against schema
@@ -366,22 +383,23 @@ const getInitialState = (
                 })
             );
 
+            console.log('responses', responses);
+
             // Make sure all the responses are valid
             const allResponsesValid = responses.every((inferResponse) => {
                 const { projections } = inferResponse;
 
                 // Make sure there is a response
                 if (projections?.length === 0) {
-                    populateState(null, 'no fields inferred from schema');
+                    populateState(null, ['no fields inferred from schema']);
                     return false;
                 }
 
                 // Make sure we did not ONLY get the root object back as a pointer
                 if (projections.length === 1 && projections[0].ptr === '') {
-                    populateState(
-                        null,
-                        'no usable fields inferred from schema'
-                    );
+                    populateState(null, [
+                        'no usable fields inferred from schema',
+                    ]);
                     return false;
                 }
 
@@ -396,7 +414,7 @@ const getInitialState = (
 
             populateState(responses, null);
         } catch (err: unknown) {
-            populateState(null, err as string);
+            populateState(null, [err as string]);
         }
     },
 

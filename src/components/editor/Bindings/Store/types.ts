@@ -45,7 +45,7 @@ export interface BindingsEditorState {
     hasReadAndWriteSchema: boolean | null;
     inferSchemaResponse: InferSchemaPropertyForRender[] | null;
     inferSchemaResponse_Keys: string[];
-    inferSchemaResponseError: string | null;
+    inferSchemaResponseError: string[] | null;
     inferSchemaResponseDoneProcessing: boolean;
     inferSchemaResponseEmpty: boolean;
     populateInferSchemaResponse: (
