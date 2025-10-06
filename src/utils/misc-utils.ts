@@ -261,3 +261,17 @@ export const isGrant_UserExt = (
 export const isPromiseFulfilledResult = <T>(
     value: PromiseSettledResult<T>
 ): value is PromiseFulfilledResult<T> => value.status === 'fulfilled';
+
+export const hasOwnProperty = (
+    value: null | object | undefined,
+    property: PropertyKey
+) => {
+    if (!value) {
+        return false;
+    }
+
+    const stringifiedProperty =
+        typeof property === 'string' ? property : property.toString();
+
+    return Object.keys(value).includes(stringifiedProperty);
+};

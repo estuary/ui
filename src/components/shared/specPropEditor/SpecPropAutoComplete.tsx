@@ -140,9 +140,13 @@ export default function SpecPropAutoComplete({
                                       )
                                     : undefined
                             }
-                            label={intl.formatMessage({
-                                id: inputLabelId,
-                            })}
+                            label={
+                                inputLabelId
+                                    ? intl.formatMessage({
+                                          id: inputLabelId,
+                                      })
+                                    : undefined
+                            }
                             variant="standard"
                         />
                     );
