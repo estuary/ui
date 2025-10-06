@@ -20,7 +20,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import BindingSelector from 'src/components/editor/Bindings/Selector';
 import PrefixedName from 'src/components/inputs/PrefixedName';
-import GitPodButton from 'src/components/transformation/create/GitPodButton';
+import DraftIdGeneratorButton from 'src/components/transformation/create/DraftIdGeneratorButton';
 import LegacyLanguageSelector from 'src/components/transformation/create/legacy/LanguageSelector';
 import LegacySingleStep from 'src/components/transformation/create/legacy/SingleStep';
 import { LegacyStepWrapper } from 'src/components/transformation/create/legacy/Wrapper';
@@ -44,7 +44,7 @@ const StyledStepConnector = styled(StepConnector)(() => ({
 }));
 
 interface Props {
-    postWindowOpen: (window: Window | null) => void;
+    postWindowOpen: (draftId: string | undefined | null) => void;
     closeDialog: () => void;
 }
 
@@ -152,7 +152,7 @@ function TransformationCreate({ postWindowOpen }: Props) {
                             }}
                         />
 
-                        <GitPodButton
+                        <DraftIdGeneratorButton
                             entityNameError={entityNameError}
                             sourceCollectionSet={selectedCollectionSet}
                             postWindowOpen={postWindowOpen}

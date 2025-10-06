@@ -7,10 +7,8 @@ import { useIntl } from 'react-intl';
 
 import { createEntityDraft } from 'src/api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
-import { createRefreshToken } from 'src/api/tokens';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
-import { generateGitPodURL } from 'src/services/gitpod';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
@@ -22,13 +20,13 @@ import {
 import { generateInitialSpec } from 'src/utils/derivation-utils';
 
 interface Props {
-    postWindowOpen?: (window: Window | null) => void;
+    postWindowOpen?: (draftId: string | null | undefined) => void;
     entityNameError?: string | null;
     sourceCollectionSet?: Set<string>;
     buttonVariant?: LoadingButtonProps['variant'];
 }
 
-function GitPodButton({
+function DraftIdGeneratorButton({
     postWindowOpen,
     entityNameError,
     sourceCollectionSet,
@@ -149,7 +147,7 @@ function GitPodButton({
         ]
     );
 
-    const generateUrl = useMemo(
+    const generateDraftId = useMemo(
         () => async () => {
             try {
                 setUrlLoading(true);
@@ -165,12 +163,11 @@ function GitPodButton({
                     );
                 }
 
-                const [token, evaluatedDraftId] = await Promise.all([
-                    createRefreshToken(false, '1 day'),
+                const [evaluatedDraftId] = await Promise.all([
                     generateDraftWithSpecs(),
                 ]);
 
-                if (!evaluatedDraftId || !token.data) {
+                if (!evaluatedDraftId) {
                     throw new Error(
                         intl.formatMessage({
                             id: 'newTransform.errors.urlNotGenerated',
@@ -178,11 +175,7 @@ function GitPodButton({
                     );
                 }
 
-                return generateGitPodURL(
-                    evaluatedDraftId,
-                    token.data,
-                    catalogName
-                );
+                return evaluatedDraftId;
             } catch (e: unknown) {
                 displayError(
                     intl.formatMessage({
@@ -204,20 +197,10 @@ function GitPodButton({
             loading={urlLoading}
             disabled={!!entityNameError || !!submitButtonError || urlLoading}
             onClick={async () => {
-                const gitpodUrl = await generateUrl();
-                if (gitpodUrl) {
-                    const gitPodWindow = window.open(gitpodUrl, '_blank');
-
-                    if (!gitPodWindow || gitPodWindow.closed) {
-                        displayError(
-                            intl.formatMessage({
-                                id: 'newTransform.errors.gitPodWindow',
-                            })
-                        );
-                    }
-
+                const generatedDraftId = await generateDraftId();
+                if (generatedDraftId) {
                     if (postWindowOpen) {
-                        postWindowOpen(gitPodWindow);
+                        postWindowOpen(generatedDraftId);
                     }
                 }
             }}
@@ -231,4 +214,4 @@ function GitPodButton({
     );
 }
 
-export default GitPodButton;
+export default DraftIdGeneratorButton;
