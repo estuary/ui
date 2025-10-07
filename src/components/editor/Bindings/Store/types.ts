@@ -45,12 +45,14 @@ export interface BindingsEditorState {
     hasReadAndWriteSchema: boolean | null;
     inferSchemaResponse: InferSchemaPropertyForRender[] | null;
     inferSchemaResponse_Keys: string[];
-    inferSchemaResponseError: string | null;
+    inferSchemaResponseError: string[] | null;
     inferSchemaResponseDoneProcessing: boolean;
     inferSchemaResponseEmpty: boolean;
     populateInferSchemaResponse: (
         value: any | undefined,
-        entityName: string
+        entityName: string,
+        collectionSpec: any,
+        projections: any
     ) => void;
 
     // Schema Evolution

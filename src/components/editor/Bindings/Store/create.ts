@@ -11,7 +11,7 @@ import type { NamedSet } from 'zustand/middleware';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { extend_read_bundle, infer } from '@estuary/flow-web';
+import { skim_collection_projections } from '@estuary/flow-web';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 
@@ -57,6 +57,7 @@ const evaluateCollectionData = async (
 
 // Used to properly populate the inferSchemaResponse related state
 const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
+    let errors: string[] = [];
     let updatedVal: InferSchemaPropertyForRender[] | null, validKeys: string[];
 
     const hasResponse = dataVal && dataVal.length > 0;
@@ -71,6 +72,7 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
             const response = filterInferSchemaResponse(val);
             filteredKeys.push(response.validKeys);
             filteredFields.push(response.fields);
+            errors = union(val.errors);
         });
 
         // Find the keys that are valid in BOTH read/write schema
@@ -79,14 +81,16 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
         // Put the read/write output together so all keys are rendered
         updatedVal = union(...filteredFields);
     } else {
+        errors = [];
         updatedVal = null;
         validKeys = [];
     }
 
     return {
+        errors,
+        hasResponse,
         updatedVal,
         validKeys,
-        hasResponse,
     };
 };
 
@@ -104,11 +108,18 @@ const updateReadSchema = async (
 
     let response;
     try {
-        response = extend_read_bundle({
-            read,
-            write,
-            inferred,
-        });
+        // response = extend_read_bundle({
+        //     read,
+        //     write,
+        //     inferred,
+        // });
+
+        response = {
+            ...read,
+            ...write,
+            ...inferred,
+        };
+
         // We can catch any error here so that any issue causes an empty response and the
         //  component will show an error... though not the most useful one.
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
@@ -116,6 +127,9 @@ const updateReadSchema = async (
         logRocketEvent('extend_read_bundle:failed', e);
         response = {};
     }
+
+    console.log('updateReadSchema response >>> ', response);
+
     return response;
 };
 
@@ -282,18 +296,23 @@ const getInitialState = (
     // That was removed but might be needed in the future
     //  so we left things running through loops in case we need
     //  to support that again
-    populateInferSchemaResponse: async (spec, entityName) => {
+    populateInferSchemaResponse: async (
+        spec,
+        entityName,
+        collectionSpec,
+        projections
+    ) => {
         const populateState = (
             dataVal: InferSchemaResponse[] | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
         ) => {
-            const { hasResponse, updatedVal, validKeys } =
+            const { hasResponse, updatedVal, validKeys, errors } =
                 evaluateInferSchemaResponse(dataVal);
 
             // Save the values into the store
             set(
                 produce((state: BindingsEditorState) => {
-                    state.inferSchemaResponseError = errorVal;
+                    state.inferSchemaResponseError = errorVal ?? errors;
                     state.inferSchemaResponse = updatedVal;
                     state.inferSchemaResponseEmpty = !hasResponse;
                     state.inferSchemaResponse_Keys = validKeys;
@@ -341,7 +360,7 @@ const getInitialState = (
 
         // Make sure we have an object
         if (!schemasToTest.every((schema) => isPlainObject(schema))) {
-            populateState(null, 'schema must be an object');
+            populateState(null, ['schema must be an object']);
             return;
         }
 
@@ -358,24 +377,40 @@ const getInitialState = (
             }
 
             // Run infer against schema
-            const responses = schemasToTest.map((schema) => infer(schema));
+            const responses = schemasToTest.map((schema) => {
+                console.log('schema >>> ', schema);
+                console.log('liveSpec  >>> ', collectionSpec.schema);
+
+                return skim_collection_projections({
+                    collection: entityName,
+                    model: {
+                        schema,
+                        // writeSchema: {},
+                        // readSchema: {},
+                        projections,
+                        key: collectionSpec.key,
+                    },
+                });
+            });
+
+            console.log('projections', projections);
+            console.log('responses', responses);
 
             // Make sure all the responses are valid
             const allResponsesValid = responses.every((inferResponse) => {
-                const { properties } = inferResponse;
+                const { projections } = inferResponse;
 
                 // Make sure there is a response
-                if (properties?.length === 0) {
-                    populateState(null, 'no fields inferred from schema');
+                if (projections?.length === 0) {
+                    populateState(null, ['no fields inferred from schema']);
                     return false;
                 }
 
                 // Make sure we did not ONLY get the root object back as a pointer
-                if (properties.length === 1 && properties[0].pointer === '') {
-                    populateState(
-                        null,
-                        'no usable fields inferred from schema'
-                    );
+                if (projections.length === 1 && projections[0].ptr === '') {
+                    populateState(null, [
+                        'no usable fields inferred from schema',
+                    ]);
                     return false;
                 }
 
@@ -390,7 +425,7 @@ const getInitialState = (
 
             populateState(responses, null);
         } catch (err: unknown) {
-            populateState(null, err as string);
+            populateState(null, [err as string]);
         }
     },
 

@@ -1,5 +1,5 @@
 import type { FullSource } from 'src/stores/Binding/slices/TimeTravel';
-import type { Schema } from 'src/types';
+import type { FieldExistence, Schema } from 'src/types';
 
 // The constraint types are ordered by severity, with one being the most severe and six the least.
 enum ConstraintTypes {
@@ -29,9 +29,24 @@ interface BuiltCollection {
     writeSchema: Schema;
 }
 
+export interface BuiltProjectionInference {
+    types: string[];
+
+    description?: string;
+    exists?: FieldExistence;
+    title?: string;
+
+    string?: BuiltProjectionString;
+}
+
+export interface BuiltProjectionString {
+    format?: string;
+}
+
+// TODO (skim) - need to look more into inference typing
 export interface BuiltProjection {
     field: string;
-    inference: any;
+    inference: any | BuiltProjectionInference;
     ptr?: string;
     isPrimaryKey?: boolean;
 }
