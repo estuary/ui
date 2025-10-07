@@ -299,7 +299,7 @@ const getInitialState = (
     populateInferSchemaResponse: async (
         spec,
         entityName,
-        liveSpec,
+        collectionSpec,
         projections
     ) => {
         const populateState = (
@@ -379,7 +379,7 @@ const getInitialState = (
             // Run infer against schema
             const responses = schemasToTest.map((schema) => {
                 console.log('schema >>> ', schema);
-                console.log('liveSpec  >>> ', liveSpec.schema);
+                console.log('liveSpec  >>> ', collectionSpec.schema);
 
                 return skim_collection_projections({
                     collection: entityName,
@@ -388,7 +388,7 @@ const getInitialState = (
                         // writeSchema: {},
                         // readSchema: {},
                         projections,
-                        key: liveSpec.key,
+                        key: collectionSpec.key,
                     },
                 });
             });
