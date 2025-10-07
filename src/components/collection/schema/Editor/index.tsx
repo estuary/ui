@@ -8,6 +8,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 
+import SchemaWarning from 'src/components/collection/schema/Editor/SchemaWarning';
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
@@ -20,6 +21,7 @@ import {
 import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
+import { useCollectionProjections } from 'src/hooks/projections/useCollectionProjections';
 import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
@@ -39,6 +41,8 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         localZustandScope,
         editorSchemaScope
     );
+
+    const projections = useCollectionProjections();
 
     const entityType = useEntityType();
 
@@ -75,7 +79,8 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
             populateInferSchemaResponse(
                 draftSpec.spec,
                 entityName,
-                draftSpec.spec
+                draftSpec.spec,
+                projections
             );
 
             // Need to keep the collection data updated so that the schema
@@ -87,6 +92,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         entityType,
         entityName,
         populateInferSchemaResponse,
+        projections,
         setCollectionData,
     ]);
 
@@ -128,22 +134,27 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
             return <CollectionSchemaEditorSkeleton />;
         }
         return (
-            <Grid container>
+            <Grid container rowGap={2}>
                 {entityType === 'collection' ? null : (
-                    <Stack
-                        sx={{
-                            alignItems: 'start',
-                            alignContent: 'start',
-                            mb: 3,
-                        }}
-                    >
-                        <Typography variant="subtitle1" component="div">
-                            <FormattedMessage id="entityName.label" />
-                        </Typography>
+                    <Grid item xs={12}>
+                        <Stack
+                            sx={{
+                                alignItems: 'start',
+                                alignContent: 'start',
+                            }}
+                        >
+                            <Typography variant="subtitle1" component="div">
+                                <FormattedMessage id="entityName.label" />
+                            </Typography>
 
-                        <Typography sx={{ ml: 1.5 }}>{entityName}</Typography>
-                    </Stack>
+                            <Typography sx={{ ml: 1.5 }}>
+                                {entityName}
+                            </Typography>
+                        </Stack>
+                    </Grid>
                 )}
+
+                <SchemaWarning />
 
                 <KeyAutoComplete
                     value={draftSpec.spec.key}

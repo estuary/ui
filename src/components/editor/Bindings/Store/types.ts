@@ -51,7 +51,8 @@ export interface BindingsEditorState {
     populateInferSchemaResponse: (
         value: any | undefined,
         entityName: string,
-        liveSpec: any
+        liveSpec: any,
+        projections: any
     ) => void;
 
     // Schema Evolution

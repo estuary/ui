@@ -296,7 +296,12 @@ const getInitialState = (
     // That was removed but might be needed in the future
     //  so we left things running through loops in case we need
     //  to support that again
-    populateInferSchemaResponse: async (spec, entityName, liveSpec) => {
+    populateInferSchemaResponse: async (
+        spec,
+        entityName,
+        liveSpec,
+        projections
+    ) => {
         const populateState = (
             dataVal: InferSchemaResponse[] | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
@@ -372,17 +377,23 @@ const getInitialState = (
             }
 
             // Run infer against schema
-            const responses = schemasToTest.map((schema) =>
-                skim_collection_projections({
+            const responses = schemasToTest.map((schema) => {
+                console.log('schema >>> ', schema);
+                console.log('liveSpec  >>> ', liveSpec.schema);
+
+                return skim_collection_projections({
                     collection: entityName,
                     model: {
-                        schema: liveSpec.schema,
+                        schema,
+                        // writeSchema: {},
+                        // readSchema: {},
+                        projections,
                         key: liveSpec.key,
-                        projections: {},
                     },
-                })
-            );
+                });
+            });
 
+            console.log('projections', projections);
             console.log('responses', responses);
 
             // Make sure all the responses are valid
