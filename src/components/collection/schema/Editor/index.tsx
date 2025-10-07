@@ -21,7 +21,7 @@ import {
 import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
-import { useCollectionProjections } from 'src/hooks/projections/useCollectionProjections';
+import { useProjectionsForSkim } from 'src/hooks/projections/useProjectionsForSkim';
 import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
@@ -42,7 +42,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         editorSchemaScope
     );
 
-    const projections = useCollectionProjections();
+    const projections = useProjectionsForSkim();
 
     const entityType = useEntityType();
 
