@@ -225,7 +225,7 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                                 onPageChange={(_event, page) => {
                                     loadMore(page);
                                 }}
-                                showFirstButton
+                                showFirstButton={currentPage !== 0}
                                 labelDisplayedRows={({ from, to }) => {
                                     return (
                                         <>
