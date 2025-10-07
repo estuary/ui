@@ -49,7 +49,7 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
                     inferredProperty.inference.types;
                 const isValidKey = Boolean(
                     // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
-                    inferredProperty.inference.exists !== 'cannot' &&
+                    inferredProperty.inference.exists !== 'CANNOT' &&
                         // Make sure we only have a single type besides null
                         inferredPropertyTypes.filter((type) => type !== 'null')
                             .length === 1 &&
@@ -63,10 +63,7 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
                     validKeys.push(inferredProperty.ptr);
                 }
 
-                return {
-                    ...inferredProperty,
-                    allowedToBeKey: isValidKey,
-                };
+                return inferredProperty;
             });
     }
 
