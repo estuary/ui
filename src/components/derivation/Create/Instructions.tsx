@@ -13,6 +13,7 @@ import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import SingleLineCode from 'src/components/content/SingleLineCode';
+import { codeBackground } from 'src/context/Theme';
 
 function Instructions({ draftId }: InstructionsProps) {
     const intl = useIntl();
@@ -83,23 +84,35 @@ function Instructions({ draftId }: InstructionsProps) {
                                 })}
                             />
 
-                            <MessageWithLink
-                                messageID="newTransform.steps.4.details"
-                                intlValues={{
-                                    emphasis: (
-                                        <Typography
-                                            component="code"
-                                            sx={{
-                                                fontFamily: 'Monospace',
-                                            }}
-                                        >
-                                            {intl.formatMessage({
-                                                id: 'newTransform.steps.4.details.emphasis',
-                                            })}
-                                        </Typography>
-                                    ),
-                                }}
-                            />
+                            <Stack spacing={1}>
+                                <Typography>
+                                    {intl.formatMessage(
+                                        { id: 'newTransform.steps.4.details' },
+                                        {
+                                            emphasis: (
+                                                <Typography
+                                                    component="code"
+                                                    sx={{
+                                                        bgcolor: (theme) =>
+                                                            codeBackground[
+                                                                theme.palette
+                                                                    .mode
+                                                            ],
+                                                        fontWeight: 500,
+                                                        p: 0.25,
+                                                        fontFamily: 'Monospace',
+                                                    }}
+                                                >
+                                                    {intl.formatMessage({
+                                                        id: 'newTransform.steps.4.details.emphasis',
+                                                    })}
+                                                </Typography>
+                                            ),
+                                        }
+                                    )}
+                                </Typography>
+                                <MessageWithLink messageID="newTransform.steps.4.learnMore" />
+                            </Stack>
                         </Stack>
                     </StepContent>
                 </Step>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Collapse, Dialog, DialogContent } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -23,6 +23,8 @@ import { useTransformationCreate_resetState } from 'src/stores/TransformationCre
 const ARIA_LABEL_ID = 'derivation-create-dialog';
 
 function DerivationCreate() {
+    const intl = useIntl();
+
     const searchParams = new URLSearchParams(window.location.search);
     const collectionsPrefilled = searchParams.has(
         GlobalSearchParams.PREFILL_LIVE_SPEC_ID
@@ -71,7 +73,7 @@ function DerivationCreate() {
             aria-labelledby={ARIA_LABEL_ID}
         >
             <DialogTitleWithClose id={ARIA_LABEL_ID} onClose={closeDialog}>
-                <FormattedMessage id="newTransform.modal.title" />
+                {intl.formatMessage({ id: 'newTransform.modal.title' })}
             </DialogTitleWithClose>
 
             <DialogContent>
