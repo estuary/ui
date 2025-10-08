@@ -149,13 +149,13 @@ function FieldSelectionViewer({
                         />
                     </Stack>
 
+                    <KeyChangeAlert bindingUUID={bindingUUID} />
+
                     <RefreshStatus show={refreshRequired ? true : undefined} />
 
                     <Typography component="div">
                         <MessageWithLink messageID="fieldSelection.message" />
                     </Typography>
-
-                    <KeyChangeAlert bindingUUID={bindingUUID} />
                 </Stack>
             </Stack>
 
