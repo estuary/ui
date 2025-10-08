@@ -78,7 +78,7 @@ export const Transforms: Record<string, string> = {
     'newTransform.steps.2.details.docLink': `docs`,
     'newTransform.steps.2.details.docPath': `https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli`,
 
-    'newTransform.steps.3': `Select generated draft`,
+    'newTransform.steps.3': `Select created draft`,
     'newTransform.steps.3.code': `flowctl draft select --id {draftId}`,
     'newTransform.steps.3.details': `Allows you to continue working on your derivation specification on your local system. {docLink}`,
     'newTransform.steps.3.details.docLink': `docs`,
@@ -86,7 +86,9 @@ export const Transforms: Record<string, string> = {
 
     'newTransform.steps.4': `Create default file structure`,
     'newTransform.steps.4.code': `flowctl draft develop`,
-    'newTransform.steps.4.details': `Creates a new file structure in your working directory. Edit the deepest-nested {emphasis} file and its associated SQL or TypeScript transformation files to describe your desired transformed collection. Learn more about constructing derivations.`,
+    'newTransform.steps.4.details': `Creates a new file structure in your working directory. Edit the deepest-nested {emphasis} file and its associated SQL or TypeScript transformation files to describe your desired transformed collection. Learn more about constructing {docLink}`,
+    'newTransform.steps.4.details.docLink': `derivations`,
+    'newTransform.steps.4.details.docPath': `https://docs.estuary.dev/concepts/derivations/`,
     'newTransform.steps.4.details.emphasis': `flow.yaml`,
 
     'newTransform.steps.5': `Save`,

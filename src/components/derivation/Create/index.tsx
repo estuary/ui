@@ -2,17 +2,9 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useState } from 'react';
 
-import {
-    Button,
-    Collapse,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Collapse, Dialog, DialogContent } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
@@ -31,8 +23,6 @@ import { useTransformationCreate_resetState } from 'src/stores/TransformationCre
 const ARIA_LABEL_ID = 'derivation-create-dialog';
 
 function DerivationCreate() {
-    const intl = useIntl();
-
     const searchParams = new URLSearchParams(window.location.search);
     const collectionsPrefilled = searchParams.has(
         GlobalSearchParams.PREFILL_LIVE_SPEC_ID
@@ -87,15 +77,7 @@ function DerivationCreate() {
             <DialogContent>
                 <AdminCapabilityGuard>
                     <Collapse in={showConfirmation}>
-                        <Stack spacing={2}>
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'newTransform.steps.message',
-                                })}
-                            </Typography>
-
-                            <Instructions draftId={draftId} />
-                        </Stack>
+                        <Instructions draftId={draftId} />
                     </Collapse>
 
                     <Collapse in={!showConfirmation}>
@@ -114,13 +96,6 @@ function DerivationCreate() {
                     </Collapse>
                 </AdminCapabilityGuard>
             </DialogContent>
-            <DialogActions>
-                <Collapse in={showConfirmation}>
-                    <Button onClick={closeDialog}>
-                        {intl.formatMessage({ id: 'cta.close' })}
-                    </Button>
-                </Collapse>
-            </DialogActions>
         </Dialog>
     );
 }
