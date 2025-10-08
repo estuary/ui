@@ -66,6 +66,9 @@ export default function FieldSelectionTable({
             bindingUUID,
             'validatedBindingIndex'
         );
+    const groupBy = useBindingStore(
+        (state) => state.selections?.[bindingUUID].groupBy
+    );
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -269,10 +272,11 @@ export default function FieldSelectionTable({
                                 processedSelections &&
                                 processedSelections.length > 0 ? (
                                     <Rows
+                                        columnToSort={columnToSort}
                                         columns={columnsToShow}
                                         data={processedSelections}
+                                        groupBy={groupBy}
                                         sortDirection={sortDirection}
-                                        columnToSort={columnToSort}
                                     />
                                 ) : null
                             }
