@@ -8,26 +8,22 @@ import {
     Box,
     Stack,
     TextField,
-    Tooltip,
     Typography,
     useMediaQuery,
     useTheme,
 } from '@mui/material';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { Check, Key } from 'iconoir-react';
-import { useIntl } from 'react-intl';
+import { Check } from 'iconoir-react';
 
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
 
 const GroupByKeysForm = ({
-    groupBy,
     localValues,
     options,
     setLocalValues,
 }: GroupByKeysFormProps) => {
-    const intl = useIntl();
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -67,27 +63,30 @@ const GroupByKeysForm = ({
                         component="li"
                         key={key}
                         style={{
+                            alignItems: 'flex-start',
                             display: 'flex',
-                            justifyContent: 'space-between',
                             paddingLeft: 10,
                             paddingRight: 8,
                         }}
                     >
+                        {state.selected ? (
+                            <Check
+                                style={{
+                                    color: theme.palette.primary.main,
+                                    fontSize: 12,
+                                    marginRight: 4,
+                                    marginTop: 2,
+                                }}
+                            />
+                        ) : (
+                            <Box style={{ width: 18, marginRight: 4 }} />
+                        )}
+
                         <Stack>
                             <Stack
                                 direction="row"
                                 style={{ alignItems: 'center' }}
                             >
-                                {state.selected ? (
-                                    <Check
-                                        style={{
-                                            color: theme.palette.primary.main,
-                                            fontSize: 12,
-                                            marginRight: 4,
-                                        }}
-                                    />
-                                ) : null}
-
                                 <Typography
                                     style={{ fontWeight: 500, marginBottom: 4 }}
                                 >
@@ -122,21 +121,6 @@ const GroupByKeysForm = ({
                                 </Typography>
                             ) : null}
                         </Stack>
-
-                        {groupBy.implicit.includes(field) ? (
-                            <Tooltip
-                                placement="left"
-                                title={intl.formatMessage({
-                                    id: 'fieldSelection.groupBy.tooltip.implicitKey',
-                                })}
-                            >
-                                <Key
-                                    style={{
-                                        color: theme.palette.text.primary,
-                                    }}
-                                />
-                            </Tooltip>
-                        ) : null}
                     </Box>
                 );
             }}

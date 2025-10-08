@@ -13,6 +13,11 @@ export const optionalColumns = Object.values(optionalColumnIntlKeys);
 
 export const tableColumns: TableColumns[] = [
     {
+        field: null,
+        headerIntlKey: ' ',
+        width: 37,
+    },
+    {
         field: 'field',
         headerIntlKey: 'data.field',
         columnWraps: true,

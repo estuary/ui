@@ -55,7 +55,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
             .map((index) => selections[index]);
 
         setLocalValues(explicitKeys.length > 0 ? explicitKeys : []);
-    }, [groupBy, selections]);
+    }, [groupBy, selections, open]);
 
     return (
         <>
@@ -96,33 +96,9 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                                 values={groupBy.implicit}
                             />
                         </Stack>
-
-                        {groupBy.explicit.length > 0 ? (
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                style={{
-                                    alignItems: 'center',
-                                    marginBottom: 24,
-                                }}
-                            >
-                                <Typography>
-                                    {intl.formatMessage({
-                                        id: 'fieldSelection.groupBy.label.explicitKeys',
-                                    })}
-                                </Typography>
-
-                                <ChipList
-                                    maxChips={3}
-                                    stripPath={false}
-                                    values={groupBy.explicit}
-                                />
-                            </Stack>
-                        ) : null}
                     </Box>
 
                     <GroupByKeysForm
-                        groupBy={groupBy}
                         localValues={localValues}
                         options={
                             selections?.filter(

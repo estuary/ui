@@ -4,8 +4,9 @@ import type {
     RowsProps,
 } from 'src/components/tables/FieldSelection/types';
 
-import { TableCell, TableRow } from '@mui/material';
+import { Stack, TableCell, TableRow } from '@mui/material';
 
+import { Key } from 'iconoir-react';
 import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
@@ -40,11 +41,17 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            <FieldName
-                field={row.field}
-                isGroupByKey={row.isGroupByKey}
-                outcome={row.outcome}
-            />
+            {row.isGroupByKey ? (
+                <TableCell>
+                    <Stack style={{ alignItems: 'center' }}>
+                        <Key />
+                    </Stack>
+                </TableCell>
+            ) : (
+                <TableCell />
+            )}
+
+            <FieldName field={row.field} outcome={row.outcome} />
 
             {pointerColumnVisible ? (
                 <TableCell sx={wrappingTableBodyCell}>

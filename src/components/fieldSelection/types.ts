@@ -1,7 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type {
     FieldSelection,
-    GroupKeyMetadata,
     SelectionAlgorithm,
 } from 'src/stores/Binding/slices/FieldSelection';
 
@@ -23,7 +22,6 @@ interface BaseMenuProps {
 }
 
 export interface GroupByKeysFormProps {
-    groupBy: GroupKeyMetadata;
     localValues: FieldSelection[];
     options: FieldSelection[];
     setLocalValues: Dispatch<SetStateAction<FieldSelection[]>>;

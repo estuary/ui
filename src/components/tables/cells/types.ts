@@ -38,7 +38,6 @@ export interface FieldListProps {
 
 export interface FieldNameProps {
     field: string;
-    isGroupByKey: boolean;
     outcome: FieldOutcome;
 }
 

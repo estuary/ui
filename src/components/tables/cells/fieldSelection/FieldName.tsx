@@ -9,28 +9,18 @@ import {
     isSelectedField,
 } from 'src/utils/fieldSelection-utils';
 
-const FieldName = ({ field, isGroupByKey, outcome }: FieldNameProps) => {
+const FieldName = ({ field, outcome }: FieldNameProps) => {
     return (
         <TableCell sx={wrappingTableBodyCell}>
             <OutlinedChip
-                color={
-                    hasFieldConflict(outcome)
-                        ? 'error'
-                        : isGroupByKey
-                          ? 'primary'
-                          : undefined
-                }
+                color={hasFieldConflict(outcome) ? 'error' : undefined}
                 label={
                     <Stack
                         direction="row"
                         spacing={1}
                         style={{ alignItems: 'center' }}
                     >
-                        <Typography
-                            style={{ fontWeight: isGroupByKey ? 500 : 400 }}
-                        >
-                            {field}
-                        </Typography>
+                        <Typography>{field}</Typography>
                     </Stack>
                 }
                 variant="outlined"
