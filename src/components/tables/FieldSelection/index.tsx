@@ -1,4 +1,7 @@
-import type { FieldSelectionTableProps } from 'src/components/tables/FieldSelection/types';
+import type {
+    ExpandedFieldSelection,
+    FieldSelectionTableProps,
+} from 'src/components/tables/FieldSelection/types';
 import type { SortDirection, TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -40,9 +43,22 @@ export default function FieldSelectionTable({
 }: FieldSelectionTableProps) {
     const intl = useIntl();
 
-    const selections = useBindingStore((state) =>
+    const selections: ExpandedFieldSelection[] = useBindingStore((state) =>
         state.selections?.[bindingUUID]
-            ? Object.values(state.selections[bindingUUID].value)
+            ? Object.values(state.selections[bindingUUID].value).map(
+                  (selection) => ({
+                      ...selection,
+                      isGroupByKey:
+                          state.selections[bindingUUID].groupBy.explicit
+                              .length > 0
+                              ? state.selections[
+                                    bindingUUID
+                                ].groupBy.explicit.includes(selection.field)
+                              : state.selections[
+                                    bindingUUID
+                                ].groupBy.implicit.includes(selection.field),
+                  })
+              )
             : []
     );
     const selectionsHydrating = useBindingStore(
@@ -66,9 +82,6 @@ export default function FieldSelectionTable({
             bindingUUID,
             'validatedBindingIndex'
         );
-    const groupBy = useBindingStore(
-        (state) => state.selections?.[bindingUUID].groupBy
-    );
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -275,7 +288,6 @@ export default function FieldSelectionTable({
                                         columnToSort={columnToSort}
                                         columns={columnsToShow}
                                         data={processedSelections}
-                                        groupBy={groupBy}
                                         sortDirection={sortDirection}
                                     />
                                 ) : null

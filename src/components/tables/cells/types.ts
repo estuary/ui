@@ -36,9 +36,10 @@ export interface FieldListProps {
     sticky?: boolean;
 }
 
-export interface FieldNameProps extends BaseFieldOutcomeProps {
-    bindingUUID: string | null;
+export interface FieldNameProps {
     field: string;
+    isGroupByKey: boolean;
+    outcome: FieldOutcome;
 }
 
 export interface FieldOutputProps {

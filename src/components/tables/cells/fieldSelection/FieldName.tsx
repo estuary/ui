@@ -3,21 +3,13 @@ import type { FieldNameProps } from 'src/components/tables/cells/types';
 import { Stack, TableCell, Typography } from '@mui/material';
 
 import { wrappingTableBodyCell } from 'src/context/Theme';
-import { useBindingStore } from 'src/stores/Binding/Store';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import {
     hasFieldConflict,
     isSelectedField,
 } from 'src/utils/fieldSelection-utils';
 
-const FieldName = ({ bindingUUID, field, outcome }: FieldNameProps) => {
-    const isGroupByKey = useBindingStore((state) =>
-        bindingUUID && state.selections?.[bindingUUID]
-            ? state.selections[bindingUUID].groupBy.explicit.includes(field) ||
-              state.selections[bindingUUID].groupBy.implicit.includes(field)
-            : false
-    );
-
+const FieldName = ({ field, isGroupByKey, outcome }: FieldNameProps) => {
     return (
         <TableCell sx={wrappingTableBodyCell}>
             <OutlinedChip

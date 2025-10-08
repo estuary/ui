@@ -1,8 +1,8 @@
 import type {
+    ExpandedFieldSelection,
     RowProps,
     RowsProps,
 } from 'src/components/tables/FieldSelection/types';
-import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 import { TableCell, TableRow } from '@mui/material';
 
@@ -41,8 +41,8 @@ function Row({ columns, row }: RowProps) {
             }}
         >
             <FieldName
-                bindingUUID={currentBindingUUID}
                 field={row.field}
+                isGroupByKey={row.isGroupByKey}
                 outcome={row.outcome}
             />
 
@@ -82,13 +82,7 @@ function Row({ columns, row }: RowProps) {
 
 // TODO (field selection): Share the custom sorting logic taken from src/components/tables/Schema/Rows.tsx.
 //   At this point, the majority of the logic for these two components is shared. Consider unifying them.
-function Rows({
-    columnToSort,
-    columns,
-    data,
-    groupBy,
-    sortDirection,
-}: RowsProps) {
+function Rows({ columnToSort, columns, data, sortDirection }: RowsProps) {
     // We only do special sorting for field - otherwise we can use lodash
     //  We're probably safe always using the method below but made them
     //  different so we can have special control when sorting the fields
@@ -98,35 +92,25 @@ function Rows({
         return (
             <>
                 {data
-                    .sort((first: FieldSelection, second: FieldSelection) => {
-                        const isFirstExplicitKey = groupBy.explicit.includes(
-                            first.field
-                        );
-                        const isFirstImplicitKey = groupBy.implicit.includes(
-                            first.field
-                        );
-
-                        const isSecondExplicitKey = groupBy.explicit.includes(
-                            second.field
-                        );
-                        const isSecondImplicitKey = groupBy.implicit.includes(
-                            second.field
-                        );
-
-                        return sortByField(
-                            {
-                                field: first.field,
-                                isKey: isFirstExplicitKey || isFirstImplicitKey,
-                            },
-                            {
-                                field: second.field,
-                                isKey:
-                                    isSecondExplicitKey || isSecondImplicitKey,
-                            },
-                            sortDirection
-                        );
-                    })
-                    .map((record: FieldSelection, index: number) => (
+                    .sort(
+                        (
+                            first: ExpandedFieldSelection,
+                            second: ExpandedFieldSelection
+                        ) => {
+                            return sortByField(
+                                {
+                                    field: first.field,
+                                    isKey: first.isGroupByKey,
+                                },
+                                {
+                                    field: second.field,
+                                    isKey: second.isGroupByKey,
+                                },
+                                sortDirection
+                            );
+                        }
+                    )
+                    .map((record: ExpandedFieldSelection, index: number) => (
                         <Row
                             columns={columns}
                             row={record}
