@@ -7,13 +7,13 @@ import {
     TableBody,
     TableCell,
     TableContainer,
-    TableHead,
     TableRow,
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import TableHeader from 'src/components/home/dashboard/AlertingOverview/TableHeader';
 import ChipList from 'src/components/shared/ChipList';
 import EntityNameLink from 'src/components/tables/cells/EntityNameLink';
 import TableLoadingRows from 'src/components/tables/Loading';
@@ -28,7 +28,7 @@ export default function AlertSummary({
 }: AlertSummaryProps) {
     const intl = useIntl();
 
-    const { tbodyComponent, tdComponent, trComponent, theaderComponent } =
+    const { tbodyComponent, tdComponent, trComponent } =
         getTableComponents(true);
 
     const getAlertTypeContent = useAlertTypeContent();
@@ -54,26 +54,7 @@ export default function AlertSummary({
                     id: 'alerts.overview.label',
                 })}
             >
-                <TableHead component={theaderComponent}>
-                    <TableRow component={trComponent}>
-                        <TableCell
-                            component={tdComponent}
-                            sx={{
-                                minWidth: 250,
-                                maxWidth: 'min-content',
-                            }}
-                        >
-                            {intl.formatMessage({
-                                id: 'entityName.label',
-                            })}
-                        </TableCell>
-                        <TableCell component={tdComponent}>
-                            {intl.formatMessage({
-                                id: 'alerts.overview.recentAlerts',
-                            })}
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
+                <TableHeader />
 
                 <TableBody component={tbodyComponent}>
                     {fetching ? (
