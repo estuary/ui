@@ -3,21 +3,20 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 import { useState } from 'react';
 
 import {
+    Button,
     Collapse,
     Dialog,
+    DialogActions,
     DialogContent,
-    List,
-    ListItem,
-    ListItemText,
     Stack,
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import SingleLineCode from 'src/components/content/SingleLineCode';
+import Instructions from 'src/components/derivation/Create/Instructions';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
 import TransformationCreate from 'src/components/transformation/create';
@@ -32,6 +31,8 @@ import { useTransformationCreate_resetState } from 'src/stores/TransformationCre
 const ARIA_LABEL_ID = 'derivation-create-dialog';
 
 function DerivationCreate() {
+    const intl = useIntl();
+
     const searchParams = new URLSearchParams(window.location.search);
     const collectionsPrefilled = searchParams.has(
         GlobalSearchParams.PREFILL_LIVE_SPEC_ID
@@ -88,75 +89,12 @@ function DerivationCreate() {
                     <Collapse in={showConfirmation}>
                         <Stack spacing={2}>
                             <Typography>
-                                Now that you’ve created a derivation draft, you
-                                will need to continue development locally or in
-                                a cloud environment. Follow these steps to edit
-                                and publish your derivation.
+                                {intl.formatMessage({
+                                    id: 'newTransform.steps.message',
+                                })}
                             </Typography>
 
-                            <List component="ol">
-                                <ListItem component="li">
-                                    <ListItemText>
-                                        Install Estuary’s flowctl CLI.
-                                    </ListItemText>
-                                </ListItem>
-
-                                <ListItem component="li">
-                                    <ListItemText>
-                                        Authenticate your account with `flowctl
-                                        auth login` and paste your access token
-                                        into the terminal.
-                                    </ListItemText>
-                                </ListItem>
-
-                                <ListItem component="li">
-                                    <ListItemText>
-                                        Pull your draft to continue working on
-                                        your derivation specification:
-                                    </ListItemText>
-                                </ListItem>
-
-                                <ListItem component="li">
-                                    <ListItemText>
-                                        <SingleLineCode
-                                            value={`flowctl draft select --id ${draftId}`}
-                                        />
-                                    </ListItemText>
-                                </ListItem>
-
-                                <ListItem component="li">
-                                    <ListItemText>
-                                        <SingleLineCode value="flowctl draft develop" />
-                                    </ListItemText>
-                                </ListItem>
-
-                                <ListItem component="li">
-                                    <ListItemText>
-                                        This will create a new file structure in
-                                        your working directory. Edit the
-                                        deepest-nested `flow.yaml` file and its
-                                        associated SQL or TypeScript
-                                        transformation files to describe your
-                                        desired transformed collection. Learn
-                                        more about constructing derivations.
-                                    </ListItemText>
-                                </ListItem>
-
-                                <ListItem component="li">
-                                    <ListItemText>
-                                        When you’re done, you can save your
-                                        draft specification back to Estuary
-                                        using:
-                                    </ListItemText>
-                                </ListItem>
-
-                                <ListItem component="li">
-                                    <ListItemText>
-                                        <SingleLineCode value="flowctl draft author --source flow.yaml" />
-                                        <SingleLineCode value="flowctl draft publish" />
-                                    </ListItemText>
-                                </ListItem>
-                            </List>
+                            <Instructions draftId={draftId} />
                         </Stack>
                     </Collapse>
 
@@ -176,6 +114,13 @@ function DerivationCreate() {
                     </Collapse>
                 </AdminCapabilityGuard>
             </DialogContent>
+            <DialogActions>
+                <Collapse in={showConfirmation}>
+                    <Button onClick={closeDialog}>
+                        {intl.formatMessage({ id: 'cta.close' })}
+                    </Button>
+                </Collapse>
+            </DialogActions>
         </Dialog>
     );
 }

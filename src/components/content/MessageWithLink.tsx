@@ -29,7 +29,9 @@ function MessageWithLink({ link, linkOptions, messageID }: Props) {
                             })
                         }
                     >
-                        <FormattedMessage id={`${messageID}.docLink`} />
+                        {intl.formatMessage({
+                            id: `${messageID}.docLink`,
+                        })}
                     </ExternalLink>
                 ),
             }}
