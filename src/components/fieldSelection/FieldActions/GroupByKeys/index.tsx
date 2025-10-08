@@ -124,7 +124,17 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                     <GroupByKeysForm
                         groupBy={groupBy}
                         localValues={localValues}
-                        options={selections ?? []}
+                        options={
+                            selections?.filter(
+                                ({ projection }) =>
+                                    !projection?.inference.types.includes(
+                                        'object'
+                                    ) &&
+                                    !projection?.inference.types.includes(
+                                        'array'
+                                    )
+                            ) ?? []
+                        }
                         setLocalValues={setLocalValues}
                     />
                 </DialogContent>
