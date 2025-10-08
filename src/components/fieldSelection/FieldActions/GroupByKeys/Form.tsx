@@ -15,6 +15,7 @@ import {
 
 import { arrayMove } from '@dnd-kit/sortable';
 import { Check } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
@@ -24,6 +25,7 @@ const GroupByKeysForm = ({
     options,
     setLocalValues,
 }: GroupByKeysFormProps) => {
+    const intl = useIntl();
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -39,7 +41,15 @@ const GroupByKeysForm = ({
             }}
             options={options}
             renderInput={(params) => {
-                return <TextField {...params} variant="standard" />;
+                return (
+                    <TextField
+                        {...params}
+                        label={intl.formatMessage({
+                            id: 'fieldSelection.groupBy.label.field',
+                        })}
+                        variant="standard"
+                    />
+                );
             }}
             renderOption={(renderOptionProps, option, state) => {
                 const { field, projection } = option;

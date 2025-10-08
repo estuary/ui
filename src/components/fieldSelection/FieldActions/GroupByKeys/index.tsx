@@ -79,6 +79,12 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
 
                 <DialogContent>
                     <Box style={{ marginBottom: 24 }}>
+                        <Typography style={{ marginBottom: 8, width: 700 }}>
+                            {intl.formatMessage({
+                                id: 'fieldSelection.groupBy.description',
+                            })}
+                        </Typography>
+
                         <Stack
                             direction="row"
                             spacing={1}
