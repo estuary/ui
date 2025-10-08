@@ -35,14 +35,24 @@ import { PAGE_INFO_FRAGMENT } from 'src/services/gql';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
+const PAGE_SIZE = 3;
+
 const resolvedAlertsForTaskQuery = gql<
     ResolvedAlertsForTaskQuery,
     AlertsVariables
 >`
-    query ResolvedAlertsForTaskQuery($prefix: String!, $before: String) {
+    query ResolvedAlertsForTaskQuery(
+        $prefix: String!
+        $before: String
+        $after: String
+        $first: Int
+        $last: Int
+    ) {
         alerts(
             by: { prefix: $prefix, active: false }
-            last: 3
+            first: $first
+            last: $last
+            after: $after
             before: $before
         ) {
             edges {
@@ -74,32 +84,46 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
     const [beforeCursor, setBeforeCursor] = useState<string | undefined>(
         undefined
     );
+    const [afterCursor, setAfterCursor] = useState<string | undefined>(
+        undefined
+    );
+    const [paginationDirection, setPaginationDirection] = useState<
+        'first' | 'last'
+    >('last');
 
     const [{ fetching, data, error }] = useQuery({
         query: resolvedAlertsForTaskQuery,
-        variables: { prefix: catalogName, before: beforeCursor },
+        variables: {
+            prefix: catalogName,
+            before: beforeCursor,
+            after: afterCursor,
+            [paginationDirection]: PAGE_SIZE,
+        },
         pause: !catalogName,
     });
 
     const loadMore = (page: number) => {
         if (page > currentPage) {
-            // Next page - use endCursor as the new after cursor
-            if (
-                data?.alerts?.pageInfo?.hasPreviousPage &&
-                data?.alerts?.pageInfo?.endCursor
-            ) {
+            // Next page - use endCursor as the new after cursor and paginate backward
+            if (data?.alerts?.pageInfo?.endCursor) {
+                setAfterCursor(undefined);
                 setBeforeCursor(data.alerts.pageInfo.endCursor);
+                setPaginationDirection('last');
                 setCurrentPage(page);
             }
         } else if (page < currentPage) {
             if (page === 0) {
+                setAfterCursor(undefined);
                 setBeforeCursor(undefined);
+                setPaginationDirection('last');
                 setCurrentPage(0);
             } else if (
-                data?.alerts?.pageInfo?.hasNextPage &&
-                data?.alerts?.pageInfo?.startCursor
+                data?.alerts?.pageInfo?.startCursor &&
+                data?.alerts?.pageInfo?.endCursor
             ) {
+                setAfterCursor(data.alerts.pageInfo.endCursor);
                 setBeforeCursor(data.alerts.pageInfo.startCursor);
+                setPaginationDirection('last');
                 setCurrentPage(page);
             }
         }
@@ -219,8 +243,8 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                         <TableRow>
                             <TablePagination
                                 count={-1}
-                                rowsPerPageOptions={[3]}
-                                rowsPerPage={3}
+                                rowsPerPageOptions={[PAGE_SIZE]}
+                                rowsPerPage={PAGE_SIZE}
                                 page={currentPage}
                                 onPageChange={(_event, page) => {
                                     loadMore(page);
