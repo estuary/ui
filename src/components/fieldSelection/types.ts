@@ -31,6 +31,10 @@ export interface GroupByKeysSaveButtonProps extends BaseButtonProps {
     close: () => void;
 }
 
+export interface KeyChangeAlertProps {
+    bindingUUID: string;
+}
+
 export interface MenuActionProps extends BaseMenuProps {
     close: () => void;
 }
