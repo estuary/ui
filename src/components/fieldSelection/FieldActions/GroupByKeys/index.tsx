@@ -20,6 +20,7 @@ import GroupByKeysForm from 'src/components/fieldSelection/FieldActions/GroupByK
 import SaveButton from 'src/components/fieldSelection/FieldActions/GroupByKeys/SaveButton';
 import ChipList from 'src/components/shared/ChipList';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 const TITLE_ID = 'configure-groupBy-keys-title';
 
@@ -33,6 +34,8 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                 implicit: [],
             }
     );
+
+    const formActive = useFormStateStore_isActive();
 
     const [open, setOpen] = useState(false);
     const [localValues, setLocalValues] = useState<FieldSelection[]>([]);
@@ -57,6 +60,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
     return (
         <>
             <Button
+                disabled={formActive || !selections || selections.length === 0}
                 onClick={() => {
                     setOpen(true);
                 }}
