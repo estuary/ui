@@ -21,11 +21,15 @@ const KeyChangeAlert = ({ bindingUUID }: KeyChangeAlertProps) => {
     const selectionsExist = useBindingStore(
         (state) => !isEmpty(state.selections?.[bindingUUID].value)
     );
-    const draftedGroupByKeys = useBindingStore((state) =>
-        bindingUUID && state.selections?.[bindingUUID]
+    const draftedGroupByKeys = useBindingStore((state) => {
+        if (bindingUUID && !state.selections?.[bindingUUID]) {
+            return [];
+        }
+
+        return state.selections[bindingUUID].groupBy.explicit.length > 0
             ? state.selections[bindingUUID].groupBy.explicit
-            : []
-    );
+            : state.selections[bindingUUID].groupBy.implicit;
+    });
 
     const liveBuiltBindingIndex = useBindingStore(
         (state) =>
