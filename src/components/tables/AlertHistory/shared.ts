@@ -32,7 +32,8 @@ export const tableColumns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'alerts.table.data.recipients',
-        width: 460,
+        collapseHeader: true,
+        minWidth: 185,
     },
     {
         field: null,

@@ -102,28 +102,33 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
         pause: !catalogName,
     });
 
+    const updatePaginationState = (direction: any, after: any, before: any) => {
+        setAfterCursor(after);
+        setBeforeCursor(before);
+        setPaginationDirection(direction);
+    };
+
     const loadMore = (page: number) => {
         if (page > currentPage) {
             // Next page - use endCursor as the new after cursor and paginate backward
             if (data?.alerts?.pageInfo?.endCursor) {
-                setAfterCursor(undefined);
-                setBeforeCursor(data.alerts.pageInfo.endCursor);
-                setPaginationDirection('last');
+                updatePaginationState(
+                    'last',
+                    undefined,
+                    data.alerts.pageInfo.endCursor
+                );
                 setCurrentPage(page);
             }
         } else if (page < currentPage) {
             if (page === 0) {
-                setAfterCursor(undefined);
-                setBeforeCursor(undefined);
-                setPaginationDirection('last');
+                updatePaginationState('last', undefined, undefined);
                 setCurrentPage(0);
-            } else if (
-                data?.alerts?.pageInfo?.startCursor &&
-                data?.alerts?.pageInfo?.endCursor
-            ) {
-                setAfterCursor(data.alerts.pageInfo.endCursor);
-                setBeforeCursor(data.alerts.pageInfo.startCursor);
-                setPaginationDirection('last');
+            } else if (data?.alerts?.pageInfo?.startCursor) {
+                updatePaginationState(
+                    'first',
+                    data.alerts.pageInfo.startCursor,
+                    undefined
+                );
                 setCurrentPage(page);
             }
         }
