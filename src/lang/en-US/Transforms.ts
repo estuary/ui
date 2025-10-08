@@ -67,7 +67,8 @@ export const Transforms: Record<string, string> = {
 
     'newTransform.steps.message': `Now that you’ve created a derivation draft, you will need to continue development locally or in a cloud environment. Follow these steps to edit and publish your derivation.`,
 
-    'newTransform.steps.1': `Install Estuary’s flowctl CLI.`,
+    'newTransform.steps.1': `Install Estuary’s {emphasis} CLI.`,
+    'newTransform.steps.1.emphasis': `flowctl`,
     'newTransform.steps.1.details': `See {docLink} for installation instructions.`,
     'newTransform.steps.1.details.docLink': `docs`,
     'newTransform.steps.1.details.docPath': `https://docs.estuary.dev/concepts/flowctl/#installation-and-setup`,
@@ -97,6 +98,6 @@ export const Transforms: Record<string, string> = {
     'newTransform.steps.5.code': `flowctl draft author --source flow.yaml`,
 
     'newTransform.steps.6': `Publish`,
-    'newTransform.steps.6.details': `Publishes the changes to Flow. This can take a little while to complete depending on the changes.`,
+    'newTransform.steps.6.details': `Publishes the changes to ${CommonMessages['productName']}. This can take a little while to complete depending on the changes.`,
     'newTransform.steps.6.code': `flowctl draft publish`,
 };

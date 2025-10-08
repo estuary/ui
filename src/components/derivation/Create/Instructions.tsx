@@ -29,7 +29,24 @@ function Instructions({ draftId }: InstructionsProps) {
             <Stepper orientation="vertical">
                 <Step active>
                     <StepLabel>
-                        {intl.formatMessage({ id: 'newTransform.steps.1' })}
+                        {intl.formatMessage(
+                            { id: 'newTransform.steps.1' },
+                            {
+                                emphasis: (
+                                    <Typography
+                                        component="code"
+                                        sx={{
+                                            fontWeight: 500,
+                                            fontFamily: 'Monospace',
+                                        }}
+                                    >
+                                        {intl.formatMessage({
+                                            id: 'newTransform.steps.1.emphasis',
+                                        })}
+                                    </Typography>
+                                ),
+                            }
+                        )}
                     </StepLabel>
                     <StepContent>
                         <MessageWithLink messageID="newTransform.steps.1.details" />
