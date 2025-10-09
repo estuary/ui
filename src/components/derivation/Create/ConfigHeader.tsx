@@ -39,10 +39,7 @@ function ConfigHeader({ entityNameError }: ConfigHeaderProps) {
                         selectedCollections={new Set(selectedCollections)}
                     />
                 ) : (
-                    <InitializeDraftButton
-                        entityNameError={entityNameError}
-                        selectedCollections={new Set(selectedCollections)}
-                    />
+                    <>Used to go to GitPod here</>
                 )
             }
             primaryButtonProps={{
