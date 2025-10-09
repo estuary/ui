@@ -10,22 +10,25 @@ export const Transforms: Record<string, string> = {
     'newTransform.baseConfig.sourceCollections.label': `Source Collections`,
     'newTransform.baseConfig.sqlTemplates.label': `SQL Templates`,
     'newTransform.collection.label': `Derived Collection Name`,
+
     'newTransform.errors.collection': `Select source collections`,
     'newTransform.errors.name': `Name your Derived Collection`,
     'newTransform.errors.prefixMissing': `No prefix selected`,
     'newTransform.errors.namePattern': `Name does not match pattern`,
     'newTransform.errors.nameInvalid': `Invalid entity name`,
     'newTransform.errors.nameMissing': `Missing entity name`,
-    'newTransform.errors.urlNotGenerated': `We failed to generate your draft. ${Errors['error.tryAgain']}`,
+    'newTransform.errors.draftCreateFailed': `We failed to generate your draft. ${Errors['error.tryAgain']}`,
+    'newTransform.errors.draftModifyFailed': `We failed to apply a template fo your draft.`,
     'newTransform.errors.draftSpecCreateFailed': `Creating Specification Failed`,
     'newTransform.errors.draftSpecUpdateFailed': `Updating Specification Failed`,
+
     'newTransform.stepper.step1.label': `Select source collections`,
     'newTransform.stepper.step2.label': `Transformation Language`,
     'newTransform.stepper.step3.label': `Write transformations`,
-    'newTransform.instructions1': `You will be set up with an environment to create a
-                            transformation.`,
-    'newTransform.instructions2': `Create your query and use the CLI to
-                            continue, e.g`,
+    'newTransform.instructions1': `You will be set up with an environment to create a transformation.`,
+    'newTransform.instructions2': `Create your query and use the CLI to continue, e.g`,
+    'newTransform.instructions2.code': `flowctl --help`,
+
     'newTransform.button.cta': `Create Draft`,
 
     'newTransform.config.header': `Database`,

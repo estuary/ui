@@ -1,4 +1,4 @@
-import type { LoadingButtonProps } from '@mui/lab';
+import type { DraftIdGeneratorButtonProps } from 'src/components/transformation/create/types';
 
 import { useCallback, useMemo, useState } from 'react';
 
@@ -19,19 +19,12 @@ import {
 } from 'src/stores/TransformationCreate/hooks';
 import { generateInitialSpec } from 'src/utils/derivation-utils';
 
-interface Props {
-    postWindowOpen?: (draftId: string | null | undefined) => void;
-    entityNameError?: string | null;
-    sourceCollectionSet?: Set<string>;
-    buttonVariant?: LoadingButtonProps['variant'];
-}
-
 function DraftIdGeneratorButton({
-    postWindowOpen,
+    draftCreationCallback,
     entityNameError,
     sourceCollectionSet,
     buttonVariant,
-}: Props) {
+}: DraftIdGeneratorButtonProps) {
     const intl = useIntl();
 
     // Draft Editor Store
@@ -101,11 +94,19 @@ function DraftIdGeneratorButton({
                     }
                 );
 
-                await modifyDraftSpec(spec, {
+                const modifyResponse = await modifyDraftSpec(spec, {
                     draft_id: evaluatedDraftId,
                     catalog_name: catalogName,
                     spec_type: 'collection',
                 });
+
+                if (modifyResponse.error) {
+                    throw new Error(
+                        intl.formatMessage({
+                            id: 'newTransform.errors.draftModifyFailed',
+                        })
+                    );
+                }
             } else if (sourceCollectionSet) {
                 const draft = await createEntityDraft(catalogName);
 
@@ -124,13 +125,21 @@ function DraftIdGeneratorButton({
                     { templateFiles: true }
                 );
 
-                await createDraftSpec(
+                const createResponse = await createDraftSpec(
                     evaluatedDraftId,
                     catalogName,
                     spec,
                     'collection',
                     null
                 );
+
+                if (createResponse.error) {
+                    throw new Error(
+                        intl.formatMessage({
+                            id: 'newTransform.errors.draftCreateFailed',
+                        })
+                    );
+                }
             }
 
             return evaluatedDraftId;
@@ -163,14 +172,12 @@ function DraftIdGeneratorButton({
                     );
                 }
 
-                const [evaluatedDraftId] = await Promise.all([
-                    generateDraftWithSpecs(),
-                ]);
+                const evaluatedDraftId = await generateDraftWithSpecs();
 
                 if (!evaluatedDraftId) {
                     throw new Error(
                         intl.formatMessage({
-                            id: 'newTransform.errors.urlNotGenerated',
+                            id: 'newTransform.errors.draftCreateFailed',
                         })
                     );
                 }
@@ -179,7 +186,7 @@ function DraftIdGeneratorButton({
             } catch (e: unknown) {
                 displayError(
                     intl.formatMessage({
-                        id: 'newTransform.errors.urlNotGenerated',
+                        id: 'newTransform.errors.draftCreateFailed',
                     })
                 );
                 console.error(e);
@@ -199,8 +206,8 @@ function DraftIdGeneratorButton({
             onClick={async () => {
                 const generatedDraftId = await generateDraftId();
                 if (generatedDraftId) {
-                    if (postWindowOpen) {
-                        postWindowOpen(generatedDraftId);
+                    if (draftCreationCallback) {
+                        draftCreationCallback(generatedDraftId);
                     }
                 }
             }}

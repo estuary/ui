@@ -1,4 +1,5 @@
 import type { Theme } from '@mui/material';
+import type { TransformationCreateProps } from 'src/components/transformation/create/types';
 
 import { useMemo, useState } from 'react';
 
@@ -15,7 +16,7 @@ import {
     useMediaQuery,
 } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import BindingSelector from 'src/components/editor/Bindings/Selector';
@@ -43,12 +44,9 @@ const StyledStepConnector = styled(StepConnector)(() => ({
     },
 }));
 
-interface Props {
-    postWindowOpen: (draftId: string | undefined | null) => void;
-    closeDialog: () => void;
-}
-
-function TransformationCreate({ postWindowOpen }: Props) {
+function TransformationCreate({
+    draftCreationCallback,
+}: TransformationCreateProps) {
     const intl = useIntl();
     const belowSm = useMediaQuery<Theme>((theme) =>
         theme.breakpoints.down('sm')
@@ -90,7 +88,9 @@ function TransformationCreate({ postWindowOpen }: Props) {
                         <Step active>
                             <StepLabel>
                                 <Typography>
-                                    <FormattedMessage id="newTransform.stepper.step1.label" />
+                                    {intl.formatMessage({
+                                        id: 'newTransform.stepper.step1.label',
+                                    })}
                                 </Typography>
                             </StepLabel>
                         </Step>
@@ -98,7 +98,9 @@ function TransformationCreate({ postWindowOpen }: Props) {
                         <Step active>
                             <StepLabel>
                                 <Typography>
-                                    <FormattedMessage id="newTransform.stepper.step2.label" />
+                                    {intl.formatMessage({
+                                        id: 'newTransform.stepper.step2.label',
+                                    })}
                                 </Typography>
                             </StepLabel>
                         </Step>
@@ -133,7 +135,9 @@ function TransformationCreate({ postWindowOpen }: Props) {
                             }}
                         >
                             <Typography>
-                                <FormattedMessage id="newTransform.stepper.step3.label" />
+                                {intl.formatMessage({
+                                    id: 'newTransform.stepper.step3.label',
+                                })}
                             </Typography>
                         </LegacySingleStep>
 
@@ -155,20 +159,28 @@ function TransformationCreate({ postWindowOpen }: Props) {
                         <DraftIdGeneratorButton
                             entityNameError={entityNameError}
                             sourceCollectionSet={selectedCollectionSet}
-                            postWindowOpen={postWindowOpen}
+                            draftCreationCallback={draftCreationCallback}
                         />
 
                         <Stack spacing={1}>
                             <Typography variant="caption">
                                 <Box>
-                                    <FormattedMessage id="newTransform.instructions1" />
+                                    {intl.formatMessage({
+                                        id: 'newTransform.instructions1',
+                                    })}
                                 </Box>
                                 <Box>
-                                    <FormattedMessage id="newTransform.instructions2" />
+                                    {intl.formatMessage({
+                                        id: 'newTransform.instructions2',
+                                    })}
                                 </Box>
                             </Typography>
 
-                            <SingleLineCode value="flowctl --help" />
+                            <SingleLineCode
+                                value={intl.formatMessage({
+                                    id: 'newTransform.instructions2.code',
+                                })}
+                            />
                         </Stack>
                     </Box>
                 </Box>

@@ -86,7 +86,7 @@ function DerivationCreate() {
                         <BindingHydrator>
                             <TransformationCreate
                                 key={newCollectionKey}
-                                postWindowOpen={(draftId) => {
+                                draftCreationCallback={(draftId) => {
                                     if (draftId) {
                                         setDraftId(draftId);
                                         setShowConfirmation(true);
