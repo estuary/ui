@@ -1,22 +1,66 @@
-import type { InstructionsProps } from 'src/components/derivation/Create/types';
+import type {
+    InstructionsProps,
+    InstructionStepProps,
+} from 'src/components/derivation/Create/types';
 
-import {
-    Stack,
-    Step,
-    StepContent,
-    StepLabel,
-    Stepper,
-    Typography,
-} from '@mui/material';
+import { Stack, Step, Stepper, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import MessageWithLink from 'src/components/content/MessageWithLink';
-import SingleLineCode from 'src/components/content/SingleLineCode';
-import { codeBackground } from 'src/context/Theme';
+import InstructionStep from 'src/components/derivation/Create/InstructionStep';
+import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 
 function Instructions({ draftId }: InstructionsProps) {
     const intl = useIntl();
+
+    const steps: InstructionStepProps[] = [
+        {
+            labelKey: 'newTransform.steps.1',
+            labelValues: {
+                emphasis: (
+                    <TechnicalEmphasis intlKey="newTransform.steps.1.emphasis" />
+                ),
+            },
+            contentSections: ['details'],
+            detailsHaveLink: true,
+        },
+        {
+            labelKey: 'newTransform.steps.2',
+            contentSections: ['code', 'details'],
+            detailsHaveLink: true,
+        },
+        {
+            labelKey: 'newTransform.steps.3',
+            contentSections: ['code', 'details'],
+            codeValues: { draftId },
+            detailsHaveLink: true,
+        },
+        {
+            labelKey: 'newTransform.steps.4',
+            contentSections: ['code', 'details'],
+        },
+        {
+            labelKey: 'newTransform.steps.5',
+            contentSections: ['details', 'learnMore'],
+            detailsHaveLink: true,
+            detailsValues: {
+                emphasis: (
+                    <TechnicalEmphasis
+                        enableBackground
+                        intlKey="newTransform.steps.5.details.emphasis"
+                    />
+                ),
+            },
+        },
+        {
+            labelKey: 'newTransform.steps.6',
+            contentSections: ['code', 'details'],
+        },
+        {
+            labelKey: 'newTransform.steps.7',
+            contentSections: ['code', 'details'],
+        },
+    ];
 
     return (
         <Stack spacing={2}>
@@ -27,162 +71,11 @@ function Instructions({ draftId }: InstructionsProps) {
             </Typography>
 
             <Stepper orientation="vertical">
-                <Step active>
-                    <StepLabel>
-                        {intl.formatMessage(
-                            { id: 'newTransform.steps.1' },
-                            {
-                                emphasis: (
-                                    <Typography
-                                        component="code"
-                                        sx={{
-                                            fontWeight: 500,
-                                            fontFamily: 'Monospace',
-                                        }}
-                                    >
-                                        {intl.formatMessage({
-                                            id: 'newTransform.steps.1.emphasis',
-                                        })}
-                                    </Typography>
-                                ),
-                            }
-                        )}
-                    </StepLabel>
-                    <StepContent>
-                        <MessageWithLink messageID="newTransform.steps.1.details" />
-                    </StepContent>
-                </Step>
-                <Step active>
-                    <StepLabel>
-                        {intl.formatMessage({ id: 'newTransform.steps.2' })}
-                    </StepLabel>
-                    <StepContent>
-                        <Stack spacing={2}>
-                            <SingleLineCode
-                                value={intl.formatMessage({
-                                    id: 'newTransform.steps.2.code',
-                                })}
-                            />
-
-                            <MessageWithLink messageID="newTransform.steps.2.details" />
-                        </Stack>
-                    </StepContent>
-                </Step>
-                <Step active>
-                    <StepLabel>
-                        {intl.formatMessage({ id: 'newTransform.steps.3' })}
-                    </StepLabel>
-
-                    <StepContent>
-                        <Stack spacing={2}>
-                            <SingleLineCode
-                                value={intl.formatMessage(
-                                    {
-                                        id: 'newTransform.steps.3.code',
-                                    },
-                                    { draftId }
-                                )}
-                            />
-
-                            <MessageWithLink messageID="newTransform.steps.3.details" />
-                        </Stack>
-                    </StepContent>
-                </Step>
-                <Step active>
-                    <StepLabel>
-                        {intl.formatMessage({ id: 'newTransform.steps.4' })}
-                    </StepLabel>
-
-                    <StepContent>
-                        <Stack spacing={2}>
-                            <SingleLineCode
-                                value={intl.formatMessage({
-                                    id: 'newTransform.steps.4.code',
-                                })}
-                            />
-
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'newTransform.steps.4.details',
-                                })}
-                            </Typography>
-                        </Stack>
-                    </StepContent>
-                </Step>
-                <Step active>
-                    <StepLabel>
-                        {intl.formatMessage({ id: 'newTransform.steps.5' })}
-                    </StepLabel>
-
-                    <StepContent>
-                        <Stack spacing={2}>
-                            <MessageWithLink
-                                messageID="newTransform.steps.5.details"
-                                intlValues={{
-                                    emphasis: (
-                                        <Typography
-                                            component="code"
-                                            sx={{
-                                                bgcolor: (theme) =>
-                                                    codeBackground[
-                                                        theme.palette.mode
-                                                    ],
-                                                fontWeight: 500,
-                                                p: 0.25,
-                                                fontFamily: 'Monospace',
-                                            }}
-                                        >
-                                            {intl.formatMessage({
-                                                id: 'newTransform.steps.5.details.emphasis',
-                                            })}
-                                        </Typography>
-                                    ),
-                                }}
-                            />
-                            <MessageWithLink messageID="newTransform.steps.5.learnMore" />
-                        </Stack>
-                    </StepContent>
-                </Step>
-
-                <Step active>
-                    <StepLabel>
-                        {intl.formatMessage({ id: 'newTransform.steps.6' })}
-                    </StepLabel>
-
-                    <StepContent>
-                        <Stack spacing={2}>
-                            <SingleLineCode
-                                value={intl.formatMessage({
-                                    id: 'newTransform.steps.6.code',
-                                })}
-                            />
-
-                            <MessageWithLink messageID="newTransform.steps.6.details" />
-                        </Stack>
-                    </StepContent>
-                </Step>
-
-                <Step active>
-                    <StepLabel>
-                        {intl.formatMessage({ id: 'newTransform.steps.7' })}
-                    </StepLabel>
-
-                    <StepContent>
-                        <Stack spacing={2}>
-                            <SingleLineCode
-                                value={intl.formatMessage({
-                                    id: 'newTransform.steps.7.code',
-                                })}
-                            />
-
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'newTransform.steps.7.details',
-                                })}
-                            </Typography>
-                        </Stack>
-                    </StepContent>
-                </Step>
+                {steps.map((step, index) => (
+                    <Step active key={`instructions_${index}`}>
+                        <InstructionStep {...step} />
+                    </Step>
+                ))}
             </Stepper>
         </Stack>
     );

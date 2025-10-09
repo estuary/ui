@@ -65,24 +65,26 @@ export const Transforms: Record<string, string> = {
     'newTransform.createNotification.title': `New Derivation Created`,
     'newTransform.createNotification.desc': `Your new derivation is published and ready to be used.`,
 
+    // Many of the "newTransform.steps.n.___" keys are dynamically constructed in:
+    // ui/src/components/derivation/Create/InstructionStep.tsx
     'newTransform.steps.message': `Now that you’ve created a derivation draft, you will need to continue development locally or in a cloud environment. Follow these steps to edit and publish your derivation using the command line.`,
 
     'newTransform.steps.1': `Install Estuary’s {emphasis} CLI`,
     'newTransform.steps.1.emphasis': `flowctl`,
-    'newTransform.steps.1.details': `See {docLink} for installation instructions.`,
-    'newTransform.steps.1.details.docLink': `docs`,
+    'newTransform.steps.1.details': `See how to {docLink} our CLI tool.`,
+    'newTransform.steps.1.details.docLink': `install`,
     'newTransform.steps.1.details.docPath': `https://docs.estuary.dev/concepts/flowctl/#installation-and-setup`,
 
     'newTransform.steps.2': `Authenticate your account`,
     'newTransform.steps.2.code': `flowctl auth login`,
-    'newTransform.steps.2.details': `Opens the Flow Dashboard. Paste the displayed access token into the terminal. {docLink}`,
-    'newTransform.steps.2.details.docLink': `docs`,
+    'newTransform.steps.2.details': `Opens the Flow Dashboard. Paste the displayed access token into the terminal {docLink}.`,
+    'newTransform.steps.2.details.docLink': `authenticate`,
     'newTransform.steps.2.details.docPath': `https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli`,
 
     'newTransform.steps.3': `Select created draft`,
     'newTransform.steps.3.code': `flowctl draft select --id {draftId}`,
-    'newTransform.steps.3.details': `Sets your derivation as your active draft. {docLink}`,
-    'newTransform.steps.3.details.docLink': `docs`,
+    'newTransform.steps.3.details': `Sets your derivation as your active {docLink}.`,
+    'newTransform.steps.3.details.docLink': `draft`,
     'newTransform.steps.3.details.docPath': `https://docs.estuary.dev/guides/flowctl/edit-draft-from-webapp/#identify-the-draft-and-pull-it-locally`,
 
     'newTransform.steps.4': `Create default file structure`,
