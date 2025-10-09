@@ -18,7 +18,7 @@ export const Transforms: Record<string, string> = {
     'newTransform.errors.nameInvalid': `Invalid entity name`,
     'newTransform.errors.nameMissing': `Missing entity name`,
     'newTransform.errors.draftCreateFailed': `We failed to generate your draft. ${Errors['error.tryAgain']}`,
-    'newTransform.errors.draftModifyFailed': `We failed to apply a template fo your draft.`,
+    'newTransform.errors.draftModifyFailed': `We failed to apply a template to your draft.`,
     'newTransform.errors.draftSpecCreateFailed': `Creating Specification Failed`,
     'newTransform.errors.draftSpecUpdateFailed': `Updating Specification Failed`,
 
