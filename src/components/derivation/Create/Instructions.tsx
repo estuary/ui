@@ -101,35 +101,11 @@ function Instructions({ draftId }: InstructionsProps) {
                                 })}
                             />
 
-                            <Stack spacing={1}>
-                                <Typography>
-                                    {intl.formatMessage(
-                                        { id: 'newTransform.steps.4.details' },
-                                        {
-                                            emphasis: (
-                                                <Typography
-                                                    component="code"
-                                                    sx={{
-                                                        bgcolor: (theme) =>
-                                                            codeBackground[
-                                                                theme.palette
-                                                                    .mode
-                                                            ],
-                                                        fontWeight: 500,
-                                                        p: 0.25,
-                                                        fontFamily: 'Monospace',
-                                                    }}
-                                                >
-                                                    {intl.formatMessage({
-                                                        id: 'newTransform.steps.4.details.emphasis',
-                                                    })}
-                                                </Typography>
-                                            ),
-                                        }
-                                    )}
-                                </Typography>
-                                <MessageWithLink messageID="newTransform.steps.4.learnMore" />
-                            </Stack>
+                            <Typography>
+                                {intl.formatMessage({
+                                    id: 'newTransform.steps.4.details',
+                                })}
+                            </Typography>
                         </Stack>
                     </StepContent>
                 </Step>
@@ -140,13 +116,30 @@ function Instructions({ draftId }: InstructionsProps) {
 
                     <StepContent>
                         <Stack spacing={2}>
-                            <SingleLineCode
-                                value={intl.formatMessage({
-                                    id: 'newTransform.steps.5.code',
-                                })}
+                            <MessageWithLink
+                                messageID="newTransform.steps.5.details"
+                                intlValues={{
+                                    emphasis: (
+                                        <Typography
+                                            component="code"
+                                            sx={{
+                                                bgcolor: (theme) =>
+                                                    codeBackground[
+                                                        theme.palette.mode
+                                                    ],
+                                                fontWeight: 500,
+                                                p: 0.25,
+                                                fontFamily: 'Monospace',
+                                            }}
+                                        >
+                                            {intl.formatMessage({
+                                                id: 'newTransform.steps.5.details.emphasis',
+                                            })}
+                                        </Typography>
+                                    ),
+                                }}
                             />
-
-                            <MessageWithLink messageID="newTransform.steps.5.details" />
+                            <MessageWithLink messageID="newTransform.steps.5.learnMore" />
                         </Stack>
                     </StepContent>
                 </Step>
@@ -165,6 +158,28 @@ function Instructions({ draftId }: InstructionsProps) {
                             />
 
                             <MessageWithLink messageID="newTransform.steps.6.details" />
+                        </Stack>
+                    </StepContent>
+                </Step>
+
+                <Step active>
+                    <StepLabel>
+                        {intl.formatMessage({ id: 'newTransform.steps.7' })}
+                    </StepLabel>
+
+                    <StepContent>
+                        <Stack spacing={2}>
+                            <SingleLineCode
+                                value={intl.formatMessage({
+                                    id: 'newTransform.steps.7.code',
+                                })}
+                            />
+
+                            <Typography>
+                                {intl.formatMessage({
+                                    id: 'newTransform.steps.7.details',
+                                })}
+                            </Typography>
                         </Stack>
                     </StepContent>
                 </Step>

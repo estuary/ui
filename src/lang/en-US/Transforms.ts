@@ -65,9 +65,9 @@ export const Transforms: Record<string, string> = {
     'newTransform.createNotification.title': `New Derivation Created`,
     'newTransform.createNotification.desc': `Your new derivation is published and ready to be used.`,
 
-    'newTransform.steps.message': `Now that you’ve created a derivation draft, you will need to continue development locally or in a cloud environment. Follow these steps to edit and publish your derivation.`,
+    'newTransform.steps.message': `Now that you’ve created a derivation draft, you will need to continue development locally or in a cloud environment. Follow these steps to edit and publish your derivation using the command line.`,
 
-    'newTransform.steps.1': `Install Estuary’s {emphasis} CLI.`,
+    'newTransform.steps.1': `Install Estuary’s {emphasis} CLI`,
     'newTransform.steps.1.emphasis': `flowctl`,
     'newTransform.steps.1.details': `See {docLink} for installation instructions.`,
     'newTransform.steps.1.details.docLink': `docs`,
@@ -75,29 +75,32 @@ export const Transforms: Record<string, string> = {
 
     'newTransform.steps.2': `Authenticate your account`,
     'newTransform.steps.2.code': `flowctl auth login`,
-    'newTransform.steps.2.details': `Opens the Flow Dashboard and allows you to copy your access token so you can paste it into the terminal. {docLink}`,
+    'newTransform.steps.2.details': `Opens the Flow Dashboard. Paste the displayed access token into the terminal. {docLink}`,
     'newTransform.steps.2.details.docLink': `docs`,
     'newTransform.steps.2.details.docPath': `https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli`,
 
     'newTransform.steps.3': `Select created draft`,
     'newTransform.steps.3.code': `flowctl draft select --id {draftId}`,
-    'newTransform.steps.3.details': `Allows you to continue working on your derivation specification on your local system. {docLink}`,
+    'newTransform.steps.3.details': `Sets your derivation as your active draft. {docLink}`,
     'newTransform.steps.3.details.docLink': `docs`,
-    'newTransform.steps.3.details.docPath': `https://docs.estuary.dev/guides/flowctl/edit-specification-locally/#edit-source-files-and-re-publish-specifications`,
+    'newTransform.steps.3.details.docPath': `https://docs.estuary.dev/guides/flowctl/edit-draft-from-webapp/#identify-the-draft-and-pull-it-locally`,
 
     'newTransform.steps.4': `Create default file structure`,
     'newTransform.steps.4.code': `flowctl draft develop`,
-    'newTransform.steps.4.details': `Creates a new file structure in your working directory. Edit the deepest-nested {emphasis} file and its associated SQL or TypeScript transformation files to describe your desired transformed collection.`,
-    'newTransform.steps.4.details.emphasis': `flow.yaml`,
-    'newTransform.steps.4.learnMore': `Learn more about constructing {docLink}.`,
-    'newTransform.steps.4.learnMore.docLink': `derivations`,
-    'newTransform.steps.4.learnMore.docPath': `https://docs.estuary.dev/concepts/derivations/`,
+    'newTransform.steps.4.details': `Creates the specification's file structure in your working directory.`,
 
-    'newTransform.steps.5': `Save`,
-    'newTransform.steps.5.details': `Syncs the local work to the global draft so all entities in the draft are imported.`,
-    'newTransform.steps.5.code': `flowctl draft author --source flow.yaml`,
+    'newTransform.steps.5': `Edit your draft`,
+    'newTransform.steps.5.details': `Edit the deepest-nested {emphasis} file and its associated SQL or TypeScript transformation files to describe your derived collection.`,
+    'newTransform.steps.5.details.emphasis': `flow.yaml`,
+    'newTransform.steps.5.learnMore': `Learn more about constructing {docLink}.`,
+    'newTransform.steps.5.learnMore.docLink': `derivations`,
+    'newTransform.steps.5.learnMore.docPath': `https://docs.estuary.dev/concepts/derivations/`,
 
-    'newTransform.steps.6': `Publish`,
-    'newTransform.steps.6.details': `Publishes the changes to ${CommonMessages['productName']}. This can take a little while to complete depending on the changes.`,
-    'newTransform.steps.6.code': `flowctl draft publish`,
+    'newTransform.steps.6': `Save`,
+    'newTransform.steps.6.details': `Syncs your local copy back to the global draft.`,
+    'newTransform.steps.6.code': `flowctl draft author --source flow.yaml`,
+
+    'newTransform.steps.7': `Publish`,
+    'newTransform.steps.7.details': `Publishes the draft to your ${CommonMessages['productName']} catalog. This may take a few minutes.`,
+    'newTransform.steps.7.code': `flowctl draft publish`,
 };
