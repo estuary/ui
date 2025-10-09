@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { useStore } from 'zustand';
 
 import EntityToolbar from 'src/components/shared/Entity/Header';
-import DraftIdGeneratorButton from 'src/components/transformation/create/DraftIdGeneratorButton';
 import InitializeDraftButton from 'src/components/transformation/create/InitializeDraftButton';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import { CustomEvents } from 'src/services/types';
@@ -45,7 +44,7 @@ function ConfigHeader({ entityNameError }: ConfigHeaderProps) {
             primaryButtonProps={{
                 logEvent: CustomEvents.COLLECTION_CREATE,
             }}
-            SecondaryButtonComponent={DraftIdGeneratorButton}
+            SecondaryButtonComponent={<>Previously Linked To GitPod</>}
             secondaryButtonProps={{
                 buttonVariant: 'outlined',
             }}
