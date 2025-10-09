@@ -21,15 +21,15 @@ function Instructions({ draftId }: InstructionsProps) {
                     <TechnicalEmphasis intlKey="newTransform.steps.1.emphasis" />
                 ),
             },
-            contentSections: ['learnMore'],
+            contentSections: ['linked'],
         },
         {
             labelKey: 'newTransform.steps.2',
-            contentSections: ['code', 'learnMore'],
+            contentSections: ['code', 'linked'],
         },
         {
             labelKey: 'newTransform.steps.3',
-            contentSections: ['code', 'learnMore'],
+            contentSections: ['code', 'linked'],
             codeValues: { draftId },
         },
         {
@@ -38,7 +38,7 @@ function Instructions({ draftId }: InstructionsProps) {
         },
         {
             labelKey: 'newTransform.steps.5',
-            contentSections: ['details', 'learnMore'],
+            contentSections: ['details', 'linked'],
             detailsValues: {
                 emphasis: (
                     <TechnicalEmphasis

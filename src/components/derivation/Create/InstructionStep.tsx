@@ -38,7 +38,7 @@ function InstructionStep({
                             );
                         }
 
-                        if (section === 'learnMore') {
+                        if (section === 'linked') {
                             return (
                                 <MessageWithLink
                                     key={section}

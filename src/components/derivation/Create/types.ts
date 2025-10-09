@@ -13,7 +13,7 @@ export interface TechnicalEmphasisProps {
 
 export interface InstructionStepProps {
     labelKey: string;
-    contentSections: Array<'code' | 'details' | 'learnMore'>;
+    contentSections: Array<'code' | 'details' | 'linked'>;
 
     codeValues?: Record<string, any>;
     detailsValues?: Record<string, React.ReactNode>;
