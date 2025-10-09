@@ -69,7 +69,9 @@ export const Transforms: Record<string, string> = {
     'newTransform.createNotification.desc': `Your new derivation is published and ready to be used.`,
 
     // Many of the "newTransform.steps.n.___" keys are dynamically constructed in:
-    // ui/src/components/derivation/Create/InstructionStep.tsx
+    //  ui/src/components/derivation/Create/InstructionStep.tsx
+    // The supported types are listed in:
+    //  /ui/src/components/derivation/Create/types.ts > InstructionStepProps
     'newTransform.steps.message': `Now that you’ve created a derivation draft, you will need to continue development locally or in a cloud environment. Follow these steps to edit and publish your derivation using the command line.`,
 
     'newTransform.steps.1': `Install Estuary’s {emphasis} CLI`,
