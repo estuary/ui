@@ -39,7 +39,7 @@ function ConfigHeader({ entityNameError }: ConfigHeaderProps) {
                         selectedCollections={new Set(selectedCollections)}
                     />
                 ) : (
-                    <>Used to go to GitPod here</>
+                    <>Previously Linked To GitPod</>
                 )
             }
             primaryButtonProps={{
