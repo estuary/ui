@@ -77,7 +77,7 @@ export const Transforms: Record<string, string> = {
 
     'newTransform.steps.2': `Authenticate your account`,
     'newTransform.steps.2.code': `flowctl auth login`,
-    'newTransform.steps.2.details': `Opens the Flow Dashboard. Paste the displayed access token into the terminal {docLink}.`,
+    'newTransform.steps.2.details': `Opens the ${CommonMessages['productName']} Dashboard. Paste the displayed access token into the terminal to {docLink}.`,
     'newTransform.steps.2.details.docLink': `authenticate`,
     'newTransform.steps.2.details.docPath': `https://docs.estuary.dev/reference/authentication/#authenticating-flow-using-the-cli`,
 
