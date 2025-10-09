@@ -1,6 +1,6 @@
 import type { ChipProps } from '@mui/material';
 
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -18,6 +18,8 @@ interface Props {
 
 function SortableTag({ tagProps, label, validOption }: Props) {
     const intl = useIntl();
+    const theme = useTheme();
+
     const {
         attributes,
         listeners,
@@ -54,6 +56,12 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                             ref={setActivatorNodeRef}
                             {...listeners}
                             size="small"
+                            style={{ marginLeft: 0 }}
+                            sx={{
+                                '&:hover': {
+                                    color: theme.palette.text.primary,
+                                },
+                            }}
                         >
                             <MoreVert />
                         </IconButton>
@@ -62,16 +70,6 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                     variant="outlined"
                 />
             ) : (
-                // <StyledChip
-                //     componentProps={{
-                //         chip: tagProps,
-                //         icon: {
-                //             ref: setActivatorNodeRef,
-                //             ...listeners,
-                //         },
-                //     }}
-                //     label={label}
-                // />
                 <Tooltip
                     title={intl.formatMessage({
                         id: 'keyAutoComplete.keys.invalid.message',
