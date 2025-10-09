@@ -21,19 +21,16 @@ function Instructions({ draftId }: InstructionsProps) {
                     <TechnicalEmphasis intlKey="newTransform.steps.1.emphasis" />
                 ),
             },
-            contentSections: ['details'],
-            detailsHaveLink: true,
+            contentSections: ['learnMore'],
         },
         {
             labelKey: 'newTransform.steps.2',
-            contentSections: ['code', 'details'],
-            detailsHaveLink: true,
+            contentSections: ['code', 'learnMore'],
         },
         {
             labelKey: 'newTransform.steps.3',
-            contentSections: ['code', 'details'],
+            contentSections: ['code', 'learnMore'],
             codeValues: { draftId },
-            detailsHaveLink: true,
         },
         {
             labelKey: 'newTransform.steps.4',
@@ -42,7 +39,6 @@ function Instructions({ draftId }: InstructionsProps) {
         {
             labelKey: 'newTransform.steps.5',
             contentSections: ['details', 'learnMore'],
-            detailsHaveLink: true,
             detailsValues: {
                 emphasis: (
                     <TechnicalEmphasis

@@ -10,7 +10,6 @@ import SingleLineCode from 'src/components/content/SingleLineCode';
 function InstructionStep({
     codeValues,
     contentSections,
-    detailsHaveLink = false,
     detailsValues,
     labelKey,
     labelValues,
@@ -39,24 +38,24 @@ function InstructionStep({
                             );
                         }
 
-                        if (section === 'details' || section === 'learnMore') {
-                            return detailsHaveLink ? (
+                        if (section === 'learnMore') {
+                            return (
                                 <MessageWithLink
                                     key={section}
                                     messageID={sectionKey}
                                     intlValues={detailsValues}
                                 />
-                            ) : (
-                                <Typography key={section}>
-                                    {intl.formatMessage(
-                                        { id: sectionKey },
-                                        detailsValues
-                                    )}
-                                </Typography>
                             );
                         }
 
-                        return null;
+                        return (
+                            <Typography key={section}>
+                                {intl.formatMessage(
+                                    { id: sectionKey },
+                                    detailsValues
+                                )}
+                            </Typography>
+                        );
                     })}
                 </Stack>
             </StepContent>

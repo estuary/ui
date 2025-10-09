@@ -16,7 +16,6 @@ export interface InstructionStepProps {
     contentSections: Array<'code' | 'details' | 'learnMore'>;
 
     codeValues?: Record<string, any>;
-    detailsHaveLink?: boolean;
     detailsValues?: Record<string, React.ReactNode>;
     labelValues?: Record<string, React.ReactNode>;
 }
