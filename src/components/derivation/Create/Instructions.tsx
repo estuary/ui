@@ -71,7 +71,7 @@ function Instructions({ draftId }: InstructionsProps) {
                 component="ol"
                 sx={{
                     pl: 0,
-                    [`& > li`]: {
+                    [`& >li`]: {
                         listStyleType: 'none',
                     },
                 }}
