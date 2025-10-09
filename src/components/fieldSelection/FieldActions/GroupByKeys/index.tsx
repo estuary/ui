@@ -19,6 +19,7 @@ import { useIntl } from 'react-intl';
 import GroupByKeysForm from 'src/components/fieldSelection/FieldActions/GroupByKeys/Form';
 import SaveButton from 'src/components/fieldSelection/FieldActions/GroupByKeys/SaveButton';
 import ChipList from 'src/components/shared/ChipList';
+import useLiveGroupByKey from 'src/hooks/fieldSelection/useLiveGroupByKey';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
@@ -26,6 +27,8 @@ const TITLE_ID = 'configure-groupBy-keys-title';
 
 const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
     const intl = useIntl();
+
+    const { existingGroupByKey } = useLiveGroupByKey(bindingUUID);
 
     const groupBy = useBindingStore(
         (state) =>
@@ -43,15 +46,15 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
     const displayExplicitKeys = useMemo(
         () =>
             Boolean(
-                groupBy.explicit.length > 0 &&
-                    (groupBy.explicit.length !== groupBy.implicit.length ||
+                existingGroupByKey.length > 0 &&
+                    (existingGroupByKey.length !== groupBy.implicit.length ||
                         groupBy.implicit.some((field, index) =>
-                            groupBy.explicit.length > index
-                                ? groupBy.explicit[index] !== field
+                            existingGroupByKey.length > index
+                                ? existingGroupByKey[index] !== field
                                 : false
                         ))
             ),
-        [groupBy]
+        [existingGroupByKey, groupBy.implicit]
     );
 
     useEffect(() => {
@@ -132,7 +135,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                                 <ChipList
                                     maxChips={3}
                                     stripPath={false}
-                                    values={groupBy.explicit}
+                                    values={existingGroupByKey}
                                 />
                             </Stack>
                         ) : null}
