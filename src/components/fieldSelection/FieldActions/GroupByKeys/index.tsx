@@ -1,7 +1,7 @@
 import type { BaseButtonProps } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     Box,
@@ -40,6 +40,20 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
     const [open, setOpen] = useState(false);
     const [localValues, setLocalValues] = useState<FieldSelection[]>([]);
 
+    const displayExplicitKeys = useMemo(
+        () =>
+            Boolean(
+                groupBy.explicit.length > 0 &&
+                    (groupBy.explicit.length !== groupBy.implicit.length ||
+                        groupBy.implicit.some((field, index) =>
+                            groupBy.explicit.length > index
+                                ? groupBy.explicit[index] !== field
+                                : false
+                        ))
+            ),
+        [groupBy]
+    );
+
     useEffect(() => {
         const { explicit } = groupBy;
 
@@ -54,7 +68,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
             .filter((index) => index > -1)
             .map((index) => selections[index]);
 
-        setLocalValues(explicitKeys.length > 0 ? explicitKeys : []);
+        setLocalValues(explicitKeys);
     }, [groupBy, selections, open]);
 
     return (
@@ -102,21 +116,31 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                                 values={groupBy.implicit}
                             />
                         </Stack>
+
+                        {displayExplicitKeys ? (
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                style={{ alignItems: 'center' }}
+                            >
+                                <Typography>
+                                    {intl.formatMessage({
+                                        id: 'fieldSelection.groupBy.label.explicitKeys',
+                                    })}
+                                </Typography>
+
+                                <ChipList
+                                    maxChips={3}
+                                    stripPath={false}
+                                    values={groupBy.explicit}
+                                />
+                            </Stack>
+                        ) : null}
                     </Box>
 
                     <GroupByKeysForm
                         localValues={localValues}
-                        options={
-                            selections?.filter(
-                                ({ projection }) =>
-                                    !projection?.inference.types.includes(
-                                        'object'
-                                    ) &&
-                                    !projection?.inference.types.includes(
-                                        'array'
-                                    )
-                            ) ?? []
-                        }
+                        options={selections ?? []}
                         setLocalValues={setLocalValues}
                     />
                 </DialogContent>

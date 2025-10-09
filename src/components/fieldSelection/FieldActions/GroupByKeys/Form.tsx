@@ -19,6 +19,7 @@ import { useIntl } from 'react-intl';
 
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
+import { isValidCollectionKey } from 'src/utils/schema-utils';
 
 const GroupByKeysForm = ({
     localValues,
@@ -34,7 +35,15 @@ const GroupByKeysForm = ({
     return (
         <Autocomplete
             disableCloseOnSelect
+            filterOptions={(selections) =>
+                selections.filter(({ projection }) =>
+                    isValidCollectionKey(projection?.inference)
+                )
+            }
             getOptionLabel={({ field }) => field}
+            isOptionEqualToValue={(option, value) =>
+                option.field === value.field
+            }
             multiple
             onChange={(_event, values) => {
                 setLocalValues(values);

@@ -240,9 +240,10 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.groupBy.header': `Configure Materialization Group-By`,
     'fieldSelection.groupBy.description': `Select an ordered subset of scalar fields which will be grouped over. If not specified, the key of the source collection will be used.`,
     'fieldSelection.groupBy.label.field': `Group By`,
+    'fieldSelection.groupBy.label.explicitKeys': `The source collection is currently keyed by:`,
     'fieldSelection.groupBy.label.implicitKeys': `The source collection is naturally keyed by:`,
     'fieldSelection.groupBy.tooltip.implicitKey': `This field is a key of the source collection.`,
-    'fieldSelection.groupBy.alert.backfillRequired': `To ensure you have all data, please also backfill this binding after editing the groupBy keys.`,
+    'fieldSelection.groupBy.alert.backfillRequired': `To ensure you have all data, please also backfill this binding after editing the group-by keys.`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
