@@ -1,4 +1,4 @@
-import type { LoadingButtonProps } from '@mui/lab';
+import type { DraftIdGeneratorButtonProps } from 'src/components/transformation/create/types';
 
 import { useCallback, useMemo, useState } from 'react';
 
@@ -7,10 +7,8 @@ import { useIntl } from 'react-intl';
 
 import { createEntityDraft } from 'src/api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
-import { createRefreshToken } from 'src/api/tokens';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
-import { generateGitPodURL } from 'src/services/gitpod';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
@@ -21,19 +19,12 @@ import {
 } from 'src/stores/TransformationCreate/hooks';
 import { generateInitialSpec } from 'src/utils/derivation-utils';
 
-interface Props {
-    postWindowOpen?: (window: Window | null) => void;
-    entityNameError?: string | null;
-    sourceCollectionSet?: Set<string>;
-    buttonVariant?: LoadingButtonProps['variant'];
-}
-
-function GitPodButton({
-    postWindowOpen,
+function DraftIdGeneratorButton({
+    draftCreationCallback,
     entityNameError,
     sourceCollectionSet,
     buttonVariant,
-}: Props) {
+}: DraftIdGeneratorButtonProps) {
     const intl = useIntl();
 
     // Draft Editor Store
@@ -103,11 +94,19 @@ function GitPodButton({
                     }
                 );
 
-                await modifyDraftSpec(spec, {
+                const modifyResponse = await modifyDraftSpec(spec, {
                     draft_id: evaluatedDraftId,
                     catalog_name: catalogName,
                     spec_type: 'collection',
                 });
+
+                if (modifyResponse.error) {
+                    throw new Error(
+                        intl.formatMessage({
+                            id: 'newTransform.errors.draftModifyFailed',
+                        })
+                    );
+                }
             } else if (sourceCollectionSet) {
                 const draft = await createEntityDraft(catalogName);
 
@@ -126,13 +125,21 @@ function GitPodButton({
                     { templateFiles: true }
                 );
 
-                await createDraftSpec(
+                const createResponse = await createDraftSpec(
                     evaluatedDraftId,
                     catalogName,
                     spec,
                     'collection',
                     null
                 );
+
+                if (createResponse.error) {
+                    throw new Error(
+                        intl.formatMessage({
+                            id: 'newTransform.errors.draftCreateFailed',
+                        })
+                    );
+                }
             }
 
             return evaluatedDraftId;
@@ -149,7 +156,7 @@ function GitPodButton({
         ]
     );
 
-    const generateUrl = useMemo(
+    const generateDraftId = useMemo(
         () => async () => {
             try {
                 setUrlLoading(true);
@@ -165,28 +172,21 @@ function GitPodButton({
                     );
                 }
 
-                const [token, evaluatedDraftId] = await Promise.all([
-                    createRefreshToken(false, '1 day'),
-                    generateDraftWithSpecs(),
-                ]);
+                const evaluatedDraftId = await generateDraftWithSpecs();
 
-                if (!evaluatedDraftId || !token.data) {
+                if (!evaluatedDraftId) {
                     throw new Error(
                         intl.formatMessage({
-                            id: 'newTransform.errors.urlNotGenerated',
+                            id: 'newTransform.errors.draftCreateFailed',
                         })
                     );
                 }
 
-                return generateGitPodURL(
-                    evaluatedDraftId,
-                    token.data,
-                    catalogName
-                );
+                return evaluatedDraftId;
             } catch (e: unknown) {
                 displayError(
                     intl.formatMessage({
-                        id: 'newTransform.errors.urlNotGenerated',
+                        id: 'newTransform.errors.draftCreateFailed',
                     })
                 );
                 console.error(e);
@@ -204,20 +204,10 @@ function GitPodButton({
             loading={urlLoading}
             disabled={!!entityNameError || !!submitButtonError || urlLoading}
             onClick={async () => {
-                const gitpodUrl = await generateUrl();
-                if (gitpodUrl) {
-                    const gitPodWindow = window.open(gitpodUrl, '_blank');
-
-                    if (!gitPodWindow || gitPodWindow.closed) {
-                        displayError(
-                            intl.formatMessage({
-                                id: 'newTransform.errors.gitPodWindow',
-                            })
-                        );
-                    }
-
-                    if (postWindowOpen) {
-                        postWindowOpen(gitPodWindow);
+                const generatedDraftId = await generateDraftId();
+                if (generatedDraftId) {
+                    if (draftCreationCallback) {
+                        draftCreationCallback(generatedDraftId);
                     }
                 }
             }}
@@ -231,4 +221,4 @@ function GitPodButton({
     );
 }
 
-export default GitPodButton;
+export default DraftIdGeneratorButton;

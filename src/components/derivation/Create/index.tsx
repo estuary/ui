@@ -2,13 +2,13 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useState } from 'react';
 
-import { Collapse, Dialog, DialogContent, Typography } from '@mui/material';
+import { Collapse, Dialog, DialogContent } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import AlertBox from 'src/components/shared/AlertBox';
+import Instructions from 'src/components/derivation/Create/Instructions';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import AdminCapabilityGuard from 'src/components/shared/guards/AdminCapability';
 import TransformationCreate from 'src/components/transformation/create';
@@ -23,6 +23,8 @@ import { useTransformationCreate_resetState } from 'src/stores/TransformationCre
 const ARIA_LABEL_ID = 'derivation-create-dialog';
 
 function DerivationCreate() {
+    const intl = useIntl();
+
     const searchParams = new URLSearchParams(window.location.search);
     const collectionsPrefilled = searchParams.has(
         GlobalSearchParams.PREFILL_LIVE_SPEC_ID
@@ -47,9 +49,11 @@ function DerivationCreate() {
     // selections still selected, which would be unexpected.
     const [newCollectionKey, setNewCollectionKey] = useState(0);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [draftId, setDraftId] = useState<null | string>(null);
 
     const closeDialog = () => {
         navigate(authenticatedRoutes.collections.fullPath);
+        setDraftId(null);
         setShowConfirmation(false);
         setNewCollectionKey((k) => k + 1);
         resetTransformationCreateState();
@@ -64,38 +68,27 @@ function DerivationCreate() {
         <Dialog
             open
             fullWidth={!showConfirmation}
-            maxWidth="lg"
+            maxWidth={showConfirmation ? 'md' : 'lg'}
             onClose={closeDialog}
             aria-labelledby={ARIA_LABEL_ID}
         >
             <DialogTitleWithClose id={ARIA_LABEL_ID} onClose={closeDialog}>
-                <FormattedMessage id="newTransform.modal.title" />
+                {intl.formatMessage({ id: 'newTransform.modal.title' })}
             </DialogTitleWithClose>
 
             <DialogContent>
                 <AdminCapabilityGuard>
                     <Collapse in={showConfirmation}>
-                        <AlertBox
-                            short
-                            severity="info"
-                            title={
-                                <Typography>
-                                    <FormattedMessage id="newTransform.info.gitPodWindowTitle" />
-                                </Typography>
-                            }
-                        >
-                            <FormattedMessage id="newTransform.info.gitPodWindowMessage" />
-                        </AlertBox>
+                        <Instructions draftId={draftId} />
                     </Collapse>
 
                     <Collapse in={!showConfirmation}>
                         <BindingHydrator>
                             <TransformationCreate
                                 key={newCollectionKey}
-                                postWindowOpen={(gitPodWindow) => {
-                                    // If there is a window object we know the browser at least let us open it up.
-                                    //  This does not 100% prove that GitPod loaded correctly
-                                    if (gitPodWindow) {
+                                draftCreationCallback={(draftId) => {
+                                    if (draftId) {
+                                        setDraftId(draftId);
                                         setShowConfirmation(true);
                                     }
                                 }}

@@ -32,7 +32,6 @@ function DerivationCreateConfig() {
     return (
         <Stack spacing={3}>
             <ConfigHeader entityNameError={entityNameError} />
-
             <StepWrapper>
                 <SingleStep>
                     <FormattedMessage id="newTransform.collection.label" />
@@ -55,9 +54,7 @@ function DerivationCreateConfig() {
                     />
                 </Box>
             </StepWrapper>
-
             <LanguageSelector />
-
             <StepWrapper>
                 <SingleStep>
                     <FormattedMessage id="newTransform.baseConfig.sourceCollections.label" />
