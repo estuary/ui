@@ -77,7 +77,11 @@ function Instructions({ draftId }: InstructionsProps) {
                 }}
             >
                 {steps.map((step, index) => (
-                    <Step active key={`instructions_${index}`} component="li">
+                    <Step
+                        active
+                        key={`derivation_create_instructions_${index}`}
+                        component="li"
+                    >
                         <InstructionStep {...step} />
                     </Step>
                 ))}
