@@ -66,9 +66,18 @@ function Instructions({ draftId }: InstructionsProps) {
                 })}
             </Typography>
 
-            <Stepper orientation="vertical">
+            <Stepper
+                orientation="vertical"
+                component="ol"
+                sx={{
+                    pl: 0,
+                    [`& >li`]: {
+                        listStyleType: 'none',
+                    },
+                }}
+            >
                 {steps.map((step, index) => (
-                    <Step active key={`instructions_${index}`}>
+                    <Step active key={`instructions_${index}`} component="li">
                         <InstructionStep {...step} />
                     </Step>
                 ))}
