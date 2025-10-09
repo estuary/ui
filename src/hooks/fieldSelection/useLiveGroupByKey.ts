@@ -19,9 +19,7 @@ export default function useLiveGroupByKey(bindingUUID: string) {
             return [];
         }
 
-        return state.selections[bindingUUID].groupBy.explicit.length > 0
-            ? state.selections[bindingUUID].groupBy.explicit
-            : state.selections[bindingUUID].groupBy.implicit;
+        return state.selections[bindingUUID].groupBy.explicit;
     });
 
     const liveBuiltBindingIndex = useBindingStore(

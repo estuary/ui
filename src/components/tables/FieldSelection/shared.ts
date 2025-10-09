@@ -49,12 +49,6 @@ export const sortByField = (
     b: { field: string; isKey: boolean },
     sortDirection: SortDirection
 ) => {
-    const sortResult = compareInitialCharacterType(a.field, b.field);
-
-    if (typeof sortResult === 'number') {
-        return sortResult;
-    }
-
     // If a is not a key and b is then return >0 to put b first
     if (!a.isKey && b.isKey) {
         return 1;
@@ -63,6 +57,12 @@ export const sortByField = (
     // If a is a key and b is not then return <0 to put a first
     if (a.isKey && !b.isKey) {
         return -1;
+    }
+
+    const sortResult = compareInitialCharacterType(a.field, b.field);
+
+    if (typeof sortResult === 'number') {
+        return sortResult;
     }
 
     return basicSort_string(a.field, b.field, sortDirection);
