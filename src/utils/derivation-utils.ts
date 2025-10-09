@@ -99,7 +99,7 @@ const generateSqlTemplate = (
         schema,
         key,
         derive: {
-            // TODO (GitPod) what do we make this base here?
+            // TODO (transforms) what do we make this base here?
             //  there could be multiple bases
             using: { sqlite },
             transforms,
