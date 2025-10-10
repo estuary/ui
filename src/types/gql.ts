@@ -30,11 +30,16 @@ export interface Alert {
 }
 
 export interface PageInfo {
-    hasPreviousPage: boolean;
     hasNextPage: boolean;
+    hasPreviousPage: boolean;
     startCursor: string;
     endCursor: string;
 }
+
+export type PageInfoReverse = Pick<
+    PageInfo,
+    'hasPreviousPage' | 'startCursor' | 'endCursor'
+>;
 
 export interface AlertsVariables {
     prefix: string | undefined;
@@ -45,7 +50,7 @@ export type DefaultAlertingQueryResponse = {
         edges: {
             node: Alert;
         }[];
-        pageInfo?: PageInfo;
+        pageInfo?: PageInfoReverse;
     };
 };
 export interface ActiveAlertCountQueryResponse {

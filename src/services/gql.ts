@@ -1,9 +1,8 @@
 import { gql } from 'urql';
 
-export const PAGE_INFO_FRAGMENT = gql`
-    fragment PageInfo on PageInfo {
+export const PAGE_INFO_REVERSE_FRAGMENT = gql`
+    fragment PageInfoReverse on PageInfo {
         hasPreviousPage
-        hasNextPage
         startCursor
         endCursor
     }

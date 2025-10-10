@@ -31,7 +31,7 @@ import { useDisplayTableColumns } from 'src/context/TableSettings';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { PAGE_INFO_FRAGMENT } from 'src/services/gql';
+import { PAGE_INFO_REVERSE_FRAGMENT } from 'src/services/gql';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
@@ -67,11 +67,11 @@ const resolvedAlertsForTaskQuery = gql<
                 }
             }
             pageInfo {
-                ...PageInfo
+                ...PageInfoReverse
             }
         }
     }
-    ${PAGE_INFO_FRAGMENT}
+    ${PAGE_INFO_REVERSE_FRAGMENT}
 `;
 
 function AlertHistoryTable({
