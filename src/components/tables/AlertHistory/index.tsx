@@ -86,6 +86,7 @@ function AlertHistoryTable({
     const { tableSettings } = useDisplayTableColumns();
 
     const [currentPage, setCurrentPage] = useState(0);
+    const [maxPageSeen, setMaxPageSeen] = useState(0);
     const [beforeCursor, setBeforeCursor] = useState<string | undefined>(
         undefined
     );
@@ -124,6 +125,7 @@ function AlertHistoryTable({
                     data.alerts.pageInfo.endCursor
                 );
                 setCurrentPage(page);
+                setMaxPageSeen(Math.max(maxPageSeen, page));
             }
         } else if (page < currentPage) {
             if (page === 0) {
@@ -217,6 +219,10 @@ function AlertHistoryTable({
     const hasData =
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
     const showFooter = !disableFooter && hasData;
+    const isNextButtonDisabled =
+        currentPage < maxPageSeen
+            ? false
+            : !data?.alerts?.pageInfo?.hasPreviousPage;
 
     return (
         <TableContainer component={Box}>
@@ -286,9 +292,7 @@ function AlertHistoryTable({
                                             disabled: currentPage === 0,
                                         },
                                         nextButton: {
-                                            disabled:
-                                                !data?.alerts?.pageInfo
-                                                    ?.hasPreviousPage,
+                                            disabled: isNextButtonDisabled,
                                         },
                                     },
                                 }}
