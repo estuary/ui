@@ -2,27 +2,38 @@ import type { ActiveOrResolvedCellsProps } from 'src/components/tables/cells/act
 
 import { useMemo } from 'react';
 
-import { chipClasses, TableCell, Tooltip, Typography } from '@mui/material';
+import { Stack, TableCell, Tooltip, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
+import { useIntl } from 'react-intl';
 
 function ActiveCell({ firedAt }: ActiveOrResolvedCellsProps) {
-    const [firedOutput, firedTooltip] = useMemo(() => {
+    const intl = useIntl();
+
+    const [outputDate, outputTime, tooltipTitle] = useMemo(() => {
         const firedAtDate = DateTime.fromISO(firedAt).toUTC();
 
-        return [firedAtDate.toLocaleString(DateTime.DATETIME_FULL), firedAt];
-    }, [firedAt]);
+        return [
+            firedAtDate.toLocaleString(DateTime.DATE_FULL),
+            firedAtDate.toLocaleString(DateTime.TIME_WITH_SECONDS),
+            intl.formatMessage(
+                { id: 'alerts.table.firedAt.tooltip' },
+                {
+                    relative: firedAtDate.toRelative(),
+                }
+            ),
+        ];
+    }, [firedAt, intl]);
 
     return (
-        <TableCell
-            sx={{
-                [`& .${chipClasses.label}`]: {
-                    whiteSpace: 'nowrap !important',
-                },
-            }}
-        >
-            <Tooltip title={firedTooltip} placement="top-end">
-                <Typography component="span">{firedOutput}</Typography>
+        <TableCell>
+            <Tooltip title={tooltipTitle} placement="top-end">
+                <Stack>
+                    <Typography component="span" variant="subtitle2">
+                        {outputDate}
+                    </Typography>
+                    <Typography component="span">{outputTime}</Typography>
+                </Stack>
             </Tooltip>
         </TableCell>
     );

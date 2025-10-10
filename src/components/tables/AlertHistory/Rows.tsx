@@ -42,7 +42,7 @@ function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
                 />
             )}
 
-            <TableCell>{humanReadable}</TableCell>
+            <TableCell sx={{ whiteSpace: 'nowrap' }}>{humanReadable}</TableCell>
 
             <ActiveOrResolvedCells
                 firedAt={firedAt}

@@ -33,10 +33,11 @@ export const tableColumns: TableColumns[] = [
         field: null,
         headerIntlKey: 'alerts.table.data.recipients',
         collapseHeader: true,
-        minWidth: 185,
+        minWidth: 200,
     },
     {
         field: null,
         headerIntlKey: 'alerts.table.data.details',
+        minWidth: 200,
     },
 ];

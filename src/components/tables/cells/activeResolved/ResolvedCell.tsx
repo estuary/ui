@@ -2,7 +2,7 @@ import type { ActiveOrResolvedCellsProps } from 'src/components/tables/cells/act
 
 import { useMemo } from 'react';
 
-import { chipClasses, TableCell, Tooltip, Typography } from '@mui/material';
+import { Stack, TableCell, Tooltip, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
@@ -12,13 +12,14 @@ import { toAbsHumanDuration } from 'src/services/luxon';
 function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
     const intl = useIntl();
 
-    const [resolvedOutput, resolvedTooltip] = useMemo(() => {
+    const [outputDate, outputTime, tooltipTitle] = useMemo(() => {
         if (resolvedAt) {
             const firedAtDate = DateTime.fromISO(firedAt).toUTC();
             const resolvedAtDate = DateTime.fromISO(resolvedAt).toUTC();
 
             return [
-                resolvedAtDate.toLocaleString(DateTime.DATETIME_FULL),
+                resolvedAtDate.toLocaleString(DateTime.DATE_FULL),
+                resolvedAtDate.toLocaleString(DateTime.TIME_WITH_SECONDS),
                 intl.formatMessage(
                     { id: 'alerts.table.resolvedAt.tooltip' },
                     {
@@ -31,24 +32,25 @@ function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
             ];
         }
 
-        return [intl.formatMessage({ id: 'data.active' }), null];
+        return [null, null, null];
     }, [firedAt, intl, resolvedAt]);
 
     return (
-        <TableCell
-            sx={{
-                [`& .${chipClasses.label}`]: {
-                    whiteSpace: 'nowrap !important',
-                },
-            }}
-        >
-            <Tooltip title={resolvedTooltip} placement="top-end">
-                <Typography component="span">
-                    {resolvedOutput
-                        ? resolvedOutput
-                        : intl.formatMessage({ id: 'data.active' })}{' '}
-                </Typography>
-            </Tooltip>
+        <TableCell>
+            {outputDate === null ? null : (
+                <Tooltip title={tooltipTitle} placement="top-end">
+                    <Typography component="span">
+                        <Stack>
+                            <Typography component="span" variant="subtitle2">
+                                {outputDate}
+                            </Typography>
+                            <Typography component="span">
+                                {outputTime}
+                            </Typography>
+                        </Stack>
+                    </Typography>
+                </Tooltip>
+            )}
         </TableCell>
     );
 }
