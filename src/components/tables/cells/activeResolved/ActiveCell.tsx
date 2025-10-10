@@ -2,10 +2,12 @@ import type { ActiveOrResolvedCellsProps } from 'src/components/tables/cells/act
 
 import { useMemo } from 'react';
 
-import { Stack, TableCell, Tooltip, Typography } from '@mui/material';
+import { TableCell, Tooltip } from '@mui/material';
 
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
+
+import TimeStamp from 'src/components/tables/cells/activeResolved/TimeStamp';
 
 function ActiveCell({ firedAt }: ActiveOrResolvedCellsProps) {
     const intl = useIntl();
@@ -28,12 +30,12 @@ function ActiveCell({ firedAt }: ActiveOrResolvedCellsProps) {
     return (
         <TableCell>
             <Tooltip title={tooltipTitle} placement="top-end">
-                <Stack>
-                    <Typography component="span" variant="subtitle2">
-                        {outputDate}
-                    </Typography>
-                    <Typography component="span">{outputTime}</Typography>
-                </Stack>
+                <span>
+                    <TimeStamp
+                        outputDate={outputDate}
+                        outputTime={outputTime}
+                    />
+                </span>
             </Tooltip>
         </TableCell>
     );

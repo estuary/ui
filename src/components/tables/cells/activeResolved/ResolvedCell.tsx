@@ -2,11 +2,12 @@ import type { ActiveOrResolvedCellsProps } from 'src/components/tables/cells/act
 
 import { useMemo } from 'react';
 
-import { Stack, TableCell, Tooltip, Typography } from '@mui/material';
+import { TableCell, Tooltip } from '@mui/material';
 
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
+import TimeStamp from 'src/components/tables/cells/activeResolved/TimeStamp';
 import { toAbsHumanDuration } from 'src/services/luxon';
 
 function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
@@ -39,16 +40,12 @@ function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
         <TableCell>
             {outputDate === null ? null : (
                 <Tooltip title={tooltipTitle} placement="top-end">
-                    <Typography component="span">
-                        <Stack>
-                            <Typography component="span" variant="subtitle2">
-                                {outputDate}
-                            </Typography>
-                            <Typography component="span">
-                                {outputTime}
-                            </Typography>
-                        </Stack>
-                    </Typography>
+                    <span>
+                        <TimeStamp
+                            outputDate={outputDate}
+                            outputTime={outputTime}
+                        />
+                    </span>
                 </Tooltip>
             )}
         </TableCell>
