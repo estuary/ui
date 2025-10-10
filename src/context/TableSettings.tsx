@@ -6,6 +6,7 @@ import { createContext, useCallback, useContext } from 'react';
 
 import { useLocalStorage, useMount } from 'react-use';
 
+import { alertHistoryOptionalColumnIntlKeys } from 'src/components/tables/AlertHistory/shared';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
@@ -31,7 +32,13 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
         useLocalStorage<TableSettingsDictionary>(
             LocalStorageKeys.TABLE_SETTINGS,
             {
+                [TablePrefixes.alertsForEntity]: {
+                    shownOptionalColumns: [],
+                },
                 [TablePrefixes.alertHistoryForEntity]: {
+                    shownOptionalColumns: [],
+                },
+                [TablePrefixes.alertsForEntity]: {
                     shownOptionalColumns: [],
                 },
                 [TablePrefixes.fieldSelection]: {
@@ -62,11 +69,22 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
             });
         }
 
+        if (!tableSettings?.[TablePrefixes.alertsForEntity]) {
+            setTableSettings({
+                ...tableSettings,
+                [TablePrefixes.alertsForEntity]: {
+                    shownOptionalColumns: [],
+                },
+            });
+        }
+
         if (!tableSettings?.[TablePrefixes.alertHistoryForEntity]) {
             setTableSettings({
                 ...tableSettings,
                 [TablePrefixes.alertHistoryForEntity]: {
-                    shownOptionalColumns: [],
+                    shownOptionalColumns: [
+                        alertHistoryOptionalColumnIntlKeys.resolvedAt,
+                    ],
                 },
             });
         }
@@ -74,6 +92,11 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
         if (!tableSettings?.[TablePrefixes.alertHistoryForTenant]) {
             setTableSettings({
                 ...tableSettings,
+                [TablePrefixes.alertHistoryForTenant]: {
+                    shownOptionalColumns: [
+                        alertHistoryOptionalColumnIntlKeys.entityName,
+                    ],
+                },
             });
         }
     });

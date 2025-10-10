@@ -43,13 +43,14 @@ const resolvedAlertsForTaskQuery = gql<
 >`
     query ResolvedAlertsForTaskQuery(
         $prefix: String!
+        $active: Boolean
         $before: String
         $after: String
         $first: Int
         $last: Int
     ) {
         alerts(
-            by: { prefix: $prefix, active: false }
+            by: { prefix: $prefix, active: $active }
             first: $first
             last: $last
             after: $after
@@ -73,7 +74,11 @@ const resolvedAlertsForTaskQuery = gql<
     ${PAGE_INFO_FRAGMENT}
 `;
 
-function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
+function AlertHistoryTable({
+    active,
+    disableFooter,
+    tablePrefix,
+}: AlertHistoryTableProps) {
     const intl = useIntl();
 
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
@@ -95,6 +100,7 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
         query: resolvedAlertsForTaskQuery,
         variables: {
             prefix: catalogName,
+            active,
             before: beforeCursor,
             after: afterCursor,
             [paginationDirection]: PAGE_SIZE,
@@ -211,6 +217,11 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
     const hasData =
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
 
+    console.log('[tablePrefix, columnsToShow] >> ', [
+        tablePrefix,
+        columnsToShow,
+    ]);
+
     return (
         <TableContainer component={Box}>
             <Table
@@ -243,7 +254,7 @@ function AlertHistoryTable({ tablePrefix }: AlertHistoryTableProps) {
                     }
                 />
 
-                {hasData ? (
+                {!disableFooter && hasData ? (
                     <TableFooter>
                         <TableRow>
                             <TablePagination

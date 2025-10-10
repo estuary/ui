@@ -4,6 +4,7 @@ export const ALERT_HISTORY_LOADING_DELAY = 195;
 
 export const alertHistoryOptionalColumnIntlKeys = {
     entityName: 'entityTable.data.entity',
+    resolvedAt: 'alerts.table.data.resolvedAt',
 };
 
 export const optionalColumns = Object.values(
@@ -17,17 +18,17 @@ export const tableColumns: TableColumns[] = [
     },
     {
         field: null,
+        headerIntlKey: 'alerts.table.data.alertType',
+        collapseHeader: true,
+        minWidth: 225,
+    },
+    {
+        field: null,
         headerIntlKey: 'alerts.table.data.firedAt',
     },
     {
         field: null,
-        headerIntlKey: 'alerts.table.data.resolvedAt',
-    },
-    {
-        field: null,
-        headerIntlKey: 'alerts.table.data.alertType',
-        collapseHeader: true,
-        minWidth: 225,
+        headerIntlKey: alertHistoryOptionalColumnIntlKeys.resolvedAt,
     },
     {
         field: null,

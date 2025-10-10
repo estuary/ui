@@ -3,7 +3,6 @@ import { Grid } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
-import ActiveAlerts from 'src/components/shared/Entity/Details/Alerts/ActiveAlerts';
 import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import AlertHistoryTable from 'src/components/tables/AlertHistory';
 import { useEntityType } from 'src/context/EntityContext';
@@ -26,11 +25,17 @@ function EntityAlerts() {
                 xs={12}
                 md={!isCollection ? 6 : 12}
                 lg={!isCollection ? 8 : 12}
-                sx={{
-                    display: 'flex',
-                }}
             >
-                <ActiveAlerts />
+                <CardWrapper
+                    message={intl.formatMessage({
+                        id: 'alerts.history.title.active',
+                    })}
+                >
+                    <AlertHistoryTable
+                        active
+                        tablePrefix={TablePrefixes.alertsForEntity}
+                    />
+                </CardWrapper>
             </Grid>
 
             {!isCollection && catalogName ? (
@@ -42,10 +47,11 @@ function EntityAlerts() {
             <Grid item xs={12}>
                 <CardWrapper
                     message={intl.formatMessage({
-                        id: 'alerts.history.title.active',
+                        id: 'alerts.history.title.resolved',
                     })}
                 >
                     <AlertHistoryTable
+                        active={false}
                         tablePrefix={TablePrefixes.alertHistoryForEntity}
                     />
                 </CardWrapper>

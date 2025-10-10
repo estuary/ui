@@ -1,4 +1,5 @@
 import type { ChipDisplay } from 'src/components/shared/ChipList/types';
+import type { TableColumns } from 'src/types';
 import type { Alert, DefaultAlertingQueryResponse } from 'src/types/gql';
 
 export interface AlertDetail {
@@ -39,6 +40,7 @@ export interface ServerErrorProps {
 }
 
 export interface AlertCardGridProps {
+    columnsToShow: TableColumns[];
     edges: DefaultAlertingQueryResponse['alerts']['edges'];
 }
 

@@ -3,7 +3,11 @@ import type { TableColumns } from 'src/types';
 import type { Alert, ResolvedAlertsForTaskQuery } from 'src/types/gql';
 
 export interface AlertHistoryTableProps {
-    tablePrefix: TablePrefixes.alertHistoryForEntity;
+    active: boolean;
+    tablePrefix:
+        | TablePrefixes.alertHistoryForEntity
+        | TablePrefixes.alertsForEntity;
+    disableFooter?: boolean;
 }
 
 export interface AlertTruncationMessageProps {
@@ -19,6 +23,7 @@ export interface RowProps {
     columns: TableColumns[];
     row: Alert;
     hideEntityName?: boolean;
+    hideResolvedAt?: boolean;
 }
 
 export interface DetailsPaneProps {

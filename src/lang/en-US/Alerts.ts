@@ -28,7 +28,8 @@ export const Alerts: Record<string, string> = {
     'alerts.details.title': `Alert Details`,
     'alerts.details.preview': `...{lineCount} lines hidden`,
 
-    'alerts.history.title.active': `Resolved Alerts`,
+    'alerts.history.title.active': `Active Alerts`,
+    'alerts.history.title.resolved': `Resolved Alerts`,
     'alerts.table.data.firedAt': `Fired At`,
     'alerts.table.data.recipients': `Recipients`,
     'alerts.table.data.resolvedAt': `Resolved At`,

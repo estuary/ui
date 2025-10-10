@@ -15,7 +15,7 @@ import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { isColumnVisible } from 'src/utils/table-utils';
 
-function Row({ hideEntityName, row }: RowProps) {
+function Row({ hideEntityName, hideResolvedAt, row }: RowProps) {
     const { catalogName, firedAt, resolvedAt, alertDetails } = row;
 
     const getAlertTypeContent = useAlertTypeContent();
@@ -42,14 +42,14 @@ function Row({ hideEntityName, row }: RowProps) {
                 />
             )}
 
+            <TableCell>{humanReadable}</TableCell>
+
             <ActiveOrResolvedCells
                 firedAt={firedAt}
                 resolvedAt={resolvedAt}
                 currentlyActive={Boolean(hideEntityName)}
-                hideResolvedAt={false}
+                hideResolvedAt={hideResolvedAt}
             />
-
-            <TableCell>{humanReadable}</TableCell>
 
             <ChipListCell
                 forceTooltip
@@ -66,9 +66,14 @@ function Row({ hideEntityName, row }: RowProps) {
 }
 
 function Rows({ columns, data }: RowsProps) {
-    const showEntityName = isColumnVisible(
+    const hideEntityName = !isColumnVisible(
         columns,
         alertHistoryOptionalColumnIntlKeys.entityName
+    );
+
+    const hiseResolvedAt = !isColumnVisible(
+        columns,
+        alertHistoryOptionalColumnIntlKeys.resolvedAt
     );
 
     return (
@@ -78,7 +83,8 @@ function Rows({ columns, data }: RowsProps) {
                     key={`${row.node.alertType}_${index}`}
                     columns={columns}
                     row={row.node}
-                    hideEntityName={!showEntityName}
+                    hideEntityName={hideEntityName}
+                    hideResolvedAt={hiseResolvedAt}
                 />
             ))}
         </>

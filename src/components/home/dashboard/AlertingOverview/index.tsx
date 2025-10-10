@@ -85,13 +85,13 @@ export default function AlertingOverview({
                             id: 'alert.active.fetchError.title',
                         })}
                     </AlertBox>
-                ) : (
+                ) : filteredAndGroupedAlerts.length > 0 ? (
                     <AlertSummary
                         entityType={entityType}
                         fetching={fetching}
                         filteredAndGroupedAlerts={filteredAndGroupedAlerts}
                     />
-                )}
+                ) : null}
             </CardWrapper>
         </Grid>
     );
