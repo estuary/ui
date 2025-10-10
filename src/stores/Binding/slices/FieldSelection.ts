@@ -1,6 +1,5 @@
 import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { ValidationRequestMetadata } from 'src/hooks/fieldSelection/useValidateFieldSelection';
-import type { BindingState } from 'src/stores/Binding/types';
 import type { Schema } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
 import type { FieldOutcome } from 'src/types/wasm';
@@ -22,6 +21,11 @@ export type SelectionAlgorithm =
     | 'depthTwo'
     | 'depthUnlimited';
 
+export interface GroupKeyMetadata {
+    explicit: string[];
+    implicit: string[];
+}
+
 export interface FieldSelection {
     field: string;
     mode: FieldSelectionType | null;
@@ -35,6 +39,7 @@ export interface FieldSelectionDictionary {
 }
 
 export interface BindingFieldSelection {
+    groupBy: GroupKeyMetadata;
     hasConflicts: boolean;
     hydrating: boolean;
     status: HydrationStatus;
@@ -74,6 +79,7 @@ export interface StoreWithFieldSelection {
         bindingUUIDs: string[],
         serverUpdateFailed?: boolean
     ) => void;
+    setExplicitGroupBy: (bindingUUID: string, targetKeys: string[]) => void;
 
     selectionAlgorithm: SelectionAlgorithm | null;
     setSelectionAlgorithm: (
@@ -119,7 +125,7 @@ export const getHydrationStatus = (
 };
 
 const setBindingHydrationStatus = (
-    state: BindingState,
+    state: StoreWithFieldSelection,
     bindingUUID: string,
     status: HydrationStatus,
     resetRequested?: boolean,
@@ -157,7 +163,7 @@ export const getStoreWithFieldSelectionSettings = (
         validationRequested
     ) => {
         set(
-            produce((state: BindingState) => {
+            produce((state: StoreWithFieldSelection) => {
                 if (bindingUUID && state.selections?.[bindingUUID]) {
                     setBindingHydrationStatus(
                         state,
@@ -193,9 +199,15 @@ export const getStoreWithFieldSelectionSettings = (
 
     initializeSelections: (values) => {
         set(
-            produce((state: BindingState) => {
+            produce((state: StoreWithFieldSelection) => {
                 values.forEach(
-                    ({ hasConflicts, recommended, selections, uuid }) => {
+                    ({
+                        groupBy,
+                        hasConflicts,
+                        recommended,
+                        selections,
+                        uuid,
+                    }) => {
                         const evaluatedStatus = getHydrationStatus(
                             state.selections[uuid].status
                         );
@@ -203,6 +215,7 @@ export const getStoreWithFieldSelectionSettings = (
                         state.recommendFields[uuid] = recommended;
 
                         state.selections[uuid] = {
+                            groupBy,
                             hasConflicts,
                             hydrating: isHydrating(evaluatedStatus),
                             status: evaluatedStatus,
@@ -217,39 +230,19 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setRecommendFields: (bindingUUID, value) => {
+    setExplicitGroupBy: (bindingUUID, targetKeys) => {
         set(
-            produce((state: BindingState) => {
-                state.recommendFields[bindingUUID] = value;
+            produce((state: StoreWithFieldSelection) => {
+                state.selections[bindingUUID].groupBy.explicit = targetKeys;
             }),
             false,
-            'Recommend Fields Flag Set'
-        );
-    },
-
-    setSearchQuery: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.searchQuery = value;
-            }),
-            false,
-            'Search Query Set'
-        );
-    },
-
-    setSelectionAlgorithm: (value) => {
-        set(
-            produce((state: BindingState) => {
-                state.selectionAlgorithm = value;
-            }),
-            false,
-            'Selection Algorithm Set'
+            'Explicit Group-By Set'
         );
     },
 
     setMultiSelection: (bindingUUID, targetFields, targetMode) => {
         set(
-            produce((state: BindingState) => {
+            produce((state: StoreWithFieldSelection) => {
                 const evaluatedStatus = getHydrationStatus(
                     state.selections[bindingUUID].status
                 );
@@ -270,9 +263,39 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
+    setRecommendFields: (bindingUUID, value) => {
+        set(
+            produce((state: StoreWithFieldSelection) => {
+                state.recommendFields[bindingUUID] = value;
+            }),
+            false,
+            'Recommend Fields Flag Set'
+        );
+    },
+
+    setSearchQuery: (value) => {
+        set(
+            produce((state: StoreWithFieldSelection) => {
+                state.searchQuery = value;
+            }),
+            false,
+            'Search Query Set'
+        );
+    },
+
+    setSelectionAlgorithm: (value) => {
+        set(
+            produce((state: StoreWithFieldSelection) => {
+                state.selectionAlgorithm = value;
+            }),
+            false,
+            'Selection Algorithm Set'
+        );
+    },
+
     setSingleSelection: (bindingUUID, field, mode, outcome, meta) => {
         set(
-            produce((state: BindingState) => {
+            produce((state: StoreWithFieldSelection) => {
                 const previousSelectionMode =
                     state.selections[bindingUUID].value[field].mode;
 
@@ -307,7 +330,7 @@ export const getStoreWithFieldSelectionSettings = (
 
     setValidationFailure: (bindingUUIDs, serverUpdateFailed) => {
         set(
-            produce((state: BindingState) => {
+            produce((state: StoreWithFieldSelection) => {
                 bindingUUIDs.forEach((uuid) => {
                     const { status } = state.selections[uuid];
 

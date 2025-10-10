@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import type {
     FieldSelection,
     SelectionAlgorithm,
@@ -9,15 +10,34 @@ export interface AlgorithmMenuProps extends BaseMenuProps {
     targetFieldsRecommended?: boolean;
 }
 
+export interface BaseButtonProps {
+    bindingUUID: string;
+    loading: boolean;
+    selections: FieldSelection[] | null | undefined;
+}
+
 interface BaseMenuProps {
     handleClick: (recommended: boolean | number) => void;
     disabled: boolean;
 }
 
-export interface ExcludeAllButtonProps {
+export interface ExistingKeyProps {
+    labelId: string;
+    values: string[];
+}
+
+export interface GroupByKeysFormProps {
+    localValues: FieldSelection[];
+    options: FieldSelection[];
+    setLocalValues: Dispatch<SetStateAction<FieldSelection[]>>;
+}
+
+export interface GroupByKeysSaveButtonProps extends BaseButtonProps {
+    close: () => void;
+}
+
+export interface KeyChangeAlertProps {
     bindingUUID: string;
-    loading: boolean;
-    selections: FieldSelection[] | null | undefined;
 }
 
 export interface MenuActionProps extends BaseMenuProps {

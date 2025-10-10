@@ -25,7 +25,7 @@ import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'src/context/EntityContext';
-import { truncateTextSx } from 'src/context/Theme';
+import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
@@ -133,7 +133,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                         );
                     }
                 }}
-                onInputChange={(event, newInputValue) => {
+                onInputChange={(_event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
                 renderGroup={({ key, group, children }) => {
@@ -178,16 +178,18 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                         RowContent = (
                             <Stack
                                 component="span"
-                                spacing={1}
                                 x-react-window-item-height={tallHeight}
                             >
                                 <BasicOption pointer={pointer} types={types} />
+
                                 <Typography
                                     component="span"
-                                    variant="caption"
                                     sx={{
                                         ...truncateTextSx,
-                                        pl: 1.5,
+                                        color: (theme) =>
+                                            diminishedTextColor[
+                                                theme.palette.mode
+                                            ],
                                     }}
                                 >
                                     {description}
