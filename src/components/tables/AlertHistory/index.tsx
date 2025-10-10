@@ -114,7 +114,7 @@ function AlertHistoryTable({
         setPaginationDirection(direction);
     };
 
-    const loadMore = (page: number) => {
+    const loadMore = (_event: any, page: number) => {
         if (page > currentPage) {
             // Next page - use endCursor as the new after cursor and paginate backward
             if (data?.alerts?.pageInfo?.endCursor) {
@@ -216,11 +216,7 @@ function AlertHistoryTable({
     const loading = tableState.status === TableStatuses.LOADING;
     const hasData =
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
-
-    console.log('[tablePrefix, columnsToShow] >> ', [
-        tablePrefix,
-        columnsToShow,
-    ]);
+    const showFooter = !disableFooter && hasData;
 
     return (
         <TableContainer component={Box}>
@@ -254,18 +250,16 @@ function AlertHistoryTable({
                     }
                 />
 
-                {!disableFooter && hasData ? (
+                {showFooter ? (
                     <TableFooter>
                         <TableRow>
                             <TablePagination
                                 count={-1}
-                                rowsPerPageOptions={[PAGE_SIZE]}
-                                rowsPerPage={PAGE_SIZE}
                                 page={currentPage}
-                                onPageChange={(_event, page) => {
-                                    loadMore(page);
-                                }}
+                                rowsPerPage={PAGE_SIZE}
+                                rowsPerPageOptions={[PAGE_SIZE]}
                                 showFirstButton={currentPage !== 0}
+                                onPageChange={loadMore}
                                 labelDisplayedRows={({ from, to }) => {
                                     return (
                                         <>
@@ -273,7 +267,15 @@ function AlertHistoryTable({
                                                 {
                                                     id: 'alerts.table.pagination.displayedRows',
                                                 },
-                                                { from, to }
+                                                {
+                                                    from,
+                                                    to,
+                                                    status: intl.formatMessage({
+                                                        id: active
+                                                            ? 'alerts.table.pagination.displayedRows.active'
+                                                            : 'alerts.table.pagination.displayedRows.resolved',
+                                                    }),
+                                                }
                                             )}
                                         </>
                                     );
