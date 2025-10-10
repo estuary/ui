@@ -1,6 +1,6 @@
 import type { FieldNameProps } from 'src/components/tables/cells/types';
 
-import { Stack, TableCell, Typography } from '@mui/material';
+import { TableCell } from '@mui/material';
 
 import { wrappingTableBodyCell } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
@@ -14,15 +14,7 @@ const FieldName = ({ field, outcome }: FieldNameProps) => {
         <TableCell sx={wrappingTableBodyCell}>
             <OutlinedChip
                 color={hasFieldConflict(outcome) ? 'error' : undefined}
-                label={
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        style={{ alignItems: 'center' }}
-                    >
-                        <Typography>{field}</Typography>
-                    </Stack>
-                }
+                label={field}
                 variant="outlined"
                 diminishedText={Boolean(
                     !isSelectedField(outcome) && !hasFieldConflict(outcome)
