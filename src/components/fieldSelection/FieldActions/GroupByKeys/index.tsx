@@ -16,9 +16,9 @@ import {
 
 import { useIntl } from 'react-intl';
 
+import ExistingKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ExistingKey';
 import GroupByKeysForm from 'src/components/fieldSelection/FieldActions/GroupByKeys/Form';
 import SaveButton from 'src/components/fieldSelection/FieldActions/GroupByKeys/SaveButton';
-import ChipList from 'src/components/shared/ChipList';
 import useLiveGroupByKey from 'src/hooks/fieldSelection/useLiveGroupByKey';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -95,51 +95,25 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                 </DialogTitle>
 
                 <DialogContent>
-                    <Box style={{ marginBottom: 24 }}>
-                        <Typography style={{ marginBottom: 8, width: 700 }}>
+                    <Stack spacing={1} style={{ marginBottom: 24 }}>
+                        <Typography style={{ width: 700 }}>
                             {intl.formatMessage({
                                 id: 'fieldSelection.groupBy.description',
                             })}
                         </Typography>
 
-                        <Stack
-                            direction="row"
-                            spacing={1}
-                            style={{ alignItems: 'center' }}
-                        >
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'fieldSelection.groupBy.label.implicitKeys',
-                                })}
-                            </Typography>
-
-                            <ChipList
-                                maxChips={3}
-                                stripPath={false}
-                                values={groupBy.implicit}
-                            />
-                        </Stack>
+                        <ExistingKey
+                            labelId="fieldSelection.groupBy.label.implicitKeys"
+                            values={groupBy.implicit}
+                        />
 
                         {displayExplicitKeys ? (
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                style={{ alignItems: 'center' }}
-                            >
-                                <Typography>
-                                    {intl.formatMessage({
-                                        id: 'fieldSelection.groupBy.label.explicitKeys',
-                                    })}
-                                </Typography>
-
-                                <ChipList
-                                    maxChips={3}
-                                    stripPath={false}
-                                    values={existingGroupByKey}
-                                />
-                            </Stack>
+                            <ExistingKey
+                                labelId="fieldSelection.groupBy.label.explicitKeys"
+                                values={existingGroupByKey}
+                            />
                         ) : null}
-                    </Box>
+                    </Stack>
 
                     <GroupByKeysForm
                         localValues={localValues}

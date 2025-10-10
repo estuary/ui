@@ -21,6 +21,11 @@ interface BaseMenuProps {
     disabled: boolean;
 }
 
+export interface ExistingKeyProps {
+    labelId: string;
+    values: string[];
+}
+
 export interface GroupByKeysFormProps {
     localValues: FieldSelection[];
     options: FieldSelection[];
