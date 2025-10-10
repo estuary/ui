@@ -20,7 +20,6 @@ export const tableColumns: TableColumns[] = [
         field: null,
         headerIntlKey: 'alerts.table.data.alertType',
         collapseHeader: true,
-        minWidth: 225,
     },
     {
         field: null,
