@@ -19,7 +19,7 @@ function EntityAlerts() {
     const isCollection = entityType === 'collection';
 
     return (
-        <Grid container spacing={2} flexDirection="row-reverse">
+        <Grid container spacing={2} sx={{ flexDirection: 'row-reverse' }}>
             {!isCollection && catalogName ? (
                 <Grid item xs={12} md={12} lg={4}>
                     <NotificationSettings taskName={catalogName} />
