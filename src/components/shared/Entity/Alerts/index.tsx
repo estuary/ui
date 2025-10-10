@@ -19,13 +19,14 @@ function EntityAlerts() {
     const isCollection = entityType === 'collection';
 
     return (
-        <Grid container spacing={2}>
-            <Grid
-                item
-                xs={12}
-                md={!isCollection ? 6 : 12}
-                lg={!isCollection ? 8 : 12}
-            >
+        <Grid container spacing={2} flexDirection="row-reverse">
+            {!isCollection && catalogName ? (
+                <Grid item xs={12} md={12} lg={4}>
+                    <NotificationSettings taskName={catalogName} />
+                </Grid>
+            ) : null}
+
+            <Grid item xs={12} md={12} lg={!isCollection ? 8 : 12}>
                 <CardWrapper
                     message={intl.formatMessage({
                         id: 'alerts.history.title.active',
@@ -37,12 +38,6 @@ function EntityAlerts() {
                     />
                 </CardWrapper>
             </Grid>
-
-            {!isCollection && catalogName ? (
-                <Grid item xs={12} md={6} lg={4}>
-                    <NotificationSettings taskName={catalogName} />
-                </Grid>
-            ) : null}
 
             <Grid item xs={12}>
                 <CardWrapper
