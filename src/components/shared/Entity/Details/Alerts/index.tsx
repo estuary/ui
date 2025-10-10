@@ -4,7 +4,7 @@ import EntityAlerts from 'src/components/shared/Entity/Alerts';
 
 function Alerts() {
     return (
-        <Box>
+        <Box sx={{ mt: 5 }}>
             <EntityAlerts />
         </Box>
     );
