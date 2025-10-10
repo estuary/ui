@@ -230,6 +230,16 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
+    setExplicitGroupBy: (bindingUUID, targetKeys) => {
+        set(
+            produce((state: StoreWithFieldSelection) => {
+                state.selections[bindingUUID].groupBy.explicit = targetKeys;
+            }),
+            false,
+            'Explicit Group-By Set'
+        );
+    },
+
     setMultiSelection: (bindingUUID, targetFields, targetMode) => {
         set(
             produce((state: StoreWithFieldSelection) => {
@@ -280,16 +290,6 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Selection Algorithm Set'
-        );
-    },
-
-    setExplicitGroupBy: (bindingUUID, targetKeys) => {
-        set(
-            produce((state: StoreWithFieldSelection) => {
-                state.selections[bindingUUID].groupBy.explicit = targetKeys;
-            }),
-            false,
-            'Single GroupBy Set'
         );
     },
 
