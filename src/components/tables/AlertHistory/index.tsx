@@ -3,6 +3,7 @@ import type { TableState } from 'src/types';
 import type {
     AlertsVariables,
     ResolvedAlertsForTaskQuery,
+    WithPagination,
 } from 'src/types/gql';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -39,7 +40,7 @@ const PAGE_SIZE = 3;
 
 const resolvedAlertsForTaskQuery = gql<
     ResolvedAlertsForTaskQuery,
-    AlertsVariables
+    WithPagination<AlertsVariables>
 >`
     query ResolvedAlertsForTaskQuery(
         $prefix: String!
@@ -93,53 +94,39 @@ function AlertHistoryTable({
     const [afterCursor, setAfterCursor] = useState<string | undefined>(
         undefined
     );
-    const [paginationDirection, setPaginationDirection] = useState<
-        'first' | 'last'
-    >('last');
 
     const [{ fetching, data, error }] = useQuery({
         query: resolvedAlertsForTaskQuery,
         variables: {
-            prefix: catalogName,
             active,
-            before: beforeCursor,
+            prefix: catalogName,
+
             after: afterCursor,
-            [paginationDirection]: PAGE_SIZE,
+            before: beforeCursor,
+
+            [!afterCursor ? 'last' : 'first']: PAGE_SIZE,
         },
         pause: !catalogName,
     });
 
-    const updatePaginationState = (direction: any, after: any, before: any) => {
-        setAfterCursor(after);
-        setBeforeCursor(before);
-        setPaginationDirection(direction);
-    };
-
     const loadMore = (_event: any, page: number) => {
         if (page > currentPage) {
-            // Next page - use endCursor as the new after cursor and paginate backward
             if (data?.alerts?.pageInfo?.endCursor) {
-                updatePaginationState(
-                    'last',
-                    undefined,
-                    data.alerts.pageInfo.endCursor
-                );
-                setCurrentPage(page);
                 setMaxPageSeen(Math.max(maxPageSeen, page));
+                setAfterCursor(undefined);
+                setBeforeCursor(data.alerts.pageInfo.endCursor);
             }
         } else if (page < currentPage) {
             if (page === 0) {
-                updatePaginationState('last', undefined, undefined);
-                setCurrentPage(0);
+                // Reset to initial state
+                setAfterCursor(undefined);
+                setBeforeCursor(undefined);
             } else if (data?.alerts?.pageInfo?.startCursor) {
-                updatePaginationState(
-                    'first',
-                    data.alerts.pageInfo.startCursor,
-                    undefined
-                );
-                setCurrentPage(page);
+                setAfterCursor(data.alerts.pageInfo.startCursor);
+                setBeforeCursor(undefined);
             }
         }
+        setCurrentPage(page);
     };
 
     const columnsToShow = useMemo(

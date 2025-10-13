@@ -16,8 +16,8 @@ const ActiveAlertCountQuery = gql<
     ActiveAlertCountQueryResponse,
     AlertsVariables
 >`
-    query ActiveAlertCount($prefix: String!) {
-        alerts(by: { prefix: $prefix, active: true }) {
+    query ActiveAlertCount($prefix: String!, $active: Boolean) {
+        alerts(by: { prefix: $prefix, active: $active }) {
             edges {
                 cursor
             }
@@ -28,7 +28,7 @@ const ActiveAlertCountQuery = gql<
 function AlertsAreActiveBadge({ children, prefix }: AlertsAreActiveBadgeProps) {
     const [{ fetching, data }, reexecuteQuery] = useQuery({
         query: ActiveAlertCountQuery,
-        variables: { prefix },
+        variables: { active: true, prefix },
         pause: !prefix,
     });
 

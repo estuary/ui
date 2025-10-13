@@ -42,8 +42,19 @@ export type PageInfoReverse = Pick<
 >;
 
 export interface AlertsVariables {
+    active: boolean | undefined;
     prefix: string | undefined;
 }
+
+export interface PaginationVariables {
+    after: string | undefined;
+    before: string | undefined;
+    first?: number | undefined;
+    last?: number | undefined;
+    prefix: string | undefined;
+}
+
+export type WithPagination<T> = T & PaginationVariables;
 
 export type DefaultAlertingQueryResponse = {
     alerts: {

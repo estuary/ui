@@ -25,8 +25,8 @@ const alertingOverviewQuery = gql<
     AlertingOverviewQueryResponse,
     AlertsVariables
 >`
-    query AlertingOverviewQuery($prefix: String!) {
-        alerts(by: { prefix: $prefix, active: true }) {
+    query AlertingOverviewQuery($prefix: String!, $active: Boolean) {
+        alerts(by: { prefix: $prefix, active: $active }) {
             edges {
                 node {
                     alertType
@@ -49,7 +49,7 @@ export default function AlertingOverview({
 
     const [{ fetching, data, error }] = useQuery({
         query: alertingOverviewQuery,
-        variables: { prefix: selectedTenant },
+        variables: { active: true, prefix: selectedTenant },
         pause: !selectedTenant,
     });
 
