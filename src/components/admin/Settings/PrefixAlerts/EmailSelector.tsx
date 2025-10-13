@@ -2,7 +2,7 @@ import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { Grant_UserExt } from 'src/types';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     Autocomplete,
@@ -17,6 +17,7 @@ import {
 
 import { useIntl } from 'react-intl';
 
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import usePrefixAdministrators from 'src/hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'src/hooks/useUserInformationByPrefix';
@@ -68,6 +69,10 @@ function EmailSelector({
 
     const [inputValue, setInputValue] = useState('');
 
+    const setInputUncommitted = useAlertSubscriptionsStore(
+        (state) => state.setInputUncommitted
+    );
+
     const { data: adminPrefixes } = usePrefixAdministrators(
         prefix,
         minCapability
@@ -96,6 +101,11 @@ function EmailSelector({
             ) as Values,
         [emails, userInfo]
     );
+
+    useEffect(() => {
+        setInputUncommitted(inputValue.length > 0);
+    }, [inputValue, setInputUncommitted]);
+
     return (
         <FormControl fullWidth>
             <Autocomplete

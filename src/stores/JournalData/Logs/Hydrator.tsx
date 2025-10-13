@@ -10,7 +10,7 @@ export const JournalDataLogsHydrator = ({ children }: BaseComponentProps) => {
         (state) => [state.resetState, state.setActive, state.hydrate]
     );
 
-    const { docs, error, loading, refresh } = useOpsLogs();
+    const { docs, error, loading, readStatus, refresh } = useOpsLogs();
 
     // More mount/unmount for store
     useEffect(() => {
@@ -26,8 +26,8 @@ export const JournalDataLogsHydrator = ({ children }: BaseComponentProps) => {
         if (loading) {
             return;
         }
-        hydrate(docs, refresh, error);
-    }, [docs, error, hydrate, loading, refresh]);
+        hydrate(docs, refresh, readStatus, error);
+    }, [docs, error, readStatus, hydrate, loading, refresh]);
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

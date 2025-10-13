@@ -3,6 +3,7 @@ import type {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
+import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { ReactElement, ReactNode } from 'react';
 import type { BaseGrant, Grant_UserExt } from 'src/types';
 
@@ -21,21 +22,41 @@ export const RESPONSE_DATA_LIMIT = 1000;
 // Default size used when splitting up larged promises
 export const CHUNK_SIZE = 10;
 
-const JOURNAL_READ_ERRORS = [
-    'JOURNAL_NOT_FOUND',
+// Descriptions of these:
+// https://github.com/gazette/core/blob/2580071332a6bf7f9302af1e513391f8c6539f5d/broker/protocol/protocol.proto#L20
+export const JOURNAL_READ_WARNINGS = ['OFFSET_NOT_YET_AVAILABLE'];
+export const JOURNAL_READ_ERRORS = [
+    // temporary and quickly resolved
     'NO_JOURNAL_PRIMARY_BROKER',
+
+    // journal is suspended
+    // checked for data preview - ui/src/components/collection/DataPreview/HydrationError.tsx
+    'SUSPENDED',
+
+    // misc journal stuff
     'NOT_JOURNAL_PRIMARY_BROKER',
     'NOT_JOURNAL_BROKER',
     'INSUFFICIENT_JOURNAL_BROKERS',
-    'OFFSET_NOT_YET_AVAILABLE',
+
+    // peer disagreements
     'WRONG_ROUTE',
     'PROPOSAL_MISMATCH',
+
+    // transaction failure
     'ETCD_TRANSACTION_FAILED',
+
+    // access error
     'NOT_ALLOWED',
+
+    // read failure
     'WRONG_APPEND_OFFSET',
     'INDEX_HAS_GREATER_OFFSET',
     'REGISTER_MISMATCH',
+    'JOURNAL_NOT_FOUND',
 ];
+export const journalStatusIsWarning = (status: ProtocolStatus | undefined) => {
+    return status ? JOURNAL_READ_WARNINGS.includes(status) : false;
+};
 export const journalStatusIsError = (status: string | undefined) => {
     return status ? JOURNAL_READ_ERRORS.includes(status) : false;
 };
@@ -245,3 +266,17 @@ export const getAuthHeader = (token?: string) => {
 export const isPromiseFulfilledResult = <T>(
     value: PromiseSettledResult<T>
 ): value is PromiseFulfilledResult<T> => value.status === 'fulfilled';
+
+export const hasOwnProperty = (
+    value: null | object | undefined,
+    property: PropertyKey
+) => {
+    if (!value) {
+        return false;
+    }
+
+    const stringifiedProperty =
+        typeof property === 'string' ? property : property.toString();
+
+    return Object.keys(value).includes(stringifiedProperty);
+};

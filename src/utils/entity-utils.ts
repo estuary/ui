@@ -3,7 +3,11 @@ import type { Projections } from 'src/types/schemaModels';
 
 import produce from 'immer';
 
-import { hasLength, specContainsDerivation } from 'src/utils/misc-utils';
+import {
+    hasLength,
+    hasOwnProperty,
+    specContainsDerivation,
+} from 'src/utils/misc-utils';
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
     draftSpec.shards ??= {};
@@ -147,4 +151,24 @@ export const getExistingPartition = (
     }
 
     return existingProjection[1].partition;
+};
+
+export const isTaskDisabled = (spec: any) => {
+    return Boolean(spec?.shards?.disable);
+};
+
+export const setFieldsStanzaRecommended = (
+    binding: Schema,
+    source: SourceCaptureDef | null
+) => {
+    const value: boolean | number | undefined =
+        source && hasOwnProperty(source, 'fieldsRecommended')
+            ? source.fieldsRecommended
+            : undefined;
+
+    if (typeof value !== 'undefined' && !binding?.fields) {
+        binding.fields = { recommended: value };
+    }
+
+    return binding;
 };

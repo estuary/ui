@@ -3,7 +3,7 @@ import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import Instructions from 'src/components/shared/Error/Instructions';
 import {
@@ -67,7 +67,7 @@ function Message({ error, linkOptions }: Props) {
             <Instructions message={message} linkOptions={linkOptions} />
             <Stack direction="row" spacing={1}>
                 <Typography sx={{ fontWeight: 'bold' }}>
-                    <FormattedMessage id="error.messageLabel" />
+                    {intl.formatMessage({ id: 'error.messageLabel' })}
                 </Typography>
 
                 <Typography>{message}</Typography>

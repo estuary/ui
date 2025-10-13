@@ -1,3 +1,4 @@
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Details: Record<string, string> = {
@@ -10,7 +11,8 @@ export const Details: Record<string, string> = {
 
     'details.history.noPublications': `No publications were found.`,
     'details.history.diffFailed': `Unable to get specs to compare.`,
-    'details.history.title': `Publication History`,
+    'details.history.title': `Change History`,
+    'details.history.list.title': `Changes`,
 
     'details.ops.status.cta.formatted': `Dashboard`,
     'details.ops.status.cta.raw': `Code`,
@@ -68,6 +70,10 @@ export const Details: Record<string, string> = {
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
     'detailsPanel.dataPreview.listView.header': `Key`,
     'detailsPanel.dataPreview.hidden': `Data previews are disabled for this tenant.`,
+
+    'detailsPanel.dataPreview.suspended.title': `No data found in collection.`,
+    'detailsPanel.dataPreview.suspended.message': `If you are using the ${CommonMessages['company']} trial storage mapping, data expires after 20 days.`,
+
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
     'detailsPanel.details.title': `Details`,
@@ -85,4 +91,6 @@ export const Details: Record<string, string> = {
     'detailsPanel.graph.syncDelay': `Reporting can be delayed by up to {reportingDelay} for this materialization`,
     'detailsPanel.graph.syncDelay.default': `Reporting can be delayed due to update delay for this materialization`,
     'detailsPanel.graph.syncDelay.tooltip': `Reporting can be delayed by up to 2x the set update delay in the configuration.`,
+
+    'detailsPanel.status.taskDisabled.message': `Task is disabled`,
 };

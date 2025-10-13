@@ -1008,8 +1008,11 @@ const getInitialState = (
                             return;
                         }
 
-                        let liveBuiltBindingIndex = builtSpec
-                            ? getBuiltBindingIndex(builtSpec, collectionName)
+                        let liveBuiltBindingIndex = liveBuiltSpec
+                            ? getBuiltBindingIndex(
+                                  liveBuiltSpec,
+                                  collectionName
+                              )
                             : -1;
 
                         const liveBuiltBinding =

@@ -33,6 +33,7 @@ export interface TileProps extends BaseComponentProps {
 }
 
 export interface CardWrapperProps extends BaseComponentProps {
+    disableMinWidth?: boolean;
     message?: string | ReactNode;
     tooltipMessageId?: string;
     height?: string | number;

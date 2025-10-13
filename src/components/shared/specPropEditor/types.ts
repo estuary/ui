@@ -21,8 +21,8 @@ export interface SelectorOptionProps<T> {
 
 export interface SpecPropInputProps extends BaseFormProps {
     updateDraftedSetting: (selectedOption?: any) => Promise<any>;
-    inputLabelId: string;
     setErrorExists: (errorExists: boolean, scope: FormScope) => void;
+    inputLabelId?: string;
     invalidSettingsMessageId?: string;
 }
 

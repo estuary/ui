@@ -1,13 +1,10 @@
-import type { NavigationTabProps } from 'src/components/shared/NavigationTabs/types';
-
 import { useCallback, useMemo } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 
 import AlertsAreActiveBadge from 'src/components/shared/AlertsAreActiveBadge';
-import useEntityShouldShowLogs from 'src/components/shared/Entity/Details/useEntityShouldShowLogs';
 import NavigationTabs from 'src/components/shared/NavigationTabs';
-import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import useEntityShouldShowLogs from 'src/hooks/details/useEntityShouldShowLogs';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -16,11 +13,8 @@ const TAB_KEY = 'details-tabs';
 function DetailTabs() {
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const [searchParams] = useSearchParams();
     const shouldShowLogs = useEntityShouldShowLogs();
-    const hasSupportRole = useUserInfoSummaryStore(
-        (state) => state.hasSupportAccess
-    );
+    const [searchParams] = useSearchParams();
 
     const getPath = useCallback(
         (path: string) => {
@@ -34,7 +28,7 @@ function DetailTabs() {
     );
 
     const tabProps = useMemo(() => {
-        const response: NavigationTabProps[] = [
+        const response = [
             {
                 labelMessageId: 'details.tabs.overview',
                 path: 'overview',
@@ -51,15 +45,11 @@ function DetailTabs() {
                 labelMessageId: 'details.tabs.spec',
                 path: 'spec',
             },
-        ];
-
-        // TODO (details:history) not currently live but is here to make sure it can render
-        if (hasSupportRole) {
-            response.push({
+            {
                 labelMessageId: 'details.tabs.history',
                 path: 'history',
-            });
-        }
+            },
+        ];
 
         if (shouldShowLogs) {
             response.push({
@@ -69,7 +59,7 @@ function DetailTabs() {
         }
 
         return response;
-    }, [catalogName, hasSupportRole, shouldShowLogs]);
+    }, [catalogName, shouldShowLogs]);
 
     return (
         <NavigationTabs keyPrefix={TAB_KEY} tabs={tabProps} getPath={getPath} />

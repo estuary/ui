@@ -1,5 +1,8 @@
 /* eslint-disable no-await-in-loop */
-import type { ProtocolReadResponse } from 'data-plane-gateway/types/gen/broker/protocol/broker';
+import type {
+    ProtocolReadResponse,
+    ProtocolStatus,
+} from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type {
     AttemptToReadResponse,
     JournalByteRange,
@@ -98,7 +101,6 @@ export async function loadDocuments({
         val: metadataResponse.status,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (journalStatusIsError(metadataResponse?.status)) {
         if (!Boolean(metadataResponse.status)) {
             logRocketEvent(CustomEvents.JOURNAL_DATA, {
@@ -108,17 +110,19 @@ export async function loadDocuments({
         throw new Error(metadataResponse.status);
     }
 
+    // Now that we have passed the error we can start getting a response ready
+    // TODO (typing) let docsMetaResponse: any; //ProtocolReadResponse
+    const status: ProtocolStatus | undefined = metadataResponse?.status;
+    let range: JournalByteRange = [-1, -1];
+    let documents: JournalRecord[] = [];
+    let attempt = 0;
+
     const head = parseInt(metadataResponse.writeHead, 10);
     const providedStart = offsets?.offset && offsets.offset > 0;
 
     const end =
         offsets?.endOffset && offsets.endOffset > 0 ? offsets.endOffset : head;
     let start = providedStart ? offsets.offset : end;
-
-    // let docsMetaResponse: any; //ProtocolReadResponse
-    let range: JournalByteRange = [-1, -1];
-    let documents: JournalRecord[] = [];
-    let attempt = 0;
 
     // TODO (gross)
     // This is bad and I feel bad. The function uses references to vars up above.
@@ -205,6 +209,7 @@ export async function loadDocuments({
             // metadataResponse,
             // docsMetaResponse,
             range,
+            status,
         },
         tooFewDocuments: documentCount ? start <= 0 : false,
         tooManyBytes: head - start >= maxBytes,

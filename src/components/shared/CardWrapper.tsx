@@ -22,11 +22,12 @@ import {
 
 function CardWrapper({
     children,
+    disableMinWidth,
+    opaqueLightMode,
     height,
     message,
-    tooltipMessageId,
-    opaqueLightMode,
     sx,
+    tooltipMessageId,
 }: CardWrapperProps) {
     const intl = useIntl();
     const theme = useTheme();
@@ -46,8 +47,8 @@ function CardWrapper({
                 flexDirection: 'column',
                 boxShadow: defaultBoxShadow,
                 borderRadius: 3,
-                minWidth: 'min-content',
                 rowGap: 2,
+                minWidth: disableMinWidth ? undefined : 'min-content',
                 background: opaqueLightMode
                     ? opaqueLightModeBackground[theme.palette.mode]
                     : semiTransparentBackground[theme.palette.mode],
