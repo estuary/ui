@@ -79,9 +79,12 @@ function SelectColumnMenu({
                                     }
                                 />
                             }
-                            onChange={(event, checked) =>
-                                onChange(event, checked, headerIntlKey)
-                            }
+                            onChange={(event, checked) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+
+                                onChange(checked, headerIntlKey);
+                            }}
                             label={intl.formatMessage({ id: headerIntlKey })}
                         />
                     </FormControl>

@@ -258,6 +258,11 @@ export const isGrant_UserExt = (
     value: Grant_UserExt | BaseGrant
 ): value is Grant_UserExt => isObject(value) && 'user_email' in value;
 
+export const getAuthHeader = (token?: string) => {
+    return {
+        Authorization: `Bearer ${token}`,
+    };
+};
 export const isPromiseFulfilledResult = <T>(
     value: PromiseSettledResult<T>
 ): value is PromiseFulfilledResult<T> => value.status === 'fulfilled';

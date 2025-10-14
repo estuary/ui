@@ -1,0 +1,29 @@
+import type { AlertDetailsWrapperProps } from 'src/components/shared/Entity/Details/Alerts/types';
+
+import { Stack, Typography } from '@mui/material';
+
+import ServerError from 'src/components/shared/Entity/Details/Alerts/Details/ServerError';
+import useAlertTypeContent from 'src/hooks/useAlertTypeContent';
+
+function AlertDetailsWrapper({
+    datum,
+    hideLabel,
+    short,
+}: AlertDetailsWrapperProps) {
+    const getAlertTypeContent = useAlertTypeContent();
+    const { detail } = getAlertTypeContent(datum);
+
+    // being safe on the rare case we get data back that is not right
+    if (!detail || !detail.dataVal) {
+        return null;
+    }
+
+    return (
+        <Stack>
+            {hideLabel ? null : <Typography>{detail.label}</Typography>}
+            <ServerError datum={datum} detail={detail} short={short} />
+        </Stack>
+    );
+}
+
+export default AlertDetailsWrapper;

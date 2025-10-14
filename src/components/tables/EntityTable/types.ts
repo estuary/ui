@@ -5,7 +5,12 @@ import type {
 } from 'src/components/collection/Selector/types';
 import type { Pagination } from 'src/services/supabase';
 import type { SelectTableStoreNames } from 'src/stores/names';
-import type { SortDirection, TableColumns, TableIntlConfig } from 'src/types';
+import type {
+    SortDirection,
+    TableColumns,
+    TableIntlConfig,
+    TableState,
+} from 'src/types';
 
 // These are settings that were added just for Collection Selector but might be useful elsewhere in the future (Q2 2025)
 
@@ -74,4 +79,13 @@ export interface EntityTableProps {
 
     // This is a HACK
     tableAriaLabelKey?: string;
+}
+
+export interface EntityTableBodyProps {
+    columns: ColumnProps[];
+    noExistingDataContentIds: TableIntlConfig;
+    tableState: TableState;
+    loading: boolean;
+    rows: any;
+    enableDivRendering?: boolean;
 }

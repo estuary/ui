@@ -16,6 +16,7 @@ interface Props {
     lineNumber: number | string | any;
     disableBorder?: boolean;
     disableSelect?: boolean;
+    disableLineNumber?: boolean;
 }
 
 export const lineNumberColor = '#666';
@@ -24,7 +25,13 @@ export const lineNumberColor = '#666';
 //     return line.stream.slice(0, line.stream.lastIndexOf(':')) as ParsedStream;
 // };
 
-function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
+function LogLine({
+    line,
+    lineNumber,
+    disableBorder,
+    disableLineNumber,
+    disableSelect,
+}: Props) {
     let parsedLine: AnsiColored;
 
     if (line instanceof Object) {
@@ -59,19 +66,21 @@ function LogLine({ line, lineNumber, disableBorder, disableSelect }: Props) {
                 },
             }}
         >
-            <ListItemAvatar
-                sx={{
-                    alignItems: 'baseline',
-                    color: lineNumberColor,
-                    userSelect: 'none',
-                    minWidth: 50,
-                    textAlign: 'right',
-                    mr: 1,
-                    mt: 0.5,
-                }}
-            >
-                {lineNumber}
-            </ListItemAvatar>
+            {disableLineNumber ? null : (
+                <ListItemAvatar
+                    sx={{
+                        alignItems: 'baseline',
+                        color: lineNumberColor,
+                        userSelect: 'none',
+                        minWidth: 50,
+                        textAlign: 'right',
+                        mr: 1,
+                        mt: 0.5,
+                    }}
+                >
+                    {lineNumber}
+                </ListItemAvatar>
+            )}
             <ListItemText
                 disableTypography
                 sx={{

@@ -10,6 +10,7 @@ export interface ChipDisplay {
 export interface ChipWrapperProps {
     onClick?: () => void;
     disabled?: boolean;
+    forceTooltip?: boolean;
     stripPath?: boolean;
     title?: string;
     val: ChipDisplay;
@@ -21,5 +22,6 @@ export interface ChipListProps {
     maxChips?: number;
     newWindow?: boolean;
     stripPath?: boolean;
+    forceTooltip?: boolean;
     sx?: SxProps<Theme>;
 }

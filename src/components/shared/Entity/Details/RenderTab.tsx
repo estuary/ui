@@ -1,3 +1,4 @@
+import EntityAlerts from 'src/components/shared/Entity/Alerts';
 import { useDetailsPage } from 'src/components/shared/Entity/Details/context';
 import History from 'src/components/shared/Entity/Details/History';
 import Status from 'src/components/shared/Entity/Details/Logs/Status';
@@ -14,6 +15,9 @@ function RenderTab() {
 
         case 'history':
             return <History />;
+
+        case 'alerts':
+            return <EntityAlerts />;
 
         case 'ops':
             return (
