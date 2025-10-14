@@ -24,7 +24,7 @@ import { getTableComponents } from 'src/utils/table-utils';
 export default function AlertSummary({
     entityType,
     fetching,
-    filteredAndGroupedAlerts: filteredDataArray,
+    flattenedGroupedAlerts,
 }: AlertSummaryProps) {
     const intl = useIntl();
 
@@ -63,48 +63,53 @@ export default function AlertSummary({
                             enableDivRendering
                         />
                     ) : (
-                        filteredDataArray.map(([catalogName, datum], index) => {
-                            return (
-                                <TableRow
-                                    component={trComponent}
-                                    key={`alert-summary-${datum[0].catalogName}-${index}`}
-                                >
-                                    <EntityNameLink
-                                        enableDivRendering
-                                        name={catalogName}
-                                        showEntityStatus={false}
-                                        detailsLink={generatePath({
-                                            catalog_name: catalogName,
-                                        })}
-                                        entityStatusTypes={[entityType]}
-                                    />
-
-                                    <TableCell component={tdComponent}>
-                                        <ChipList
-                                            forceTooltip
-                                            stripPath={false}
-                                            values={datum.map(
-                                                (alertData): ChipDisplay => {
-                                                    const {
-                                                        humanReadable,
-                                                        firedAtReadable:
-                                                            readableTime,
-                                                    } =
-                                                        getAlertTypeContent(
-                                                            alertData
-                                                        );
-
-                                                    return {
-                                                        display: humanReadable,
-                                                        title: readableTime,
-                                                    };
-                                                }
-                                            )}
+                        flattenedGroupedAlerts.map(
+                            ([catalogName, datum], index) => {
+                                return (
+                                    <TableRow
+                                        component={trComponent}
+                                        key={`alert-summary-${datum[0].catalogName}-${index}`}
+                                    >
+                                        <EntityNameLink
+                                            enableDivRendering
+                                            name={catalogName}
+                                            showEntityStatus={false}
+                                            detailsLink={generatePath({
+                                                catalog_name: catalogName,
+                                            })}
+                                            entityStatusTypes={[entityType]}
                                         />
-                                    </TableCell>
-                                </TableRow>
-                            );
-                        })
+
+                                        <TableCell component={tdComponent}>
+                                            <ChipList
+                                                forceTooltip
+                                                stripPath={false}
+                                                values={datum.map(
+                                                    (
+                                                        alertData
+                                                    ): ChipDisplay => {
+                                                        const {
+                                                            humanReadable,
+                                                            firedAtReadable:
+                                                                readableTime,
+                                                        } =
+                                                            getAlertTypeContent(
+                                                                alertData
+                                                            );
+
+                                                        return {
+                                                            display:
+                                                                humanReadable,
+                                                            title: readableTime,
+                                                        };
+                                                    }
+                                                )}
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            }
+                        )
                     )}
                 </TableBody>
             </Table>

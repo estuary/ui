@@ -1,6 +1,5 @@
 import type { ChipDisplay } from 'src/components/shared/ChipList/types';
-import type { TableColumns } from 'src/types';
-import type { Alert, DefaultAlertingQueryResponse } from 'src/types/gql';
+import type { Alert } from 'src/types/gql';
 
 export interface AlertDetail {
     label: string;
@@ -17,12 +16,6 @@ export interface AlertTypeContent {
     docLink?: string;
 }
 
-export interface AlertCardProps {
-    datum: Alert;
-}
-
-export type AlertCardHeaderProps = AlertCardProps;
-
 export interface AlertDetailsWrapperProps {
     datum: Alert;
     hideLabel?: boolean;
@@ -37,11 +30,6 @@ export interface ServerErrorProps {
     datum: Alert;
     detail: AlertDetail;
     short?: boolean;
-}
-
-export interface AlertCardGridProps {
-    columnsToShow: TableColumns[];
-    edges: DefaultAlertingQueryResponse['alerts']['edges'];
 }
 
 export type ServerErrorDialogProps = AlertDetailsProps;

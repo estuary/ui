@@ -33,6 +33,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     ttl: 30000,
                 }),
                 cacheExchange({
+                    // If we end up wanting to use URQL built in pagination
                     // directives: {
                     //     relayPagination: (options) =>
                     //         relayPagination({ ...options }),

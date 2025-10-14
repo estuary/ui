@@ -332,11 +332,6 @@ export const defaultOutline = {
     dark: `1px solid rgba(247, 249, 252, 0.12)`,
 };
 
-export const foo = {
-    light: `#bce3e0`,
-    dark: undefined,
-};
-
 export const defaultOutline_hovered = {
     light: `1px solid rgba(11, 19, 30, 0.6)`,
     dark: `1px solid rgba(247, 249, 252, 0.6)`,

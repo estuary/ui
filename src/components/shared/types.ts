@@ -37,6 +37,8 @@ export interface CardWrapperProps extends BaseComponentProps {
     message?: string | ReactNode;
     tooltipMessageId?: string;
     height?: string | number;
-    opaqueLightMode?: boolean;
     sx?: SxProps;
+
+    // Only for the special cards for alert summary on dashboard page (as of Q4 2025)
+    opaqueLightMode?: boolean;
 }

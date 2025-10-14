@@ -6,6 +6,7 @@ import type {
 } from '@mui/material';
 import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
 
 export interface BaseFieldOutcomeProps {
@@ -55,4 +56,19 @@ export interface FieldOutputProps {
 export interface ProjectionActionsProps {
     field: string;
     pointer: string | undefined;
+}
+
+export interface EntityNameLinkProps {
+    name: string;
+    showEntityStatus: boolean;
+    entityStatusTypes: ShardEntityTypes[];
+    detailsLink: string;
+    enableDivRendering?: boolean;
+}
+
+export interface TimeStampProps {
+    time: string | Date;
+    enableExact?: boolean;
+    enableRelative?: boolean;
+    TableCellProps?: Partial<TableCellProps>;
 }

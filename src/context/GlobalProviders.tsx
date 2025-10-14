@@ -17,7 +17,7 @@ if (
     !import.meta.env.VITE_GQL_URL
 ) {
     throw new Error(
-        'Missing at least 1 endpoint config: [VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_GQL_URL]'
+        'Missing at least 1 environment config: [VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_GQL_URL]'
     );
 }
 

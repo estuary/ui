@@ -1,23 +1,16 @@
-import type { TableCellProps } from '@mui/material';
+import type { TimeStampProps } from 'src/components/tables/cells/types';
 
 import { Box, TableCell, Tooltip } from '@mui/material';
 
 import { formatDistanceToNow, formatRelative } from 'date-fns';
 import { FormattedDate } from 'react-intl';
 
-interface Props {
-    time: string | Date;
-    enableExact?: boolean;
-    enableRelative?: boolean;
-    TableCellProps?: Partial<TableCellProps>;
-}
-
 function TimeStamp({
     enableExact,
     enableRelative,
     time,
     TableCellProps,
-}: Props) {
+}: TimeStampProps) {
     return (
         <TableCell {...(TableCellProps ?? {})}>
             <Tooltip

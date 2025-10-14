@@ -14,7 +14,7 @@ We will keep all the types in a single GQL file for now (ui/src/types/gql.ts).
 
 ## Client Library: URQL
 
-This is our client solution primarily because it is very barebones and seems to be easy to extend as we need.
+This is our client solution primarily because it is very bare bones and seems to be easy to extend as we need.
 
 ## Helpers / Utils
 

@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -19,44 +19,46 @@ function EntityAlerts() {
     const isCollection = entityType === 'collection';
 
     return (
-        <Grid
-            container
-            spacing={2}
-            rowSpacing={5}
-            sx={{ flexDirection: 'row-reverse' }}
-        >
-            {!isCollection && catalogName ? (
-                <Grid item xs={12} md={12} lg={4}>
-                    <NotificationSettings taskName={catalogName} />
+        <Box sx={{ mt: 5 }}>
+            <Grid
+                container
+                spacing={2}
+                rowSpacing={5}
+                sx={{ flexDirection: 'row-reverse' }}
+            >
+                {!isCollection && catalogName ? (
+                    <Grid item xs={12} md={12} lg={4}>
+                        <NotificationSettings taskName={catalogName} />
+                    </Grid>
+                ) : null}
+
+                <Grid item xs={12} md={12} lg={!isCollection ? 8 : 12}>
+                    <CardWrapper
+                        message={intl.formatMessage({
+                            id: 'alerts.history.title.active',
+                        })}
+                    >
+                        <AlertHistoryTable
+                            active
+                            tablePrefix={TablePrefixes.alertsForEntity}
+                        />
+                    </CardWrapper>
                 </Grid>
-            ) : null}
 
-            <Grid item xs={12} md={12} lg={!isCollection ? 8 : 12}>
-                <CardWrapper
-                    message={intl.formatMessage({
-                        id: 'alerts.history.title.active',
-                    })}
-                >
-                    <AlertHistoryTable
-                        active
-                        tablePrefix={TablePrefixes.alertsForEntity}
-                    />
-                </CardWrapper>
+                <Grid item xs={12}>
+                    <CardWrapper
+                        message={intl.formatMessage({
+                            id: 'alerts.history.title.resolved',
+                        })}
+                    >
+                        <AlertHistoryTable
+                            active={false}
+                            tablePrefix={TablePrefixes.alertHistoryForEntity}
+                        />
+                    </CardWrapper>
+                </Grid>
             </Grid>
-
-            <Grid item xs={12}>
-                <CardWrapper
-                    message={intl.formatMessage({
-                        id: 'alerts.history.title.resolved',
-                    })}
-                >
-                    <AlertHistoryTable
-                        active={false}
-                        tablePrefix={TablePrefixes.alertHistoryForEntity}
-                    />
-                </CardWrapper>
-            </Grid>
-        </Grid>
+        </Box>
     );
 }
 

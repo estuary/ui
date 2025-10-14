@@ -33,10 +33,6 @@ function CardWrapper({
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
 
-    // TODO (opaqueLightMode) - do we even need this? I feel like we do not often
-    //  have cards displaying with stuff behind them so there should be no real change on
-    //  any of the parts that use white on white cardWrappers
-
     return (
         <Stack
             sx={{

@@ -1,7 +1,7 @@
 import type {
     AlertingOverviewProps,
-    FilteredAndGroupedAlerts,
-    GroupedAlerts,
+    AlertsByCatalogName,
+    FlattenedGroupedAlerts,
 } from 'src/components/home/dashboard/AlertingOverview/types';
 import type {
     AlertingOverviewQueryResponse,
@@ -53,18 +53,18 @@ export default function AlertingOverview({
         pause: !selectedTenant,
     });
 
-    const filteredAndGroupedAlerts = useMemo<FilteredAndGroupedAlerts>(() => {
+    const flattenedGroupedAlerts = useMemo<FlattenedGroupedAlerts>(() => {
         const entityData = data?.alerts?.edges.filter((datum) => {
             return datum.node.alertDetails.spec_type === entityType;
         });
 
-        const groupedAlerts: GroupedAlerts = {};
+        const alertsByCatalogName: AlertsByCatalogName = {};
         entityData?.forEach((datum, index) => {
-            groupedAlerts[datum.node.catalogName] ??= [];
-            groupedAlerts[datum.node.catalogName].push(datum.node);
+            alertsByCatalogName[datum.node.catalogName] ??= [];
+            alertsByCatalogName[datum.node.catalogName].push(datum.node);
         });
 
-        return Object.entries(groupedAlerts);
+        return Object.entries(alertsByCatalogName);
     }, [data?.alerts?.edges, entityType]);
 
     return (
@@ -74,7 +74,7 @@ export default function AlertingOverview({
                 message={intl.formatMessage({
                     id: fetching
                         ? 'alerts.overview.title.fetching'
-                        : filteredAndGroupedAlerts.length > 0
+                        : flattenedGroupedAlerts.length > 0
                           ? 'alerts.overview.title.active'
                           : 'alerts.overview.title.activeEmpty',
                 })}
@@ -85,11 +85,11 @@ export default function AlertingOverview({
                             id: 'alert.active.fetchError.title',
                         })}
                     </AlertBox>
-                ) : filteredAndGroupedAlerts.length > 0 ? (
+                ) : flattenedGroupedAlerts.length > 0 ? (
                     <AlertSummary
                         entityType={entityType}
                         fetching={fetching}
-                        filteredAndGroupedAlerts={filteredAndGroupedAlerts}
+                        flattenedGroupedAlerts={flattenedGroupedAlerts}
                     />
                 ) : null}
             </CardWrapper>

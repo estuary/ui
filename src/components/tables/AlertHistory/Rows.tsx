@@ -71,7 +71,7 @@ function Rows({ columns, data }: RowsProps) {
         alertHistoryOptionalColumnIntlKeys.entityName
     );
 
-    const hiseResolvedAt = !isColumnVisible(
+    const hideResolvedAt = !isColumnVisible(
         columns,
         alertHistoryOptionalColumnIntlKeys.resolvedAt
     );
@@ -84,7 +84,7 @@ function Rows({ columns, data }: RowsProps) {
                     columns={columns}
                     row={row.node}
                     hideEntityName={hideEntityName}
-                    hideResolvedAt={hiseResolvedAt}
+                    hideResolvedAt={hideResolvedAt}
                 />
             ))}
         </>
