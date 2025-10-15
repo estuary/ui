@@ -1,5 +1,6 @@
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
 import type { InferSchemaResponse, Schema } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { isEmpty } from 'lodash';
 
@@ -42,8 +43,8 @@ const getProperSchemaScope = (spec: any) => {
 };
 
 const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
-    let fields: any | null = null;
     const validKeys: string[] = [];
+    let fields: BuiltProjection[] | null = null;
 
     if (schema) {
         const { projections } = schema;
@@ -74,7 +75,12 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
                         canPointerBeUsedAsKey(inferredProperty.ptr)
                 );
 
-                if (isValidKey && inferredProperty.ptr) {
+                if (
+                    isValidKey &&
+                    // Make sure we have a pointer and it is not duplicated (projections)
+                    inferredProperty.ptr &&
+                    !validKeys.includes(inferredProperty.ptr)
+                ) {
                     validKeys.push(inferredProperty.ptr);
                 }
 

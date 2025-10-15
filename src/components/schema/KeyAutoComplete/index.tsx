@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import type { KeyAutoCompleteProps } from 'src/components/schema/KeyAutoComplete/types';
+import type { InferSchemaPropertyForRender } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -29,22 +31,12 @@ import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
 import { hasLength } from 'src/utils/misc-utils';
 
-interface Props {
-    value: any;
-    disabled?: boolean;
-    onChange?: (
-        event: any,
-        newValue: string[],
-        reason: string
-    ) => PromiseLike<any>;
-}
-
 const tallHeight = 71;
 const getValue = (option: BuiltProjection) => {
     return option.ptr ?? '';
 };
 
-function KeyAutoComplete({ disabled, onChange, value }: Props) {
+function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
     const intl = useIntl();
 
     // We want a local copy so that the display is updated right away when the user
@@ -63,21 +55,40 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
         useBindingsEditorStore_inferSchemaResponseEmpty();
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
     const validKeys = useBindingsEditorStore_inferSchemaResponse_Keys();
-    const keys = useMemo(
-        () =>
-            inferSchemaResponse
-                ? orderBy(
-                      // Filter so only valid keys are displayed
-                      filter(Object.values(inferSchemaResponse), (field) =>
-                          keyIsValidOption(validKeys, field.ptr)
-                      ),
-                      // Order first by exists so groups do not duplicate in the dropdown
-                      ['inference.exists', 'inference.ptr'],
-                      ['desc', 'asc']
-                  )
-                : [],
-        [inferSchemaResponse, validKeys]
-    );
+    const keys = useMemo(() => {
+        const inferSchemaResponses = inferSchemaResponse
+            ? Object.values(inferSchemaResponse)
+            : [];
+
+        const response = orderBy(
+            filter(inferSchemaResponses, (field) =>
+                // Filter so only valid keys are displayed
+                keyIsValidOption(validKeys, field.ptr)
+            ).reduce<InferSchemaPropertyForRender[]>(
+                // Reduce down to get rid of duplicate pointers. We do this mainly so
+                //  projections do not show the same pointer multiple times. We _could_ filter
+                //  on the explicit property however there are times where certain projections (patterns)
+                //  would be a valid reason to use a projection as part of the key
+                (acc, inferredProperty) => {
+                    const existingIndex = acc.findIndex(
+                        (item) => item.ptr === inferredProperty.ptr
+                    );
+
+                    if (existingIndex === -1) {
+                        acc.push(inferredProperty);
+                    }
+
+                    return acc;
+                },
+                []
+            ),
+            // Order first by exists so groups do not duplicate in the dropdown
+            ['inference.exists', 'inference.ptr'],
+            ['desc', 'asc']
+        );
+
+        return response;
+    }, [inferSchemaResponse, validKeys]);
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
