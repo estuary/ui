@@ -1,3 +1,4 @@
+import type { CollectionSchemaEditorProps } from 'src/components/collection/schema/Editor/types';
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
 import type { Schema } from 'src/types';
 
@@ -26,12 +27,10 @@ import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
 
-export interface Props {
-    entityName?: string;
-    localZustandScope?: boolean;
-}
-
-function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
+function CollectionSchemaEditor({
+    entityName,
+    localZustandScope,
+}: CollectionSchemaEditorProps) {
     const [editorSchemaScope, setEditorSchemaScope] = useState<
         AllowedScopes | undefined
     >(undefined);

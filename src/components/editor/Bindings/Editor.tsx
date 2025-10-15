@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import ResourceConfig from 'src/components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
@@ -40,6 +40,7 @@ interface Props {
 }
 
 function BindingsEditor({ itemType, readOnly = false }: Props) {
+    const intl = useIntl();
     const entityType = useEntityType();
 
     const initializeCollectionDraft = useInitializeCollectionDraft();
@@ -116,9 +117,9 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                     severity={
                                         collectionInitializationAlert.severity
                                     }
-                                    title={
-                                        <FormattedMessage id="workflows.collectionSelector.error.title.editorInitialization" />
-                                    }
+                                    title={intl.formatMessage({
+                                        id: 'workflows.collectionSelector.error.title.editorInitialization',
+                                    })}
                                 >
                                     <FormattedMessage
                                         id={
