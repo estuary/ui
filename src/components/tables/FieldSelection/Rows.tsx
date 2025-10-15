@@ -99,24 +99,19 @@ function Rows({ columnToSort, columns, data, sortDirection }: RowsProps) {
         return (
             <>
                 {data
-                    .sort(
-                        (
-                            first: ExpandedFieldSelection,
-                            second: ExpandedFieldSelection
-                        ) => {
-                            return sortByField(
-                                {
-                                    field: first.field,
-                                    isKey: first.isGroupByKey,
-                                },
-                                {
-                                    field: second.field,
-                                    isKey: second.isGroupByKey,
-                                },
-                                sortDirection
-                            );
-                        }
-                    )
+                    .sort((first, second) => {
+                        return sortByField(
+                            {
+                                field: first.field,
+                                isKey: first.isGroupByKey,
+                            },
+                            {
+                                field: second.field,
+                                isKey: second.isGroupByKey,
+                            },
+                            sortDirection
+                        );
+                    })
                     .map((record: ExpandedFieldSelection, index: number) => (
                         <Row
                             columns={columns}
