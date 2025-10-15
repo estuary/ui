@@ -58,11 +58,11 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
     );
 
     useEffect(() => {
-        const { explicit } = groupBy;
-
         if (!selections) {
             return;
         }
+
+        const { explicit } = groupBy;
 
         const explicitKeys = explicit
             .map((field) =>
