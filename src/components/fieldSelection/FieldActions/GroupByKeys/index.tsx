@@ -1,7 +1,7 @@
 import type { BaseButtonProps } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Box,
@@ -16,10 +16,10 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import ExistingKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ExistingKey';
+import ExplicitKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ExplicitKey';
 import GroupByKeysForm from 'src/components/fieldSelection/FieldActions/GroupByKeys/Form';
+import ImplicitKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ImplicitKey';
 import SaveButton from 'src/components/fieldSelection/FieldActions/GroupByKeys/SaveButton';
-import useLiveGroupByKey from 'src/hooks/fieldSelection/useLiveGroupByKey';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
@@ -27,8 +27,6 @@ const TITLE_ID = 'configure-groupBy-keys-title';
 
 const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
     const intl = useIntl();
-
-    const { existingGroupByKey } = useLiveGroupByKey(bindingUUID);
 
     const groupBy = useBindingStore(
         (state) =>
@@ -42,20 +40,6 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
 
     const [open, setOpen] = useState(false);
     const [localValues, setLocalValues] = useState<FieldSelection[]>([]);
-
-    const displayExplicitKeys = useMemo(
-        () =>
-            Boolean(
-                existingGroupByKey.length > 0 &&
-                    (existingGroupByKey.length !== groupBy.implicit.length ||
-                        groupBy.implicit.some((field, index) =>
-                            existingGroupByKey.length > index
-                                ? existingGroupByKey[index] !== field
-                                : false
-                        ))
-            ),
-        [existingGroupByKey, groupBy.implicit]
-    );
 
     useEffect(() => {
         if (!selections) {
@@ -102,17 +86,9 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
                             })}
                         </Typography>
 
-                        <ExistingKey
-                            labelId="fieldSelection.groupBy.label.implicitKeys"
-                            values={groupBy.implicit}
-                        />
+                        <ImplicitKey bindingUUID={bindingUUID} />
 
-                        {displayExplicitKeys ? (
-                            <ExistingKey
-                                labelId="fieldSelection.groupBy.label.explicitKeys"
-                                values={existingGroupByKey}
-                            />
-                        ) : null}
+                        <ExplicitKey bindingUUID={bindingUUID} />
                     </Stack>
 
                     <GroupByKeysForm

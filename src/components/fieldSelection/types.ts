@@ -21,6 +21,10 @@ interface BaseMenuProps {
     disabled: boolean;
 }
 
+export interface DefinedKeyProps {
+    bindingUUID: string;
+}
+
 export interface ExistingKeyProps {
     labelId: string;
     values: string[];
