@@ -152,13 +152,10 @@ const GroupByKeysForm = ({
                                 ({ field }) => field
                             );
 
-                            const oldIndex = selectedFields.indexOf(activeId);
-                            const newIndex = selectedFields.indexOf(overId);
-
                             const updatedArray = arrayMove<FieldSelection>(
                                 localValues,
-                                oldIndex,
-                                newIndex
+                                selectedFields.indexOf(activeId),
+                                selectedFields.indexOf(overId)
                             );
 
                             setLocalValues(updatedArray);
