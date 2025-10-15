@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
+// This component was modeled after the SaveButton component used within the AlgorithmMenu component.
 const SaveButton = ({
     bindingUUID,
     close,
