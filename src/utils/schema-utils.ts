@@ -50,7 +50,11 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
 
         fields = projections
             .filter((inferredProperty) => {
-                return inferredProperty.ptr && inferredProperty.ptr.length > 0;
+                return (
+                    inferredProperty &&
+                    inferredProperty.ptr &&
+                    inferredProperty.ptr.length > 0
+                );
             })
             .map((inferredProperty) => {
                 const inferredPropertyTypes: string[] =
