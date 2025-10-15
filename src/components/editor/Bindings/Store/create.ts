@@ -1,10 +1,7 @@
 import type { BindingsEditorState } from 'src/components/editor/Bindings/Store/types';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
-import type {
-    InferSchemaPropertyForRender,
-    InferSchemaResponse,
-    Schema,
-} from 'src/types';
+import type { InferSchemaResponse, Schema } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -58,7 +55,7 @@ const evaluateCollectionData = async (
 // Used to properly populate the inferSchemaResponse related state
 const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
     let errors: string[] = [];
-    let updatedVal: InferSchemaPropertyForRender[] | null, validKeys: string[];
+    let updatedVal: BuiltProjection[] | null, validKeys: string[];
 
     const hasResponse = dataVal && dataVal.length > 0;
     if (hasResponse) {

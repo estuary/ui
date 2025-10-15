@@ -6,21 +6,6 @@ import { isEmpty } from 'lodash';
 
 // These are inserted by the server and never would make sense as keys
 const invalidKeyPointers = ['/_meta/uuid', '/_meta/flow_truncated'];
-
-const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
-
-const hasWriteSchema = (spec: any) => {
-    return spec.hasOwnProperty('writeSchema');
-};
-
-const hasReadSchema = (spec: any) => {
-    return spec.hasOwnProperty('readSchema');
-};
-
-const hasReadAndWriteSchema = (spec: any) => {
-    return Boolean(hasReadSchema(spec) && hasReadSchema(spec));
-};
-
 const canPointerBeUsedAsKey = (pointer: string | null | undefined) => {
     return (
         pointer &&
@@ -29,7 +14,21 @@ const canPointerBeUsedAsKey = (pointer: string | null | undefined) => {
     );
 };
 
-const getProperSchemaScope = (spec: any) => {
+const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
+
+export const hasWriteSchema = (spec: any) => {
+    return spec.hasOwnProperty('writeSchema');
+};
+
+export const hasReadSchema = (spec: any) => {
+    return spec.hasOwnProperty('readSchema');
+};
+
+export const hasReadAndWriteSchema = (spec: any) => {
+    return Boolean(hasReadSchema(spec) && hasReadSchema(spec));
+};
+
+export const getProperSchemaScope = (spec: any) => {
     const readSchemaExists = hasReadSchema(spec);
 
     let key: AllowedScopes;
@@ -42,7 +41,28 @@ const getProperSchemaScope = (spec: any) => {
     return [key, readSchemaExists];
 };
 
-const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
+// Reduce down to get rid of duplicate pointers. We do this mainly so
+//  projections do not show the same pointer multiple times. We _could_ filter
+//  on the explicit property however there are times where certain projections (patterns)
+//  would be a valid reason to use a projection as part of the key
+export const reduceInferenceResponse = (
+    acc: any[],
+    inferredProperty: BuiltProjection
+) => {
+    const existingIndex = acc.findIndex(
+        (item) => item.ptr === inferredProperty.ptr
+    );
+
+    if (existingIndex === -1) {
+        acc.push(inferredProperty);
+    }
+
+    return acc;
+};
+
+export const filterInferSchemaResponse = (
+    schema: InferSchemaResponse | null
+) => {
     const validKeys: string[] = [];
     let fields: BuiltProjection[] | null = null;
 
@@ -50,13 +70,12 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
         const { projections } = schema;
 
         fields = projections
-            .filter((inferredProperty) => {
-                return (
+            .filter(
+                (inferredProperty) =>
                     inferredProperty &&
                     inferredProperty.ptr &&
                     inferredProperty.ptr.length > 0
-                );
-            })
+            )
             .map((inferredProperty) => {
                 const inferredPropertyTypes: string[] =
                     inferredProperty.inference.types;
@@ -94,7 +113,7 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
     };
 };
 
-const moveUpdatedSchemaToReadSchema = (
+export const moveUpdatedSchemaToReadSchema = (
     original: any,
     updatedSchema: Schema
 ) => {
@@ -124,13 +143,4 @@ const moveUpdatedSchemaToReadSchema = (
     }
 
     return newSpec;
-};
-
-export {
-    getProperSchemaScope,
-    filterInferSchemaResponse,
-    hasReadAndWriteSchema,
-    hasReadSchema,
-    hasWriteSchema,
-    moveUpdatedSchemaToReadSchema,
 };

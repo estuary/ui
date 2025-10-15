@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import type { KeyAutoCompleteProps } from 'src/components/schema/KeyAutoComplete/types';
-import type { InferSchemaPropertyForRender } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -30,6 +29,7 @@ import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/Aut
 import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
 import { hasLength } from 'src/utils/misc-utils';
+import { reduceInferenceResponse } from 'src/utils/schema-utils';
 
 const tallHeight = 71;
 const getValue = (option: BuiltProjection) => {
@@ -60,34 +60,14 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
             ? Object.values(inferSchemaResponse)
             : [];
 
-        const response = orderBy(
+        return orderBy(
             filter(inferSchemaResponses, (field) =>
-                // Filter so only valid keys are displayed
                 keyIsValidOption(validKeys, field.ptr)
-            ).reduce<InferSchemaPropertyForRender[]>(
-                // Reduce down to get rid of duplicate pointers. We do this mainly so
-                //  projections do not show the same pointer multiple times. We _could_ filter
-                //  on the explicit property however there are times where certain projections (patterns)
-                //  would be a valid reason to use a projection as part of the key
-                (acc, inferredProperty) => {
-                    const existingIndex = acc.findIndex(
-                        (item) => item.ptr === inferredProperty.ptr
-                    );
-
-                    if (existingIndex === -1) {
-                        acc.push(inferredProperty);
-                    }
-
-                    return acc;
-                },
-                []
-            ),
+            ).reduce<BuiltProjection[]>(reduceInferenceResponse, []),
             // Order first by exists so groups do not duplicate in the dropdown
             ['inference.exists', 'inference.ptr'],
             ['desc', 'asc']
         );
-
-        return response;
     }, [inferSchemaResponse, validKeys]);
 
     // Make sure we keep our local copy up to date

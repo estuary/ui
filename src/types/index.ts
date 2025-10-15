@@ -411,10 +411,6 @@ export interface InferSchemaResponseProperty {
     string_format?: string;
 }
 
-export interface InferSchemaPropertyForRender extends BuiltProjection {
-    allowedToBeKey: boolean;
-}
-
 export interface AutoDiscoverySettings {
     addNewBindings: boolean;
     evolveIncompatibleCollections: boolean;

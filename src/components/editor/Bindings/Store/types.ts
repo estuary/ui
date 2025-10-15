@@ -1,7 +1,7 @@
 import type { AlertColor } from '@mui/material';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
 import type { IncompatibleCollections } from 'src/components/shared/Entity/IncompatibleCollections/types';
-import type { InferSchemaPropertyForRender } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
@@ -43,7 +43,7 @@ export interface BindingsEditorState {
 
     // Infer Schema used to set the key of a collection
     hasReadAndWriteSchema: boolean | null;
-    inferSchemaResponse: InferSchemaPropertyForRender[] | null;
+    inferSchemaResponse: BuiltProjection[] | null;
     inferSchemaResponse_Keys: string[];
     inferSchemaResponseError: string[] | null;
     inferSchemaResponseDoneProcessing: boolean;
