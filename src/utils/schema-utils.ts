@@ -3,7 +3,8 @@ import type { InferSchemaResponse, Schema } from 'src/types';
 
 import { isEmpty } from 'lodash';
 
-import { hasLength } from 'src/utils/misc-utils';
+// These are inserted by the server and never would make sense as keys
+const invalidKeyPointers = ['/_meta/uuid', '/_meta/flow_truncated'];
 
 const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
 
@@ -17,6 +18,14 @@ const hasReadSchema = (spec: any) => {
 
 const hasReadAndWriteSchema = (spec: any) => {
     return Boolean(hasReadSchema(spec) && hasReadSchema(spec));
+};
+
+const canPointerBeUsedAsKey = (pointer: string | null | undefined) => {
+    return (
+        pointer &&
+        pointer.length > 0 &&
+        !invalidKeyPointers.includes(pointer.toLowerCase())
+    );
 };
 
 const getProperSchemaScope = (spec: any) => {
@@ -41,12 +50,12 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
 
         fields = projections
             .filter((inferredProperty) => {
-                // If there is a blank pointer it cannot be used
-                return hasLength(inferredProperty.ptr);
+                return inferredProperty.ptr && inferredProperty.ptr.length > 0;
             })
             .map((inferredProperty) => {
                 const inferredPropertyTypes: string[] =
                     inferredProperty.inference.types;
+
                 const isValidKey = Boolean(
                     // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
                     inferredProperty.inference.exists !== 'CANNOT' &&
@@ -56,7 +65,9 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
                         // make sure all types are valid
                         inferredPropertyTypes.every((type) =>
                             typesAllowedAsKeys.includes(type)
-                        )
+                        ) &&
+                        // make sure the pointer is allowed since server inserts on fields
+                        canPointerBeUsedAsKey(inferredProperty.ptr)
                 );
 
                 if (isValidKey && inferredProperty.ptr) {
