@@ -17,6 +17,7 @@ const namePattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);
 const getInitialStateData = (): Pick<
     OnboardingState,
     | 'nameInvalid'
+    | 'nameProblematic'
     | 'nameMissing'
     | 'requestedTenant'
     | 'surveyOptionOther'
@@ -24,6 +25,7 @@ const getInitialStateData = (): Pick<
     | 'surveyMissing'
 > => ({
     nameInvalid: false,
+    nameProblematic: false,
     nameMissing: false,
     requestedTenant: '',
     surveyOptionOther: 'Other',
@@ -44,6 +46,7 @@ const getInitialState = (
 
                 state.nameMissing = !hasLength(formattedValue);
                 state.nameInvalid = !namePattern.test(formattedValue);
+                state.nameProblematic = formattedValue.includes('test');
                 state.requestedTenant = formattedValue;
             }),
             false,
@@ -68,6 +71,16 @@ const getInitialState = (
             }),
             false,
             'Missing Organization Name Flag Set'
+        );
+    },
+
+    setNameProblematic: (value) => {
+        set(
+            produce((state: OnboardingState) => {
+                state.nameProblematic = value;
+            }),
+            false,
+            'Problematic Organization Name Flag Set'
         );
     },
 

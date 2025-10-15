@@ -38,6 +38,13 @@ export const useOnboardingStore_nameMissing = () => {
     >(OnboardingStoreNames.GENERAL, (state) => state.nameMissing);
 };
 
+export const useOnboardingStore_nameProblematic = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['nameProblematic']
+    >(OnboardingStoreNames.GENERAL, (state) => state.nameProblematic);
+};
+
 export const useOnboardingStore_setNameMissing = () => {
     return useLocalZustandStore<
         OnboardingState,

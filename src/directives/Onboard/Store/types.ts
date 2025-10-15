@@ -11,6 +11,9 @@ export interface OnboardingState {
     nameInvalid: boolean;
     setNameInvalid: (value: boolean) => void;
 
+    nameProblematic: boolean;
+    setNameProblematic: (value: boolean) => void;
+
     nameMissing: boolean;
     setNameMissing: (value: boolean) => void;
 

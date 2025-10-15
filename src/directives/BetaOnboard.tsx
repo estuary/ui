@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 
 import { submitDirective } from 'src/api/directives';
@@ -16,6 +16,7 @@ import OrganizationNameField from 'src/directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
     useOnboardingStore_nameMissing,
+    useOnboardingStore_nameProblematic,
     useOnboardingStore_requestedTenant,
     useOnboardingStore_resetState,
     useOnboardingStore_setNameMissing,
@@ -57,6 +58,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     const requestedTenant = useOnboardingStore_requestedTenant();
     const nameInvalid = useOnboardingStore_nameInvalid();
     const nameMissing = useOnboardingStore_nameMissing();
+    const nameProblematic = useOnboardingStore_nameProblematic();
     const setNameMissing = useOnboardingStore_setNameMissing();
     const surveyMissing = useOnboardingStore_surveyMissing();
     const setSurveyMissing = useOnboardingStore_setSurveyMissing();
@@ -170,6 +172,19 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
 
                 <HeaderMessage isRegister />
 
+                {nameProblematic ? (
+                    <Box>
+                        <AlertBox
+                            severity="warning"
+                            short
+                            title="Are you sure?"
+                        >
+                            Looks like your Organization Name contains "test".
+                            This
+                        </AlertBox>
+                    </Box>
+                ) : null}
+
                 {serverError ? (
                     <Box>
                         <AlertBox
@@ -189,7 +204,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         <AlertBox
                             short
                             severity="error"
-                            title={<FormattedMessage id="error.title" />}
+                            title={intl.formatMessage({ id: 'error.title' })}
                         >
                             {nameMissing ? (
                                 <Typography>

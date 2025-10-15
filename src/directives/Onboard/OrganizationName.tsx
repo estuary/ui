@@ -1,3 +1,5 @@
+import type { OrganizationNameFieldProps } from 'src/directives/Onboard/types';
+
 import { FormControl, FormLabel, TextField } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -9,11 +11,7 @@ import {
     useOnboardingStore_setRequestedTenant,
 } from 'src/directives/Onboard/Store/hooks';
 
-interface Props {
-    forceError?: boolean;
-}
-
-function OrganizationNameField({ forceError }: Props) {
+function OrganizationNameField({ forceError }: OrganizationNameFieldProps) {
     const intl = useIntl();
 
     // Onboarding Store
