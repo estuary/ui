@@ -21,6 +21,7 @@ import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
 import { isValidCollectionKey } from 'src/utils/schema-utils';
 
+// This component was modeled after the KeyAutoComplete component.
 const GroupByKeysForm = ({
     localValues,
     options,
