@@ -29,7 +29,7 @@ import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/Aut
 import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
 import { hasLength } from 'src/utils/misc-utils';
-import { reduceInferenceResponse } from 'src/utils/schema-utils';
+import { reduceBuiltProjections } from 'src/utils/schema-utils';
 
 const tallHeight = 71;
 const getValue = (option: BuiltProjection) => {
@@ -63,7 +63,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
         return orderBy(
             filter(inferSchemaResponses, (field) =>
                 keyIsValidOption(validKeys, field.ptr)
-            ).reduce<BuiltProjection[]>(reduceInferenceResponse, []),
+            ).reduce<BuiltProjection[]>(reduceBuiltProjections, []),
             // Order first by exists so groups do not duplicate in the dropdown
             ['inference.exists', 'inference.ptr'],
             ['desc', 'asc']

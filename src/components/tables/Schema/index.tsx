@@ -77,11 +77,11 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
         }
 
         if (filter === 'all') {
-            return inferSchemaResponse;
+            return inferSchemaResponse.filter((datum) => !datum.explicit);
         }
 
         return inferSchemaResponse.filter(
-            (datum) => datum.inference.exists === filter
+            (datum) => !datum.explicit && datum.inference.exists === filter
         );
     }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
 

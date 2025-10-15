@@ -45,7 +45,7 @@ export const getProperSchemaScope = (spec: any) => {
 //  projections do not show the same pointer multiple times. We _could_ filter
 //  on the explicit property however there are times where certain projections (patterns)
 //  would be a valid reason to use a projection as part of the key
-export const reduceInferenceResponse = (
+export const reduceBuiltProjections = (
     acc: any[],
     inferredProperty: BuiltProjection
 ) => {
