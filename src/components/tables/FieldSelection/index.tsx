@@ -35,6 +35,7 @@ import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableStatuses } from 'src/types';
+import { getExpandedFieldSelection } from 'src/utils/fieldSelection-utils';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 export default function FieldSelectionTable({
@@ -44,22 +45,7 @@ export default function FieldSelectionTable({
     const intl = useIntl();
 
     const selections: ExpandedFieldSelection[] = useBindingStore((state) =>
-        state.selections?.[bindingUUID]
-            ? Object.values(state.selections[bindingUUID].value).map(
-                  (selection) => ({
-                      ...selection,
-                      isGroupByKey:
-                          state.selections[bindingUUID].groupBy.explicit
-                              .length > 0
-                              ? state.selections[
-                                    bindingUUID
-                                ].groupBy.explicit.includes(selection.field)
-                              : state.selections[
-                                    bindingUUID
-                                ].groupBy.implicit.includes(selection.field),
-                  })
-              )
-            : []
+        getExpandedFieldSelection(state.selections?.[bindingUUID])
     );
     const selectionsHydrating = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.hydrating
