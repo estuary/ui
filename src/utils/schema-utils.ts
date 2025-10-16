@@ -32,6 +32,24 @@ const getProperSchemaScope = (spec: any) => {
     return [key, readSchemaExists];
 };
 
+export const isValidCollectionKey = (inference: any | undefined): boolean => {
+    if (!inference) {
+        return false;
+    }
+
+    const inferenceTypes: string[] = inference?.types ?? [];
+
+    return Boolean(
+        inference?.exists !== 'CANNOT' &&
+            inferenceTypes.filter(
+                (inferenceType: string) => inferenceType !== 'null'
+            ).length === 1 &&
+            inferenceTypes.every((inferenceType) =>
+                typesAllowedAsKeys.includes(inferenceType)
+            )
+    );
+};
+
 const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
     let fields: any | null = null;
     const validKeys: string[] = [];
@@ -47,7 +65,7 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
             .map((inferredProperty: any) => {
                 const inferredPropertyTypes: string[] = inferredProperty.types;
                 const isValidKey = Boolean(
-                    // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
+                    // Happens when the schema contradicts itself, which isn't a "feature" we use intentionally
                     inferredProperty.exists !== 'cannot' &&
                         // Make sure we only have a single type besides null
                         inferredPropertyTypes.filter((type) => type !== 'null')

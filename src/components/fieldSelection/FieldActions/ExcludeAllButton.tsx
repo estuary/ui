@@ -1,4 +1,4 @@
-import type { ExcludeAllButtonProps } from 'src/components/fieldSelection/types';
+import type { BaseButtonProps } from 'src/components/fieldSelection/types';
 
 import { Button } from '@mui/material';
 
@@ -12,7 +12,7 @@ const ExcludeAllButton = ({
     bindingUUID,
     loading,
     selections,
-}: ExcludeAllButtonProps) => {
+}: BaseButtonProps) => {
     const intl = useIntl();
 
     const setMultiSelection = useBindingStore(

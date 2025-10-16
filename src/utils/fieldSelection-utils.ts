@@ -1,5 +1,9 @@
 import type { FieldSelectionType } from 'src/components/fieldSelection/types';
-import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
+import type { ExpandedFieldSelection } from 'src/components/tables/FieldSelection/types';
+import type {
+    BindingFieldSelection,
+    FieldSelectionDictionary,
+} from 'src/stores/Binding/slices/FieldSelection';
 import type {
     BaseMaterializationFields,
     BuiltProjection,
@@ -109,3 +113,16 @@ export const getFieldSelection = (
 
     return updatedSelections;
 };
+
+export const getExpandedFieldSelection = (
+    selections: BindingFieldSelection | undefined
+): ExpandedFieldSelection[] =>
+    selections
+        ? Object.values(selections.value).map((selection) => ({
+              ...selection,
+              isGroupByKey:
+                  selections.groupBy.explicit.length > 0
+                      ? selections.groupBy.explicit.includes(selection.field)
+                      : selections.groupBy.implicit.includes(selection.field),
+          }))
+        : [];

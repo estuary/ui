@@ -289,6 +289,7 @@ export const stubBindingFieldSelection = (
     bindingUUIDs.forEach((bindingUUID) => {
         if (!existingSelections?.[bindingUUID]) {
             selections[bindingUUID] = {
+                groupBy: { explicit: [], implicit: [] },
                 hasConflicts: false,
                 hydrating: defaultStatus ? isHydrating(defaultStatus) : false,
                 status: defaultStatus ?? 'HYDRATED',

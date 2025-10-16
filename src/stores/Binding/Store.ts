@@ -170,6 +170,11 @@ const getInitialState = (
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(state, sortedResourceConfigs);
+
+                state.selections = stubBindingFieldSelection(
+                    state.selections,
+                    Object.keys(state.resourceConfigs)
+                );
             }),
             false,
             'Empty bindings added'
