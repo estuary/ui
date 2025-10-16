@@ -1,6 +1,6 @@
 import type { BindingsEditorState } from 'src/components/editor/Bindings/Store/types';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
-import type { InferSchemaResponse, Schema } from 'src/types';
+import type { InferSchemaResponse } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
@@ -13,14 +13,12 @@ import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
-import { fetchInferredSchema } from 'src/api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
-import { logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import {
     filterInferSchemaResponse,
-    hasReadSchema,
+    hasReadAndWriteSchema,
 } from 'src/utils/schema-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
@@ -91,45 +89,6 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
     };
 };
 
-// Call into the flow WASM handler that will inline the write/inferred schema if necessary
-const updateReadSchema = async (
-    read: Schema,
-    write: Schema,
-    entityName: string
-) => {
-    // Try fetching the inferred schema... possible TODO handle errors better
-    const inferredSchemaResponse = await fetchInferredSchema(entityName);
-    const inferred = inferredSchemaResponse.data?.[0]?.schema
-        ? inferredSchemaResponse.data[0].schema
-        : {};
-
-    let response;
-    try {
-        // response = extend_read_bundle({
-        //     read,
-        //     write,
-        //     inferred,
-        // });
-
-        response = {
-            ...read,
-            ...write,
-            ...inferred,
-        };
-
-        // We can catch any error here so that any issue causes an empty response and the
-        //  component will show an error... though not the most useful one.
-        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-    } catch (e: any) {
-        logRocketEvent('extend_read_bundle:failed', e);
-        response = {};
-    }
-
-    console.log('updateReadSchema response >>> ', response);
-
-    return response;
-};
-
 const getInitialMiscData = (): Pick<
     BindingsEditorState,
     | 'collectionData'
@@ -147,6 +106,7 @@ const getInitialMiscData = (): Pick<
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
     | 'hasReadAndWriteSchema'
+    | 'schemaScope'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -163,6 +123,7 @@ const getInitialMiscData = (): Pick<
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
     hasReadAndWriteSchema: null,
+    schemaScope: 'schema',
 });
 
 const getInitialStateData = () => ({
@@ -182,6 +143,16 @@ const getInitialState = (
             }),
             false,
             'Edit Mode Enabled Set'
+        );
+    },
+
+    setSchemaScope: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.schemaScope = value;
+            }),
+            false,
+            'Schema Scope Set'
         );
     },
 
@@ -335,19 +306,18 @@ const getInitialState = (
         }
 
         // Check which schema to use
-        const usingReadSchema = hasReadSchema(spec);
-        const schemasToTest = usingReadSchema
-            ? [spec.readSchema]
+        const usingReadAndWriteSchema = hasReadAndWriteSchema(spec);
+        const schemasToTest = usingReadAndWriteSchema
+            ? [spec.readSchema, spec.writeSchema]
             : [spec.schema];
 
-        // TODO (schema editing management) - we'll need to know about this
-        // set(
-        //     produce((state: BindingsEditorState) => {
-        //         state.hasReadAndWriteSchema = usingReadAndWriteSchema;
-        //     }),
-        //     false,
-        //     'Setting hasReadAndWriteSchema flag'
-        // );
+        set(
+            produce((state: BindingsEditorState) => {
+                state.hasReadAndWriteSchema = usingReadAndWriteSchema;
+            }),
+            false,
+            'Setting hasReadAndWriteSchema flag'
+        );
 
         // If no schema then just return because hopefully it means
         //  we are still just waiting for the schema to load in
@@ -362,22 +332,8 @@ const getInitialState = (
         }
 
         try {
-            // Should only impact the read schema
-            if (usingReadSchema) {
-                // We MUST make this call before calling `infer` below
-                //  This will inline the write/inferred schema in the `$defs` if needed
-                schemasToTest[0] = await updateReadSchema(
-                    schemasToTest[0],
-                    spec.writeSchema ?? {},
-                    entityName
-                );
-            }
-
             // Run infer against schema
             const responses = schemasToTest.map((schema) => {
-                console.log('schema >>> ', schema);
-                console.log('liveSpec  >>> ', collectionSpec.schema);
-
                 return skim_collection_projections({
                     collection: entityName,
                     model: {

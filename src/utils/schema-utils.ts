@@ -1,8 +1,6 @@
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
-import type { InferSchemaResponse, Schema } from 'src/types';
+import type { InferSchemaResponse } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
-
-import { isEmpty } from 'lodash';
 
 // These are inserted by the server and never would make sense as keys
 const invalidKeyPointers = ['/_meta/uuid', '/_meta/flow_truncated'];
@@ -111,36 +109,4 @@ export const filterInferSchemaResponse = (
         fields,
         validKeys,
     };
-};
-
-export const moveUpdatedSchemaToReadSchema = (
-    original: any,
-    updatedSchema: Schema
-) => {
-    let newSpec = null;
-
-    if (hasWriteSchema(original.spec)) {
-        const { ...additionalSpecKeys } = original.spec;
-
-        newSpec = !isEmpty(updatedSchema)
-            ? {
-                  ...additionalSpecKeys,
-                  writeSchema: original.spec.writeSchema,
-                  readSchema: updatedSchema,
-              }
-            : null;
-    } else {
-        // Removing schema from the object
-        const { schema, ...additionalSpecKeys } = original.spec;
-
-        newSpec = !isEmpty(updatedSchema)
-            ? {
-                  ...additionalSpecKeys,
-                  writeSchema: original.spec.schema,
-                  readSchema: updatedSchema,
-              }
-            : null;
-    }
-
-    return newSpec;
 };

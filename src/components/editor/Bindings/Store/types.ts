@@ -43,6 +43,10 @@ export interface BindingsEditorState {
 
     // Infer Schema used to set the key of a collection
     hasReadAndWriteSchema: boolean | null;
+
+    schemaScope: 'schema' | 'read' | 'write';
+    setSchemaScope: (vewVal: BindingsEditorState['schemaScope']) => void;
+
     inferSchemaResponse: BuiltProjection[] | null;
     inferSchemaResponse_Keys: string[];
     inferSchemaResponseError: string[] | null;

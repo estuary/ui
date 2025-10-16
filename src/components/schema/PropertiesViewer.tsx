@@ -10,6 +10,7 @@ import { useIntl } from 'react-intl';
 import { useBindingsEditorStore_inferSchemaResponseEmpty } from 'src/components/editor/Bindings/Store/hooks';
 import MonacoEditor from 'src/components/editor/MonacoEditor';
 import ExistFilter from 'src/components/schema/ExistFilter';
+import SchemaSelector from 'src/components/schema/SchemaSelector';
 import SchemaPropertiesTable from 'src/components/tables/Schema';
 import { optionalColumns } from 'src/components/tables/Schema/shared';
 import TableColumnSelector from 'src/components/tables/TableColumnSelector';
@@ -45,6 +46,8 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 <Typography variant="subtitle1" component="span">
                     {intl.formatMessage({ id: 'schemaEditor.fields.label' })}
                 </Typography>
+
+                <SchemaSelector />
 
                 {disabled ? (
                     <Stack
