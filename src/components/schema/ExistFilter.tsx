@@ -26,13 +26,13 @@ function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
             }),
         },
         {
-            id: 'must',
+            id: 'MUST',
             label: intl.formatMessage({
                 id: 'schemaEditor.table.filter.option.must',
             }),
         },
         {
-            id: 'may',
+            id: 'MAY',
             label: intl.formatMessage({
                 id: 'schemaEditor.table.filter.option.may',
             }),

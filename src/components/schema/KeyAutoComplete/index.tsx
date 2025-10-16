@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import type { KeyAutoCompleteProps } from 'src/components/schema/KeyAutoComplete/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -27,23 +29,14 @@ import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/Aut
 import { useEntityType } from 'src/context/EntityContext';
 import { truncateTextSx } from 'src/context/Theme';
 import { hasLength } from 'src/utils/misc-utils';
+import { reduceBuiltProjections } from 'src/utils/schema-utils';
 
-interface Props {
-    value: any;
-    disabled?: boolean;
-    onChange?: (
-        event: any,
-        newValue: string[],
-        reason: string
-    ) => PromiseLike<any>;
-}
-
-// Hardcoded and figured out by rendering the content and inspecting heigh
-//  due to virtualization we need to be specific here.
 const tallHeight = 71;
-const getValue = (option: any) => option.pointer;
+const getValue = (option: BuiltProjection) => {
+    return option.ptr ?? '';
+};
 
-function KeyAutoComplete({ disabled, onChange, value }: Props) {
+function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
     const intl = useIntl();
 
     // We want a local copy so that the display is updated right away when the user
@@ -62,21 +55,20 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
         useBindingsEditorStore_inferSchemaResponseEmpty();
     const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
     const validKeys = useBindingsEditorStore_inferSchemaResponse_Keys();
-    const keys = useMemo(
-        () =>
-            inferSchemaResponse
-                ? orderBy(
-                      // Filter so only valid keys are displayed
-                      filter(Object.values(inferSchemaResponse), (field) =>
-                          keyIsValidOption(validKeys, field.pointer)
-                      ),
-                      // Order first by exists so groups do not duplicate in the dropdown
-                      ['exists', 'pointer'],
-                      ['desc', 'asc']
-                  )
-                : [],
-        [inferSchemaResponse, validKeys]
-    );
+    const keys = useMemo(() => {
+        const inferSchemaResponses = inferSchemaResponse
+            ? Object.values(inferSchemaResponse)
+            : [];
+
+        return orderBy(
+            filter(inferSchemaResponses, (field) =>
+                keyIsValidOption(validKeys, field.ptr)
+            ).reduce<BuiltProjection[]>(reduceBuiltProjections, []),
+            // Order first by exists so groups do not duplicate in the dropdown
+            ['inference.exists', 'inference.ptr'],
+            ['desc', 'asc']
+        );
+    }, [inferSchemaResponse, validKeys]);
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
@@ -113,7 +105,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 groupBy={(option) => option.exists}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    return option.pointer === optionValue;
+                    return option.ptr === optionValue;
                 }}
                 options={keys}
                 readOnly={disableInput}
@@ -139,7 +131,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 renderGroup={({ key, group, children }) => {
                     const readableGroup = intl.formatMessage({
                         id:
-                            group === 'must'
+                            group === 'MUST'
                                 ? 'keyAutoComplete.keys.group.must'
                                 : 'keyAutoComplete.keys.group.may',
                     });
@@ -169,19 +161,22 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                     );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
-                    const { description, pointer, types } = option;
+                    const { ptr, inference } = option;
 
                     // We do this logic here to pass the specific component (Stack with custom prop)
                     //  into the virtualized renderer. That way we can easily read off the custom prop.
                     let RowContent;
-                    if (description) {
+                    if (inference?.description) {
                         RowContent = (
                             <Stack
                                 component="span"
                                 spacing={1}
                                 x-react-window-item-height={tallHeight}
                             >
-                                <BasicOption pointer={pointer} types={types} />
+                                <BasicOption
+                                    pointer={ptr}
+                                    types={inference.types}
+                                />
                                 <Typography
                                     component="span"
                                     variant="caption"
@@ -190,13 +185,16 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                                         pl: 1.5,
                                     }}
                                 >
-                                    {description}
+                                    {inference.description}
                                 </Typography>
                             </Stack>
                         );
                     } else {
                         RowContent = (
-                            <BasicOption pointer={pointer} types={types} />
+                            <BasicOption
+                                pointer={ptr}
+                                types={inference.types}
+                            />
                         );
                     }
 

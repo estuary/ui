@@ -1,29 +1,24 @@
 import type { BindingsEditorState } from 'src/components/editor/Bindings/Store/types';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
-import type {
-    InferSchemaPropertyForRender,
-    InferSchemaResponse,
-    Schema,
-} from 'src/types';
+import type { InferSchemaResponse } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { extend_read_bundle, infer } from '@estuary/flow-web';
+import { skim_collection_projections } from '@estuary/flow-web';
 import produce from 'immer';
 import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
 
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
-import { fetchInferredSchema } from 'src/api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
-import { logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import {
     filterInferSchemaResponse,
-    hasReadSchema,
+    hasReadAndWriteSchema,
 } from 'src/utils/schema-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
@@ -57,7 +52,8 @@ const evaluateCollectionData = async (
 
 // Used to properly populate the inferSchemaResponse related state
 const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
-    let updatedVal: InferSchemaPropertyForRender[] | null, validKeys: string[];
+    let errors: string[] = [];
+    let updatedVal: BuiltProjection[] | null, validKeys: string[];
 
     const hasResponse = dataVal && dataVal.length > 0;
     if (hasResponse) {
@@ -71,6 +67,7 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
             const response = filterInferSchemaResponse(val);
             filteredKeys.push(response.validKeys);
             filteredFields.push(response.fields);
+            errors = union(val.errors);
         });
 
         // Find the keys that are valid in BOTH read/write schema
@@ -79,44 +76,17 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
         // Put the read/write output together so all keys are rendered
         updatedVal = union(...filteredFields);
     } else {
+        errors = [];
         updatedVal = null;
         validKeys = [];
     }
 
     return {
+        errors,
+        hasResponse,
         updatedVal,
         validKeys,
-        hasResponse,
     };
-};
-
-// Call into the flow WASM handler that will inline the write/inferred schema if necessary
-const updateReadSchema = async (
-    read: Schema,
-    write: Schema,
-    entityName: string
-) => {
-    // Try fetching the inferred schema... possible TODO handle errors better
-    const inferredSchemaResponse = await fetchInferredSchema(entityName);
-    const inferred = inferredSchemaResponse.data?.[0]?.schema
-        ? inferredSchemaResponse.data[0].schema
-        : {};
-
-    let response;
-    try {
-        response = extend_read_bundle({
-            read,
-            write,
-            inferred,
-        });
-        // We can catch any error here so that any issue causes an empty response and the
-        //  component will show an error... though not the most useful one.
-        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-    } catch (e: any) {
-        logRocketEvent('extend_read_bundle:failed', e);
-        response = {};
-    }
-    return response;
 };
 
 const getInitialMiscData = (): Pick<
@@ -136,6 +106,7 @@ const getInitialMiscData = (): Pick<
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
     | 'hasReadAndWriteSchema'
+    | 'schemaScope'
 > => ({
     collectionData: null,
     collectionInitializationAlert: null,
@@ -152,6 +123,7 @@ const getInitialMiscData = (): Pick<
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
     hasReadAndWriteSchema: null,
+    schemaScope: 'schema',
 });
 
 const getInitialStateData = () => ({
@@ -171,6 +143,16 @@ const getInitialState = (
             }),
             false,
             'Edit Mode Enabled Set'
+        );
+    },
+
+    setSchemaScope: (value) => {
+        set(
+            produce((state: BindingsEditorState) => {
+                state.schemaScope = value;
+            }),
+            false,
+            'Schema Scope Set'
         );
     },
 
@@ -282,18 +264,23 @@ const getInitialState = (
     // That was removed but might be needed in the future
     //  so we left things running through loops in case we need
     //  to support that again
-    populateInferSchemaResponse: async (spec, entityName) => {
+    populateInferSchemaResponse: async (
+        spec,
+        entityName,
+        collectionSpec,
+        projections
+    ) => {
         const populateState = (
             dataVal: InferSchemaResponse[] | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
         ) => {
-            const { hasResponse, updatedVal, validKeys } =
+            const { hasResponse, updatedVal, validKeys, errors } =
                 evaluateInferSchemaResponse(dataVal);
 
             // Save the values into the store
             set(
                 produce((state: BindingsEditorState) => {
-                    state.inferSchemaResponseError = errorVal;
+                    state.inferSchemaResponseError = errorVal ?? errors;
                     state.inferSchemaResponse = updatedVal;
                     state.inferSchemaResponseEmpty = !hasResponse;
                     state.inferSchemaResponse_Keys = validKeys;
@@ -319,19 +306,18 @@ const getInitialState = (
         }
 
         // Check which schema to use
-        const usingReadSchema = hasReadSchema(spec);
-        const schemasToTest = usingReadSchema
-            ? [spec.readSchema]
+        const usingReadAndWriteSchema = hasReadAndWriteSchema(spec);
+        const schemasToTest = usingReadAndWriteSchema
+            ? [spec.readSchema, spec.writeSchema]
             : [spec.schema];
 
-        // TODO (schema editing management) - we'll need to know about this
-        // set(
-        //     produce((state: BindingsEditorState) => {
-        //         state.hasReadAndWriteSchema = usingReadAndWriteSchema;
-        //     }),
-        //     false,
-        //     'Setting hasReadAndWriteSchema flag'
-        // );
+        set(
+            produce((state: BindingsEditorState) => {
+                state.hasReadAndWriteSchema = usingReadAndWriteSchema;
+            }),
+            false,
+            'Setting hasReadAndWriteSchema flag'
+        );
 
         // If no schema then just return because hopefully it means
         //  we are still just waiting for the schema to load in
@@ -341,41 +327,43 @@ const getInitialState = (
 
         // Make sure we have an object
         if (!schemasToTest.every((schema) => isPlainObject(schema))) {
-            populateState(null, 'schema must be an object');
+            populateState(null, ['schema must be an object']);
             return;
         }
 
         try {
-            // Should only impact the read schema
-            if (usingReadSchema) {
-                // We MUST make this call before calling `infer` below
-                //  This will inline the write/inferred schema in the `$defs` if needed
-                schemasToTest[0] = await updateReadSchema(
-                    schemasToTest[0],
-                    spec.writeSchema ?? {},
-                    entityName
-                );
-            }
-
             // Run infer against schema
-            const responses = schemasToTest.map((schema) => infer(schema));
+            const responses = schemasToTest.map((schema) => {
+                return skim_collection_projections({
+                    collection: entityName,
+                    model: {
+                        schema,
+                        // writeSchema: {},
+                        // readSchema: {},
+                        projections,
+                        key: collectionSpec.key,
+                    },
+                });
+            });
+
+            console.log('projections', projections);
+            console.log('responses', responses);
 
             // Make sure all the responses are valid
             const allResponsesValid = responses.every((inferResponse) => {
-                const { properties } = inferResponse;
+                const { projections } = inferResponse;
 
                 // Make sure there is a response
-                if (properties?.length === 0) {
-                    populateState(null, 'no fields inferred from schema');
+                if (projections?.length === 0) {
+                    populateState(null, ['no fields inferred from schema']);
                     return false;
                 }
 
                 // Make sure we did not ONLY get the root object back as a pointer
-                if (properties.length === 1 && properties[0].pointer === '') {
-                    populateState(
-                        null,
-                        'no usable fields inferred from schema'
-                    );
+                if (projections.length === 1 && projections[0].ptr === '') {
+                    populateState(null, [
+                        'no usable fields inferred from schema',
+                    ]);
                     return false;
                 }
 
@@ -390,7 +378,7 @@ const getInitialState = (
 
             populateState(responses, null);
         } catch (err: unknown) {
-            populateState(null, err as string);
+            populateState(null, [err as string]);
         }
     },
 

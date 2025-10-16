@@ -38,9 +38,16 @@ function CollectionSpecViews({ presentation }: Props) {
     const inferSchemaResponseDoneProcessing =
         useBindingsEditorStore_inferSchemaResponseDoneProcessing();
 
+    console.log('currentCatalog', currentCatalog);
+
     useEffect(() => {
         if (entityType === 'collection' && currentCatalog) {
-            populateInferSchemaResponse(currentCatalog.spec, catalogName);
+            populateInferSchemaResponse(
+                currentCatalog.spec,
+                catalogName,
+                currentCatalog.spec,
+                {}
+            );
         }
 
         return () => {

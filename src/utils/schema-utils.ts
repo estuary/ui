@@ -1,25 +1,32 @@
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
-import type { InferSchemaResponse, Schema } from 'src/types';
+import type { InferSchemaResponse } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
-import { isEmpty } from 'lodash';
-
-import { hasLength } from 'src/utils/misc-utils';
+// These are inserted by the server and never would make sense as keys
+const invalidKeyPointers = ['/_meta/uuid', '/_meta/flow_truncated'];
+const canPointerBeUsedAsKey = (pointer: string | null | undefined) => {
+    return (
+        pointer &&
+        pointer.length > 0 &&
+        !invalidKeyPointers.includes(pointer.toLowerCase())
+    );
+};
 
 const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
 
-const hasWriteSchema = (spec: any) => {
+export const hasWriteSchema = (spec: any) => {
     return spec.hasOwnProperty('writeSchema');
 };
 
-const hasReadSchema = (spec: any) => {
+export const hasReadSchema = (spec: any) => {
     return spec.hasOwnProperty('readSchema');
 };
 
-const hasReadAndWriteSchema = (spec: any) => {
+export const hasReadAndWriteSchema = (spec: any) => {
     return Boolean(hasReadSchema(spec) && hasReadSchema(spec));
 };
 
-const getProperSchemaScope = (spec: any) => {
+export const getProperSchemaScope = (spec: any) => {
     const readSchemaExists = hasReadSchema(spec);
 
     let key: AllowedScopes;
@@ -32,37 +39,68 @@ const getProperSchemaScope = (spec: any) => {
     return [key, readSchemaExists];
 };
 
-const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
-    let fields: any | null = null;
+// Reduce down to get rid of duplicate pointers. We do this mainly so
+//  projections do not show the same pointer multiple times. We _could_ filter
+//  on the explicit property however there are times where certain projections (patterns)
+//  would be a valid reason to use a projection as part of the key
+export const reduceBuiltProjections = (
+    acc: any[],
+    inferredProperty: BuiltProjection
+) => {
+    const existingIndex = acc.findIndex(
+        (item) => item.ptr === inferredProperty.ptr
+    );
+
+    if (existingIndex === -1) {
+        acc.push(inferredProperty);
+    }
+
+    return acc;
+};
+
+export const filterInferSchemaResponse = (
+    schema: InferSchemaResponse | null
+) => {
     const validKeys: string[] = [];
+    let fields: BuiltProjection[] | null = null;
 
     if (schema) {
-        const { properties } = schema;
+        const { projections } = schema;
 
-        fields = properties
-            .filter((inferredProperty: any) => {
-                // If there is a blank pointer it cannot be used
-                return hasLength(inferredProperty.pointer);
-            })
-            .map((inferredProperty: any) => {
-                const inferredPropertyTypes: string[] = inferredProperty.types;
+        fields = projections
+            .filter(
+                (inferredProperty) =>
+                    inferredProperty &&
+                    inferredProperty.ptr &&
+                    inferredProperty.ptr.length > 0
+            )
+            .map((inferredProperty) => {
+                const inferredPropertyTypes: string[] =
+                    inferredProperty.inference.types;
+
                 const isValidKey = Boolean(
                     // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
-                    inferredProperty.exists !== 'cannot' &&
+                    inferredProperty.inference.exists !== 'CANNOT' &&
                         // Make sure we only have a single type besides null
                         inferredPropertyTypes.filter((type) => type !== 'null')
                             .length === 1 &&
                         // make sure all types are valid
                         inferredPropertyTypes.every((type) =>
                             typesAllowedAsKeys.includes(type)
-                        )
+                        ) &&
+                        // make sure the pointer is allowed since server inserts on fields
+                        canPointerBeUsedAsKey(inferredProperty.ptr)
                 );
 
-                if (isValidKey) {
-                    validKeys.push(inferredProperty.pointer);
+                if (
+                    isValidKey &&
+                    // Make sure we have a pointer and it is not duplicated (projections)
+                    inferredProperty.ptr &&
+                    !validKeys.includes(inferredProperty.ptr)
+                ) {
+                    validKeys.push(inferredProperty.ptr);
                 }
 
-                inferredProperty.allowedToBeKey = isValidKey;
                 return inferredProperty;
             });
     }
@@ -71,45 +109,4 @@ const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
         fields,
         validKeys,
     };
-};
-
-const moveUpdatedSchemaToReadSchema = (
-    original: any,
-    updatedSchema: Schema
-) => {
-    let newSpec = null;
-
-    if (hasWriteSchema(original.spec)) {
-        const { ...additionalSpecKeys } = original.spec;
-
-        newSpec = !isEmpty(updatedSchema)
-            ? {
-                  ...additionalSpecKeys,
-                  writeSchema: original.spec.writeSchema,
-                  readSchema: updatedSchema,
-              }
-            : null;
-    } else {
-        // Removing schema from the object
-        const { schema, ...additionalSpecKeys } = original.spec;
-
-        newSpec = !isEmpty(updatedSchema)
-            ? {
-                  ...additionalSpecKeys,
-                  writeSchema: original.spec.schema,
-                  readSchema: updatedSchema,
-              }
-            : null;
-    }
-
-    return newSpec;
-};
-
-export {
-    getProperSchemaScope,
-    filterInferSchemaResponse,
-    hasReadAndWriteSchema,
-    hasReadSchema,
-    hasWriteSchema,
-    moveUpdatedSchemaToReadSchema,
 };
