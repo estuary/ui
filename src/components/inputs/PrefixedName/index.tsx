@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 
 import { capitalize } from 'lodash';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
@@ -145,7 +145,9 @@ function PrefixedName({
     if (!hasLength(objectRoles)) {
         return (
             <AlertBox short severity="warning">
-                <FormattedMessage id="custom.prefixedName.noAccessGrants" />
+                {intl.formatMessage({
+                    id: 'custom.prefixedName.noAccessGrants',
+                })}
             </AlertBox>
         );
     }
