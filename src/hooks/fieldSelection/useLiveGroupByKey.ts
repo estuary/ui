@@ -5,21 +5,26 @@ import { useMemo } from 'react';
 import { isEmpty } from 'lodash';
 
 import { useEditorStore_liveBuiltSpec } from 'src/components/editor/Store/hooks';
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function useLiveGroupByKey(bindingUUID: string) {
+    const isEdit = useEntityWorkflow_Editing();
+
     const backfilledBindings = useBindingStore(
         (state) => state.backfilledBindings
     );
     const selectionsExist = useBindingStore(
         (state) => !isEmpty(state.selections?.[bindingUUID].value)
     );
-    const draftedGroupByKeys = useBindingStore((state) => {
+    const draftedGroupByKey = useBindingStore((state) => {
         if (bindingUUID && !state.selections?.[bindingUUID]) {
             return [];
         }
 
-        return state.selections[bindingUUID].groupBy.explicit;
+        const { explicit, implicit } = state.selections[bindingUUID].groupBy;
+
+        return explicit.length > 0 ? explicit : implicit;
     });
 
     const liveBuiltBindingIndex = useBindingStore(
@@ -41,19 +46,21 @@ export default function useLiveGroupByKey(bindingUUID: string) {
 
     const backfillRequired = useMemo(
         () =>
+            isEdit &&
             selectionsExist &&
             !backfilledBindings.includes(bindingUUID) &&
-            (existingGroupByKey.length !== draftedGroupByKeys.length ||
+            (existingGroupByKey.length !== draftedGroupByKey.length ||
                 existingGroupByKey.some((key, index) =>
-                    index < draftedGroupByKeys.length
-                        ? draftedGroupByKeys[index] !== key
+                    index < draftedGroupByKey.length
+                        ? draftedGroupByKey[index] !== key
                         : false
                 )),
         [
             backfilledBindings,
             bindingUUID,
-            draftedGroupByKeys,
+            draftedGroupByKey,
             existingGroupByKey,
+            isEdit,
             selectionsExist,
         ]
     );
