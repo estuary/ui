@@ -27,6 +27,7 @@ function BindingsSelectorName({
                 },
                 [`& .${HIGHLIGHT_CLASS_NAME}`]: {
                     background: 'none',
+                    color: 'unset',
                     fontWeight: 700,
                     mx: 0.25,
                 },

@@ -11,7 +11,6 @@ import {
     useOnboardingStore_setSurveyMissing,
     useOnboardingStore_setSurveyResponse,
     useOnboardingStore_surveyMissing,
-    useOnboardingStore_surveyOptionOther,
     useOnboardingStore_surveyResponse,
 } from 'src/directives/Onboard/Store/hooks';
 import OriginOption from 'src/directives/Onboard/Survey/OriginOption';
@@ -20,7 +19,6 @@ function OnboardingSurvey() {
     const intl = useIntl();
 
     // Onboarding Store
-    const surveyOptionOther = useOnboardingStore_surveyOptionOther();
     const surveyResponse = useOnboardingStore_surveyResponse();
     const setSurveyResponse = useOnboardingStore_setSurveyResponse();
     const surveyMissing = useOnboardingStore_surveyMissing();
@@ -36,7 +34,7 @@ function OnboardingSurvey() {
         intl.formatMessage({ id: 'tenant.origin.radio.reddit.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.linkedIn.label' }),
         intl.formatMessage({ id: 'tenant.origin.radio.socialMedia.label' }),
-        surveyOptionOther,
+        intl.formatMessage({ id: 'tenant.origin.radio.other.label' }),
     ]);
 
     const handlers = {
