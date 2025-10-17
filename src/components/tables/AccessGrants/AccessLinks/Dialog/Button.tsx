@@ -13,23 +13,29 @@ function AccessLinksButton() {
 
     const atLeastOneAdminTenant = useEntitiesStore_atLeastOneAdminTenant();
 
-    return atLeastOneAdminTenant ? (
-        <Box>
-            <Button
-                variant="outlined"
-                onClick={(event) => {
-                    event.preventDefault();
+    if (atLeastOneAdminTenant) {
+        return (
+            <Box>
+                <Button
+                    variant="outlined"
+                    onClick={(event) => {
+                        event.preventDefault();
 
-                    setOpen(true);
-                }}
-                sx={{ whiteSpace: 'nowrap' }}
-            >
-                {intl.formatMessage({ id: 'admin.users.cta.prefixInvitation' })}
-            </Button>
+                        setOpen(true);
+                    }}
+                    sx={{ whiteSpace: 'nowrap' }}
+                >
+                    {intl.formatMessage({
+                        id: 'admin.users.cta.prefixInvitation',
+                    })}
+                </Button>
 
-            <PrefixInvitationDialog open={open} setOpen={setOpen} />
-        </Box>
-    ) : null;
+                <PrefixInvitationDialog open={open} setOpen={setOpen} />
+            </Box>
+        );
+    }
+
+    return null;
 }
 
 export default AccessLinksButton;
