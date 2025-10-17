@@ -219,6 +219,10 @@ function PrefixedName({
                 size={size ?? 'small'}
                 sx={{
                     'borderRadius': 3,
+                    [`& .MuiInputAdornment-root,
+                      & .MuiInputAdornment-root .MuiAutocomplete-root `]: {
+                        width: allowBlankName ? '100%' : undefined,
+                    },
                     // Gross - but prevents the name input from showing a border while inside another border
                     '& div > div > fieldset.MuiOutlinedInput-notchedOutline': {
                         border: 'none',

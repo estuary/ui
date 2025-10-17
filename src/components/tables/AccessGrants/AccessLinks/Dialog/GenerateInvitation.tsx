@@ -3,16 +3,18 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useState } from 'react';
 
-import { Button, Grid } from '@mui/material';
+import { Button, Collapse, Grid, Typography } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
 import PrefixedName from 'src/components/inputs/PrefixedName';
+import AlertBox from 'src/components/shared/AlertBox';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 
 interface Props {
@@ -44,6 +46,8 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
 
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
+
+    const [nestingWarning, setNestingWarning] = useState<boolean>(false);
 
     const handlers = {
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
@@ -101,6 +105,39 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
             spacing={2}
             sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
         >
+            <Grid
+                item
+                xs={12}
+                sx={nestingWarning ? { mb: 1 } : { display: 'none' }}
+            >
+                <Collapse in={nestingWarning}>
+                    <AlertBox
+                        severity="info"
+                        short
+                        title={intl.formatMessage({
+                            id: 'admin.users.prefixInvitation.nesting.title',
+                        })}
+                    >
+                        <Typography>
+                            {intl.formatMessage({
+                                id: 'admin.users.prefixInvitation.nesting',
+                            })}
+                            <OutlinedChip
+                                component="span"
+                                variant="outlined"
+                                label={objectRole}
+                            />
+                        </Typography>
+
+                        <Typography>
+                            {intl.formatMessage({
+                                id: 'admin.users.prefixInvitation.nesting.instructions',
+                            })}
+                        </Typography>
+                    </AlertBox>
+                </Collapse>
+            </Grid>
+
             <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
                 <PrefixedName
                     allowBlankName
@@ -110,6 +147,11 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                         id: 'common.tenant',
                     })}
                     onChange={onChange}
+                    onNameChange={(prefixedName) => {
+                        setNestingWarning(
+                            Boolean(prefixedName && prefixedName.length > 0)
+                        );
+                    }}
                     required
                     validateOnLoad
                 />

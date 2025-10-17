@@ -101,6 +101,10 @@ export const AdminPage: Record<string, string> = {
     'admin.users.prefixInvitation.label.type': `Type`,
     'admin.users.prefixInvitation.cta.generateLink': `Create Invite Link`,
 
+    'admin.users.prefixInvitation.nesting.title': `Access Limited`,
+    'admin.users.prefixInvitation.nesting': `User will not have access to entire prefix. Access will be limited to: `,
+    'admin.users.prefixInvitation.nesting.instructions': `Provide only prefix to share access to the entire prefix.`,
+
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
     'admin.prefix.issueGrant.label.capability': `Capability`,
