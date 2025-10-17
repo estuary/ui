@@ -42,7 +42,9 @@ const getInitialState = (set: NamedSet<OnboardingState>): OnboardingState => ({
                     ...state,
                     nameMissing: !hasLength(formattedValue),
                     nameInvalid: !namePattern.test(formattedValue),
-                    nameProblematic: formattedValue.includes('test'),
+                    nameProblematic: formattedValue
+                        .toLowerCase()
+                        .includes('test'),
                     requestedTenant: formattedValue,
                 };
             },
