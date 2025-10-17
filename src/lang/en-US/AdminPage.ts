@@ -102,8 +102,8 @@ export const AdminPage: Record<string, string> = {
     'admin.users.prefixInvitation.cta.generateLink': `Create Invite Link`,
 
     'admin.users.prefixInvitation.nesting.title': `Access Limited`,
-    'admin.users.prefixInvitation.nesting': `User will not have access to entire prefix. Access will be limited to: `,
-    'admin.users.prefixInvitation.nesting.instructions': `Remove to share access to entire prefix.`,
+    'admin.users.prefixInvitation.nesting': `User will have access to all tasks beginning with the prefix: `,
+    'admin.users.prefixInvitation.nesting.instructions': `Remove to share access to entire tenant.`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
