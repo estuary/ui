@@ -103,7 +103,7 @@ export const AdminPage: Record<string, string> = {
 
     'admin.users.prefixInvitation.nesting.title': `Access Limited`,
     'admin.users.prefixInvitation.nesting': `User will not have access to entire prefix. Access will be limited to: `,
-    'admin.users.prefixInvitation.nesting.instructions': `Provide only prefix to share access to the entire prefix.`,
+    'admin.users.prefixInvitation.nesting.instructions': `Remove to share access to entire prefix.`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
