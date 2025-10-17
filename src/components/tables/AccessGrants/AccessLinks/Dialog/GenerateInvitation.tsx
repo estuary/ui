@@ -1,36 +1,31 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
+import type { GenerateInvitationProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useState } from 'react';
 
-import { Button, Collapse, Grid, Typography } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
 import PrefixedName from 'src/components/inputs/PrefixedName';
-import AlertBox from 'src/components/shared/AlertBox';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
+import NestingWarning from 'src/components/tables/AccessGrants/AccessLinks/Dialog/NestingWarning';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
-import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
-
-interface Props {
-    serverError: PostgrestError | null;
-    setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
-}
 
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
 // outside of advanced cases.
-
 const capabilityOptions = ['admin', 'read'];
-
 const typeOptions = ['single-use', 'multi-use'];
 
-function GenerateInvitation({ serverError, setServerError }: Props) {
+function GenerateInvitation({
+    serverError,
+    setServerError,
+}: GenerateInvitationProps) {
     const intl = useIntl();
 
     const hydrate = useZustandStore<
@@ -47,7 +42,8 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
 
-    const [nestingWarning, setNestingWarning] = useState<boolean>(false);
+    const [showNestingWarning, setShowNestingWarning] =
+        useState<boolean>(false);
 
     const handlers = {
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
@@ -108,34 +104,12 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
             <Grid
                 item
                 xs={12}
-                sx={nestingWarning ? { mb: 1 } : { display: 'none' }}
+                sx={showNestingWarning ? { mb: 1 } : { display: 'none' }}
             >
-                <Collapse in={nestingWarning}>
-                    <AlertBox
-                        severity="info"
-                        short
-                        title={intl.formatMessage({
-                            id: 'admin.users.prefixInvitation.nesting.title',
-                        })}
-                    >
-                        <Typography>
-                            {intl.formatMessage({
-                                id: 'admin.users.prefixInvitation.nesting',
-                            })}
-                            <OutlinedChip
-                                component="span"
-                                variant="outlined"
-                                label={objectRole}
-                            />
-                        </Typography>
-
-                        <Typography>
-                            {intl.formatMessage({
-                                id: 'admin.users.prefixInvitation.nesting.instructions',
-                            })}
-                        </Typography>
-                    </AlertBox>
-                </Collapse>
+                <NestingWarning
+                    objectRole={objectRole}
+                    show={showNestingWarning}
+                />
             </Grid>
 
             <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
@@ -148,7 +122,7 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                     })}
                     onChange={onChange}
                     onNameChange={(prefixedName) => {
-                        setNestingWarning(
+                        setShowNestingWarning(
                             Boolean(prefixedName && prefixedName.length > 0)
                         );
                     }}
@@ -187,7 +161,9 @@ function GenerateInvitation({ serverError, setServerError }: Props) {
                     onClick={handlers.generateInvitation}
                     sx={{ flexGrow: 1 }}
                 >
-                    <FormattedMessage id="admin.users.prefixInvitation.cta.generateLink" />
+                    {intl.formatMessage({
+                        id: 'admin.users.prefixInvitation.cta.generateLink',
+                    })}
                 </Button>
             </Grid>
         </Grid>

@@ -1,5 +1,5 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { Dispatch, SetStateAction } from 'react';
+import type { PrefixInvitationDialogProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
 
 import { useState } from 'react';
 
@@ -22,12 +22,10 @@ import GenerateInvitation from 'src/components/tables/AccessGrants/AccessLinks/D
 
 const TITLE_ID = 'share-prefix-dialog-title';
 
-interface Props {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-function PrefixInvitationDialog({ open, setOpen }: Props) {
+function PrefixInvitationDialog({
+    open,
+    setOpen,
+}: PrefixInvitationDialogProps) {
     const intl = useIntl();
     const theme = useTheme();
 
