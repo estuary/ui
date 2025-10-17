@@ -219,6 +219,8 @@ function PrefixedName({
                 size={size ?? 'small'}
                 sx={{
                     'borderRadius': 3,
+                    // If we allow a blankName we can give the `prefix` portion more room as the
+                    //  name input is of less importance. Mainly for GenerateInvitation
                     [`& .MuiInputAdornment-root,
                       & .MuiInputAdornment-root .MuiAutocomplete-root `]: {
                         width: allowBlankName ? '100%' : undefined,
