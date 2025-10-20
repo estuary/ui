@@ -56,8 +56,8 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                             ref={setActivatorNodeRef}
                             {...listeners}
                             size="small"
-                            style={{ marginLeft: 0 }}
                             sx={{
+                                'marginLeft': 0,
                                 '&:hover': {
                                     color: theme.palette.text.primary,
                                 },
