@@ -51,7 +51,7 @@ interface FieldSelectionValidationResponse {
 }
 
 export interface ValidationRequestMetadata {
-    groupBy: GroupKeyMetadata;
+    groupByValue: GroupKeyMetadata;
     hasConflicts: boolean;
     recommended: boolean | number;
     selections: FieldSelectionDictionary;
@@ -276,7 +276,7 @@ export default function useValidateFieldSelection() {
                             );
 
                             validatedRequests.push({
-                                groupBy: {
+                                groupByValue: {
                                     explicit: fieldStanza?.groupBy ?? [],
                                     implicit:
                                         builtBinding?.collection.key.map(

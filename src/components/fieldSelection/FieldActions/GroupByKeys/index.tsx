@@ -30,7 +30,7 @@ const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
 
     const groupBy = useBindingStore(
         (state) =>
-            state.selections?.[bindingUUID].groupBy ?? {
+            state.selections?.[bindingUUID].groupBy.value ?? {
                 explicit: [],
                 implicit: [],
             }

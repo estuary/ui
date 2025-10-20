@@ -121,8 +121,12 @@ export const getExpandedFieldSelection = (
         ? Object.values(selections.value).map((selection) => ({
               ...selection,
               isGroupByKey:
-                  selections.groupBy.explicit.length > 0
-                      ? selections.groupBy.explicit.includes(selection.field)
-                      : selections.groupBy.implicit.includes(selection.field),
+                  selections.groupBy.value.explicit.length > 0
+                      ? selections.groupBy.value.explicit.includes(
+                            selection.field
+                        )
+                      : selections.groupBy.value.implicit.includes(
+                            selection.field
+                        ),
           }))
         : [];

@@ -58,7 +58,7 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
             };
 
             const groupBy = Object.keys(selections).includes(bindingUUID)
-                ? selections[bindingUUID].groupBy.explicit
+                ? selections[bindingUUID].groupBy.value.explicit
                 : [];
 
             if (groupBy.length > 0) {

@@ -44,6 +44,7 @@ export interface ResourceConfig extends JsonFormsData {
         bindingIndex: number;
         builtBindingIndex: number;
         collectionName: string;
+        liveBindingIndex: number;
         liveBuiltBindingIndex: number;
         validatedBindingIndex: number;
         disable?: boolean;

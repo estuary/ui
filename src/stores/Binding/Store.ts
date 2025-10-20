@@ -152,6 +152,7 @@ const getInitialState = (
                                         bindingIndex,
                                         builtBindingIndex: -1,
                                         collectionName,
+                                        liveBindingIndex: -1,
                                         liveBuiltBindingIndex: -1,
                                         validatedBindingIndex: -1,
                                     },
@@ -393,6 +394,9 @@ const getInitialState = (
                             state.backfilledBindings.push(UUID);
                         }
 
+                        state.resourceConfigs[UUID].meta.liveBindingIndex =
+                            liveBindingIndex;
+
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                         if (state.collectionMetadata?.[collection]) {
                             // This condition only exists as a safeguard in the event this action
@@ -443,7 +447,9 @@ const getInitialState = (
                 state.selections = stubBindingFieldSelection(
                     state.selections,
                     bindingUUIDs,
-                    requestFieldValidation ? 'SERVER_UPDATING' : undefined
+                    requestFieldValidation ? 'SERVER_UPDATING' : undefined,
+                    sortedResourceConfigs,
+                    liveBindings
                 );
             }),
             false,
@@ -522,6 +528,7 @@ const getInitialState = (
                             bindingIndex: reducedBindingCount + index,
                             builtBindingIndex: -1,
                             collectionName,
+                            liveBindingIndex: -1,
                             liveBuiltBindingIndex: -1,
                             validatedBindingIndex: -1,
                             // When adding default this so the first click on the binding
@@ -1222,6 +1229,8 @@ const getInitialState = (
                         builtBindingIndex:
                             targetResourceConfig.meta.builtBindingIndex,
                         collectionName: targetCollection,
+                        liveBindingIndex:
+                            targetResourceConfig.meta.liveBindingIndex,
                         liveBuiltBindingIndex:
                             targetResourceConfig.meta.liveBuiltBindingIndex,
                         validatedBindingIndex:

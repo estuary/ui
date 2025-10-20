@@ -39,7 +39,10 @@ export interface FieldSelectionDictionary {
 }
 
 export interface BindingFieldSelection {
-    groupBy: GroupKeyMetadata;
+    groupBy: {
+        liveGroupByKey: string[];
+        value: GroupKeyMetadata;
+    };
     hasConflicts: boolean;
     hydrating: boolean;
     status: HydrationStatus;
@@ -202,7 +205,7 @@ export const getStoreWithFieldSelectionSettings = (
             produce((state: StoreWithFieldSelection) => {
                 values.forEach(
                     ({
-                        groupBy,
+                        groupByValue,
                         hasConflicts,
                         recommended,
                         selections,
@@ -215,7 +218,10 @@ export const getStoreWithFieldSelectionSettings = (
                         state.recommendFields[uuid] = recommended;
 
                         state.selections[uuid] = {
-                            groupBy,
+                            groupBy: {
+                                ...state.selections[uuid].groupBy,
+                                value: groupByValue,
+                            },
                             hasConflicts,
                             hydrating: isHydrating(evaluatedStatus),
                             status: evaluatedStatus,
@@ -233,7 +239,8 @@ export const getStoreWithFieldSelectionSettings = (
     setExplicitGroupBy: (bindingUUID, targetKeys) => {
         set(
             produce((state: StoreWithFieldSelection) => {
-                state.selections[bindingUUID].groupBy.explicit = targetKeys;
+                state.selections[bindingUUID].groupBy.value.explicit =
+                    targetKeys;
             }),
             false,
             'Explicit Group-By Set'

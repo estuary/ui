@@ -17,15 +17,12 @@ export default function useLiveGroupByKey(bindingUUID: string) {
     const selectionsExist = useBindingStore(
         (state) => !isEmpty(state.selections?.[bindingUUID].value)
     );
-    const draftedGroupByKey = useBindingStore((state) => {
-        if (bindingUUID && !state.selections?.[bindingUUID]) {
-            return [];
-        }
-
-        const { explicit, implicit } = state.selections[bindingUUID].groupBy;
-
-        return explicit.length > 0 ? explicit : implicit;
-    });
+    const liveGroupByKey = useBindingStore(
+        (state) => state.selections[bindingUUID].groupBy.liveGroupByKey
+    );
+    const draftedExplicitGroupByKey = useBindingStore(
+        (state) => state.selections?.[bindingUUID].groupBy.value.explicit ?? []
+    );
 
     const liveBuiltBindingIndex = useBindingStore(
         (state) =>
@@ -44,26 +41,29 @@ export default function useLiveGroupByKey(bindingUUID: string) {
         return liveBuiltBinding?.fieldSelection.keys ?? [];
     }, [liveBuiltBindingIndex, liveBuiltSpec]);
 
-    const backfillRequired = useMemo(
-        () =>
+    const backfillRequired = useMemo(() => {
+        const explicitKeysDiffer =
+            draftedExplicitGroupByKey.length !== liveGroupByKey.length ||
+            liveGroupByKey.some((key, index) =>
+                index < draftedExplicitGroupByKey.length
+                    ? draftedExplicitGroupByKey[index] !== key
+                    : false
+            );
+
+        return (
             isEdit &&
             selectionsExist &&
             !backfilledBindings.includes(bindingUUID) &&
-            (existingGroupByKey.length !== draftedGroupByKey.length ||
-                existingGroupByKey.some((key, index) =>
-                    index < draftedGroupByKey.length
-                        ? draftedGroupByKey[index] !== key
-                        : false
-                )),
-        [
-            backfilledBindings,
-            bindingUUID,
-            draftedGroupByKey,
-            existingGroupByKey,
-            isEdit,
-            selectionsExist,
-        ]
-    );
+            explicitKeysDiffer
+        );
+    }, [
+        backfilledBindings,
+        bindingUUID,
+        draftedExplicitGroupByKey,
+        isEdit,
+        liveGroupByKey,
+        selectionsExist,
+    ]);
 
     return { backfillRequired, existingGroupByKey };
 }
