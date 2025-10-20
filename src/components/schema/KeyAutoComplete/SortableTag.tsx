@@ -57,7 +57,6 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                             {...listeners}
                             size="small"
                             sx={{
-                                'marginLeft': 0,
                                 '&:hover': {
                                     color: theme.palette.text.primary,
                                 },
@@ -67,6 +66,11 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                         </IconButton>
                     }
                     label={label}
+                    sx={{
+                        '.MuiChip-icon': {
+                            marginLeft: 0,
+                        },
+                    }}
                     variant="outlined"
                 />
             ) : (
