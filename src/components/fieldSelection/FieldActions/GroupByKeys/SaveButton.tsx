@@ -2,10 +2,13 @@ import type { GroupByKeysSaveButtonProps } from 'src/components/fieldSelection/t
 
 import { Button } from '@mui/material';
 
+import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
+import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { snackbarSettings } from 'src/utils/notification-utils';
 
 // This component was modeled after the SaveButton component used within the AlgorithmMenu component.
 const SaveButton = ({
@@ -15,7 +18,9 @@ const SaveButton = ({
     selections,
 }: GroupByKeysSaveButtonProps) => {
     const intl = useIntl();
+    const { enqueueSnackbar } = useSnackbar();
 
+    const currentCollection = useBinding_currentCollection();
     const advanceHydrationStatus = useBindingStore(
         (state) => state.advanceHydrationStatus
     );
@@ -30,7 +35,21 @@ const SaveButton = ({
             disabled={loading || formActive}
             onClick={() => {
                 if (!selections) {
-                    // TODO: display error.
+                    const errorSource =
+                        currentCollection ??
+                        intl.formatMessage({
+                            id: 'fieldSelection.error.genericTerm.binding',
+                        });
+
+                    enqueueSnackbar(
+                        intl.formatMessage(
+                            {
+                                id: 'fieldSelection.error.groupBySaveFailed',
+                            },
+                            { collection: errorSource }
+                        ),
+                        { ...snackbarSettings, variant: 'error' }
+                    );
 
                     return;
                 }

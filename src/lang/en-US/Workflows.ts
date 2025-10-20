@@ -175,6 +175,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.error.serverUpdateFailed': `Field selection update failed`,
     'fieldSelection.error.validationFailed': `Field selection validation failed for {collection}.`,
+    'fieldSelection.error.groupBySaveFailed': `Group-by key update failed for {collection}.`,
+    'fieldSelection.error.genericTerm.binding': `a binding`,
     'fieldSelection.table.cta.excludeAll': `Exclude All`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
     'fieldSelection.table.cta.requireField': `Require`,
