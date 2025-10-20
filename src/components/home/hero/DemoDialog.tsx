@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AcceptDemoInvitation from 'src/components/home/hero/AcceptDemoInvitation';
 import Logo from 'src/components/navigation/Logo';
@@ -27,6 +27,8 @@ interface Props {
 }
 
 function DemoDialog({ objectRoles, open, setOpen, goToFilteredTable }: Props) {
+    const intl = useIntl();
+
     const [loading, setLoading] = useState(false);
 
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
@@ -68,7 +70,9 @@ function DemoDialog({ objectRoles, open, setOpen, goToFilteredTable }: Props) {
                         />
                     ) : (
                         <Typography>
-                            <FormattedMessage id="admin.users.prefixInvitation.header" />
+                            {intl.formatMessage({
+                                id: 'admin.users.prefixInvitation.header',
+                            })}
                         </Typography>
                     )}
                 </Stack>

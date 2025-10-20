@@ -1,6 +1,8 @@
+import type { OrganizationNameFieldProps } from 'src/directives/Onboard/types';
+
 import { FormControl, FormLabel, TextField } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import {
     useOnboardingStore_nameInvalid,
@@ -9,11 +11,7 @@ import {
     useOnboardingStore_setRequestedTenant,
 } from 'src/directives/Onboard/Store/hooks';
 
-interface Props {
-    forceError?: boolean;
-}
-
-function OrganizationNameField({ forceError }: Props) {
+function OrganizationNameField({ forceError }: OrganizationNameFieldProps) {
     const intl = useIntl();
 
     // Onboarding Store
@@ -33,7 +31,7 @@ function OrganizationNameField({ forceError }: Props) {
     return (
         <FormControl error={showError}>
             <FormLabel id="origin" required sx={{ mb: 1, fontSize: 20 }}>
-                <FormattedMessage id="tenant.input.label" />
+                {intl.formatMessage({ id: 'tenant.input.label' })}
             </FormLabel>
 
             <TextField
@@ -47,7 +45,7 @@ function OrganizationNameField({ forceError }: Props) {
                             : 'tenant.expectations',
                 })}
                 id="requestedTenant"
-                label={<FormattedMessage id="common.tenant.creationForm" />}
+                label={intl.formatMessage({ id: 'common.tenant.creationForm' })}
                 onChange={(event) => handlers.update(event.target.value)}
                 placeholder={intl.formatMessage({
                     id: 'tenant.input.placeholder',

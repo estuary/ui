@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 
 import { capitalize } from 'lodash';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
@@ -145,7 +145,9 @@ function PrefixedName({
     if (!hasLength(objectRoles)) {
         return (
             <AlertBox short severity="warning">
-                <FormattedMessage id="custom.prefixedName.noAccessGrants" />
+                {intl.formatMessage({
+                    id: 'custom.prefixedName.noAccessGrants',
+                })}
             </AlertBox>
         );
     }
@@ -217,6 +219,12 @@ function PrefixedName({
                 size={size ?? 'small'}
                 sx={{
                     'borderRadius': 3,
+                    // If we allow a blankName we can give the `prefix` portion more room as the
+                    //  name input is of less importance. Mainly for GenerateInvitation
+                    [`& .MuiInputAdornment-root,
+                      & .MuiInputAdornment-root .MuiAutocomplete-root `]: {
+                        width: allowBlankName ? '100%' : undefined,
+                    },
                     // Gross - but prevents the name input from showing a border while inside another border
                     '& div > div > fieldset.MuiOutlinedInput-notchedOutline': {
                         border: 'none',
