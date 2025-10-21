@@ -7,9 +7,12 @@ export interface OnboardingState {
     requestedTenant: string;
     setRequestedTenant: (value: string) => void;
 
-    // Organization Name Validation
     nameInvalid: boolean;
     setNameInvalid: (value: boolean) => void;
+
+    // Only used for checking if `test` is in the name as of Q4 2025
+    nameProblematic: boolean;
+    setNameProblematic: (value: boolean) => void;
 
     nameMissing: boolean;
     setNameMissing: (value: boolean) => void;
@@ -17,12 +20,11 @@ export interface OnboardingState {
     surveyMissing: boolean;
     setSurveyMissing: (value: boolean) => void;
 
-    // Survey
-    surveyOptionOther: string;
-
     surveyResponse: SurveyResponse;
     setSurveyResponse: (value: SurveyResponse) => void;
 
-    // Misc.
+    serverError: string | null;
+    setServerError: (value: string | null) => void;
+
     resetState: () => void;
 }

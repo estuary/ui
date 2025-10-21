@@ -1,12 +1,9 @@
 import type { OnboardingState } from 'src/directives/Onboard/Store/types';
 import type { OnboardingStoreNames } from 'src/stores/names';
-import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-
-import produce from 'immer';
 
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
@@ -17,35 +14,40 @@ const namePattern = new RegExp(`^${PREFIX_NAME_PATTERN}$`);
 const getInitialStateData = (): Pick<
     OnboardingState,
     | 'nameInvalid'
+    | 'nameProblematic'
     | 'nameMissing'
     | 'requestedTenant'
-    | 'surveyOptionOther'
     | 'surveyResponse'
     | 'surveyMissing'
+    | 'serverError'
 > => ({
     nameInvalid: false,
+    nameProblematic: false,
     nameMissing: false,
     requestedTenant: '',
-    surveyOptionOther: 'Other',
     surveyResponse: { origin: '', details: '' },
     surveyMissing: false,
+    serverError: null,
 });
 
-const getInitialState = (
-    set: NamedSet<OnboardingState>,
-    _get: StoreApi<OnboardingState>['getState']
-): OnboardingState => ({
+const getInitialState = (set: NamedSet<OnboardingState>): OnboardingState => ({
     ...getInitialStateData(),
 
     setRequestedTenant: (value) => {
         set(
-            produce((state: OnboardingState) => {
+            (state) => {
                 const formattedValue = value.replaceAll(/\s/g, '_');
 
-                state.nameMissing = !hasLength(formattedValue);
-                state.nameInvalid = !namePattern.test(formattedValue);
-                state.requestedTenant = formattedValue;
-            }),
+                return {
+                    ...state,
+                    nameMissing: !hasLength(formattedValue),
+                    nameInvalid: !namePattern.test(formattedValue),
+                    nameProblematic: formattedValue
+                        .toLowerCase()
+                        .includes('test'),
+                    requestedTenant: formattedValue,
+                };
+            },
             false,
             'Requested Tenant Set'
         );
@@ -53,41 +55,59 @@ const getInitialState = (
 
     setNameInvalid: (value) => {
         set(
-            produce((state: OnboardingState) => {
-                state.nameInvalid = value;
+            () => ({
+                nameInvalid: value,
             }),
             false,
-            'Invalid Organization Name Flag Set'
+            'setNameInvalid'
+        );
+    },
+
+    setServerError: (value) => {
+        set(
+            (state) => ({
+                serverError: value,
+            }),
+            false,
+            'setServerError'
         );
     },
 
     setNameMissing: (value) => {
         set(
-            produce((state: OnboardingState) => {
-                state.nameMissing = value;
+            (state) => ({
+                nameMissing: value,
             }),
             false,
-            'Missing Organization Name Flag Set'
+            'setNameMissing'
         );
     },
 
+    setNameProblematic: (value) => {
+        set(
+            (state) => ({
+                nameProblematic: value,
+            }),
+            false,
+            'setNameProblematic'
+        );
+    },
     setSurveyResponse: (value) => {
         set(
-            produce((state: OnboardingState) => {
-                state.surveyResponse = value;
+            (state) => ({
+                surveyResponse: value,
             }),
             false,
-            'Survey Response Set'
+            'setSurveyResponse'
         );
     },
-
     setSurveyMissing: (value) => {
         set(
-            produce((state: OnboardingState) => {
-                state.surveyMissing = value;
+            (state) => ({
+                surveyMissing: value,
             }),
             false,
-            'Survey Missing Set'
+            'setSurveyMissing'
         );
     },
 
@@ -98,5 +118,5 @@ const getInitialState = (
 
 export const createOnboardingStore = (key: OnboardingStoreNames) =>
     create<OnboardingState>()(
-        devtools((set, get) => getInitialState(set, get), devtoolsOptions(key))
+        devtools((set) => getInitialState(set), devtoolsOptions(key))
     );
