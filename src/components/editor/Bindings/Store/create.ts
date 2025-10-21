@@ -140,9 +140,7 @@ const getInitialState = (
 
     setEditModeEnabled: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.editModeEnabled = value;
-            }),
+            (state) => ({ ...state, editModeEnabled: value }),
             false,
             'Edit Mode Enabled Set'
         );
@@ -150,9 +148,7 @@ const getInitialState = (
 
     setSchemaScope: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.schemaScope = value;
-            }),
+            (state) => ({ ...state, schemaScope: value }),
             false,
             'Schema Scope Set'
         );
@@ -160,9 +156,7 @@ const getInitialState = (
 
     setCollectionData: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.collectionData = value;
-            }),
+            (state) => ({ ...state, collectionData: value }),
             false,
             'Collection Data Set'
         );
@@ -170,9 +164,7 @@ const getInitialState = (
 
     setCollectionInitializationAlert: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.collectionInitializationAlert = value;
-            }),
+            (state) => ({ ...state, collectionInitializationAlert: value }),
             false,
             'Collection Initialization Alert Set'
         );
@@ -180,9 +172,7 @@ const getInitialState = (
 
     setCollectionInitializationDone: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.collectionInitializationDone = value;
-            }),
+            (state) => ({ ...state, collectionInitializationDone: value }),
             false,
             'Collection Initialization Done Set'
         );
@@ -190,9 +180,10 @@ const getInitialState = (
 
     setIncompatibleCollections: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.incompatibleCollections = value;
-                state.hasIncompatibleCollections = hasLength(value);
+            (state) => ({
+                ...state,
+                incompatibleCollections: value,
+                hasIncompatibleCollections: hasLength(value),
             }),
             false,
             'Incompatible Collections List Set'
@@ -201,9 +192,7 @@ const getInitialState = (
 
     setSchemaUpdateErrored: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.schemaUpdateErrored = value;
-            }),
+            (state) => ({ ...state, schemaUpdateErrored: value }),
             false,
             'Schema Update Errored Set'
         );
@@ -211,9 +200,7 @@ const getInitialState = (
 
     setSchemaUpdated: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.schemaUpdated = value;
-            }),
+            (state) => ({ ...state, schemaUpdated: value }),
             false,
             'Schema Updated Set'
         );
@@ -221,9 +208,7 @@ const getInitialState = (
 
     setSchemaUpdating: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.schemaUpdating = value;
-            }),
+            (state) => ({ ...state, schemaUpdating: value }),
             false,
             'Schema Updating Set'
         );
@@ -260,18 +245,7 @@ const getInitialState = (
         }
     },
 
-    // TODO (collection editor) maybe
-    // This code was initially written supporting being able to
-    //  run against `schema` OR [`readSchema`, `writeSchema`].
-    // That was removed but might be needed in the future
-    //  so we left things running through loops in case we need
-    //  to support that again
-    populateInferSchemaResponse: async (
-        spec,
-        entityName,
-        collectionSpec,
-        projections
-    ) => {
+    populateInferSchemaResponse: async (spec, entityName, projections) => {
         const populateState = (
             dataVal: SkimProjectionsResponse | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
@@ -287,6 +261,7 @@ const getInitialState = (
                     state.inferSchemaResponseEmpty = !hasResponse;
                     state.inferSchemaResponse_Keys = validKeys;
                     state.inferSchemaResponseDoneProcessing = true;
+                    state.inferSchemaResponseProcessingUpdate = false;
                 }),
                 false,
                 'Inferred Schema Populated'
@@ -295,7 +270,11 @@ const getInitialState = (
 
         set(
             produce((state: BindingsEditorState) => {
-                state.inferSchemaResponseDoneProcessing = false;
+                if (state.inferSchemaResponseDoneProcessing) {
+                    state.inferSchemaResponseProcessingUpdate = true;
+                } else {
+                    state.inferSchemaResponseDoneProcessing = false;
+                }
             }),
             false,
             'Resetting inferSchemaDoneProcessing flag'
@@ -355,7 +334,7 @@ const getInitialState = (
                     model: {
                         ...modelSchemaSettings,
                         projections,
-                        key: collectionSpec.key,
+                        key: spec.key,
                     },
                 });
 

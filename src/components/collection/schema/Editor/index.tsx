@@ -78,7 +78,6 @@ function CollectionSchemaEditor({
             populateInferSchemaResponse(
                 draftSpec.spec,
                 entityName,
-                draftSpec.spec,
                 projections
             );
 

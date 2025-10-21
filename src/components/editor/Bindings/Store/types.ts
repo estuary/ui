@@ -56,7 +56,6 @@ export interface BindingsEditorState {
     populateInferSchemaResponse: (
         value: any | undefined,
         entityName: string,
-        collectionSpec: any,
         projections: any
     ) => void;
 
