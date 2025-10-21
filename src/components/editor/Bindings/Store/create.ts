@@ -271,6 +271,8 @@ const getInitialState = (
         set(
             produce((state: BindingsEditorState) => {
                 if (state.inferSchemaResponseDoneProcessing) {
+                    // TODO (infer) not being consumed right now
+                    //  I _think_ this processes fast enough but not totally sure
                     state.inferSchemaResponseProcessingUpdate = true;
                 } else {
                     state.inferSchemaResponseDoneProcessing = false;
