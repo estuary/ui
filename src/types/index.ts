@@ -395,6 +395,9 @@ export interface InferSchemaResponse {
     projections: BuiltProjection[];
 }
 
+// These are the same right now but not sure that will always hold true
+export type SkimProjectionsResponse = InferSchemaResponse;
+
 export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
 
 export interface InferSchemaResponseProperty {

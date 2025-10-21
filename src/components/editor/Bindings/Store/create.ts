@@ -1,6 +1,6 @@
 import type { BindingsEditorState } from 'src/components/editor/Bindings/Store/types';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
-import type { InferSchemaResponse } from 'src/types';
+import type { SkimProjectionsResponse } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
@@ -10,7 +10,7 @@ import { devtools } from 'zustand/middleware';
 
 import { skim_collection_projections } from '@estuary/flow-web';
 import produce from 'immer';
-import { forEach, intersection, isEmpty, isPlainObject, union } from 'lodash';
+import { intersection, isEmpty, isPlainObject, union } from 'lodash';
 
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
@@ -51,11 +51,13 @@ const evaluateCollectionData = async (
 };
 
 // Used to properly populate the inferSchemaResponse related state
-const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
+const evaluateInferSchemaResponse = (
+    dataVal: SkimProjectionsResponse | null
+) => {
     let errors: string[] = [];
     let updatedVal: BuiltProjection[] | null, validKeys: string[];
 
-    const hasResponse = dataVal && dataVal.length > 0;
+    const hasResponse = dataVal;
     if (hasResponse) {
         // Need list of fields and keys to be populated by the data
         const filteredKeys: string[][] = [];
@@ -63,12 +65,10 @@ const evaluateInferSchemaResponse = (dataVal: InferSchemaResponse[] | null) => {
 
         // Go through all the data and grab the filtered values
         //  and put them into the lists
-        forEach(dataVal, (val) => {
-            const response = filterInferSchemaResponse(val);
-            filteredKeys.push(response.validKeys);
-            filteredFields.push(response.fields);
-            errors = union(val.errors);
-        });
+        const response = filterInferSchemaResponse(dataVal);
+        filteredKeys.push(response.validKeys);
+        filteredFields.push(response.fields);
+        errors = union(dataVal.errors);
 
         // Find the keys that are valid in BOTH read/write schema
         validKeys = intersection(...filteredKeys);
@@ -271,7 +271,7 @@ const getInitialState = (
         projections
     ) => {
         const populateState = (
-            dataVal: InferSchemaResponse[] | null,
+            dataVal: SkimProjectionsResponse | null,
             errorVal: BindingsEditorState['inferSchemaResponseError']
         ) => {
             const { hasResponse, updatedVal, validKeys, errors } =
@@ -305,11 +305,14 @@ const getInitialState = (
             return;
         }
 
+        // If no schema then just return because hopefully it means
+        //  we are still just waiting for the schema to load in
+        if (!spec.schema && !spec.writeSchema && !spec.writeSchema) {
+            return;
+        }
+
         // Check which schema to use
         const usingReadAndWriteSchema = hasReadAndWriteSchema(spec);
-        const schemasToTest = usingReadAndWriteSchema
-            ? [spec.readSchema, spec.writeSchema]
-            : [spec.schema];
 
         set(
             produce((state: BindingsEditorState) => {
@@ -319,56 +322,57 @@ const getInitialState = (
             'Setting hasReadAndWriteSchema flag'
         );
 
-        // If no schema then just return because hopefully it means
-        //  we are still just waiting for the schema to load in
-        if (!hasLength(schemasToTest)) {
-            return;
-        }
-
-        // Make sure we have an object
-        if (!schemasToTest.every((schema) => isPlainObject(schema))) {
-            populateState(null, ['schema must be an object']);
-            return;
+        // TODO (infer - typing)
+        const modelSchemaSettings: any = {};
+        if (usingReadAndWriteSchema) {
+            if (
+                isPlainObject(spec.readSchema) &&
+                isPlainObject(spec.writeSchema)
+            ) {
+                modelSchemaSettings.readSchema = spec.readSchema;
+                modelSchemaSettings.writeSchema = spec.writeSchema;
+            } else {
+                populateState(null, [
+                    'read and write schemas must be an object',
+                ]);
+                return;
+            }
+        } else {
+            if (isPlainObject(spec.schema)) {
+                modelSchemaSettings.schema = spec.schema;
+            } else {
+                populateState(null, ['schema must be an object']);
+                return;
+            }
         }
 
         try {
-            // Run infer against schema
-            const responses = schemasToTest.map((schema) => {
-                return skim_collection_projections({
+            const skimProjectionResponse: SkimProjectionsResponse =
+                await skim_collection_projections({
                     collection: entityName,
                     model: {
-                        schema,
-                        // writeSchema: {},
-                        // readSchema: {},
+                        ...modelSchemaSettings,
                         projections,
                         key: collectionSpec.key,
                     },
                 });
-            });
 
-            console.log('projections', projections);
-            console.log('responses', responses);
+            let allResponsesValid = true;
 
-            // Make sure all the responses are valid
-            const allResponsesValid = responses.every((inferResponse) => {
-                const { projections } = inferResponse;
+            // Make sure there is a response
+            if (skimProjectionResponse.projections?.length === 0) {
+                populateState(null, ['no fields inferred from schema']);
+                allResponsesValid = false;
+            }
 
-                // Make sure there is a response
-                if (projections?.length === 0) {
-                    populateState(null, ['no fields inferred from schema']);
-                    return false;
-                }
-
-                // Make sure we did not ONLY get the root object back as a pointer
-                if (projections.length === 1 && projections[0].ptr === '') {
-                    populateState(null, [
-                        'no usable fields inferred from schema',
-                    ]);
-                    return false;
-                }
-
-                return true;
-            });
+            // Make sure we did not ONLY get the root object back as a pointer
+            if (
+                skimProjectionResponse.projections.length === 1 &&
+                skimProjectionResponse.projections[0].ptr === ''
+            ) {
+                populateState(null, ['no usable fields inferred from schema']);
+                allResponsesValid = false;
+            }
 
             if (!allResponsesValid) {
                 // This just returns because we already populated the state
@@ -376,7 +380,7 @@ const getInitialState = (
                 return;
             }
 
-            populateState(responses, null);
+            populateState(skimProjectionResponse, null);
         } catch (err: unknown) {
             populateState(null, [err as string]);
         }
