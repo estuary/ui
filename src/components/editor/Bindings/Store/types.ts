@@ -50,6 +50,7 @@ export interface BindingsEditorState {
     inferSchemaResponse: BuiltProjection[] | null;
     inferSchemaResponse_Keys: string[];
     inferSchemaResponseError: string[] | null;
+    inferSchemaResponseProcessingUpdate: boolean;
     inferSchemaResponseDoneProcessing: boolean;
     inferSchemaResponseEmpty: boolean;
     populateInferSchemaResponse: (

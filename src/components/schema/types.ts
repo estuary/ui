@@ -10,3 +10,9 @@ export interface AutoCompleteOptionForExistFilter {
     id: FieldFilter;
     label: string;
 }
+
+export interface ExistFilterProps {
+    fieldFilter: FieldFilter;
+    setFieldFilter: (value: FieldFilter) => void;
+    disabled?: boolean;
+}

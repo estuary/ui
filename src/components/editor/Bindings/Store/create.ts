@@ -101,6 +101,7 @@ const getInitialMiscData = (): Pick<
     | 'inferSchemaResponse'
     | 'inferSchemaResponseError'
     | 'inferSchemaResponseDoneProcessing'
+    | 'inferSchemaResponseProcessingUpdate'
     | 'inferSchemaResponseEmpty'
     | 'inferSchemaResponse_Keys'
     | 'incompatibleCollections'
@@ -119,6 +120,7 @@ const getInitialMiscData = (): Pick<
     inferSchemaResponse_Keys: [],
     inferSchemaResponseError: null,
     inferSchemaResponseDoneProcessing: false,
+    inferSchemaResponseProcessingUpdate: false,
     inferSchemaResponseEmpty: false,
     incompatibleCollections: [],
     hasIncompatibleCollections: false,

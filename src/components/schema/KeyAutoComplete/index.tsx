@@ -14,7 +14,7 @@ import {
 
 import { arrayMove } from '@dnd-kit/sortable';
 import { filter, orderBy } from 'lodash';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import {
     useBindingsEditorStore_inferSchemaResponse,
@@ -45,7 +45,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
     const [localCopyValue, setLocalCopyValue] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
 
-    // We only want to all edit during capture create/edit and derivation create.
+    // We only want to allow edit during capture create/edit and derivation create.
     const entityType = useEntityType();
     const editKeyAllowed =
         entityType === 'capture' || entityType === 'collection';
@@ -144,18 +144,16 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                             {...params}
                             disabled={inferSchemaResponseEmpty || disableInput}
                             error={showEditErrorState}
-                            helperText={
-                                inferSchemaResponseEmpty ? (
-                                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
-                                ) : noUsableKeys ? (
-                                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
-                                ) : (
-                                    <FormattedMessage id="schemaEditor.key.helper" />
-                                )
-                            }
-                            label={
-                                <FormattedMessage id="schemaEditor.key.label" />
-                            }
+                            helperText={intl.formatMessage({
+                                id: inferSchemaResponseEmpty
+                                    ? 'keyAutoComplete.noOptions.message'
+                                    : noUsableKeys
+                                      ? 'keyAutoComplete.noUsableKeys.message'
+                                      : 'schemaEditor.key.helper',
+                            })}
+                            label={intl.formatMessage({
+                                id: 'schemaEditor.key.label',
+                            })}
                             variant="standard"
                         />
                     );
@@ -212,14 +210,10 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                             getTagProps={getTagProps}
                             ownerState={ownerState}
                             onOrderChange={async (activeId, overId) => {
-                                const oldIndex =
-                                    localCopyValue.indexOf(activeId);
-                                const newIndex = localCopyValue.indexOf(overId);
-
                                 const updatedArray = arrayMove<string>(
                                     localCopyValue,
-                                    oldIndex,
-                                    newIndex
+                                    localCopyValue.indexOf(activeId), //old
+                                    localCopyValue.indexOf(overId) //new
                                 );
 
                                 setLocalCopyValue(updatedArray);

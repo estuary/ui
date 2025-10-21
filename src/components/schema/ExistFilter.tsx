@@ -1,5 +1,6 @@
 import type {
     AutoCompleteOptionForExistFilter,
+    ExistFilterProps,
     FieldFilter,
 } from 'src/components/schema/types';
 
@@ -9,13 +10,11 @@ import { useIntl } from 'react-intl';
 
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 
-interface Props {
-    fieldFilter: FieldFilter;
-    setFieldFilter: (value: FieldFilter) => void;
-    disabled?: boolean;
-}
-
-function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
+function ExistFilter({
+    fieldFilter,
+    setFieldFilter,
+    disabled,
+}: ExistFilterProps) {
     const intl = useIntl();
 
     const fieldOptions: AutoCompleteOptionForExistFilter[] = [
@@ -39,16 +38,18 @@ function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
         },
     ];
 
-    const [localValue, setLocalValue] = useState(
-        fieldOptions.find((datum) => datum.id === fieldFilter)
-    );
+    const findOption = (filterVal: FieldFilter) => {
+        return fieldOptions.find((datum) => datum.id === filterVal);
+    };
+
+    const [localValue, setLocalValue] = useState(findOption(fieldFilter));
 
     return (
         <AutocompletedField
             autocompleteSx={{ flexGrow: 1 }}
             changeHandler={(_, value) => {
                 setFieldFilter(value.id);
-                setLocalValue(value.id);
+                setLocalValue(value);
             }}
             defaultValue={localValue}
             label={intl.formatMessage({
