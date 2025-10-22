@@ -44,9 +44,9 @@ export const tableColumns: TableColumns[] = [
     },
 ];
 
-export const sortByField = (
-    a: { field: string; isKey: boolean },
-    b: { field: string; isKey: boolean },
+export const sortByStringProperty = (
+    a: { isKey: boolean; value: string },
+    b: { isKey: boolean; value: string },
     sortDirection: SortDirection
 ) => {
     // If a is not a key and b is then return >0 to put b first
@@ -59,11 +59,11 @@ export const sortByField = (
         return -1;
     }
 
-    const sortResult = compareInitialCharacterType(a.field, b.field);
+    const sortResult = compareInitialCharacterType(a.value, b.value);
 
     if (typeof sortResult === 'number') {
         return sortResult;
     }
 
-    return basicSort_string(a.field, b.field, sortDirection);
+    return basicSort_string(a.value, b.value, sortDirection);
 };

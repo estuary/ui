@@ -15,7 +15,7 @@ import FieldName from 'src/components/tables/cells/fieldSelection/FieldName';
 import FieldOutcome from 'src/components/tables/cells/fieldSelection/FieldOutcome';
 import {
     optionalColumnIntlKeys,
-    sortByField,
+    sortByStringProperty,
 } from 'src/components/tables/FieldSelection/shared';
 import {
     doubleElevationHoverBackground,
@@ -95,19 +95,25 @@ function Rows({ columnToSort, columns, data, sortDirection }: RowsProps) {
     //  different so we can have special control when sorting the fields
     //  in case we want to make more customizations
 
-    if (columnToSort === 'field') {
+    if (columnToSort === 'field' || columnToSort === 'ptr') {
         return (
             <>
                 {data
                     .sort((first, second) => {
-                        return sortByField(
+                        const fieldSort = columnToSort === 'field';
+
+                        return sortByStringProperty(
                             {
-                                field: first.field,
                                 isKey: first.isGroupByKey,
+                                value: fieldSort
+                                    ? first.field
+                                    : (first.projection?.ptr ?? ''),
                             },
                             {
-                                field: second.field,
                                 isKey: second.isGroupByKey,
+                                value: fieldSort
+                                    ? second.field
+                                    : (second.projection?.ptr ?? ''),
                             },
                             sortDirection
                         );
