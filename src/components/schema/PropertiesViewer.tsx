@@ -21,6 +21,8 @@ import { useEntityWorkflow } from 'src/context/Workflow';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 
 const EDITOR_HEIGHT = 404;
+const INFERRED_SCHEMA_REGEX =
+    /"flow:\/\/inferred-schema":\s*{[\s\S]*?^(\s{2})}/gm;
 
 function PropertiesViewer({ disabled, editorProps }: PropertiesViewerProps) {
     const intl = useIntl();
@@ -112,14 +114,18 @@ function PropertiesViewer({ disabled, editorProps }: PropertiesViewerProps) {
                             const content = model.getValue();
 
                             // Find the flow://inferred-schema section
-                            const regex =
-                                /"flow:\/\/inferred-schema":\s*{[\s\S]*?^(\s{2})}/gm;
-                            const matches = [...content.matchAll(regex)];
 
+                            const matches = [
+                                ...content.matchAll(INFERRED_SCHEMA_REGEX),
+                            ];
+
+                            // IModelDeltaDecoration
                             const decorations: any[] = [];
                             const readOnlyRanges: any[] = [];
 
                             matches.forEach((match) => {
+                                console.log('match', match);
+
                                 const startOffset = match.index ?? 0;
                                 const endOffset = startOffset + match[0].length;
 
@@ -136,15 +142,16 @@ function PropertiesViewer({ disabled, editorProps }: PropertiesViewerProps) {
                                     endColumn: endPosition.column,
                                 });
 
-                                // Add visual indicator (optional)
                                 decorations.push({
                                     range: new monaco.Range(
                                         startPosition.lineNumber,
-                                        startPosition.column,
+                                        0,
                                         endPosition.lineNumber,
                                         endPosition.column
                                     ),
                                     options: {
+                                        before: 'Before Text',
+                                        after: 'After Text',
                                         isWholeLine: true,
                                         className: 'read-only-content',
                                         glyphMarginClassName: 'read-only-glyph',
