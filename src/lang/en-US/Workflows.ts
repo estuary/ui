@@ -423,8 +423,6 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.table.filter.option.all': `All`,
     'schemaEditor.table.filter.option.must': `Must exist`,
     'schemaEditor.table.filter.option.may': `May exist`,
-    'schemaEditor.editing.disabled.title': `Editing disabled`,
-    'schemaEditor.editing.disabled.message': `To edit collections, disable "${optIntoDiscovery}" under "${autoDiscoverHeader}"`,
 
     'keyAutoComplete.keys.group.must': `Fields that always exist`,
     'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,

@@ -23,7 +23,6 @@ import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
 import { useProjectionsForSkim } from 'src/hooks/projections/useProjectionsForSkim';
-import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
 
@@ -58,7 +57,6 @@ function CollectionSchemaEditor({
     const populateInferSchemaResponse =
         useBindingsEditorStore_populateInferSchemaResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
-    const disableSchemaEditing = useDisableSchemaEditing();
 
     useEffect(() => {
         if (draftSpec?.spec && entityName) {
@@ -156,11 +154,11 @@ function CollectionSchemaEditor({
 
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
-                    disabled={!editModeEnabled || disableSchemaEditing}
+                    disabled={!editModeEnabled}
                     onChange={onKeyChange}
                 />
                 <PropertiesViewer
-                    disabled={!editModeEnabled || disableSchemaEditing}
+                    disabled={!editModeEnabled}
                     editorProps={{
                         localZustandScope,
                         onChange: onPropertiesViewerChange,

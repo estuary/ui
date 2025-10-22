@@ -6,7 +6,6 @@ import { useIntl } from 'react-intl';
 
 import ResourceConfig from 'src/components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
-import DisabledWarning from 'src/components/collection/schema/Editor/DisabledWarning';
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 import ControlledEditor from 'src/components/editor/Bindings/ControlledEditor';
 import SchemaEditCLIButton from 'src/components/editor/Bindings/SchemaEdit/CLIButton';
@@ -164,8 +163,6 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                     })}
                                 </Typography>
                             )}
-
-                            <DisabledWarning />
 
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (
