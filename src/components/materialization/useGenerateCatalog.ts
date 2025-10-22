@@ -123,6 +123,9 @@ function useGenerateCatalog() {
         useBinding_serverUpdateRequired();
     const prefillBindingDependentState =
         useBinding_prefillBindingDependentState();
+    const resetResourceConfigAddedMetadata = useBindingStore(
+        (state) => state.resetResourceConfigAddedMetadata
+    );
 
     const fullSourceConfigs = useBinding_fullSourceConfigs();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
@@ -316,6 +319,7 @@ function useGenerateCatalog() {
                               .config,
                 });
                 setPreviousEndpointConfig({ data: endpointConfigData });
+                resetResourceConfigAddedMetadata();
 
                 logRocketEvent(CustomEvents.DRAFT_ID_SET, {
                     newValue: evaluatedDraftId,
@@ -360,6 +364,7 @@ function useGenerateCatalog() {
             processedEntityName,
             resetEditorState,
             resetRediscoverySettings,
+            resetResourceConfigAddedMetadata,
             resourceConfigErrorsExist,
             resourceConfigServerUpdateRequired,
             resourceConfigs,

@@ -47,6 +47,7 @@ export interface ResourceConfig extends JsonFormsData {
         liveBindingIndex: number;
         liveBuiltBindingIndex: number;
         validatedBindingIndex: number;
+        added?: boolean;
         disable?: boolean;
         onIncompatibleSchemaChange?: string;
         previouslyDisabled?: boolean; // Used to store if the binding was disabled last time we loaded in bindings
@@ -188,6 +189,7 @@ export interface BindingState
         validationResponse: Schema | null,
         liveBuiltSpec: Schema | null
     ) => void;
+    resetResourceConfigAddedMetadata: () => void;
 
     resourceConfigErrorsExist: boolean;
     resourceConfigErrors: (string | undefined)[];

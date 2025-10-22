@@ -525,6 +525,7 @@ const getInitialState = (
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,
                         meta: {
+                            added: true,
                             bindingIndex: reducedBindingCount + index,
                             builtBindingIndex: -1,
                             collectionName,
@@ -839,6 +840,23 @@ const getInitialState = (
             }),
             false,
             'Rediscovery Related Settings Reset'
+        );
+    },
+
+    resetResourceConfigAddedMetadata: () => {
+        set(
+            produce((state: BindingState) => {
+                Object.entries(state.resourceConfigs).forEach(
+                    ([bindingUUID, config]) => {
+                        if (config.meta?.added) {
+                            state.resourceConfigs[bindingUUID].meta.added =
+                                false;
+                        }
+                    }
+                );
+            }),
+            false,
+            'Resource Config Added Metadata Reset'
         );
     },
 
@@ -1225,6 +1243,7 @@ const getInitialState = (
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
+                        added: targetResourceConfig.meta?.added,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
                         builtBindingIndex:
                             targetResourceConfig.meta.builtBindingIndex,
