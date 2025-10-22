@@ -47,13 +47,13 @@ export interface BindingsEditorState {
     schemaScope: 'schema' | 'read' | 'write';
     setSchemaScope: (vewVal: BindingsEditorState['schemaScope']) => void;
 
-    inferSchemaResponse: BuiltProjection[] | null;
-    inferSchemaResponse_Keys: string[];
-    inferSchemaResponseError: string[] | null;
-    inferSchemaResponseProcessingUpdate: boolean;
-    inferSchemaResponseDoneProcessing: boolean;
-    inferSchemaResponseEmpty: boolean;
-    populateInferSchemaResponse: (
+    skimProjectionResponse: BuiltProjection[] | null;
+    skimProjectionResponse_Keys: string[];
+    skimProjectionResponseError: string[] | null;
+    skimProjectionResponseProcessingUpdate: boolean;
+    skimProjectionDoneProcessing: boolean;
+    skimProjectionResponseEmpty: boolean;
+    populateSkimProjectionResponse: (
         value: any | undefined,
         entityName: string,
         projections: any

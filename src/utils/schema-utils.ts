@@ -1,5 +1,5 @@
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
-import type { InferSchemaResponse } from 'src/types';
+import type { SkimProjectionResponse } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
 
 // These are inserted by the server and never would make sense as keys
@@ -58,8 +58,8 @@ export const reduceBuiltProjections = (
     return acc;
 };
 
-export const filterInferSchemaResponse = (
-    schema: InferSchemaResponse | null
+export const filterSkimProjectionResponse = (
+    schema: SkimProjectionResponse | null
 ) => {
     const validKeys: string[] = [];
     let fields: BuiltProjection[] | null = null;

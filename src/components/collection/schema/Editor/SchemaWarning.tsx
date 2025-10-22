@@ -3,20 +3,21 @@ import { Collapse, Grid } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import {
-    useBindingsEditorStore_inferSchemaResponseEmpty,
-    useBindingsEditorStore_inferSchemaResponseError,
+    useBindingsEditorStore_skimProjectionResponseEmpty,
+    useBindingsEditorStore_skimProjectionResponseError,
 } from 'src/components/editor/Bindings/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
 
 function SchemaWarning() {
     const intl = useIntl();
 
-    const inferSchemaError = useBindingsEditorStore_inferSchemaResponseError();
-    const inferSchemaResponseEmpty =
-        useBindingsEditorStore_inferSchemaResponseEmpty();
+    const inferSchemaError =
+        useBindingsEditorStore_skimProjectionResponseError();
+    const skimProjectionResponseEmpty =
+        useBindingsEditorStore_skimProjectionResponseEmpty();
 
     const show = Boolean(
-        inferSchemaResponseEmpty ||
+        skimProjectionResponseEmpty ||
             (inferSchemaError && inferSchemaError.length > 0)
     );
 

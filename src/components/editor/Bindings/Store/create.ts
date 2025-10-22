@@ -17,7 +17,7 @@ import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
 import { BindingsEditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import {
-    filterInferSchemaResponse,
+    filterSkimProjectionResponse,
     hasReadAndWriteSchema,
 } from 'src/utils/schema-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
@@ -50,8 +50,8 @@ const evaluateCollectionData = async (
     }
 };
 
-// Used to properly populate the inferSchemaResponse related state
-const evaluateInferSchemaResponse = (
+// Used to properly populate the skimProjectionResponse related state
+const evaluateSkimProjectionResponse = (
     dataVal: SkimProjectionsResponse | null
 ) => {
     let errors: string[] = [];
@@ -65,7 +65,7 @@ const evaluateInferSchemaResponse = (
 
         // Go through all the data and grab the filtered values
         //  and put them into the lists
-        const response = filterInferSchemaResponse(dataVal);
+        const response = filterSkimProjectionResponse(dataVal);
         filteredKeys.push(response.validKeys);
         filteredFields.push(response.fields);
         errors = union(dataVal.errors);
@@ -98,12 +98,12 @@ const getInitialMiscData = (): Pick<
     | 'schemaUpdated'
     | 'schemaUpdating'
     | 'editModeEnabled'
-    | 'inferSchemaResponse'
-    | 'inferSchemaResponseError'
-    | 'inferSchemaResponseDoneProcessing'
-    | 'inferSchemaResponseProcessingUpdate'
-    | 'inferSchemaResponseEmpty'
-    | 'inferSchemaResponse_Keys'
+    | 'skimProjectionResponse'
+    | 'skimProjectionResponseError'
+    | 'skimProjectionDoneProcessing'
+    | 'skimProjectionResponseProcessingUpdate'
+    | 'skimProjectionResponseEmpty'
+    | 'skimProjectionResponse_Keys'
     | 'incompatibleCollections'
     | 'hasIncompatibleCollections'
     | 'hasReadAndWriteSchema'
@@ -116,12 +116,12 @@ const getInitialMiscData = (): Pick<
     schemaUpdated: true,
     schemaUpdating: false,
     editModeEnabled: false,
-    inferSchemaResponse: null,
-    inferSchemaResponse_Keys: [],
-    inferSchemaResponseError: null,
-    inferSchemaResponseDoneProcessing: false,
-    inferSchemaResponseProcessingUpdate: false,
-    inferSchemaResponseEmpty: false,
+    skimProjectionResponse: null,
+    skimProjectionResponse_Keys: [],
+    skimProjectionResponseError: null,
+    skimProjectionDoneProcessing: false,
+    skimProjectionResponseProcessingUpdate: false,
+    skimProjectionResponseEmpty: false,
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
     hasReadAndWriteSchema: null,
@@ -245,23 +245,23 @@ const getInitialState = (
         }
     },
 
-    populateInferSchemaResponse: async (spec, entityName, projections) => {
+    populateSkimProjectionResponse: async (spec, entityName, projections) => {
         const populateState = (
             dataVal: SkimProjectionsResponse | null,
-            errorVal: BindingsEditorState['inferSchemaResponseError']
+            errorVal: BindingsEditorState['skimProjectionResponseError']
         ) => {
             const { hasResponse, updatedVal, validKeys, errors } =
-                evaluateInferSchemaResponse(dataVal);
+                evaluateSkimProjectionResponse(dataVal);
 
             // Save the values into the store
             set(
                 produce((state: BindingsEditorState) => {
-                    state.inferSchemaResponseError = errorVal ?? errors;
-                    state.inferSchemaResponse = updatedVal;
-                    state.inferSchemaResponseEmpty = !hasResponse;
-                    state.inferSchemaResponse_Keys = validKeys;
-                    state.inferSchemaResponseDoneProcessing = true;
-                    state.inferSchemaResponseProcessingUpdate = false;
+                    state.skimProjectionResponseError = errorVal ?? errors;
+                    state.skimProjectionResponse = updatedVal;
+                    state.skimProjectionResponseEmpty = !hasResponse;
+                    state.skimProjectionResponse_Keys = validKeys;
+                    state.skimProjectionDoneProcessing = true;
+                    state.skimProjectionResponseProcessingUpdate = false;
                 }),
                 false,
                 'Inferred Schema Populated'
@@ -270,16 +270,16 @@ const getInitialState = (
 
         set(
             produce((state: BindingsEditorState) => {
-                if (state.inferSchemaResponseDoneProcessing) {
+                if (state.skimProjectionDoneProcessing) {
                     // TODO (infer) not being consumed right now
                     //  I _think_ this processes fast enough but not totally sure
-                    state.inferSchemaResponseProcessingUpdate = true;
+                    state.skimProjectionResponseProcessingUpdate = true;
                 } else {
-                    state.inferSchemaResponseDoneProcessing = false;
+                    state.skimProjectionDoneProcessing = false;
                 }
             }),
             false,
-            'Resetting inferSchemaDoneProcessing flag'
+            'Resetting skimProjectionDoneProcessing flag'
         );
 
         // If no schema then just return because hopefully it means

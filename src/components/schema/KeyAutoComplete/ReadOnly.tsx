@@ -3,9 +3,9 @@ import { Chip, Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import {
-    useBindingsEditorStore_inferSchemaResponse_Keys,
-    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
-    useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_skimProjectionDoneProcessing,
+    useBindingsEditorStore_skimProjectionResponse_Keys,
+    useBindingsEditorStore_skimProjectionResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
 import SchemaKeyHeader from 'src/components/schema/KeyAutoComplete/Header';
 import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
@@ -20,18 +20,18 @@ function ReadOnly({ value }: Props) {
     const intl = useIntl();
     const valueEmpty = !value || !hasLength(value);
 
-    const inferSchemaResponseEmpty =
-        useBindingsEditorStore_inferSchemaResponseEmpty();
+    const skimProjectionResponseEmpty =
+        useBindingsEditorStore_skimProjectionResponseEmpty();
 
-    const inferSchemaResponseDoneProcessing =
-        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
+    const skimProjectionDoneProcessing =
+        useBindingsEditorStore_skimProjectionDoneProcessing();
 
-    const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
+    const keys = useBindingsEditorStore_skimProjectionResponse_Keys();
 
     // TODO (collection editor) move these helper vars into the store
     const noUsableKeys = !hasLength(keys);
 
-    if (!inferSchemaResponseDoneProcessing) {
+    if (!skimProjectionDoneProcessing) {
         return (
             <Grid item xs={12}>
                 <SchemaKeyHeader />
@@ -105,7 +105,7 @@ function ReadOnly({ value }: Props) {
                 </Stack>
             )}
 
-            {inferSchemaResponseEmpty ? (
+            {skimProjectionResponseEmpty ? (
                 <AlertBox short severity="warning">
                     <FormattedMessage id="keyAutoComplete.noOptions.message" />
                 </AlertBox>

@@ -7,7 +7,7 @@ import { Box, Grid, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { useBindingsEditorStore_inferSchemaResponseEmpty } from 'src/components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_skimProjectionResponseEmpty } from 'src/components/editor/Bindings/Store/hooks';
 import MonacoEditor from 'src/components/editor/MonacoEditor';
 import ExistFilter from 'src/components/schema/ExistFilter';
 import SchemaSelector from 'src/components/schema/SchemaSelector';
@@ -31,8 +31,8 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
 
-    const inferSchemaResponseEmpty =
-        useBindingsEditorStore_inferSchemaResponseEmpty();
+    const skimProjectionResponseEmpty =
+        useBindingsEditorStore_skimProjectionResponseEmpty();
 
     const [fieldFilter, setFieldFilter] = useState<FieldFilter>('all');
 
@@ -62,7 +62,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                             <ExistFilter
                                 fieldFilter={fieldFilter}
                                 setFieldFilter={setFieldFilter}
-                                disabled={inferSchemaResponseEmpty}
+                                disabled={skimProjectionResponseEmpty}
                             />
                         </Box>
 

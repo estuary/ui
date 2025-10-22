@@ -390,17 +390,20 @@ export type ParsedStream =
     | 'cleanup'
     | 'activate';
 
-export interface InferSchemaResponse {
+export interface SkimProjectionResponse {
     errors: any[];
     projections: BuiltProjection[];
 }
 
 // These are the same right now but not sure that will always hold true
-export type SkimProjectionsResponse = InferSchemaResponse;
+export type SkimProjectionsResponse = {
+    errors: any[];
+    projections: BuiltProjection[];
+};
 
 export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
 
-export interface InferSchemaResponseProperty {
+export interface SkimProjectionResponseProperty {
     is_pattern_property: boolean;
     // https://github.com/estuary/flow/blob/db2cdd86825132ee7e0bcac8b432712ab5866c83/crates/doc/src/inference.rs#L1121
     exists: FieldExistence;

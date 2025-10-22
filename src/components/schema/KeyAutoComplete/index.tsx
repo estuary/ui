@@ -17,9 +17,9 @@ import { filter, orderBy } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import {
-    useBindingsEditorStore_inferSchemaResponse,
-    useBindingsEditorStore_inferSchemaResponse_Keys,
-    useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_skimProjectionResponse,
+    useBindingsEditorStore_skimProjectionResponse_Keys,
+    useBindingsEditorStore_skimProjectionResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
 import BasicOption from 'src/components/schema/KeyAutoComplete/options/Basic';
 import ReadOnly from 'src/components/schema/KeyAutoComplete/ReadOnly';
@@ -51,24 +51,25 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
         entityType === 'capture' || entityType === 'collection';
 
     // Need the response so we know the options
-    const inferSchemaResponseEmpty =
-        useBindingsEditorStore_inferSchemaResponseEmpty();
-    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
-    const validKeys = useBindingsEditorStore_inferSchemaResponse_Keys();
+    const skimProjectionResponseEmpty =
+        useBindingsEditorStore_skimProjectionResponseEmpty();
+    const skimProjectionResponse =
+        useBindingsEditorStore_skimProjectionResponse();
+    const validKeys = useBindingsEditorStore_skimProjectionResponse_Keys();
     const keys = useMemo(() => {
-        const inferSchemaResponses = inferSchemaResponse
-            ? Object.values(inferSchemaResponse)
+        const skimProjectionResponses = skimProjectionResponse
+            ? Object.values(skimProjectionResponse)
             : [];
 
         return orderBy(
-            filter(inferSchemaResponses, (field) =>
+            filter(skimProjectionResponses, (field) =>
                 keyIsValidOption(validKeys, field.ptr)
             ).reduce<BuiltProjection[]>(reduceBuiltProjections, []),
             // Order first by exists so groups do not duplicate in the dropdown
             ['inference.exists', 'inference.ptr'],
             ['desc', 'asc']
         );
-    }, [inferSchemaResponse, validKeys]);
+    }, [skimProjectionResponse, validKeys]);
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
@@ -80,7 +81,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
     const noUsableKeys = !hasLength(keys);
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
-    const showEditErrorState = inferSchemaResponseEmpty || noUsableKeys;
+    const showEditErrorState = skimProjectionResponseEmpty || noUsableKeys;
 
     // Loading state and we do not want to stop here if
     // the inferSchemaMissing error is hit because we'll handle
@@ -100,7 +101,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
         <Grid item xs={12}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
-                disabled={inferSchemaResponseEmpty}
+                disabled={skimProjectionResponseEmpty}
                 getOptionLabel={getValue}
                 groupBy={(option) => option.exists}
                 inputValue={inputValue}
@@ -142,10 +143,12 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                     return (
                         <TextField
                             {...params}
-                            disabled={inferSchemaResponseEmpty || disableInput}
+                            disabled={
+                                skimProjectionResponseEmpty || disableInput
+                            }
                             error={showEditErrorState}
                             helperText={intl.formatMessage({
-                                id: inferSchemaResponseEmpty
+                                id: skimProjectionResponseEmpty
                                     ? 'keyAutoComplete.noOptions.message'
                                     : noUsableKeys
                                       ? 'keyAutoComplete.noUsableKeys.message'
@@ -205,7 +208,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
-                            validateOptions={!inferSchemaResponseEmpty}
+                            validateOptions={!skimProjectionResponseEmpty}
                             values={tagValues}
                             getTagProps={getTagProps}
                             ownerState={ownerState}

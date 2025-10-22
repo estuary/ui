@@ -14,10 +14,10 @@ import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Edi
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_editModeEnabled,
-    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
-    useBindingsEditorStore_populateInferSchemaResponse,
+    useBindingsEditorStore_populateSkimProjectionResponse,
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
+    useBindingsEditorStore_skimProjectionDoneProcessing,
 } from 'src/components/editor/Bindings/Store/hooks';
 import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
@@ -52,10 +52,10 @@ function CollectionSchemaEditor({
 
     const setCollectionData = useBindingsEditorStore_setCollectionData();
 
-    const inferSchemaResponseDoneProcessing =
-        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
-    const populateInferSchemaResponse =
-        useBindingsEditorStore_populateInferSchemaResponse();
+    const skimProjectionDoneProcessing =
+        useBindingsEditorStore_skimProjectionDoneProcessing();
+    const populateSkimProjectionResponse =
+        useBindingsEditorStore_populateSkimProjectionResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
 
     useEffect(() => {
@@ -73,7 +73,7 @@ function CollectionSchemaEditor({
             //  if there is a read/write or just plain schema
 
             // TODO (skim) need to replace draft spec with live spec when editing
-            populateInferSchemaResponse(
+            populateSkimProjectionResponse(
                 draftSpec.spec,
                 entityName,
                 projections
@@ -87,7 +87,7 @@ function CollectionSchemaEditor({
         draftSpec?.spec,
         entityType,
         entityName,
-        populateInferSchemaResponse,
+        populateSkimProjectionResponse,
         projections,
         setCollectionData,
     ]);
@@ -126,7 +126,7 @@ function CollectionSchemaEditor({
     );
 
     if (draftSpec && entityName) {
-        if (!inferSchemaResponseDoneProcessing) {
+        if (!skimProjectionDoneProcessing) {
             return <CollectionSchemaEditorSkeleton />;
         }
         return (
