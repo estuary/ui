@@ -43,11 +43,14 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 spacing={2}
                 direction="row"
             >
-                <Typography variant="subtitle1" component="span">
-                    {intl.formatMessage({ id: 'schemaEditor.fields.label' })}
-                </Typography>
-
-                <SchemaSelector />
+                <Stack direction="row" spacing={1}>
+                    <Typography variant="subtitle1" component="span">
+                        {intl.formatMessage({
+                            id: 'schemaEditor.fields.label',
+                        })}
+                    </Typography>
+                    <SchemaSelector />
+                </Stack>
 
                 {disabled ? (
                     <Stack
