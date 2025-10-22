@@ -1,3 +1,4 @@
+import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor/types';
 import type { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/AutoComplete/DefaultProps';
 import type { BuiltProjectionInference } from 'src/types/schemaModels';
 
@@ -15,4 +16,9 @@ export interface ExistFilterProps {
     fieldFilter: FieldFilter;
     setFieldFilter: (value: FieldFilter) => void;
     disabled?: boolean;
+}
+
+export interface PropertiesViewerProps {
+    disabled: boolean;
+    editorProps?: Partial<MonacoEditorProps>;
 }

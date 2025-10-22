@@ -1,7 +1,9 @@
-import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor';
-import type { FieldFilter } from 'src/components/schema/types';
+import type {
+    FieldFilter,
+    PropertiesViewerProps,
+} from 'src/components/schema/types';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
 
@@ -14,18 +16,16 @@ import SchemaSelector from 'src/components/schema/SchemaSelector';
 import SchemaPropertiesTable from 'src/components/tables/Schema';
 import { optionalColumns } from 'src/components/tables/Schema/shared';
 import TableColumnSelector from 'src/components/tables/TableColumnSelector';
+import { codeBackgroundDisabled } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 
-interface Props {
-    disabled: boolean;
-    editorProps?: Partial<MonacoEditorProps>;
-}
-
 const EDITOR_HEIGHT = 404;
 
-function PropertiesViewer({ disabled, editorProps }: Props) {
+function PropertiesViewer({ disabled, editorProps }: PropertiesViewerProps) {
     const intl = useIntl();
+
+    const readOnlyDecorationsRef = useRef<any[]>([]);
 
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
@@ -37,9 +37,24 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
     const [fieldFilter, setFieldFilter] = useState<FieldFilter>('all');
 
     return (
-        <Grid item xs={12}>
+        <Grid
+            item
+            xs={12}
+            sx={{
+                [`& .monaco-editor-background .cdr.read-only-content`]: {
+                    backgroundColor: (theme) =>
+                        codeBackgroundDisabled[theme.palette.mode],
+                },
+                [`& .monaco-editor-background .read-only-glyph`]: {
+                    backgrounColor: (theme) =>
+                        codeBackgroundDisabled[theme.palette.mode],
+                },
+            }}
+        >
             <Stack
-                style={{ justifyContent: 'space-between' }}
+                sx={{
+                    justifyContent: 'space-between',
+                }}
                 spacing={2}
                 direction="row"
             >
@@ -84,6 +99,117 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 <MonacoEditor
                     localZustandScope
                     height={EDITOR_HEIGHT}
+                    onMount={(editorRef, monaco) => {
+                        // Function to mark read-only regions
+                        const updateReadOnlyRegions = () => {
+                            if (!editorRef || !editorRef.current) {
+                                return;
+                            }
+
+                            const model = editorRef.current.getModel();
+                            if (!model) return;
+
+                            const content = model.getValue();
+
+                            // Find the flow://inferred-schema section
+                            const regex =
+                                /"flow:\/\/inferred-schema":\s*{[\s\S]*?^(\s{2})}/gm;
+                            const matches = [...content.matchAll(regex)];
+
+                            const decorations: any[] = [];
+                            const readOnlyRanges: any[] = [];
+
+                            matches.forEach((match) => {
+                                const startOffset = match.index ?? 0;
+                                const endOffset = startOffset + match[0].length;
+
+                                const startPosition =
+                                    model.getPositionAt(startOffset);
+                                const endPosition =
+                                    model.getPositionAt(endOffset);
+
+                                // Store the range for validation
+                                readOnlyRanges.push({
+                                    startLineNumber: startPosition.lineNumber,
+                                    startColumn: startPosition.column,
+                                    endLineNumber: endPosition.lineNumber,
+                                    endColumn: endPosition.column,
+                                });
+
+                                // Add visual indicator (optional)
+                                decorations.push({
+                                    range: new monaco.Range(
+                                        startPosition.lineNumber,
+                                        startPosition.column,
+                                        endPosition.lineNumber,
+                                        endPosition.column
+                                    ),
+                                    options: {
+                                        isWholeLine: true,
+                                        className: 'read-only-content',
+                                        glyphMarginClassName: 'read-only-glyph',
+                                        hoverMessage: {
+                                            value: 'Read-only',
+                                        },
+                                    },
+                                });
+                            });
+
+                            // Apply decorations
+                            readOnlyDecorationsRef.current =
+                                model.deltaDecorations(
+                                    readOnlyDecorationsRef.current,
+                                    decorations
+                                );
+
+                            // Prevent edits in read-only regions
+                            editorRef.current.onDidChangeModelContent((e) => {
+                                const changes = e.changes;
+                                let shouldRevert = false;
+
+                                for (const change of changes) {
+                                    for (const range of readOnlyRanges) {
+                                        // Check if the change overlaps with a read-only range
+                                        if (
+                                            change.range.startLineNumber <=
+                                                range.endLineNumber &&
+                                            change.range.endLineNumber >=
+                                                range.startLineNumber
+                                        ) {
+                                            shouldRevert = true;
+                                            break;
+                                        }
+                                    }
+                                    if (shouldRevert) break;
+                                }
+
+                                if (shouldRevert && editorRef.current) {
+                                    // Revert the change
+                                    editorRef.current.executeEdits(
+                                        'read-only-check',
+                                        [
+                                            {
+                                                range: model.getFullModelRange(),
+                                                text: content,
+                                                forceMoveMarkers: true,
+                                            },
+                                        ]
+                                    );
+
+                                    // Show warning (optional)
+                                    console.warn(
+                                        'Cannot edit read-only section'
+                                    );
+                                } else {
+                                    // Update content reference for next validation
+                                    updateReadOnlyRegions();
+                                }
+                            });
+                        };
+
+                        // Initial setup
+                        updateReadOnlyRegions();
+                    }}
                     {...editorProps}
                 />
             )}

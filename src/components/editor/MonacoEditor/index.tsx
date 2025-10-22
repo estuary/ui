@@ -1,5 +1,6 @@
+import type { Monaco } from '@monaco-editor/react';
 import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import type { Entity } from 'src/types';
+import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -36,32 +37,12 @@ import {
     ICON_SIZE,
 } from 'src/utils/editor-utils';
 
-type EditorChangeHandler = (
-    newVal: any,
-    path: string,
-    specType: Entity,
-    scope?: string
-) => any;
-
-export interface MonacoEditorProps {
-    localZustandScope: boolean;
-    disabled?: boolean;
-    onChange?: EditorChangeHandler;
-    height?: number;
-    toolbarHeight?: number;
-    editorSchemaScope?: string; // Used to scope the schema editor
-    defaultLanguage?: 'json' | 'sql';
-    defaultValue?: string;
-    path?: string;
-    editorLabel?: string;
-    manuallySynced?: boolean;
-}
-
 function MonacoEditor({
     localZustandScope,
     disabled,
     height = DEFAULT_HEIGHT,
     onChange,
+    onMount,
     toolbarHeight = DEFAULT_TOOLBAR_HEIGHT,
     editorSchemaScope,
     defaultLanguage = 'json',
@@ -309,9 +290,16 @@ function MonacoEditor({
             // Fire off the debounced change to keep the server up to date
             debouncedChange(undoing);
         },
-        mount: (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+        mount: (
+            editor: monacoEditor.editor.IStandaloneCodeEditor,
+            monaco: Monaco
+        ) => {
             logRocketConsole('handlers:mount');
             editorRef.current = editor;
+            if (onMount && editorRef.current) {
+                logRocketConsole('handlers:mount');
+                onMount(editorRef, monaco);
+            }
         },
         merge: () => {
             setShowServerDiff(!showServerDiff);
