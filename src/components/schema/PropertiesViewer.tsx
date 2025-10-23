@@ -43,13 +43,16 @@ function PropertiesViewer({ disabled, editorProps }: PropertiesViewerProps) {
             item
             xs={12}
             sx={{
-                [`& .monaco-editor-background .cdr.read-only-content`]: {
+                [`& .cdr.read-only-content`]: {
                     backgroundColor: (theme) =>
                         codeBackgroundDisabled[theme.palette.mode],
                 },
-                [`& .monaco-editor-background .read-only-glyph`]: {
+                [`&  .read-only-glyph`]: {
                     backgrounColor: (theme) =>
                         codeBackgroundDisabled[theme.palette.mode],
+                },
+                [`& .cldr.read-only-line`]: {
+                    backgroundColor: (theme) => 'red',
                 },
             }}
         >
@@ -150,11 +153,11 @@ function PropertiesViewer({ disabled, editorProps }: PropertiesViewerProps) {
                                         endPosition.column
                                     ),
                                     options: {
-                                        before: 'Before Text',
-                                        after: 'After Text',
                                         isWholeLine: true,
                                         className: 'read-only-content',
                                         glyphMarginClassName: 'read-only-glyph',
+                                        linesDecorationsClassName:
+                                            'read-only-line',
                                         hoverMessage: {
                                             value: 'Read-only',
                                         },
