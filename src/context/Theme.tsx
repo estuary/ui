@@ -545,6 +545,11 @@ export const codeBackground = {
     dark: 'rgba(247, 249, 252, 0.05)',
 };
 
+export const codeBackgroundDisabled = {
+    light: sample_grey[200],
+    dark: 'rgba(247, 249, 252, 0.05)',
+};
+
 const expandedRowBgColor = {
     light: sample_grey[100],
     dark: 'rgba(247, 249, 252, 0.05)',

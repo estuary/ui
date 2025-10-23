@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import ResourceConfig from 'src/components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
-import DisabledWarning from 'src/components/collection/schema/Editor/DisabledWarning';
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 import ControlledEditor from 'src/components/editor/Bindings/ControlledEditor';
 import SchemaEditCLIButton from 'src/components/editor/Bindings/SchemaEdit/CLIButton';
@@ -40,6 +39,7 @@ interface Props {
 }
 
 function BindingsEditor({ itemType, readOnly = false }: Props) {
+    const intl = useIntl();
     const entityType = useEntityType();
 
     const initializeCollectionDraft = useInitializeCollectionDraft();
@@ -106,7 +106,9 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                         <Stack spacing={2}>
                             {schemaUpdateErrored ? (
                                 <AlertBox severity="warning" short>
-                                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError" />
+                                    {intl.formatMessage({
+                                        id: 'workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError',
+                                    })}
                                 </AlertBox>
                             ) : null}
 
@@ -116,15 +118,13 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                     severity={
                                         collectionInitializationAlert.severity
                                     }
-                                    title={
-                                        <FormattedMessage id="workflows.collectionSelector.error.title.editorInitialization" />
-                                    }
+                                    title={intl.formatMessage({
+                                        id: 'workflows.collectionSelector.error.title.editorInitialization',
+                                    })}
                                 >
-                                    <FormattedMessage
-                                        id={
-                                            collectionInitializationAlert.messageId
-                                        }
-                                    />
+                                    {intl.formatMessage({
+                                        id: collectionInitializationAlert.messageId,
+                                    })}
                                 </AlertBox>
                             ) : null}
 
@@ -140,9 +140,13 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                         variant="formSectionHeader"
                                         sx={{ mr: 1 }}
                                     >
-                                        <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                        {intl.formatMessage({
+                                            id: 'workflows.collectionSelector.header.collectionSchema',
+                                        })}
                                         <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
-                                            <FormattedMessage id="terms.documentation" />
+                                            {intl.formatMessage({
+                                                id: 'terms.documentation',
+                                            })}
                                         </ExternalLink>
                                     </Typography>
 
@@ -154,11 +158,11 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                 </Box>
                             ) : (
                                 <Typography variant="h6" sx={{ mr: 1 }}>
-                                    <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                    {intl.formatMessage({
+                                        id: 'workflows.collectionSelector.header.collectionSchema',
+                                    })}
                                 </Typography>
                             )}
-
-                            <DisabledWarning />
 
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (
@@ -183,26 +187,30 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                         <AlertBox
                             severity="warning"
                             short
-                            title={
-                                <FormattedMessage id="workflows.collectionSelector.error.title.missingCollectionSchema" />
-                            }
+                            title={intl.formatMessage({
+                                id: 'workflows.collectionSelector.error.title.missingCollectionSchema',
+                            })}
                         >
                             <Typography>
-                                <FormattedMessage
-                                    id="workflows.collectionSelector.error.message.missingCollectionSchema"
-                                    values={{
+                                {intl.formatMessage(
+                                    {
+                                        id: 'workflows.collectionSelector.error.message.missingCollectionSchema',
+                                    },
+                                    {
                                         itemType,
                                         entityType,
-                                    }}
-                                />
+                                    }
+                                )}
                             </Typography>
                             <Typography>
-                                <FormattedMessage
-                                    id="workflows.collectionSelector.error.fix.missingCollectionSchema"
-                                    values={{
+                                {intl.formatMessage(
+                                    {
+                                        id: 'workflows.collectionSelector.error.fix.missingCollectionSchema',
+                                    },
+                                    {
                                         itemType,
-                                    }}
-                                />
+                                    }
+                                )}
                             </Typography>
                         </AlertBox>
                     )}

@@ -4,6 +4,7 @@ import type { PostgrestError } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 export type fake = 'fake';
 
@@ -389,13 +390,20 @@ export type ParsedStream =
     | 'cleanup'
     | 'activate';
 
-export interface InferSchemaResponse {
-    properties: InferSchemaResponseProperty[];
+export interface SkimProjectionResponse {
+    errors: any[];
+    projections: BuiltProjection[];
 }
 
-export type FieldExistence = 'may' | 'must' | 'cannot' | 'implicit';
+// These are the same right now but not sure that will always hold true
+export type SkimProjectionsResponse = {
+    errors: any[];
+    projections: BuiltProjection[];
+};
 
-export interface InferSchemaResponseProperty {
+export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
+
+export interface SkimProjectionResponseProperty {
     is_pattern_property: boolean;
     // https://github.com/estuary/flow/blob/db2cdd86825132ee7e0bcac8b432712ab5866c83/crates/doc/src/inference.rs#L1121
     exists: FieldExistence;
@@ -407,11 +415,6 @@ export interface InferSchemaResponseProperty {
     name?: string;
     description?: string;
     string_format?: string;
-}
-
-export interface InferSchemaPropertyForRender
-    extends InferSchemaResponseProperty {
-    allowedToBeKey: boolean;
 }
 
 export interface AutoDiscoverySettings {

@@ -430,8 +430,6 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.table.filter.option.all': `All`,
     'schemaEditor.table.filter.option.must': `Must exist`,
     'schemaEditor.table.filter.option.may': `May exist`,
-    'schemaEditor.editing.disabled.title': `Editing disabled`,
-    'schemaEditor.editing.disabled.message': `To edit collections, disable "${optIntoDiscovery}" under "${autoDiscoverHeader}"`,
 
     'keyAutoComplete.keys.group.must': `Fields that always exist`,
     'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,
@@ -467,6 +465,8 @@ export const Workflows: Record<string, string> = {
     'projection.dialog.add.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
     'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
     'projection.error.alert.removalFailure': `Failed to update the server when removing field alias. Please try again.`,
+    'projection.error.alert.duplicate': `Field name already in use for "{duplicateLocation}"`,
+    'projection.error.alert.draftId': `draft ID or stored draft spec not found`,
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
