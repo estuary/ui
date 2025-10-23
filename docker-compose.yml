@@ -1,8 +1,8 @@
 # Used only for testing local like production
-# cannot run at the same time as `npm start` as they
-# use the same port.
+# To start run: `npm run build` and then `docker compose up`
+#  Not building inside docker so we don't have to mess with `git` access
+# Cannot run at the same time as `npm start` as they use the same port.
 
-version: '3.8'
 services:
     nginx:
         image: nginx:alpine
@@ -11,15 +11,4 @@ services:
         volumes:
             - ./public/nginx.conf:/etc/nginx/nginx.conf:ro
             - ./build:/usr/share/nginx/html:ro
-        depends_on:
-            - app
         restart: unless-stopped
-
-    app:
-        image: node:18-alpine
-        working_dir: /app
-        volumes:
-            - .:/app
-        command: npm run build
-        environment:
-            - NODE_ENV=production
