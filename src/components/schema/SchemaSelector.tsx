@@ -7,14 +7,24 @@ import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField
 
 const options = [
     {
-        description: 'When data is being read from collections',
+        description: 'Schema at materialization time',
         label: 'Read Schema',
         val: 'read',
     },
     {
-        description: 'When data is being written to collections',
+        description: 'Schema at capture time',
         label: 'Write Schema',
-        val: 'write',
+        val: 'flow://write-schema', // or flow://relaxed-write-schema
+    },
+    {
+        description: 'Schema controlled by flow',
+        label: 'Inferred Schema',
+        val: 'flow://inferred-schema',
+    },
+    {
+        description: 'Schema controlled by connector',
+        label: 'Connector Schema',
+        val: 'flow://connector-schema',
     },
 ];
 
