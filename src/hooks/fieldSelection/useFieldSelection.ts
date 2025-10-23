@@ -57,6 +57,19 @@ function useFieldSelection(bindingUUID: string, collectionName: string) {
                 require: {},
             };
 
+            const groupBy = Object.keys(selections).includes(bindingUUID)
+                ? selections[bindingUUID].groupBy.value.explicit
+                : [];
+
+            if (groupBy.length > 0) {
+                spec.bindings[bindingIndex].fields.groupBy = groupBy;
+            } else {
+                spec.bindings[bindingIndex].fields = omit(
+                    spec.bindings[bindingIndex].fields,
+                    'groupBy'
+                );
+            }
+
             const requiredFields: Pick<FieldSelection, 'field' | 'meta'>[] =
                 Object.entries(selections[bindingUUID].value)
                     .filter(

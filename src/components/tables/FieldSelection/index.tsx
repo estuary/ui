@@ -1,4 +1,7 @@
-import type { FieldSelectionTableProps } from 'src/components/tables/FieldSelection/types';
+import type {
+    ExpandedFieldSelection,
+    FieldSelectionTableProps,
+} from 'src/components/tables/FieldSelection/types';
 import type { SortDirection, TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -12,6 +15,7 @@ import { useUnmount } from 'react-use';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
 import ExcludeAllButton from 'src/components/fieldSelection/FieldActions/ExcludeAllButton';
+import GroupByKeys from 'src/components/fieldSelection/FieldActions/GroupByKeys';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import FieldFilter from 'src/components/tables/FieldSelection/FieldFilter';
@@ -31,6 +35,7 @@ import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 import { TableStatuses } from 'src/types';
+import { getExpandedFieldSelection } from 'src/utils/fieldSelection-utils';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 export default function FieldSelectionTable({
@@ -39,10 +44,8 @@ export default function FieldSelectionTable({
 }: FieldSelectionTableProps) {
     const intl = useIntl();
 
-    const selections = useBindingStore((state) =>
-        state.selections?.[bindingUUID]
-            ? Object.values(state.selections[bindingUUID].value)
-            : []
+    const selections: ExpandedFieldSelection[] = useBindingStore((state) =>
+        getExpandedFieldSelection(state.selections?.[bindingUUID])
     );
     const selectionsHydrating = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.hydrating
@@ -171,26 +174,44 @@ export default function FieldSelectionTable({
                     justifyContent: 'space-between',
                 }}
             >
-                <Tooltip
-                    placement="top-start"
-                    title={
-                        draftSpecAssetsMissing
-                            ? intl.formatMessage({
-                                  id: 'fieldSelection.table.empty.message',
-                              })
-                            : ''
-                    }
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    style={{ alignItems: 'center', paddingRight: 16 }}
                 >
-                    <span>
-                        <AlgorithmMenu
-                            handleClick={(recommended) => {
-                                setRecommendFields(bindingUUID, recommended);
-                                advanceHydrationStatus('HYDRATED', bindingUUID);
-                            }}
-                            disabled={loading || draftSpecAssetsMissing}
-                        />
-                    </span>
-                </Tooltip>
+                    <Tooltip
+                        placement="top-start"
+                        title={
+                            draftSpecAssetsMissing
+                                ? intl.formatMessage({
+                                      id: 'fieldSelection.table.empty.message',
+                                  })
+                                : ''
+                        }
+                    >
+                        <span>
+                            <AlgorithmMenu
+                                handleClick={(recommended) => {
+                                    setRecommendFields(
+                                        bindingUUID,
+                                        recommended
+                                    );
+                                    advanceHydrationStatus(
+                                        'HYDRATED',
+                                        bindingUUID
+                                    );
+                                }}
+                                disabled={loading || draftSpecAssetsMissing}
+                            />
+                        </span>
+                    </Tooltip>
+
+                    <GroupByKeys
+                        bindingUUID={bindingUUID}
+                        loading={loading}
+                        selections={selections}
+                    />
+                </Stack>
 
                 <Stack
                     direction="row"
@@ -250,10 +271,10 @@ export default function FieldSelectionTable({
                                 processedSelections &&
                                 processedSelections.length > 0 ? (
                                     <Rows
+                                        columnToSort={columnToSort}
                                         columns={columnsToShow}
                                         data={processedSelections}
                                         sortDirection={sortDirection}
-                                        columnToSort={columnToSort}
                                     />
                                 ) : null
                             }

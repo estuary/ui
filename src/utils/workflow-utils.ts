@@ -19,7 +19,7 @@ import type {
 } from 'src/types';
 import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
 
-import { isBoolean, isEmpty, isEqual } from 'lodash';
+import { isBoolean, isEmpty, isEqual, omit } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import { isDekafEndpointConfig } from 'src/utils/connector-utils';
@@ -199,6 +199,7 @@ export const generateTaskSpec = (
                 const resourceConfig = resourceConfigs[bindingUUID].data;
 
                 const {
+                    added,
                     bindingIndex,
                     collectionName,
                     disable,
@@ -234,6 +235,14 @@ export const generateTaskSpec = (
                             draftSpec.bindings[existingBindingIndex],
                             onIncompatibleSchemaChange
                         );
+
+                        // Remove the fields stanza from the drafted binding if it was reintroduced to the spec.
+                        if (added) {
+                            draftSpec.bindings[existingBindingIndex] = omit(
+                                draftSpec.bindings[existingBindingIndex],
+                                'fields'
+                            );
+                        }
 
                         // Set the value of the recommended flag of a new binding to that of `fieldsRecommended`.
                         if (liveBuiltBindingIndex === -1) {

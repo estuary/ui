@@ -1,5 +1,8 @@
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
-import type { FieldSelectionDictionary } from 'src/stores/Binding/slices/FieldSelection';
+import type {
+    FieldSelectionDictionary,
+    GroupKeyMetadata,
+} from 'src/stores/Binding/slices/FieldSelection';
 import type {
     MaterializationBinding,
     MaterializationBuiltBinding,
@@ -48,6 +51,7 @@ interface FieldSelectionValidationResponse {
 }
 
 export interface ValidationRequestMetadata {
+    groupByValue: GroupKeyMetadata;
     hasConflicts: boolean;
     recommended: boolean | number;
     selections: FieldSelectionDictionary;
@@ -272,6 +276,16 @@ export default function useValidateFieldSelection() {
                             );
 
                             validatedRequests.push({
+                                groupByValue: {
+                                    explicit: fieldStanza?.groupBy ?? [],
+                                    implicit:
+                                        builtBinding?.collection.key.map(
+                                            (key) =>
+                                                key.startsWith('/')
+                                                    ? key.slice(1)
+                                                    : key
+                                        ) ?? [],
+                                },
                                 hasConflicts: result.hasConflicts,
                                 recommended:
                                     fieldStanza?.recommended ??

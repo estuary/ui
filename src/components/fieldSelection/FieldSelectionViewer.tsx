@@ -9,6 +9,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import KeyChangeAlert from 'src/components/fieldSelection/FieldActions/GroupByKeys/KeyChangeAlert';
 import RefreshButton from 'src/components/fieldSelection/RefreshButton';
 import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
 import FieldSelectionTable from 'src/components/tables/FieldSelection';
@@ -147,6 +148,8 @@ function FieldSelectionViewer({
                             refresh={refresh}
                         />
                     </Stack>
+
+                    <KeyChangeAlert bindingUUID={bindingUUID} />
 
                     <RefreshStatus show={refreshRequired ? true : undefined} />
 
