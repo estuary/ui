@@ -10,7 +10,6 @@ import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hoo
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
-import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
@@ -20,10 +19,6 @@ const FieldsRecommendedUpdateWrapper = () => {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const workflow = useEntityWorkflow();
-
-    const setSelectionAlgorithm = useBindingStore(
-        (state) => state.setSelectionAlgorithm
-    );
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -44,7 +39,6 @@ const FieldsRecommendedUpdateWrapper = () => {
     useMount(() => {
         if (workflow === 'materialization_create') {
             setFieldsRecommended(1);
-            setSelectionAlgorithm('depthOne', undefined);
         }
     });
 

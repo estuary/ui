@@ -5,21 +5,14 @@ import { Box, Button, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import SaveButton from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/SaveButton';
-import { useBindingStore } from 'src/stores/Binding/Store';
 
 export default function MenuActions({
-    bindingUUID,
     close,
     disabled,
     handleClick,
+    selectionAlgorithm,
 }: MenuActionProps) {
     const intl = useIntl();
-
-    const selectionAlgorithm = useBindingStore((state) =>
-        bindingUUID
-            ? state.selections[bindingUUID].selectionAlgorithm
-            : state.selectionAlgorithm
-    );
 
     return (
         <Stack
@@ -40,7 +33,7 @@ export default function MenuActions({
                 close={close}
                 disabled={disabled}
                 handleClick={handleClick}
-                selectedAlgorithm={selectionAlgorithm}
+                selectionAlgorithm={selectionAlgorithm}
             />
         </Stack>
     );

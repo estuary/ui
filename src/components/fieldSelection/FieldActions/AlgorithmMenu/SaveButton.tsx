@@ -1,4 +1,4 @@
-import type { SaveButtonProps } from 'src/components/fieldSelection/types';
+import type { MenuActionProps } from 'src/components/fieldSelection/types';
 
 import { Button } from '@mui/material';
 
@@ -14,8 +14,8 @@ export default function SaveButton({
     close,
     disabled,
     handleClick,
-    selectedAlgorithm,
-}: SaveButtonProps) {
+    selectionAlgorithm,
+}: MenuActionProps) {
     const intl = useIntl();
 
     const formActive = useFormStateStore_isActive();
@@ -26,23 +26,23 @@ export default function SaveButton({
 
     return (
         <Button
-            disabled={disabled || formActive || !selectedAlgorithm}
+            disabled={disabled || formActive || !selectionAlgorithm}
             onClick={() => {
                 const recommendedFlag =
-                    selectedAlgorithm === 'depthZero'
+                    selectionAlgorithm === 'depthZero'
                         ? 0
-                        : selectedAlgorithm === 'depthOne'
+                        : selectionAlgorithm === 'depthOne'
                           ? 1
-                          : selectedAlgorithm === 'depthTwo'
+                          : selectionAlgorithm === 'depthTwo'
                             ? 2
-                            : selectedAlgorithm === 'depthUnlimited'
+                            : selectionAlgorithm === 'depthUnlimited'
                               ? true
                               : (fieldsRecommended ?? DEFAULT_RECOMMENDED_FLAG);
 
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
                     fieldsRecommended,
                     recommendedFlag,
-                    selectedAlgorithm,
+                    selectionAlgorithm,
                 });
 
                 handleClick(recommendedFlag);

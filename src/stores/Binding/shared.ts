@@ -315,7 +315,6 @@ export const stubBindingFieldSelection = (
                 },
                 hasConflicts: false,
                 hydrating: defaultStatus ? isHydrating(defaultStatus) : false,
-                selectionAlgorithm: null,
                 status: defaultStatus ?? 'HYDRATED',
                 validationFailed: false,
                 value: {},

@@ -7,8 +7,6 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-import { mapRecommendedValueToAlgorithm } from 'src/utils/fieldSelection-utils';
-
 export type HydrationStatus =
     | 'HYDRATED'
     | 'SERVER_UPDATE_REQUESTED'
@@ -47,7 +45,6 @@ export interface BindingFieldSelection {
     };
     hasConflicts: boolean;
     hydrating: boolean;
-    selectionAlgorithm: SelectionAlgorithm | null;
     status: HydrationStatus;
     validationFailed: boolean;
     value: FieldSelectionDictionary;
@@ -86,12 +83,6 @@ export interface StoreWithFieldSelection {
         serverUpdateFailed?: boolean
     ) => void;
     setExplicitGroupBy: (bindingUUID: string, targetKeys: string[]) => void;
-
-    selectionAlgorithm: SelectionAlgorithm | null;
-    setSelectionAlgorithm: (
-        value: BindingFieldSelection['selectionAlgorithm'],
-        bindingUUID: string | undefined
-    ) => void;
 
     searchQuery: string | null;
     setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
@@ -150,11 +141,10 @@ const setBindingHydrationStatus = (
 
 export const getInitialFieldSelectionData = (): Pick<
     StoreWithFieldSelection,
-    'recommendFields' | 'searchQuery' | 'selectionAlgorithm' | 'selections'
+    'recommendFields' | 'searchQuery' | 'selections'
 > => ({
     recommendFields: {},
     searchQuery: null,
-    selectionAlgorithm: null,
     selections: {},
 });
 
@@ -228,8 +218,6 @@ export const getStoreWithFieldSelectionSettings = (
                             },
                             hasConflicts,
                             hydrating: isHydrating(evaluatedStatus),
-                            selectionAlgorithm:
-                                mapRecommendedValueToAlgorithm(recommended),
                             status: evaluatedStatus,
                             validationFailed: false,
                             value: selections,
@@ -293,20 +281,6 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Search Query Set'
-        );
-    },
-
-    setSelectionAlgorithm: (value, bindingUUID) => {
-        set(
-            produce((state: StoreWithFieldSelection) => {
-                if (!bindingUUID) {
-                    state.selectionAlgorithm = value;
-                } else {
-                    state.selections[bindingUUID].selectionAlgorithm = value;
-                }
-            }),
-            false,
-            'Selection Algorithm Set'
         );
     },
 
