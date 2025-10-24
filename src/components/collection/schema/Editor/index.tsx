@@ -9,17 +9,19 @@ import { FormattedMessage } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
+import SkimProjectionErrors from 'src/components/collection/schema/Editor/SkimProjectionErrors';
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
     useBindingsEditorStore_editModeEnabled,
-    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
-    useBindingsEditorStore_populateInferSchemaResponse,
+    useBindingsEditorStore_populateSkimProjectionResponse,
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
+    useBindingsEditorStore_skimProjectionResponseDoneProcessing,
 } from 'src/components/editor/Bindings/Store/hooks';
 import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
+import { useProjectionsForSkim } from 'src/hooks/projections/useProjectionsForSkim';
 import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
@@ -40,6 +42,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         editorSchemaScope
     );
 
+    const projections = useProjectionsForSkim();
     const entityType = useEntityType();
 
     // We need to know the schema was updated so we can "reload" this section
@@ -50,10 +53,10 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
     const setCollectionData = useBindingsEditorStore_setCollectionData();
 
-    const inferSchemaResponseDoneProcessing =
-        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
-    const populateInferSchemaResponse =
-        useBindingsEditorStore_populateInferSchemaResponse();
+    const skimProjectionResponseDoneProcessing =
+        useBindingsEditorStore_skimProjectionResponseDoneProcessing();
+    const populateSkimProjectionResponse =
+        useBindingsEditorStore_populateSkimProjectionResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
     const disableSchemaEditing = useDisableSchemaEditing();
 
@@ -70,7 +73,11 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
             // Infer schema and pass in spec so the function can handle
             //  if there is a read/write or just plain schema
-            populateInferSchemaResponse(draftSpec.spec, entityName);
+            populateSkimProjectionResponse(
+                draftSpec.spec,
+                entityName,
+                projections
+            );
 
             // Need to keep the collection data updated so that the schema
             //  inference and CLI buttons work
@@ -80,8 +87,9 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         draftSpec?.spec,
         entityType,
         entityName,
-        populateInferSchemaResponse,
+        populateSkimProjectionResponse,
         setCollectionData,
+        projections,
     ]);
 
     // If the schema is updated via the scheme inference
@@ -118,26 +126,31 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     );
 
     if (draftSpec && entityName) {
-        if (!inferSchemaResponseDoneProcessing) {
+        if (!skimProjectionResponseDoneProcessing) {
             return <CollectionSchemaEditorSkeleton />;
         }
         return (
-            <Grid container>
+            <Grid container rowGap={2}>
                 {entityType === 'collection' ? null : (
-                    <Stack
-                        sx={{
-                            alignItems: 'start',
-                            alignContent: 'start',
-                            mb: 3,
-                        }}
-                    >
-                        <Typography variant="subtitle1" component="div">
-                            <FormattedMessage id="entityName.label" />
-                        </Typography>
+                    <Grid item xs={12}>
+                        <Stack
+                            sx={{
+                                alignItems: 'start',
+                                alignContent: 'start',
+                            }}
+                        >
+                            <Typography variant="subtitle1" component="div">
+                                <FormattedMessage id="entityName.label" />
+                            </Typography>
 
-                        <Typography sx={{ ml: 1.5 }}>{entityName}</Typography>
-                    </Stack>
+                            <Typography sx={{ ml: 1.5 }}>
+                                {entityName}
+                            </Typography>
+                        </Stack>
+                    </Grid>
                 )}
+
+                <SkimProjectionErrors />
 
                 <KeyAutoComplete
                     value={draftSpec.spec.key}

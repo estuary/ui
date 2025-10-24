@@ -8,9 +8,9 @@ import { Box, Table, TableContainer } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import {
-    useBindingsEditorStore_inferSchemaResponse,
-    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
-    useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_skimProjectionResponse,
+    useBindingsEditorStore_skimProjectionResponseDoneProcessing,
+    useBindingsEditorStore_skimProjectionResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
@@ -41,11 +41,12 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
     const [columnToSort, setColumnToSort] = useState('name');
 
-    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
+    const skimProjectionResponse =
+        useBindingsEditorStore_skimProjectionResponse();
     const inferSchemaDoneProcessing =
-        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
-    const inferSchemaResponseEmpty =
-        useBindingsEditorStore_inferSchemaResponseEmpty();
+        useBindingsEditorStore_skimProjectionResponseDoneProcessing();
+    const skimProjectionResponseEmpty =
+        useBindingsEditorStore_skimProjectionResponseEmpty();
 
     const handlers = {
         sortRequest: (_event: React.MouseEvent<unknown>, column: any) => {
@@ -61,7 +62,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
 
     useEffect(() => {
         if (inferSchemaDoneProcessing) {
-            if (inferSchemaResponse && inferSchemaResponse.length > 0) {
+            if (skimProjectionResponse && skimProjectionResponse.length > 0) {
                 setTableState({ status: TableStatuses.DATA_FETCHED });
             } else {
                 setTableState({ status: TableStatuses.NO_EXISTING_DATA });
@@ -69,19 +70,21 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
         } else {
             setTableState({ status: TableStatuses.LOADING });
         }
-    }, [inferSchemaDoneProcessing, inferSchemaResponse]);
+    }, [inferSchemaDoneProcessing, skimProjectionResponse]);
 
     const data = useMemo(() => {
-        if (inferSchemaResponseEmpty || !inferSchemaResponse) {
+        if (skimProjectionResponseEmpty || !skimProjectionResponse) {
             return [];
         }
 
         if (filter === 'ALL') {
-            return inferSchemaResponse;
+            return skimProjectionResponse;
         }
 
-        return inferSchemaResponse.filter((datum) => datum.exists === filter);
-    }, [filter, inferSchemaResponse, inferSchemaResponseEmpty]);
+        return skimProjectionResponse.filter(
+            (datum) => !datum.explicit && datum.inference.exists === filter
+        );
+    }, [filter, skimProjectionResponse, skimProjectionResponseEmpty]);
 
     const { tableSettings } = useDisplayTableColumns();
 
@@ -121,7 +124,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
                         columns={columnsToShow}
                         noExistingDataContentIds={{
                             header: 'schemaEditor.table.empty.header',
-                            message: inferSchemaResponseEmpty
+                            message: skimProjectionResponseEmpty
                                 ? 'schemaEditor.table.empty.message'
                                 : 'schemaEditor.table.empty.filtered.message',
                             disableDoclink: true,

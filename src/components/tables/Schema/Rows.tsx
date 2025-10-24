@@ -1,5 +1,5 @@
 import type { RowProps, RowsProps } from 'src/components/tables/Schema/types';
-import type { InferSchemaResponseProperty } from 'src/types';
+import type { SkimProjectionResponseProperty } from 'src/types';
 
 import { useMemo } from 'react';
 
@@ -107,13 +107,13 @@ function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
             <>
                 {data
                     .filter(
-                        (datum: InferSchemaResponseProperty) =>
+                        (datum: SkimProjectionResponseProperty) =>
                             datum.exists === 'MAY' || datum.exists === 'MUST'
                     )
                     .sort(
                         (
-                            first: InferSchemaResponseProperty,
-                            second: InferSchemaResponseProperty
+                            first: SkimProjectionResponseProperty,
+                            second: SkimProjectionResponseProperty
                         ) =>
                             basicSort_string(
                                 first.name ?? '',
@@ -123,7 +123,7 @@ function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
                     )
                     .map(
                         (
-                            record: InferSchemaResponseProperty,
+                            record: SkimProjectionResponseProperty,
                             index: number
                         ) => (
                             <Row
