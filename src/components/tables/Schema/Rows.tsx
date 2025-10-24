@@ -108,7 +108,7 @@ function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
                 {data
                     .filter(
                         (datum: InferSchemaResponseProperty) =>
-                            datum.exists === 'may' || datum.exists === 'must'
+                            datum.exists === 'MAY' || datum.exists === 'MUST'
                     )
                     .sort(
                         (

@@ -393,7 +393,7 @@ export interface InferSchemaResponse {
     properties: InferSchemaResponseProperty[];
 }
 
-export type FieldExistence = 'may' | 'must' | 'cannot' | 'implicit';
+export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
 
 export interface InferSchemaResponseProperty {
     is_pattern_property: boolean;

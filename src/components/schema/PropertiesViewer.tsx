@@ -36,7 +36,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
     const inferSchemaResponseEmpty =
         useBindingsEditorStore_inferSchemaResponseEmpty();
 
-    const [fieldFilter, setFieldFilter] = useState<FieldFilter>('all');
+    const [fieldFilter, setFieldFilter] = useState<FieldFilter>('ALL');
 
     return (
         <Grid

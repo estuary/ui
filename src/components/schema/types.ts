@@ -4,7 +4,7 @@ import type { InferSchemaResponseProperty } from 'src/types';
 export type OnChange =
     (typeof autoCompleteDefaults_Virtual_Multiple)['onChange'];
 
-export type FieldFilter = 'all' | InferSchemaResponseProperty['exists'];
+export type FieldFilter = 'ALL' | InferSchemaResponseProperty['exists'];
 
 export interface AutoCompleteOptionForExistFilter {
     id: FieldFilter;

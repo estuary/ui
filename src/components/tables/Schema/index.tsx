@@ -76,7 +76,7 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
             return [];
         }
 
-        if (filter === 'all') {
+        if (filter === 'ALL') {
             return inferSchemaResponse;
         }
 
