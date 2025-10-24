@@ -28,7 +28,7 @@ import {
     addOrRemoveSourceCapture,
     setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
-import { hasLength } from 'src/utils/misc-utils';
+import { hasLength, hasOwnProperty } from 'src/utils/misc-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -175,6 +175,7 @@ export const generateTaskSpec = (
         fullSource: FullSourceDictionary | null;
         sourceCaptureDefinition: SourceCaptureDef | null;
         specOnIncompatibleSchemaChange?: string;
+        defaultFieldsRecommended?: boolean;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)
@@ -321,6 +322,17 @@ export const generateTaskSpec = (
             draftSpec,
             options.specOnIncompatibleSchemaChange
         );
+
+        if (options.defaultFieldsRecommended) {
+            const targetSourceProperty = hasOwnProperty(
+                draftSpec,
+                'sourceCapture'
+            )
+                ? 'sourceCapture'
+                : 'source';
+
+            draftSpec[targetSourceProperty].fieldsRecommended = 1;
+        }
     }
 
     return draftSpec;

@@ -4,9 +4,11 @@ import { Box } from '@mui/material';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
+import { useMount } from 'react-use';
 
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import AlgorithmMenu from 'src/components/fieldSelection/FieldActions/AlgorithmMenu';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import useSourceSetting from 'src/hooks/sourceCapture/useSourceSetting';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -16,6 +18,7 @@ import { snackbarSettings } from 'src/utils/notification-utils';
 const FieldsRecommendedUpdateWrapper = () => {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+    const workflow = useEntityWorkflow();
 
     const persistedDraftId = useEditorStore_persistedDraftId();
 
@@ -32,6 +35,12 @@ const FieldsRecommendedUpdateWrapper = () => {
     const { currentSetting, updateSourceSetting } = useSourceSetting<
         boolean | number
     >('fieldsRecommended');
+
+    useMount(() => {
+        if (workflow === 'materialization_create') {
+            setFieldsRecommended(1);
+        }
+    });
 
     const storeUpdateRequired = useMemo(
         () => fieldsRecommended !== currentSetting,
