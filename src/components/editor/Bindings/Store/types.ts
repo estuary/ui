@@ -47,6 +47,7 @@ export interface BindingsEditorState {
     skimProjectionResponse_Keys: string[];
     skimProjectionResponseError: string[] | null;
     skimProjectionResponseDoneProcessing: boolean;
+    skimProjectionResponseProcessingUpdate: boolean;
     skimProjectionResponseEmpty: boolean;
     populateSkimProjectionResponse: (
         value: any | undefined,

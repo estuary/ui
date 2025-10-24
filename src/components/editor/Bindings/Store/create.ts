@@ -101,6 +101,7 @@ const getInitialMiscData = (): Pick<
     | 'skimProjectionResponse'
     | 'skimProjectionResponseError'
     | 'skimProjectionResponseDoneProcessing'
+    | 'skimProjectionResponseProcessingUpdate'
     | 'skimProjectionResponseEmpty'
     | 'skimProjectionResponse_Keys'
     | 'incompatibleCollections'
@@ -118,6 +119,7 @@ const getInitialMiscData = (): Pick<
     skimProjectionResponse_Keys: [],
     skimProjectionResponseError: null,
     skimProjectionResponseDoneProcessing: false,
+    skimProjectionResponseProcessingUpdate: false,
     skimProjectionResponseEmpty: false,
     incompatibleCollections: [],
     hasIncompatibleCollections: false,
@@ -136,9 +138,7 @@ const getInitialState = (
 
     setEditModeEnabled: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.editModeEnabled = value;
-            }),
+            (state) => ({ ...state, editModeEnabled: value }),
             false,
             'Edit Mode Enabled Set'
         );
@@ -146,9 +146,7 @@ const getInitialState = (
 
     setCollectionData: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.collectionData = value;
-            }),
+            (state) => ({ ...state, collectionData: value }),
             false,
             'Collection Data Set'
         );
@@ -156,9 +154,7 @@ const getInitialState = (
 
     setCollectionInitializationAlert: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.collectionInitializationAlert = value;
-            }),
+            (state) => ({ ...state, collectionInitializationAlert: value }),
             false,
             'Collection Initialization Alert Set'
         );
@@ -166,9 +162,7 @@ const getInitialState = (
 
     setCollectionInitializationDone: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.collectionInitializationDone = value;
-            }),
+            (state) => ({ ...state, collectionInitializationDone: value }),
             false,
             'Collection Initialization Done Set'
         );
@@ -176,9 +170,10 @@ const getInitialState = (
 
     setIncompatibleCollections: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.incompatibleCollections = value;
-                state.hasIncompatibleCollections = hasLength(value);
+            (state) => ({
+                ...state,
+                incompatibleCollections: value,
+                hasIncompatibleCollections: hasLength(value),
             }),
             false,
             'Incompatible Collections List Set'
@@ -187,9 +182,7 @@ const getInitialState = (
 
     setSchemaUpdateErrored: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.schemaUpdateErrored = value;
-            }),
+            (state) => ({ ...state, schemaUpdateErrored: value }),
             false,
             'Schema Update Errored Set'
         );
@@ -197,9 +190,7 @@ const getInitialState = (
 
     setSchemaUpdated: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.schemaUpdated = value;
-            }),
+            (state) => ({ ...state, schemaUpdated: value }),
             false,
             'Schema Updated Set'
         );
@@ -207,9 +198,7 @@ const getInitialState = (
 
     setSchemaUpdating: (value) => {
         set(
-            produce((state: BindingsEditorState) => {
-                state.schemaUpdating = value;
-            }),
+            (state) => ({ ...state, schemaUpdating: value }),
             false,
             'Schema Updating Set'
         );
@@ -262,6 +251,7 @@ const getInitialState = (
                     state.skimProjectionResponseEmpty = !hasResponse;
                     state.skimProjectionResponse_Keys = validKeys;
                     state.skimProjectionResponseDoneProcessing = true;
+                    state.skimProjectionResponseProcessingUpdate = false;
                 }),
                 false,
                 'Inferred Schema Populated'
@@ -270,10 +260,16 @@ const getInitialState = (
 
         set(
             produce((state: BindingsEditorState) => {
-                state.skimProjectionResponseDoneProcessing = false;
+                if (state.skimProjectionResponseDoneProcessing) {
+                    // TODO (infer) not being consumed right now
+                    //  I _think_ this processes fast enough but not totally sure
+                    state.skimProjectionResponseProcessingUpdate = true;
+                } else {
+                    state.skimProjectionResponseDoneProcessing = false;
+                }
             }),
             false,
-            'Resetting inferSchemaDoneProcessing flag'
+            'Resetting skimProjectionDoneProcessing flag'
         );
 
         // If no schema then just return because hopefully it means
@@ -330,20 +326,12 @@ const getInitialState = (
                     },
                 });
 
-            let allResponsesValid = true;
-
             // Make sure we did not ONLY get the root object back as a pointer
             if (
                 skimProjectionResponse.projections.length === 1 &&
                 skimProjectionResponse.projections[0].ptr === ''
             ) {
                 populateState(null, ['no usable fields inferred from schema']);
-                allResponsesValid = false;
-            }
-
-            if (!allResponsesValid) {
-                // This just returns because we already populated the state
-                //  in the above loop
                 return;
             }
 

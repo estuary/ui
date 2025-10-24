@@ -22,9 +22,6 @@ function SkimProjectionErrors() {
                 skimProjectionResponseError.length > 0)
     );
 
-    console.log('show', show);
-    console.log('skimProjectionResponseError', skimProjectionResponseError);
-
     return (
         <Grid
             item

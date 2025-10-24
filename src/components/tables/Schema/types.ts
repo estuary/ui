@@ -1,14 +1,10 @@
 import type { FieldFilter } from 'src/components/schema/types';
-import type {
-    Schema,
-    SkimProjectionResponseProperty,
-    SortDirection,
-    TableColumns,
-} from 'src/types';
+import type { Schema, SortDirection, TableColumns } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 export interface RowProps {
     columns: TableColumns[];
-    row: SkimProjectionResponseProperty;
+    row: BuiltProjection;
 }
 
 export interface RowsProps {

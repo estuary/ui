@@ -397,25 +397,6 @@ export interface SkimProjectionResponse {
 
 export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
 
-export interface SkimProjectionResponseProperty {
-    is_pattern_property: boolean;
-    // https://github.com/estuary/flow/blob/db2cdd86825132ee7e0bcac8b432712ab5866c83/crates/doc/src/inference.rs#L1121
-    exists: FieldExistence;
-    title: string;
-    reduction: string;
-    pointer: string;
-    types: string[];
-    enum_vals: any[];
-    name?: string;
-    description?: string;
-    string_format?: string;
-}
-
-export interface InferSchemaPropertyForRender
-    extends SkimProjectionResponseProperty {
-    allowedToBeKey: boolean;
-}
-
 export interface AutoDiscoverySettings {
     addNewBindings: boolean;
     evolveIncompatibleCollections: boolean;
