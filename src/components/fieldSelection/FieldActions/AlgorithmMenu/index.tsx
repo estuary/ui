@@ -1,4 +1,4 @@
-import type { AlgorithmMenuProps } from 'src/components/fieldSelection/types';
+import type { BaseMenuProps } from 'src/components/fieldSelection/types';
 
 import { useState } from 'react';
 
@@ -17,10 +17,11 @@ import {
 } from 'src/context/Theme';
 
 const AlgorithmMenu = ({
+    bindingUUID,
     disabled,
     handleClick,
     targetFieldsRecommended,
-}: AlgorithmMenuProps) => {
+}: BaseMenuProps) => {
     const intl = useIntl();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -76,11 +77,12 @@ const AlgorithmMenu = ({
                     targetFieldsRecommended={targetFieldsRecommended}
                 />
 
-                <MenuOptions />
+                <MenuOptions bindingUUID={bindingUUID} />
 
                 <Divider style={{ marginTop: 4, marginBottom: 12 }} />
 
                 <MenuActions
+                    bindingUUID={bindingUUID}
                     close={closeMenu}
                     disabled={disabled}
                     handleClick={handleClick}

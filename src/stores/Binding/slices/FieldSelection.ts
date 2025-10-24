@@ -7,6 +7,8 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
+import { mapRecommendedValueToAlgorithm } from 'src/utils/fieldSelection-utils';
+
 export type HydrationStatus =
     | 'HYDRATED'
     | 'SERVER_UPDATE_REQUESTED'
@@ -45,6 +47,7 @@ export interface BindingFieldSelection {
     };
     hasConflicts: boolean;
     hydrating: boolean;
+    selectionAlgorithm: SelectionAlgorithm | null;
     status: HydrationStatus;
     validationFailed: boolean;
     value: FieldSelectionDictionary;
@@ -86,7 +89,8 @@ export interface StoreWithFieldSelection {
 
     selectionAlgorithm: SelectionAlgorithm | null;
     setSelectionAlgorithm: (
-        value: StoreWithFieldSelection['selectionAlgorithm']
+        value: BindingFieldSelection['selectionAlgorithm'],
+        bindingUUID: string | undefined
     ) => void;
 
     searchQuery: string | null;
@@ -224,6 +228,8 @@ export const getStoreWithFieldSelectionSettings = (
                             },
                             hasConflicts,
                             hydrating: isHydrating(evaluatedStatus),
+                            selectionAlgorithm:
+                                mapRecommendedValueToAlgorithm(recommended),
                             status: evaluatedStatus,
                             validationFailed: false,
                             value: selections,
@@ -290,10 +296,14 @@ export const getStoreWithFieldSelectionSettings = (
         );
     },
 
-    setSelectionAlgorithm: (value) => {
+    setSelectionAlgorithm: (value, bindingUUID) => {
         set(
             produce((state: StoreWithFieldSelection) => {
-                state.selectionAlgorithm = value;
+                if (!bindingUUID) {
+                    state.selectionAlgorithm = value;
+                } else {
+                    state.selections[bindingUUID].selectionAlgorithm = value;
+                }
             }),
             false,
             'Selection Algorithm Set'

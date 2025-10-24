@@ -3,6 +3,7 @@ import type { ExpandedFieldSelection } from 'src/components/tables/FieldSelectio
 import type {
     BindingFieldSelection,
     FieldSelectionDictionary,
+    SelectionAlgorithm,
 } from 'src/stores/Binding/slices/FieldSelection';
 import type {
     BaseMaterializationFields,
@@ -130,3 +131,25 @@ export const getExpandedFieldSelection = (
                         ),
           }))
         : [];
+
+export const mapRecommendedValueToAlgorithm = (
+    value: boolean | number | null | undefined
+): SelectionAlgorithm | null => {
+    switch (value) {
+        case 0: {
+            return 'depthZero';
+        }
+        case 1: {
+            return 'depthOne';
+        }
+        case 2: {
+            return 'depthTwo';
+        }
+        case true: {
+            return 'depthUnlimited';
+        }
+        default: {
+            return null;
+        }
+    }
+};

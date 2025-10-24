@@ -1,3 +1,4 @@
+import type { MenuOptionsProps } from 'src/components/fieldSelection/types';
 import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 
 import { RadioGroup } from '@mui/material';
@@ -7,11 +8,13 @@ import { useIntl } from 'react-intl';
 import RadioMenuItem from 'src/components/shared/RadioMenuItem';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
-export default function MenuOptions() {
+export default function MenuOptions({ bindingUUID }: MenuOptionsProps) {
     const intl = useIntl();
 
-    const selectionAlgorithm = useBindingStore(
-        (state) => state.selectionAlgorithm
+    const selectionAlgorithm = useBindingStore((state) =>
+        bindingUUID
+            ? state.selections[bindingUUID].selectionAlgorithm
+            : state.selectionAlgorithm
     );
     const setSelectionAlgorithm = useBindingStore(
         (state) => state.setSelectionAlgorithm
@@ -20,7 +23,10 @@ export default function MenuOptions() {
     return (
         <RadioGroup
             onChange={(event) =>
-                setSelectionAlgorithm(event.target.value as SelectionAlgorithm)
+                setSelectionAlgorithm(
+                    event.target.value as SelectionAlgorithm,
+                    bindingUUID
+                )
             }
             value={selectionAlgorithm}
             style={{ maxWidth: 320, textWrap: 'wrap' }}
