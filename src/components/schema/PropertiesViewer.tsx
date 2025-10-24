@@ -16,7 +16,6 @@ import SchemaSelector from 'src/components/schema/SchemaSelector';
 import SchemaPropertiesTable from 'src/components/tables/Schema';
 import { optionalColumns } from 'src/components/tables/Schema/shared';
 import TableColumnSelector from 'src/components/tables/TableColumnSelector';
-import { codeBackgroundDisabled } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 
@@ -35,23 +34,7 @@ function PropertiesViewer({ disabled, editorProps }: PropertiesViewerProps) {
     const [fieldFilter, setFieldFilter] = useState<FieldFilter>('all');
 
     return (
-        <Grid
-            item
-            xs={12}
-            sx={{
-                [`& .cdr.read-only-content`]: {
-                    backgroundColor: (theme) =>
-                        codeBackgroundDisabled[theme.palette.mode],
-                },
-                [`&  .read-only-glyph`]: {
-                    backgrounColor: (theme) =>
-                        codeBackgroundDisabled[theme.palette.mode],
-                },
-                [`& .cldr.read-only-line`]: {
-                    backgroundColor: (theme) => 'red',
-                },
-            }}
-        >
+        <Grid item xs={12}>
             <Stack
                 sx={{
                     justifyContent: 'space-between',
