@@ -50,11 +50,6 @@ export interface MenuActionProps extends BaseMenuProps {
     selectionAlgorithm: SelectionAlgorithm | null;
 }
 
-export interface MenuHeaderProps {
-    headerId: string;
-    targetFieldsRecommended?: boolean;
-}
-
 export interface MenuOptionsProps {
     selectionAlgorithm: SelectionAlgorithm | null;
     setSelectionAlgorithm: Dispatch<SetStateAction<SelectionAlgorithm | null>>;
