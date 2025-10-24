@@ -55,7 +55,9 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
         useBindingsEditorStore_skimProjectionResponseEmpty();
     const skimProjectionResponse =
         useBindingsEditorStore_skimProjectionResponse();
-    const validKeys = useBindingsEditorStore_skimProjectionResponse_Keys();
+    const skimProjectionResponse_Keys =
+        useBindingsEditorStore_skimProjectionResponse_Keys();
+
     const keys = useMemo(() => {
         const skimProjectionResponses = skimProjectionResponse
             ? Object.values(skimProjectionResponse)
@@ -63,13 +65,13 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
 
         return orderBy(
             filter(skimProjectionResponses, (field) =>
-                keyIsValidOption(validKeys, field.ptr)
+                keyIsValidOption(skimProjectionResponse_Keys, field.ptr)
             ).reduce<BuiltProjection[]>(reduceBuiltProjections, []),
             // Order first by exists so groups do not duplicate in the dropdown
             ['inference.exists', 'inference.ptr'],
             ['desc', 'asc']
         );
-    }, [skimProjectionResponse, validKeys]);
+    }, [skimProjectionResponse, skimProjectionResponse_Keys]);
 
     // Make sure we keep our local copy up to date
     useEffect(() => {

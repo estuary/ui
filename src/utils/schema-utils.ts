@@ -5,7 +5,12 @@ import type { BuiltProjection } from 'src/types/schemaModels';
 import { isEmpty } from 'lodash';
 
 // These are inserted by the server and never would make sense as keys
-const invalidKeyPointers = ['/_meta/uuid', '/_meta/flow_truncated'];
+//  Make sure you lowercase these
+const invalidKeyPointers = [
+    '/_meta/uuid',
+    '/_meta/flow_truncated',
+    '/_meta/inferredschemaisnotavailable',
+];
 const canPointerBeUsedAsKey = (pointer: string | null | undefined) => {
     return (
         pointer &&
@@ -47,6 +52,8 @@ const isValidKey = (inference: any, pointer?: any) => {
 
     const inferredTypes: string[] = inference.types;
 
+    console.log('pointer', pointer);
+
     return Boolean(
         // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
         inference.exists !== 'CANNOT' &&
@@ -64,13 +71,13 @@ export const isValidCollectionKey = (inference: any | undefined): boolean => {
 };
 
 const filterSkimProjectionResponse = (
-    schema: SkimProjectionResponse | null
+    skimProjectionResponse: SkimProjectionResponse | null
 ) => {
     const validKeys: string[] = [];
     let fields: BuiltProjection[] | null = null;
 
-    if (schema) {
-        const { projections } = schema;
+    if (skimProjectionResponse) {
+        const { projections } = skimProjectionResponse;
 
         fields = projections
             .filter(
