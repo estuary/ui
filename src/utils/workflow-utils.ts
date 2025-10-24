@@ -26,9 +26,10 @@ import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
     addOrRemoveSourceCapture,
+    getSourceCapturePropKey,
     setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
-import { hasLength, hasOwnProperty } from 'src/utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 
 // This is the soft limit we recommend to users
 export const MAX_BINDINGS = 300;
@@ -324,12 +325,7 @@ export const generateTaskSpec = (
         );
 
         if (options.defaultFieldsRecommended) {
-            const targetSourceProperty = hasOwnProperty(
-                draftSpec,
-                'sourceCapture'
-            )
-                ? 'sourceCapture'
-                : 'source';
+            const targetSourceProperty = getSourceCapturePropKey(draftSpec);
 
             draftSpec[targetSourceProperty].fieldsRecommended = 1;
         }
