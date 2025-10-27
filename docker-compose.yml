@@ -1,7 +1,18 @@
 # Used only for testing local like production
-# To start run: `npm run build` and then `docker compose up`
-#  Not building inside docker so we don't have to mess with `git` access
+# Not building inside docker so we don't have to mess with `git` access
 # Cannot run at the same time as `npm start` as they use the same port.
+
+# First - build with npm outside of docker
+# Options
+#   prod: `npm run build`
+#   dev: `npm run build -- --mode development`
+#       When dev building you have to update `connect-src` with:
+#           http://localhost:5431
+#           http://localhost:8675
+#           https://flow.localhost:9000
+
+# Second - start up docker
+#   run: `docker compose up`
 
 services:
     nginx:
