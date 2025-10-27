@@ -36,8 +36,9 @@ export interface FieldListProps {
     sticky?: boolean;
 }
 
-export interface FieldNameProps extends BaseFieldOutcomeProps {
+export interface FieldNameProps {
     field: string;
+    outcome: FieldOutcome;
 }
 
 export interface FieldOutputProps {

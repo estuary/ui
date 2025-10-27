@@ -1,4 +1,4 @@
-import { Chip, Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
+import { Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -10,6 +10,7 @@ import {
 import SchemaKeyHeader from 'src/components/schema/KeyAutoComplete/Header';
 import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
 import AlertBox from 'src/components/shared/AlertBox';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
@@ -80,9 +81,10 @@ function ReadOnly({ value }: Props) {
                                 dense
                                 sx={{ px: 0.5, width: 'auto' }}
                             >
-                                <Chip
-                                    label={key}
+                                <OutlinedChip
                                     color={!validOption ? 'error' : undefined}
+                                    label={key}
+                                    variant="outlined"
                                 />
                             </ListItem>
                         );

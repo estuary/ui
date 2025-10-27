@@ -152,6 +152,7 @@ const getInitialState = (
                                         bindingIndex,
                                         builtBindingIndex: -1,
                                         collectionName,
+                                        liveBindingIndex: -1,
                                         liveBuiltBindingIndex: -1,
                                         validatedBindingIndex: -1,
                                     },
@@ -170,6 +171,11 @@ const getInitialState = (
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(state, sortedResourceConfigs);
+
+                state.selections = stubBindingFieldSelection(
+                    state.selections,
+                    Object.keys(state.resourceConfigs)
+                );
             }),
             false,
             'Empty bindings added'
@@ -388,6 +394,9 @@ const getInitialState = (
                             state.backfilledBindings.push(UUID);
                         }
 
+                        state.resourceConfigs[UUID].meta.liveBindingIndex =
+                            liveBindingIndex;
+
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                         if (state.collectionMetadata?.[collection]) {
                             // This condition only exists as a safeguard in the event this action
@@ -438,7 +447,9 @@ const getInitialState = (
                 state.selections = stubBindingFieldSelection(
                     state.selections,
                     bindingUUIDs,
-                    requestFieldValidation ? 'SERVER_UPDATING' : undefined
+                    requestFieldValidation ? 'SERVER_UPDATING' : undefined,
+                    sortedResourceConfigs,
+                    liveBindings
                 );
             }),
             false,
@@ -514,9 +525,11 @@ const getInitialState = (
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,
                         meta: {
+                            added: true,
                             bindingIndex: reducedBindingCount + index,
                             builtBindingIndex: -1,
                             collectionName,
+                            liveBindingIndex: -1,
                             liveBuiltBindingIndex: -1,
                             validatedBindingIndex: -1,
                             // When adding default this so the first click on the binding
@@ -827,6 +840,23 @@ const getInitialState = (
             }),
             false,
             'Rediscovery Related Settings Reset'
+        );
+    },
+
+    resetResourceConfigAddedMetadata: () => {
+        set(
+            produce((state: BindingState) => {
+                Object.entries(state.resourceConfigs).forEach(
+                    ([bindingUUID, config]) => {
+                        if (config.meta?.added) {
+                            state.resourceConfigs[bindingUUID].meta.added =
+                                false;
+                        }
+                    }
+                );
+            }),
+            false,
+            'Resource Config Added Metadata Reset'
         );
     },
 
@@ -1213,10 +1243,13 @@ const getInitialState = (
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
+                        added: targetResourceConfig.meta?.added,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
                         builtBindingIndex:
                             targetResourceConfig.meta.builtBindingIndex,
                         collectionName: targetCollection,
+                        liveBindingIndex:
+                            targetResourceConfig.meta.liveBindingIndex,
                         liveBuiltBindingIndex:
                             targetResourceConfig.meta.liveBuiltBindingIndex,
                         validatedBindingIndex:

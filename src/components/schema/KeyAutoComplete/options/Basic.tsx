@@ -9,21 +9,25 @@ interface Props {
 
 function BasicOption({ pointer, types }: Props) {
     return (
-        <Stack component="span" direction="row" spacing={1}>
+        <Stack direction="row" style={{ alignItems: 'center' }}>
             <Typography
                 component="span"
                 sx={{
                     ...truncateTextSx,
+                    fontWeight: 500,
+                    marginBottom: '4px',
                 }}
             >
                 {pointer}
             </Typography>
+
             <Typography
                 component="span"
-                variant="body2"
-                sx={{
-                    fontFamily: 'Monospace',
+                style={{
+                    fontFamily: 'monospace',
+                    marginLeft: 8,
                 }}
+                variant="body2"
             >
                 [{types.join(', ')}]
             </Typography>

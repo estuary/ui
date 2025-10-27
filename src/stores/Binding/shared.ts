@@ -28,7 +28,7 @@ import {
 import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
 import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
 import { populateErrors } from 'src/stores/utils';
-import { hasLength } from 'src/utils/misc-utils';
+import { hasLength, hasOwnProperty } from 'src/utils/misc-utils';
 import { formatCaptureInterval } from 'src/utils/time-utils';
 import { getCollectionName, getDisableProps } from 'src/utils/workflow-utils';
 
@@ -197,6 +197,7 @@ const getResourceConfig = (
             bindingIndex,
             builtBindingIndex: -1,
             collectionName,
+            liveBindingIndex: -1,
             liveBuiltBindingIndex: -1,
             onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,
             validatedBindingIndex: -1,
@@ -282,13 +283,36 @@ export const updateBackfilledBindingState = (
 export const stubBindingFieldSelection = (
     existingSelections: BindingFieldSelectionDictionary,
     bindingUUIDs: string[],
-    defaultStatus?: HydrationStatus
+    defaultStatus?: HydrationStatus,
+    resourceConfigs?: ResourceConfigDictionary,
+    liveBindings?: Schema[]
 ): BindingFieldSelectionDictionary => {
     const selections: BindingFieldSelectionDictionary = {};
 
     bindingUUIDs.forEach((bindingUUID) => {
         if (!existingSelections?.[bindingUUID]) {
+            let liveGroupByKey: string[] = [];
+
+            if (resourceConfigs && liveBindings && liveBindings.length > 0) {
+                const liveBindingIndex = hasOwnProperty(
+                    resourceConfigs,
+                    bindingUUID
+                )
+                    ? resourceConfigs[bindingUUID].meta.liveBindingIndex
+                    : -1;
+
+                liveGroupByKey =
+                    liveBindingIndex > -1
+                        ? (liveBindings[liveBindingIndex]?.fields?.groupBy ??
+                          [])
+                        : [];
+            }
+
             selections[bindingUUID] = {
+                groupBy: {
+                    liveGroupByKey,
+                    value: { explicit: [], implicit: [] },
+                },
                 hasConflicts: false,
                 hydrating: defaultStatus ? isHydrating(defaultStatus) : false,
                 status: defaultStatus ?? 'HYDRATED',

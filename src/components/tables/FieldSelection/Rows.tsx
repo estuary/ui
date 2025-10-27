@@ -1,24 +1,27 @@
 import type {
+    ExpandedFieldSelection,
     RowProps,
     RowsProps,
 } from 'src/components/tables/FieldSelection/types';
-import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
-import { TableCell, TableRow } from '@mui/material';
+import { Stack, TableCell, TableRow } from '@mui/material';
 
+import { Key } from 'iconoir-react';
 import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import FieldActions from 'src/components/tables/cells/fieldSelection/FieldActions';
 import FieldName from 'src/components/tables/cells/fieldSelection/FieldName';
 import FieldOutcome from 'src/components/tables/cells/fieldSelection/FieldOutcome';
-import { optionalColumnIntlKeys } from 'src/components/tables/FieldSelection/shared';
+import {
+    optionalColumnIntlKeys,
+    sortByStringProperty,
+} from 'src/components/tables/FieldSelection/shared';
 import {
     doubleElevationHoverBackground,
     wrappingTableBodyCell,
 } from 'src/context/Theme';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
-import { basicSort_string } from 'src/utils/misc-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ columns, row }: RowProps) {
@@ -38,11 +41,17 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            <FieldName
-                bindingUUID={currentBindingUUID}
-                field={row.field}
-                outcome={row.outcome}
-            />
+            {row.isGroupByKey ? (
+                <TableCell>
+                    <Stack style={{ alignItems: 'center' }}>
+                        <Key />
+                    </Stack>
+                </TableCell>
+            ) : (
+                <TableCell />
+            )}
+
+            <FieldName field={row.field} outcome={row.outcome} />
 
             {pointerColumnVisible ? (
                 <TableCell sx={wrappingTableBodyCell}>
@@ -86,18 +95,30 @@ function Rows({ columnToSort, columns, data, sortDirection }: RowsProps) {
     //  different so we can have special control when sorting the fields
     //  in case we want to make more customizations
 
-    if (columnToSort === 'field') {
+    if (columnToSort === 'field' || columnToSort === 'ptr') {
         return (
             <>
                 {data
-                    .sort((first: FieldSelection, second: FieldSelection) =>
-                        basicSort_string(
-                            first.field,
-                            second.field,
+                    .sort((first, second) => {
+                        const fieldSort = columnToSort === 'field';
+
+                        return sortByStringProperty(
+                            {
+                                isKey: first.isGroupByKey,
+                                value: fieldSort
+                                    ? first.field
+                                    : (first.projection?.ptr ?? ''),
+                            },
+                            {
+                                isKey: second.isGroupByKey,
+                                value: fieldSort
+                                    ? second.field
+                                    : (second.projection?.ptr ?? ''),
+                            },
                             sortDirection
-                        )
-                    )
-                    .map((record: FieldSelection, index: number) => (
+                        );
+                    })
+                    .map((record: ExpandedFieldSelection, index: number) => (
                         <Row
                             columns={columns}
                             row={record}

@@ -175,6 +175,8 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
     'fieldSelection.error.serverUpdateFailed': `Field selection update failed`,
     'fieldSelection.error.validationFailed': `Field selection validation failed for {collection}.`,
+    'fieldSelection.error.groupBySaveFailed': `Group-by key update failed for {collection}.`,
+    'fieldSelection.error.genericTerm.binding': `a binding`,
     'fieldSelection.table.cta.excludeAll': `Exclude All`,
     'fieldSelection.table.cta.excludeField': `Exclude`,
     'fieldSelection.table.cta.requireField': `Require`,
@@ -236,6 +238,14 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.outcomeButton.select.header.conflict': `A reason to include this field is:`,
     'fieldSelection.outcomeButton.tooltip': `Click to view outcome`,
     'fieldSelection.outcomeButton.tooltip.conflict': `Click to review conflict`,
+    'fieldSelection.cta.groupBy': `Group By`,
+    'fieldSelection.groupBy.header': `Configure Materialization Group-By`,
+    'fieldSelection.groupBy.description': `Select an ordered subset of scalar fields which will be grouped over. If not specified, the key of the source collection will be used.`,
+    'fieldSelection.groupBy.label.field': `Group By`,
+    'fieldSelection.groupBy.label.explicitKeys': `The source collection is currently keyed by:`,
+    'fieldSelection.groupBy.label.implicitKeys': `The source collection is naturally keyed by:`,
+    'fieldSelection.groupBy.tooltip.implicitKey': `This field is a key of the source collection.`,
+    'fieldSelection.groupBy.alert.backfillRequired': `Editing the group-by key may result in a backfill of this binding.`,
 
     // Messages from binding editing
     'updateBinding.error.noBinding': `Unable to update the proper binding. Contact Support.`,
