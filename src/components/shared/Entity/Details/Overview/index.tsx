@@ -9,7 +9,6 @@ import { DataPreview } from 'src/components/collection/DataPreview';
 import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
 import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
-import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import Usage from 'src/components/shared/Entity/Details/Usage';
 import ShardInformation from 'src/components/shared/Entity/Shard/Information';
 import { useEntityType } from 'src/context/EntityContext';
@@ -50,12 +49,6 @@ function Overview({ name }: DetailsOverviewProps) {
                     loading={!Boolean(latestLiveSpec)}
                 />
             </Grid>
-
-            {!isCollection && entityName ? (
-                <Grid item xs={12}>
-                    <NotificationSettings taskName={entityName} />
-                </Grid>
-            ) : null}
 
             {/* The grid item below exists when no children are present which creates 16 pixels of vertical padding. */}
             {!isCollection ? (

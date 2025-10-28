@@ -26,7 +26,7 @@ function AlertEditButton({ prefix }: Props) {
             </Button>
 
             <AlertSubscriptionDialog
-                headerId="admin.alerts.dialog.update.header"
+                headerId="alerts.config.dialog.update.header"
                 open={open}
                 setOpen={setOpen}
                 staticPrefix={prefix}

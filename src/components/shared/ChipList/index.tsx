@@ -11,6 +11,7 @@ import { useCollapsableList } from 'src/styledComponents/chips/useCollapsableLis
 function ChipList({
     values,
     disabled,
+    forceTooltip,
     maxChips,
     stripPath,
     sx,
@@ -55,6 +56,7 @@ function ChipList({
                         key={`chipList_${el.display}-${index}`}
                         disabled={disabled}
                         stripPath={stripPath ?? true}
+                        forceTooltip={forceTooltip ?? false}
                     />
                 );
             })}

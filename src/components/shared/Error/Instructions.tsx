@@ -5,7 +5,7 @@ import { Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
+import { showAsTechnicalDifficulties } from 'src/services/shared';
 
 interface Props {
     message: string;
@@ -17,7 +17,8 @@ interface Props {
 //      network issues Q4 2023
 function Instructions({ linkOptions, message }: Props) {
     const intl = useIntl();
-    const messageIntlKey = checkErrorMessage(FAILED_TO_FETCH, message)
+
+    const messageIntlKey = showAsTechnicalDifficulties(message)
         ? 'error.reason.fetchFailed'
         : null;
 

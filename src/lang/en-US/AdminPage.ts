@@ -116,18 +116,6 @@ export const AdminPage: Record<string, string> = {
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
     'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
-    'admin.alerts.header': `Organization Notifications`,
-    'admin.alerts.table.aria.label': `Organization Notifications Table`,
-    'admin.alerts.cta.addAlertMethod': `Configure Notifications`,
-    'admin.alerts.dialog.description': `Choose where you'd like notifications to be sent. To add an email address, select from the list of admin user emails or enter custom email addresses as a comma separated list.`,
-    'admin.alerts.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
-    'admin.alerts.dialog.generate.header': `Configure Notification Methods`,
-    'admin.alerts.dialog.update.header': `Update Notification Methods`,
-    'admin.alerts.table.filterLabel': `Filter by Prefix or Email`,
-    'admin.alerts.table.noContent.header': `No subscriptions found.`,
-    'admin.alerts.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
-    'admin.alerts.table.label.alertMethod': `Notification Method`,
-
     'admin.dataPlanes.private.option': `Private`,
     'admin.dataPlanes.public.option': `Public`,
 
@@ -143,6 +131,7 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.table.filterLabel': `Filter by Name or Reactor Address`,
 
     'admin.tabs.users': `Account Access`,
+    'admin.tabs.notifications': `Notifications`,
     'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,

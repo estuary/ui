@@ -11,11 +11,10 @@ import {
     useTheme,
 } from '@mui/material';
 
-import Editor from '@monaco-editor/react';
 import { NavArrowDown } from 'iconoir-react';
 
+import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import { defaultOutline } from 'src/context/Theme';
-import { unescapeString } from 'src/utils/misc-utils';
 
 export default function ControllerAlert({
     error,
@@ -51,21 +50,7 @@ export default function ControllerAlert({
 
             <AccordionDetails>
                 <Box sx={{ height: 100 }}>
-                    <Editor
-                        defaultLanguage=""
-                        theme={
-                            theme.palette.mode === 'light' ? 'vs' : 'vs-dark'
-                        }
-                        options={{
-                            lineNumbers: 'off',
-                            readOnly: true,
-                            scrollBeyondLastLine: false,
-                            minimap: {
-                                enabled: false,
-                            },
-                        }}
-                        value={unescapeString(error.detail)}
-                    />
+                    <ServerErrorDetail val={error.detail} />
                 </Box>
             </AccordionDetails>
         </Accordion>
