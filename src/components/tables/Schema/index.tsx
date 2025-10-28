@@ -73,12 +73,15 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     }, [inferSchemaDoneProcessing, skimProjectionResponse]);
 
     const data = useMemo(() => {
+        // We can filter out all `explicit` to prevent duplicates.
+        //  The projection hook ensures they are still shown where they should be.
+
         if (skimProjectionResponseEmpty || !skimProjectionResponse) {
             return [];
         }
 
         if (filter === 'ALL') {
-            return skimProjectionResponse;
+            return skimProjectionResponse.filter((datum) => !datum.explicit);
         }
 
         return skimProjectionResponse.filter(
