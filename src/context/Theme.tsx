@@ -964,7 +964,7 @@ const themeSettings = createTheme({
                         width: '100%',
                         zIndex: buttonHoverIndex,
                     },
-                    '& .MuiChip-deleteIcon': {
+                    '& .MuiChip-deleteIcon, button': {
                         zIndex: chipDeleteIndex,
                     },
                 },

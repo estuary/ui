@@ -3,24 +3,22 @@ import type { DirectiveProps } from 'src/directives/types';
 
 import { useState } from 'react';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
 
 import { submitDirective } from 'src/api/directives';
 import RegistrationProgress from 'src/app/guards/RegistrationProgress';
-import AlertBox from 'src/components/shared/AlertBox';
+import BetaWarningAndError from 'src/components/transformation/create/BetaWarningAndError';
 import Actions from 'src/directives/Actions';
 import OrganizationNameField from 'src/directives/Onboard/OrganizationName';
 import {
     useOnboardingStore_nameInvalid,
-    useOnboardingStore_nameMissing,
     useOnboardingStore_requestedTenant,
     useOnboardingStore_resetState,
     useOnboardingStore_setNameMissing,
+    useOnboardingStore_setServerError,
     useOnboardingStore_setSurveyMissing,
-    useOnboardingStore_surveyMissing,
     useOnboardingStore_surveyResponse,
 } from 'src/directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'src/directives/Onboard/Survey';
@@ -49,24 +47,19 @@ const submit_onboard = async (
 };
 
 const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
-    const intl = useIntl();
-
     const { jobStatusPoller } = useJobStatusPoller();
 
     // Onboarding Store
     const requestedTenant = useOnboardingStore_requestedTenant();
     const nameInvalid = useOnboardingStore_nameInvalid();
-    const nameMissing = useOnboardingStore_nameMissing();
     const setNameMissing = useOnboardingStore_setNameMissing();
-    const surveyMissing = useOnboardingStore_surveyMissing();
     const setSurveyMissing = useOnboardingStore_setSurveyMissing();
-
     const surveyResponse = useOnboardingStore_surveyResponse();
     const resetOnboardingState = useOnboardingStore_resetState();
+    const setServerError = useOnboardingStore_setServerError();
 
     const [nameTaken, setNameTaken] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [serverError, setServerError] = useState<string | null>(null);
 
     const handlers = {
         submit: async (event: any) => {
@@ -170,53 +163,7 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
 
                 <HeaderMessage isRegister />
 
-                {serverError ? (
-                    <Box>
-                        <AlertBox
-                            severity="error"
-                            short
-                            title={intl.formatMessage({
-                                id: 'common.fail',
-                            })}
-                        >
-                            {serverError}
-                        </AlertBox>
-                    </Box>
-                ) : null}
-
-                {nameMissing || surveyMissing || nameInvalid ? (
-                    <Box>
-                        <AlertBox
-                            short
-                            severity="error"
-                            title={<FormattedMessage id="error.title" />}
-                        >
-                            {nameMissing ? (
-                                <Typography>
-                                    {intl.formatMessage({
-                                        id: 'tenant.errorMessage.empty',
-                                    })}
-                                </Typography>
-                            ) : null}
-
-                            {nameInvalid ? (
-                                <Typography>
-                                    {intl.formatMessage({
-                                        id: 'tenant.errorMessage.invalid',
-                                    })}
-                                </Typography>
-                            ) : null}
-
-                            {surveyMissing ? (
-                                <Typography>
-                                    {intl.formatMessage({
-                                        id: 'tenant.origin.errorMessage.empty',
-                                    })}
-                                </Typography>
-                            ) : null}
-                        </AlertBox>
-                    </Box>
-                ) : null}
+                <BetaWarningAndError />
             </Stack>
 
             <form noValidate onSubmit={handlers.submit}>

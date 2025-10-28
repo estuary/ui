@@ -38,6 +38,13 @@ export const useOnboardingStore_nameMissing = () => {
     >(OnboardingStoreNames.GENERAL, (state) => state.nameMissing);
 };
 
+export const useOnboardingStore_nameProblematic = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['nameProblematic']
+    >(OnboardingStoreNames.GENERAL, (state) => state.nameProblematic);
+};
+
 export const useOnboardingStore_setNameMissing = () => {
     return useLocalZustandStore<
         OnboardingState,
@@ -59,13 +66,6 @@ export const useOnboardingStore_setSurveyMissing = () => {
     >(OnboardingStoreNames.GENERAL, (state) => state.setSurveyMissing);
 };
 
-export const useOnboardingStore_surveyOptionOther = () => {
-    return useLocalZustandStore<
-        OnboardingState,
-        OnboardingState['surveyOptionOther']
-    >(OnboardingStoreNames.GENERAL, (state) => state.surveyOptionOther);
-};
-
 export const useOnboardingStore_surveyResponse = () => {
     return useLocalZustandStore<
         OnboardingState,
@@ -85,4 +85,18 @@ export const useOnboardingStore_resetState = () => {
         OnboardingStoreNames.GENERAL,
         (state) => state.resetState
     );
+};
+
+export const useOnboardingStore_serverError = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['serverError']
+    >(OnboardingStoreNames.GENERAL, (state) => state.serverError);
+};
+
+export const useOnboardingStore_setServerError = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['setServerError']
+    >(OnboardingStoreNames.GENERAL, (state) => state.setServerError);
 };
