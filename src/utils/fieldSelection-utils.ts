@@ -153,3 +153,26 @@ export const mapRecommendedValueToAlgorithm = (
         }
     }
 };
+
+export const mapAlgorithmToRecommendedValue = (
+    value: SelectionAlgorithm | null | undefined,
+    fieldsRecommended: boolean | number | undefined
+): boolean | number => {
+    switch (value) {
+        case 'depthZero': {
+            return 0;
+        }
+        case 'depthOne': {
+            return 1;
+        }
+        case 'depthTwo': {
+            return 2;
+        }
+        case 'depthUnlimited': {
+            return true;
+        }
+        default: {
+            return fieldsRecommended ?? DEFAULT_RECOMMENDED_FLAG;
+        }
+    }
+};

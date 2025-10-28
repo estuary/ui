@@ -8,7 +8,7 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
+import { mapAlgorithmToRecommendedValue } from 'src/utils/fieldSelection-utils';
 
 export default function SaveButton({
     close,
@@ -28,16 +28,10 @@ export default function SaveButton({
         <Button
             disabled={disabled || formActive || !selectionAlgorithm}
             onClick={() => {
-                const recommendedFlag =
-                    selectionAlgorithm === 'depthZero'
-                        ? 0
-                        : selectionAlgorithm === 'depthOne'
-                          ? 1
-                          : selectionAlgorithm === 'depthTwo'
-                            ? 2
-                            : selectionAlgorithm === 'depthUnlimited'
-                              ? true
-                              : (fieldsRecommended ?? DEFAULT_RECOMMENDED_FLAG);
+                const recommendedFlag = mapAlgorithmToRecommendedValue(
+                    selectionAlgorithm,
+                    fieldsRecommended
+                );
 
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
                     fieldsRecommended,
