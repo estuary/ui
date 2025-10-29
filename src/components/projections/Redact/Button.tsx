@@ -6,13 +6,13 @@ import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import EditProjectionDialog from 'src/components/projections/Edit/Dialog';
+import RedactFieldDialog from 'src/components/projections/Redact/Dialog';
 
-function EditProjectionButton({
+const RedactFieldButton = ({
     disabled,
     field,
     pointer,
-}: BaseProjectionButtonProps) {
+}: BaseProjectionButtonProps) => {
     const intl = useIntl();
 
     const [open, setOpen] = useState(false);
@@ -31,10 +31,10 @@ function EditProjectionButton({
                 size="small"
                 variant="outlined"
             >
-                {intl.formatMessage({ id: 'cta.rename' })}
+                {intl.formatMessage({ id: 'cta.redact' })}
             </Button>
 
-            <EditProjectionDialog
+            <RedactFieldDialog
                 field={field}
                 open={open}
                 setOpen={setOpen}
@@ -42,6 +42,6 @@ function EditProjectionButton({
             />
         </>
     );
-}
+};
 
-export default EditProjectionButton;
+export default RedactFieldButton;

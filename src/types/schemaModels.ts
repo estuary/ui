@@ -13,7 +13,7 @@ enum ConstraintTypes {
 
 type ConstraintType = keyof typeof ConstraintTypes;
 
-type RedactionStrategy = 'block' | 'sha256';
+export type RedactionStrategy = 'block' | 'sha256';
 
 export interface BaseMaterializationFields {
     recommended: boolean | number;

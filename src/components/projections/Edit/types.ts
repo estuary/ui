@@ -1,6 +1,20 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
 
+interface BaseProjectionProps {
+    field: string;
+    pointer: string | undefined;
+}
+
+export interface BaseProjectionButtonProps extends BaseProjectionProps {
+    disabled?: boolean;
+}
+
+export interface BaseProjectionDialogProps extends BaseProjectionProps {
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
 export interface FieldEditorProps {
     input: string;
     inputInvalid: boolean;
@@ -8,20 +22,6 @@ export interface FieldEditorProps {
     setInputInvalid: Dispatch<SetStateAction<boolean>>;
     value: string;
     disabled?: boolean;
-}
-
-interface BaseEditProjectionProps {
-    field: string;
-    pointer: string | undefined;
-}
-
-export interface EditProjectionButtonProps extends BaseEditProjectionProps {
-    disabled?: boolean;
-}
-
-export interface EditProjectionDialogProps extends BaseEditProjectionProps {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface ProjectionListProps {
