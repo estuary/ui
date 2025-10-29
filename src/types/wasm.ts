@@ -110,7 +110,7 @@ export interface SplitSchemaModel {
     readSchema: any;
 }
 
-export interface BaseSkimModel {
+export interface CollectionDef {
     key: any;
     projections: any;
     journals: any;
@@ -120,8 +120,8 @@ export interface BaseSkimModel {
     reset: any;
 }
 
-export interface BasicSkimModel extends BaseSkimModel, BasicSchemaModel {}
-export interface SplitSkimModel extends BaseSkimModel, SplitSchemaModel {}
+export interface BasicCollectionDef extends CollectionDef, BasicSchemaModel {}
+export interface SplitCollectionDef extends CollectionDef, SplitSchemaModel {}
 
 export interface SkimProjectionResponse {
     errors: any[];

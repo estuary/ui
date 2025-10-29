@@ -2,9 +2,9 @@ import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
 import type { Schema } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
 import type {
-    BasicSkimModel,
+    BasicCollectionDef,
     SkimProjectionResponse,
-    SplitSkimModel,
+    SplitCollectionDef,
 } from 'src/types/wasm';
 
 import { isEmpty, isPlainObject } from 'lodash';
@@ -168,7 +168,8 @@ const reduceBuiltProjections = (
 
 const getSchemaForProjectionModel = (spec: any) => {
     // TODO (infer - typing)
-    let schemaProjectionModel: null | BasicSkimModel | SplitSkimModel = null;
+    let schemaProjectionModel: null | BasicCollectionDef | SplitCollectionDef =
+        null;
     const usingReadSchema = hasReadSchema(spec);
     const usingWriteSchema = hasWriteSchema(spec);
     const usingReadAndWriteSchema = usingReadSchema && usingWriteSchema;
@@ -178,13 +179,13 @@ const getSchemaForProjectionModel = (spec: any) => {
             schemaProjectionModel = {
                 readSchema: spec.readSchema,
                 writeSchema: spec.writeSchema,
-            } as SplitSkimModel;
+            } as SplitCollectionDef;
         }
     } else {
         if (isPlainObject(spec.schema)) {
             schemaProjectionModel = {
                 schema: spec.schema,
-            } as BasicSkimModel;
+            } as BasicCollectionDef;
         }
     }
 

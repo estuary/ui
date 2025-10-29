@@ -294,23 +294,22 @@ const getInitialState = (
             'Setting hasReadAndWriteSchema flag'
         );
 
+        // Make sure there is SOME schema
         if (schemaProjectionModel === null) {
             populateState(null, [
                 usingReadAndWriteSchema
                     ? 'read and write schemas must be an object'
                     : 'schema must be an object',
             ]);
+
+            return;
         }
 
         try {
             const skimProjectionResponse: SkimProjectionResponse =
                 await skim_collection_projections({
                     collection: entityName,
-                    model: {
-                        ...schemaProjectionModel,
-                        projections,
-                        key: spec.key,
-                    },
+                    model: spec,
                 });
 
             // Make sure we did not ONLY get the root object back as a pointer
