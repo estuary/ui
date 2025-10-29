@@ -52,17 +52,16 @@ function Form({ bindingIndex = -1 }: OnIncompatibleSchemaChangeProps) {
 
     const updateServer = useCallback(
         async (
-            value?: AutoCompleteOptionForIncompatibleSchemaChange | null
+            value?:
+                | AutoCompleteOptionForIncompatibleSchemaChange['val']
+                | undefined
         ) => {
             setFormState({ status: FormStatus.UPDATING, error: null });
 
-            return updateOnIncompatibleSchemaChange(value?.val, bindingMetadata)
+            return updateOnIncompatibleSchemaChange(value, bindingMetadata)
                 .then(() => {
                     if (currentBindingUUID) {
-                        setIncompatibleSchemaChange(
-                            value?.val,
-                            currentBindingUUID
-                        );
+                        setIncompatibleSchemaChange(value, currentBindingUUID);
                     }
 
                     setFormState({ status: FormStatus.UPDATED });
