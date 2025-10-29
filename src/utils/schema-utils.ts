@@ -1,8 +1,13 @@
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
-import type { Schema, SkimProjectionResponse } from 'src/types';
+import type { Schema } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
+import type {
+    BasicSkimModel,
+    SkimProjectionResponse,
+    SplitSkimModel,
+} from 'src/types/wasm';
 
-import { isEmpty } from 'lodash';
+import { isEmpty, isPlainObject } from 'lodash';
 
 // These are inserted by the server and never would make sense as keys
 //  Make sure you lowercase these
@@ -29,7 +34,7 @@ const hasReadSchema = (spec: any) => {
 };
 
 const hasReadAndWriteSchema = (spec: any) => {
-    return Boolean(hasReadSchema(spec) && hasReadSchema(spec));
+    return Boolean(hasReadSchema(spec) && hasWriteSchema(spec));
 };
 
 const getProperSchemaScope = (spec: any) => {
@@ -161,7 +166,36 @@ const reduceBuiltProjections = (
     return acc;
 };
 
+const getSchemaForProjectionModel = (spec: any) => {
+    // TODO (infer - typing)
+    let schemaProjectionModel: null | BasicSkimModel | SplitSkimModel = null;
+    const usingReadSchema = hasReadSchema(spec);
+    const usingWriteSchema = hasWriteSchema(spec);
+    const usingReadAndWriteSchema = usingReadSchema && usingWriteSchema;
+
+    if (usingReadAndWriteSchema) {
+        if (isPlainObject(spec.readSchema) && isPlainObject(spec.writeSchema)) {
+            schemaProjectionModel = {
+                readSchema: spec.readSchema,
+                writeSchema: spec.writeSchema,
+            } as SplitSkimModel;
+        }
+    } else {
+        if (isPlainObject(spec.schema)) {
+            schemaProjectionModel = {
+                schema: spec.schema,
+            } as BasicSkimModel;
+        }
+    }
+
+    return {
+        usingReadAndWriteSchema,
+        schemaProjectionModel,
+    };
+};
+
 export {
+    getSchemaForProjectionModel,
     getProperSchemaScope,
     filterSkimProjectionResponse,
     hasReadAndWriteSchema,

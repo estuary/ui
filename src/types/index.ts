@@ -4,7 +4,6 @@ import type { PostgrestError } from '@supabase/supabase-js';
 import type { ReactNode } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
-import type { BuiltProjection } from 'src/types/schemaModels';
 
 export type fake = 'fake';
 
@@ -389,11 +388,6 @@ export type ParsedStream =
     | 'test'
     | 'cleanup'
     | 'activate';
-
-export interface SkimProjectionResponse {
-    errors: any[];
-    projections: BuiltProjection[];
-}
 
 export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
 

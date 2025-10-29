@@ -1,7 +1,7 @@
 import type { BindingsEditorState } from 'src/components/editor/Bindings/Store/types';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
-import type { SkimProjectionResponse } from 'src/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
+import type { SkimProjectionResponse } from 'src/types/wasm';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -10,7 +10,7 @@ import { devtools } from 'zustand/middleware';
 
 import { skim_collection_projections } from '@estuary/flow-web';
 import produce from 'immer';
-import { intersection, isEmpty, isPlainObject, union } from 'lodash';
+import { intersection, isEmpty, union } from 'lodash';
 
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
@@ -18,7 +18,7 @@ import { BindingsEditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import {
     filterSkimProjectionResponse,
-    hasReadAndWriteSchema,
+    getSchemaForProjectionModel,
 } from 'src/utils/schema-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
@@ -278,10 +278,13 @@ const getInitialState = (
             return;
         }
 
-        // Check which schema to use
-        const usingReadAndWriteSchema = hasReadAndWriteSchema(spec);
         // TODO (schema editing) - use this or something similar to figure out
         //  what schemas to show in the dropdown while editing
+
+        // Check which schema to use
+        const { usingReadAndWriteSchema, schemaProjectionModel } =
+            getSchemaForProjectionModel(spec);
+
         set(
             (state) => ({
                 ...state,
@@ -291,28 +294,12 @@ const getInitialState = (
             'Setting hasReadAndWriteSchema flag'
         );
 
-        // TODO (infer - typing)
-        const modelSchemaSettings: any = {};
-        if (usingReadAndWriteSchema) {
-            if (
-                isPlainObject(spec.readSchema) &&
-                isPlainObject(spec.writeSchema)
-            ) {
-                modelSchemaSettings.readSchema = spec.readSchema;
-                modelSchemaSettings.writeSchema = spec.writeSchema;
-            } else {
-                populateState(null, [
-                    'read and write schemas must be an object',
-                ]);
-                return;
-            }
-        } else {
-            if (isPlainObject(spec.schema)) {
-                modelSchemaSettings.schema = spec.schema;
-            } else {
-                populateState(null, ['schema must be an object']);
-                return;
-            }
+        if (schemaProjectionModel === null) {
+            populateState(null, [
+                usingReadAndWriteSchema
+                    ? 'read and write schemas must be an object'
+                    : 'schema must be an object',
+            ]);
         }
 
         try {
@@ -320,7 +307,7 @@ const getInitialState = (
                 await skim_collection_projections({
                     collection: entityName,
                     model: {
-                        ...modelSchemaSettings,
+                        ...schemaProjectionModel,
                         projections,
                         key: spec.key,
                     },

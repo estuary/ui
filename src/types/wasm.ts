@@ -62,6 +62,18 @@ export interface FieldSelectionInput {
     liveSpec?: MaterializationBuiltBinding;
 }
 
+export interface FieldSelectionInput_Skim {
+    collection: {
+        name: string;
+        model: any; //MaterializationBinding ?
+    };
+    binding: {
+        live: any; //MaterializationBuiltBinding ?
+        model: any; // MaterializationBinding?
+        validated: any; //ValidatedBinding?
+    };
+}
+
 export interface FieldSelectionResult {
     hasConflicts: boolean;
     outcomes: FieldOutcome[];
@@ -86,4 +98,32 @@ export interface SelectOutput {
 interface SelectOutputReason {
     type: SelectReason;
     [key: string]: any;
+}
+
+// Skim Projections
+export interface BasicSchemaModel {
+    schema: any;
+}
+
+export interface SplitSchemaModel {
+    writeSchema: any;
+    readSchema: any;
+}
+
+export interface BaseSkimModel {
+    key: any;
+    projections: any;
+    journals: any;
+    derive: any;
+    expectPubId: any;
+    delete: any;
+    reset: any;
+}
+
+export interface BasicSkimModel extends BaseSkimModel, BasicSchemaModel {}
+export interface SplitSkimModel extends BaseSkimModel, SplitSchemaModel {}
+
+export interface SkimProjectionResponse {
+    errors: any[];
+    projections: BuiltProjection[];
 }

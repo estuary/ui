@@ -1,4 +1,6 @@
-import { Collapse, Grid } from '@mui/material';
+import type { KeyValue } from 'src/components/shared/KeyValueList';
+
+import { Collapse, Grid, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -7,7 +9,9 @@ import {
     useBindingsEditorStore_skimProjectionResponseError,
 } from 'src/components/editor/Bindings/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
+import KeyValueList from 'src/components/shared/KeyValueList';
 
+const maxToDisplay = 3;
 function SkimProjectionErrors() {
     const intl = useIntl();
 
@@ -16,11 +20,27 @@ function SkimProjectionErrors() {
     const skimProjectionResponseEmpty =
         useBindingsEditorStore_skimProjectionResponseEmpty();
 
-    const show = Boolean(
-        skimProjectionResponseEmpty ||
-            (skimProjectionResponseError &&
-                skimProjectionResponseError.length > 0)
-    );
+    const total = skimProjectionResponseError
+        ? skimProjectionResponseError.length
+        : 0;
+
+    const errors: KeyValue[] =
+        skimProjectionResponseError
+            ?.slice(0, maxToDisplay)
+            .map((error, index) => {
+                return {
+                    title: (
+                        <Typography
+                            key={`skim-projections-errors-${index}`}
+                            component="span"
+                        >
+                            {error}
+                        </Typography>
+                    ),
+                };
+            }) ?? [];
+
+    const show = Boolean(skimProjectionResponseEmpty || errors.length > 0);
 
     return (
         <Grid
@@ -39,9 +59,18 @@ function SkimProjectionErrors() {
                         id: 'schemaEditor.error.title',
                     })}
                 >
-                    {skimProjectionResponseError?.map((error) => {
-                        return error;
-                    })}
+                    {total > maxToDisplay ? (
+                        <Typography>
+                            {intl.formatMessage(
+                                { id: 'errors.preface.totalCount' },
+                                {
+                                    displaying: maxToDisplay,
+                                    total,
+                                }
+                            )}
+                        </Typography>
+                    ) : null}
+                    <KeyValueList data={errors} disableTypography />
                 </AlertBox>
             </Collapse>
         </Grid>
