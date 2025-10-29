@@ -20,7 +20,7 @@ import { fetchInferredSchema } from 'src/api/inferred_schemas';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
 import { logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
-import { hasLength } from 'src/utils/misc-utils';
+import { hasLength, hasOwnProperty } from 'src/utils/misc-utils';
 import {
     filterInferSchemaResponse,
     hasReadSchema,
@@ -124,6 +124,7 @@ const getInitialMiscData = (): Pick<
     | 'collectionData'
     | 'collectionInitializationAlert'
     | 'collectionInitializationDone'
+    | 'schemaProperties'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
     | 'schemaUpdating'
@@ -140,6 +141,7 @@ const getInitialMiscData = (): Pick<
     collectionData: null,
     collectionInitializationAlert: null,
     collectionInitializationDone: false,
+    schemaProperties: {},
     schemaUpdateErrored: false,
     schemaUpdated: true,
     schemaUpdating: false,
@@ -177,6 +179,10 @@ const getInitialState = (
     setCollectionData: (value) => {
         set(
             produce((state: BindingsEditorState) => {
+                if (value && hasOwnProperty(value.spec, 'properties')) {
+                    state.schemaProperties = value.spec.properties;
+                }
+
                 state.collectionData = value;
             }),
             false,
