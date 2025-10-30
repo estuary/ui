@@ -312,6 +312,11 @@ const getInitialState = (
                     model: spec,
                 });
 
+            console.log('skimProjectionResponse>>', {
+                spec,
+                skimProjectionResponse,
+            });
+
             // Make sure we did not ONLY get the root object back as a pointer
             if (
                 skimProjectionResponse.projections.length === 1 &&

@@ -1,13 +1,25 @@
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 
-function useCollectionDef() {
-    return useCallback(() => {
+import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
+
+function useCollectionDef(
+    entityName: string | undefined,
+    localZustandScope: boolean | undefined,
+    editorSchemaScope: string | undefined
+) {
+    const { draftSpec } = useDraftSpecEditor(
+        entityName,
+        localZustandScope,
+        editorSchemaScope
+    );
+
+    return useMemo(() => {
         return {
             hasReadSchema: true,
             hasWriteSchema: true,
-            model: {},
+            model: draftSpec?.spec,
         };
-    }, []);
+    }, [draftSpec?.spec]);
 }
 
 export default useCollectionDef;

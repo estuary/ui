@@ -21,6 +21,7 @@ import {
 import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
+import useCollectionDef from 'src/hooks/projections/useCollectionDef';
 import { useProjectionsForSkim } from 'src/hooks/projections/useProjectionsForSkim';
 import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
@@ -37,6 +38,12 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     >(undefined);
 
     const { onChange, draftSpec, mutate, defaultValue } = useDraftSpecEditor(
+        entityName,
+        localZustandScope,
+        editorSchemaScope
+    );
+
+    const { model } = useCollectionDef(
         entityName,
         localZustandScope,
         editorSchemaScope
@@ -73,23 +80,20 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
             // Infer schema and pass in spec so the function can handle
             //  if there is a read/write or just plain schema
-            populateSkimProjectionResponse(
-                draftSpec.spec,
-                entityName,
-                projections
-            );
+            populateSkimProjectionResponse(model, entityName, projections);
 
             // Need to keep the collection data updated so that the schema
             //  inference and CLI buttons work
             setCollectionData({ spec: draftSpec.spec, belongsToDraft: true });
         }
     }, [
-        draftSpec?.spec,
         entityType,
         entityName,
         populateSkimProjectionResponse,
         setCollectionData,
         projections,
+        draftSpec?.spec,
+        model,
     ]);
 
     // If the schema is updated via the scheme inference

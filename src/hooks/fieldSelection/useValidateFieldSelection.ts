@@ -156,9 +156,9 @@ export default function useValidateFieldSelection() {
             try {
                 result = await evaluateFieldSelection({
                     collection: {
-                        name: liveBuiltBinding?.collection.name ?? '',
                         // Mode will be the draftedCollectionSpec IF exists
                         // if not using the liveCollectionSpec
+                        name: liveBuiltBinding?.collection.name ?? '',
                         model: {} as any,
                     },
                     binding: {
