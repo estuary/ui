@@ -327,6 +327,7 @@ export const generateTaskSpec = (
         if (options.defaultFieldsRecommended) {
             const targetSourceProperty = getSourceCapturePropKey(draftSpec);
 
+            draftSpec[targetSourceProperty] ??= {};
             draftSpec[targetSourceProperty].fieldsRecommended = 1;
         }
     }
