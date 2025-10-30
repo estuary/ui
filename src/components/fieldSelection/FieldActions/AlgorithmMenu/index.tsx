@@ -1,6 +1,7 @@
 import type { AlgorithmMenuProps } from 'src/components/fieldSelection/types';
+import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button, Divider, Menu } from '@mui/material';
 
@@ -8,23 +9,37 @@ import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import MenuActions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuActions';
-import MenuHeader from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuHeader';
 import MenuOptions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuOptions';
 import {
     defaultOutline,
     paperBackground,
     paperBackgroundImage,
 } from 'src/context/Theme';
+import { useBindingStore } from 'src/stores/Binding/Store';
+import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { mapRecommendedValueToAlgorithm } from 'src/utils/fieldSelection-utils';
 
 const AlgorithmMenu = ({
+    bindingUUID,
     disabled,
     handleClick,
     targetFieldsRecommended,
 }: AlgorithmMenuProps) => {
     const intl = useIntl();
 
+    const bindingRecommendedFlag = useBindingStore((state) =>
+        bindingUUID ? state.recommendFields?.[bindingUUID] : undefined
+    );
+
+    const fieldsRecommended = useSourceCaptureStore(
+        (state) => state.fieldsRecommended
+    );
+
+    const [selectionAlgorithm, setSelectionAlgorithm] =
+        useState<SelectionAlgorithm | null>(null);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const openMenu = Boolean(anchorEl);
+
+    const isOpen = Boolean(anchorEl);
     const closeMenu = () => {
         setAnchorEl(null);
     };
@@ -32,6 +47,24 @@ const AlgorithmMenu = ({
     const contentId = targetFieldsRecommended
         ? 'fieldsRecommended.cta.selectAlgorithm'
         : 'fieldSelection.cta.selectAlgorithm';
+
+    useEffect(() => {
+        if (isOpen) {
+            const targetAlgorithm = mapRecommendedValueToAlgorithm(
+                targetFieldsRecommended
+                    ? fieldsRecommended
+                    : bindingRecommendedFlag
+            );
+
+            setSelectionAlgorithm(targetAlgorithm);
+        }
+    }, [
+        bindingRecommendedFlag,
+        fieldsRecommended,
+        isOpen,
+        setSelectionAlgorithm,
+        targetFieldsRecommended,
+    ]);
 
     return (
         <>
@@ -56,7 +89,7 @@ const AlgorithmMenu = ({
             <Menu
                 anchorEl={anchorEl}
                 onClose={closeMenu}
-                open={openMenu}
+                open={isOpen}
                 PaperProps={{
                     sx: {
                         filter: 'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
@@ -71,12 +104,10 @@ const AlgorithmMenu = ({
                 }}
                 sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
             >
-                <MenuHeader
-                    headerId={contentId}
-                    targetFieldsRecommended={targetFieldsRecommended}
+                <MenuOptions
+                    selectionAlgorithm={selectionAlgorithm}
+                    setSelectionAlgorithm={setSelectionAlgorithm}
                 />
-
-                <MenuOptions />
 
                 <Divider style={{ marginTop: 4, marginBottom: 12 }} />
 
@@ -84,6 +115,7 @@ const AlgorithmMenu = ({
                     close={closeMenu}
                     disabled={disabled}
                     handleClick={handleClick}
+                    selectionAlgorithm={selectionAlgorithm}
                 />
             </Menu>
         </>

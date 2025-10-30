@@ -7,6 +7,7 @@ import type {
 export type FieldSelectionType = 'default' | 'require' | 'exclude';
 
 export interface AlgorithmMenuProps extends BaseMenuProps {
+    bindingUUID?: string;
     targetFieldsRecommended?: boolean;
 }
 
@@ -16,7 +17,7 @@ export interface BaseButtonProps {
     selections: FieldSelection[] | null | undefined;
 }
 
-interface BaseMenuProps {
+export interface BaseMenuProps {
     handleClick: (recommended: boolean | number) => void;
     disabled: boolean;
 }
@@ -46,13 +47,10 @@ export interface KeyChangeAlertProps {
 
 export interface MenuActionProps extends BaseMenuProps {
     close: () => void;
+    selectionAlgorithm: SelectionAlgorithm | null;
 }
 
-export interface MenuHeaderProps {
-    headerId: string;
-    targetFieldsRecommended?: boolean;
-}
-
-export interface SaveButtonProps extends MenuActionProps {
-    selectedAlgorithm: SelectionAlgorithm | null;
+export interface MenuOptionsProps {
+    selectionAlgorithm: SelectionAlgorithm | null;
+    setSelectionAlgorithm: Dispatch<SetStateAction<SelectionAlgorithm | null>>;
 }
