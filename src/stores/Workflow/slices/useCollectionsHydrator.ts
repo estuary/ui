@@ -27,10 +27,6 @@ function useCollectionsHydrator() {
                 ),
             ];
 
-            if (collectionsNeedingFetched.length === 0) {
-                return Promise.resolve();
-            }
-
             // Keep track of all the collections that need loaded into the workflow store
             const collectionsToAdd = new Map<string, CollectionMetadata>();
 
