@@ -1,102 +1,99 @@
 import type { CollectionMetadata } from 'src/stores/Workflow/slices/Collections';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { getDraftSpecsBySpecTypeReduced } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogNames } from 'src/api/liveSpecsExt';
-import {
-    useEditorStore_id,
-    useEditorStore_liveBuiltSpec,
-} from 'src/components/editor/Store/hooks';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { getCollectionName } from 'src/utils/workflow-utils';
 
 function useCollectionsHydrator() {
-    // const isEdit = useEntityWorkflow_Editing();
-
-    const draftId = useEditorStore_id();
-    const liveBuiltSpec = useEditorStore_liveBuiltSpec();
-
     const initializeCollections = useWorkflowStore((state) => {
         return state.initializeCollections;
     });
 
-    console.log('useCollectionsHydrator:draftId', draftId);
-    console.log('useCollectionsHydrator:liveBuiltSpec', liveBuiltSpec);
+    const hydrateCollections = useCallback(
+        async (id: string, specToUse: any) => {
+            // Go through the bindings and get the names we need to fetch
+            const collectionsNeedingFetched = [
+                ...new Set<string>(
+                    specToUse.bindings
+                        .filter((binding: any) => {
+                            return Boolean(!binding.disable);
+                        })
+                        .map((binding: any) => {
+                            return getCollectionName(binding);
+                        })
+                ),
+            ];
 
-    const collectionsNeedingFetched: string[] | null = useMemo(
-        () =>
-            liveBuiltSpec
-                ? ([
-                      ...new Set(
-                          liveBuiltSpec.bindings.map(
-                              ({ collection }: any) => collection.name
-                          )
-                      ),
-                  ] as string[])
-                : null,
-        [liveBuiltSpec]
-    );
+            if (collectionsNeedingFetched.length === 0) {
+                return Promise.resolve();
+            }
 
-    const hydrateCollections = useCallback(async () => {
-        if (!collectionsNeedingFetched || !draftId) {
-            return Promise.resolve();
-        }
+            // Keep track of all the collections that need loaded into the workflow store
+            const collectionsToAdd = new Map<string, CollectionMetadata>();
 
-        const collectionsToAdd = new Map<string, CollectionMetadata>();
+            if (id) {
+                // Fetch all the collections already on the draft
+                const collectionsOnDraftSpecResponse =
+                    await getDraftSpecsBySpecTypeReduced(id, 'collection');
 
-        const collectionsOnDraftSpecResponse =
-            await getDraftSpecsBySpecTypeReduced(draftId, 'collection');
+                if (collectionsOnDraftSpecResponse.error) {
+                    console.log('CollectionsHydrator FAILED');
+                    return Promise.reject();
+                }
 
-        if (collectionsOnDraftSpecResponse.error) {
-            console.log('CollectionsHydrator FAILED');
-            return Promise.reject();
-        }
+                if (
+                    collectionsOnDraftSpecResponse.data &&
+                    collectionsOnDraftSpecResponse.data.length > 0
+                ) {
+                    collectionsOnDraftSpecResponse.data.forEach(
+                        ({ catalog_name, spec }) => {
+                            collectionsToAdd.set(catalog_name, {
+                                spec,
+                                belongsToDraft: true,
+                            });
+                        }
+                    );
+                }
+            }
 
-        if (
-            collectionsOnDraftSpecResponse.data &&
-            collectionsOnDraftSpecResponse.data.length > 0
-        ) {
-            collectionsOnDraftSpecResponse.data.forEach(
-                ({ catalog_name, spec }) => {
+            // User might not have edited all the collections
+            const collectionsStillNeeded =
+                collectionsToAdd.size === 0
+                    ? collectionsNeedingFetched
+                    : collectionsNeedingFetched.filter(
+                          (collection) => !collectionsToAdd.has(collection)
+                      );
+
+            // Now fetch the left overs from live_specs
+            const liveCollections = await getLiveSpecsByCatalogNames(
+                'collection',
+                collectionsStillNeeded
+            );
+
+            if (liveCollections.error) {
+                console.log('CollectionsHydrator FAILED');
+                return Promise.reject();
+            }
+
+            if (liveCollections.data && liveCollections.data.length > 0) {
+                liveCollections.data.forEach(({ catalog_name, spec }) => {
                     collectionsToAdd.set(catalog_name, {
                         spec,
-                        belongsToDraft: true,
+                        belongsToDraft: false,
                     });
-                }
-            );
-        }
-
-        const collectionsStillNeeded =
-            collectionsToAdd.size === 0
-                ? collectionsNeedingFetched
-                : collectionsNeedingFetched.filter(
-                      (collection) => !collectionsToAdd.has(collection)
-                  );
-
-        // We fetched what is on the draft now go fetch the live ones
-        const liveCollections = await getLiveSpecsByCatalogNames(
-            'collection',
-            collectionsStillNeeded
-        );
-
-        if (liveCollections.error) {
-            console.log('CollectionsHydrator FAILED');
-            return Promise.reject();
-        }
-
-        if (liveCollections.data && liveCollections.data.length > 0) {
-            liveCollections.data.forEach(({ catalog_name, spec }) => {
-                collectionsToAdd.set(catalog_name, {
-                    spec,
-                    belongsToDraft: false,
                 });
-            });
-        }
+            }
 
-        initializeCollections(collectionsToAdd);
+            // Store the collections we've fetched into WorkFlow
+            initializeCollections(collectionsToAdd);
 
-        return Promise.resolve();
-    }, [collectionsNeedingFetched, draftId, initializeCollections]);
+            return Promise.resolve();
+        },
+        [initializeCollections]
+    );
 
     return {
         hydrateCollections,

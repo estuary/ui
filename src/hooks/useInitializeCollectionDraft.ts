@@ -69,10 +69,9 @@ function useInitializeCollectionDraft() {
     const setLocalDraftId = useEditorStore_setId({ localScope: true });
 
     // Workflow Store
-    const [initializeProjections, addCollection] = useWorkflowStore((state) => [
-        state.initializeProjections,
-        state.addCollection,
-    ]);
+    const [initializeProjections, upsertCollection] = useWorkflowStore(
+        (state) => [state.initializeProjections, state.upsertCollection]
+    );
 
     const createCollectionDraftSpec = useCallback(
         async (
@@ -113,7 +112,7 @@ function useInitializeCollectionDraft() {
                     targetRow.spec?.projections,
                     collectionName
                 );
-                addCollection(targetRow.catalog_name, {
+                upsertCollection(targetRow.catalog_name, {
                     spec: targetRow.spec,
                     belongsToDraft: true,
                 });
@@ -135,7 +134,7 @@ function useInitializeCollectionDraft() {
                     belongsToDraft: false,
                 });
                 initializeProjections(liveSpec?.projections, collectionName);
-                addCollection(collectionName, {
+                upsertCollection(collectionName, {
                     spec: liveSpec,
                     belongsToDraft: false,
                 });
@@ -149,7 +148,7 @@ function useInitializeCollectionDraft() {
             }
         },
         [
-            addCollection,
+            upsertCollection,
             initializeProjections,
             setCollectionData,
             setCollectionInitializationAlert,
@@ -202,7 +201,7 @@ function useInitializeCollectionDraft() {
                         targetRow.spec?.projections,
                         collectionName
                     );
-                    addCollection(targetRow.catalog_name, {
+                    upsertCollection(targetRow.catalog_name, {
                         spec: targetRow.spec,
                         belongsToDraft: true,
                     });
@@ -256,7 +255,7 @@ function useInitializeCollectionDraft() {
             }
         },
         [
-            addCollection,
+            upsertCollection,
             createCollectionDraftSpec,
             initializeProjections,
             setCollectionData,

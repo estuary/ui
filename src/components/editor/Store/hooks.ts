@@ -3,7 +3,7 @@ import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import type { Entity } from 'src/types';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -16,6 +16,7 @@ import useGlobalSearchParams, {
 import { useDraftSpecs_forEditor } from 'src/hooks/useDraftSpecs';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { EditorStoreNames } from 'src/stores/names';
+import useCollectionsHydrator from 'src/stores/Workflow/slices/useCollectionsHydrator';
 import { hasLength } from 'src/utils/misc-utils';
 import { getBindingIndex } from 'src/utils/workflow-utils';
 
@@ -641,11 +642,15 @@ export const useHydrateEditorState = (
     catalogName?: string,
     localScope?: boolean
 ) => {
+    const hydratedCollectionsOnce = useRef(false);
+
     const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
 
     const setRelatedBindingIndices = useBindingStore(
         (state) => state.setRelatedBindingIndices
     );
+
+    const { hydrateCollections } = useCollectionsHydrator();
 
     const draftId = useEditorStore_id({ localScope });
     const persistedDraftId = useEditorStore_persistedDraftId({ localScope });
@@ -673,7 +678,27 @@ export const useHydrateEditorState = (
                     response.draftSpecs[0].validated,
                     liveBuiltSpec
                 );
+
+                // TODO (draft init / workflow)
+                // This is hacky - but will work for now. We need to know about
+                //  all the collections on the draft so we want to wait for a draftedSpec
+                //  to be available to us. This means we have to wait until we know 100%
+                //  we have one. This is a pain when trying to hydrateCollections higher up
+                //  in the WorkFlow hydrator
+                if (!hydratedCollectionsOnce.current) {
+                    hydratedCollectionsOnce.current = true;
+                    void hydrateCollections(
+                        response.draftSpecs[0].draft_id,
+                        response.draftSpecs[0].spec
+                    );
+                }
             }
         }
-    }, [liveBuiltSpec, setQueryResponse, setRelatedBindingIndices, response]);
+    }, [
+        liveBuiltSpec,
+        setQueryResponse,
+        setRelatedBindingIndices,
+        response,
+        hydrateCollections,
+    ]);
 };

@@ -3,6 +3,13 @@ import type { NamedSet } from 'zustand/middleware';
 export interface CollectionMetadata {
     spec: any;
     belongsToDraft: boolean;
+    // TODO (schema edit?) this is a lot to transfer but should come over here
+    // ui/src/stores/Binding/types.ts
+    // added?: boolean;
+    // previouslyBound?: boolean;
+    // sourceBackfillRecommended?: boolean;
+    // trialStorage?: boolean;
+    // updatedAt?: string;
 }
 
 interface CollectionDictionary {
@@ -11,7 +18,10 @@ interface CollectionDictionary {
 
 export interface StoreWithCollections {
     collections: CollectionDictionary;
-    addCollection: (collectionName: string, meta: CollectionMetadata) => void;
+    upsertCollection: (
+        collectionName: string,
+        meta: CollectionMetadata
+    ) => void;
     initializeCollections: (collections: Map<string, any>) => void;
     removeCollections: (collection: string) => void;
 }
@@ -28,7 +38,7 @@ export const getStoreWithCollectionSettings = (
 ): StoreWithCollections => ({
     ...getInitialCollectionData(),
 
-    addCollection: (collection, meta) => {
+    upsertCollection: (collection, meta) => {
         set((state) => ({
             ...state,
             collections: {
