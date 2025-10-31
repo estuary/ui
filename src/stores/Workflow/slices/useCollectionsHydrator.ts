@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 
 import { getDraftSpecsBySpecTypeReduced } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogNames } from 'src/api/liveSpecsExt';
+import { generateDefaultCollectionMetadata } from 'src/stores/Workflow/slices/Collections';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { getCollectionName } from 'src/utils/workflow-utils';
 
@@ -48,10 +49,13 @@ function useCollectionsHydrator() {
                 ) {
                     collectionsOnDraftSpecResponse.data.forEach(
                         ({ catalog_name, spec }) => {
-                            collectionsToAdd.set(catalog_name, {
-                                spec,
-                                belongsToDraft: true,
-                            });
+                            collectionsToAdd.set(
+                                catalog_name,
+                                generateDefaultCollectionMetadata({
+                                    spec,
+                                    belongsToDraft: true,
+                                })
+                            );
                         }
                     );
                 }
@@ -78,10 +82,13 @@ function useCollectionsHydrator() {
 
             if (liveCollections.data && liveCollections.data.length > 0) {
                 liveCollections.data.forEach(({ catalog_name, spec }) => {
-                    collectionsToAdd.set(catalog_name, {
-                        spec,
-                        belongsToDraft: false,
-                    });
+                    collectionsToAdd.set(
+                        catalog_name,
+                        generateDefaultCollectionMetadata({
+                            spec,
+                            belongsToDraft: false,
+                        })
+                    );
                 });
             }
 

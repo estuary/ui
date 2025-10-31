@@ -3,14 +3,37 @@ import type { NamedSet } from 'zustand/middleware';
 export interface CollectionMetadata {
     spec: any;
     belongsToDraft: boolean;
+
     // TODO (schema edit?) this is a lot to transfer but should come over here
+    // ui/src/components/editor/Bindings/Store/types.ts
+    // editor state
+    // initAlert: any;
+    // initComplete: boolean;
+    // schemaUpdating: boolean;
+    // schemaUpdated: boolean;
+    // schemaUpdateErrored: boolean;
+
     // ui/src/stores/Binding/types.ts
     // added?: boolean;
     // previouslyBound?: boolean;
     // sourceBackfillRecommended?: boolean;
     // trialStorage?: boolean;
     // updatedAt?: string;
+
+    // Needed for useInitializeCollectionDraft
+    // last_pub_id: any;
 }
+
+// More useful when we have a bigger object but leaving for now
+export const generateDefaultCollectionMetadata = (
+    definition: Partial<CollectionMetadata>
+): CollectionMetadata => {
+    return {
+        spec: null,
+        belongsToDraft: false,
+        ...definition,
+    };
+};
 
 interface CollectionDictionary {
     [collection: string]: CollectionMetadata;
@@ -20,12 +43,15 @@ export interface StoreWithCollections {
     collections: CollectionDictionary;
     upsertCollection: (
         collectionName: string,
-        meta: CollectionMetadata
+        meta: Partial<CollectionMetadata>
     ) => void;
     initializeCollections: (collections: Map<string, any>) => void;
-    removeCollections: (collection: string) => void;
     collectionsError: boolean;
     setCollectionsError: (newVal: boolean) => void;
+
+    // TODO (schema edit)
+    // Leaning towards this not being needed
+    // removeCollections: (collection: string) => void;
 }
 
 export const getInitialCollectionData = (): Pick<
@@ -46,7 +72,10 @@ export const getStoreWithCollectionSettings = (
             ...state,
             collections: {
                 ...state.collections,
-                [collection]: meta,
+                [collection]: {
+                    ...(state.collections[collection] ?? {}),
+                    ...meta,
+                },
             },
         }));
     },
@@ -72,16 +101,16 @@ export const getStoreWithCollectionSettings = (
         }));
     },
 
-    removeCollections: (name) => {
-        set((state) => {
-            return {
-                ...state,
-                collections: Object.fromEntries(
-                    Object.entries(state.collections).filter(
-                        ([key]) => !name.includes(key)
-                    )
-                ),
-            };
-        });
-    },
+    // removeCollections: (name) => {
+    //     set((state) => {
+    //         return {
+    //             ...state,
+    //             collections: Object.fromEntries(
+    //                 Object.entries(state.collections).filter(
+    //                     ([key]) => !name.includes(key)
+    //                 )
+    //             ),
+    //         };
+    //     });
+    // },
 });

@@ -22,10 +22,9 @@ function CollectionConfig({
     const intl = useIntl();
 
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
-
-    const [collectionsError] = useWorkflowStore((state) => {
-        return [state.collectionsError];
-    });
+    const collectionsError = useWorkflowStore(
+        (state) => state.collectionsError
+    );
 
     return (
         <WrapperWithHeader
