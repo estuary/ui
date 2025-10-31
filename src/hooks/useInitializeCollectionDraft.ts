@@ -69,9 +69,10 @@ function useInitializeCollectionDraft() {
     const setLocalDraftId = useEditorStore_setId({ localScope: true });
 
     // Workflow Store
-    const initializeProjections = useWorkflowStore(
-        (state) => state.initializeProjections
-    );
+    const [initializeProjections, addCollection] = useWorkflowStore((state) => [
+        state.initializeProjections,
+        state.addCollection,
+    ]);
 
     const createCollectionDraftSpec = useCallback(
         async (
@@ -112,6 +113,10 @@ function useInitializeCollectionDraft() {
                     targetRow.spec?.projections,
                     collectionName
                 );
+                addCollection(targetRow.catalog_name, {
+                    spec: targetRow.spec,
+                    belongsToDraft: true,
+                });
 
                 setCollectionInitializationDone(true);
             } else {
@@ -130,6 +135,10 @@ function useInitializeCollectionDraft() {
                     belongsToDraft: false,
                 });
                 initializeProjections(liveSpec?.projections, collectionName);
+                addCollection(collectionName, {
+                    spec: liveSpec,
+                    belongsToDraft: false,
+                });
 
                 setCollectionInitializationDone(false);
                 setCollectionInitializationAlert({
@@ -140,6 +149,7 @@ function useInitializeCollectionDraft() {
             }
         },
         [
+            addCollection,
             initializeProjections,
             setCollectionData,
             setCollectionInitializationAlert,
@@ -192,6 +202,10 @@ function useInitializeCollectionDraft() {
                         targetRow.spec?.projections,
                         collectionName
                     );
+                    addCollection(targetRow.catalog_name, {
+                        spec: targetRow.spec,
+                        belongsToDraft: true,
+                    });
 
                     if (lastPubId && expectedPubId !== lastPubId) {
                         setCollectionInitializationDone(false);
@@ -242,6 +256,7 @@ function useInitializeCollectionDraft() {
             }
         },
         [
+            addCollection,
             createCollectionDraftSpec,
             initializeProjections,
             setCollectionData,
@@ -258,6 +273,8 @@ function useInitializeCollectionDraft() {
             resetBindingsEditorState(true);
 
             if (collection) {
+                // TODO (infer)
+                // Need to move more collection meta data and fetch off the workflow store
                 const publishedCollection = await getCollection(collection);
 
                 await getCollectionDraftSpecs(

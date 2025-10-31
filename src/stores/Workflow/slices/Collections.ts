@@ -11,7 +11,7 @@ interface CollectionDictionary {
 
 export interface StoreWithCollections {
     collections: CollectionDictionary;
-    addCollections: (collections: Map<string, any>) => void;
+    addCollection: (collectionName: string, meta: CollectionMetadata) => void;
     initializeCollections: (collections: Map<string, any>) => void;
     removeCollections: (collection: string) => void;
 }
@@ -28,16 +28,12 @@ export const getStoreWithCollectionSettings = (
 ): StoreWithCollections => ({
     ...getInitialCollectionData(),
 
-    addCollections: (collections) => {
-        if (collections.size < 1) {
-            return;
-        }
-
+    addCollection: (collection, meta) => {
         set((state) => ({
             ...state,
             collections: {
                 ...state.collections,
-                ...Object.fromEntries(collections),
+                [collection]: meta,
             },
         }));
     },
