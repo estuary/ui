@@ -11,6 +11,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useBinding_hydrationErrorsExist } from 'src/stores/Binding/hooks';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 function CollectionConfig({
     draftSpecs,
@@ -22,13 +23,17 @@ function CollectionConfig({
 
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
 
+    const [collectionsError] = useWorkflowStore((state) => {
+        return [state.collectionsError];
+    });
+
     return (
         <WrapperWithHeader
             hideBorder={hideBorder}
             header={<SectionAlertIndicator />}
         >
             <ErrorBoundryWrapper>
-                {bindingHydrationErrorsExist ? (
+                {bindingHydrationErrorsExist || collectionsError ? (
                     <AlertBox
                         severity="error"
                         title={
@@ -40,7 +45,14 @@ function CollectionConfig({
                         }
                         short
                     >
-                        <MessageWithLink messageID="error.message" />
+                        <Typography>
+                            {intl.formatMessage({
+                                id: collectionsError
+                                    ? 'workflows.error.collections'
+                                    : 'workflows.error.bindings',
+                            })}
+                        </Typography>
+                        <MessageWithLink messageID="error.instructions" />
                     </AlertBox>
                 ) : (
                     <BindingsMultiEditor

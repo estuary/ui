@@ -24,13 +24,16 @@ export interface StoreWithCollections {
     ) => void;
     initializeCollections: (collections: Map<string, any>) => void;
     removeCollections: (collection: string) => void;
+    collectionsError: boolean;
+    setCollectionsError: (newVal: boolean) => void;
 }
 
 export const getInitialCollectionData = (): Pick<
     StoreWithCollections,
-    'collections'
+    'collections' | 'collectionsError'
 > => ({
     collections: {},
+    collectionsError: false,
 });
 
 export const getStoreWithCollectionSettings = (
@@ -45,6 +48,13 @@ export const getStoreWithCollectionSettings = (
                 ...state.collections,
                 [collection]: meta,
             },
+        }));
+    },
+
+    setCollectionsError: (collectionsError) => {
+        set((state) => ({
+            ...state,
+            collectionsError,
         }));
     },
 

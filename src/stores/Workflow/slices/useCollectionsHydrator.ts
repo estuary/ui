@@ -8,9 +8,11 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { getCollectionName } from 'src/utils/workflow-utils';
 
 function useCollectionsHydrator() {
-    const initializeCollections = useWorkflowStore((state) => {
-        return state.initializeCollections;
-    });
+    const [initializeCollections, setCollectionsError] = useWorkflowStore(
+        (state) => {
+            return [state.initializeCollections, state.setCollectionsError];
+        }
+    );
 
     const hydrateCollections = useCallback(
         async (id: string, specToUse: any) => {
@@ -36,7 +38,7 @@ function useCollectionsHydrator() {
                     await getDraftSpecsBySpecTypeReduced(id, 'collection');
 
                 if (collectionsOnDraftSpecResponse.error) {
-                    console.log('CollectionsHydrator FAILED');
+                    setCollectionsError(true);
                     return Promise.reject();
                 }
 
@@ -70,7 +72,7 @@ function useCollectionsHydrator() {
             );
 
             if (liveCollections.error) {
-                console.log('CollectionsHydrator FAILED');
+                setCollectionsError(true);
                 return Promise.reject();
             }
 
@@ -88,7 +90,7 @@ function useCollectionsHydrator() {
 
             return Promise.resolve();
         },
-        [initializeCollections]
+        [initializeCollections, setCollectionsError]
     );
 
     return {
