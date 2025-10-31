@@ -1,49 +1,102 @@
-import { useCallback } from 'react';
+import type { CollectionMetadata } from 'src/stores/Workflow/slices/Collections';
+
+import { useCallback, useMemo } from 'react';
 
 import { getDraftSpecsBySpecTypeReduced } from 'src/api/draftSpecs';
+import { getLiveSpecsByCatalogNames } from 'src/api/liveSpecsExt';
+import {
+    useEditorStore_id,
+    useEditorStore_liveBuiltSpec,
+} from 'src/components/editor/Store/hooks';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 function useCollectionsHydrator() {
-    const fetchDraftCollections = useCallback(async (draftId: string) => {
-        // Look for every collection on the draft.
-        const collectionsOnDraftSpecResponse =
-            await getDraftSpecsBySpecTypeReduced(draftId, 'collection');
-        if (collectionsOnDraftSpecResponse.error) {
-            console.log('CollectionsHydrator FAILED');
-            // onFailure({
-            //     error: {
-            //         title: 'captureEdit.generate.failedErrorTitle',
-            //         error: collectionsOnDraftSpecResponse.error,
-            //     },
-            // });
+    // const isEdit = useEntityWorkflow_Editing();
 
-            return false;
+    const draftId = useEditorStore_id();
+    const liveBuiltSpec = useEditorStore_liveBuiltSpec();
+
+    const initializeCollections = useWorkflowStore((state) => {
+        return state.initializeCollections;
+    });
+
+    console.log('useCollectionsHydrator:draftId', draftId);
+    console.log('useCollectionsHydrator:liveBuiltSpec', liveBuiltSpec);
+
+    const collectionsNeedingFetched: string[] | null = useMemo(
+        () =>
+            liveBuiltSpec
+                ? ([
+                      ...new Set(
+                          liveBuiltSpec.bindings.map(
+                              ({ collection }: any) => collection.name
+                          )
+                      ),
+                  ] as string[])
+                : null,
+        [liveBuiltSpec]
+    );
+
+    const hydrateCollections = useCallback(async () => {
+        if (!collectionsNeedingFetched || !draftId) {
+            return Promise.resolve();
         }
 
-        // We need to track what is already on the draft so we do not overwrite
-        //  any changes the user made while we mark reset=true
-        let collectionsOnDraft: string[] | null = null;
+        const collectionsToAdd = new Map<string, CollectionMetadata>();
+
+        const collectionsOnDraftSpecResponse =
+            await getDraftSpecsBySpecTypeReduced(draftId, 'collection');
+
+        if (collectionsOnDraftSpecResponse.error) {
+            console.log('CollectionsHydrator FAILED');
+            return Promise.reject();
+        }
+
         if (
             collectionsOnDraftSpecResponse.data &&
             collectionsOnDraftSpecResponse.data.length > 0
         ) {
-            // Get a list of all the collections on the draft spec.
-            //  During create - this will often be all collections
-            //  During edit - this will often only be the ones the user edited
-            collectionsOnDraft = collectionsOnDraftSpecResponse.data.map(
-                (datum) => datum.catalog_name
+            collectionsOnDraftSpecResponse.data.forEach(
+                ({ catalog_name, spec }) => {
+                    collectionsToAdd.set(catalog_name, {
+                        spec,
+                        belongsToDraft: true,
+                    });
+                }
             );
         }
 
-        return {
-            collectionNamesOnDraft: collectionsOnDraft,
-        };
-    }, []);
+        const collectionsStillNeeded =
+            collectionsToAdd.size === 0
+                ? collectionsNeedingFetched
+                : collectionsNeedingFetched.filter(
+                      (collection) => !collectionsToAdd.has(collection)
+                  );
 
-    const hydrateCollections = useCallback(async () => {
-        const response = await fetchDraftCollections('');
+        // We fetched what is on the draft now go fetch the live ones
+        const liveCollections = await getLiveSpecsByCatalogNames(
+            'collection',
+            collectionsStillNeeded
+        );
 
-        console.log('response', response);
-    }, [fetchDraftCollections]);
+        if (liveCollections.error) {
+            console.log('CollectionsHydrator FAILED');
+            return Promise.reject();
+        }
+
+        if (liveCollections.data && liveCollections.data.length > 0) {
+            liveCollections.data.forEach(({ catalog_name, spec }) => {
+                collectionsToAdd.set(catalog_name, {
+                    spec,
+                    belongsToDraft: false,
+                });
+            });
+        }
+
+        initializeCollections(collectionsToAdd);
+
+        return Promise.resolve();
+    }, [collectionsNeedingFetched, draftId, initializeCollections]);
 
     return {
         hydrateCollections,

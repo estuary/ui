@@ -1,6 +1,6 @@
 import type { NamedSet } from 'zustand/middleware';
 
-interface CollectionMetadata {
+export interface CollectionMetadata {
     spec: any;
     belongsToDraft: boolean;
 }
@@ -11,20 +11,10 @@ interface CollectionDictionary {
 
 export interface StoreWithCollections {
     collections: CollectionDictionary;
-    addCollections: (collection: string, definition?: any) => void;
+    addCollections: (collections: Map<string, any>) => void;
+    initializeCollections: (collections: Map<string, any>) => void;
     removeCollections: (collection: string) => void;
 }
-
-const generateCollectionMetaData = (definition?: CollectionMetadata) => {
-    if (!definition) {
-        return {
-            spec: null,
-            belongsToDraft: false,
-        };
-    }
-
-    return definition;
-};
 
 export const getInitialCollectionData = (): Pick<
     StoreWithCollections,
@@ -38,12 +28,30 @@ export const getStoreWithCollectionSettings = (
 ): StoreWithCollections => ({
     ...getInitialCollectionData(),
 
-    addCollections: (name, definition) => {
+    addCollections: (collections) => {
+        if (collections.size < 1) {
+            return;
+        }
+
         set((state) => ({
             ...state,
             collections: {
                 ...state.collections,
-                [name]: generateCollectionMetaData(definition),
+                ...Object.fromEntries(collections),
+            },
+        }));
+    },
+
+    initializeCollections: (collections) => {
+        if (collections.size < 1) {
+            return;
+        }
+
+        set((state) => ({
+            ...state,
+            collections: {
+                ...state.collections,
+                ...Object.fromEntries(collections),
             },
         }));
     },

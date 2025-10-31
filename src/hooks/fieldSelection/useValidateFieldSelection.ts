@@ -35,6 +35,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import {
     DEFAULT_RECOMMENDED_FLAG,
     getFieldSelection,
@@ -107,7 +108,9 @@ export default function useValidateFieldSelection() {
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
     const liveBuiltSpec = useEditorStore_liveBuiltSpec();
-
+    const collections = useWorkflowStore((state) => {
+        return state.collections;
+    });
     const formStatus = useFormStateStore_status();
 
     const fieldsRecommended = useSourceCaptureStore(
@@ -154,12 +157,17 @@ export default function useValidateFieldSelection() {
             let result: FieldSelectionResult | undefined;
 
             try {
+                console.log(
+                    'collections[builtBinding.collection.name]',
+                    collections[builtBinding.collection.name]
+                );
+
                 result = await evaluateFieldSelection({
                     collection: {
                         // Mode will be the draftedCollectionSpec IF exists
                         // if not using the liveCollectionSpec
-                        name: liveBuiltBinding?.collection.name ?? '',
-                        model: {} as any,
+                        name: builtBinding.collection.name,
+                        model: collections[builtBinding.collection.name].spec,
                     },
                     binding: {
                         live: liveBuiltBinding,
@@ -178,7 +186,7 @@ export default function useValidateFieldSelection() {
                 result,
             };
         },
-        [liveBuiltSpec?.bindings]
+        [collections, liveBuiltSpec?.bindings]
     );
 
     const failureDetected = useMemo(
