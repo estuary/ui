@@ -10,6 +10,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
+import { getStoreWithCollectionSettings } from 'src/stores/Workflow/slices/Collections';
 import {
     getInitialProjectionData,
     getStoreWithProjectionSettings,
@@ -37,6 +38,7 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
     ...getStoreWithProjectionSettings(set),
+    ...getStoreWithCollectionSettings(set),
 
     resetState: () => {
         set(

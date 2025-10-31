@@ -16,6 +16,7 @@ import {
     useEditorStore_setSpecs,
 } from 'src/components/editor/Store/hooks';
 import { stringifyJSON } from 'src/services/stringify';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 function useDraftSpecEditor(
@@ -46,6 +47,10 @@ function useDraftSpecEditor(
         localScope,
     });
     const mutate = useEditorStore_queryResponse_mutate({ localScope });
+
+    const upsertCollection = useWorkflowStore(
+        (state) => state.upsertCollection
+    );
 
     const specAsString = useMemo(() => {
         let spec = draftSpec?.spec ?? null;
@@ -105,6 +110,11 @@ function useDraftSpecEditor(
                     return Promise.reject();
                 }
 
+                upsertCollection(catalogName, {
+                    spec: updatedSpec,
+                    belongsToDraft: true,
+                });
+
                 // Fire off mutate so other uses know to update
                 return mutate().then((args) => {
                     // Make the update to the current AFTER the mutate so things
@@ -116,7 +126,7 @@ function useDraftSpecEditor(
                 });
             }
         },
-        [draftId, draftSpec, mutate]
+        [draftId, draftSpec, mutate, upsertCollection]
     );
 
     // This is mainly for the binding collection editing

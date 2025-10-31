@@ -89,7 +89,7 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
                 {count && count > errorLength ? (
                     <Typography>
                         <FormattedMessage
-                            id="draftErrors.totalCount"
+                            id="errors.preface.totalCount"
                             values={{
                                 displaying: errorLength,
                                 total: count,

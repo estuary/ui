@@ -12,12 +12,16 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 export default function SectionAlertIndicator() {
     const intl = useIntl();
     const theme = useTheme();
 
     // Binding Store
+    const [collectionsError] = useWorkflowStore((state) => {
+        return [state.collectionsError];
+    });
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const bindingErrorsExist = useBinding_bindingErrorsExist();
@@ -33,6 +37,7 @@ export default function SectionAlertIndicator() {
     const messagePrefix = useFormStateStore_messagePrefix();
 
     const hasErrors =
+        collectionsError ||
         bindingHydrationErrorsExist ||
         resourceConfigErrorsExist ||
         fullSourceErrorsExist ||

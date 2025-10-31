@@ -5,11 +5,11 @@ import { useState } from 'react';
 
 import { Box, Collapse, Grid, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import {
-    useBindingsEditorStore_inferSchemaResponseEmpty,
-    useBindingsEditorStore_inferSchemaResponseError,
+    useBindingsEditorStore_skimProjectionResponseEmpty,
+    useBindingsEditorStore_skimProjectionResponseError,
 } from 'src/components/editor/Bindings/Store/hooks';
 import MonacoEditor from 'src/components/editor/MonacoEditor';
 import ExistFilter from 'src/components/schema/ExistFilter';
@@ -28,15 +28,18 @@ interface Props {
 const EDITOR_HEIGHT = 404;
 
 function PropertiesViewer({ disabled, editorProps }: Props) {
+    const intl = useIntl();
+
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
 
-    const inferSchemaError = useBindingsEditorStore_inferSchemaResponseError();
-    const inferSchemaResponseEmpty =
-        useBindingsEditorStore_inferSchemaResponseEmpty();
+    const skimProjectionResponseError =
+        useBindingsEditorStore_skimProjectionResponseError();
+    const skimProjectionResponseEmpty =
+        useBindingsEditorStore_skimProjectionResponseEmpty();
 
-    const [fieldFilter, setFieldFilter] = useState<FieldFilter>('all');
+    const [fieldFilter, setFieldFilter] = useState<FieldFilter>('ALL');
 
     return (
         <Grid
@@ -52,7 +55,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 direction="row"
             >
                 <Typography variant="subtitle1" component="span">
-                    <FormattedMessage id="schemaEditor.fields.label" />
+                    {intl.formatMessage({ id: 'schemaEditor.fields.label' })}
                 </Typography>
 
                 {disabled ? (
@@ -65,7 +68,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                             <ExistFilter
                                 fieldFilter={fieldFilter}
                                 setFieldFilter={setFieldFilter}
-                                disabled={inferSchemaResponseEmpty}
+                                disabled={skimProjectionResponseEmpty}
                             />
                         </Box>
 
@@ -80,18 +83,20 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
             </Stack>
 
             <Collapse
-                in={inferSchemaResponseEmpty}
+                in={skimProjectionResponseEmpty}
                 sx={{
                     mt: 2,
-                    mb: inferSchemaResponseEmpty ? 2 : undefined,
+                    mb: skimProjectionResponseEmpty ? 2 : undefined,
                 }}
             >
                 <AlertBox
                     short
                     severity="error"
-                    title={<FormattedMessage id="schemaEditor.error.title" />}
+                    title={intl.formatMessage({
+                        id: 'schemaEditor.error.title',
+                    })}
                 >
-                    {inferSchemaError}
+                    {skimProjectionResponseError}
                 </AlertBox>
             </Collapse>
 
