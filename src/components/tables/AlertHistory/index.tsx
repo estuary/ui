@@ -138,8 +138,6 @@ function AlertHistoryTable({
     const [beforeCursor, setBeforeCursor] = useState<string | undefined>(
         undefined
     );
-    // Store cursor history for backward navigation that relies only on
-    //  `before` and `last`
     const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>(
         []
     );
@@ -164,11 +162,13 @@ function AlertHistoryTable({
             const endCursor =
                 data?.liveSpecs?.edges?.[0]?.node?.alertHistory?.pageInfo
                     ?.endCursor;
+
             if (endCursor) {
                 setMaxPageSeen(Math.max(maxPageSeen, page));
                 setBeforeCursor(endCursor);
 
-                // Store the current cursor in history for the new page
+                // Store cursor history for backward navigation that relies only on
+                //  `before` and `last` for `alertHistory` table
                 setCursorHistory((prev) => {
                     const newHistory = [...prev];
 
@@ -191,7 +191,6 @@ function AlertHistoryTable({
                 setBeforeCursor(undefined);
                 setCursorHistory([]);
             } else {
-                // See what the history says
                 setBeforeCursor(cursorHistory[page]);
             }
         }
