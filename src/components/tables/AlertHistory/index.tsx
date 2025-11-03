@@ -33,7 +33,7 @@ import { PAGE_INFO_REVERSE_FRAGMENT } from 'src/services/gql';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 5;
 const MAX_ACTIVE_ALERTS = 5;
 
 interface AlertEdge {
