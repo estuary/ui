@@ -16,6 +16,7 @@ import {
 import { useIntl } from 'react-intl';
 import { gql, useQuery } from 'urql';
 
+import AlertBox from 'src/components/shared/AlertBox';
 import Rows from 'src/components/tables/AlertHistory/Rows';
 import {
     ALERT_HISTORY_LOADING_DELAY,
@@ -33,6 +34,7 @@ import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 const PAGE_SIZE = 3;
+const MAX_ACTIVE_ALERTS = 5;
 
 interface AlertEdge {
     cursor: string;
@@ -137,11 +139,10 @@ function AlertHistoryTable({
         undefined
     );
     // Store cursor history for backward navigation
-    const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>([
-        undefined,
-    ]);
+    const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>(
+        []
+    );
 
-    // Use the appropriate query based on active prop
     const [{ fetching, data, error }] = useQuery({
         query: active ? activeAlertsQuery : alertHistoryQuery,
         variables: {
@@ -170,7 +171,6 @@ function AlertHistoryTable({
                 setCursorHistory((prev) => {
                     const newHistory = [...prev];
 
-                    // Ensure the array is large enough
                     while (newHistory.length <= page) {
                         newHistory.push(undefined);
                     }
@@ -183,10 +183,10 @@ function AlertHistoryTable({
             if (page === 0) {
                 // Reset to initial state
                 setBeforeCursor(undefined);
+                setCursorHistory([]);
             } else {
-                // Use the stored cursor from history
-                const storedCursor = cursorHistory[page];
-                setBeforeCursor(storedCursor);
+                // See what the history says
+                setBeforeCursor(cursorHistory[page]);
             }
         }
         setCurrentPage(page);
@@ -269,20 +269,25 @@ function AlertHistoryTable({
         };
     }, [alerts, error, fetching]);
 
-    // Format so that the array is always consistent
-    const alertsAsEdges: AlertEdge[] = useMemo(() => {
+    // Transform active alerts to edges format for consistency
+    const alertsAsEdges = useMemo(() => {
         if (!alerts || alerts.length === 0) return [];
 
+        // If active, transform array to edges format
         if (active) {
-            return (alerts as AlertNode[]).map((alert, index) => ({
-                // Just here to be consistent - do not really trust this for querying or anything
-                cursor: `active-${index}`,
-                node: alert,
-            }));
+            return (alerts as AlertNode[])
+                .map((alert, index) => ({
+                    cursor: `active-${index}`,
+                    node: alert,
+                }))
+                .slice(0, MAX_ACTIVE_ALERTS);
         }
 
+        // Already in edges format for alert history
         return alerts as AlertEdge[];
     }, [alerts, active]);
+
+    const totalActiveAlertsCount = active && alerts ? alerts.length : 0;
 
     const failed =
         tableState.status === TableStatuses.TECHNICAL_DIFFICULTIES ||
@@ -294,86 +299,110 @@ function AlertHistoryTable({
     const isNextButtonDisabled =
         currentPage < maxPageSeen ? false : !pageInfo?.hasPreviousPage;
 
-    console.log('pageInfo', pageInfo);
-
     return (
-        <TableContainer component={Box}>
-            <Table
-                size="small"
-                sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                aria-label={intl.formatMessage({
-                    id: 'alerts.table.label',
-                })}
-            >
-                <EntityTableHeader columns={columnsToShow} selectData={true} />
-
-                <EntityTableBody
-                    columns={columnsToShow}
-                    noExistingDataContentIds={{
-                        header: 'alerts.table.empty.header',
-                        message: failed
-                            ? 'alerts.table.error.message'
-                            : 'alerts.table.empty.message',
-                        disableDoclink: true,
+        <>
+            {active && totalActiveAlertsCount > MAX_ACTIVE_ALERTS ? (
+                <AlertBox
+                    short
+                    sx={{
+                        maxWidth: 'fit-content',
                     }}
-                    tableState={tableState}
-                    loading={loading}
-                    rows={
-                        hasData && alertsAsEdges.length > 0 ? (
-                            <Rows
-                                columns={columnsToShow}
-                                data={alertsAsEdges}
-                            />
-                        ) : null
-                    }
-                />
+                    severity="info"
+                >
+                    {intl.formatMessage(
+                        {
+                            id: 'alerts.table.reduced',
+                        },
+                        {
+                            count: MAX_ACTIVE_ALERTS,
+                            total: totalActiveAlertsCount,
+                        }
+                    )}
+                </AlertBox>
+            ) : null}
+            <TableContainer component={Box}>
+                <Table
+                    size="small"
+                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
+                    aria-label={intl.formatMessage({
+                        id: 'alerts.table.label',
+                    })}
+                >
+                    <EntityTableHeader
+                        columns={columnsToShow}
+                        selectData={true}
+                    />
 
-                {showFooter ? (
-                    <TableFooter>
-                        <TableRow>
-                            <TablePagination
-                                count={-1}
-                                page={currentPage}
-                                rowsPerPage={PAGE_SIZE}
-                                rowsPerPageOptions={[PAGE_SIZE]}
-                                showFirstButton={currentPage !== 0}
-                                onPageChange={loadMore}
-                                labelDisplayedRows={({ from, to }) => {
-                                    return (
-                                        <>
-                                            {intl.formatMessage(
-                                                {
-                                                    id: 'alerts.table.pagination.displayedRows',
-                                                },
-                                                {
-                                                    from,
-                                                    to,
-                                                    status: intl.formatMessage({
-                                                        id: active
-                                                            ? 'alerts.table.pagination.displayedRows.active'
-                                                            : 'alerts.table.pagination.displayedRows.resolved',
-                                                    }),
-                                                }
-                                            )}
-                                        </>
-                                    );
-                                }}
-                                slotProps={{
-                                    actions: {
-                                        previousButton: {
-                                            disabled: currentPage === 0,
+                    <EntityTableBody
+                        columns={columnsToShow}
+                        noExistingDataContentIds={{
+                            header: 'alerts.table.empty.header',
+                            message: failed
+                                ? 'alerts.table.error.message'
+                                : 'alerts.table.empty.message',
+                            disableDoclink: true,
+                        }}
+                        tableState={tableState}
+                        loading={loading}
+                        rows={
+                            hasData && alertsAsEdges.length > 0 ? (
+                                <Rows
+                                    columns={columnsToShow}
+                                    data={alertsAsEdges}
+                                />
+                            ) : null
+                        }
+                    />
+
+                    {showFooter ? (
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    count={-1}
+                                    page={currentPage}
+                                    rowsPerPage={PAGE_SIZE}
+                                    rowsPerPageOptions={[PAGE_SIZE]}
+                                    showFirstButton={currentPage !== 0}
+                                    onPageChange={loadMore}
+                                    labelDisplayedRows={({ from, to }) => {
+                                        return (
+                                            <>
+                                                {intl.formatMessage(
+                                                    {
+                                                        id: 'alerts.table.pagination.displayedRows',
+                                                    },
+                                                    {
+                                                        from,
+                                                        to,
+                                                        status: intl.formatMessage(
+                                                            {
+                                                                id: active
+                                                                    ? 'alerts.table.pagination.displayedRows.active'
+                                                                    : 'alerts.table.pagination.displayedRows.resolved',
+                                                            }
+                                                        ),
+                                                    }
+                                                )}
+                                            </>
+                                        );
+                                    }}
+                                    slotProps={{
+                                        actions: {
+                                            previousButton: {
+                                                disabled: currentPage === 0,
+                                            },
+                                            nextButton: {
+                                                disabled: isNextButtonDisabled,
+                                            },
                                         },
-                                        nextButton: {
-                                            disabled: isNextButtonDisabled,
-                                        },
-                                    },
-                                }}
-                            />
-                        </TableRow>
-                    </TableFooter>
-                ) : null}
-            </Table>
-        </TableContainer>
+                                    }}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    ) : null}
+                </Table>
+            </TableContainer>
+        </>
     );
 }
 
