@@ -1,9 +1,9 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { Entity } from 'src/types';
-import type { Alert } from 'src/types/gql';
+import type { AlertNode } from 'src/types/gql';
 
-export type AlertsByCatalogName = { [catalogName: string]: Alert[] };
-export type FlattenedGroupedAlerts = [string, Alert[]][];
+export type AlertsByCatalogName = { [catalogName: string]: AlertNode[] };
+export type FlattenedGroupedAlerts = [string, AlertNode[]][];
 
 export interface AlertingOverviewProps {
     entityType: Entity;

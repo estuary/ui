@@ -21,12 +21,12 @@ export interface AlertDetails {
     recipients?: AlertDetailsRecipients[];
 }
 
-export interface Alert {
+export interface AlertNode {
     alertType: AlertType;
     firedAt: string;
-    resolvedAt: string;
     alertDetails: AlertDetails;
     catalogName: string;
+    resolvedAt?: string;
 }
 
 export interface PageInfo {
@@ -62,7 +62,7 @@ export type WithPagination<T> = T & PaginationVariables;
 export type DefaultAlertingQueryResponse = {
     alerts: {
         edges: {
-            node: Alert;
+            node: AlertNode;
         }[];
         pageInfo?: PageInfoReverse;
     };
@@ -73,7 +73,7 @@ export interface ActiveAlertCountQueryResponse {
             cursor: string;
             node: {
                 activeAlerts: {
-                    alertType: Pick<Alert, 'alertType'>;
+                    alertType: Pick<AlertNode, 'alertType'>;
                 }[];
             };
         }[];

@@ -1,10 +1,6 @@
 import type { AlertHistoryTableProps } from 'src/components/tables/AlertHistory/types';
 import type { TableState } from 'src/types';
-import type {
-    AlertHistoryForTaskQueryResponse,
-    AlertsVariables,
-    WithPagination,
-} from 'src/types/gql';
+import type { AlertNode } from 'src/types/gql';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -38,37 +34,86 @@ import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 const PAGE_SIZE = 3;
 
-const alertHistoryForTaskQuery = gql<
-    AlertHistoryForTaskQueryResponse,
-    WithPagination<AlertsVariables>
->`
-    query AlertHistoryForTaskQueryResponse(
-        $prefix: String!
-        $active: Boolean
-        $before: String
-        $after: String
-        $first: Int
-        $last: Int
-    ) {
-        alerts(
-            by: { prefix: $prefix, active: $active }
-            first: $first
-            last: $last
-            after: $after
-            before: $before
-        ) {
+interface AlertEdge {
+    cursor: string;
+    node: AlertNode;
+}
+
+interface PageInfo {
+    endCursor?: string;
+    startCursor?: string;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+}
+
+interface AlertHistoryConnection {
+    edges: AlertEdge[];
+    pageInfo: PageInfo;
+}
+
+interface LiveSpecNode {
+    activeAlerts?: AlertNode[];
+    alertHistory?: AlertHistoryConnection;
+}
+
+interface LiveSpecsQueryResponse {
+    liveSpecs: {
+        edges: {
+            node: LiveSpecNode;
+        }[];
+    };
+}
+
+interface LiveSpecsVariables {
+    catalogName: string;
+    before?: string;
+    first?: number;
+}
+
+// Query for active alerts
+const activeAlertsQuery = gql<LiveSpecsQueryResponse, LiveSpecsVariables>`
+    query ActiveAlertsQuery($catalogName: String!) {
+        liveSpecs(by: { names: $catalogName }) {
             edges {
-                cursor
                 node {
-                    alertType
-                    alertDetails: arguments
-                    firedAt
-                    catalogName
-                    resolvedAt
+                    activeAlerts {
+                        alertType
+                        catalogName
+                        alertDetails: arguments
+                        firedAt
+                    }
                 }
             }
-            pageInfo {
-                ...PageInfoReverse
+        }
+    }
+`;
+
+// Query for alert history (resolved alerts)
+const alertHistoryQuery = gql<LiveSpecsQueryResponse, LiveSpecsVariables>`
+    query AlertHistoryQuery(
+        $catalogName: String!
+        $before: String
+        $last: Int
+    ) {
+        liveSpecs(by: { names: $catalogName }) {
+            edges {
+                node {
+                    alertHistory(before: $before, last: $last) {
+                        edges {
+                            cursor
+                            node {
+                                alertType
+                                alertDetails: arguments
+                                catalogName
+                                firedAt
+                                resolvedAt
+                            }
+                        }
+                        pageInfo {
+                            ...PageInfoReverse
+                        }
+                    }
+                }
             }
         }
     }
@@ -91,39 +136,57 @@ function AlertHistoryTable({
     const [beforeCursor, setBeforeCursor] = useState<string | undefined>(
         undefined
     );
-    const [afterCursor, setAfterCursor] = useState<string | undefined>(
-        undefined
-    );
+    // Store cursor history for backward navigation
+    const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>([
+        undefined,
+    ]);
 
+    // Use the appropriate query based on active prop
     const [{ fetching, data, error }] = useQuery({
-        query: alertHistoryForTaskQuery,
+        query: active ? activeAlertsQuery : alertHistoryQuery,
         variables: {
-            active,
-            prefix: catalogName,
-
-            after: afterCursor,
-            before: beforeCursor,
-
-            [!afterCursor ? 'last' : 'first']: PAGE_SIZE,
+            catalogName: catalogName,
+            ...(active
+                ? {}
+                : {
+                      before: beforeCursor,
+                      last: PAGE_SIZE,
+                  }),
         },
         pause: !catalogName,
     });
 
     const loadMore = (_event: any, page: number) => {
         if (page > currentPage) {
-            if (data?.alerts?.pageInfo?.endCursor) {
+            // Moving forward
+            const endCursor =
+                data?.liveSpecs?.edges?.[0]?.node?.alertHistory?.pageInfo
+                    ?.endCursor;
+            if (endCursor) {
                 setMaxPageSeen(Math.max(maxPageSeen, page));
-                setAfterCursor(undefined);
-                setBeforeCursor(data.alerts.pageInfo.endCursor);
+                setBeforeCursor(endCursor);
+
+                // Store the current cursor in history for the new page
+                setCursorHistory((prev) => {
+                    const newHistory = [...prev];
+
+                    // Ensure the array is large enough
+                    while (newHistory.length <= page) {
+                        newHistory.push(undefined);
+                    }
+                    newHistory[page] = endCursor;
+                    return newHistory;
+                });
             }
         } else if (page < currentPage) {
+            // Moving backward
             if (page === 0) {
                 // Reset to initial state
-                setAfterCursor(undefined);
                 setBeforeCursor(undefined);
-            } else if (data?.alerts?.pageInfo?.startCursor) {
-                setAfterCursor(data.alerts.pageInfo.startCursor);
-                setBeforeCursor(undefined);
+            } else {
+                // Use the stored cursor from history
+                const storedCursor = cursorHistory[page];
+                setBeforeCursor(storedCursor);
             }
         }
         setCurrentPage(page);
@@ -149,6 +212,13 @@ function AlertHistoryTable({
         status: TableStatuses.LOADING,
     });
 
+    // Extract the data based on active prop
+    const specNode = data?.liveSpecs?.edges?.[0]?.node;
+    const alerts = active
+        ? specNode?.activeAlerts
+        : specNode?.alertHistory?.edges;
+    const pageInfo = active ? null : specNode?.alertHistory?.pageInfo;
+
     useEffect(() => {
         // Clear any existing timeout
         if (loadingTimeoutRef.current) {
@@ -158,7 +228,7 @@ function AlertHistoryTable({
 
         if (fetching) {
             // If this is the first load or we don't have data yet, show loading immediately
-            if (!hasLoadedOnce.current || !data?.alerts?.edges?.length) {
+            if (!hasLoadedOnce.current || !alerts?.length) {
                 setTableState({ status: TableStatuses.LOADING });
             } else {
                 // For subsequent loads, wait 100ms before showing loading state
@@ -180,7 +250,7 @@ function AlertHistoryTable({
             }
             return;
         }
-        if (data?.alerts?.edges && data.alerts.edges.length > 0) {
+        if (alerts && alerts.length > 0) {
             setTableState({
                 status: TableStatuses.DATA_FETCHED,
             });
@@ -197,7 +267,22 @@ function AlertHistoryTable({
                 clearTimeout(loadingTimeoutRef.current);
             }
         };
-    }, [data, error, fetching]);
+    }, [alerts, error, fetching]);
+
+    // Format so that the array is always consistent
+    const alertsAsEdges: AlertEdge[] = useMemo(() => {
+        if (!alerts || alerts.length === 0) return [];
+
+        if (active) {
+            return (alerts as AlertNode[]).map((alert, index) => ({
+                // Just here to be consistent - do not really trust this for querying or anything
+                cursor: `active-${index}`,
+                node: alert,
+            }));
+        }
+
+        return alerts as AlertEdge[];
+    }, [alerts, active]);
 
     const failed =
         tableState.status === TableStatuses.TECHNICAL_DIFFICULTIES ||
@@ -205,11 +290,11 @@ function AlertHistoryTable({
     const loading = tableState.status === TableStatuses.LOADING;
     const hasData =
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
-    const showFooter = !disableFooter && hasData;
+    const showFooter = !disableFooter && !active;
     const isNextButtonDisabled =
-        currentPage < maxPageSeen
-            ? false
-            : !data?.alerts?.pageInfo?.hasPreviousPage;
+        currentPage < maxPageSeen ? false : !pageInfo?.hasPreviousPage;
+
+    console.log('pageInfo', pageInfo);
 
     return (
         <TableContainer component={Box}>
@@ -234,10 +319,10 @@ function AlertHistoryTable({
                     tableState={tableState}
                     loading={loading}
                     rows={
-                        hasData && data?.alerts?.edges ? (
+                        hasData && alertsAsEdges.length > 0 ? (
                             <Rows
                                 columns={columnsToShow}
-                                data={data.alerts.edges}
+                                data={alertsAsEdges}
                             />
                         ) : null
                     }
