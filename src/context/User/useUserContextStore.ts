@@ -3,8 +3,6 @@ import type { UserStore } from 'src/context/User/types';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import produce from 'immer';
-
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 const name = 'estuary.user-provider-store';
@@ -15,38 +13,42 @@ const useUserStore = create<UserStore>()(
             initialized: false,
             setInitialized: (newVal) => {
                 set(
-                    produce((state) => {
-                        state.initialized = newVal;
+                    (state) => ({
+                        ...state,
+                        initialized: newVal,
                     }),
                     false,
-                    'setUserDetails'
+                    'setInitialized'
                 );
             },
             session: null,
             setSession: (newVal) => {
                 set(
-                    produce((state) => {
-                        state.session = newVal;
+                    (state) => ({
+                        ...state,
+                        session: newVal,
                     }),
                     false,
-                    'setUserDetails'
+                    'setSession'
                 );
             },
             user: null,
             setUser: (newVal) => {
                 set(
-                    produce((state) => {
-                        state.user = newVal;
+                    (state) => ({
+                        ...state,
+                        user: newVal,
                     }),
                     false,
-                    'setUserDetails'
+                    'setUser'
                 );
             },
             userDetails: null,
             setUserDetails: (newVal) => {
                 set(
-                    produce((state) => {
-                        state.userDetails = newVal;
+                    (state) => ({
+                        ...state,
+                        userDetails: newVal,
                     }),
                     false,
                     'setUserDetails'

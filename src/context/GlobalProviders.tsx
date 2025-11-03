@@ -13,10 +13,11 @@ import { initLogRocket } from 'src/services/logrocket';
 
 if (
     !import.meta.env.VITE_SUPABASE_URL ||
-    !import.meta.env.VITE_SUPABASE_ANON_KEY
+    !import.meta.env.VITE_SUPABASE_ANON_KEY ||
+    !import.meta.env.VITE_GQL_URL
 ) {
     throw new Error(
-        'You must set the Supabase url and anon key in the env settings.'
+        'Missing at least 1 environment config: [VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_GQL_URL]'
     );
 }
 
