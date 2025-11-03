@@ -5,12 +5,10 @@ import { useMemo } from 'react';
 import { authenticatedRoutes } from 'src/app/routes';
 import NavigationTabs from 'src/components/shared/NavigationTabs';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import { useTenantStore } from 'src/stores/Tenant/Store';
 
 const TAB_KEY = 'admin-tabs';
 function AdminTabs() {
     const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const tabProps = useMemo(() => {
         const response: NavigationTabProps[] = [
@@ -41,7 +39,7 @@ function AdminTabs() {
                 path: authenticatedRoutes.admin.api.fullPath,
             },
         ]);
-    }, [hasAnyAccess, selectedTenant]);
+    }, [hasAnyAccess]);
 
     return <NavigationTabs keyPrefix={TAB_KEY} tabs={tabProps} />;
 }
