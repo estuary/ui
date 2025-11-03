@@ -1,4 +1,4 @@
-import type { SaveButtonProps } from 'src/components/fieldSelection/types';
+import type { MenuActionProps } from 'src/components/fieldSelection/types';
 
 import { Button } from '@mui/material';
 
@@ -8,14 +8,14 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { DEFAULT_RECOMMENDED_FLAG } from 'src/utils/fieldSelection-utils';
+import { mapAlgorithmToRecommendedValue } from 'src/utils/fieldSelection-utils';
 
 export default function SaveButton({
     close,
     disabled,
     handleClick,
-    selectedAlgorithm,
-}: SaveButtonProps) {
+    selectionAlgorithm,
+}: MenuActionProps) {
     const intl = useIntl();
 
     const formActive = useFormStateStore_isActive();
@@ -26,23 +26,17 @@ export default function SaveButton({
 
     return (
         <Button
-            disabled={disabled || formActive || !selectedAlgorithm}
+            disabled={disabled || formActive || !selectionAlgorithm}
             onClick={() => {
-                const recommendedFlag =
-                    selectedAlgorithm === 'depthZero'
-                        ? 0
-                        : selectedAlgorithm === 'depthOne'
-                          ? 1
-                          : selectedAlgorithm === 'depthTwo'
-                            ? 2
-                            : selectedAlgorithm === 'depthUnlimited'
-                              ? true
-                              : (fieldsRecommended ?? DEFAULT_RECOMMENDED_FLAG);
+                const recommendedFlag = mapAlgorithmToRecommendedValue(
+                    selectionAlgorithm,
+                    fieldsRecommended
+                );
 
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
                     fieldsRecommended,
                     recommendedFlag,
-                    selectedAlgorithm,
+                    selectionAlgorithm,
                 });
 
                 handleClick(recommendedFlag);
