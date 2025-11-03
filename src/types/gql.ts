@@ -29,6 +29,21 @@ export interface AlertNode {
     resolvedAt?: string;
 }
 
+export interface AlertNodeEdge {
+    cursor: string;
+    node: AlertNode;
+}
+
+export interface LiveSpecNode {
+    activeAlerts?: AlertNode[];
+    alertHistory?: {
+        edges: AlertNodeEdge[];
+        pageInfo: PageInfo;
+    };
+}
+
+// PAGINATION
+
 export interface PageInfo {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
@@ -40,6 +55,8 @@ export type PageInfoReverse = Pick<
     PageInfo,
     'hasPreviousPage' | 'startCursor' | 'endCursor'
 >;
+
+// VARIABLES
 
 export interface LiveSpecVariables {
     catalogName: string | undefined;
@@ -60,6 +77,8 @@ export interface PaginationVariables {
 }
 
 export type WithPagination<T> = T & PaginationVariables;
+
+// QUERY RESPONSES
 
 export type DefaultAlertingQueryResponse = {
     alerts: {
@@ -85,20 +104,7 @@ export interface ActiveAlertCountQueryResponse {
 export type AlertHistoryForTaskQueryResponse = DefaultAlertingQueryResponse;
 export type AlertingOverviewQueryResponse = AlertHistoryForTaskQueryResponse;
 
-export interface AlertEdge {
-    cursor: string;
-    node: AlertNode;
-}
-
-interface LiveSpecNode {
-    activeAlerts?: AlertNode[];
-    alertHistory?: {
-        edges: AlertEdge[];
-        pageInfo: PageInfo;
-    };
-}
-
-export interface LiveSpecsQueryResponse {
+export interface AlertHistoryQueryResponse {
     liveSpecs: {
         edges: {
             node: LiveSpecNode;

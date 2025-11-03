@@ -1,9 +1,9 @@
 import type { AlertHistoryTableProps } from 'src/components/tables/AlertHistory/types';
 import type { TableState } from 'src/types';
 import type {
-    AlertEdge,
+    AlertHistoryQueryResponse,
     AlertNode,
-    LiveSpecsQueryResponse,
+    AlertNodeEdge,
     LiveSpecVariables,
     WithPagination,
 } from 'src/types/gql';
@@ -43,7 +43,7 @@ const PAGE_SIZE = 5;
 const MAX_ACTIVE_ALERTS = 5;
 
 // Query for active alerts
-const activeAlertsQuery = gql<LiveSpecsQueryResponse, LiveSpecVariables>`
+const activeAlertsQuery = gql<AlertHistoryQueryResponse, LiveSpecVariables>`
     query ActiveAlertsQuery($catalogName: String!) {
         liveSpecs(by: { names: $catalogName }) {
             edges {
@@ -62,7 +62,7 @@ const activeAlertsQuery = gql<LiveSpecsQueryResponse, LiveSpecVariables>`
 
 // Query for alert history (resolved alerts)
 const alertHistoryQuery = gql<
-    LiveSpecsQueryResponse,
+    AlertHistoryQueryResponse,
     WithPagination<LiveSpecVariables>
 >`
     query AlertHistoryQuery(
@@ -262,7 +262,7 @@ function AlertHistoryTable({
         }
 
         // Already in edges format for alert history
-        return alerts as AlertEdge[];
+        return alerts as AlertNodeEdge[];
     }, [alerts, active]);
 
     const totalActiveAlertsCount = active && alerts ? alerts.length : 0;
