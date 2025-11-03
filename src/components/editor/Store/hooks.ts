@@ -642,6 +642,9 @@ export const useHydrateEditorState = (
     catalogName?: string,
     localScope?: boolean
 ) => {
+    // We use this to make the skips a bit quicker - but the hydrator
+    //  itself also checks this since this hook is unmounted when switching
+    //  tabs in the binding section
     const hydratedCollectionsOnce = useRef(false);
 
     const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);

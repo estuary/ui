@@ -48,8 +48,11 @@ export interface StoreWithCollections {
         meta: Partial<CollectionMetadata>
     ) => void;
     initializeCollections: (collections: Map<string, any>) => void;
-    collectionsError: boolean;
     setCollectionsError: (newVal: boolean) => void;
+
+    // Temporary before we implement a proper state machine pattern
+    collectionsError: boolean;
+    collectionsInited: boolean;
 
     // TODO (schema edit)
     // Leaning towards this not being needed
@@ -58,10 +61,11 @@ export interface StoreWithCollections {
 
 export const getInitialCollectionData = (): Pick<
     StoreWithCollections,
-    'collections' | 'collectionsError'
+    'collections' | 'collectionsError' | 'collectionsInited'
 > => ({
     collections: {},
     collectionsError: false,
+    collectionsInited: false,
 });
 
 export const getStoreWithCollectionSettings = (
@@ -91,11 +95,16 @@ export const getStoreWithCollectionSettings = (
 
     initializeCollections: (collections) => {
         if (collections.size < 1) {
+            set((state) => ({
+                ...state,
+                collectionsInited: true,
+            }));
             return;
         }
 
         set((state) => ({
             ...state,
+            collectionsInited: true,
             collections: {
                 ...state.collections,
                 ...Object.fromEntries(collections),

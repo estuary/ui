@@ -9,24 +9,31 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { getCollectionName } from 'src/utils/workflow-utils';
 
 function useCollectionsHydrator() {
-    const [initializeCollections, setCollectionsError] = useWorkflowStore(
-        (state) => {
-            return [state.initializeCollections, state.setCollectionsError];
-        }
-    );
+    const [initializeCollections, setCollectionsError, collectionsInited] =
+        useWorkflowStore((state) => {
+            return [
+                state.initializeCollections,
+                state.setCollectionsError,
+                state.collectionsInited,
+            ];
+        });
 
     const hydrateCollections = useCallback(
         async (id: string, specToUse: any) => {
+            if (collectionsInited) {
+                return Promise.resolve();
+            }
+
             // Go through the bindings and get the names we need to fetch
             const collectionsNeedingFetched = [
                 ...new Set<string>(
-                    specToUse.bindings
-                        .filter((binding: any) => {
+                    specToUse?.bindings
+                        ?.filter((binding: any) => {
                             return Boolean(!binding.disable);
                         })
                         .map((binding: any) => {
                             return getCollectionName(binding);
-                        })
+                        }) ?? []
                 ),
             ];
 
@@ -97,7 +104,7 @@ function useCollectionsHydrator() {
 
             return Promise.resolve();
         },
-        [initializeCollections, setCollectionsError]
+        [collectionsInited, initializeCollections, setCollectionsError]
     );
 
     return {

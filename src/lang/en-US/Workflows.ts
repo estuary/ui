@@ -176,7 +176,7 @@ export const Workflows: Record<string, string> = {
 
     'fieldSelection.cta.selectAlgorithm': `Field Depth`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
-    'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
+    'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config or collection can sometimes change the options below.`,
     'fieldSelection.error.serverUpdateFailed': `Field selection update failed`,
     'fieldSelection.error.validationFailed': `Field selection validation failed for {collection}.`,
     'fieldSelection.error.groupBySaveFailed': `Group-by key update failed for {collection}.`,

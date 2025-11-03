@@ -17,6 +17,7 @@ import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
 interface Props {
@@ -39,6 +40,10 @@ function FieldSelectionViewer({
         bindingUUID,
         collectionName
     );
+
+    const collectionEdited = useWorkflowStore((state) => {
+        return Boolean(state.collections[collectionName]?.belongsToDraft);
+    });
 
     // Bindings Store
     const advanceHydrationStatus = useBindingStore(
@@ -151,7 +156,13 @@ function FieldSelectionViewer({
 
                     <KeyChangeAlert bindingUUID={bindingUUID} />
 
-                    <RefreshStatus show={refreshRequired ? true : undefined} />
+                    <RefreshStatus
+                        show={
+                            collectionEdited || refreshRequired
+                                ? true
+                                : undefined
+                        }
+                    />
 
                     <Typography component="div">
                         <MessageWithLink messageID="fieldSelection.message" />
