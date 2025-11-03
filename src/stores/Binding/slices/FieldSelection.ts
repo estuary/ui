@@ -84,11 +84,6 @@ export interface StoreWithFieldSelection {
     ) => void;
     setExplicitGroupBy: (bindingUUID: string, targetKeys: string[]) => void;
 
-    selectionAlgorithm: SelectionAlgorithm | null;
-    setSelectionAlgorithm: (
-        value: StoreWithFieldSelection['selectionAlgorithm']
-    ) => void;
-
     searchQuery: string | null;
     setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
 }
@@ -146,11 +141,10 @@ const setBindingHydrationStatus = (
 
 export const getInitialFieldSelectionData = (): Pick<
     StoreWithFieldSelection,
-    'recommendFields' | 'searchQuery' | 'selectionAlgorithm' | 'selections'
+    'recommendFields' | 'searchQuery' | 'selections'
 > => ({
     recommendFields: {},
     searchQuery: null,
-    selectionAlgorithm: null,
     selections: {},
 });
 
@@ -287,16 +281,6 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Search Query Set'
-        );
-    },
-
-    setSelectionAlgorithm: (value) => {
-        set(
-            produce((state: StoreWithFieldSelection) => {
-                state.selectionAlgorithm = value;
-            }),
-            false,
-            'Selection Algorithm Set'
         );
     },
 

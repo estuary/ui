@@ -26,6 +26,7 @@ import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
     addOrRemoveSourceCapture,
+    getSourceCapturePropKey,
     setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
 import { hasLength } from 'src/utils/misc-utils';
@@ -175,6 +176,7 @@ export const generateTaskSpec = (
         fullSource: FullSourceDictionary | null;
         sourceCaptureDefinition: SourceCaptureDef | null;
         specOnIncompatibleSchemaChange?: string;
+        defaultFieldsRecommended?: boolean;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)
@@ -321,6 +323,13 @@ export const generateTaskSpec = (
             draftSpec,
             options.specOnIncompatibleSchemaChange
         );
+
+        if (options.defaultFieldsRecommended) {
+            const targetSourceProperty = getSourceCapturePropKey(draftSpec);
+
+            draftSpec[targetSourceProperty] ??= {};
+            draftSpec[targetSourceProperty].fieldsRecommended = 1;
+        }
     }
 
     return draftSpec;

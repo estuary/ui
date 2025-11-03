@@ -191,6 +191,7 @@ export default function FieldSelectionTable({
                     >
                         <span>
                             <AlgorithmMenu
+                                bindingUUID={bindingUUID}
                                 handleClick={(recommended) => {
                                     setRecommendFields(
                                         bindingUUID,

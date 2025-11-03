@@ -251,6 +251,7 @@ function useGenerateCatalog() {
                         fullSource: fullSourceConfigs,
                         sourceCaptureDefinition,
                         specOnIncompatibleSchemaChange,
+                        defaultFieldsRecommended: !isEdit,
                     }
                 );
 
@@ -359,6 +360,7 @@ function useGenerateCatalog() {
             fullSourceErrorsExist,
             imageConnectorId,
             imageConnectorTagId,
+            isEdit,
             persistedDraftId,
             prefillBindingDependentState,
             processedEntityName,

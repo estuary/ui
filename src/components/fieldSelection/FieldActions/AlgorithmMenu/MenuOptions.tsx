@@ -1,3 +1,4 @@
+import type { MenuOptionsProps } from 'src/components/fieldSelection/types';
 import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelection';
 
 import { RadioGroup } from '@mui/material';
@@ -5,17 +6,12 @@ import { RadioGroup } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import RadioMenuItem from 'src/components/shared/RadioMenuItem';
-import { useBindingStore } from 'src/stores/Binding/Store';
 
-export default function MenuOptions() {
+export default function MenuOptions({
+    selectionAlgorithm,
+    setSelectionAlgorithm,
+}: MenuOptionsProps) {
     const intl = useIntl();
-
-    const selectionAlgorithm = useBindingStore(
-        (state) => state.selectionAlgorithm
-    );
-    const setSelectionAlgorithm = useBindingStore(
-        (state) => state.setSelectionAlgorithm
-    );
 
     return (
         <RadioGroup
