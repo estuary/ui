@@ -138,7 +138,8 @@ function AlertHistoryTable({
     const [beforeCursor, setBeforeCursor] = useState<string | undefined>(
         undefined
     );
-    // Store cursor history for backward navigation
+    // Store cursor history for backward navigation that relies only on
+    //  `before` and `last`
     const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>(
         []
     );
@@ -171,10 +172,15 @@ function AlertHistoryTable({
                 setCursorHistory((prev) => {
                     const newHistory = [...prev];
 
+                    // Make sure there is a spot in the history
                     while (newHistory.length <= page) {
                         newHistory.push(undefined);
                     }
+
+                    // Add the cursor
                     newHistory[page] = endCursor;
+
+                    // Update state
                     return newHistory;
                 });
             }
