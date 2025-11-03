@@ -70,6 +70,7 @@ export default function AlertingOverview({
     return (
         <Grid item xs={12}>
             <CardWrapper
+                disableMinWidth
                 opaqueLightMode
                 message={intl.formatMessage({
                     id: fetching
