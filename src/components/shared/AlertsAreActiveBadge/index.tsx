@@ -1,7 +1,7 @@
 import type { AlertsAreActiveBadgeProps } from 'src/components/shared/AlertsAreActiveBadge/types';
 import type {
     ActiveAlertCountQueryResponse,
-    AlertsVariables,
+    LiveSpecVariables,
 } from 'src/types/gql';
 
 import { useEffect } from 'react';
@@ -14,22 +14,30 @@ const POLLING_INTERVAL = 45000;
 
 const ActiveAlertCountQuery = gql<
     ActiveAlertCountQueryResponse,
-    AlertsVariables
+    LiveSpecVariables
 >`
-    query ActiveAlertCount($prefix: String!, $active: Boolean) {
-        alerts(by: { prefix: $prefix, active: $active }) {
+    query ActiveAlertCount($catalogName: String!) {
+        liveSpecs(by: { names: $catalogName }) {
             edges {
                 cursor
+                node {
+                    activeAlerts {
+                        alertType
+                    }
+                }
             }
         }
     }
 `;
 
-function AlertsAreActiveBadge({ children, prefix }: AlertsAreActiveBadgeProps) {
+function AlertsAreActiveBadge({
+    children,
+    catalogName,
+}: AlertsAreActiveBadgeProps) {
     const [{ fetching, data }, reexecuteQuery] = useQuery({
         query: ActiveAlertCountQuery,
-        variables: { active: true, prefix },
-        pause: !prefix,
+        variables: { catalogName },
+        pause: !catalogName,
     });
 
     useEffect(() => {
@@ -42,7 +50,8 @@ function AlertsAreActiveBadge({ children, prefix }: AlertsAreActiveBadgeProps) {
         return () => clearTimeout(timerId);
     }, [fetching, reexecuteQuery]);
 
-    const activeAlertCount = data?.alerts.edges.length ?? 0;
+    const activeAlertCount =
+        data?.liveSpecs.edges[0]?.node.activeAlerts.length ?? 0;
 
     return (
         <Badge

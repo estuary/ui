@@ -1,8 +1,8 @@
 import type { AlertHistoryTableProps } from 'src/components/tables/AlertHistory/types';
 import type { TableState } from 'src/types';
 import type {
+    AlertHistoryForTaskQueryResponse,
     AlertsVariables,
-    ResolvedAlertsForTaskQuery,
     WithPagination,
 } from 'src/types/gql';
 
@@ -38,11 +38,11 @@ import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
 const PAGE_SIZE = 3;
 
-const resolvedAlertsForTaskQuery = gql<
-    ResolvedAlertsForTaskQuery,
+const alertHistoryForTaskQuery = gql<
+    AlertHistoryForTaskQueryResponse,
     WithPagination<AlertsVariables>
 >`
-    query ResolvedAlertsForTaskQuery(
+    query AlertHistoryForTaskQueryResponse(
         $prefix: String!
         $active: Boolean
         $before: String
@@ -96,7 +96,7 @@ function AlertHistoryTable({
     );
 
     const [{ fetching, data, error }] = useQuery({
-        query: resolvedAlertsForTaskQuery,
+        query: alertHistoryForTaskQuery,
         variables: {
             active,
             prefix: catalogName,

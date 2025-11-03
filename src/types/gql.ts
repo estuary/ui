@@ -41,6 +41,10 @@ export type PageInfoReverse = Pick<
     'hasPreviousPage' | 'startCursor' | 'endCursor'
 >;
 
+export interface LiveSpecVariables {
+    catalogName: string | undefined;
+}
+
 export interface AlertsVariables {
     active: boolean | undefined;
     prefix: string | undefined;
@@ -51,7 +55,6 @@ export interface PaginationVariables {
     before: string | undefined;
     first?: number | undefined;
     last?: number | undefined;
-    prefix: string | undefined;
 }
 
 export type WithPagination<T> = T & PaginationVariables;
@@ -65,14 +68,17 @@ export type DefaultAlertingQueryResponse = {
     };
 };
 export interface ActiveAlertCountQueryResponse {
-    alerts: {
+    liveSpecs: {
         edges: {
             cursor: string;
+            node: {
+                activeAlerts: {
+                    alertType: Pick<Alert, 'alertType'>;
+                }[];
+            };
         }[];
     };
 }
 
-export type AlertingOverviewQueryResponse = AlertHistoryQueryResponse;
-export type ActiveAlertsForTaskQueryResponse = AlertHistoryQueryResponse;
-export type AlertHistoryQueryResponse = DefaultAlertingQueryResponse;
-export type ResolvedAlertsForTaskQuery = DefaultAlertingQueryResponse;
+export type AlertHistoryForTaskQueryResponse = DefaultAlertingQueryResponse;
+export type AlertingOverviewQueryResponse = AlertHistoryForTaskQueryResponse;

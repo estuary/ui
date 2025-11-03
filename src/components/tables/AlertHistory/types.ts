@@ -1,6 +1,6 @@
 import type { TablePrefixes } from 'src/stores/Tables/hooks';
 import type { TableColumns } from 'src/types';
-import type { Alert, ResolvedAlertsForTaskQuery } from 'src/types/gql';
+import type { Alert, AlertHistoryForTaskQueryResponse } from 'src/types/gql';
 
 export interface AlertHistoryTableProps {
     active: boolean;
@@ -16,7 +16,7 @@ export interface AlertTruncationMessageProps {
 
 export interface RowsProps {
     columns: TableColumns[];
-    data: ResolvedAlertsForTaskQuery['alerts']['edges'];
+    data: AlertHistoryForTaskQueryResponse['alerts']['edges'];
 }
 
 export interface RowProps {
@@ -27,5 +27,5 @@ export interface RowProps {
 }
 
 export interface DetailsPaneProps {
-    foo: any;
+    alertDetails: any;
 }
