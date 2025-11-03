@@ -50,9 +50,11 @@ export interface AlertsVariables {
     prefix: string | undefined;
 }
 
+// TODO (typing) - we need more versions of pagination
+//  as some endpoints only support before/last (AlertHistory)
 export interface PaginationVariables {
-    after: string | undefined;
-    before: string | undefined;
+    before?: string | undefined;
+    after?: string | undefined;
     first?: number | undefined;
     last?: number | undefined;
 }
@@ -82,3 +84,24 @@ export interface ActiveAlertCountQueryResponse {
 
 export type AlertHistoryForTaskQueryResponse = DefaultAlertingQueryResponse;
 export type AlertingOverviewQueryResponse = AlertHistoryForTaskQueryResponse;
+
+export interface AlertEdge {
+    cursor: string;
+    node: AlertNode;
+}
+
+interface LiveSpecNode {
+    activeAlerts?: AlertNode[];
+    alertHistory?: {
+        edges: AlertEdge[];
+        pageInfo: PageInfo;
+    };
+}
+
+export interface LiveSpecsQueryResponse {
+    liveSpecs: {
+        edges: {
+            node: LiveSpecNode;
+        }[];
+    };
+}

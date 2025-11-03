@@ -1,6 +1,12 @@
 import type { AlertHistoryTableProps } from 'src/components/tables/AlertHistory/types';
 import type { TableState } from 'src/types';
-import type { AlertNode } from 'src/types/gql';
+import type {
+    AlertEdge,
+    AlertNode,
+    LiveSpecsQueryResponse,
+    LiveSpecVariables,
+    WithPagination,
+} from 'src/types/gql';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -36,44 +42,8 @@ import { evaluateColumnsToShow } from 'src/utils/table-utils';
 const PAGE_SIZE = 5;
 const MAX_ACTIVE_ALERTS = 5;
 
-interface AlertEdge {
-    cursor: string;
-    node: AlertNode;
-}
-
-interface PageInfo {
-    endCursor?: string;
-    startCursor?: string;
-    hasPreviousPage?: boolean;
-    hasNextPage?: boolean;
-}
-
-interface AlertHistoryConnection {
-    edges: AlertEdge[];
-    pageInfo: PageInfo;
-}
-
-interface LiveSpecNode {
-    activeAlerts?: AlertNode[];
-    alertHistory?: AlertHistoryConnection;
-}
-
-interface LiveSpecsQueryResponse {
-    liveSpecs: {
-        edges: {
-            node: LiveSpecNode;
-        }[];
-    };
-}
-
-interface LiveSpecsVariables {
-    catalogName: string;
-    before?: string;
-    first?: number;
-}
-
 // Query for active alerts
-const activeAlertsQuery = gql<LiveSpecsQueryResponse, LiveSpecsVariables>`
+const activeAlertsQuery = gql<LiveSpecsQueryResponse, LiveSpecVariables>`
     query ActiveAlertsQuery($catalogName: String!) {
         liveSpecs(by: { names: $catalogName }) {
             edges {
@@ -91,7 +61,10 @@ const activeAlertsQuery = gql<LiveSpecsQueryResponse, LiveSpecsVariables>`
 `;
 
 // Query for alert history (resolved alerts)
-const alertHistoryQuery = gql<LiveSpecsQueryResponse, LiveSpecsVariables>`
+const alertHistoryQuery = gql<
+    LiveSpecsQueryResponse,
+    WithPagination<LiveSpecVariables>
+>`
     query AlertHistoryQuery(
         $catalogName: String!
         $before: String
