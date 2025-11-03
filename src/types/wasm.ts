@@ -65,7 +65,7 @@ export interface FieldSelectionInput {
 export interface FieldSelectionInput_Skim {
     collection: {
         name: string;
-        model: any; //MaterializationBinding ?
+        model: any; //Collection Spec (drafted or live) ?
     };
     binding: {
         live: any; //MaterializationBuiltBinding ?

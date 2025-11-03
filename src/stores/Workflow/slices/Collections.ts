@@ -6,6 +6,7 @@ export interface CollectionMetadata {
 
     // TODO (schema edit?) this is a lot to transfer but should come over here
     // ui/src/components/editor/Bindings/Store/types.ts
+    // Needs state machine status - NO BOOLEANS!
     // editor state
     // initAlert: any;
     // initComplete: boolean;
@@ -14,6 +15,7 @@ export interface CollectionMetadata {
     // schemaUpdateErrored: boolean;
 
     // ui/src/stores/Binding/types.ts
+    // Workflow State/meta
     // added?: boolean;
     // previouslyBound?: boolean;
     // sourceBackfillRecommended?: boolean;
