@@ -263,6 +263,7 @@ function useInitializeCollectionDraft() {
             setDraftId,
             setLocalDraftId,
             setPersistedDraftId,
+            upsertCollection,
         ]
     );
 
