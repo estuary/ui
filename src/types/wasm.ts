@@ -100,7 +100,7 @@ interface SelectOutputReason {
     [key: string]: any;
 }
 
-// Skim Projections
+// Skim Projections (Will probably pull these into a "flow" type file eventually)
 export interface BasicSchemaModel {
     schema: any;
 }

@@ -54,3 +54,10 @@ export interface MenuOptionsProps {
     selectionAlgorithm: SelectionAlgorithm | null;
     setSelectionAlgorithm: Dispatch<SetStateAction<SelectionAlgorithm | null>>;
 }
+
+export interface FieldSelectionViewerProps {
+    bindingUUID: string;
+    collectionName: string;
+    refreshRequired: boolean;
+    refresh: Function;
+}

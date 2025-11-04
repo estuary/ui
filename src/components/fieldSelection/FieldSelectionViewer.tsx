@@ -1,3 +1,4 @@
+import type { FieldSelectionViewerProps } from 'src/components/fieldSelection/types';
 import type { BindingFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 import { useEffect, useMemo } from 'react';
@@ -20,19 +21,12 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
-interface Props {
-    bindingUUID: string;
-    collectionName: string;
-    refreshRequired: boolean;
-    refresh: Function;
-}
-
 function FieldSelectionViewer({
     bindingUUID,
     collectionName,
     refreshRequired,
     refresh,
-}: Props) {
+}: FieldSelectionViewerProps) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 

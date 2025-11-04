@@ -2,6 +2,7 @@ import type { AlertColor } from '@mui/material';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
 import type { IncompatibleCollections } from 'src/components/shared/Entity/IncompatibleCollections/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
+import type { CollectionDef } from 'src/types/wasm';
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
@@ -50,7 +51,7 @@ export interface BindingsEditorState {
     skimProjectionResponseProcessingUpdate: boolean;
     skimProjectionResponseEmpty: boolean;
     populateSkimProjectionResponse: (
-        value: any | undefined,
+        value: CollectionDef,
         entityName: string,
         projections: any
     ) => void;

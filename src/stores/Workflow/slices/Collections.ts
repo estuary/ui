@@ -1,7 +1,8 @@
+import type { CollectionDef } from 'src/types/wasm';
 import type { NamedSet } from 'zustand/middleware';
 
 export interface CollectionMetadata {
-    spec: any;
+    spec: CollectionDef | null;
     belongsToDraft: boolean;
 
     // TODO (schema edit?) this is a lot to transfer but should come over here

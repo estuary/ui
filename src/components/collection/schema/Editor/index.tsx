@@ -37,17 +37,18 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         AllowedScopes | undefined
     >(undefined);
 
+    const { collectionDef } = useCollectionDef(entityName);
+
     const { onChange, draftSpec, mutate, defaultValue } = useDraftSpecEditor(
         entityName,
         localZustandScope,
         editorSchemaScope
     );
 
-    const { model } = useCollectionDef(
-        entityName,
-        localZustandScope,
-        editorSchemaScope
-    );
+    console.log('collectionDef vs draftSpec >>>>>> ', {
+        collectionDef,
+        draftSpec,
+    });
 
     const projections = useProjectionsForSkim();
     const entityType = useEntityType();
@@ -68,32 +69,37 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const disableSchemaEditing = useDisableSchemaEditing();
 
     useEffect(() => {
-        if (draftSpec?.spec && entityName) {
+        if (collectionDef?.spec && entityName) {
             // TODO (collection editor) when we allow collections to get updated
             //  from the details page we'll need to handle this for that.
 
             // Figure out if we need to use schema or readSchema
-            const [schemaScope] = getProperSchemaScope(draftSpec.spec);
+            const [schemaScope] = getProperSchemaScope(collectionDef.spec);
 
             // Store off what scope is being used
             setEditorSchemaScope(schemaScope);
 
             // Infer schema and pass in spec so the function can handle
             //  if there is a read/write or just plain schema
-            populateSkimProjectionResponse(model, entityName, projections);
+            populateSkimProjectionResponse(
+                collectionDef.spec,
+                entityName,
+                projections
+            );
 
             // Need to keep the collection data updated so that the schema
             //  inference and CLI buttons work
-            setCollectionData({ spec: draftSpec.spec, belongsToDraft: true });
+            setCollectionData({
+                spec: collectionDef.spec,
+                belongsToDraft: true,
+            });
         }
     }, [
-        entityType,
+        collectionDef,
         entityName,
         populateSkimProjectionResponse,
-        setCollectionData,
         projections,
-        draftSpec?.spec,
-        model,
+        setCollectionData,
     ]);
 
     // If the schema is updated via the scheme inference

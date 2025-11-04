@@ -1,25 +1,18 @@
-import { useMemo } from 'react';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
-import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
-
-function useCollectionDef(
-    entityName: string | undefined,
-    localZustandScope: boolean | undefined,
-    editorSchemaScope: string | undefined
-) {
-    const { draftSpec } = useDraftSpecEditor(
-        entityName,
-        localZustandScope,
-        editorSchemaScope
+// TODO (schema edit) ... kinda
+// This is kind of a weird one and might not stay around.
+//  There is a chance we'll need to do some common processing here.
+//  Like figuring out if this is a liveSpec of a draftSpec. However, this
+//  won't be apparent until we wire up Schema Editing
+function useCollectionDef(entityName: string | undefined) {
+    const collectionDef = useWorkflowStore((state) =>
+        entityName ? state.collections[entityName] : undefined
     );
 
-    return useMemo(() => {
-        return {
-            hasReadSchema: true,
-            hasWriteSchema: true,
-            model: draftSpec?.spec,
-        };
-    }, [draftSpec?.spec]);
+    return {
+        collectionDef,
+    };
 }
 
 export default useCollectionDef;
