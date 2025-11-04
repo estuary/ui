@@ -3,6 +3,9 @@ import { useMemo } from 'react';
 import { useCollectionIndex } from 'src/hooks/projections/useCollectionIndex';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
+// Very minor difference between this and useProjectedFields as `skim_collection_projections`
+//  wants the `projections` to look like they do in the CollectionDef.
+// Eventually we'll probably want to merge these - but having two hooks helped reduce complexity
 export const useProjectionsForSkim = () => {
     const { collection } = useCollectionIndex();
 
