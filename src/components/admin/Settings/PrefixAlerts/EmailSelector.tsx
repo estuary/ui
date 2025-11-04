@@ -15,7 +15,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import UserAvatar from 'src/components/shared/UserAvatar';
@@ -248,7 +248,9 @@ function EmailSelector({
 
             {inputErrorExists ? (
                 <FormHelperText error={inputErrorExists}>
-                    <FormattedMessage id="admin.alerts.dialog.emailSelector.inputError" />
+                    {intl.formatMessage({
+                        id: 'alerts.config.dialog.emailSelector.inputError',
+                    })}
                 </FormHelperText>
             ) : null}
         </FormControl>

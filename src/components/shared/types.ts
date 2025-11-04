@@ -31,3 +31,14 @@ export interface TileProps extends BaseComponentProps {
     externalLink?: ButtonLinkAttributes;
     fullHeight?: boolean;
 }
+
+export interface CardWrapperProps extends BaseComponentProps {
+    disableMinWidth?: boolean;
+    message?: string | ReactNode;
+    tooltipMessageId?: string;
+    height?: string | number;
+    sx?: SxProps;
+
+    // Only for the special cards for alert summary on dashboard page (as of Q4 2025)
+    opaqueLightMode?: boolean;
+}

@@ -1,5 +1,4 @@
-import type { ColumnProps } from 'src/components/tables/EntityTable/types';
-import type { TableIntlConfig, TableState } from 'src/types';
+import type { EntityTableBodyProps } from 'src/components/tables/EntityTable/types';
 
 import { useMemo } from 'react';
 
@@ -15,25 +14,14 @@ import {
     getTableComponents,
 } from 'src/utils/table-utils';
 
-interface Props {
-    columns: ColumnProps[];
-    noExistingDataContentIds: TableIntlConfig;
-    tableState: TableState;
-    loading: boolean;
-    rows: any;
-    CustomBody?: any;
-    enableDivRendering?: boolean;
-}
-
 function EntityTableBody({
     columns,
     loading,
     noExistingDataContentIds,
     rows,
     tableState,
-    CustomBody,
     enableDivRendering,
-}: Props) {
+}: EntityTableBodyProps) {
     const intl = useIntl();
 
     const columnKeys = useMemo(() => {
@@ -42,10 +30,6 @@ function EntityTableBody({
 
     const { tbodyComponent, tdComponent, trComponent } =
         getTableComponents(enableDivRendering);
-
-    if (rows && CustomBody) {
-        return <CustomBody />;
-    }
 
     return (
         <TableBody component={tbodyComponent}>

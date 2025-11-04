@@ -1,7 +1,7 @@
 import type { ChipProps } from '@mui/material';
 import type { CSSProperties } from 'react';
 
-import { Chip, styled } from '@mui/material';
+import { Chip, chipClasses, styled } from '@mui/material';
 
 import {
     defaultOutlineColor,
@@ -62,7 +62,7 @@ export const OutlinedChip = styled(Chip, {
         '& .MuiChip-deleteIconSmall': {
             marginRight: '1px',
         },
-        '& .MuiChip-label': {
+        [`& .${chipClasses.label}`]: {
             color: diminishedText
                 ? diminishedTextColor[theme.palette.mode]
                 : undefined,

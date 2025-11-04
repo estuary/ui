@@ -3,14 +3,11 @@ import type { BaseComponentProps } from 'src/types';
 import { useCallback } from 'react';
 
 import LRUMapWithDelete from 'mnemonist/lru-map-with-delete';
-import { useSnackbar } from 'notistack';
-import { useIntl } from 'react-intl';
 import { SWRConfig, useSWRConfig } from 'swr';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
+import useDataFetchErrorHandling from 'src/hooks/useDataFetchErrorHandling';
 import { AUTH_ERROR } from 'src/services/client';
-import { logRocketConsole, logRocketEvent } from 'src/services/shared';
-import { tokenHasIssues } from 'src/services/supabase';
+import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
 const DEFAULT_RETRY_COUNT = 3;
@@ -30,9 +27,9 @@ export const extendedPollSettings = {
     revalidateOnFocus: false,
 };
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
-    const intl = useIntl();
-    const { enqueueSnackbar } = useSnackbar();
     const { onErrorRetry } = useSWRConfig();
+    const { forceUserToSignOut, checkIfAuthInvalid } =
+        useDataFetchErrorHandling();
 
     const provider = useCallback(() => {
         return new LRUMapWithDelete<string, any>(500);
@@ -86,41 +83,8 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                     onError: async (error, _key, _config) => {
                         // This happens when a call to the server has returned a 401 but
                         //      the UI thinks the User is still valid. So we need to log them out.
-                        if (
-                            error.message === AUTH_ERROR ||
-                            tokenHasIssues(error.message)
-                        ) {
-                            logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
-                                trigger: 'swr',
-                            });
-                            await supabaseClient.auth
-                                .signOut()
-                                .then(() => {
-                                    enqueueSnackbar(
-                                        intl.formatMessage({
-                                            id: 'login.jwtExpired',
-                                        }),
-                                        {
-                                            anchorOrigin: {
-                                                vertical: 'top',
-                                                horizontal: 'center',
-                                            },
-                                            variant: 'error',
-                                            // TODO (notification)
-                                            // If we ever let people log back in without navigation away first
-                                            //  this notification will always show and never go away.
-                                            persist: true,
-                                        }
-                                    );
-                                })
-                                .catch((signOutError) => {
-                                    logRocketConsole(
-                                        'SWR:onError:failed to sign out',
-                                        {
-                                            signOutError,
-                                        }
-                                    );
-                                });
+                        if (checkIfAuthInvalid(error.message)) {
+                            await forceUserToSignOut('swr');
                         }
                     },
 
