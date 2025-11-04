@@ -315,8 +315,13 @@ const getInitialState = (
             // Generate model based on entire spec as we need all the details
             const model: CollectionDef = { ...spec };
 
-            // Add in projections if they exist (might be overkill to even check)
-            if (Object.keys(projections).length > 0) {
+            // Add in projections if they exist. Making sure it is an object since
+            //  the collection details view are passing in the `projections` directly
+            //  in the `spec`
+            if (
+                typeof projections === 'object' &&
+                Object.keys(projections).length > 0
+            ) {
                 model.projections = projections;
             }
 

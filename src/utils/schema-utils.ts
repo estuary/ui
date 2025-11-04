@@ -25,6 +25,9 @@ const canPointerBeUsedAsKey = (pointer: string | null | undefined) => {
 };
 const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
 
+const filterProjectionsByExists = (datum: BuiltProjection) =>
+    datum.inference.exists === 'MAY' || datum.inference.exists === 'MUST';
+
 const hasWriteSchema = (spec: any) => {
     return spec.hasOwnProperty('writeSchema');
 };
@@ -196,6 +199,7 @@ const getSchemaForProjectionModel = (spec: any) => {
 export {
     getSchemaForProjectionModel,
     getProperSchemaScope,
+    filterProjectionsByExists,
     filterSkimProjectionResponse,
     hasReadAndWriteSchema,
     hasReadSchema,

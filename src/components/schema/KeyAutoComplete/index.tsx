@@ -217,8 +217,8 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                             onOrderChange={async (activeId, overId) => {
                                 const updatedArray = arrayMove<string>(
                                     localCopyValue,
-                                    localCopyValue.indexOf(activeId), //old
-                                    localCopyValue.indexOf(overId) //new
+                                    localCopyValue.indexOf(activeId), // old index
+                                    localCopyValue.indexOf(overId) //new index
                                 );
 
                                 setLocalCopyValue(updatedArray);

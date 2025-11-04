@@ -40,11 +40,12 @@ function CollectionSpecViews({ presentation }: Props) {
 
     useEffect(() => {
         if (entityType === 'collection' && currentCatalog) {
-            // TODO (skim - get actual projections here)
             populateSkimProjectionResponse(
                 currentCatalog.spec,
                 catalogName,
-                {}
+                // projections are in the `currentCatalog.spec` already as we are fetching a liveSpec
+                //  so no need to pass it in
+                undefined
             );
         }
 

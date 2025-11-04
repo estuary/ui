@@ -11,6 +11,11 @@ import {
 import AlertBox from 'src/components/shared/AlertBox';
 import KeyValueList from 'src/components/shared/KeyValueList';
 
+// skim_collection_projections can _technically_ return an array of any length.
+//  this should not really happen but just to be safe we will limit showing only
+//  3 at a time. If a user gets TONs of errors - the UX would be the user fixing
+//  several errors at once and slowly seeing more errors.
+
 const maxToDisplay = 3;
 function SkimProjectionErrors() {
     const intl = useIntl();
