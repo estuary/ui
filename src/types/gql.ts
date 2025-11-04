@@ -21,13 +21,28 @@ export interface AlertDetails {
     recipients?: AlertDetailsRecipients[];
 }
 
-export interface Alert {
+export interface AlertNode {
     alertType: AlertType;
     firedAt: string;
-    resolvedAt: string;
     alertDetails: AlertDetails;
     catalogName: string;
+    resolvedAt?: string;
 }
+
+export interface AlertNodeEdge {
+    cursor: string;
+    node: AlertNode;
+}
+
+export interface LiveSpecNode {
+    activeAlerts?: AlertNode[];
+    alertHistory?: {
+        edges: AlertNodeEdge[];
+        pageInfo: PageInfo;
+    };
+}
+
+// PAGINATION
 
 export interface PageInfo {
     hasNextPage: boolean;
@@ -41,6 +56,8 @@ export type PageInfoReverse = Pick<
     'hasPreviousPage' | 'startCursor' | 'endCursor'
 >;
 
+// VARIABLES
+
 export interface LiveSpecVariables {
     catalogName: string | undefined;
 }
@@ -50,19 +67,23 @@ export interface AlertsVariables {
     prefix: string | undefined;
 }
 
+// TODO (typing) - we need more versions of pagination
+//  as some endpoints only support before/last (AlertHistory)
 export interface PaginationVariables {
-    after: string | undefined;
-    before: string | undefined;
+    before?: string | undefined;
+    after?: string | undefined;
     first?: number | undefined;
     last?: number | undefined;
 }
 
 export type WithPagination<T> = T & PaginationVariables;
 
+// QUERY RESPONSES
+
 export type DefaultAlertingQueryResponse = {
     alerts: {
         edges: {
-            node: Alert;
+            node: AlertNode;
         }[];
         pageInfo?: PageInfoReverse;
     };
@@ -73,7 +94,7 @@ export interface ActiveAlertCountQueryResponse {
             cursor: string;
             node: {
                 activeAlerts: {
-                    alertType: Pick<Alert, 'alertType'>;
+                    alertType: Pick<AlertNode, 'alertType'>;
                 }[];
             };
         }[];
@@ -82,3 +103,11 @@ export interface ActiveAlertCountQueryResponse {
 
 export type AlertHistoryForTaskQueryResponse = DefaultAlertingQueryResponse;
 export type AlertingOverviewQueryResponse = AlertHistoryForTaskQueryResponse;
+
+export interface AlertHistoryQueryResponse {
+    liveSpecs: {
+        edges: {
+            node: LiveSpecNode;
+        }[];
+    };
+}

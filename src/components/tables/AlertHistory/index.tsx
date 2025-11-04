@@ -1,8 +1,10 @@
 import type { AlertHistoryTableProps } from 'src/components/tables/AlertHistory/types';
 import type { TableState } from 'src/types';
 import type {
-    AlertHistoryForTaskQueryResponse,
-    AlertsVariables,
+    AlertHistoryQueryResponse,
+    AlertNode,
+    AlertNodeEdge,
+    LiveSpecVariables,
     WithPagination,
 } from 'src/types/gql';
 
@@ -20,6 +22,7 @@ import {
 import { useIntl } from 'react-intl';
 import { gql, useQuery } from 'urql';
 
+import AlertBox from 'src/components/shared/AlertBox';
 import Rows from 'src/components/tables/AlertHistory/Rows';
 import {
     ALERT_HISTORY_LOADING_DELAY,
@@ -36,39 +39,56 @@ import { PAGE_INFO_REVERSE_FRAGMENT } from 'src/services/gql';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 5;
+const MAX_ACTIVE_ALERTS = 5;
 
-const alertHistoryForTaskQuery = gql<
-    AlertHistoryForTaskQueryResponse,
-    WithPagination<AlertsVariables>
->`
-    query AlertHistoryForTaskQueryResponse(
-        $prefix: String!
-        $active: Boolean
-        $before: String
-        $after: String
-        $first: Int
-        $last: Int
-    ) {
-        alerts(
-            by: { prefix: $prefix, active: $active }
-            first: $first
-            last: $last
-            after: $after
-            before: $before
-        ) {
+// Query for active alerts
+const activeAlertsQuery = gql<AlertHistoryQueryResponse, LiveSpecVariables>`
+    query ActiveAlertsQuery($catalogName: String!) {
+        liveSpecs(by: { names: $catalogName }) {
             edges {
-                cursor
                 node {
-                    alertType
-                    alertDetails: arguments
-                    firedAt
-                    catalogName
-                    resolvedAt
+                    activeAlerts {
+                        alertType
+                        catalogName
+                        alertDetails: arguments
+                        firedAt
+                    }
                 }
             }
-            pageInfo {
-                ...PageInfoReverse
+        }
+    }
+`;
+
+// Query for alert history (resolved alerts)
+const alertHistoryQuery = gql<
+    AlertHistoryQueryResponse,
+    WithPagination<LiveSpecVariables>
+>`
+    query AlertHistoryQuery(
+        $catalogName: String!
+        $before: String
+        $last: Int
+    ) {
+        liveSpecs(by: { names: $catalogName }) {
+            edges {
+                node {
+                    alertHistory(before: $before, last: $last) {
+                        edges {
+                            cursor
+                            node {
+                                alertType
+                                alertDetails: arguments
+                                catalogName
+                                firedAt
+                                resolvedAt
+                            }
+                        }
+                        pageInfo {
+                            ...PageInfoReverse
+                        }
+                    }
+                }
             }
         }
     }
@@ -91,39 +111,60 @@ function AlertHistoryTable({
     const [beforeCursor, setBeforeCursor] = useState<string | undefined>(
         undefined
     );
-    const [afterCursor, setAfterCursor] = useState<string | undefined>(
-        undefined
+    const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>(
+        []
     );
 
     const [{ fetching, data, error }] = useQuery({
-        query: alertHistoryForTaskQuery,
+        query: active ? activeAlertsQuery : alertHistoryQuery,
         variables: {
-            active,
-            prefix: catalogName,
-
-            after: afterCursor,
-            before: beforeCursor,
-
-            [!afterCursor ? 'last' : 'first']: PAGE_SIZE,
+            catalogName: catalogName,
+            ...(active
+                ? {}
+                : {
+                      before: beforeCursor,
+                      last: PAGE_SIZE,
+                  }),
         },
         pause: !catalogName,
     });
 
     const loadMore = (_event: any, page: number) => {
         if (page > currentPage) {
-            if (data?.alerts?.pageInfo?.endCursor) {
+            // Moving forward
+            const endCursor =
+                data?.liveSpecs?.edges?.[0]?.node?.alertHistory?.pageInfo
+                    ?.endCursor;
+
+            if (endCursor) {
                 setMaxPageSeen(Math.max(maxPageSeen, page));
-                setAfterCursor(undefined);
-                setBeforeCursor(data.alerts.pageInfo.endCursor);
+                setBeforeCursor(endCursor);
+
+                // Store cursor history for backward navigation that relies only on
+                //  `before` and `last` for `alertHistory` table
+                setCursorHistory((prev) => {
+                    const newHistory = [...prev];
+
+                    // Make sure there is a spot in the history
+                    while (newHistory.length <= page) {
+                        newHistory.push(undefined);
+                    }
+
+                    // Add the cursor
+                    newHistory[page] = endCursor;
+
+                    // Update state
+                    return newHistory;
+                });
             }
         } else if (page < currentPage) {
+            // Moving backward
             if (page === 0) {
                 // Reset to initial state
-                setAfterCursor(undefined);
                 setBeforeCursor(undefined);
-            } else if (data?.alerts?.pageInfo?.startCursor) {
-                setAfterCursor(data.alerts.pageInfo.startCursor);
-                setBeforeCursor(undefined);
+                setCursorHistory([]);
+            } else {
+                setBeforeCursor(cursorHistory[page]);
             }
         }
         setCurrentPage(page);
@@ -149,6 +190,13 @@ function AlertHistoryTable({
         status: TableStatuses.LOADING,
     });
 
+    // Extract the data based on active prop
+    const specNode = data?.liveSpecs?.edges?.[0]?.node;
+    const alerts = active
+        ? specNode?.activeAlerts
+        : specNode?.alertHistory?.edges;
+    const pageInfo = active ? null : specNode?.alertHistory?.pageInfo;
+
     useEffect(() => {
         // Clear any existing timeout
         if (loadingTimeoutRef.current) {
@@ -158,7 +206,7 @@ function AlertHistoryTable({
 
         if (fetching) {
             // If this is the first load or we don't have data yet, show loading immediately
-            if (!hasLoadedOnce.current || !data?.alerts?.edges?.length) {
+            if (!hasLoadedOnce.current || !alerts?.length) {
                 setTableState({ status: TableStatuses.LOADING });
             } else {
                 // For subsequent loads, wait 100ms before showing loading state
@@ -180,7 +228,7 @@ function AlertHistoryTable({
             }
             return;
         }
-        if (data?.alerts?.edges && data.alerts.edges.length > 0) {
+        if (alerts && alerts.length > 0) {
             setTableState({
                 status: TableStatuses.DATA_FETCHED,
             });
@@ -197,7 +245,27 @@ function AlertHistoryTable({
                 clearTimeout(loadingTimeoutRef.current);
             }
         };
-    }, [data, error, fetching]);
+    }, [alerts, error, fetching]);
+
+    // Transform active alerts to edges format for consistency
+    const alertsAsEdges = useMemo(() => {
+        if (!alerts || alerts.length === 0) return [];
+
+        // If active, transform array to edges format
+        if (active) {
+            return (alerts as AlertNode[])
+                .map((alert, index) => ({
+                    cursor: `active-${index}`,
+                    node: alert,
+                }))
+                .slice(0, MAX_ACTIVE_ALERTS);
+        }
+
+        // Already in edges format for alert history
+        return alerts as AlertNodeEdge[];
+    }, [alerts, active]);
+
+    const totalActiveAlertsCount = active && alerts ? alerts.length : 0;
 
     const failed =
         tableState.status === TableStatuses.TECHNICAL_DIFFICULTIES ||
@@ -205,90 +273,114 @@ function AlertHistoryTable({
     const loading = tableState.status === TableStatuses.LOADING;
     const hasData =
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
-    const showFooter = !disableFooter && hasData;
+    const showFooter = !disableFooter && !active;
     const isNextButtonDisabled =
-        currentPage < maxPageSeen
-            ? false
-            : !data?.alerts?.pageInfo?.hasPreviousPage;
+        currentPage < maxPageSeen ? false : !pageInfo?.hasPreviousPage;
 
     return (
-        <TableContainer component={Box}>
-            <Table
-                size="small"
-                sx={{ minWidth: 350, borderCollapse: 'separate' }}
-                aria-label={intl.formatMessage({
-                    id: 'alerts.table.label',
-                })}
-            >
-                <EntityTableHeader columns={columnsToShow} selectData={true} />
-
-                <EntityTableBody
-                    columns={columnsToShow}
-                    noExistingDataContentIds={{
-                        header: 'alerts.table.empty.header',
-                        message: failed
-                            ? 'alerts.table.error.message'
-                            : 'alerts.table.empty.message',
-                        disableDoclink: true,
+        <>
+            {active && totalActiveAlertsCount > MAX_ACTIVE_ALERTS ? (
+                <AlertBox
+                    short
+                    sx={{
+                        maxWidth: 'fit-content',
                     }}
-                    tableState={tableState}
-                    loading={loading}
-                    rows={
-                        hasData && data?.alerts?.edges ? (
-                            <Rows
-                                columns={columnsToShow}
-                                data={data.alerts.edges}
-                            />
-                        ) : null
-                    }
-                />
+                    severity="info"
+                >
+                    {intl.formatMessage(
+                        {
+                            id: 'alerts.table.reduced',
+                        },
+                        {
+                            count: MAX_ACTIVE_ALERTS,
+                            total: totalActiveAlertsCount,
+                        }
+                    )}
+                </AlertBox>
+            ) : null}
+            <TableContainer component={Box}>
+                <Table
+                    size="small"
+                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
+                    aria-label={intl.formatMessage({
+                        id: 'alerts.table.label',
+                    })}
+                >
+                    <EntityTableHeader
+                        columns={columnsToShow}
+                        selectData={true}
+                    />
 
-                {showFooter ? (
-                    <TableFooter>
-                        <TableRow>
-                            <TablePagination
-                                count={-1}
-                                page={currentPage}
-                                rowsPerPage={PAGE_SIZE}
-                                rowsPerPageOptions={[PAGE_SIZE]}
-                                showFirstButton={currentPage !== 0}
-                                onPageChange={loadMore}
-                                labelDisplayedRows={({ from, to }) => {
-                                    return (
-                                        <>
-                                            {intl.formatMessage(
-                                                {
-                                                    id: 'alerts.table.pagination.displayedRows',
-                                                },
-                                                {
-                                                    from,
-                                                    to,
-                                                    status: intl.formatMessage({
-                                                        id: active
-                                                            ? 'alerts.table.pagination.displayedRows.active'
-                                                            : 'alerts.table.pagination.displayedRows.resolved',
-                                                    }),
-                                                }
-                                            )}
-                                        </>
-                                    );
-                                }}
-                                slotProps={{
-                                    actions: {
-                                        previousButton: {
-                                            disabled: currentPage === 0,
+                    <EntityTableBody
+                        columns={columnsToShow}
+                        noExistingDataContentIds={{
+                            header: 'alerts.table.empty.header',
+                            message: failed
+                                ? 'alerts.table.error.message'
+                                : 'alerts.table.empty.message',
+                            disableDoclink: true,
+                        }}
+                        tableState={tableState}
+                        loading={loading}
+                        rows={
+                            hasData && alertsAsEdges.length > 0 ? (
+                                <Rows
+                                    columns={columnsToShow}
+                                    data={alertsAsEdges}
+                                />
+                            ) : null
+                        }
+                    />
+
+                    {showFooter ? (
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    count={-1}
+                                    page={currentPage}
+                                    rowsPerPage={PAGE_SIZE}
+                                    rowsPerPageOptions={[PAGE_SIZE]}
+                                    showFirstButton={currentPage !== 0}
+                                    onPageChange={loadMore}
+                                    labelDisplayedRows={({ from, to }) => {
+                                        return (
+                                            <>
+                                                {intl.formatMessage(
+                                                    {
+                                                        id: 'alerts.table.pagination.displayedRows',
+                                                    },
+                                                    {
+                                                        from,
+                                                        to,
+                                                        status: intl.formatMessage(
+                                                            {
+                                                                id: active
+                                                                    ? 'alerts.table.pagination.displayedRows.active'
+                                                                    : 'alerts.table.pagination.displayedRows.resolved',
+                                                            }
+                                                        ),
+                                                    }
+                                                )}
+                                            </>
+                                        );
+                                    }}
+                                    slotProps={{
+                                        actions: {
+                                            previousButton: {
+                                                disabled: currentPage === 0,
+                                            },
+                                            nextButton: {
+                                                disabled: isNextButtonDisabled,
+                                            },
                                         },
-                                        nextButton: {
-                                            disabled: isNextButtonDisabled,
-                                        },
-                                    },
-                                }}
-                            />
-                        </TableRow>
-                    </TableFooter>
-                ) : null}
-            </Table>
-        </TableContainer>
+                                    }}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    ) : null}
+                </Table>
+            </TableContainer>
+        </>
     );
 }
 

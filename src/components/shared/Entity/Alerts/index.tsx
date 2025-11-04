@@ -40,6 +40,7 @@ function EntityAlerts() {
                     >
                         <AlertHistoryTable
                             active
+                            disableFooter
                             tablePrefix={TablePrefixes.alertsForEntity}
                         />
                     </CardWrapper>

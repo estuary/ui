@@ -1,6 +1,9 @@
 import type { TablePrefixes } from 'src/stores/Tables/hooks';
 import type { TableColumns } from 'src/types';
-import type { Alert, AlertHistoryForTaskQueryResponse } from 'src/types/gql';
+import type {
+    AlertHistoryForTaskQueryResponse,
+    AlertNode,
+} from 'src/types/gql';
 
 export interface AlertHistoryTableProps {
     active: boolean;
@@ -21,7 +24,7 @@ export interface RowsProps {
 
 export interface RowProps {
     columns: TableColumns[];
-    row: Alert;
+    row: AlertNode;
     hideEntityName?: boolean;
     hideResolvedAt?: boolean;
 }

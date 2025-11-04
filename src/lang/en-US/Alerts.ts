@@ -41,6 +41,8 @@ export const Alerts: Record<string, string> = {
     'alerts.table.empty.message': `No resolved alerts`,
     'alerts.table.error.message': `There was an error attempting to fetch resolved alerts.`,
 
+    'alerts.table.reduced': `Showing {count} of {total} total alerts.`,
+
     'alerts.table.firedAt.tooltip': `{relative}`,
     'alerts.table.resolvedAt.tooltip': `alert resolved {alertDuration}`,
     'alerts.table.pagination.displayedRows': `{status} alerts | {from} to {to}`,
