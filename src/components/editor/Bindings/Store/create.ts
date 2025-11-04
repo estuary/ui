@@ -14,7 +14,7 @@ import { intersection, isEmpty, union } from 'lodash';
 
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
-import { logRocketEvent } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import {
@@ -330,6 +330,11 @@ const getInitialState = (
                     collection: entityName,
                     model,
                 });
+
+            logRocketConsole(
+                'skim_collection_projections returned = ',
+                skimProjectionResponse
+            );
 
             // Make sure we got more back than ONLY the root object as a pointer
             if (

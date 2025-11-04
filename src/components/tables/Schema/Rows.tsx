@@ -20,7 +20,7 @@ import {
 } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { basicSort_string } from 'src/utils/misc-utils';
-import { filterProjectionsByExists } from 'src/utils/schema-utils';
+import { filterProjectionsForFieldTable } from 'src/utils/schema-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ columns, row }: RowProps) {
@@ -111,7 +111,7 @@ function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
         return (
             <>
                 {data
-                    .filter(filterProjectionsByExists)
+                    .filter(filterProjectionsForFieldTable)
                     .sort((first: BuiltProjection, second: BuiltProjection) =>
                         basicSort_string(
                             first.field ?? '',
