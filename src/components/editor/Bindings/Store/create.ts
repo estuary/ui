@@ -1,7 +1,7 @@
 import type { BindingsEditorState } from 'src/components/editor/Bindings/Store/types';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
 import type { BuiltProjection } from 'src/types/schemaModels';
-import type { SkimProjectionResponse } from 'src/types/wasm';
+import type { CollectionDef, SkimProjectionResponse } from 'src/types/wasm';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -14,6 +14,7 @@ import { intersection, isEmpty, union } from 'lodash';
 
 import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
+import { logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
 import { hasLength } from 'src/utils/misc-utils';
 import {
@@ -220,7 +221,6 @@ const getInitialState = (
                     }
 
                     get().setCollectionData(response);
-
                     get().setSchemaUpdated(true);
                     get().setSchemaUpdating(false);
                 },
@@ -242,6 +242,12 @@ const getInitialState = (
         ) => {
             const { hasResponse, updatedVal, validKeys, errors } =
                 evaluateSkimProjectionResponse(dataVal);
+
+            logRocketEvent('SkimProjections', {
+                hasErrors: Boolean(forcedError || errors),
+                hasResponse,
+                validKeys,
+            });
 
             // Save the values into the store
             set(
@@ -306,18 +312,21 @@ const getInitialState = (
         }
 
         try {
+            // Generate model based on entire spec as we need all the details
+            const model: CollectionDef = { ...spec };
+
+            // Add in projections if they exist (might be overkill to even check)
+            if (Object.keys(projections).length > 0) {
+                model.projections = projections;
+            }
+
             const skimProjectionResponse: SkimProjectionResponse =
                 await skim_collection_projections({
                     collection: entityName,
-                    model: spec,
+                    model,
                 });
 
-            console.log('skimProjectionResponse>>', {
-                spec,
-                skimProjectionResponse,
-            });
-
-            // Make sure we did not ONLY get the root object back as a pointer
+            // Make sure we got more back than ONLY the root object as a pointer
             if (
                 skimProjectionResponse.projections.length === 1 &&
                 skimProjectionResponse.projections[0].ptr === ''

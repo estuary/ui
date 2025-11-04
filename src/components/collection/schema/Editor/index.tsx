@@ -21,7 +21,6 @@ import {
 import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
-import useCollectionDef from 'src/hooks/projections/useCollectionDef';
 import { useProjectionsForSkim } from 'src/hooks/projections/useProjectionsForSkim';
 import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
@@ -37,18 +36,11 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         AllowedScopes | undefined
     >(undefined);
 
-    const { collectionDef } = useCollectionDef(entityName);
-
     const { onChange, draftSpec, mutate, defaultValue } = useDraftSpecEditor(
         entityName,
         localZustandScope,
         editorSchemaScope
     );
-
-    console.log('collectionDef vs draftSpec >>>>>> ', {
-        collectionDef,
-        draftSpec,
-    });
 
     const projections = useProjectionsForSkim();
     const entityType = useEntityType();
@@ -69,12 +61,12 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const disableSchemaEditing = useDisableSchemaEditing();
 
     useEffect(() => {
-        if (collectionDef?.spec && entityName) {
+        if (draftSpec?.spec && entityName) {
             // TODO (collection editor) when we allow collections to get updated
             //  from the details page we'll need to handle this for that.
 
             // Figure out if we need to use schema or readSchema
-            const [schemaScope] = getProperSchemaScope(collectionDef.spec);
+            const [schemaScope] = getProperSchemaScope(draftSpec.spec);
 
             // Store off what scope is being used
             setEditorSchemaScope(schemaScope);
@@ -82,7 +74,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
             // Infer schema and pass in spec so the function can handle
             //  if there is a read/write or just plain schema
             populateSkimProjectionResponse(
-                collectionDef.spec,
+                draftSpec.spec,
                 entityName,
                 projections
             );
@@ -90,12 +82,12 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
             // Need to keep the collection data updated so that the schema
             //  inference and CLI buttons work
             setCollectionData({
-                spec: collectionDef.spec,
+                spec: draftSpec.spec,
                 belongsToDraft: true,
             });
         }
     }, [
-        collectionDef,
+        draftSpec,
         entityName,
         populateSkimProjectionResponse,
         projections,

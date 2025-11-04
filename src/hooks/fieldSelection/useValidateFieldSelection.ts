@@ -73,8 +73,11 @@ const evaluateFieldSelection = async (input: FieldSelectionInput_Skim) => {
         // We can catch any error here so that any issue causes an empty response and the
         //  component will show an error... though not the most useful one.
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-    } catch (e: any) {
-        logRocketEvent('evaluate_field_selection:failed', e);
+    } catch (error: any) {
+        logRocketEvent('evaluate_field_selection', {
+            failed: true,
+            error,
+        });
     }
 
     return response;
@@ -148,24 +151,23 @@ export default function useValidateFieldSelection() {
                     ? liveBuiltSpec?.bindings.at(liveBuiltBindingIndex)
                     : undefined;
 
-            if (!builtBinding || !draftedBinding || !validatedBinding) {
+            if (
+                !builtBinding ||
+                !draftedBinding ||
+                !validatedBinding ||
+                !collections[builtBinding.collection.name] ||
+                !collections[builtBinding.collection.name].spec
+            ) {
                 return Promise.reject(
-                    'data not found: built spec binding, drafted binding, or validation binding'
+                    'data not found: collection spec, built spec binding, drafted binding, or validation binding'
                 );
             }
 
             let result: FieldSelectionResult | undefined;
 
             try {
-                console.log(
-                    'collections[builtBinding.collection.name]',
-                    collections[builtBinding.collection.name]
-                );
-
                 result = await evaluateFieldSelection({
                     collection: {
-                        // Mode will be the draftedCollectionSpec IF exists
-                        // if not using the liveCollectionSpec
                         name: builtBinding.collection.name,
                         model: collections[builtBinding.collection.name].spec,
                     },
@@ -176,7 +178,10 @@ export default function useValidateFieldSelection() {
                     },
                 });
             } catch (error: unknown) {
-                logRocketEvent('evaluate_field_selection:failed', error);
+                logRocketEvent('evaluate_field_selection', {
+                    failed: true,
+                    error,
+                });
             }
 
             return {

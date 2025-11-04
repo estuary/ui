@@ -57,8 +57,6 @@ const isValidKey = (inference: any, pointer?: any) => {
 
     const inferredTypes: string[] = inference.types;
 
-    console.log('pointer', pointer);
-
     return Boolean(
         // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
         inference.exists !== 'CANNOT' &&
