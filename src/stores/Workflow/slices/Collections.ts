@@ -44,6 +44,9 @@ interface CollectionDictionary {
 
 export interface StoreWithCollections {
     collections: CollectionDictionary;
+    // TODO (schema edit)
+    //  this is NOT the name we want long term (99% sure of that). Making it this so
+    //  it is easy to find when coming back and wiring edit up to this
     upsertCollection: (
         collectionName: string,
         meta: Partial<CollectionMetadata>
