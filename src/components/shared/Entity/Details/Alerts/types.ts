@@ -1,5 +1,5 @@
 import type { ChipDisplay } from 'src/components/shared/ChipList/types';
-import type { Alert } from 'src/types/gql';
+import type { AlertNode } from 'src/types/gql';
 
 export interface AlertDetail {
     label: string;
@@ -17,7 +17,7 @@ export interface AlertTypeContent {
 }
 
 export interface AlertDetailsWrapperProps {
-    datum: Alert;
+    datum: AlertNode;
     hideLabel?: boolean;
     short?: boolean;
 }
@@ -27,7 +27,7 @@ export interface AlertDetailsProps extends AlertDetailsWrapperProps {
 }
 
 export interface ServerErrorProps {
-    datum: Alert;
+    datum: AlertNode;
     detail: AlertDetail;
     short?: boolean;
 }

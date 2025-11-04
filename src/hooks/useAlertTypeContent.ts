@@ -3,7 +3,7 @@ import type {
     AlertDetail,
     AlertTypeContent,
 } from 'src/components/shared/Entity/Details/Alerts/types';
-import type { Alert } from 'src/types/gql';
+import type { AlertNode } from 'src/types/gql';
 
 import { useCallback } from 'react';
 
@@ -24,7 +24,7 @@ function useAlertTypeContent() {
             alertDetails,
             firedAt,
             resolvedAt,
-        }: Alert): AlertTypeContent => {
+        }: AlertNode): AlertTypeContent => {
             if (alertType && ALERT_SETTING[alertType]) {
                 let detail: AlertDetail | null = null;
 
