@@ -75,42 +75,58 @@ export const getStoreWithCollectionSettings = (
     ...getInitialCollectionData(),
 
     upsertCollection: (collection, meta) => {
-        set((state) => ({
-            ...state,
-            collections: {
-                ...state.collections,
-                [collection]: {
-                    ...(state.collections[collection] ?? {}),
-                    ...meta,
+        set(
+            (state) => ({
+                ...state,
+                collections: {
+                    ...state.collections,
+                    [collection]: {
+                        ...(state.collections[collection] ?? {}),
+                        ...meta,
+                    },
                 },
-            },
-        }));
+            }),
+            false,
+            'upsertCollection'
+        );
     },
 
     setCollectionsError: (collectionsError) => {
-        set((state) => ({
-            ...state,
-            collectionsError,
-        }));
+        set(
+            (state) => ({
+                ...state,
+                collectionsError,
+            }),
+            false,
+            'setCollectionsError'
+        );
     },
 
     initializeCollections: (collections) => {
         if (collections.size < 1) {
-            set((state) => ({
-                ...state,
-                collectionsInited: true,
-            }));
+            set(
+                (state) => ({
+                    ...state,
+                    collectionsInited: true,
+                }),
+                false,
+                'initializeCollections:empty'
+            );
             return;
         }
 
-        set((state) => ({
-            ...state,
-            collectionsInited: true,
-            collections: {
-                ...state.collections,
-                ...Object.fromEntries(collections),
-            },
-        }));
+        set(
+            (state) => ({
+                ...state,
+                collectionsInited: true,
+                collections: {
+                    ...state.collections,
+                    ...Object.fromEntries(collections),
+                },
+            }),
+            false,
+            'initializeCollections'
+        );
     },
 
     // removeCollections: (name) => {
