@@ -153,6 +153,7 @@ function useInitializeCollectionDraft() {
             setCollectionData,
             setCollectionInitializationAlert,
             setCollectionInitializationDone,
+            upsertCollection,
         ]
     );
 
