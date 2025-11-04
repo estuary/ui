@@ -3,7 +3,7 @@ import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import type { Entity } from 'src/types';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -642,18 +642,13 @@ export const useHydrateEditorState = (
     catalogName?: string,
     localScope?: boolean
 ) => {
-    // We use this to make the skips a bit quicker - but the hydrator
-    //  itself also checks this since this hook is unmounted when switching
-    //  tabs in the binding section
-    const hydratedCollectionsOnce = useRef(false);
-
     const draftIdInURL = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
 
     const setRelatedBindingIndices = useBindingStore(
         (state) => state.setRelatedBindingIndices
     );
 
-    const { hydrateCollections } = useCollectionsHydrator();
+    const hydrateCollections = useCollectionsHydrator();
 
     const draftId = useEditorStore_id({ localScope });
     const persistedDraftId = useEditorStore_persistedDraftId({ localScope });
@@ -688,13 +683,10 @@ export const useHydrateEditorState = (
                 //  to be available to us. This means we have to wait until we know 100%
                 //  we have one. This is a pain when trying to hydrateCollections higher up
                 //  in the WorkFlow hydrator
-                if (!hydratedCollectionsOnce.current) {
-                    hydratedCollectionsOnce.current = true;
-                    void hydrateCollections(
-                        response.draftSpecs[0].draft_id,
-                        response.draftSpecs[0].spec
-                    );
-                }
+                void hydrateCollections(
+                    response.draftSpecs[0].draft_id,
+                    response.draftSpecs[0].spec
+                );
             }
         }
     }, [

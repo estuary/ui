@@ -6,6 +6,7 @@ export type KnownEvents =
     | 'SkimProjections'
     | 'StoreCleaner'
     | 'SourceCapture'
+    | 'WorkflowStore'
     | 'evaluate_field_selection';
 
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the

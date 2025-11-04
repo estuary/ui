@@ -4,23 +4,40 @@ import { useCallback } from 'react';
 
 import { getDraftSpecsBySpecTypeReduced } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogNames } from 'src/api/liveSpecsExt';
+import { logRocketEvent } from 'src/services/shared';
 import { generateDefaultCollectionMetadata } from 'src/stores/Workflow/slices/Collections';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import { getCollectionName } from 'src/utils/workflow-utils';
 
 function useCollectionsHydrator() {
-    const [initializeCollections, setCollectionsError, collectionsInited] =
-        useWorkflowStore((state) => {
-            return [
-                state.initializeCollections,
-                state.setCollectionsError,
-                state.collectionsInited,
-            ];
-        });
+    const [
+        collections,
+        collectionsHydrating,
+        initializeCollections,
+        setCollectionsError,
+        setCollectionsHydrating,
+        collectionsInited,
+    ] = useWorkflowStore((state) => {
+        return [
+            state.collections,
+            state.collectionsHydrating,
+            state.initializeCollections,
+            state.setCollectionsError,
+            state.setCollectionsHydrating,
+            state.collectionsInited,
+        ];
+    });
 
-    const hydrateCollections = useCallback(
+    return useCallback(
         async (id: string, specToUse: any) => {
-            if (collectionsInited) {
+            // If we are already hydrating then we can skip
+            if (collectionsHydrating) {
+                logRocketEvent('WorkflowStore', {
+                    collections: true,
+                    hydrating: 'skipped',
+                    alreadyRunning: true,
+                });
                 return Promise.resolve();
             }
 
@@ -33,15 +50,42 @@ function useCollectionsHydrator() {
                         })
                         .map((binding: any) => {
                             return getCollectionName(binding);
+                        })
+                        .filter((name: string) => {
+                            // Filter out collections we already know about
+                            return !hasOwnProperty(collections, name);
                         }) ?? []
                 ),
             ];
+
+            // Since this hook runs as the draft changes we need to see if
+            //  there are any new collections for us to fetch. So if we are
+            //  already `inited` only continue on if there are collections missing.
+            if (collectionsInited && collectionsNeedingFetched.length === 0) {
+                logRocketEvent('WorkflowStore', {
+                    collections: true,
+                    hydrating: 'skipped',
+                    collectionsInited,
+                    collectionsNeedingFetched: collectionsNeedingFetched.length,
+                });
+                return Promise.resolve();
+            }
+
+            // We have started running so set this.
+            //  setting it back to `false` is handled by
+            //  the store in the `init` and `error` functions
+            setCollectionsHydrating(true);
+            logRocketEvent('WorkflowStore', {
+                collections: true,
+                hydrating: 'running',
+                collectionsNeedingFetched: collectionsNeedingFetched.length,
+            });
 
             // Keep track of all the collections that need loaded into the workflow store
             const collectionsToAdd = new Map<string, CollectionMetadata>();
 
             if (id) {
-                // Fetch all the collections already on the draft
+                // Fetch all the collections already on the draft if we have a draft
                 const collectionsOnDraftSpecResponse =
                     await getDraftSpecsBySpecTypeReduced(id, 'collection');
 
@@ -104,12 +148,15 @@ function useCollectionsHydrator() {
 
             return Promise.resolve();
         },
-        [collectionsInited, initializeCollections, setCollectionsError]
+        [
+            collections,
+            collectionsHydrating,
+            collectionsInited,
+            initializeCollections,
+            setCollectionsError,
+            setCollectionsHydrating,
+        ]
     );
-
-    return {
-        hydrateCollections,
-    };
 }
 
 export default useCollectionsHydrator;

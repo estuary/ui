@@ -52,10 +52,13 @@ export interface StoreWithCollections {
         meta: Partial<CollectionMetadata>
     ) => void;
     initializeCollections: (collections: Map<string, any>) => void;
-    setCollectionsError: (newVal: boolean) => void;
 
     // Temporary before we implement a proper state machine pattern
+    collectionsHydrating: boolean;
+    setCollectionsHydrating: (newVal: boolean) => void;
+
     collectionsError: boolean;
+    setCollectionsError: (newVal: boolean) => void;
     collectionsInited: boolean;
 
     // TODO (schema edit)
@@ -65,10 +68,14 @@ export interface StoreWithCollections {
 
 export const getInitialCollectionData = (): Pick<
     StoreWithCollections,
-    'collections' | 'collectionsError' | 'collectionsInited'
+    | 'collections'
+    | 'collectionsError'
+    | 'collectionsInited'
+    | 'collectionsHydrating'
 > => ({
     collections: {},
     collectionsError: false,
+    collectionsHydrating: false,
     collectionsInited: false,
 });
 
@@ -99,22 +106,28 @@ export const getStoreWithCollectionSettings = (
             (state) => ({
                 ...state,
                 collectionsError,
+                collectionsHydrating: false,
             }),
             false,
             'setCollectionsError'
         );
     },
 
+    setCollectionsHydrating: (collectionsHydrating) => {
+        set(
+            (state) => ({
+                ...state,
+                collectionsHydrating,
+            }),
+            false,
+            'setCollectionsHydrating'
+        );
+    },
+
     initializeCollections: (collections) => {
+        // Do not set 'inited' here as we can just return and assume
+        //  we are still loading whatever we need
         if (collections.size < 1) {
-            set(
-                (state) => ({
-                    ...state,
-                    collectionsInited: true,
-                }),
-                false,
-                'initializeCollections:empty'
-            );
             return;
         }
 
@@ -122,6 +135,7 @@ export const getStoreWithCollectionSettings = (
             (state) => ({
                 ...state,
                 collectionsInited: true,
+                collectionsHydrating: false,
                 collections: {
                     ...state.collections,
                     ...Object.fromEntries(collections),
