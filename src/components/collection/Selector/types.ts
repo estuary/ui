@@ -10,7 +10,7 @@ import type {
 } from 'src/components/collection/Selector/List/shared';
 import type { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
 import type { ColumnProps } from 'src/components/tables/EntityTable/types';
-import type { BindingState, RemoveTarget } from 'src/stores/Binding/types';
+import type { BindingMetadata, BindingState } from 'src/stores/Binding/types';
 
 export type CollectionSelectorCellRenderer = (
     params: any,
@@ -78,7 +78,7 @@ export interface CollectionSelectorCell<T = any> {
 
 export interface CollectionSelectorCellSettings {
     name: CollectionSelectorCell;
-    remove?: CollectionSelectorCell<RemoveTarget[]>;
+    remove?: CollectionSelectorCell<BindingMetadata[]>;
     toggle?: CollectionSelectorCell<any>;
 }
 

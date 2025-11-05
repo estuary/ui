@@ -1,5 +1,5 @@
 import type { CollectionSelectorCellSettings } from 'src/components/collection/Selector/types';
-import type { RemoveTarget } from 'src/stores/Binding/types';
+import type { BindingMetadata } from 'src/stores/Binding/types';
 
 import { useMemo } from 'react';
 
@@ -47,7 +47,7 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
 
     const handlers = useMemo(
         () => ({
-            removeBindings: async (rows: RemoveTarget[]) => {
+            removeBindings: async (rows: BindingMetadata[]) => {
                 removeBindings(rows, workflow, task);
 
                 if (workflow === 'materialization_edit') {
