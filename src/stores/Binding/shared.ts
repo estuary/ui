@@ -14,7 +14,7 @@ import type {
 import type { Entity, Schema } from 'src/types';
 import type { StoreApi } from 'zustand';
 
-import { difference, intersection } from 'lodash';
+import { difference, intersection, isEmpty, omit } from 'lodash';
 
 import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import { getSchema_Resource } from 'src/api/hydration';
@@ -71,7 +71,7 @@ export const resetCollectionMetadata = (
         return;
     }
 
-    Object.keys(state.collectionMetadata).forEach((collection) => {
+    Object.keys(state.collectionMetadata).forEach((collection, index) => {
         resetSingleCollectionMetadata(state, collection);
     });
 };
@@ -488,3 +488,22 @@ export const getInitialStoreDataAndKeepBindings = () => ({
     ...getInitialTimeTravelData(),
     ...getInitialBackfillData(),
 });
+
+export const removeBindingsFromDictionary = (
+    state: BindingState,
+    collection: string,
+    uuid: string
+) => {
+    const evaluatedBindings = state.bindings;
+
+    evaluatedBindings[collection] = state.bindings[collection].filter(
+        (bindingUUID) => bindingUUID !== uuid
+    );
+
+    state.bindings =
+        evaluatedBindings[collection].length === 0
+            ? omit(evaluatedBindings, collection)
+            : evaluatedBindings;
+
+    state.bindingErrorsExist = isEmpty(evaluatedBindings);
+};

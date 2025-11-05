@@ -95,7 +95,7 @@ export interface BindingState
 
     removeBinding: (binding: BindingMetadata) => void;
     removeBindings: (
-        targetUUIDs: string[],
+        targets: BindingMetadata[],
         workflow: EntityWorkflow | null,
         taskName: string
     ) => void;
