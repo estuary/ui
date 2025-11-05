@@ -73,20 +73,26 @@ function SchemaPropertiesTable({ filter }: SchemaPropertiesTableProps) {
     }, [inferSchemaDoneProcessing, skimProjectionResponse]);
 
     const data = useMemo(() => {
-        // We can filter out all `explicit` to prevent duplicates.
-        //  The projection hook ensures they are still shown where they should be.
-
         if (skimProjectionResponseEmpty || !skimProjectionResponse) {
             return [];
         }
 
-        if (filter === 'ALL') {
-            return skimProjectionResponse.filter((datum) => !datum.explicit);
-        }
+        return skimProjectionResponse
+            .filter((datum) =>
+                filter === 'ALL' ? true : datum.inference.exists === filter
+            )
+            .filter((datum, _index, data) => {
+                if (data.filter((item) => item.ptr === datum.ptr).length > 1) {
+                    // If there are duplicates then check for `explicit` as that probably means
+                    //  one should be a projection and that will be rendered in the
+                    //  table in the row with the original pointer
+                    return !datum.explicit;
+                }
 
-        return skimProjectionResponse.filter(
-            (datum) => !datum.explicit && datum.inference.exists === filter
-        );
+                // If there aren't duplicates then we should show it as there is a chance
+                //  it is an older invalid projection they need to remove
+                return true;
+            });
     }, [filter, skimProjectionResponse, skimProjectionResponseEmpty]);
 
     const { tableSettings } = useDisplayTableColumns();

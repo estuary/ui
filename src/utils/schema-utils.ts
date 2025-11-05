@@ -25,16 +25,6 @@ const canPointerBeUsedAsKey = (pointer: string | null | undefined) => {
 };
 const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
 
-// This happens when a user has provided a projection and then in the schema editor
-//  changes the key that the project was tired to
-const isProbablyInvalidProjection = (datum: BuiltProjection) =>
-    datum.explicit === true && datum.inference.exists === 'IMPLICIT';
-
-const filterProjectionsForFieldTable = (datum: BuiltProjection) =>
-    datum.inference.exists === 'MAY' ||
-    datum.inference.exists === 'MUST' ||
-    isProbablyInvalidProjection(datum);
-
 const hasWriteSchema = (spec: any) => {
     return spec.hasOwnProperty('writeSchema');
 };
@@ -206,8 +196,6 @@ const getSchemaForProjectionModel = (spec: any) => {
 export {
     getSchemaForProjectionModel,
     getProperSchemaScope,
-    isProbablyInvalidProjection,
-    filterProjectionsForFieldTable,
     filterSkimProjectionResponse,
     hasReadAndWriteSchema,
     hasReadSchema,
