@@ -40,6 +40,7 @@ import {
     initializeBinding,
     initializeCurrentBinding,
     populateResourceConfigErrors,
+    removeBindingsFromDictionary,
     resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
@@ -640,18 +641,7 @@ const getInitialState = (
                     );
 
                     // Remove the binding from the bindings dictionary.
-                    const evaluatedBindings = state.bindings;
-
-                    evaluatedBindings[collection] = state.bindings[
-                        collection
-                    ].filter((bindingUUID) => bindingUUID !== uuid);
-
-                    state.bindings =
-                        evaluatedBindings[collection].length === 0
-                            ? omit(evaluatedBindings, collection)
-                            : evaluatedBindings;
-
-                    state.bindingErrorsExist = isEmpty(evaluatedBindings);
+                    removeBindingsFromDictionary(state, collection, uuid);
                 }
             }),
             false,
@@ -659,9 +649,11 @@ const getInitialState = (
         );
     },
 
-    removeBindings: (targetUUIDs, workflow, taskName) => {
+    removeBindings: (targets, workflow, taskName) => {
         set(
             produce((state: BindingState) => {
+                const targetUUIDs = targets.map((datum) => datum.uuid);
+
                 const collections = getCollectionNames(state.resourceConfigs);
 
                 // Remove the selected bindings from the resource config dictionary.
@@ -673,22 +665,15 @@ const getInitialState = (
                 state.resourceConfigs = evaluatedResourceConfigs;
                 populateResourceConfigErrors(state, evaluatedResourceConfigs);
 
-                // Repopulate the bindings dictionary, update the value of the current binding,
-                // and update the backfill-related state.
                 const mappedUUIDsAndResourceConfigs = Object.entries(
                     evaluatedResourceConfigs
                 );
 
                 if (hasLength(mappedUUIDsAndResourceConfigs)) {
-                    mappedUUIDsAndResourceConfigs.forEach(
-                        ([uuid, resourceConfig]) => {
-                            initializeBinding(
-                                state,
-                                resourceConfig.meta.collectionName,
-                                uuid
-                            );
-                        }
-                    );
+                    // Update the value of the current binding, and update the backfill-related state.
+                    targets.forEach(({ collection, uuid }) => {
+                        removeBindingsFromDictionary(state, collection, uuid);
+                    });
 
                     const [uuid, resourceConfig] =
                         mappedUUIDsAndResourceConfigs[0];
