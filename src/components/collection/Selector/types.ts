@@ -10,7 +10,7 @@ import type {
 } from 'src/components/collection/Selector/List/shared';
 import type { AddDialogProps } from 'src/components/shared/Entity/AddDialog/types';
 import type { ColumnProps } from 'src/components/tables/EntityTable/types';
-import type { BindingState } from 'src/stores/Binding/types';
+import type { BindingState, RemoveTarget } from 'src/stores/Binding/types';
 
 export type CollectionSelectorCellRenderer = (
     params: any,
@@ -71,15 +71,15 @@ export interface CollectionSelectorProps {
     RediscoverButton?: ReactNode;
 }
 
-export interface CollectionSelectorCell {
-    handler?: (rows: any, newVal?: any) => Promise<any>;
+export interface CollectionSelectorCell<T = any> {
+    handler?: (rows: T, newVal?: any) => Promise<any>;
     cellRenderer: CollectionSelectorCellRenderer;
 }
 
 export interface CollectionSelectorCellSettings {
     name: CollectionSelectorCell;
-    remove?: CollectionSelectorCell;
-    toggle?: CollectionSelectorCell;
+    remove?: CollectionSelectorCell<RemoveTarget[]>;
+    toggle?: CollectionSelectorCell<any>;
 }
 
 export interface CollectionSelectorListProps {

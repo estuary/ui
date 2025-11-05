@@ -68,6 +68,11 @@ export type BindingDisableUpdate = {
     val: boolean;
 };
 
+export interface RemoveTarget {
+    collection: string;
+    uuid: string;
+}
+
 export interface BindingState
     extends StoreWithHydration,
         StoreWithBackfill,
@@ -95,7 +100,7 @@ export interface BindingState
 
     removeBinding: (binding: BindingMetadata) => void;
     removeBindings: (
-        targetUUIDs: string[],
+        targets: RemoveTarget[],
         workflow: EntityWorkflow | null,
         taskName: string
     ) => void;

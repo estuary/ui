@@ -1,4 +1,5 @@
 import type { CollectionSelectorCellSettings } from 'src/components/collection/Selector/types';
+import type { RemoveTarget } from 'src/stores/Binding/types';
 
 import { useMemo } from 'react';
 
@@ -46,13 +47,20 @@ export function useBindingSelectorCells(): CollectionSelectorCellSettings {
 
     const handlers = useMemo(
         () => ({
-            removeBindings: async (rows: any[]) => {
+            removeBindings: async (rows: RemoveTarget[]) => {
                 removeBindings(rows, workflow, task);
 
                 if (workflow === 'materialization_edit') {
-                    resetCollectionMetadata([], rows);
+                    resetCollectionMetadata(
+                        rows.map((datum) => datum.collection),
+                        rows.map((datum) => datum.uuid)
+                    );
                 }
 
+                // TODO (What are we doing?)
+                // I have no clue why we are cleaning collections up like this
+                //  Should probably work like `removeBinding` where we remove from draft
+                //  FIRST. Also, should be cleaning up collections that are being removed
                 const publishedCollections =
                     hasLength(discoveredCollections) && hasLength(collections)
                         ? collections.filter(
