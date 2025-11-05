@@ -147,11 +147,12 @@ export const ProjectionList = ({
                                         : undefined
                                 }
                                 size="small"
-                                sx={
-                                    metadata?.systemDefined
-                                        ? { fontFamily: 'monospace' }
-                                        : undefined
-                                }
+                                sx={{
+                                    fontFamily: metadata?.systemDefined
+                                        ? 'monospace'
+                                        : undefined,
+                                    maxWidth: 400,
+                                }}
                                 variant="outlined"
                             />
                         </Tooltip>
