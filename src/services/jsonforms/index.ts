@@ -63,6 +63,7 @@ import {
     Formats,
     Options,
 } from 'src/types/jsonforms';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import { ISO_8601_DURATION_PATTERN } from 'src/validation';
 
 /////////////////////////////////////////////////////////
@@ -182,6 +183,20 @@ const getNullableType = (schema: JsonSchema): null | string => {
     return getTypeOtherThanNull(combinatorVal.map(({ type }) => type));
 };
 
+const allEnumWithDescriptionOptions = (schema: JsonSchema): boolean => {
+    return Boolean(
+        schema &&
+            schema.oneOf &&
+            schema.oneOf.length > 0 && // Make sure there are options otherwise the 'every' returns true
+            (schema.oneOf as JsonSchema[]).every(
+                (datum) =>
+                    hasOwnProperty(datum, 'const') &&
+                    hasOwnProperty(datum, 'title') &&
+                    hasOwnProperty(datum, 'description')
+            )
+    );
+};
+
 const isOAuthConfig = (schema: JsonSchema): boolean =>
     Object.hasOwn(schema, Annotations.oAuthProvider);
 
@@ -215,6 +230,14 @@ const addRequiredGroupOptions = (
 ) => {
     if (!Object.hasOwn(elem.options ?? {}, CONTAINS_REQUIRED_FIELDS)) {
         addOption(elem, CONTAINS_REQUIRED_FIELDS, true);
+    }
+};
+
+const addRenderDescriptionInOptionOptions = (
+    elem: Layout | ControlElement | GroupLayout
+) => {
+    if (!Object.hasOwn(elem.options ?? {}, Options.enumWithDescriptions)) {
+        addOption(elem, Options.enumWithDescriptions, true);
     }
 };
 
@@ -526,6 +549,10 @@ const generateUISchema = (
             const nullableType = getNullableType(jsonSchema);
             if (nullableType) {
                 addNullableField(controlObject, nullableType);
+            }
+
+            if (allEnumWithDescriptionOptions(jsonSchema)) {
+                addRenderDescriptionInOptionOptions(controlObject);
             }
 
             schemaElements.push(controlObject);

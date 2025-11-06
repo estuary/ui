@@ -45,6 +45,9 @@ import MaterialDateControl, {
 import MaterialDateTimeControl, {
     materialDateTimeControlTester,
 } from 'src/forms/renderers/Overrides/material/controls/MaterialDateTimeControl';
+import MaterialEnumControl, {
+    materialOneOfEnumControlTester_Descriptions,
+} from 'src/forms/renderers/Overrides/material/controls/MaterialEnumControl';
 import MaterialTimeControl, {
     materialTimeControlTester,
 } from 'src/forms/renderers/Overrides/material/controls/MaterialTimeControl';
@@ -52,6 +55,10 @@ import MaterialTimeControl, {
 const defaultRenderers: JsonFormsRendererRegistryEntry[] = [
     ...materialRenderers,
     // These are normal renderers but customized to our needs
+    {
+        renderer: MaterialEnumControl,
+        tester: materialOneOfEnumControlTester_Descriptions,
+    },
     {
         renderer: MaterialOneOfRenderer_Discriminator,
         tester: materialOneOfControlTester_Discriminator,
