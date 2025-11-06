@@ -6,9 +6,7 @@ We follow JSONForm's folder structure to make it easier to bring over updates an
 
 # Why is content hardcoded?
 
-Unlike other parts of the app these components have content hardcoded into them. This goes against our general approach to using React-Intl for all content in the UI. We did this is because we want these components to match JSON Forms closely and the content is not exactly "ours" to change right now. We want to keep the components all using the same content (as much as possible).
-
-Eventually we need to put some time into how we want to handle JSON Forms translations - but can wait until we truly need translations.
+We implemented this before JSONForms started adding i18n support. So now we can start getting conrent plumbed through from `react-intl` soon.
 
 # How do they stay in sync?
 
@@ -17,6 +15,7 @@ We have to check after every JSONForms update if these need updated.
 # Current Customizations
 
 1. A oneOf renderer for the parser format property
+1. A enum oneOf that renders selects with `description` showing in options
 
 # Upcoming Customizations
 

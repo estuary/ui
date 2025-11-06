@@ -1,3 +1,5 @@
+import type { JsonFormsRendererRegistryEntry } from '@jsonforms/core';
+
 import { materialRenderers } from '@jsonforms/material-renderers';
 
 import {
@@ -47,7 +49,7 @@ import MaterialTimeControl, {
     materialTimeControlTester,
 } from 'src/forms/renderers/Overrides/material/controls/MaterialTimeControl';
 
-const defaultRenderers = [
+const defaultRenderers: JsonFormsRendererRegistryEntry[] = [
     ...materialRenderers,
     // These are normal renderers but customized to our needs
     {
