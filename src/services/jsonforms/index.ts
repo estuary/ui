@@ -53,6 +53,7 @@ import {
     allowedNullableTypes,
     CONTAINS_REQUIRED_FIELDS,
     LAYOUT_PATH,
+    ONE_OF_WITH_DESCRIPTIONS,
     SHOW_INFO_SSH_ENDPOINT,
 } from 'src/services/jsonforms/shared';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
@@ -183,11 +184,11 @@ const getNullableType = (schema: JsonSchema): null | string => {
     return getTypeOtherThanNull(combinatorVal.map(({ type }) => type));
 };
 
-const allEnumWithDescriptionOptions = (schema: JsonSchema): boolean => {
+const allOneOfOptionsContainDescription = (schema: JsonSchema): boolean => {
     return Boolean(
         schema &&
             schema.oneOf &&
-            schema.oneOf.length > 0 && // Make sure there are options otherwise the 'every' returns true
+            schema.oneOf.length > 0 &&
             (schema.oneOf as JsonSchema[]).every(
                 (datum) =>
                     hasOwnProperty(datum, 'const') &&
@@ -236,8 +237,11 @@ const addRequiredGroupOptions = (
 const addRenderDescriptionInOptionOptions = (
     elem: Layout | ControlElement | GroupLayout
 ) => {
-    if (!Object.hasOwn(elem.options ?? {}, Options.enumWithDescriptions)) {
-        addOption(elem, Options.enumWithDescriptions, true);
+    if (!Object.hasOwn(elem.options ?? {}, ONE_OF_WITH_DESCRIPTIONS)) {
+        addOption(elem, ONE_OF_WITH_DESCRIPTIONS, true);
+        // This is not truly needed but we do force this as an autocomplete
+        //  so probably best to make sure JSONForms knows
+        addOption(elem, 'autocomplete', true);
     }
 };
 
@@ -551,7 +555,7 @@ const generateUISchema = (
                 addNullableField(controlObject, nullableType);
             }
 
-            if (allEnumWithDescriptionOptions(jsonSchema)) {
+            if (allOneOfOptionsContainDescription(jsonSchema)) {
                 addRenderDescriptionInOptionOptions(controlObject);
             }
 

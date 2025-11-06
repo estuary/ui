@@ -19,6 +19,9 @@ import {
     DurationTypeControl,
     durationTypeTester,
 } from 'src/forms/renderers/Duration';
+import MaterialEnumControlWith_Description, {
+    materialOneOfEnumControlTester_Descriptions,
+} from 'src/forms/renderers/MaterialEnumControl';
 import {
     MissingType,
     missingTypeTester,
@@ -45,9 +48,6 @@ import MaterialDateControl, {
 import MaterialDateTimeControl, {
     materialDateTimeControlTester,
 } from 'src/forms/renderers/Overrides/material/controls/MaterialDateTimeControl';
-import MaterialEnumControl, {
-    materialOneOfEnumControlTester_Descriptions,
-} from 'src/forms/renderers/Overrides/material/controls/MaterialEnumControl';
 import MaterialTimeControl, {
     materialTimeControlTester,
 } from 'src/forms/renderers/Overrides/material/controls/MaterialTimeControl';
@@ -55,10 +55,6 @@ import MaterialTimeControl, {
 const defaultRenderers: JsonFormsRendererRegistryEntry[] = [
     ...materialRenderers,
     // These are normal renderers but customized to our needs
-    {
-        renderer: MaterialEnumControl,
-        tester: materialOneOfEnumControlTester_Descriptions,
-    },
     {
         renderer: MaterialOneOfRenderer_Discriminator,
         tester: materialOneOfControlTester_Discriminator,
@@ -89,6 +85,13 @@ const defaultRenderers: JsonFormsRendererRegistryEntry[] = [
     { renderer: NullableArrayControl, tester: nullableArrayTester },
     { renderer: NullableControl, tester: nullableControlTester },
     { renderer: DurationTypeControl, tester: durationTypeTester },
+
+    // This _could_ become a generic override but it is currently very
+    //  narrow in scope (Q4 2025)
+    {
+        renderer: MaterialEnumControlWith_Description,
+        tester: materialOneOfEnumControlTester_Descriptions,
+    },
 ];
 
 export default defaultRenderers;
