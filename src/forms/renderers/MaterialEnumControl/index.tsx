@@ -63,14 +63,16 @@ const MaterialEnumControlWith_Description = (
                             >
                                 {option.label}
                             </Typography>
-                            <Typography
-                                component="span"
-                                sx={{
-                                    pl: 1.5,
-                                }}
-                            >
-                                {option.description}
-                            </Typography>
+                            {option.description.length > 0 ? (
+                                <Typography
+                                    component="span"
+                                    sx={{
+                                        pl: 1.5,
+                                    }}
+                                >
+                                    {option.description}
+                                </Typography>
+                            ) : null}
                         </Stack>
                     </li>
                 );
