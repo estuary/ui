@@ -17,7 +17,7 @@ import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { INJECTED_VALUES, NO_PROVIDER } from 'src/forms/renderers/OAuth/shared';
 import { useAllRequiredPropCheck } from 'src/forms/renderers/OAuth/useAllRequiredPropCheck';
 import { useOauthHandler } from 'src/forms/renderers/OAuth/useOauthHandler';
-import { optionExists } from 'src/forms/renderers/Overrides/testers/testers';
+import { optionExists } from 'src/forms/renderers/overrides/testers/testers';
 import {
     getDiscriminator,
     getDiscriminatorDefaultValue,

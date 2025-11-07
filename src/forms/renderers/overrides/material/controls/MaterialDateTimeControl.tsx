@@ -27,22 +27,39 @@ import type { ControlProps, RankedTester } from '@jsonforms/core';
 
 import { Hidden, Stack } from '@mui/material';
 
-import { isDateControl, rankWith } from '@jsonforms/core';
+import { isDateTimeControl, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
-import DatePickerCTA from 'src/components/shared/pickers/DatePickerCTA';
+import DateTimePickerCTA from 'src/components/shared/pickers/DateTimePickerCTA';
 import useDatePickerState from 'src/components/shared/pickers/useDatePickerState';
-import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
-import { CustomMuiInputText } from 'src/forms/renderers/Overrides/material/controls/MuiInputText';
+import { CustomMaterialInputControl } from 'src/forms/renderers/overrides/material/controls/MaterialInputControl';
+import { CustomMuiInputText } from 'src/forms/renderers/overrides/material/controls/MuiInputText';
 
-// This is pretty customized
-//  Look at MaterialDateTimeControl for extra notes
-//  as this is based on that but made to support Date Picker
-export const CustomMaterialDateControl = (props: ControlProps) => {
+// This is SUPER customized
+// Customizations:
+//  1. Use Static Date Time Picker
+//      We stopped using the MUI DateTimePicker and switched to the static one
+//      This allows us to format the input only when the user is using the date
+//      picker. The original approach would try to format the input on every keystroke
+//      and it made it difficult to edit.
+//  2. Use Date Fns
+//      We already have a date format library so DayJS was not needed. Also, it
+//      tries REALLY hard to understand what a user is meaning and will basically
+//      work around almost anything you type and give you a date back. Example:
+//      if a user types "2020" into the input then DayJS immedietly will format that to
+//      something like "2020-01-01T01:00:00Z"
+//  3. Mess with data format
+//      We always want to send back an actual "Z" with this input and never send
+//      back an actual time zone offset. To accomplish this we just mess with the
+//      value onChange. However, to make sure when a user opens the DateTimePicker
+//      it opens to their selection we need to feed the data back into the picker.
+//      This requires that we remove the "Z" (that we inject) before opening the picker
+//      otherwise the picker will try to adjust the timezone again.
+
+export const CustomMaterialDateTimeControl = (props: ControlProps) => {
     const { data, id, visible, enabled, path, handleChange, label } = props;
-
     const { state, buttonRef, events } = useDatePickerState(
-        `date-picker-${id}`
+        `date-time-picker-${id}`
     );
 
     const onChange = (formattedValue: any) => {
@@ -62,10 +79,11 @@ export const CustomMaterialDateControl = (props: ControlProps) => {
                     input={CustomMuiInputText}
                     {...props}
                 />
-                <DatePickerCTA
+                <DateTimePickerCTA
                     enabled={enabled}
                     label={label}
                     buttonRef={buttonRef}
+                    removeOffset
                     state={state}
                     value={data}
                     onChange={onChange}
@@ -75,9 +93,9 @@ export const CustomMaterialDateControl = (props: ControlProps) => {
     );
 };
 
-export const materialDateControlTester: RankedTester = rankWith(
+export const materialDateTimeControlTester: RankedTester = rankWith(
     10,
-    isDateControl
+    isDateTimeControl
 );
 
-export default withJsonFormsControlProps(CustomMaterialDateControl);
+export default withJsonFormsControlProps(CustomMaterialDateTimeControl);

@@ -41,16 +41,16 @@ import {
 import { oAuthProviderTester, OAuthType } from 'src/forms/renderers/OAuth';
 import MaterialOneOfRenderer_Discriminator, {
     materialOneOfControlTester_Discriminator,
-} from 'src/forms/renderers/Overrides/material/complex/MaterialOneOfRenderer_Discriminator';
+} from 'src/forms/renderers/overrides/material/complex/MaterialOneOfRenderer_Discriminator';
 import MaterialDateControl, {
     materialDateControlTester,
-} from 'src/forms/renderers/Overrides/material/controls/MaterialDateControl';
+} from 'src/forms/renderers/overrides/material/controls/MaterialDateControl';
 import MaterialDateTimeControl, {
     materialDateTimeControlTester,
-} from 'src/forms/renderers/Overrides/material/controls/MaterialDateTimeControl';
+} from 'src/forms/renderers/overrides/material/controls/MaterialDateTimeControl';
 import MaterialTimeControl, {
     materialTimeControlTester,
-} from 'src/forms/renderers/Overrides/material/controls/MaterialTimeControl';
+} from 'src/forms/renderers/overrides/material/controls/MaterialTimeControl';
 
 const defaultRenderers: JsonFormsRendererRegistryEntry[] = [
     ...materialRenderers,

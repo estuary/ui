@@ -39,7 +39,7 @@ import {
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 
 import { ConnectorAutoComplete } from 'src/forms/renderers/ConnectorSelect/AutoComplete';
-import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
+import { CustomMaterialInputControl } from 'src/forms/renderers/overrides/material/controls/MaterialInputControl';
 
 export const CONNECTOR_IMAGE_SCOPE = 'connectorImage';
 
