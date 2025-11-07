@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { CaptureQuery } from 'src/api/liveSpecsExt';
 import type { AccessGrantRowConfirmation } from 'src/components/tables/RowActions/AccessGrants/types';
 import type {
     RowActionSupportedTableStoreName,
@@ -63,6 +64,16 @@ export interface RowActionButtonProps {
     renderProgress: (
         item: any,
         index: number,
+        onFinish: (response: any) => void
+    ) => ReactNode;
+    selectableTableStoreName: RowActionSupportedTableStoreName;
+}
+
+export interface GroupedRowActionButtonProps {
+    messageID: string;
+    renderConfirmationMessage: (selectedNames: string[]) => ReactNode;
+    renderProgress: (
+        items: CaptureQuery[],
         onFinish: (response: any) => void
     ) => ReactNode;
     selectableTableStoreName: RowActionSupportedTableStoreName;
