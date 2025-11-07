@@ -21,7 +21,7 @@ import { useOauthHandler } from 'src/forms/renderers/OAuth/useOauthHandler';
 import {
     getDiscriminator,
     getDiscriminatorDefaultValue,
-} from 'src/forms/renderers/shared';
+} from 'src/forms/shared';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useEndpointConfigStore_setCustomErrors } from 'src/stores/EndpointConfig/hooks';

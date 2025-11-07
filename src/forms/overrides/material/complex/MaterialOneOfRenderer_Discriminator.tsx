@@ -65,7 +65,7 @@ import {
     discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
-} from 'src/forms/renderers/shared';
+} from 'src/forms/shared';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
