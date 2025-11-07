@@ -27,6 +27,7 @@ function ConnectorIcon({ size = defaultSize, iconPath }: Props) {
                         src={iconPath}
                         loading="lazy"
                         alt=""
+                        crossOrigin="anonymous"
                     />
                 </Avatar>
             ) : (
