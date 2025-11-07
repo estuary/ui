@@ -17,7 +17,10 @@ function ActiveCell({ firedAt }: ActiveOrResolvedCellsProps) {
 
         return [
             firedAtDate.toLocaleString(DateTime.DATE_FULL),
-            firedAtDate.toLocaleString(DateTime.TIME_WITH_SECONDS),
+            firedAtDate.toLocaleString({
+                ...DateTime.TIME_WITH_SECONDS,
+                timeZoneName: 'short',
+            }),
             intl.formatMessage(
                 { id: 'alerts.table.firedAt.tooltip' },
                 {
