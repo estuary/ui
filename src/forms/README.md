@@ -8,4 +8,4 @@ These are stored in the root of the `renderers` directory. These are normally us
 
 # Overrides
 
-These are all under the `Overrides` directory. These are ones where we fully replace the standard JSONForms version with our own.
+These are all under the `overrides` directory. These are ones where we fully replace the standard JSONForms version with our own.

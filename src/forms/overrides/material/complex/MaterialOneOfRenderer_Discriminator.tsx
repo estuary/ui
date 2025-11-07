@@ -60,7 +60,7 @@ import { JsonFormsDispatch } from '@jsonforms/react';
 import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 
-import CombinatorProperties from 'src/forms/renderers/overrides/material/complex/CombinatorProperties';
+import CombinatorProperties from 'src/forms/overrides/material/complex/CombinatorProperties';
 import {
     discriminator,
     getDiscriminator,

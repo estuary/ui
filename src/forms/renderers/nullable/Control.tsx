@@ -7,8 +7,8 @@ import { rankWith } from '@jsonforms/core';
 import { Unwrapped } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
+import { optionExists } from 'src/forms/overrides/testers/testers';
 import { nullableRank } from 'src/forms/renderers/nullable/shared';
-import { optionExists } from 'src/forms/renderers/overrides/testers/testers';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { Options } from 'src/types/jsonforms';

@@ -38,8 +38,8 @@ import {
 } from '@jsonforms/core';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 
+import { CustomMaterialInputControl } from 'src/forms/overrides/material/controls/MaterialInputControl';
 import { DataPlaneAutoComplete } from 'src/forms/renderers/DataPlaneSelector/AutoComplete';
-import { CustomMaterialInputControl } from 'src/forms/renderers/overrides/material/controls/MaterialInputControl';
 
 export const DATA_PLANE_SCOPE = 'dataPlane';
 

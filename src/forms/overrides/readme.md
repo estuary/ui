@@ -10,14 +10,9 @@ We implemented this before JSONForms started adding i18n support. So now we can 
 
 # How do they stay in sync?
 
-We have to check after every JSONForms update if these need updated.
+We have to check after every JSONForms update if these need updated. This is usually a manual process that happens along with updating the JSONForms version.
 
-# Current Customizations
-
-1. A oneOf renderer for the parser format property
-1. A enum oneOf that renders selects with `description` showing in options
-
-# Upcoming Customizations
+# Potential Future Customizations
 
 1. Allow anchor tags to be rendered in forms
 2. Show description for array

@@ -38,8 +38,8 @@ import {
 } from '@jsonforms/core';
 import { withJsonFormsOneOfEnumProps } from '@jsonforms/react';
 
+import { CustomMaterialInputControl } from 'src/forms/overrides/material/controls/MaterialInputControl';
 import { ConnectorAutoComplete } from 'src/forms/renderers/ConnectorSelect/AutoComplete';
-import { CustomMaterialInputControl } from 'src/forms/renderers/overrides/material/controls/MaterialInputControl';
 
 export const CONNECTOR_IMAGE_SCOPE = 'connectorImage';
 
