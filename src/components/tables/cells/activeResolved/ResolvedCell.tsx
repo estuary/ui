@@ -20,7 +20,10 @@ function ResolvedCell({ firedAt, resolvedAt }: ActiveOrResolvedCellsProps) {
 
             return [
                 resolvedAtDate.toLocaleString(DateTime.DATE_FULL),
-                resolvedAtDate.toLocaleString(DateTime.TIME_WITH_SECONDS),
+                resolvedAtDate.toLocaleString({
+                    ...DateTime.TIME_WITH_SECONDS,
+                    timeZoneName: 'short',
+                }),
                 intl.formatMessage(
                     { id: 'alerts.table.resolvedAt.tooltip' },
                     {

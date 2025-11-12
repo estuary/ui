@@ -14,6 +14,7 @@ function Logo({
                 src={imageSrc}
                 loading="lazy"
                 alt=""
+                crossOrigin="anonymous"
                 style={{
                     maxHeight: maxHeight ?? 75,
                     maxWidth: '100%',
