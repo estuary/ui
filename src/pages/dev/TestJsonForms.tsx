@@ -8,7 +8,6 @@ import {
     StyledEngineProvider,
 } from '@mui/material';
 
-import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 
 import Editor from '@monaco-editor/react';
@@ -23,10 +22,8 @@ import { WorkflowContextProvider } from 'src/context/Workflow';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import useConnectors from 'src/hooks/connectors/useConnectors';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { customAjv } from 'src/services/ajv';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
-import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
-import { defaultOptions } from 'src/services/jsonforms/shared';
+import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
 import { DetailsFormHydrator } from 'src/stores/DetailsForm/Hydrator';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { getDereffedSchema } from 'src/utils/misc-utils';
@@ -150,7 +147,24 @@ const TestJsonForms = () => {
                         </AlertBox>
                     ) : null}
 
+                    <AlertBox severity="info" short title="Instructions">
+                        <Box>
+                            1. Select a connector in the dropdown. This does not
+                            load in anything - just sets a property in the URL
+                            and sets some stuff behind the scenes.
+                        </Box>
+                        <Box>
+                            2. Paste a JSONSchema into the text area below and
+                            clicked on render to see the form.
+                        </Box>
+                        <Box>
+                            3. Open the browser console to see details related
+                            to the state, schema, and ui schema.
+                        </Box>
+                    </AlertBox>
+
                     <JsonForms
+                        {...jsonFormsDefaults}
                         schema={topSchema}
                         uischema={topUiSchema}
                         data={{
@@ -160,9 +174,6 @@ const TestJsonForms = () => {
                                 ),
                             },
                         }}
-                        renderers={defaultRenderers}
-                        cells={materialCells}
-                        config={defaultOptions}
                         validationMode="ValidateAndShow"
                         onChange={(state) => {
                             console.log(
@@ -184,7 +195,6 @@ const TestJsonForms = () => {
                                     searchParams.toString();
                             }
                         }}
-                        ajv={customAjv}
                     />
 
                     <Editor
@@ -209,12 +219,10 @@ const TestJsonForms = () => {
                             <DetailsFormHydrator>
                                 {schema !== null && uiSchema !== null ? (
                                     <JsonForms
+                                        {...jsonFormsDefaults}
                                         schema={schema}
                                         uischema={uiSchema}
                                         data={formData}
-                                        renderers={defaultRenderers}
-                                        cells={materialCells}
-                                        config={defaultOptions}
                                         validationMode="ValidateAndShow"
                                         onChange={(state) => {
                                             console.log(
@@ -222,7 +230,6 @@ const TestJsonForms = () => {
                                                 state
                                             );
                                         }}
-                                        ajv={customAjv}
                                     />
                                 ) : (
                                     <>

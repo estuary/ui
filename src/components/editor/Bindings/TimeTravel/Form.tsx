@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { StyledEngineProvider } from '@mui/material';
 
-import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 
 import { useSnackbar } from 'notistack';
@@ -10,8 +9,8 @@ import { useIntl } from 'react-intl';
 
 import useTimeTravel from 'src/components/editor/Bindings/TimeTravel/useTimeTravel';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
-import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
-import { defaultOptions, showValidation } from 'src/services/jsonforms/shared';
+import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
+import { showValidation } from 'src/services/jsonforms/shared';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
@@ -78,13 +77,11 @@ function TimeTravelForm({ bindingUUID, collectionName }: Props) {
     return (
         <StyledEngineProvider injectFirst>
             <JsonForms
+                {...jsonFormsDefaults}
                 readonly={formActive}
                 schema={schema}
                 uischema={uiSchema}
                 data={localCopy}
-                renderers={defaultRenderers}
-                cells={materialCells}
-                config={defaultOptions}
                 validationMode={showValidation()}
                 onChange={async (state) => {
                     updateTimeTravel(state, skipServer.current)

@@ -7,6 +7,7 @@ export enum Options {
     multi = 'multi',
     nullable = 'nullable',
     format = 'format',
+    enumWithDescriptions = 'enum_with_descriptions',
     oauthProvider = 'oauth_provider',
     oauthFields = 'oauth_fields',
     oauthPathToFields = 'oauth_path_to_fields',
