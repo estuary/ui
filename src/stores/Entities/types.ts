@@ -30,6 +30,7 @@ export interface EntitiesState extends StoreWithHydration {
     hydrationErrors: any;
     setHydrationErrors: (val: EntitiesState['hydrationErrors']) => void;
 
-    mutate: KeyedMutator<ParsedPagedFetchAllResponse<AuthRoles>> | null;
+    // TODO update typing here
+    mutate: any | KeyedMutator<ParsedPagedFetchAllResponse<AuthRoles>> | null;
     setMutate: (value: EntitiesState['mutate']) => void;
 }

@@ -1,12 +1,17 @@
-import { useEffect } from 'react';
+import type { AuthRoles, Capability } from 'src/types';
+import type { AuthRolesQueryResponse } from 'src/types/gql';
+
+import { useCallback, useEffect } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
 import useSWR from 'swr';
+import { gql, useQuery } from 'urql';
 
 import { getAllStorageMappingStores } from 'src/api/storageMappings';
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { BASE_ERROR } from 'src/services/supabase';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { stripPathing } from 'src/utils/misc-utils';
 
@@ -80,21 +85,87 @@ export const useEntitiesStore_tenantsWithAdmin = () => {
     );
 };
 
-export const useHydrateState = () => {
-    const [
-        hydrateState,
-        setActive,
-        setCapabilities,
-        setHydrated,
-        setHydrationErrors,
-        setMutate,
-    ] = useEntitiesStore((state) => [
+const authRolesQuery = gql<AuthRolesQueryResponse>`
+    query AuthRolesQuery {
+        prefixes(by: { minCapability: read }, first: 25000) {
+            edges {
+                node {
+                    prefix
+                    userCapability
+                }
+            }
+        }
+    }
+`;
+export const useHydrateStateWithGql = () => {
+    const { populateState } = useEntitiesHydrationStatePopulate();
+
+    // We hardcode the key here as we only call once
+    const [{ fetching, data, error }, reexecuteQuery] = useQuery({
+        query: authRolesQuery,
+    });
+
+    // Once we are done validating update all the settings
+    useEffect(() => {
+        if (!fetching) {
+            populateState({
+                data:
+                    data?.prefixes?.edges?.map(({ node }) => {
+                        return {
+                            capability: node.userCapability as Capability,
+                            role_prefix: node.prefix,
+                        };
+                    }) ?? [],
+                error: error
+                    ? {
+                          ...BASE_ERROR,
+                          message: error.message,
+                      }
+                    : null,
+                mutate: reexecuteQuery ?? null,
+            });
+        }
+    }, [data?.prefixes?.edges, error, fetching, populateState, reexecuteQuery]);
+};
+
+export const useEntitiesHydrationStatePopulate = () => {
+    const [setCapabilities, setHydrated, setHydrationErrors, setMutate] =
+        useEntitiesStore((state) => [
+            state.setCapabilities,
+            state.setHydrated,
+            state.setHydrationErrors,
+            state.setMutate,
+        ]);
+
+    const populateState = useCallback(
+        ({
+            data,
+            error,
+            mutate,
+        }: {
+            data: (AuthRoles | null)[] | null;
+            error: any;
+            mutate: any;
+        }) => {
+            setCapabilities(data);
+            setHydrationErrors(error);
+            setMutate(mutate);
+            setHydrated(true);
+        },
+        [setCapabilities, setHydrated, setHydrationErrors, setMutate]
+    );
+
+    return {
+        populateState,
+    };
+};
+
+export const useHydrateStateWithPostgres = () => {
+    const { populateState } = useEntitiesHydrationStatePopulate();
+
+    const [hydrateState, setActive] = useEntitiesStore((state) => [
         state.hydrateState,
         state.setActive,
-        state.setCapabilities,
-        state.setHydrated,
-        state.setHydrationErrors,
-        state.setMutate,
     ]);
 
     // We hardcode the key here as we only call once
@@ -110,23 +181,19 @@ export const useHydrateState = () => {
     // Once we are done validating update all the settings
     useEffect(() => {
         if (!response.isValidating) {
-            setHydrationErrors(response.data?.error);
-            setCapabilities(response.data?.data ?? null);
-            setMutate(response.mutate);
-            setHydrated(true);
+            populateState({
+                data: response.data?.data ?? null,
+                error: response.data?.error,
+                mutate: response.mutate ?? null,
+            });
         }
     }, [
+        populateState,
         response.data?.data,
         response.data?.error,
         response.isValidating,
         response.mutate,
-        setCapabilities,
-        setHydrated,
-        setHydrationErrors,
-        setMutate,
     ]);
-
-    return response;
 };
 
 export const useStorageMappingsHydrator = () => {
