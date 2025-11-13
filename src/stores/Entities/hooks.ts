@@ -1,3 +1,5 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { EntitiesState } from 'src/stores/Entities/types';
 import type { AuthRoles, Capability } from 'src/types';
 import type {
     AuthRolesQueryResponse,
@@ -112,8 +114,8 @@ export const useEntitiesStore_populateState = () => {
             mutate,
         }: {
             data: (AuthRoles | null)[] | null;
-            error: any;
-            mutate: any;
+            mutate: EntitiesState['mutate'];
+            error?: PostgrestError | null;
         }) => {
             setCapabilities(data);
             setHydrationErrors(error);
@@ -186,6 +188,11 @@ export const useHydrateStateWithGql = () => {
             // We are done - set so we stop any other effects from running right away
             isComplete.current = true;
 
+            logRocketEvent('authroles', {
+                totalFetched: allDataRef.current.size,
+                usedGql: true,
+            });
+
             populateState({
                 data: Array.from(allDataRef.current),
                 error: error
@@ -200,6 +207,8 @@ export const useHydrateStateWithGql = () => {
                         mutate: true,
                         usedGql: true,
                     });
+
+                    return Promise.resolve();
                 },
             });
         }

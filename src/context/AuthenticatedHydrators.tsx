@@ -11,8 +11,6 @@ function AuthenticatedHydrators({ children }: BaseComponentProps) {
         (state) => state.hasSupportAccess
     );
 
-    console.log('AuthenticatedHydrators : hasSupportRole : ', hasSupportRole);
-
     const EntityHydratorComponent = hasSupportRole
         ? EntitiesHydratorForSupport
         : EntitiesHydrator;
