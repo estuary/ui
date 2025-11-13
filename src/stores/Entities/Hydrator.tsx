@@ -21,7 +21,7 @@ export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
     useMount(() => {
         logRocketEvent('authroles', {
             fetching: true,
-            usedGql: false,
+            usedPostgrest: true,
         });
     });
 
