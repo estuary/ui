@@ -50,6 +50,8 @@ This should not impact normal users and only `support` staff. We have the `mutat
 
 ## Graph Caching
 
+Look for `TODO (gql caching)` in the code.
+
 ### Impact
 
 We do not use Graph caching so there are times we are fetching more data than we need.
