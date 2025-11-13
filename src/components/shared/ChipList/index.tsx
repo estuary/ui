@@ -20,6 +20,10 @@ function ChipList({
 
     // Format data coming in so we can still pass in a list of strings
     const formattedValues = useMemo(() => {
+        if (!values || values.length < 1) {
+            return [];
+        }
+
         return values.map((value) => {
             return typeof value === 'string'
                 ? {

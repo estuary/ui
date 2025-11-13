@@ -32,7 +32,8 @@ export const Errors: Record<string, string> = {
     'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
 
     // Draft Errors
-    'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
+    // Also used to SkimProjectionErrors
+    'errors.preface.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
 
     // Error Boundry
     'errorBoundry.title': `${CommonMessages['common.errors.heading']}`,

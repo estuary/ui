@@ -39,6 +39,7 @@ export interface FieldActionsProps {
 export interface FieldListProps {
     field: string;
     pointer: string | undefined;
+    cannotExist?: boolean;
     editable?: boolean;
     sticky?: boolean;
 }

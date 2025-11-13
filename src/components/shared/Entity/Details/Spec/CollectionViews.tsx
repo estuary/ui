@@ -3,9 +3,9 @@ import type { SpecPresentation } from 'src/components/shared/Entity/Details/Spec
 import { useEffect } from 'react';
 
 import {
-    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
-    useBindingsEditorStore_populateInferSchemaResponse,
+    useBindingsEditorStore_populateSkimProjectionResponse,
     useBindingsEditorStore_resetState,
+    useBindingsEditorStore_skimProjectionResponseDoneProcessing,
 } from 'src/components/editor/Bindings/Store/hooks';
 import LiveSpecEditor from 'src/components/editor/LiveSpec';
 import { MonacoEditorSkeleton } from 'src/components/editor/MonacoEditor/EditorSkeletons';
@@ -32,15 +32,21 @@ function CollectionSpecViews({ presentation }: Props) {
 
     const resetState = useBindingsEditorStore_resetState();
 
-    const populateInferSchemaResponse =
-        useBindingsEditorStore_populateInferSchemaResponse();
+    const populateSkimProjectionResponse =
+        useBindingsEditorStore_populateSkimProjectionResponse();
 
-    const inferSchemaResponseDoneProcessing =
-        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
+    const skimProjectionResponseDoneProcessing =
+        useBindingsEditorStore_skimProjectionResponseDoneProcessing();
 
     useEffect(() => {
         if (entityType === 'collection' && currentCatalog) {
-            populateInferSchemaResponse(currentCatalog.spec, catalogName);
+            populateSkimProjectionResponse(
+                currentCatalog.spec,
+                catalogName,
+                // projections are in the `currentCatalog.spec` already as we are fetching a liveSpec
+                //  so no need to pass it in
+                undefined
+            );
         }
 
         return () => {
@@ -50,7 +56,7 @@ function CollectionSpecViews({ presentation }: Props) {
         catalogName,
         currentCatalog,
         entityType,
-        populateInferSchemaResponse,
+        populateSkimProjectionResponse,
         resetState,
     ]);
 
@@ -63,7 +69,7 @@ function CollectionSpecViews({ presentation }: Props) {
             </>
         );
     } else {
-        return inferSchemaResponseDoneProcessing ? (
+        return skimProjectionResponseDoneProcessing ? (
             <LiveSpecEditor localZustandScope singleSpec height={HEIGHT} />
         ) : (
             <MonacoEditorSkeleton />
