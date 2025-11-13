@@ -1,8 +1,10 @@
 import type { BaseComponentProps } from 'src/types';
 
 import { FormattedMessage } from 'react-intl';
+import { useMount } from 'react-use';
 
 import FullPageError from 'src/components/fullPage/Error';
+import { logRocketEvent } from 'src/services/shared';
 import { useHydrateStateWithGql } from 'src/stores/Entities/hooks';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 
@@ -17,6 +19,13 @@ export const EntitiesHydratorForSupport = ({
         state.hydrated,
         state.hydrationErrors,
     ]);
+
+    useMount(() => {
+        logRocketEvent('authroles', {
+            fetching: true,
+            usedGql: true,
+        });
+    });
 
     if (!hydrated) {
         return null;

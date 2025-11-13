@@ -1,8 +1,10 @@
 import type { BaseComponentProps } from 'src/types';
 
 import { FormattedMessage } from 'react-intl';
+import { useMount } from 'react-use';
 
 import FullPageError from 'src/components/fullPage/Error';
+import { logRocketEvent } from 'src/services/shared';
 import { useHydrateStateWithPostgres } from 'src/stores/Entities/hooks';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 
@@ -15,6 +17,13 @@ export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
         state.hydrated,
         state.hydrationErrors,
     ]);
+
+    useMount(() => {
+        logRocketEvent('authroles', {
+            fetching: true,
+            usedGql: false,
+        });
+    });
 
     if (!hydrated) {
         return null;
