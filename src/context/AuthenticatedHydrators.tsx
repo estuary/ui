@@ -11,6 +11,7 @@ function AuthenticatedHydrators({ children }: BaseComponentProps) {
         (state) => state.hasSupportAccess
     );
 
+    // TODO (gql auth roles) - see GRAPHQL.md
     const EntityHydratorComponent = hasSupportRole
         ? EntitiesHydratorForSupport
         : EntitiesHydrator;
