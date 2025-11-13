@@ -103,7 +103,9 @@ const getInitialState = (
         });
 
         set(
-            { capabilities: newCapabilities },
+            produce((state: EntitiesState) => {
+                state.capabilities = newCapabilities;
+            }),
             false,
             'Entities capabilities populating'
         );
