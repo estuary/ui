@@ -47,3 +47,13 @@ A user can click to see the demo tasks. If they do this without access we prompt
 ### Workaround
 
 This should not impact normal users and only `support` staff. We have the `mutate` call just log an event so we can keep track of who would be impacted - but do nothing else. This has to be solved before we can roll this out to the wider audience.
+
+## Graph Caching
+
+### Impact
+
+We do not use Graph caching so there are times we are fetching more data than we need.
+
+### Workaround
+
+We are fine with this for _now_ but will want to handle this in the near future.

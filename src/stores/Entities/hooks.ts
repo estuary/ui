@@ -1,7 +1,10 @@
 import type { AuthRoles, Capability } from 'src/types';
-import type { AuthRolesQueryResponse } from 'src/types/gql';
+import type {
+    AuthRolesQueryResponse,
+    PaginationVariables,
+} from 'src/types/gql';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -93,7 +96,7 @@ export const useEntitiesStore_tenantsWithAdmin = () => {
     );
 };
 
-export const useEntitiesHydrationStatePopulate = () => {
+export const useEntitiesStore_populateState = () => {
     const [setCapabilities, setHydrated, setHydrationErrors, setMutate] =
         useEntitiesStore((state) => [
             state.setCapabilities,
@@ -125,59 +128,86 @@ export const useEntitiesHydrationStatePopulate = () => {
     };
 };
 
-const authRolesQuery = gql<AuthRolesQueryResponse>`
-    query AuthRolesQuery {
-        prefixes(by: { minCapability: read }, first: 25000) {
+// The 7500 was kind of picked through "vibes"
+//  It should keep the payload around 1000kB
+//  That should load in around 1 second for 4g
+const authRolesQuery = gql<AuthRolesQueryResponse, PaginationVariables>`
+    query AuthRolesQuery($after: String) {
+        prefixes(by: { minCapability: read }, first: 7500, after: $after) {
             edges {
-                cursor
                 node {
                     prefix
                     userCapability
                 }
             }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
         }
     }
 `;
-export const useHydrateStateWithGql = () => {
-    const { populateState } = useEntitiesHydrationStatePopulate();
 
-    // We hardcode the key here as we only call once
-    const [{ fetching, data, error }, reexecuteQuery] = useQuery({
+export const useHydrateStateWithGql = () => {
+    const { populateState } = useEntitiesStore_populateState();
+
+    // Store all data so we can pretend we didn't paginate through
+    const allDataRef = useRef<Set<AuthRoles>>(new Set());
+    const isComplete = useRef(false);
+    const [after, setAfter] = useState<string | undefined>(undefined);
+
+    const [{ fetching, data, error }] = useQuery({
         query: authRolesQuery,
+        variables: { after },
     });
 
-    console.log('useHydrateStateWithGql', fetching);
-
-    // Once we are done validating update all the settings
     useEffect(() => {
-        if (!fetching) {
-            logRocketEvent('authroles', {
-                fetching: true,
-                usedGql: true,
+        if (isComplete.current || fetching) {
+            return;
+        }
+
+        (data?.prefixes?.edges ?? []).forEach(({ node }) => {
+            allDataRef.current.add({
+                capability: node.userCapability as Capability,
+                role_prefix: node.prefix,
             });
+        });
+
+        const endCursor = data?.prefixes?.pageInfo?.endCursor;
+        if (
+            !Boolean(error) &&
+            data?.prefixes?.pageInfo?.hasNextPage &&
+            endCursor
+        ) {
+            // Stop if there are errors and just show error to user
+            // Make sure there is a next page and we know what cursor to start after
+            setAfter(endCursor);
+        } else {
+            // We are done - set so we stop any other effects from running right away
+            isComplete.current = true;
 
             populateState({
-                data:
-                    data?.prefixes?.edges?.map(({ node }) => {
-                        return {
-                            capability: node.userCapability as Capability,
-                            role_prefix: node.prefix,
-                        };
-                    }) ?? [],
+                data: Array.from(allDataRef.current),
                 error: error
                     ? {
                           ...BASE_ERROR,
                           message: error.message,
                       }
                     : null,
-                mutate: reexecuteQuery ?? null,
+                mutate: () => {
+                    // TODO (gql auth roles) - see GRAPHQL.md
+                    logRocketEvent('authroles', {
+                        mutate: true,
+                        usedGql: true,
+                    });
+                },
             });
         }
-    }, [data?.prefixes?.edges, error, fetching, populateState, reexecuteQuery]);
+    }, [data, error, fetching, populateState]);
 };
 
 export const useHydrateStateWithPostgres = () => {
-    const { populateState } = useEntitiesHydrationStatePopulate();
+    const { populateState } = useEntitiesStore_populateState();
 
     const [hydrateState, setActive] = useEntitiesStore((state) => [
         state.hydrateState,

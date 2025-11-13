@@ -121,5 +121,6 @@ export interface AuthRolesQueryResponse {
         edges: {
             node: AuthRolesNode;
         }[];
+        pageInfo?: Pick<PageInfo, 'hasNextPage' | 'endCursor'>;
     };
 }
