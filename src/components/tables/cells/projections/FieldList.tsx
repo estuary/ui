@@ -9,6 +9,7 @@ import { useCollectionIndex } from 'src/hooks/projections/useCollectionIndex';
 import { useProjectedFields } from 'src/hooks/projections/useProjectedFields';
 
 export const FieldList = ({
+    cannotExist,
     editable,
     field,
     pointer,
@@ -32,6 +33,7 @@ export const FieldList = ({
     return (
         <TableCell sx={sticky ? getStickyTableCell() : undefined}>
             <ProjectionList
+                cannotExist={cannotExist}
                 collection={collection}
                 editable={editable}
                 maxChips={1}
