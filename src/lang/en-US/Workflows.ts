@@ -484,6 +484,7 @@ export const Workflows: Record<string, string> = {
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
+    'projection.tooltip.cannotExist': `The location cannot exist. It may be outside of permitted array bounds, is a disallowed property, or has an impossible type.`,
 
     'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
     'schemaManagement.options.manual.label': `Manually manage schemas`,

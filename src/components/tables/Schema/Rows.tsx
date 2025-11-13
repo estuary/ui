@@ -38,12 +38,14 @@ function Row({ columns, row }: RowProps) {
             }
         }
 
-        return row.inference.types;
+        return row.inference.types ?? [];
     }, [row]);
 
     const detailsColumnVisible =
         !isCaptureWorkflow ||
         isColumnVisible(columns, optionalColumnIntlKeys.details);
+
+    const fieldCannotExist = Boolean(row.inference.exists === 'CANNOT');
 
     return (
         <TableRow
@@ -56,6 +58,7 @@ function Row({ columns, row }: RowProps) {
         >
             {row.field ? (
                 <FieldList
+                    cannotExist={fieldCannotExist}
                     editable={isCaptureWorkflow}
                     field={row.field}
                     pointer={row.ptr}
@@ -88,7 +91,7 @@ function Row({ columns, row }: RowProps) {
                 </TableCell>
             ) : null}
 
-            {isCaptureWorkflow && row.field ? (
+            {!fieldCannotExist && isCaptureWorkflow && row.field ? (
                 <ProjectionActions field={row.field} pointer={row.ptr} />
             ) : isCaptureWorkflow ? (
                 <TableCell />
