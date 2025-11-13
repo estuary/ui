@@ -177,12 +177,11 @@ export const useHydrateStateWithGql = () => {
 
         const endCursor = data?.prefixes?.pageInfo?.endCursor;
         if (
+            // Stop if there are errors and just show error to user
             !Boolean(error) &&
             data?.prefixes?.pageInfo?.hasNextPage &&
             endCursor
         ) {
-            // Stop if there are errors and just show error to user
-            // Make sure there is a next page and we know what cursor to start after
             setAfter(endCursor);
         } else {
             // We are done - set so we stop any other effects from running right away
