@@ -10,7 +10,10 @@ import type {
     MaterializationFields_Legacy,
     ValidatedBinding,
 } from 'src/types/schemaModels';
-import type { FieldSelectionInput, FieldSelectionResult } from 'src/types/wasm';
+import type {
+    FieldSelectionInput_Skim,
+    FieldSelectionResult,
+} from 'src/types/wasm';
 
 import { useCallback, useEffect, useMemo } from 'react';
 
@@ -25,7 +28,6 @@ import {
     useEditorStore_queryResponse_draftSpecs,
 } from 'src/components/editor/Store/hooks';
 import { useEntityType } from 'src/context/EntityContext';
-import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
@@ -33,6 +35,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import {
     DEFAULT_RECOMMENDED_FLAG,
     getFieldSelection,
@@ -62,7 +65,7 @@ export interface ValidationRequestMetadata {
 // https://github.com/estuary/flow/blob/master/crates/flow-web/FIELD_SELECTION.md
 
 // Call into the flow WASM handler
-const evaluateFieldSelection = async (input: FieldSelectionInput) => {
+const evaluateFieldSelection = async (input: FieldSelectionInput_Skim) => {
     let response: FieldSelectionResult | undefined;
 
     try {
@@ -70,8 +73,11 @@ const evaluateFieldSelection = async (input: FieldSelectionInput) => {
         // We can catch any error here so that any issue causes an empty response and the
         //  component will show an error... though not the most useful one.
         // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-    } catch (e: any) {
-        logRocketEvent('evaluate_field_selection:failed', e);
+    } catch (error: any) {
+        logRocketEvent('evaluate_field_selection', {
+            failed: true,
+            error,
+        });
     }
 
     return response;
@@ -81,7 +87,6 @@ export default function useValidateFieldSelection() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
     const entityType = useEntityType();
-    const isEdit = useEntityWorkflow_Editing();
 
     const currentBindingUUID = useBinding_currentBindingUUID();
     const advanceHydrationStatus = useBindingStore(
@@ -106,7 +111,9 @@ export default function useValidateFieldSelection() {
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
     const liveBuiltSpec = useEditorStore_liveBuiltSpec();
-
+    const collections = useWorkflowStore((state) => {
+        return state.collections;
+    });
     const formStatus = useFormStateStore_status();
 
     const fieldsRecommended = useSourceCaptureStore(
@@ -144,9 +151,15 @@ export default function useValidateFieldSelection() {
                     ? liveBuiltSpec?.bindings.at(liveBuiltBindingIndex)
                     : undefined;
 
-            if (!builtBinding || !draftedBinding || !validatedBinding) {
+            if (
+                !builtBinding ||
+                !draftedBinding ||
+                !validatedBinding ||
+                !collections[builtBinding.collection.name] ||
+                !collections[builtBinding.collection.name].spec
+            ) {
                 return Promise.reject(
-                    'data not found: built spec binding, drafted binding, or validation binding'
+                    'data not found: collection spec, built spec binding, drafted binding, or validation binding'
                 );
             }
 
@@ -154,14 +167,21 @@ export default function useValidateFieldSelection() {
 
             try {
                 result = await evaluateFieldSelection({
-                    collectionKey: builtBinding.collection.key,
-                    collectionProjections: builtBinding.collection.projections,
-                    liveSpec: isEdit ? liveBuiltBinding : undefined,
-                    model: draftedBinding,
-                    validated: validatedBinding,
+                    collection: {
+                        name: builtBinding.collection.name,
+                        model: collections[builtBinding.collection.name].spec,
+                    },
+                    binding: {
+                        live: liveBuiltBinding,
+                        model: draftedBinding,
+                        validated: validatedBinding,
+                    },
                 });
             } catch (error: unknown) {
-                logRocketEvent('evaluate_field_selection:failed', error);
+                logRocketEvent('evaluate_field_selection', {
+                    failed: true,
+                    error,
+                });
             }
 
             return {
@@ -171,7 +191,7 @@ export default function useValidateFieldSelection() {
                 result,
             };
         },
-        [isEdit, liveBuiltSpec]
+        [collections, liveBuiltSpec?.bindings]
     );
 
     const failureDetected = useMemo(

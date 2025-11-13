@@ -17,9 +17,17 @@ export const FieldList = ({
     const { collection } = useCollectionIndex();
     const { projectedFields } = useProjectedFields(collection, pointer);
 
-    const systemDefinedProjection: ProjectionMetadata[] = pointer
-        ? [{ field: field, location: pointer, systemDefined: true }]
-        : [];
+    // If a user edits the schema in a way that makes a projection
+    //  no longer valid. We want to check this so that we do not show
+    //  the same projection twice in the list.
+    const fieldExistsInProjected = projectedFields.some(
+        (projection) => projection.field === field
+    );
+
+    const systemDefinedProjection: ProjectionMetadata[] =
+        pointer && !fieldExistsInProjected
+            ? [{ field: field, location: pointer, systemDefined: true }]
+            : [];
 
     return (
         <TableCell sx={sticky ? getStickyTableCell() : undefined}>

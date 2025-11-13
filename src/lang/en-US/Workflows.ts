@@ -16,6 +16,10 @@ export const Workflows: Record<string, string> = {
     'workflows.error.endpointConfig.empty': `${endpointConfigHeader} empty`,
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
+
+    'workflows.error.bindings': `There was an issue fetching data related to your bindings.`,
+    'workflows.error.collections': `There was an issue fetching data related to your collections.`,
+
     'workflows.error.oldBoundCollection.added': `Your account uses Estuary's Trial bucket which includes ${trialDuration} days of storage and this collection is older than that. To ensure you have all data, please also backfill this collection from the source after adding it to the materialization.`,
     'workflows.error.oldBoundCollection.backfillAll': `Your account uses Estuary's Trial bucket which includes ${trialDuration} days of storage. There are collections bound to this materialization that are older than that.`,
     'workflows.error.oldBoundCollection.backfill': `Your account uses Estuary's Trial bucket which includes ${trialDuration} days of storage and this collection is older than that. Data will be missing if you backfill from the materialization so we recommend backfilling from the source.`,
@@ -172,7 +176,7 @@ export const Workflows: Record<string, string> = {
 
     'fieldSelection.cta.selectAlgorithm': `Field Depth`,
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
-    'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config can sometimes change the options below.`,
+    'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config or collection can sometimes change the options below.`,
     'fieldSelection.error.serverUpdateFailed': `Field selection update failed`,
     'fieldSelection.error.validationFailed': `Field selection validation failed for {collection}.`,
     'fieldSelection.error.groupBySaveFailed': `Group-by key update failed for {collection}.`,
@@ -432,7 +436,8 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.table.empty.header': `No fields to display.`,
     'schemaEditor.table.empty.message': `We were unable to generate a table from the current schema. Please update the schema.`,
     'schemaEditor.table.empty.filtered.message': `This schema does not contain these kind of fields.`,
-    'schemaEditor.error.title': `Schema Invalid`,
+    'schemaEditor.error.title': `Schema Processing Issues`,
+    'schemaEditor.error.truncation': `showing {count} of {total} errors`,
     'schemaEditor.table.filter.label': `Filter fields`,
     'schemaEditor.table.filter.option.all': `All`,
     'schemaEditor.table.filter.option.must': `Must exist`,
@@ -474,6 +479,8 @@ export const Workflows: Record<string, string> = {
     'projection.dialog.add.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
     'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
     'projection.error.alert.removalFailure': `Failed to update the server when removing field alias. Please try again.`,
+    'projection.error.alert.duplicate': `Field name already in use for "{duplicateLocation}"`,
+    'projection.error.alert.draftId': `draft ID or stored draft spec not found`,
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
