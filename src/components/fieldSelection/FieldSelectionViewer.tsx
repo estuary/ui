@@ -1,3 +1,4 @@
+import type { FieldSelectionViewerProps } from 'src/components/fieldSelection/types';
 import type { BindingFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 
 import { useEffect, useMemo } from 'react';
@@ -17,21 +18,15 @@ import useFieldSelection from 'src/hooks/fieldSelection/useFieldSelection';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
-
-interface Props {
-    bindingUUID: string;
-    collectionName: string;
-    refreshRequired: boolean;
-    refresh: Function;
-}
 
 function FieldSelectionViewer({
     bindingUUID,
     collectionName,
     refreshRequired,
     refresh,
-}: Props) {
+}: FieldSelectionViewerProps) {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -39,6 +34,10 @@ function FieldSelectionViewer({
         bindingUUID,
         collectionName
     );
+
+    const collectionEdited = useWorkflowStore((state) => {
+        return Boolean(state.collections[collectionName]?.belongsToDraft);
+    });
 
     // Bindings Store
     const advanceHydrationStatus = useBindingStore(
@@ -151,7 +150,13 @@ function FieldSelectionViewer({
 
                     <KeyChangeAlert bindingUUID={bindingUUID} />
 
-                    <RefreshStatus show={refreshRequired ? true : undefined} />
+                    <RefreshStatus
+                        show={
+                            collectionEdited || refreshRequired
+                                ? true
+                                : undefined
+                        }
+                    />
 
                     <Typography component="div">
                         <MessageWithLink messageID="fieldSelection.message" />

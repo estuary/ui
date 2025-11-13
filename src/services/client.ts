@@ -1,4 +1,5 @@
 import { FETCH_DEFAULT_ERROR, logRocketConsole } from 'src/services/shared';
+import { getAuthHeader } from 'src/utils/misc-utils';
 
 export interface ClientConfig<T> extends RequestInit {
     data?: T;
@@ -22,7 +23,8 @@ export const client = <Response, Request = {}>(
     const headersInit: HeadersInit = {};
 
     if (token) {
-        headersInit.Authorization = `Bearer ${token}`;
+        const authHeaders = getAuthHeader(token);
+        headersInit.Authorization = authHeaders.Authorization;
     }
 
     if (data) {

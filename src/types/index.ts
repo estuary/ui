@@ -389,30 +389,7 @@ export type ParsedStream =
     | 'cleanup'
     | 'activate';
 
-export interface InferSchemaResponse {
-    properties: InferSchemaResponseProperty[];
-}
-
-export type FieldExistence = 'may' | 'must' | 'cannot' | 'implicit';
-
-export interface InferSchemaResponseProperty {
-    is_pattern_property: boolean;
-    // https://github.com/estuary/flow/blob/db2cdd86825132ee7e0bcac8b432712ab5866c83/crates/doc/src/inference.rs#L1121
-    exists: FieldExistence;
-    title: string;
-    reduction: string;
-    pointer: string;
-    types: string[];
-    enum_vals: any[];
-    name?: string;
-    description?: string;
-    string_format?: string;
-}
-
-export interface InferSchemaPropertyForRender
-    extends InferSchemaResponseProperty {
-    allowedToBeKey: boolean;
-}
+export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
 
 export interface AutoDiscoverySettings {
     addNewBindings: boolean;

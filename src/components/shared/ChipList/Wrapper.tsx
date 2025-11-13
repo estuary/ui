@@ -18,6 +18,7 @@ const ListItem = styled('li')(({ theme }) => ({
 
 function ChipWrapper({
     disabled,
+    forceTooltip,
     onClick,
     stripPath,
     title,
@@ -42,8 +43,16 @@ function ChipWrapper({
             return val.title;
         }
 
+        // This is weird - but works for Alert related stuff.
+        //  We force the tooltip to show even when the strip path is disabled
+        //  however we only want to show one when there is actually a title so
+        //  if there isn't we do NOT want to default to displayValue
+        if (forceTooltip) {
+            return title;
+        }
+
         return title ?? displayValue;
-    }, [displayValue, title, val.title]);
+    }, [displayValue, forceTooltip, title, val.title]);
 
     // Save off the Chip so we can more easily wrap in a link if needed
     const chip = useMemo(() => {
@@ -95,13 +104,15 @@ function ChipWrapper({
         return chip;
     }, [chip, val.link, val.newWindow]);
 
+    const disableTooltip = forceTooltip ? false : !stripPath;
+
     return (
         <ListItem>
             <Tooltip
                 title={tooltipTitle}
-                disableFocusListener={!stripPath}
-                disableHoverListener={!stripPath}
-                disableTouchListener={!stripPath}
+                disableFocusListener={disableTooltip}
+                disableHoverListener={disableTooltip}
+                disableTouchListener={disableTooltip}
             >
                 <Box>{wrappedChip}</Box>
             </Tooltip>

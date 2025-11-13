@@ -27,6 +27,7 @@ export interface FieldEditorProps {
 export interface ProjectionListProps {
     collection: string | undefined;
     projectedFields: ProjectionMetadata[];
+    cannotExist?: boolean;
     editable?: boolean;
     maxChips?: number;
 }

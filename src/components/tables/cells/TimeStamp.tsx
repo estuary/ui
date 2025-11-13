@@ -1,17 +1,18 @@
+import type { TimeStampProps } from 'src/components/tables/cells/types';
+
 import { Box, TableCell, Tooltip } from '@mui/material';
 
 import { formatDistanceToNow, formatRelative } from 'date-fns';
 import { FormattedDate } from 'react-intl';
 
-interface Props {
-    time: string | Date;
-    enableExact?: boolean;
-    enableRelative?: boolean;
-}
-
-function TimeStamp({ enableExact, enableRelative, time }: Props) {
+function TimeStamp({
+    enableExact,
+    enableRelative,
+    time,
+    TableCellProps,
+}: TimeStampProps) {
     return (
-        <TableCell>
+        <TableCell {...(TableCellProps ?? {})}>
             <Tooltip
                 title={
                     <FormattedDate
@@ -31,7 +32,7 @@ function TimeStamp({ enableExact, enableRelative, time }: Props) {
                     {enableExact ? (
                         <FormattedDate
                             day="2-digit"
-                            month="2-digit"
+                            month="short"
                             year="numeric"
                             hour="numeric"
                             minute="numeric"

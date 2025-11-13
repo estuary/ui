@@ -430,6 +430,16 @@ export const hiddenButAccessibleRadio: SxProps<Theme> = {
 export const defaultBoxShadow =
     'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
 
+export const opaqueLightModeBorder = {
+    light: `1px solid rgba(255, 255, 255, 0.8)`,
+    dark: undefined,
+};
+
+export const opaqueLightModeBackground = {
+    light: 'rgba(255, 255, 255, 0.70)',
+    dark: 'rgba(247, 249, 252, 0.05)',
+};
+
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
 //      this is one way to handle the light/dark mode:
 
@@ -465,6 +475,10 @@ export const semiTransparentBackground_blue = {
     light: '#F4F6FF',
     dark: 'rgba(194, 205, 255, 0.12)',
 };
+export const semiTransparentBackground_blue_nesting = {
+    light: '#d8dcf2',
+    dark: undefined,
+};
 
 // RGB translation of #BAEDF2.
 export const semiTransparentBackground_teal = {
@@ -472,10 +486,19 @@ export const semiTransparentBackground_teal = {
     dark: 'rgba(186, 237, 242, 0.12)',
 };
 
+export const semiTransparentBackground_teal_nesting = {
+    light: '#d4eae8',
+    dark: undefined,
+};
+
 // RGB translation of #D6C2FF.
 export const semiTransparentBackground_purple = {
     light: '#F7F3FF',
     dark: 'rgba(214, 194, 255, 0.12)',
+};
+export const semiTransparentBackground_purple_nesting = {
+    light: '#ddd1f6',
+    dark: undefined,
 };
 
 export const primaryColoredBackground_hovered = {
@@ -618,6 +641,13 @@ export const truncateTextSx: SxProps<Theme> = {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+};
+
+export const flexGrowToSiblingsSx: SxProps<Theme> = {
+    display: 'flex',
+    alignItems: 'stretch',
+    justifyItems: 'stretch',
+    flexGrow: 1,
 };
 
 const baseBackground = {

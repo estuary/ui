@@ -36,6 +36,7 @@ export interface BuiltProjection {
     inference: any;
     ptr?: string;
     isPrimaryKey?: boolean;
+    explicit?: boolean;
 }
 
 export interface CollectionSchema extends Schema {

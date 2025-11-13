@@ -15,6 +15,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
 import { getCollectionName } from 'src/utils/workflow-utils';
 
@@ -30,7 +31,10 @@ function useDisableUpdater(bindingUUID?: string) {
 
     const [storeSetting, bindingIndex, collectionName] = useBindingStore(
         (state) => {
-            if (!bindingUUID) {
+            if (
+                !bindingUUID ||
+                !hasOwnProperty(state.resourceConfigs?.[bindingUUID], 'meta')
+            ) {
                 return [null, null, null];
             }
 
