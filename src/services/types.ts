@@ -3,8 +3,11 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 export type KnownEvents =
     | 'Auth'
     | 'ResetInvalidSetting'
+    | 'SkimProjections'
     | 'StoreCleaner'
-    | 'SourceCapture';
+    | 'SourceCapture'
+    | 'WorkflowStore'
+    | 'evaluate_field_selection';
 
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
 //  KnownEvents type

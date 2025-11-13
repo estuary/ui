@@ -20,6 +20,7 @@ import { snackbarSettings } from 'src/utils/notification-utils';
 //   The form state store does not exist outside of workflows and thus its
 //   actions cannot be called in any collection schema table-related components.
 export const ProjectionList = ({
+    cannotExist,
     collection,
     editable,
     maxChips,
@@ -54,106 +55,118 @@ export const ProjectionList = ({
                         <Tooltip
                             placement="bottom-start"
                             title={
-                                metadata?.systemDefined
+                                cannotExist
                                     ? intl.formatMessage({
-                                          id: 'projection.tooltip.systemDefinedField',
+                                          id: 'projection.tooltip.cannotExist',
                                       })
-                                    : ''
+                                    : metadata?.systemDefined
+                                      ? intl.formatMessage({
+                                            id: 'projection.tooltip.systemDefinedField',
+                                        })
+                                      : ''
                             }
                         >
-                            <OutlinedChip
-                                diminishedText={Boolean(
-                                    metadata?.systemDefined && list.length > 1
-                                )}
-                                disabled={deletionQueue.includes(
-                                    metadata.field
-                                )}
-                                label={metadata.field}
-                                onDelete={
-                                    editable && !metadata?.systemDefined
-                                        ? async () => {
-                                              setDeletionQueue(
-                                                  deletionQueue.concat(
+                            <span>
+                                <OutlinedChip
+                                    diminishedText={Boolean(
+                                        metadata?.systemDefined &&
+                                            list.length > 1
+                                    )}
+                                    disabled={Boolean(
+                                        (cannotExist &&
+                                            metadata?.systemDefined) ||
+                                            deletionQueue.includes(
+                                                metadata.field
+                                            )
+                                    )}
+                                    label={metadata.field}
+                                    onDelete={
+                                        editable && !metadata?.systemDefined
+                                            ? async () => {
+                                                  setDeletionQueue(
+                                                      deletionQueue.concat(
+                                                          metadata.field
+                                                      )
+                                                  );
+
+                                                  removeSingleProjection(
+                                                      collection,
                                                       metadata.field
                                                   )
-                                              );
-
-                                              removeSingleProjection(
-                                                  collection,
-                                                  metadata.field
-                                              )
-                                                  .then(
-                                                      () => {
-                                                          removeSingleStoredProjection(
-                                                              metadata,
-                                                              collection
-                                                          );
-
-                                                          logRocketEvent(
-                                                              CustomEvents.PROJECTION,
-                                                              {
-                                                                  collection,
-                                                                  operation:
-                                                                      'remove',
-                                                              }
-                                                          );
-                                                          logRocketConsole(
-                                                              `${CustomEvents.PROJECTION}:remove:success`,
-                                                              { metadata }
-                                                          );
-                                                      },
-                                                      (error) => {
-                                                          logRocketEvent(
-                                                              CustomEvents.PROJECTION,
-                                                              {
-                                                                  collection,
-                                                                  error: true,
-                                                                  operation:
-                                                                      'remove',
-                                                              }
-                                                          );
-                                                          logRocketConsole(
-                                                              `${CustomEvents.PROJECTION}:remove:failed`,
-                                                              {
-                                                                  error,
+                                                      .then(
+                                                          () => {
+                                                              removeSingleStoredProjection(
                                                                   metadata,
-                                                              }
-                                                          );
+                                                                  collection
+                                                              );
 
-                                                          enqueueSnackbar(
-                                                              intl.formatMessage(
+                                                              logRocketEvent(
+                                                                  CustomEvents.PROJECTION,
                                                                   {
-                                                                      id: 'projection.error.alert.removalFailure',
+                                                                      collection,
+                                                                      operation:
+                                                                          'remove',
                                                                   }
-                                                              ),
-                                                              {
-                                                                  ...snackbarSettings,
-                                                                  variant:
-                                                                      'error',
-                                                              }
+                                                              );
+                                                              logRocketConsole(
+                                                                  `${CustomEvents.PROJECTION}:remove:success`,
+                                                                  { metadata }
+                                                              );
+                                                          },
+                                                          (error) => {
+                                                              logRocketEvent(
+                                                                  CustomEvents.PROJECTION,
+                                                                  {
+                                                                      collection,
+                                                                      error: true,
+                                                                      operation:
+                                                                          'remove',
+                                                                  }
+                                                              );
+                                                              logRocketConsole(
+                                                                  `${CustomEvents.PROJECTION}:remove:failed`,
+                                                                  {
+                                                                      error,
+                                                                      metadata,
+                                                                  }
+                                                              );
+
+                                                              enqueueSnackbar(
+                                                                  intl.formatMessage(
+                                                                      {
+                                                                          id: 'projection.error.alert.removalFailure',
+                                                                      }
+                                                                  ),
+                                                                  {
+                                                                      ...snackbarSettings,
+                                                                      variant:
+                                                                          'error',
+                                                                  }
+                                                              );
+                                                          }
+                                                      )
+                                                      .finally(() => {
+                                                          setDeletionQueue(
+                                                              deletionQueue.filter(
+                                                                  (el) =>
+                                                                      el !==
+                                                                      metadata.field
+                                                              )
                                                           );
-                                                      }
-                                                  )
-                                                  .finally(() => {
-                                                      setDeletionQueue(
-                                                          deletionQueue.filter(
-                                                              (el) =>
-                                                                  el !==
-                                                                  metadata.field
-                                                          )
-                                                      );
-                                                  });
-                                          }
-                                        : undefined
-                                }
-                                size="small"
-                                sx={
-                                    metadata?.systemDefined
-                                        ? { fontFamily: 'monospace' }
-                                        : undefined
-                                }
-                                variant="outlined"
-                            />
+                                                      });
+                                              }
+                                            : undefined
+                                    }
+                                    size="small"
+                                    sx={{
+                                        fontFamily: metadata?.systemDefined
+                                            ? 'monospace'
+                                            : undefined,
+                                        maxWidth: 400,
+                                    }}
+                                    variant="outlined"
+                                />
+                            </span>
                         </Tooltip>
                     </Box>
                 ))}

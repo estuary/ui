@@ -1,21 +1,22 @@
 import { Collapse } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
 
-interface Props {
+interface RefreshStatusProps {
     show?: boolean;
 }
 
-function RefreshStatus({ show }: Props) {
+function RefreshStatus({ show }: RefreshStatusProps) {
+    const intl = useIntl();
     const draftId = useEditorStore_id();
 
     return (
         <Collapse in={Boolean(!draftId || show)} unmountOnExit>
             <AlertBox short severity="info">
-                <FormattedMessage id="fieldSelection.refresh.alert" />
+                {intl.formatMessage({ id: 'fieldSelection.refresh.alert' })}
             </AlertBox>
         </Collapse>
     );
