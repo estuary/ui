@@ -8,6 +8,7 @@ import { StorageMappingsHydrator } from 'src/stores/Entities/StorageMappingsHydr
 
 function AuthenticatedHydrators({ children }: BaseComponentProps) {
     const hasSupportRole = useUserInfoSummaryStore(
+        // (state) => true
         (state) => state.hasSupportAccess
     );
 

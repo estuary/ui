@@ -44,8 +44,10 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     //     },
                     // },
                     keys: {
-                        Alert: (data) =>
-                            `${data.resolvedAt};${data.firedAt};${data.alertType};${data.catalogName}`,
+                        // TODO (GQL Cache) - we are not caching based on these keys so just setting null for right now
+                        Alert: (_data) => null,
+                        LiveSpecRef: (_data) => null,
+                        PrefixRef: (_data) => null,
                     },
                 }),
                 authExchange(async (utils) => {

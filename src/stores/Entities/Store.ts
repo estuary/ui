@@ -28,9 +28,9 @@ const getInitialStateData = (): Pick<
     hydrationErrors: null,
     hydrationErrorsExist: false,
     capabilities: {
-        admin: [],
-        read: [],
-        write: [],
+        admin: new Set(),
+        read: new Set(),
+        write: new Set(),
     },
     storageMappings: {},
     mutate: null,
@@ -79,29 +79,31 @@ const getInitialState = (
     },
 
     setCapabilities: (val) => {
-        set(
-            produce((state: EntitiesState) => {
-                if (!val) {
+        if (!val) {
+            set(
+                produce((state: EntitiesState) => {
                     state.capabilities = getInitialStateData().capabilities;
-                    return;
-                }
+                }),
+                false,
+                'Entities capabilities clearing'
+            );
+            return;
+        }
 
-                val.forEach(async (authRole) => {
-                    if (!authRole) {
-                        return;
-                    }
+        const newCapabilities = {
+            admin: new Set<string>(),
+            read: new Set<string>(),
+            write: new Set<string>(),
+        };
 
-                    if (
-                        !state.capabilities[authRole.capability].includes(
-                            authRole.role_prefix
-                        )
-                    ) {
-                        state.capabilities[authRole.capability].push(
-                            authRole.role_prefix
-                        );
-                    }
-                });
-            }),
+        val.forEach((authRole) => {
+            if (authRole?.capability && authRole?.role_prefix) {
+                newCapabilities[authRole.capability].add(authRole.role_prefix);
+            }
+        });
+
+        set(
+            { capabilities: newCapabilities },
             false,
             'Entities capabilities populating'
         );

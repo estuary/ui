@@ -10,9 +10,9 @@ import type { KeyedMutator } from 'swr';
 export interface EntitiesState extends StoreWithHydration {
     // Storing what the user has access to
     capabilities: {
-        admin: string[];
-        read: string[];
-        write: string[];
+        admin: Set<string>;
+        read: Set<string>;
+        write: Set<string>;
     };
     setCapabilities: (capabilities: (AuthRoles | null)[] | null) => void;
 

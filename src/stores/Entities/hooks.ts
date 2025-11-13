@@ -11,6 +11,7 @@ import { gql, useQuery } from 'urql';
 import { getAllStorageMappingStores } from 'src/api/storageMappings';
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { stripPathing } from 'src/utils/misc-utils';
@@ -23,30 +24,34 @@ import { stripPathing } from 'src/utils/misc-utils';
 
 export const useEntitiesStore_capabilities_readable = () => {
     return useEntitiesStore(
-        useShallow((state) => [
-            ...new Set([
-                ...state.capabilities.admin,
-                ...state.capabilities.write,
-                ...state.capabilities.read,
-            ]),
-        ])
+        useShallow((state) =>
+            Array.from(
+                new Set([
+                    ...state.capabilities.admin,
+                    ...state.capabilities.write,
+                    ...state.capabilities.read,
+                ])
+            )
+        )
     );
 };
 
 export const useEntitiesStore_capabilities_writable = () => {
     return useEntitiesStore(
-        useShallow((state) => [
-            ...new Set([
-                ...state.capabilities.admin,
-                ...state.capabilities.write,
-            ]),
-        ])
+        useShallow((state) =>
+            Array.from(
+                new Set([
+                    ...state.capabilities.admin,
+                    ...state.capabilities.write,
+                ])
+            )
+        )
     );
 };
 
 export const useEntitiesStore_atLeastOneAdminTenant = () => {
     return useEntitiesStore(
-        useShallow((state) => state.capabilities.admin.length > 0)
+        useShallow((state) => state.capabilities.admin.size > 0)
     );
 };
 
@@ -56,16 +61,17 @@ export const useEntitiesStore_capabilities_adminable = (
     const hasSupportRole = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess
     );
-
     return useEntitiesStore(
         useShallow((state) => {
+            const adminCapabilities = Array.from(state.capabilities.admin);
+
             if (!restrictByStorageMappings || hasSupportRole) {
-                return state.capabilities.admin;
+                return adminCapabilities;
             }
 
             return Object.keys(state.storageMappings).filter(
                 (storageMappingPrefix) =>
-                    state.capabilities.admin.some((adminPrefix) =>
+                    adminCapabilities.some((adminPrefix) =>
                         storageMappingPrefix.startsWith(adminPrefix)
                     )
             );
@@ -75,57 +81,16 @@ export const useEntitiesStore_capabilities_adminable = (
 
 export const useEntitiesStore_tenantsWithAdmin = () => {
     return useEntitiesStore(
-        useShallow((state) => [
-            ...new Set(
-                state.capabilities.admin.map((tenant) =>
-                    stripPathing(tenant, true)
-                )
-            ),
-        ])
-    );
-};
+        useShallow((state) => {
+            const tenants = new Set<string>();
 
-const authRolesQuery = gql<AuthRolesQueryResponse>`
-    query AuthRolesQuery {
-        prefixes(by: { minCapability: read }, first: 25000) {
-            edges {
-                node {
-                    prefix
-                    userCapability
-                }
-            }
-        }
-    }
-`;
-export const useHydrateStateWithGql = () => {
-    const { populateState } = useEntitiesHydrationStatePopulate();
-
-    // We hardcode the key here as we only call once
-    const [{ fetching, data, error }, reexecuteQuery] = useQuery({
-        query: authRolesQuery,
-    });
-
-    // Once we are done validating update all the settings
-    useEffect(() => {
-        if (!fetching) {
-            populateState({
-                data:
-                    data?.prefixes?.edges?.map(({ node }) => {
-                        return {
-                            capability: node.userCapability as Capability,
-                            role_prefix: node.prefix,
-                        };
-                    }) ?? [],
-                error: error
-                    ? {
-                          ...BASE_ERROR,
-                          message: error.message,
-                      }
-                    : null,
-                mutate: reexecuteQuery ?? null,
+            state.capabilities.admin.forEach((datum) => {
+                tenants.add(stripPathing(datum, true));
             });
-        }
-    }, [data?.prefixes?.edges, error, fetching, populateState, reexecuteQuery]);
+
+            return Array.from(tenants);
+        })
+    );
 };
 
 export const useEntitiesHydrationStatePopulate = () => {
@@ -158,6 +123,57 @@ export const useEntitiesHydrationStatePopulate = () => {
     return {
         populateState,
     };
+};
+
+const authRolesQuery = gql<AuthRolesQueryResponse>`
+    query AuthRolesQuery {
+        prefixes(by: { minCapability: read }, first: 25000) {
+            edges {
+                cursor
+                node {
+                    prefix
+                    userCapability
+                }
+            }
+        }
+    }
+`;
+export const useHydrateStateWithGql = () => {
+    const { populateState } = useEntitiesHydrationStatePopulate();
+
+    // We hardcode the key here as we only call once
+    const [{ fetching, data, error }, reexecuteQuery] = useQuery({
+        query: authRolesQuery,
+    });
+
+    console.log('useHydrateStateWithGql', fetching);
+
+    // Once we are done validating update all the settings
+    useEffect(() => {
+        if (!fetching) {
+            logRocketEvent('authroles', {
+                fetching: true,
+                usedGql: true,
+            });
+
+            populateState({
+                data:
+                    data?.prefixes?.edges?.map(({ node }) => {
+                        return {
+                            capability: node.userCapability as Capability,
+                            role_prefix: node.prefix,
+                        };
+                    }) ?? [],
+                error: error
+                    ? {
+                          ...BASE_ERROR,
+                          message: error.message,
+                      }
+                    : null,
+                mutate: reexecuteQuery ?? null,
+            });
+        }
+    }, [data?.prefixes?.edges, error, fetching, populateState, reexecuteQuery]);
 };
 
 export const useHydrateStateWithPostgres = () => {
