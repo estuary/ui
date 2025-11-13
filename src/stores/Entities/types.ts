@@ -10,9 +10,9 @@ import type { KeyedMutator } from 'swr';
 export interface EntitiesState extends StoreWithHydration {
     // Storing what the user has access to
     capabilities: {
-        admin: string[];
-        read: string[];
-        write: string[];
+        admin: Set<string>;
+        read: Set<string>;
+        write: Set<string>;
     };
     setCapabilities: (capabilities: (AuthRoles | null)[] | null) => void;
 
@@ -30,6 +30,9 @@ export interface EntitiesState extends StoreWithHydration {
     hydrationErrors: any;
     setHydrationErrors: (val: EntitiesState['hydrationErrors']) => void;
 
-    mutate: KeyedMutator<ParsedPagedFetchAllResponse<AuthRoles>> | null;
+    mutate:
+        | KeyedMutator<ParsedPagedFetchAllResponse<AuthRoles>>
+        | (() => Promise<void>) // TODO (gql auth roles) - see GRAPHQL.md
+        | null;
     setMutate: (value: EntitiesState['mutate']) => void;
 }

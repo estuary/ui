@@ -5,12 +5,14 @@ import { useMount } from 'react-use';
 
 import FullPageError from 'src/components/fullPage/Error';
 import { logRocketEvent } from 'src/services/shared';
-import { useHydrateStateWithPostgres } from 'src/stores/Entities/hooks';
+import { useHydrateStateWithGql } from 'src/stores/Entities/hooks';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 
-export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
+export const EntitiesHydratorForSupport = ({
+    children,
+}: BaseComponentProps) => {
     // Start fetching the prefixes the user has access to
-    useHydrateStateWithPostgres();
+    useHydrateStateWithGql();
 
     // The rest of the stuff we need to handle hydration
     const [hydrated, hydrationErrors] = useEntitiesStore((state) => [
@@ -21,7 +23,7 @@ export const EntitiesHydrator = ({ children }: BaseComponentProps) => {
     useMount(() => {
         logRocketEvent('authroles', {
             fetching: true,
-            usedPostgrest: true,
+            usedGql: true,
         });
     });
 

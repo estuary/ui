@@ -111,3 +111,16 @@ export interface AlertHistoryQueryResponse {
         }[];
     };
 }
+
+export interface AuthRolesNode {
+    prefix: string;
+    userCapability: string;
+}
+export interface AuthRolesQueryResponse {
+    prefixes: {
+        edges: {
+            node: AuthRolesNode;
+        }[];
+        pageInfo?: Pick<PageInfo, 'hasNextPage' | 'endCursor'>;
+    };
+}
