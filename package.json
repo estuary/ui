@@ -64,7 +64,6 @@
         "ansicolor": "^2.0.1",
         "data-plane-gateway": "https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main",
         "date-fns": "^2.30.0",
-        "dayjs": "^1.11.19",
         "echarts": "^5.4.3",
         "filter-obj": "^5.1.0",
         "graphql": "^16.11.0",
