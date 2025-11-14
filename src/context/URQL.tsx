@@ -67,6 +67,10 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             return operation;
                         },
                         willAuthError() {
+                            // Really overkill to check for the refresh token as
+                            //  it is not fully required. However, it feels like
+                            //  if _anything_ is missing we should go ahead and
+                            //  make sure we're good with access.
                             if (!expiresAt || !accessToken || !refreshToken) {
                                 return true;
                             }
