@@ -78,7 +78,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             return (
                                 DateTime.now() >=
                                 DateTime.fromSeconds(expiresAt).minus({
-                                    hours: 12, // Expire it just a bit early
+                                    minutes: 1, // Expire it just a bit early
                                 })
                             );
                         },
