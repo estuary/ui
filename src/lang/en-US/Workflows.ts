@@ -486,6 +486,8 @@ export const Workflows: Record<string, string> = {
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.label.redactionStrategy': `Strategy`,
+    'projection.option.block.label': `Block`,
+    'projection.option.sha256.label': `Hash`,
     'projection.option.block.description': `This is a placeholder for an explanation of the block redaction strategy.`,
     'projection.option.sha256.description': `This is a placeholder for an explanation of the SHA256 redaction strategy.`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,

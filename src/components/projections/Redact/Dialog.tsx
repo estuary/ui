@@ -122,7 +122,9 @@ const RedactFieldDialog = ({
                                             textTransform: 'capitalize',
                                         }}
                                     >
-                                        {option}
+                                        {intl.formatMessage({
+                                            id: `projection.option.${option}.label`,
+                                        })}
                                     </Typography>
 
                                     <Typography
