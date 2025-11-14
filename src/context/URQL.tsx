@@ -99,7 +99,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                                 await supabaseClient.auth.refreshSession(
                                     refreshToken
                                         ? {
-                                              refresh_token: `uhoh${refreshToken}`,
+                                              refresh_token: refreshToken,
                                           }
                                         : undefined
                                 );
