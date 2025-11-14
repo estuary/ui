@@ -151,7 +151,7 @@ const getInitialState = (
         set(
             (state) => {
                 if (value && hasOwnProperty(value.spec, 'properties')) {
-                    state.schemaProperties = value.spec.properties;
+                    state.schemaProperties = value.spec.properties ?? {};
                 }
 
                 return { ...state, collectionData: value };

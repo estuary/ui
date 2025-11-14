@@ -1,6 +1,11 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
-import type { BaseProjectionDialogProps } from 'src/components/projections/Edit/types';
+import type {
+    BaseDialogProps,
+    BaseProjectionProps,
+} from 'src/components/projections/types';
 import type { RedactionStrategy } from 'src/types/schemaModels';
+
+import { useState } from 'react';
 
 import {
     Autocomplete,
@@ -19,6 +24,8 @@ import {
 import { Check } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
+import SaveButton from 'src/components/projections/Redact/SaveButton';
 import { diminishedTextColor } from 'src/context/Theme';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 
@@ -27,13 +34,21 @@ const options: RedactionStrategy[] = ['block', 'sha256'];
 const RedactFieldDialog = ({
     field,
     open,
-    pointer,
     setOpen,
-}: BaseProjectionDialogProps) => {
+}: BaseDialogProps & BaseProjectionProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
     const currentCollection = useBinding_currentCollection();
+
+    const existingRedactionStrategy = useBindingsEditorStore(
+        (state) =>
+            state.collectionData?.spec?.properties?.[field]?.redact?.strategy ??
+            null
+    );
+
+    const [redactionStrategy, setRedactionStrategy] =
+        useState<RedactionStrategy | null>(existingRedactionStrategy);
 
     return (
         <Dialog maxWidth="sm" open={open} style={{ minWidth: 500 }}>
@@ -66,6 +81,9 @@ const RedactFieldDialog = ({
                 </Typography>
 
                 <Autocomplete
+                    onChange={(_event, value) => {
+                        setRedactionStrategy(value);
+                    }}
                     options={options}
                     renderInput={({
                         InputProps,
@@ -142,6 +160,7 @@ const RedactFieldDialog = ({
                             </Box>
                         );
                     }}
+                    value={redactionStrategy}
                 />
             </DialogContent>
 
@@ -155,16 +174,11 @@ const RedactFieldDialog = ({
                     {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
 
-                <Button
-                    onClick={() => {
-                        setOpen(false);
-                    }}
-                    variant="outlined"
-                >
-                    {intl.formatMessage({
-                        id: 'cta.evolve',
-                    })}
-                </Button>
+                <SaveButton
+                    field={field}
+                    setOpen={setOpen}
+                    strategy={redactionStrategy}
+                />
             </DialogActions>
         </Dialog>
     );

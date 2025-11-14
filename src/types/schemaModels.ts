@@ -39,12 +39,16 @@ export interface BuiltProjection {
     explicit?: boolean;
 }
 
-export interface CollectionSchema extends Schema {
-    properties?: { [field: string]: CollectionSchemaProperties };
+export interface CollectionFieldAnnotations extends Schema {
+    redact?: RedactDef;
 }
 
-export interface CollectionSchemaProperties extends Schema {
-    redact?: RedactDef;
+export interface CollectionSchemaProperties {
+    [field: string]: CollectionFieldAnnotations;
+}
+
+export interface CollectionSchema extends Schema {
+    properties?: CollectionSchemaProperties;
 }
 
 interface Constraint {

@@ -21,11 +21,7 @@ export const ProjectionActions = ({
                     pointer={pointer}
                 />
 
-                <RedactFieldButton
-                    disabled={formActive}
-                    field={field}
-                    pointer={pointer}
-                />
+                <RedactFieldButton disabled={formActive} field={field} />
             </Stack>
         </TableCell>
     );
