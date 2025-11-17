@@ -29,3 +29,33 @@ Strongly doubt we will go down the same path as with useSWR and write a bunch of
 ## Exploration
 
 This will be powered by GraphiQL and is hosted from `flow` but can be accessed through the UI by going to [http://localhost:3000/test/gql](http://localhost:3000/test/gql)
+
+# Open Items (as of Nov 13, 2025)
+
+## Fetching Auth Roles
+
+Look for `TODO (gql auth roles)` in the code.
+
+### Impact
+
+We know we want to fetch Auth Roles with GQL because it is MUCH faster. However, there is currently an issue where the GQL data is ~30 seconds behind. This can cause issues for non-support staff as sometimes we need to know _right away_ that a user has access.
+
+A first time user will get a weird experience if we do not know their auth roles fairly quickly. They can interact with the dashboard and get around. However, if they try to create something they will get a `Missing required Access...` message. Any page with a "tenant selector" (welcome page or admin pages) will get weird because there are not tenants to select.
+
+A user can click to see the demo tasks. If they do this without access we prompt them to accept access first. We need to know they have access right away
+
+### Workaround
+
+This should not impact normal users and only `support` staff. We have the `mutate` call just log an event so we can keep track of who would be impacted - but do nothing else. This has to be solved before we can roll this out to the wider audience.
+
+## Graph Caching
+
+Look for `TODO (gql caching)` in the code.
+
+### Impact
+
+We do not use Graph caching so there are times we are fetching more data than we need.
+
+### Workaround
+
+We are fine with this for _now_ but will want to handle this in the near future.

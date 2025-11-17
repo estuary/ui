@@ -53,6 +53,7 @@ function useInitializeCollectionDraft() {
     const setCollectionInitializationDone = useBindingsEditorStore(
         (state) => state.setCollectionInitializationDone
     );
+
     const setCollectionData = useBindingsEditorStore_setCollectionData();
     const setCollectionInitializationAlert =
         useBindingsEditorStore_setCollectionInitializationAlert();
@@ -69,8 +70,8 @@ function useInitializeCollectionDraft() {
     const setLocalDraftId = useEditorStore_setId({ localScope: true });
 
     // Workflow Store
-    const initializeProjections = useWorkflowStore(
-        (state) => state.initializeProjections
+    const [initializeProjections, upsertCollection] = useWorkflowStore(
+        (state) => [state.initializeProjections, state.upsertCollection]
     );
 
     const createCollectionDraftSpec = useCallback(
@@ -112,6 +113,10 @@ function useInitializeCollectionDraft() {
                     targetRow.spec?.projections,
                     collectionName
                 );
+                upsertCollection(targetRow.catalog_name, {
+                    spec: targetRow.spec,
+                    belongsToDraft: true,
+                });
 
                 setCollectionInitializationDone(true);
             } else {
@@ -130,6 +135,10 @@ function useInitializeCollectionDraft() {
                     belongsToDraft: false,
                 });
                 initializeProjections(liveSpec?.projections, collectionName);
+                upsertCollection(collectionName, {
+                    spec: liveSpec,
+                    belongsToDraft: false,
+                });
 
                 setCollectionInitializationDone(false);
                 setCollectionInitializationAlert({
@@ -144,6 +153,7 @@ function useInitializeCollectionDraft() {
             setCollectionData,
             setCollectionInitializationAlert,
             setCollectionInitializationDone,
+            upsertCollection,
         ]
     );
 
@@ -192,6 +202,10 @@ function useInitializeCollectionDraft() {
                         targetRow.spec?.projections,
                         collectionName
                     );
+                    upsertCollection(targetRow.catalog_name, {
+                        spec: targetRow.spec,
+                        belongsToDraft: true,
+                    });
 
                     if (lastPubId && expectedPubId !== lastPubId) {
                         setCollectionInitializationDone(false);
@@ -250,6 +264,7 @@ function useInitializeCollectionDraft() {
             setDraftId,
             setLocalDraftId,
             setPersistedDraftId,
+            upsertCollection,
         ]
     );
 
@@ -258,6 +273,9 @@ function useInitializeCollectionDraft() {
             resetBindingsEditorState(true);
 
             if (collection) {
+                // TODO (schema edit)
+                // Need to move more collection meta data and fetch off the workflow store
+                // const cachedCollection = collections[collection];
                 const publishedCollection = await getCollection(collection);
 
                 await getCollectionDraftSpecs(
@@ -268,7 +286,7 @@ function useInitializeCollectionDraft() {
                 );
             }
         },
-        [getCollectionDraftSpecs, resetBindingsEditorState, draftId]
+        [resetBindingsEditorState, getCollectionDraftSpecs, draftId]
     );
 }
 

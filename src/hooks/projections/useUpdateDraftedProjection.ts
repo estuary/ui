@@ -2,12 +2,16 @@ import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { useIntl } from 'react-intl';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import { useBindingsEditorStore_collectionData } from 'src/components/editor/Bindings/Store/hooks';
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import { BASE_ERROR } from 'src/services/supabase';
 import { getExistingPartition } from 'src/utils/entity-utils';
 
 export const useUpdateDraftedProjection = () => {
+    const intl = useIntl();
     const draftId = useEditorStore_persistedDraftId();
     const collectionData = useBindingsEditorStore_collectionData();
 
@@ -48,14 +52,29 @@ export const useUpdateDraftedProjection = () => {
             partition?: boolean
         ) => {
             if (!draftId || !collectionData) {
-                return Promise.reject(
-                    'draft ID or stored draft spec not found'
-                );
+                return Promise.reject({
+                    ...BASE_ERROR,
+                    message: intl.formatMessage({
+                        id: 'projection.error.alert.draftId',
+                    }),
+                });
             }
 
             const spec: Schema = collectionData.spec;
 
             spec.projections ??= {};
+
+            if (Object.hasOwn(spec.projections, field)) {
+                return Promise.reject({
+                    ...BASE_ERROR,
+                    message: intl.formatMessage(
+                        { id: 'projection.error.alert.duplicate' },
+                        {
+                            duplicateLocation: spec.projections[field].location,
+                        }
+                    ),
+                });
+            }
 
             spec.projections[field] = {
                 location,
@@ -75,7 +94,7 @@ export const useUpdateDraftedProjection = () => {
 
             return Promise.resolve();
         },
-        [collectionData, draftId]
+        [collectionData, draftId, intl]
     );
 
     return { removeSingleProjection, setSingleProjection };

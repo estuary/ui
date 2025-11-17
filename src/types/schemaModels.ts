@@ -34,6 +34,7 @@ export interface BuiltProjection {
     inference: any;
     ptr?: string;
     isPrimaryKey?: boolean;
+    explicit?: boolean;
 }
 
 interface Constraint {

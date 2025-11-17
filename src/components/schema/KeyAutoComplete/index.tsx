@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import type { KeyAutoCompleteProps } from 'src/components/schema/KeyAutoComplete/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -12,12 +14,12 @@ import {
 
 import { arrayMove } from '@dnd-kit/sortable';
 import { filter, orderBy } from 'lodash';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import {
-    useBindingsEditorStore_inferSchemaResponse,
-    useBindingsEditorStore_inferSchemaResponse_Keys,
-    useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_skimProjectionResponse,
+    useBindingsEditorStore_skimProjectionResponse_Keys,
+    useBindingsEditorStore_skimProjectionResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
 import BasicOption from 'src/components/schema/KeyAutoComplete/options/Basic';
 import ReadOnly from 'src/components/schema/KeyAutoComplete/ReadOnly';
@@ -25,25 +27,16 @@ import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'src/context/EntityContext';
-import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
+import { truncateTextSx } from 'src/context/Theme';
 import { hasLength } from 'src/utils/misc-utils';
+import { reduceBuiltProjections } from 'src/utils/schema-utils';
 
-interface Props {
-    value: any;
-    disabled?: boolean;
-    onChange?: (
-        event: any,
-        newValue: string[],
-        reason: string
-    ) => PromiseLike<any>;
-}
-
-// Hardcoded and figured out by rendering the content and inspecting heigh
-//  due to virtualization we need to be specific here.
 const tallHeight = 71;
-const getValue = (option: any) => option.pointer;
+const getValue = (option: BuiltProjection) => {
+    return option.ptr ?? '';
+};
 
-function KeyAutoComplete({ disabled, onChange, value }: Props) {
+function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
     const intl = useIntl();
 
     // We want a local copy so that the display is updated right away when the user
@@ -52,31 +45,33 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const [localCopyValue, setLocalCopyValue] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
 
-    // We only want to all edit during capture create/edit and derivation create.
+    // We only want to allow edit during capture create/edit and derivation create.
     const entityType = useEntityType();
     const editKeyAllowed =
         entityType === 'capture' || entityType === 'collection';
 
     // Need the response so we know the options
-    const inferSchemaResponseEmpty =
-        useBindingsEditorStore_inferSchemaResponseEmpty();
-    const inferSchemaResponse = useBindingsEditorStore_inferSchemaResponse();
-    const validKeys = useBindingsEditorStore_inferSchemaResponse_Keys();
-    const keys = useMemo(
-        () =>
-            inferSchemaResponse
-                ? orderBy(
-                      // Filter so only valid keys are displayed
-                      filter(Object.values(inferSchemaResponse), (field) =>
-                          keyIsValidOption(validKeys, field.pointer)
-                      ),
-                      // Order first by exists so groups do not duplicate in the dropdown
-                      ['exists', 'pointer'],
-                      ['desc', 'asc']
-                  )
-                : [],
-        [inferSchemaResponse, validKeys]
-    );
+    const skimProjectionResponseEmpty =
+        useBindingsEditorStore_skimProjectionResponseEmpty();
+    const skimProjectionResponse =
+        useBindingsEditorStore_skimProjectionResponse();
+    const skimProjectionResponse_Keys =
+        useBindingsEditorStore_skimProjectionResponse_Keys();
+
+    const keys = useMemo(() => {
+        const skimProjectionResponses = skimProjectionResponse
+            ? Object.values(skimProjectionResponse)
+            : [];
+
+        return orderBy(
+            filter(skimProjectionResponses, (field) =>
+                keyIsValidOption(skimProjectionResponse_Keys, field.ptr)
+            ).reduce<BuiltProjection[]>(reduceBuiltProjections, []),
+            // Order first by exists so groups do not duplicate in the dropdown
+            ['inference.exists', 'inference.ptr'],
+            ['desc', 'asc']
+        );
+    }, [skimProjectionResponse, skimProjectionResponse_Keys]);
 
     // Make sure we keep our local copy up to date
     useEffect(() => {
@@ -88,7 +83,7 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
     const noUsableKeys = !hasLength(keys);
     const changeHandler = editKeyAllowed ? onChange : undefined;
     const disableInput = editKeyAllowed ? disabled : false;
-    const showEditErrorState = inferSchemaResponseEmpty || noUsableKeys;
+    const showEditErrorState = skimProjectionResponseEmpty || noUsableKeys;
 
     // Loading state and we do not want to stop here if
     // the inferSchemaMissing error is hit because we'll handle
@@ -108,12 +103,12 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
         <Grid item xs={12}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
-                disabled={inferSchemaResponseEmpty}
+                disabled={skimProjectionResponseEmpty}
                 getOptionLabel={getValue}
                 groupBy={(option) => option.exists}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    return option.pointer === optionValue;
+                    return option.ptr === optionValue;
                 }}
                 options={keys}
                 readOnly={disableInput}
@@ -133,13 +128,13 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                         );
                     }
                 }}
-                onInputChange={(_event, newInputValue) => {
+                onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
                 renderGroup={({ key, group, children }) => {
                     const readableGroup = intl.formatMessage({
                         id:
-                            group === 'must'
+                            group === 'MUST'
                                 ? 'keyAutoComplete.keys.group.must'
                                 : 'keyAutoComplete.keys.group.may',
                     });
@@ -150,55 +145,59 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                     return (
                         <TextField
                             {...params}
-                            disabled={inferSchemaResponseEmpty || disableInput}
+                            disabled={
+                                skimProjectionResponseEmpty || disableInput
+                            }
                             error={showEditErrorState}
-                            helperText={
-                                inferSchemaResponseEmpty ? (
-                                    <FormattedMessage id="keyAutoComplete.noOptions.message" />
-                                ) : noUsableKeys ? (
-                                    <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
-                                ) : (
-                                    <FormattedMessage id="schemaEditor.key.helper" />
-                                )
-                            }
-                            label={
-                                <FormattedMessage id="schemaEditor.key.label" />
-                            }
+                            helperText={intl.formatMessage({
+                                id: skimProjectionResponseEmpty
+                                    ? 'keyAutoComplete.noOptions.message'
+                                    : noUsableKeys
+                                      ? 'keyAutoComplete.noUsableKeys.message'
+                                      : 'schemaEditor.key.helper',
+                            })}
+                            label={intl.formatMessage({
+                                id: 'schemaEditor.key.label',
+                            })}
                             variant="standard"
                         />
                     );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
-                    const { description, pointer, types } = option;
+                    const { ptr, inference } = option;
 
                     // We do this logic here to pass the specific component (Stack with custom prop)
                     //  into the virtualized renderer. That way we can easily read off the custom prop.
                     let RowContent;
-                    if (description) {
+                    if (inference?.description) {
                         RowContent = (
                             <Stack
                                 component="span"
+                                spacing={1}
                                 x-react-window-item-height={tallHeight}
                             >
-                                <BasicOption pointer={pointer} types={types} />
-
+                                <BasicOption
+                                    pointer={ptr}
+                                    types={inference.types}
+                                />
                                 <Typography
                                     component="span"
+                                    variant="caption"
                                     sx={{
                                         ...truncateTextSx,
-                                        color: (theme) =>
-                                            diminishedTextColor[
-                                                theme.palette.mode
-                                            ],
+                                        pl: 1.5,
                                     }}
                                 >
-                                    {description}
+                                    {inference.description}
                                 </Typography>
                             </Stack>
                         );
                     } else {
                         RowContent = (
-                            <BasicOption pointer={pointer} types={types} />
+                            <BasicOption
+                                pointer={ptr}
+                                types={inference.types}
+                            />
                         );
                     }
 
@@ -211,19 +210,15 @@ function KeyAutoComplete({ disabled, onChange, value }: Props) {
                 renderTags={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
-                            validateOptions={!inferSchemaResponseEmpty}
+                            validateOptions={!skimProjectionResponseEmpty}
                             values={tagValues}
                             getTagProps={getTagProps}
                             ownerState={ownerState}
                             onOrderChange={async (activeId, overId) => {
-                                const oldIndex =
-                                    localCopyValue.indexOf(activeId);
-                                const newIndex = localCopyValue.indexOf(overId);
-
                                 const updatedArray = arrayMove<string>(
                                     localCopyValue,
-                                    oldIndex,
-                                    newIndex
+                                    localCopyValue.indexOf(activeId), // old index
+                                    localCopyValue.indexOf(overId) //new index
                                 );
 
                                 setLocalCopyValue(updatedArray);
