@@ -1,9 +1,9 @@
 import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/DisableEnable/types';
 
 import DisableEnableConfirmation from 'src/components/tables/RowActions/DisableEnable/Confirmation';
-import RowActionButton from 'src/components/tables/RowActions/Shared/Button';
 import RowActionConfirmation from 'src/components/tables/RowActions/Shared/Confirmation';
-import UpdateEntity from 'src/components/tables/RowActions/Shared/UpdateEntity';
+import GroupedRowActionButton from 'src/components/tables/RowActions/Shared/GroupedButton';
+import UpdateEntities from 'src/components/tables/RowActions/Shared/UpdateEntities';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { generateDisabledSpec } from 'src/utils/entity-utils';
 
@@ -23,7 +23,7 @@ function DisableEnableButton({
         selectableTableStoreName === SelectTableStoreNames.COLLECTION;
 
     return (
-        <RowActionButton
+        <GroupedRowActionButton
             renderConfirmationMessage={(selectedNames) => {
                 return (
                     <RowActionConfirmation
@@ -40,10 +40,9 @@ function DisableEnableButton({
                     />
                 );
             }}
-            renderProgress={(item, index, onFinish) => (
-                <UpdateEntity
-                    key={`Item-disable_enable-${index}`}
-                    entity={item}
+            renderProgress={(items, onFinish) => (
+                <UpdateEntities
+                    entities={items}
                     onFinish={onFinish}
                     validateNewSpec
                     skippedMessageID={messages.skipped}
