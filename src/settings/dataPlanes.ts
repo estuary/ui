@@ -26,7 +26,7 @@ export const DATA_PLANE_SETTINGS: {
             noExistingDataContentIds: {
                 header: `admin.dataPlanes.private.table.noContent.header`,
                 message: `admin.dataPlanes.private.table.noContent.message`,
-                disableDoclink: false,
+                disableDoclink: true,
             },
         },
     },
