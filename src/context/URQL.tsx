@@ -51,8 +51,10 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     //     },
                     // },
                     keys: {
-                        Alert: (data) =>
-                            `${data.resolvedAt};${data.firedAt};${data.alertType};${data.catalogName}`,
+                        // TODO (gql caching)  - see GRAPHQL.md
+                        Alert: (_data) => null,
+                        LiveSpecRef: (_data) => null,
+                        PrefixRef: (_data) => null,
                     },
                 }),
                 authExchange(async (utils) => {
