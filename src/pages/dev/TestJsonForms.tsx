@@ -22,11 +22,13 @@ import { WorkflowContextProvider } from 'src/context/Workflow';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import useConnectors from 'src/hooks/connectors/useConnectors';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
+import {
+    custom_generateDefaultUISchema,
+    getDereffedSchema,
+} from 'src/services/jsonforms';
 import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
 import { DetailsFormHydrator } from 'src/stores/DetailsForm/Hydrator';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { getDereffedSchema } from 'src/utils/misc-utils';
 
 const TestJsonForms = () => {
     const intl = useIntl();

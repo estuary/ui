@@ -797,6 +797,11 @@ export const custom_generateDefaultUISchema = (
     return response;
 };
 
+export const getDereffedSchema = async (val: any) => {
+    const response = val ? await derefSchema(val) : val;
+    return response;
+};
+
 export const derefSchema = async (schema: any) => {
     try {
         // Removing for now as oneOf with discriminators will mess up when the

@@ -11,6 +11,7 @@ import produce from 'immer';
 import { isEmpty } from 'lodash';
 
 import { createJSONFormDefaults } from 'src/services/ajv';
+import { getDereffedSchema } from 'src/services/jsonforms';
 import {
     fetchErrors,
     filterErrors,
@@ -21,11 +22,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
-import {
-    configCanBeEmpty,
-    getDereffedSchema,
-    hasLength,
-} from 'src/utils/misc-utils';
+import { configCanBeEmpty, hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 const STORE_KEY = 'Endpoint Config';
