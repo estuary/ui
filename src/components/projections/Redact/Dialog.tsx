@@ -41,11 +41,10 @@ const RedactFieldDialog = ({
 
     const currentCollection = useBinding_currentCollection();
 
-    // TODO: spec -> schema -> properties
     const existingRedactionStrategy = useBindingsEditorStore(
         (state) =>
-            state.collectionData?.spec?.properties?.[field]?.redact?.strategy ??
-            null
+            state.collectionData?.spec.schema?.properties?.[field]?.redact
+                ?.strategy ?? null
     );
 
     const [redactionStrategy, setRedactionStrategy] =

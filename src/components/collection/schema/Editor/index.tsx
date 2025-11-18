@@ -94,6 +94,12 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         setCollectionData,
     ]);
 
+    useUpdateEffect(() => {
+        if (mutate && editModeEnabled) {
+            void mutate();
+        }
+    }, [editModeEnabled]);
+
     // If the schema is updated via the scheme inference
     //  of CLI button we want to fire mutate and make sure we get the latest
     useUpdateEffect(() => {

@@ -1,5 +1,8 @@
 import type { Schema } from 'src/types';
-import type { RedactionStrategy } from 'src/types/schemaModels';
+import type {
+    CollectionSchemaProperties,
+    RedactionStrategy,
+} from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
 
@@ -21,15 +24,16 @@ export const useRedactionAnnotation = () => {
     const collectionSpec = useBindingsEditorStore(
         (state) => state.collectionData?.spec
     );
-    const existingSchemaProperties = useBindingsEditorStore(
-        (state) => state.schemaProperties
-    );
 
     const draftId = useEditorStore_persistedDraftId();
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     const updateRedactionAnnotation = useCallback(
-        async (field: string, strategy: RedactionStrategy | null) => {
+        async (
+            existingSchemaProperties: CollectionSchemaProperties | null,
+            field: string,
+            strategy: RedactionStrategy | null
+        ) => {
             const schemaProp = hasWriteSchema(collectionSpec)
                 ? 'writeSchema'
                 : hasOwnProperty(collectionSpec, 'schema')
@@ -83,7 +87,7 @@ export const useRedactionAnnotation = () => {
                     'redact'
                 );
             } else {
-                return Promise.resolve('noop');
+                return Promise.resolve();
             }
 
             const updateResponse = await modifyDraftSpec(spec, {
@@ -96,15 +100,9 @@ export const useRedactionAnnotation = () => {
                 return Promise.reject(updateResponse.error);
             }
 
-            return mutateDraftSpecs();
+            return Promise.resolve();
         },
-        [
-            collectionSpec,
-            currentCollection,
-            draftId,
-            existingSchemaProperties,
-            mutateDraftSpecs,
-        ]
+        [collectionSpec, currentCollection, draftId, mutateDraftSpecs]
     );
 
     return { updateRedactionAnnotation };
