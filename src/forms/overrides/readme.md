@@ -6,7 +6,7 @@ We follow JSONForm's folder structure to make it easier to bring over updates an
 
 # Why is content hardcoded?
 
-We implemented this before JSONForms started adding i18n support. So now we can start getting conrent plumbed through from `react-intl` soon.
+We implemented this before JSONForms started adding i18n support. So now we can start getting content plumbed through from `react-intl` soon.
 
 # How do they stay in sync?
 
