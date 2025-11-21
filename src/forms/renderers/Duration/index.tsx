@@ -35,8 +35,8 @@ import {
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
+import { CustomMaterialInputControl } from 'src/forms/overrides/material/controls/MaterialInputControl';
 import { DurationAutoComplete } from 'src/forms/renderers/Duration/AutoComplete';
-import { CustomMaterialInputControl } from 'src/forms/renderers/Overrides/material/controls/MaterialInputControl';
 
 const DURATION_FORMAT = 'duration';
 

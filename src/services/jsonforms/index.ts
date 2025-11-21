@@ -53,6 +53,7 @@ import {
     allowedNullableTypes,
     CONTAINS_REQUIRED_FIELDS,
     LAYOUT_PATH,
+    ONE_OF_WITH_DESCRIPTIONS,
     SHOW_INFO_SSH_ENDPOINT,
 } from 'src/services/jsonforms/shared';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
@@ -63,6 +64,7 @@ import {
     Formats,
     Options,
 } from 'src/types/jsonforms';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import { ISO_8601_DURATION_PATTERN } from 'src/validation';
 
 /////////////////////////////////////////////////////////
@@ -182,6 +184,20 @@ const getNullableType = (schema: JsonSchema): null | string => {
     return getTypeOtherThanNull(combinatorVal.map(({ type }) => type));
 };
 
+const allOneOfOptionsContainDescription = (schema: JsonSchema): boolean => {
+    return Boolean(
+        schema &&
+            schema.oneOf &&
+            schema.oneOf.length > 0 &&
+            (schema.oneOf as JsonSchema[]).every(
+                (datum) =>
+                    hasOwnProperty(datum, 'const') &&
+                    hasOwnProperty(datum, 'title') &&
+                    hasOwnProperty(datum, 'description')
+            )
+    );
+};
+
 const isOAuthConfig = (schema: JsonSchema): boolean =>
     Object.hasOwn(schema, Annotations.oAuthProvider);
 
@@ -215,6 +231,17 @@ const addRequiredGroupOptions = (
 ) => {
     if (!Object.hasOwn(elem.options ?? {}, CONTAINS_REQUIRED_FIELDS)) {
         addOption(elem, CONTAINS_REQUIRED_FIELDS, true);
+    }
+};
+
+const addRenderDescriptionInOptionOptions = (
+    elem: Layout | ControlElement | GroupLayout
+) => {
+    if (!Object.hasOwn(elem.options ?? {}, ONE_OF_WITH_DESCRIPTIONS)) {
+        addOption(elem, ONE_OF_WITH_DESCRIPTIONS, true);
+        // This is not truly needed but we do force this as an autocomplete
+        //  so probably best to make sure JSONForms knows
+        addOption(elem, 'autocomplete', true);
     }
 };
 
@@ -528,6 +555,10 @@ const generateUISchema = (
                 addNullableField(controlObject, nullableType);
             }
 
+            if (allOneOfOptionsContainDescription(jsonSchema)) {
+                addRenderDescriptionInOptionOptions(controlObject);
+            }
+
             schemaElements.push(controlObject);
 
             copyRequiredOption(isRequired, controlObject);
@@ -763,6 +794,11 @@ export const custom_generateDefaultUISchema = (
         response = generateCategoryUiSchema(response);
     }
 
+    return response;
+};
+
+export const getDereffedSchema = async (val: any) => {
+    const response = val ? await derefSchema(val) : val;
     return response;
 };
 

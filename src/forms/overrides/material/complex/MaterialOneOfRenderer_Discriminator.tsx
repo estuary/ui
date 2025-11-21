@@ -60,12 +60,12 @@ import { JsonFormsDispatch } from '@jsonforms/react';
 import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 
-import CombinatorProperties from 'src/forms/renderers/Overrides/material/complex/CombinatorProperties';
+import CombinatorProperties from 'src/forms/overrides/material/complex/CombinatorProperties';
 import {
     discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
-} from 'src/forms/renderers/shared';
+} from 'src/forms/shared';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
