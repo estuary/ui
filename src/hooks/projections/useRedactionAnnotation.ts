@@ -87,7 +87,7 @@ export const useRedactionAnnotation = () => {
                     'redact'
                 );
             } else {
-                return Promise.resolve();
+                return Promise.resolve(undefined);
             }
 
             const updateResponse = await modifyDraftSpec(spec, {
@@ -100,7 +100,7 @@ export const useRedactionAnnotation = () => {
                 return Promise.reject(updateResponse.error);
             }
 
-            return Promise.resolve();
+            return Promise.resolve(updateResponse);
         },
         [collectionSpec, currentCollection, draftId, mutateDraftSpecs]
     );

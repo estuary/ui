@@ -5,8 +5,10 @@ import { useMemo } from 'react';
 
 import { Box, Stack, TableCell, TableRow } from '@mui/material';
 
+import { Lock } from 'iconoir-react';
 import { orderBy } from 'lodash';
 
+import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
 import { ProjectionActions } from 'src/components/tables/cells/projections/ProjectionActions';
@@ -26,6 +28,13 @@ function Row({ columns, row }: RowProps) {
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
+
+    const redactionStrategyExists = useBindingsEditorStore((state) =>
+        Boolean(
+            state.collectionData?.spec.schema?.properties?.[row.field]?.redact
+                ?.strategy
+        )
+    );
 
     const formattedTypes = useMemo(() => {
         if (row.inference.string?.format && row.inference.types) {
@@ -56,6 +65,16 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
+            {redactionStrategyExists ? (
+                <TableCell>
+                    <Stack style={{ alignItems: 'center' }}>
+                        <Lock />
+                    </Stack>
+                </TableCell>
+            ) : (
+                <TableCell />
+            )}
+
             {row.field ? (
                 <FieldList
                     cannotExist={fieldCannotExist}
