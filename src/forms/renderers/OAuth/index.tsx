@@ -14,14 +14,14 @@ import { useMount } from 'react-use';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { optionExists } from 'src/forms/overrides/testers/testers';
 import { INJECTED_VALUES, NO_PROVIDER } from 'src/forms/renderers/OAuth/shared';
 import { useAllRequiredPropCheck } from 'src/forms/renderers/OAuth/useAllRequiredPropCheck';
 import { useOauthHandler } from 'src/forms/renderers/OAuth/useOauthHandler';
-import { optionExists } from 'src/forms/renderers/Overrides/testers/testers';
 import {
     getDiscriminator,
     getDiscriminatorDefaultValue,
-} from 'src/forms/renderers/shared';
+} from 'src/forms/shared';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useEndpointConfigStore_setCustomErrors } from 'src/stores/EndpointConfig/hooks';
