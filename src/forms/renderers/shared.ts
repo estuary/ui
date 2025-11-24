@@ -34,7 +34,7 @@ export const getDiscriminatorDefaultValue = (
 //  a schema. However, when we edit a schema we can end up with an option that
 //  contains errors. The NetSuite connector Authentication is what caught this. the
 //  `user_pass` option contains two fields that are encrypted and so they are empty
-//  during edit. This mean that JsonForms would not find the
+//  during edit. This mean that JsonForms would not find them
 export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
     const discriminatorProperty = getDiscriminator(schema);
 
