@@ -7,6 +7,7 @@ export type KnownEvents =
     | 'StoreCleaner'
     | 'SourceCapture'
     | 'WorkflowStore'
+    | 'ShardsList'
     | 'evaluate_field_selection';
 
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
