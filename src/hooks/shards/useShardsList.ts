@@ -84,12 +84,9 @@ const useShardsList = (catalogNames: string[]) => {
                 failureCountsRef.current[catalogName] =
                     (failureCountsRef.current[catalogName] ?? 0) + 1;
 
-                const failureCount = failureCountsRef.current[catalogName];
-
                 logRocketEvent('ShardsList', {
                     catalogName,
                     failureCount: failureCountsRef.current[catalogName],
-                    willRetry: failureCount < MAX_FAILURES,
                 });
             }
         });
