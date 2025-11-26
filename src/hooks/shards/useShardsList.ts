@@ -7,7 +7,9 @@ import useSWR from 'swr';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import useTaskAuthorization from 'src/hooks/gatewayAuth/useTaskAuthorization';
+import { ALL_FAILED_ERROR_CODE } from 'src/hooks/shards/shared';
 import { logRocketEvent } from 'src/services/shared';
+import { BASE_ERROR } from 'src/services/supabase';
 import { fetchShardList } from 'src/utils/dataPlane-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
@@ -15,7 +17,7 @@ type FetchResponse = { shards: Shard[] };
 type CacheKey = [string, TaskAuthorizationResponse[]];
 
 // These status do not change often so checking every 30 seconds is probably enough
-const INTERVAL = 5000;
+const INTERVAL = 30000;
 const MAX_FAILURES = 3;
 
 const useShardsList = (catalogNames: string[]) => {
@@ -23,10 +25,8 @@ const useShardsList = (catalogNames: string[]) => {
     const session = useUserStore((state) => state.session);
     const { data: taskAuthorizationData } = useTaskAuthorization(catalogNames);
 
-    // Track failure counts per catalog
+    // Track failure counts per catalog so we don't spam too much
     const failureCountsRef = useRef<Record<string, number>>({});
-
-    console.log('failureCountsRef.current', failureCountsRef.current);
 
     const fetcher = async ([_url, taskAuthorizations]: CacheKey) => {
         const response: FetchResponse = { shards: [] };
@@ -63,24 +63,19 @@ const useShardsList = (catalogNames: string[]) => {
                 }))
                 .at(0);
 
-            console.log('reactorAuthorization', reactorAuthorization);
-
-            return fetchShardList(name, session, {
-                address: reactorAuthorization?.address ?? '',
-                token: `fake-token-travis-testing`,
-            });
+            return fetchShardList(name, session, reactorAuthorization);
         });
 
+        let allCallsFailed = true;
         const shardResponses = await Promise.allSettled(shardPromises);
         shardResponses.forEach((shardResponse, index) => {
             const catalogName = catalogsToFetch[index];
-
-            console.log('shardResponse', shardResponse);
 
             if (
                 isPromiseFulfilledResult(shardResponse) &&
                 shardResponse.value.shards.length > 0
             ) {
+                allCallsFailed = false;
                 failureCountsRef.current[catalogName] &&= 0;
                 response.shards = response.shards.concat(
                     shardResponse.value.shards
@@ -98,6 +93,21 @@ const useShardsList = (catalogNames: string[]) => {
                 });
             }
         });
+
+        // If EVERYTHING failed when a single catalog was fetched
+        //  then go ahead and return an error. This is mainly for details
+        //  page displaying the shard status of a specific catalog so we
+        //  can show a special status
+        if (allCallsFailed && catalogNames.length === 1) {
+            logRocketEvent('ShardsList', {
+                allFailed: true,
+            });
+
+            return Promise.reject({
+                ...BASE_ERROR,
+                code: ALL_FAILED_ERROR_CODE,
+            });
+        }
 
         return response;
     };
