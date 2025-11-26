@@ -1,3 +1,5 @@
+import type { Schema } from 'src/types';
+
 import { createDefaultValue } from '@jsonforms/core';
 
 import { forIn } from 'lodash';
@@ -11,14 +13,12 @@ export const getDiscriminator = (schema: any) => {
 export const getDiscriminatorDefaultValue = (
     tabSchemaProps: any,
     discriminatorProperty: string
-) => {
+): Schema => {
     // Go through all the props and set them into the object.
     //  If it is the discriminator then try to set the default
     //      value, then the const, and finally default to an empty string.
     //  If it is any other value then go ahead and create the value
-    const defaultVal: {
-        [k: string]: any;
-    } = {};
+    const defaultVal: Schema = {};
     forIn(tabSchemaProps, (val: any, key: string) => {
         defaultVal[key] =
             key === discriminatorProperty

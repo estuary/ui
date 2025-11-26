@@ -51,7 +51,6 @@ import {
 import {
     and,
     createCombinatorRenderInfos,
-    decode,
     isOneOfControl,
     rankWith,
     schemaMatches,
@@ -60,7 +59,9 @@ import { JsonFormsDispatch } from '@jsonforms/react';
 
 import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
+import { useMount } from 'react-use';
 
+import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import CombinatorProperties from 'src/forms/renderers/Overrides/material/complex/CombinatorProperties';
 import {
     discriminator,
@@ -68,6 +69,7 @@ import {
     getDiscriminatorDefaultValue,
 } from 'src/forms/renderers/shared';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;
@@ -87,7 +89,10 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     uischemas,
     data,
     enabled,
+    required,
 }: CombinatorRendererProps) => {
+    const isEdit = useEntityWorkflow_Editing();
+
     const [open, setOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(
         indexOfFittingSchema || 0
@@ -98,14 +103,17 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         setOpen(false);
     }, [setOpen]);
 
+    const possibleSchemas = (schema as JsonSchema).oneOf as JsonSchema[];
     const oneOfRenderInfos = createCombinatorRenderInfos(
-        (schema as JsonSchema).oneOf as JsonSchema[],
+        possibleSchemas,
         rootSchema,
         'oneOf',
         uischema,
         path,
         uischemas
     );
+
+    console.log('possibleSchemas', possibleSchemas);
 
     const discriminatorProperty = getDiscriminator(schema);
 
@@ -121,15 +129,17 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 //      This is not supported out of the box https://jsonforms.discourse.group/t/use-default-uischema-and-only-apply-rule-to-one-field/1742
                 //  So we have to look at the pathSegments and filter our the one that matches the discriminator
                 //      This should be safe according to JSONForms https://jsonforms.discourse.group/t/hiding-a-specific-path-when-rendering-a-complex-oneof/2795
-                const pathSegments = el.scope?.split('/');
-                if (pathSegments && pathSegments.length > 0) {
-                    // Get the last segment as that should match property names
-                    //  based on `isRequired` in jsonforms/packages/core/src/mappers/renderer.ts
-                    return (
-                        decode(pathSegments[pathSegments.length - 1]) !==
-                        discriminatorProperty
-                    );
-                }
+                // const pathSegments = el.scope?.split('/');
+                // PUT THIS BACK IN
+                // if (pathSegments && pathSegments.length > 0) {
+                //     // Get the last segment as that should match property names
+                //     //  based on `isRequired` in jsonforms/packages/core/src/mappers/renderer.ts
+                //     return (
+                //         decode(pathSegments[pathSegments.length - 1]) !==
+                //         discriminatorProperty
+                //     );
+                // }
+                // PUT THIS BACK IN
 
                 return true;
             }
@@ -137,6 +147,8 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
 
         return renderer;
     });
+
+    console.log('oneOfRenderInfos', oneOfRenderInfos);
 
     const openNewTab = (newIndex: number) => {
         const tabSchema = oneOfRenderInfos[newIndex].schema;
@@ -176,6 +188,23 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         },
         [setOpen, setSelectedIndex, data]
     );
+
+    useMount(() => {
+        if (
+            !isEdit &&
+            required &&
+            !hasOwnProperty(data, discriminatorProperty)
+        ) {
+            const defaultVal = getDiscriminatorDefaultValue(
+                possibleSchemas?.[selectedIndex]?.properties,
+                discriminatorProperty
+            );
+
+            handleChange(path, {
+                [discriminatorProperty]: defaultVal?.[discriminatorProperty],
+            });
+        }
+    });
 
     return (
         <Hidden xsUp={!visible}>
