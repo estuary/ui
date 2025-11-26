@@ -18,7 +18,9 @@ export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
     const intl = useIntl();
 
     // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
-    useShardHydration([taskName]);
+    useShardHydration([taskName], {
+        errorOnAllFailed: true,
+    });
 
     const entityType = useEntityType();
     const { endpoints, gatewayHostname } = useShardEndpoints(

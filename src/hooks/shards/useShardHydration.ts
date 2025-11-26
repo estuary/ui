@@ -4,7 +4,6 @@ import { useEffect, useMemo } from 'react';
 
 import { useIntl } from 'react-intl';
 
-import { ALL_FAILED_ERROR_CODE } from 'src/hooks/shards/shared';
 import useShardsList from 'src/hooks/shards/useShardsList';
 import useShardStatusDefaultColor from 'src/hooks/shards/useShardStatusDefaultColor';
 import {
@@ -15,9 +14,14 @@ import {
     useShardDetail_setShards,
 } from 'src/stores/ShardDetail/hooks';
 
+interface UseShardHydrationSettings {
+    defaultMessageId?: ShardStatusMessageIds;
+    errorOnAllFailed?: boolean;
+}
+
 function useShardHydration(
     querySettings: any[],
-    defaultMessageId?: ShardStatusMessageIds
+    settings?: UseShardHydrationSettings
 ) {
     const intl = useIntl();
 
@@ -33,25 +37,21 @@ function useShardHydration(
 
     // Handle setting the defaults
     useEffect(() => {
-        if (defaultMessageId) {
-            setDefaultMessageId(defaultMessageId);
+        if (settings?.defaultMessageId) {
+            setDefaultMessageId(settings?.defaultMessageId);
         }
 
         setDefaultStatusColor(defaultStatusColor);
     }, [
-        defaultMessageId,
         defaultStatusColor,
         setDefaultMessageId,
         setDefaultStatusColor,
+        settings?.defaultMessageId,
     ]);
 
     // Handle data
     useEffect(() => {
-        // if EVERY call failed then go ahead and show an issue
-        if (
-            (!data || data.shards.length < 1) &&
-            error?.code === ALL_FAILED_ERROR_CODE
-        ) {
+        if (settings?.errorOnAllFailed && data?.allCallsFailed) {
             setShardsError({
                 ...error,
                 message: intl.formatMessage({
@@ -74,7 +74,15 @@ function useShardHydration(
             // Only show error if there is no data
             setShardsError(error ?? null);
         }
-    }, [data, error, setDictionaryHydrated, setShardsError, setShards, intl]);
+    }, [
+        data,
+        error,
+        setDictionaryHydrated,
+        setShardsError,
+        setShards,
+        intl,
+        settings?.errorOnAllFailed,
+    ]);
 
     return useMemo(
         () => ({

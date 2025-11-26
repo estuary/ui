@@ -10,7 +10,9 @@ interface Props extends BaseComponentProps {
 function ShardHydrator({ catalogName, children }: Props) {
     const taskTypes = useDetailsEntityTaskTypes();
 
-    useShardHydration(taskTypes.length === 0 ? [] : [catalogName]);
+    useShardHydration(taskTypes.length === 0 ? [] : [catalogName], {
+        errorOnAllFailed: false,
+    });
 
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <>{children}</>;

@@ -1,1 +1,0 @@
-export const ALL_FAILED_ERROR_CODE = 'ALL_FAILED';

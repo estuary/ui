@@ -7,13 +7,11 @@ import useSWR from 'swr';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import useTaskAuthorization from 'src/hooks/gatewayAuth/useTaskAuthorization';
-import { ALL_FAILED_ERROR_CODE } from 'src/hooks/shards/shared';
 import { logRocketEvent } from 'src/services/shared';
-import { BASE_ERROR } from 'src/services/supabase';
 import { fetchShardList } from 'src/utils/dataPlane-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
-type FetchResponse = { shards: Shard[] };
+type FetchResponse = { shards: Shard[]; allCallsFailed?: boolean };
 type CacheKey = [string, TaskAuthorizationResponse[]];
 
 // These status do not change often so checking every 30 seconds is probably enough
@@ -21,7 +19,6 @@ const INTERVAL = 30000;
 const MAX_FAILURES = 3;
 
 const useShardsList = (catalogNames: string[]) => {
-    const everythingFailed = useRef(false);
     const session = useUserStore((state) => state.session);
     const { data: taskAuthorizationData } = useTaskAuthorization(catalogNames);
 
@@ -31,10 +28,8 @@ const useShardsList = (catalogNames: string[]) => {
     const fetcher = async ([_url, taskAuthorizations]: CacheKey) => {
         const response: FetchResponse = { shards: [] };
 
-        if (
-            !session || // We check this in the swrKey memo so this should never actually happen
-            everythingFailed.current // If everything has failed we can just stop
-        ) {
+        // We check this in the swrKey memo so this should never actually happen
+        if (!session) {
             return response;
         }
 
@@ -45,7 +40,6 @@ const useShardsList = (catalogNames: string[]) => {
         // This should land here the first time everything failed
         //  next time it should get handled up above the filter.
         if (catalogsToFetch.length === 0) {
-            everythingFailed.current = true;
             logRocketEvent('ShardsList', {
                 everythingFailed: true,
             });
@@ -66,6 +60,7 @@ const useShardsList = (catalogNames: string[]) => {
             return fetchShardList(name, session, reactorAuthorization);
         });
 
+        // We have fetched so assume they all failed until proven otherwise
         let allCallsFailed = true;
         const shardResponses = await Promise.allSettled(shardPromises);
         shardResponses.forEach((shardResponse, index) => {
@@ -95,18 +90,16 @@ const useShardsList = (catalogNames: string[]) => {
         //  then go ahead and return an error. This is mainly for details
         //  page displaying the shard status of a specific catalog so we
         //  can show a special status
-        if (allCallsFailed && catalogNames.length === 1) {
+        if (allCallsFailed) {
             logRocketEvent('ShardsList', {
                 allFailed: true,
             });
-
-            return Promise.reject({
-                ...BASE_ERROR,
-                code: ALL_FAILED_ERROR_CODE,
-            });
         }
 
-        return response;
+        return {
+            ...response,
+            allCallsFailed,
+        };
     };
 
     const swrKey = useMemo<CacheKey | null>(
