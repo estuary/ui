@@ -9,6 +9,7 @@ import { useUserStore } from 'src/context/User/useUserContextStore';
 import useTaskAuthorization from 'src/hooks/gatewayAuth/useTaskAuthorization';
 import { logRocketConsole } from 'src/services/shared';
 import { fetchShardList } from 'src/utils/dataPlane-utils';
+import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 // These status do not change often so checking every 30 seconds is probably enough
 const INTERVAL = 30000;
@@ -40,12 +41,20 @@ const useShardsList = (catalogNames: string[]) => {
             return fetchShardList(name, session, reactorAuthorization);
         });
 
-        const shardResponses = await Promise.all(shardPromises);
+        const shardResponses = await Promise.allSettled(shardPromises);
 
         const response: { shards: Shard[] } = { shards: [] };
-
-        shardResponses.forEach(({ shards }) => {
-            response.shards = response.shards.concat(shards);
+        shardResponses.forEach((shardResponse, index) => {
+            if (
+                isPromiseFulfilledResult(shardResponse) &&
+                shardResponse.value.shards.length > 0
+            ) {
+                response.shards = response.shards.concat(
+                    shardResponse.value.shards
+                );
+            } else {
+                logRocketConsole('useShardsList allSettled error');
+            }
         });
 
         return response;
