@@ -13,3 +13,5 @@ Then in the `UI` repo you need to run the command below. Make sure your path end
 ```
 npm run hack-in-dpg /...PATH_TO_REPO.../data-plane-gateway/
 ```
+
+After that you should see a new tarball generated. You will need to update `package.json` to reference this file and clean up the old file.
