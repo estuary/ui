@@ -26,10 +26,10 @@
         "test:debug": "vitest --inspect-brk --no-file-parallelism",
         "test:ui": "vitest --ui",
         "typecheck": "tsc",
-        "installDataPlane": "npm install 'https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main'",
         "generate-flow-types": "cd deps/flow && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
         "generate-supabase-types": "node ./scripts/generateSupabaseTypes",
-        "hack-in-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh"
+        "hack-in-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh",
+        "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -62,7 +62,7 @@
         "@urql/exchange-request-policy": "^2.0.0",
         "@urql/exchange-retry": "^2.0.0",
         "ansicolor": "^2.0.1",
-        "data-plane-gateway": "https://gitpkg.now.sh/estuary/data-plane-gateway/client/dist?main",
+        "data-plane-gateway": "file:__inline-deps__/data-plane-gateway",
         "date-fns": "^2.30.0",
         "echarts": "^5.4.3",
         "filter-obj": "^5.1.0",
