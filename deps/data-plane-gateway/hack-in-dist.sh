@@ -42,15 +42,13 @@ TARBALL_TIMESTAMPED="${TARBALL_BASE}-${TIMESTAMP}.tgz"
 # Rename tarball with timestamp
 mv "$TARBALL" "$TARBALL_TIMESTAMPED"
 TARBALL="$TARBALL_TIMESTAMPED"
-echo "Renamed to: $TARBALL"
 
 # Move tarball to parent directory
 mv "$TARBALL" ../
-echo "Moved tarball to __inline-deps__/"
 
 # Clean up the copied files (but keep the directory)
 cd ../..
 rm -rf "$DEST_DIR"/
 echo "Cleaned up copied files from $DEST_DIR"
 
-echo "COMPLETE: $DEST_DIR/$TARBALL"
+echo "COMPLETE: __inline-deps__/$TARBALL"
