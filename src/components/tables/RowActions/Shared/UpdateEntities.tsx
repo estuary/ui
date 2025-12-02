@@ -1,5 +1,6 @@
 import type { UseMassUpdaterProps } from 'src/hooks/useMassUpdater';
 
+import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -10,6 +11,8 @@ import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import useMassUpdater from 'src/hooks/useMassUpdater';
 
 function UpdateEntities(props: UseMassUpdaterProps) {
+    const intl = useIntl();
+
     const { entities, runningMessageID, successMessageID } = props;
 
     const { massUpdateEntities, draftId, error, logToken, state } =
@@ -23,7 +26,10 @@ function UpdateEntities(props: UseMassUpdaterProps) {
 
     return (
         <SharedProgress
-            name={`Updating ${updating} collections`}
+            name={intl.formatMessage(
+                { id: 'entityTable.update.title' },
+                { updating }
+            )}
             error={error}
             logToken={logToken}
             renderLogs

@@ -29,8 +29,6 @@ function GroupedProgressDialog({
     };
 
     const onFinish = useCallback(() => {
-        console.log('onFinish >> ', onFinish);
-
         if (done) {
             return;
         }
@@ -39,7 +37,6 @@ function GroupedProgressDialog({
     }, [done]);
 
     useEffect(() => {
-        console.log('finishedCount >> ', finishedCount);
         if (finishedCount > 0) {
             setDone(true);
         }
