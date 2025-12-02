@@ -61,14 +61,7 @@ function useMassUpdater({
         selectableTableStoreSelectors.successfulTransformations.increment
     );
 
-    // const incrementSuccessfulTransformations = useZustandStore<
-    //     SelectableTableStore,
-    //     SelectableTableStore['incrementSuccessfulTransformations']
-    // >(
-    //     selectableStoreName,
-    //     selectableTableStoreSelectors.successfulTransformations.increment
-    // );
-
+    // TODO (mass row actions) - wire this back up
     // const actionSettings = useZustandStore<
     //     SelectableTableStore,
     //     SelectableTableStore['actionSettings']

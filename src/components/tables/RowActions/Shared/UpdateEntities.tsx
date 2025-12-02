@@ -21,10 +21,6 @@ function UpdateEntities(props: UseMassUpdaterProps) {
         void massUpdateEntities(entities);
     });
 
-    if (!draftId) {
-        return null;
-    }
-
     return (
         <SharedProgress
             name={`Updating ${updating} collections`}
@@ -34,25 +30,25 @@ function UpdateEntities(props: UseMassUpdaterProps) {
             renderError={(renderError_error, renderError_state) => {
                 const skipped = renderError_state === ProgressStates.SKIPPED;
 
-                return (
-                    <>
-                        {draftId ? (
-                            <AlertBox short hideIcon severity="error">
-                                <DraftErrors draftId={draftId} />
-                            </AlertBox>
-                        ) : null}
-
-                        {renderError_error?.message ? (
-                            <Error
-                                error={renderError_error}
-                                severity={skipped ? 'info' : undefined}
-                                hideIcon={skipped}
-                                condensed
-                                hideTitle
-                            />
-                        ) : null}
-                    </>
-                );
+                if (renderError_error?.message) {
+                    return (
+                        <Error
+                            error={renderError_error}
+                            severity={skipped ? 'info' : undefined}
+                            hideIcon={skipped}
+                            condensed
+                            hideTitle
+                        />
+                    );
+                } else if (draftId) {
+                    return (
+                        <AlertBox short hideIcon severity="error">
+                            <DraftErrors draftId={draftId} />
+                        </AlertBox>
+                    );
+                } else {
+                    return null;
+                }
             }}
             state={state}
             runningMessageID={runningMessageID}
