@@ -3,6 +3,7 @@ import type { MassUpdateMatchData } from 'src/api/types';
 import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
 import type { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
 import type { SelectTableStoreNames } from 'src/stores/names';
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
 import type { Entity } from 'src/types';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -12,8 +13,10 @@ import { massUpdateDraftSpecs } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogNames } from 'src/api/liveSpecsExt';
 import { createPublication } from 'src/api/publications';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { useZustandStore } from 'src/context/Zustand/provider';
 import usePublications from 'src/hooks/usePublications';
 import { jobSucceeded } from 'src/services/supabase';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 export interface UseMassUpdaterProps {
     entities: CaptureQuery[];
@@ -49,6 +52,14 @@ function useMassUpdater({
     const [draftId, setDraftId] = useState<string | null>(null);
     const [pubID, setPubID] = useState<string | null>(null);
     const [logToken, setLogToken] = useState<string | null>(null);
+
+    const incrementSuccessfulTransformations = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['incrementSuccessfulTransformations']
+    >(
+        selectableStoreName,
+        selectableTableStoreSelectors.successfulTransformations.increment
+    );
 
     // const incrementSuccessfulTransformations = useZustandStore<
     //     SelectableTableStore,
@@ -176,8 +187,15 @@ function useMassUpdater({
                 return failed(publishResponse);
             }
             setPubID(publishResponse.data[0].id);
+            incrementSuccessfulTransformations();
         },
-        [generateNewSpec, onFinish, skippedMessageID, validateNewSpec]
+        [
+            generateNewSpec,
+            incrementSuccessfulTransformations,
+            onFinish,
+            skippedMessageID,
+            validateNewSpec,
+        ]
     );
 
     // Start fetching publication status.

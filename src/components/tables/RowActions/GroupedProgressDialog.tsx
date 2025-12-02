@@ -1,6 +1,6 @@
 import type { GroupedProgressDialogProps } from 'src/components/tables/RowActions/types';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
     Button,
@@ -11,14 +11,15 @@ import {
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 function GroupedProgressDialog({
     selectedEntities,
     finished,
     renderComponent,
 }: GroupedProgressDialogProps) {
-    const inProgressCount = useRef(selectedEntities.length);
+    const intl = useIntl();
+
     const [done, setDone] = useState(false);
     const [finishedCount, setFinishedCount] = useState(0);
 
@@ -28,6 +29,8 @@ function GroupedProgressDialog({
     };
 
     const onFinish = useCallback(() => {
+        console.log('onFinish >> ', onFinish);
+
         if (done) {
             return;
         }
@@ -36,7 +39,8 @@ function GroupedProgressDialog({
     }, [done]);
 
     useEffect(() => {
-        if (finishedCount === inProgressCount.current) {
+        console.log('finishedCount >> ', finishedCount);
+        if (finishedCount > 0) {
             setDone(true);
         }
     }, [finishedCount]);
@@ -45,9 +49,9 @@ function GroupedProgressDialog({
         <>
             <DialogTitle>
                 <Typography component="div" variant="h6">
-                    <FormattedMessage
-                        id={done ? 'common.done' : 'common.inProgress'}
-                    />
+                    {intl.formatMessage({
+                        id: done ? 'common.done' : 'common.inProgress',
+                    })}
                 </Typography>
             </DialogTitle>
 
@@ -61,7 +65,9 @@ function GroupedProgressDialog({
 
             <DialogActions sx={{ p: 3 }}>
                 <Button onClick={onClose} disabled={!done}>
-                    <FormattedMessage id="cta.close" />
+                    {intl.formatMessage({
+                        id: 'cta.close',
+                    })}
                 </Button>
             </DialogActions>
         </>

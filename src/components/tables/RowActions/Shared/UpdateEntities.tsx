@@ -1,6 +1,6 @@
 import type { UseMassUpdaterProps } from 'src/hooks/useMassUpdater';
 
-import { Button } from '@mui/material';
+import { useMount } from 'react-use';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
@@ -17,53 +17,47 @@ function UpdateEntities(props: UseMassUpdaterProps) {
 
     const updating = entities?.length ?? 0;
 
+    useMount(() => {
+        void massUpdateEntities(entities);
+    });
+
+    if (!draftId) {
+        return null;
+    }
+
     return (
-        <>
-            <Button
-                disabled={updating < 1}
-                onClick={() => {
-                    void massUpdateEntities(entities);
-                }}
-            >
-                yes
-            </Button>
+        <SharedProgress
+            name={`Updating ${updating} collections`}
+            error={error}
+            logToken={logToken}
+            renderLogs
+            renderError={(renderError_error, renderError_state) => {
+                const skipped = renderError_state === ProgressStates.SKIPPED;
 
-            {!draftId ? null : (
-                <SharedProgress
-                    name={`Updating ${updating} collections`}
-                    error={error}
-                    logToken={logToken}
-                    renderLogs
-                    renderError={(renderError_error, renderError_state) => {
-                        const skipped =
-                            renderError_state === ProgressStates.SKIPPED;
+                return (
+                    <>
+                        {draftId ? (
+                            <AlertBox short hideIcon severity="error">
+                                <DraftErrors draftId={draftId} />
+                            </AlertBox>
+                        ) : null}
 
-                        return (
-                            <>
-                                {draftId ? (
-                                    <AlertBox short hideIcon severity="error">
-                                        <DraftErrors draftId={draftId} />
-                                    </AlertBox>
-                                ) : null}
-
-                                {renderError_error?.message ? (
-                                    <Error
-                                        error={renderError_error}
-                                        severity={skipped ? 'info' : undefined}
-                                        hideIcon={skipped}
-                                        condensed
-                                        hideTitle
-                                    />
-                                ) : null}
-                            </>
-                        );
-                    }}
-                    state={state}
-                    runningMessageID={runningMessageID}
-                    successMessageID={successMessageID}
-                />
-            )}
-        </>
+                        {renderError_error?.message ? (
+                            <Error
+                                error={renderError_error}
+                                severity={skipped ? 'info' : undefined}
+                                hideIcon={skipped}
+                                condensed
+                                hideTitle
+                            />
+                        ) : null}
+                    </>
+                );
+            }}
+            state={state}
+            runningMessageID={runningMessageID}
+            successMessageID={successMessageID}
+        />
     );
 }
 
