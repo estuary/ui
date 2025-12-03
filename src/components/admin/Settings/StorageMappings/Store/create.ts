@@ -12,8 +12,15 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialStateData = (): Pick<
     StorageMappingState,
-    'formValue' | 'logToken' | 'provider' | 'pubId' | 'saving' | 'serverError'
+    | 'dataPlaneName'
+    | 'formValue'
+    | 'logToken'
+    | 'provider'
+    | 'pubId'
+    | 'saving'
+    | 'serverError'
 > => ({
+    dataPlaneName: '',
     formValue: { data: {} },
     logToken: '',
     provider: null,
@@ -30,6 +37,36 @@ const getInitialState = (
 
     resetState: () => {
         set(getInitialStateData(), false, 'State reset');
+    },
+
+    setDataPlaneName: (value) => {
+        set(
+            produce((state: StorageMappingState) => {
+                state.dataPlaneName = value;
+            }),
+            false,
+            'Data-plane name set'
+        );
+    },
+
+    setLogToken: (value) => {
+        set(
+            produce((state: StorageMappingState) => {
+                state.logToken = value;
+            }),
+            false,
+            'Publication log token set'
+        );
+    },
+
+    setPubId: (value) => {
+        set(
+            produce((state: StorageMappingState) => {
+                state.pubId = value;
+            }),
+            false,
+            'Publication ID set'
+        );
     },
 
     setSaving: (value) => {
@@ -52,26 +89,6 @@ const getInitialState = (
             }),
             false,
             'Server error set'
-        );
-    },
-
-    setLogToken: (value) => {
-        set(
-            produce((state: StorageMappingState) => {
-                state.logToken = value;
-            }),
-            false,
-            'Publication log token set'
-        );
-    },
-
-    setPubId: (value) => {
-        set(
-            produce((state: StorageMappingState) => {
-                state.pubId = value;
-            }),
-            false,
-            'Publication ID set'
         );
     },
 
