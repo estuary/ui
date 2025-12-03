@@ -75,6 +75,10 @@ export const EntityTable: Record<string, string> = {
     'updateEntity.noLiveSpecs': `Unable to find entity on server.`,
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 
+    'updateEntity.title.delete': `Updating`,
+    'updateEntity.title.disable': `Updating`,
+    'updateEntity.title.enable': `Updating`,
+
     // Entity Selector / Add Dialog
     'entityTable.captures.missing.header': `You currently have no captures. Click the captures icon on the menu bar to get started.`,
     'entityTable.materializations.missing.header': `You currently have no materializations. Click the materializations icon on the menu bar to get started.`,

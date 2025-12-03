@@ -18,8 +18,8 @@ interface Props {
     error: any | null;
     item: string | ReactNode;
     progress: ProgressStates;
-    runningMessageID: string;
-    successMessageID: string;
+    runningIntlKey: string;
+    successIntlKey: string;
     renderError?: Function;
 }
 
@@ -30,8 +30,8 @@ function Progress({
     item,
     progress,
     renderError,
-    runningMessageID,
-    successMessageID,
+    runningIntlKey,
+    successIntlKey,
 }: Props) {
     const theme = useTheme();
 
@@ -56,10 +56,10 @@ function Progress({
                         <FormattedMessage
                             id={
                                 progress === ProgressStates.SUCCESS
-                                    ? successMessageID
+                                    ? successIntlKey
                                     : progress === ProgressStates.FAILED
                                       ? 'common.fail'
-                                      : runningMessageID
+                                      : runningIntlKey
                             }
                         />
                     }

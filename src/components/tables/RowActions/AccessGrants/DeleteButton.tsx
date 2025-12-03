@@ -123,9 +123,9 @@ function DeleteButton({ selectTableStoreName }: AccessGrantDeleteButtonProps) {
                                 key={`revoke-grant-${index}`}
                                 grant={item}
                                 onFinish={onFinish}
-                                runningMessageID="common.removing"
+                                runningIntlKey="common.removing"
                                 selectTableStoreName={selectTableStoreName}
-                                successMessageID="common.removed"
+                                successIntlKey="common.removed"
                             />
                         )}
                     />

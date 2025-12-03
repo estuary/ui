@@ -6,6 +6,7 @@ import type {
     RowConfirmation,
 } from 'src/components/tables/RowActions/types';
 import type { TableActionSettings } from 'src/stores/Tables/Store';
+import type { LiveSpecsExtBaseQuery } from 'src/types';
 
 export const ProgressFinished = 60;
 
@@ -25,13 +26,16 @@ export enum ProgressStates {
 export interface SharedProgressProps {
     name: string;
     error: any | null;
+    runningIntlKey: string;
+    successIntlKey: string;
+    titleIntlKey: string;
+    state: ProgressStates;
     logToken?: string | null;
+    renderBody?: (progressState: ProgressStates) => ReactNode;
     renderError?: (error: any, progressState: ProgressStates) => ReactNode;
     renderLogs?: Function | boolean;
-    skippedMessageID?: string;
-    runningMessageID: string;
-    successMessageID: string;
-    state: ProgressStates;
+    skippedIntlKey?: string;
+    groupedEntities?: LiveSpecsExtBaseQuery[];
 }
 
 export interface ConfirmationAlertProps {

@@ -13,7 +13,6 @@ import {
 } from 'src/api/draftSpecs';
 import { getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
 import { createPublication } from 'src/api/publications';
-import AlertBox from 'src/components/shared/AlertBox';
 import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
 import Error from 'src/components/shared/Error';
 import SharedProgress from 'src/components/tables/RowActions/Shared/Progress';
@@ -31,9 +30,10 @@ export interface UpdateEntityProps {
         spec: LiveSpecsExtQueryWithSpec['spec']
     ) => any | Promise<void>;
     generateNewSpecType: (entity: CaptureQuery) => Entity | null;
-    runningMessageID: SharedProgressProps['runningMessageID'];
-    skippedMessageID?: SharedProgressProps['skippedMessageID'];
-    successMessageID: SharedProgressProps['successMessageID'];
+    runningIntlKey: SharedProgressProps['runningIntlKey'];
+    titleIntlKey: SharedProgressProps['titleIntlKey'];
+    successIntlKey: SharedProgressProps['successIntlKey'];
+    skippedMessageID?: SharedProgressProps['skippedIntlKey'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
@@ -47,10 +47,11 @@ function UpdateEntity({
     generateNewSpecType,
     entity,
     onFinish,
-    runningMessageID,
+    runningIntlKey,
     skippedMessageID,
-    successMessageID,
+    successIntlKey,
     selectableStoreName,
+    titleIntlKey,
     validateNewSpec,
 }: UpdateEntityProps) {
     const updateStarted = useRef(false);
@@ -225,9 +226,7 @@ function UpdateEntity({
                 return (
                     <>
                         {draftId ? (
-                            <AlertBox short hideIcon severity="error">
-                                <DraftErrors draftId={draftId} />
-                            </AlertBox>
+                            <DraftErrors draftId={draftId} enableAlertStyling />
                         ) : null}
 
                         {renderError_error?.message ? (
@@ -243,8 +242,9 @@ function UpdateEntity({
                 );
             }}
             state={state}
-            runningMessageID={runningMessageID}
-            successMessageID={successMessageID}
+            runningIntlKey={runningIntlKey}
+            successIntlKey={successIntlKey}
+            titleIntlKey={titleIntlKey}
         />
     );
 }

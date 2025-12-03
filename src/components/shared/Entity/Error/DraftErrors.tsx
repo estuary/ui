@@ -4,12 +4,14 @@ import { Box, Breadcrumbs, Typography } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
+import AlertBox from 'src/components/shared/AlertBox';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import useDraftSpecErrors from 'src/hooks/useDraftSpecErrors';
 
 export interface DraftErrorProps {
     draftId?: string | null;
     enablePolling?: boolean;
+    enableAlertStyling?: boolean;
 }
 
 // Parse a draft error scope, which is generally a URL with a fragment-encoded
@@ -42,7 +44,11 @@ function parseScopeCrumbs(scope: string): string[] {
     return parts;
 }
 
-function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
+function DraftErrors({
+    draftId,
+    enablePolling,
+    enableAlertStyling,
+}: DraftErrorProps) {
     const { draftSpecErrors, count } = useDraftSpecErrors(
         draftId,
         enablePolling
@@ -84,8 +90,8 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
             };
         });
 
-        return (
-            <Box>
+        const content = (
+            <>
                 {count && count > errorLength ? (
                     <Typography>
                         <FormattedMessage
@@ -98,8 +104,18 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
                     </Typography>
                 ) : null}
                 <KeyValueList data={errors} disableTypography />
-            </Box>
+            </>
         );
+
+        if (enableAlertStyling) {
+            return (
+                <AlertBox short hideIcon severity="error">
+                    {content}
+                </AlertBox>
+            );
+        }
+
+        return <Box>{content}</Box>;
     } else {
         return null;
     }

@@ -25,14 +25,15 @@ export interface UseMassUpdaterProps {
         spec: LiveSpecsExtQueryWithSpec['spec']
     ) => any | Promise<void>;
     generateNewSpecType: (entity: CaptureQuery) => Entity | null;
-    runningMessageID: SharedProgressProps['runningMessageID'];
-    successMessageID: SharedProgressProps['successMessageID'];
+    runningIntlKey: SharedProgressProps['runningIntlKey'];
+    successIntlKey: SharedProgressProps['successIntlKey'];
+    titleIntlKey: SharedProgressProps['titleIntlKey'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.ENTITY_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
-    skippedMessageID?: SharedProgressProps['skippedMessageID'];
+    skippedMessageID?: SharedProgressProps['skippedIntlKey'];
     validateNewSpec?: boolean;
 }
 

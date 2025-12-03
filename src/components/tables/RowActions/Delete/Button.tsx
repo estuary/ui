@@ -39,8 +39,9 @@ function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
                 <UpdateEntities
                     entities={entities}
                     onFinish={onFinish}
-                    successMessageID="common.deleted"
-                    runningMessageID="common.deleting"
+                    successIntlKey="common.deleted"
+                    runningIntlKey="common.deleting"
+                    titleIntlKey="updateEntity.title.delete"
                     generateNewSpec={generator}
                     generateNewSpecType={generator}
                     selectableStoreName={selectableTableStoreName}
