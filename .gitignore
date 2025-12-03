@@ -2,6 +2,7 @@
 
 # local stuff
 /.vscode
+/.claude
 
 # dependencies
 /node_modules

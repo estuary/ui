@@ -1,16 +1,26 @@
 import type { GenerateInvitationProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
-import { useState } from 'react';
+import { ReactNode, useMemo, useRef, useState } from 'react';
 
-import { Button, Grid } from '@mui/material';
+import {
+    Box,
+    Button,
+    Checkbox,
+    Divider,
+    FormControlLabel,
+    Radio,
+    RadioGroup,
+    Typography,
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 import { useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
-import PrefixedName from 'src/components/inputs/PrefixedName';
+import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
+import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
-import NestingWarning from 'src/components/tables/AccessGrants/AccessLinks/Dialog/NestingWarning';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
@@ -21,12 +31,59 @@ import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 // outside of advanced cases.
 const capabilityOptions = ['admin', 'read'];
 const typeOptions = ['single-use', 'multi-use'];
+const INPUT_ID = 'prefixed-name-input';
+
+const RadioOption = ({
+    value,
+    label,
+    isSelected,
+    onClick,
+}: {
+    value: string;
+    label: ReactNode;
+    isSelected: boolean;
+    onClick?: () => void;
+}) => {
+    return (
+        <FormControlLabel
+            value={value}
+            control={
+                <Radio
+                    size="small"
+                    sx={{
+                        '&.MuiRadio-root:hover': {
+                            bgcolor: 'transparent !important',
+                        },
+                    }}
+                />
+            }
+            label={label}
+            componentsProps={{
+                typography: { fontSize: 13, width: '100%' },
+            }}
+            sx={{
+                m: 0,
+                px: 1,
+                border: '1px solid',
+                borderColor: isSelected ? 'primary.main' : 'divider',
+                borderRadius: 3,
+                ...(!isSelected && {
+                    '&:hover': {
+                        backgroundColor: 'action.hover',
+                    },
+                }),
+            }}
+            onClick={onClick}
+        />
+    );
+};
 
 function GenerateInvitation({
     serverError,
     setServerError,
 }: GenerateInvitationProps) {
     const intl = useIntl();
+    const { palette } = useTheme();
 
     const hydrate = useZustandStore<
         SelectableTableStore,
@@ -36,14 +93,22 @@ function GenerateInvitation({
         selectableTableStoreSelectors.query.hydrate
     );
 
-    const [objectRole, setObjectRole] = useState('');
-    const [objectRoleHasErrors, setObjectRoleHasErrors] = useState(false);
+    const {
+        handlers: prefixHandlers,
+        name,
+        nameError,
+        objectRoles,
+        prefix,
+    } = useValidatePrefix({
+        allowBlankName: false,
+        allowEndSlash: true,
+    });
+    const isMultiTenant = useMemo(() => objectRoles?.length > 1, [objectRoles]);
 
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
-
-    const [showNestingWarning, setShowNestingWarning] =
-        useState<boolean>(false);
+    const [accessScope, setAccessScope] = useState<string | null>(null);
+    const subPrefixInputRef = useRef<HTMLInputElement>(null);
 
     const handlers = {
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
@@ -63,6 +128,7 @@ function GenerateInvitation({
         generateInvitation: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
+            const objectRole = prefix + name;
             const processedObject = appendWithForwardSlash(objectRole);
 
             generateGrantDirective(
@@ -86,87 +152,247 @@ function GenerateInvitation({
         },
     };
 
-    const onChange = (value: string, errors: string | null) => {
-        if (serverError) {
-            setServerError(null);
-        }
-
-        setObjectRole(value);
-        setObjectRoleHasErrors(Boolean(errors));
-    };
-
     return (
-        <Grid
-            container
-            spacing={2}
-            sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
+        <Box
+            sx={{
+                mb: 8,
+                display: 'flex',
+                gap: 2,
+                flexDirection: 'column',
+            }}
         >
-            <Grid
-                item
-                xs={12}
-                sx={showNestingWarning ? { mb: 1 } : { display: 'none' }}
-            >
-                <NestingWarning
-                    objectRole={objectRole}
-                    show={showNestingWarning}
-                />
-            </Grid>
-
-            <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
-                <PrefixedName
-                    allowBlankName
-                    allowEndSlash
-                    defaultPrefix
-                    label={intl.formatMessage({
-                        id: 'common.tenant',
-                    })}
-                    onChange={onChange}
-                    onNameChange={(prefixedName) => {
-                        setShowNestingWarning(
-                            Boolean(prefixedName && prefixedName.length > 0)
-                        );
+            <Box sx={{ display: 'flex', gap: 2 }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        minWidth: 180,
                     }}
-                    required
-                    validateOnLoad
-                />
-            </Grid>
+                >
+                    {isMultiTenant ? (
+                        <Box sx={{ pt: 1 }}>
+                            <PrefixSelector
+                                variantString="outlined"
+                                error={false}
+                                label={intl.formatMessage({
+                                    id: 'admin.users.prefixInvitation.label.tenant',
+                                })}
+                                labelId={INPUT_ID}
+                                onChange={prefixHandlers.setPrefix}
+                                options={objectRoles}
+                                value={prefix}
+                            />
+                        </Box>
+                    ) : (
+                        <Box
+                            component="fieldset"
+                            sx={{
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                borderRadius: 3,
+                                p: 1,
+                                pt: 0,
+                            }}
+                        >
+                            <Typography
+                                component="legend"
+                                sx={{
+                                    fontSize: 11,
+                                    ml: 0.5,
+                                    color: 'primary.main',
+                                }}
+                            >
+                                {intl.formatMessage({
+                                    id: 'admin.users.prefixInvitation.label.tenant',
+                                })}
+                            </Typography>
+                            <code
+                                style={{
+                                    padding: '2px 6px',
+                                    fontSize: '12px',
+                                    fontFamily: 'monospace',
+                                }}
+                            >
+                                {prefix}
+                            </code>
+                        </Box>
+                    )}
+                    <AutocompletedField
+                        label={intl.formatMessage({
+                            id: 'admin.users.prefixInvitation.label.capability',
+                        })}
+                        required
+                        options={capabilityOptions}
+                        defaultValue={capabilityOptions[0]}
+                        changeHandler={handlers.setGrantCapability}
+                    />
+                </Box>
 
-            <Grid item xs={4} md={2}>
-                <AutocompletedField
+                <Divider flexItem orientation="vertical" />
+
+                <Box sx={{ flex: 1 }}>
+                    <RadioGroup
+                        sx={{
+                            pt: 1,
+                            gap: 1.5,
+                        }}
+                        value={accessScope}
+                        onChange={(event) => setAccessScope(event.target.value)}
+                    >
+                        <RadioOption
+                            value="full"
+                            isSelected={accessScope === 'full'}
+                            label={
+                                <span>
+                                    {intl.formatMessage({
+                                        id: 'admin.users.prefixInvitation.label.scope.full',
+                                    })}
+                                    <span
+                                        style={{
+                                            fontFamily: 'monospace',
+                                            fontSize: 12,
+                                        }}
+                                    >
+                                        {prefix}
+                                    </span>
+                                </span>
+                            }
+                        />
+                        <RadioOption
+                            value="limited"
+                            isSelected={accessScope === 'limited'}
+                            onClick={() => {
+                                if (
+                                    accessScope !== 'limited' &&
+                                    !hasLength(name)
+                                ) {
+                                    setTimeout(() => {
+                                        subPrefixInputRef.current?.focus();
+                                    }, 0);
+                                }
+                            }}
+                            label={
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: 0.5,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 1,
+                                        }}
+                                    >
+                                        <span>
+                                            {intl.formatMessage({
+                                                id: 'admin.users.prefixInvitation.label.scope.limited',
+                                            })}
+                                        </span>
+                                        <Box
+                                            sx={{
+                                                display: 'inline-flex',
+                                                py: 0.5,
+                                                ml: -0.3,
+                                                flex: 1,
+                                            }}
+                                        >
+                                            <Typography
+                                                component="span"
+                                                sx={{
+                                                    fontFamily: 'monospace',
+                                                    fontSize: 12,
+                                                }}
+                                            >
+                                                {prefix}
+                                            </Typography>
+                                            <input
+                                                ref={subPrefixInputRef}
+                                                value={name}
+                                                placeholder="example"
+                                                disabled={
+                                                    accessScope !== 'limited'
+                                                }
+                                                onChange={(event) => {
+                                                    prefixHandlers.setName(
+                                                        event.target.value
+                                                    );
+                                                }}
+                                                style={{
+                                                    border: 'none',
+                                                    outline: 'none',
+                                                    fontFamily: 'monospace',
+                                                    fontSize: 12,
+                                                    backgroundColor:
+                                                        'transparent',
+                                                    width: '100%',
+                                                    color:
+                                                        accessScope !==
+                                                        'limited'
+                                                            ? palette.text
+                                                                  .disabled
+                                                            : nameError &&
+                                                                hasLength(name)
+                                                              ? palette.error
+                                                                    .main
+                                                              : palette.text
+                                                                    .primary,
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            }
+                        />
+                    </RadioGroup>
+                </Box>
+            </Box>
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginLeft: 'auto',
+                    gap: 1,
+                }}
+            >
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={reusability === 'multi-use'}
+                            onChange={(event) => {
+                                handlers.setGrantReusability(
+                                    event,
+                                    event.target.checked
+                                        ? 'multi-use'
+                                        : 'single-use'
+                                );
+                            }}
+                        />
+                    }
                     label={intl.formatMessage({
-                        id: 'admin.users.prefixInvitation.label.capability',
+                        id: 'admin.users.prefixInvitation.label.reusable',
                     })}
-                    required
-                    options={capabilityOptions}
-                    defaultValue={capabilityOptions[0]}
-                    changeHandler={handlers.setGrantCapability}
+                    componentsProps={{
+                        typography: { fontSize: 12 },
+                    }}
                 />
-            </Grid>
-
-            <Grid item xs={4} md={2}>
-                <AutocompletedField
-                    label={intl.formatMessage({
-                        id: 'admin.users.prefixInvitation.label.type',
-                    })}
-                    required
-                    options={typeOptions}
-                    defaultValue={typeOptions[0]}
-                    changeHandler={handlers.setGrantReusability}
-                />
-            </Grid>
-
-            <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
                 <Button
-                    disabled={objectRoleHasErrors}
+                    disabled={
+                        accessScope === null ||
+                        (accessScope === 'limited' &&
+                            (hasLength(nameError) || !hasLength(name)))
+                    }
                     onClick={handlers.generateInvitation}
-                    sx={{ flexGrow: 1 }}
                 >
                     {intl.formatMessage({
                         id: 'admin.users.prefixInvitation.cta.generateLink',
                     })}
                 </Button>
-            </Grid>
-        </Grid>
+            </Box>
+        </Box>
     );
 }
 
