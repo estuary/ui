@@ -1,9 +1,9 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type {
     BaseDialogProps,
-    BaseProjectionProps,
+    BaseRedactFieldProps,
 } from 'src/components/projections/types';
-import type { RedactionStrategy } from 'src/types/schemaModels';
+import type { RedactionStrategy_Schema } from 'src/types/schemaModels';
 
 import { useState } from 'react';
 
@@ -24,31 +24,29 @@ import {
 import { Check } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import SaveButton from 'src/components/projections/Redact/SaveButton';
 import { diminishedTextColor } from 'src/context/Theme';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
+import { translateRedactionStrategy } from 'src/utils/schema-utils';
 
-const options: RedactionStrategy[] = ['block', 'sha256'];
+const options: RedactionStrategy_Schema[] = ['block', 'sha256'];
 
 const RedactFieldDialog = ({
     field,
     open,
+    pointer,
     setOpen,
-}: BaseDialogProps & BaseProjectionProps) => {
+    strategy,
+}: BaseDialogProps & BaseRedactFieldProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
     const currentCollection = useBinding_currentCollection();
 
-    const existingRedactionStrategy = useBindingsEditorStore(
-        (state) =>
-            state.collectionData?.spec.schema?.properties?.[field]?.redact
-                ?.strategy ?? null
-    );
-
     const [redactionStrategy, setRedactionStrategy] =
-        useState<RedactionStrategy | null>(existingRedactionStrategy);
+        useState<RedactionStrategy_Schema | null>(
+            translateRedactionStrategy(strategy)
+        );
 
     return (
         <Dialog maxWidth="sm" open={open} style={{ minWidth: 500 }}>
@@ -176,6 +174,7 @@ const RedactFieldDialog = ({
 
                 <SaveButton
                     field={field}
+                    pointer={pointer}
                     setOpen={setOpen}
                     strategy={redactionStrategy}
                 />

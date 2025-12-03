@@ -1,7 +1,4 @@
-import type {
-    BaseButtonProps,
-    BaseProjectionProps,
-} from 'src/components/projections/types';
+import type { BaseRedactFieldProps } from 'src/components/projections/types';
 
 import { useState } from 'react';
 
@@ -14,7 +11,9 @@ import RedactFieldDialog from 'src/components/projections/Redact/Dialog';
 const RedactFieldButton = ({
     disabled,
     field,
-}: BaseButtonProps & BaseProjectionProps) => {
+    pointer,
+    strategy,
+}: BaseRedactFieldProps) => {
     const intl = useIntl();
 
     const [open, setOpen] = useState(false);
@@ -36,7 +35,13 @@ const RedactFieldButton = ({
                 {intl.formatMessage({ id: 'cta.redact' })}
             </Button>
 
-            <RedactFieldDialog field={field} open={open} setOpen={setOpen} />
+            <RedactFieldDialog
+                field={field}
+                open={open}
+                pointer={pointer}
+                setOpen={setOpen}
+                strategy={strategy}
+            />
         </>
     );
 };

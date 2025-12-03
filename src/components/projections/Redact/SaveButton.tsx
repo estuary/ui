@@ -11,7 +11,7 @@ import { useRedactionAnnotation } from 'src/hooks/projections/useRedactionAnnota
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
-const SaveButton = ({ field, setOpen, strategy }: RedactSaveButtonProps) => {
+const SaveButton = ({ pointer, setOpen, strategy }: RedactSaveButtonProps) => {
     const intl = useIntl();
 
     const { updateRedactionAnnotation } = useRedactionAnnotation();
@@ -34,7 +34,7 @@ const SaveButton = ({ field, setOpen, strategy }: RedactSaveButtonProps) => {
             onClick={() => {
                 updateRedactionAnnotation(
                     existingSchemaProperties,
-                    field,
+                    pointer,
                     strategy
                 ).then(
                     (response) => {

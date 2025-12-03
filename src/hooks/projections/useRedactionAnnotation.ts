@@ -1,12 +1,12 @@
 import type { Schema } from 'src/types';
 import type {
     CollectionSchemaProperties,
-    RedactionStrategy,
+    RedactionStrategy_Schema,
 } from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
 
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
@@ -16,7 +16,7 @@ import {
 } from 'src/components/editor/Store/hooks';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { hasOwnProperty } from 'src/utils/misc-utils';
-import { hasWriteSchema } from 'src/utils/schema-utils';
+import { getSchemaProperties, hasWriteSchema } from 'src/utils/schema-utils';
 
 export const useRedactionAnnotation = () => {
     const currentCollection = useBinding_currentCollection();
@@ -31,8 +31,8 @@ export const useRedactionAnnotation = () => {
     const updateRedactionAnnotation = useCallback(
         async (
             existingSchemaProperties: CollectionSchemaProperties | null,
-            field: string,
-            strategy: RedactionStrategy | null
+            pointer: string,
+            strategy: RedactionStrategy_Schema | null
         ) => {
             const schemaProp = hasWriteSchema(collectionSpec)
                 ? 'writeSchema'
@@ -51,41 +51,19 @@ export const useRedactionAnnotation = () => {
 
             const spec: Schema = cloneDeep(collectionSpec);
 
-            const existingFieldAnnotations =
-                existingSchemaProperties?.[field] ?? {};
-
-            const existingFieldAnnotationKeys = Object.keys(
-                existingFieldAnnotations
+            const existingFieldAnnotations = getSchemaProperties(
+                existingSchemaProperties,
+                pointer
             );
 
             if (strategy) {
                 spec[schemaProp].properties = {
                     ...existingSchemaProperties,
-                    [field]: {
+                    ['temp_key']: {
                         ...existingFieldAnnotations,
                         redact: { strategy },
                     },
                 };
-            } else if (
-                existingFieldAnnotationKeys.length === 1 &&
-                existingFieldAnnotationKeys.includes('redact')
-            ) {
-                // Remove the annotation stanza for this field when the redaction strategy is unset
-                // and only the redact annotation was previously defined.
-                spec[schemaProp].properties = omit(
-                    spec[schemaProp].properties,
-                    field
-                );
-            } else if (
-                existingFieldAnnotationKeys.length > 1 &&
-                existingFieldAnnotationKeys.includes('redact')
-            ) {
-                // Remove the redact annotation for this field when the redaction strategy is unset
-                // and additional annotations exist for this field.
-                spec[schemaProp].properties[field] = omit(
-                    spec[schemaProp].properties[field],
-                    'redact'
-                );
             } else {
                 return Promise.resolve(undefined);
             }

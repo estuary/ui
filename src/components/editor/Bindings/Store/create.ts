@@ -16,7 +16,7 @@ import { getDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogName } from 'src/api/liveSpecsExt';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { BindingsEditorStoreNames } from 'src/stores/names';
-import { hasLength, hasOwnProperty } from 'src/utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import {
     filterSkimProjectionResponse,
     getSchemaForProjectionModel,
@@ -95,7 +95,6 @@ const getInitialMiscData = (): Pick<
     | 'collectionData'
     | 'collectionInitializationAlert'
     | 'collectionInitializationDone'
-    | 'schemaProperties'
     | 'schemaUpdateErrored'
     | 'schemaUpdated'
     | 'schemaUpdating'
@@ -113,7 +112,6 @@ const getInitialMiscData = (): Pick<
     collectionData: null,
     collectionInitializationAlert: null,
     collectionInitializationDone: false,
-    schemaProperties: {},
     schemaUpdateErrored: false,
     schemaUpdated: true,
     schemaUpdating: false,
@@ -149,13 +147,7 @@ const getInitialState = (
 
     setCollectionData: (value) => {
         set(
-            (state) => {
-                if (value && hasOwnProperty(value.spec, 'properties')) {
-                    state.schemaProperties = value.spec.properties ?? {};
-                }
-
-                return { ...state, collectionData: value };
-            },
+            (state) => ({ ...state, collectionData: value }),
             false,
             'Collection Data Set'
         );

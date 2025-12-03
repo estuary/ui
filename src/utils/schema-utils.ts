@@ -1,6 +1,13 @@
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
 import type { Schema } from 'src/types';
-import type { BuiltProjection } from 'src/types/schemaModels';
+import type {
+    BuiltProjection,
+    CollectionSchema,
+    CollectionSchemaAnnotations,
+    RedactionStrategy_Projection,
+    RedactionStrategy_Schema,
+} from 'src/types/schemaModels';
+import type { WithRequiredProperty } from 'src/types/utils';
 import type {
     BasicCollectionDef,
     SkimProjectionResponse,
@@ -8,6 +15,8 @@ import type {
 } from 'src/types/wasm';
 
 import { isEmpty, isPlainObject } from 'lodash';
+
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
 // These are inserted by the server and never would make sense as keys
 //  Make sure you lowercase these
@@ -202,4 +211,78 @@ export {
     hasWriteSchema,
     moveUpdatedSchemaToReadSchema,
     reduceBuiltProjections,
+};
+
+export const isCollectionSchemaWithProperties = (
+    value: WithRequiredProperty<CollectionSchema, 'properties'>
+): value is WithRequiredProperty<CollectionSchema, 'properties'> =>
+    'properties' in value;
+
+interface PointerSegment {
+    id: string;
+    index: number;
+}
+
+const extractSchemaProperties = (
+    schema: CollectionSchemaAnnotations,
+    pointerSegments: PointerSegment[],
+    targetSegment: PointerSegment
+): { properties: CollectionSchemaAnnotations; segment: PointerSegment } => {
+    if (
+        schema?.properties &&
+        targetSegment.index !== pointerSegments.length - 1
+    ) {
+        const nestedSchema = hasOwnProperty(schema.properties, targetSegment.id)
+            ? schema.properties[targetSegment.id]
+            : {};
+
+        extractSchemaProperties(
+            nestedSchema,
+            pointerSegments,
+            pointerSegments[targetSegment.index + 1]
+        );
+    }
+
+    return { properties: schema?.properties ?? {}, segment: targetSegment };
+};
+
+export const getSchemaProperties = (
+    schema: any,
+    pointer: string | undefined
+): CollectionSchemaAnnotations => {
+    if (!pointer || !isCollectionSchemaWithProperties(schema)) {
+        return {};
+    }
+
+    const pointerSegments: PointerSegment[] = pointer
+        .split('/')
+        .map((id, index) => ({ id, index }));
+
+    const { properties, segment } = extractSchemaProperties(
+        schema,
+        pointerSegments,
+        pointerSegments[0]
+    );
+
+    console.log('>>> response', { properties, segment });
+
+    if (segment.index !== pointerSegments.length - 1) {
+        console.log('>>> getSchemaProperties ERROR');
+        return {};
+    }
+
+    return properties;
+};
+
+export const translateRedactionStrategy = (
+    value: RedactionStrategy_Projection | null | undefined
+): RedactionStrategy_Schema | null => {
+    switch (value) {
+        case 'REDACT_BLOCK':
+            return 'block';
+        case 'REDACT_SHA256':
+            return 'sha256';
+        default:
+            return null;
+    }
 };

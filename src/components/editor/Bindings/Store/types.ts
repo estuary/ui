@@ -1,17 +1,12 @@
 import type { AlertColor } from '@mui/material';
 import type { CollectionData } from 'src/components/editor/Bindings/types';
 import type { IncompatibleCollections } from 'src/components/shared/Entity/IncompatibleCollections/types';
-import type {
-    BuiltProjection,
-    CollectionSchemaProperties,
-} from 'src/types/schemaModels';
+import type { BuiltProjection } from 'src/types/schemaModels';
 import type { CollectionDef } from 'src/types/wasm';
 
 export interface BindingsEditorState {
     collectionData: CollectionData | null | undefined;
     setCollectionData: (value: BindingsEditorState['collectionData']) => void;
-
-    schemaProperties: CollectionSchemaProperties;
 
     collectionInitializationDone: boolean;
     setCollectionInitializationDone: (

@@ -9,6 +9,7 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 export const ProjectionActions = ({
     field,
     pointer,
+    redactionStrategy,
 }: ProjectionActionsProps) => {
     const formActive = useFormStateStore_isActive();
 
@@ -21,7 +22,14 @@ export const ProjectionActions = ({
                     pointer={pointer}
                 />
 
-                <RedactFieldButton disabled={formActive} field={field} />
+                {pointer ? (
+                    <RedactFieldButton
+                        disabled={formActive}
+                        field={field}
+                        pointer={pointer}
+                        strategy={redactionStrategy}
+                    />
+                ) : null}
             </Stack>
         </TableCell>
     );

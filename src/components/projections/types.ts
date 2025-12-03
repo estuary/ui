@@ -1,6 +1,10 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
-import type { RedactionStrategy } from 'src/types/schemaModels';
+import type {
+    RedactionStrategy_Projection,
+    RedactionStrategy_Schema,
+} from 'src/types/schemaModels';
+import type { WithRequiredProperty } from 'src/types/utils';
 
 export interface BaseButtonProps {
     disabled?: boolean;
@@ -14,6 +18,12 @@ export interface BaseDialogProps {
 export interface BaseProjectionProps {
     field: string;
     pointer?: string;
+}
+
+export interface BaseRedactFieldProps
+    extends BaseButtonProps,
+        WithRequiredProperty<BaseProjectionProps, 'pointer'> {
+    strategy: RedactionStrategy_Projection | undefined;
 }
 
 export interface FieldEditorProps {
@@ -33,7 +43,8 @@ export interface ProjectionListProps {
     maxChips?: number;
 }
 
-export interface RedactSaveButtonProps extends BaseProjectionProps {
+export interface RedactSaveButtonProps
+    extends WithRequiredProperty<BaseProjectionProps, 'pointer'> {
     setOpen: Dispatch<SetStateAction<boolean>>;
-    strategy: RedactionStrategy | null;
+    strategy: RedactionStrategy_Schema | null;
 }
