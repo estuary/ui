@@ -1,8 +1,5 @@
 import type { Schema } from 'src/types';
-import type {
-    CollectionSchemaProperties,
-    RedactionStrategy_Schema,
-} from 'src/types/schemaModels';
+import type { RedactionStrategy_Schema } from 'src/types/schemaModels';
 
 import { useCallback } from 'react';
 
@@ -29,11 +26,7 @@ export const useRedactionAnnotation = () => {
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     const updateRedactionAnnotation = useCallback(
-        async (
-            existingSchemaProperties: CollectionSchemaProperties | null,
-            pointer: string,
-            strategy: RedactionStrategy_Schema | null
-        ) => {
+        async (pointer: string, strategy: RedactionStrategy_Schema | null) => {
             const schemaProp = hasWriteSchema(collectionSpec)
                 ? 'writeSchema'
                 : hasOwnProperty(collectionSpec, 'schema')

@@ -1,5 +1,4 @@
 import type { RedactSaveButtonProps } from 'src/components/projections/types';
-import type { CollectionSchemaProperties } from 'src/types/schemaModels';
 
 import { Button } from '@mui/material';
 
@@ -18,10 +17,6 @@ const SaveButton = ({ pointer, setOpen, strategy }: RedactSaveButtonProps) => {
 
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
-    const existingSchemaProperties: CollectionSchemaProperties | null =
-        useBindingsEditorStore(
-            (state) => state.collectionData?.spec.schema?.properties ?? null
-        );
     const populateSkimProjections = useBindingsEditorStore(
         (state) => state.populateSkimProjectionResponse
     );
@@ -32,11 +27,7 @@ const SaveButton = ({ pointer, setOpen, strategy }: RedactSaveButtonProps) => {
     return (
         <Button
             onClick={() => {
-                updateRedactionAnnotation(
-                    existingSchemaProperties,
-                    pointer,
-                    strategy
-                ).then(
+                updateRedactionAnnotation(pointer, strategy).then(
                     (response) => {
                         if (mutateDraftSpecs) {
                             mutateDraftSpecs();
