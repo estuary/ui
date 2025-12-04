@@ -21,6 +21,7 @@ const useShardsList = (catalogNames: string[]) => {
         string,
         TaskAuthorizationResponse[],
     ]) => {
+        console.log('useShardsList fetcher fired >>', { session });
         // We check this in the swrKey memo so this should never actually happen
         if (!session) {
             return { shards: [] };
@@ -41,6 +42,8 @@ const useShardsList = (catalogNames: string[]) => {
         });
 
         const shardResponses = await Promise.all(shardPromises);
+
+        console.log('useShardsList fetcher response >>', { shardResponses });
 
         const response: { shards: Shard[] } = { shards: [] };
 

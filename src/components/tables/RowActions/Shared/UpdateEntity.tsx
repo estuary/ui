@@ -33,7 +33,7 @@ export interface UpdateEntityProps {
     runningIntlKey: SharedProgressProps['runningIntlKey'];
     titleIntlKey: SharedProgressProps['titleIntlKey'];
     successIntlKey: SharedProgressProps['successIntlKey'];
-    skippedMessageID?: SharedProgressProps['skippedIntlKey'];
+    skippedIntlKey?: SharedProgressProps['skippedIntlKey'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
@@ -48,7 +48,7 @@ function UpdateEntity({
     entity,
     onFinish,
     runningIntlKey,
-    skippedMessageID,
+    skippedIntlKey,
     successIntlKey,
     selectableStoreName,
     titleIntlKey,
@@ -121,9 +121,9 @@ function UpdateEntity({
             const newSpec = generateNewSpec(liveSpecResponse.data.spec);
             if (validateNewSpec && !newSpec) {
                 // If we have a skipped message ID set it to the error
-                if (skippedMessageID) {
+                if (skippedIntlKey) {
                     setError({
-                        message: skippedMessageID,
+                        message: skippedIntlKey,
                     });
                 }
                 return done(ProgressStates.SKIPPED, {});

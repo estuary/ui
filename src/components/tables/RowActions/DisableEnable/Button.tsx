@@ -1,9 +1,9 @@
 import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/DisableEnable/types';
 
 import DisableEnableConfirmation from 'src/components/tables/RowActions/DisableEnable/Confirmation';
+import RowActionButton from 'src/components/tables/RowActions/Shared/Button';
 import RowActionConfirmation from 'src/components/tables/RowActions/Shared/Confirmation';
-import GroupedRowActionButton from 'src/components/tables/RowActions/Shared/GroupedButton';
-import UpdateEntities from 'src/components/tables/RowActions/Shared/UpdateEntities';
+import UpdateEntity from 'src/components/tables/RowActions/Shared/UpdateEntity';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { generateDisabledSpec } from 'src/utils/entity-utils';
 
@@ -26,7 +26,7 @@ function DisableEnableButton({
         selectableTableStoreName === SelectTableStoreNames.COLLECTION;
 
     return (
-        <GroupedRowActionButton
+        <RowActionButton
             renderConfirmationMessage={(selectedNames) => {
                 return (
                     <RowActionConfirmation
@@ -43,12 +43,13 @@ function DisableEnableButton({
                     />
                 );
             }}
-            renderProgress={(items, onFinish) => (
-                <UpdateEntities
-                    entities={items}
+            renderProgress={(item, index, onFinish) => (
+                <UpdateEntity
+                    key={`Item-disable_enable-${index}`}
+                    entity={item}
                     onFinish={onFinish}
                     validateNewSpec
-                    skippedMessageID={messages.skipped}
+                    skippedIntlKey={messages.skipped}
                     successIntlKey={messages.success}
                     runningIntlKey={messages.running}
                     titleIntlKey={messages.title}

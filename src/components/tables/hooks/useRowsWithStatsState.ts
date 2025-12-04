@@ -6,7 +6,9 @@ import type {
 import type { SelectTableStoreNames } from 'src/stores/names';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+
+import { useShallow } from 'zustand/react/shallow';
 
 import { useZustandStore } from 'src/context/Zustand/provider';
 import useShardHydration from 'src/hooks/shards/useShardHydration';
@@ -21,6 +23,7 @@ function useRowsWithStatsState(
     selectTableStoreName: SelectTableStoreNames,
     data: Data
 ) {
+    const previousCount = useRef<null | Number>(null);
     const catalogNames = useMemo(
         () =>
             data
@@ -46,7 +49,7 @@ function useRowsWithStatsState(
         SelectableTableStore['successfulTransformations']
     >(
         selectTableStoreName,
-        selectableTableStoreSelectors.successfulTransformations.get
+        useShallow(selectableTableStoreSelectors.successfulTransformations.get)
     );
 
     const stats = useZustandStore<
@@ -60,6 +63,10 @@ function useRowsWithStatsState(
     >(selectTableStoreName, selectableTableStoreSelectors.stats.failed);
 
     useEffect(() => {
+        console.log('successfulTransformations = ', successfulTransformations);
+        console.log('previousCount.current = ', previousCount.current);
+
+        previousCount.current = successfulTransformations;
         mutateShardsList().catch(() => {});
     }, [mutateShardsList, successfulTransformations]);
 
