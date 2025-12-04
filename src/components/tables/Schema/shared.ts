@@ -38,3 +38,5 @@ export const columns: TableColumns[] = [
 ];
 
 export const ROW_TYPE_STRING = 'string';
+
+export const syntheticLocations = ['/_meta/flow_truncated', '/_meta/uuid'];

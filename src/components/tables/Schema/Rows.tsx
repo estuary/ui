@@ -14,6 +14,7 @@ import { ProjectionActions } from 'src/components/tables/cells/projections/Proje
 import {
     optionalColumnIntlKeys,
     ROW_TYPE_STRING,
+    syntheticLocations,
 } from 'src/components/tables/Schema/shared';
 import {
     doubleElevationHoverBackground,
@@ -57,7 +58,9 @@ function Row({ columns, row }: RowProps) {
                 },
             }}
         >
-            {row.inference?.redact ? (
+            {row.inference?.redact &&
+            row?.ptr &&
+            !syntheticLocations.includes(row.ptr) ? (
                 <TableCell>
                     <Stack style={{ alignItems: 'center' }}>
                         <Lock />
