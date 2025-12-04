@@ -77,7 +77,7 @@ function Row({ columns, row }: RowProps) {
             }}
         >
             {redacted ? (
-                <TableCell>
+                <TableCell style={{ paddingRight: 0 }}>
                     <Stack style={{ alignItems: 'center' }}>
                         <Tooltip
                             placement="bottom-start"
