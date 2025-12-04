@@ -15,7 +15,9 @@ const SaveButton = ({ pointer, setOpen, strategy }: RedactSaveButtonProps) => {
 
     const { updateRedactionAnnotation } = useRedactionAnnotation();
 
-    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
+    const mutateDraftSpecs = useEditorStore_queryResponse_mutate({
+        localScope: true,
+    });
 
     const populateSkimProjections = useBindingsEditorStore(
         (state) => state.populateSkimProjectionResponse
