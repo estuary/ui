@@ -228,14 +228,6 @@ const templateSchemaProperties = (
     pointerSegments: PointerSegment[],
     targetSegment: PointerSegment
 ): void => {
-    console.log('>>> arguments', {
-        schema,
-        keyRoot,
-        targetProperty,
-        pointerSegments,
-        targetSegment,
-    });
-
     let nextKeyRoot = `${keyRoot}.${targetSegment.id}`;
 
     if (!has(schema, nextKeyRoot)) {
@@ -259,8 +251,6 @@ const templateSchemaProperties = (
 
         return;
     }
-
-    console.log('>>> final key', `${nextKeyRoot}.${targetProperty.id}`);
 
     set(schema, `${nextKeyRoot}.${targetProperty.id}`, targetProperty.value);
 };
