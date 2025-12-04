@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { Box, StyledEngineProvider } from '@mui/material';
 
-import { materialCells } from '@jsonforms/material-renderers';
 import { JsonForms } from '@jsonforms/react';
 
 import { isEmpty } from 'lodash';
@@ -11,10 +10,8 @@ import { FormattedMessage } from 'react-intl';
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
 import { jsonFormsPadding } from 'src/context/Theme';
-import { customAjv } from 'src/services/ajv';
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
-import defaultRenderers from 'src/services/jsonforms/defaultRenderers';
-import { defaultOptions } from 'src/services/jsonforms/shared';
+import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
 import {
     useEndpointConfig_endpointCanBeEmpty,
     useEndpointConfigStore_endpointConfig_data,
@@ -68,16 +65,13 @@ function EndpointConfigForm({ readOnly }: Props) {
                 }}
             >
                 <JsonForms
+                    {...jsonFormsDefaults}
                     schema={endpointSchema}
                     uischema={categoryLikeSchema}
                     data={endpointConfig}
-                    renderers={defaultRenderers}
-                    cells={materialCells}
-                    config={defaultOptions}
                     readonly={readOnly || isActive}
                     validationMode="ValidateAndShow"
                     onChange={setEndpointConfig}
-                    ajv={customAjv}
                 />
                 {endpointCanBeEmpty ? (
                     <AlertBox short severity="info">
