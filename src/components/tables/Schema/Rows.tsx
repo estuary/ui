@@ -3,10 +3,18 @@ import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { useMemo } from 'react';
 
-import { Box, Stack, TableCell, TableRow } from '@mui/material';
+import {
+    Box,
+    Stack,
+    TableCell,
+    TableRow,
+    Tooltip,
+    useTheme,
+} from '@mui/material';
 
 import { Lock } from 'iconoir-react';
 import { orderBy } from 'lodash';
+import { useIntl } from 'react-intl';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
@@ -17,6 +25,8 @@ import {
     syntheticLocations,
 } from 'src/components/tables/Schema/shared';
 import {
+    defaultOutlineColor,
+    diminishedTextColor,
     doubleElevationHoverBackground,
     getStickyTableCell,
 } from 'src/context/Theme';
@@ -25,6 +35,9 @@ import { basicSort_string } from 'src/utils/misc-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ columns, row }: RowProps) {
+    const intl = useIntl();
+    const theme = useTheme();
+
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
@@ -48,22 +61,36 @@ function Row({ columns, row }: RowProps) {
         isColumnVisible(columns, optionalColumnIntlKeys.details);
 
     const fieldCannotExist = Boolean(row.inference.exists === 'CANNOT');
+    const redacted = Boolean(
+        row.inference?.redact &&
+            row?.ptr &&
+            !syntheticLocations.includes(row.ptr)
+    );
 
     return (
         <TableRow
             sx={{
                 '&:hover td': {
-                    background: (theme) =>
+                    background:
                         doubleElevationHoverBackground[theme.palette.mode],
                 },
             }}
         >
-            {row.inference?.redact &&
-            row?.ptr &&
-            !syntheticLocations.includes(row.ptr) ? (
+            {redacted ? (
                 <TableCell>
                     <Stack style={{ alignItems: 'center' }}>
-                        <Lock />
+                        <Tooltip
+                            placement="bottom-start"
+                            title={
+                                redacted
+                                    ? intl.formatMessage({
+                                          id: 'projection.tooltip.locationRedacted',
+                                      })
+                                    : ''
+                            }
+                        >
+                            <Lock />
+                        </Tooltip>
                     </Stack>
                 </TableCell>
             ) : (
@@ -83,7 +110,32 @@ function Row({ columns, row }: RowProps) {
             )}
 
             <TableCell>
-                <code>{row.ptr}</code>
+                <Tooltip
+                    placement="bottom-start"
+                    title={
+                        redacted
+                            ? intl.formatMessage({
+                                  id: 'projection.tooltip.locationRedacted',
+                              })
+                            : ''
+                    }
+                >
+                    <code
+                        style={
+                            redacted
+                                ? {
+                                      borderBottom: `1px dashed ${defaultOutlineColor[theme.palette.mode]}`,
+                                      color: diminishedTextColor[
+                                          theme.palette.mode
+                                      ],
+                                      paddingBottom: 2,
+                                  }
+                                : undefined
+                        }
+                    >
+                        {row.ptr}
+                    </code>
+                </Tooltip>
             </TableCell>
 
             <ChipListCell

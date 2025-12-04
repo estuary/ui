@@ -492,6 +492,7 @@ export const Workflows: Record<string, string> = {
     'projection.option.sha256.description': `This is a placeholder for an explanation of the SHA256 redaction strategy.`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
     'projection.tooltip.cannotExist': `The location cannot exist. It may be outside of permitted array bounds, is a disallowed property, or has an impossible type.`,
+    'projection.tooltip.locationRedacted': `This location is redacted. All corresponding fields will not be captured.`,
 
     'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
     'schemaManagement.options.manual.label': `Manually manage schemas`,
