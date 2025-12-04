@@ -16,7 +16,7 @@ import {
 } from 'src/components/editor/Store/hooks';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { hasOwnProperty } from 'src/utils/misc-utils';
-import { getSchemaProperties, hasWriteSchema } from 'src/utils/schema-utils';
+import { hasWriteSchema, setSchemaProperties } from 'src/utils/schema-utils';
 
 export const useRedactionAnnotation = () => {
     const currentCollection = useBinding_currentCollection();
@@ -51,19 +51,11 @@ export const useRedactionAnnotation = () => {
 
             const spec: Schema = cloneDeep(collectionSpec);
 
-            const existingFieldAnnotations = getSchemaProperties(
-                existingSchemaProperties,
-                pointer
-            );
-
             if (strategy) {
-                spec[schemaProp].properties = {
-                    ...existingSchemaProperties,
-                    ['temp_key']: {
-                        ...existingFieldAnnotations,
-                        redact: { strategy },
-                    },
-                };
+                setSchemaProperties(spec[schemaProp], pointer, {
+                    id: 'redact',
+                    value: { strategy },
+                });
             } else {
                 return Promise.resolve(undefined);
             }

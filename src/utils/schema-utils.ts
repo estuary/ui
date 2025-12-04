@@ -14,9 +14,7 @@ import type {
     SplitCollectionDef,
 } from 'src/types/wasm';
 
-import { isEmpty, isPlainObject } from 'lodash';
-
-import { hasOwnProperty } from 'src/utils/misc-utils';
+import { has, isEmpty, isPlainObject, set } from 'lodash';
 
 // These are inserted by the server and never would make sense as keys
 //  Make sure you lowercase these
@@ -223,55 +221,73 @@ interface PointerSegment {
     index: number;
 }
 
-const extractSchemaProperties = (
+const templateSchemaProperties = (
     schema: CollectionSchemaAnnotations,
+    keyRoot: string,
+    targetProperty: { id: string; value: object },
     pointerSegments: PointerSegment[],
     targetSegment: PointerSegment
-): { properties: CollectionSchemaAnnotations; segment: PointerSegment } => {
-    if (
-        schema?.properties &&
-        targetSegment.index !== pointerSegments.length - 1
-    ) {
-        const nestedSchema = hasOwnProperty(schema.properties, targetSegment.id)
-            ? schema.properties[targetSegment.id]
-            : {};
+): void => {
+    console.log('>>> arguments', {
+        schema,
+        keyRoot,
+        targetProperty,
+        pointerSegments,
+        targetSegment,
+    });
 
-        extractSchemaProperties(
-            nestedSchema,
+    let nextKeyRoot = `${keyRoot}.${targetSegment.id}`;
+
+    if (!has(schema, nextKeyRoot)) {
+        set(schema, nextKeyRoot, {});
+    }
+
+    if (targetSegment.index !== pointerSegments.length - 1) {
+        nextKeyRoot = `${nextKeyRoot}.properties`;
+
+        if (!has(schema, nextKeyRoot)) {
+            set(schema, nextKeyRoot, {});
+        }
+
+        templateSchemaProperties(
+            schema,
+            nextKeyRoot,
+            targetProperty,
             pointerSegments,
             pointerSegments[targetSegment.index + 1]
         );
+
+        return;
     }
 
-    return { properties: schema?.properties ?? {}, segment: targetSegment };
+    console.log('>>> final key', `${nextKeyRoot}.${targetProperty.id}`);
+
+    set(schema, `${nextKeyRoot}.${targetProperty.id}`, targetProperty.value);
 };
 
-export const getSchemaProperties = (
+export const setSchemaProperties = (
     schema: any,
-    pointer: string | undefined
-): CollectionSchemaAnnotations => {
-    if (!pointer || !isCollectionSchemaWithProperties(schema)) {
-        return {};
+    pointer: string | undefined,
+    targetProperty: { id: string; value: object }
+): void => {
+    if (!pointer) {
+        return;
     }
 
     const pointerSegments: PointerSegment[] = pointer
         .split('/')
+        .filter((id) => id.length !== 0)
         .map((id, index) => ({ id, index }));
 
-    const { properties, segment } = extractSchemaProperties(
+    schema.properties ??= {};
+
+    templateSchemaProperties(
         schema,
+        'properties',
+        targetProperty,
         pointerSegments,
         pointerSegments[0]
     );
-
-    console.log('>>> response', { properties, segment });
-
-    if (segment.index !== pointerSegments.length - 1) {
-        console.log('>>> getSchemaProperties ERROR');
-        return {};
-    }
-
-    return properties;
 };
 
 export const translateRedactionStrategy = (
