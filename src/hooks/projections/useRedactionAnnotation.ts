@@ -44,14 +44,10 @@ export const useRedactionAnnotation = () => {
 
             const spec: Schema = cloneDeep(collectionSpec);
 
-            if (strategy) {
-                setSchemaProperties(spec[schemaProp], pointer, {
-                    id: 'redact',
-                    value: { strategy },
-                });
-            } else {
-                return Promise.resolve(undefined);
-            }
+            setSchemaProperties(spec[schemaProp], pointer, {
+                id: 'redact',
+                value: strategy ? { strategy } : undefined,
+            });
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
