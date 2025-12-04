@@ -48,11 +48,20 @@ const SaveButton = ({ pointer, setOpen, strategy }: RedactSaveButtonProps) => {
 
                         logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
                             operation: 'redact',
+                            pointer,
+                            strategy,
                         });
 
                         setOpen(false);
                     },
-                    () => {}
+                    () => {
+                        logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                            errored: true,
+                            operation: 'redact',
+                            pointer,
+                            strategy,
+                        });
+                    }
                 );
             }}
             variant="outlined"
