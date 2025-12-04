@@ -21,13 +21,9 @@ You need to update `~/.npmrc` with the following:
 
 [Github docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token).
 
-### npm ERR! code EINTEGRITY for `data-plane-gateway`
+### `data-plane-gateway` is outdated
 
-Every so often we need to reinstall the data plane stuff to update the integrity with the following:
-
-```
-npm run installDataPlane
-```
+Please see `__inline-deps__/README.md` for instructions
 
 ### Why don't I see logs locally?
 
@@ -57,11 +53,11 @@ This will run a build and then start previewing it. When running as `preview` yo
 
 # Stuff we use
 
--   [TypeScript](https://github.com/microsoft/TypeScript) for code
--   [MUI](https://github.com/mui/material-ui) for components
--   [JSON Forms](https://github.com/eclipsesource/jsonforms) for forms
--   [Apache ECharts](https://github.com/apache/echarts) for charts
--   [Zustand](https://github.com/pmndrs/zustand) for local state
--   [Supabase](https://github.com/supabase) for server calls
--   [SWR](https://github.com/vercel/swr) for server calls
--   [Vite](https://github.com/vitejs) for build
+- [TypeScript](https://github.com/microsoft/TypeScript) for code
+- [MUI](https://github.com/mui/material-ui) for components
+- [JSON Forms](https://github.com/eclipsesource/jsonforms) for forms
+- [Apache ECharts](https://github.com/apache/echarts) for charts
+- [Zustand](https://github.com/pmndrs/zustand) for local state
+- [Supabase](https://github.com/supabase) for server calls
+- [SWR](https://github.com/vercel/swr) for server calls
+- [Vite](https://github.com/vitejs) for build
