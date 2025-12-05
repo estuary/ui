@@ -18,6 +18,7 @@ import { useTheme } from '@mui/material/styles';
 import { useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
+import PrefixedName from 'src/components/inputs/PrefixedName';
 import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
 import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
@@ -103,7 +104,6 @@ function GenerateInvitation({
         allowBlankName: false,
         allowEndSlash: true,
     });
-    const isMultiTenant = useMemo(() => objectRoles?.length > 1, [objectRoles]);
 
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
@@ -170,54 +170,16 @@ function GenerateInvitation({
                         minWidth: 180,
                     }}
                 >
-                    {isMultiTenant ? (
-                        <Box sx={{ pt: 1 }}>
-                            <PrefixSelector
-                                variantString="outlined"
-                                error={false}
-                                label={intl.formatMessage({
-                                    id: 'admin.users.prefixInvitation.label.tenant',
-                                })}
-                                labelId={INPUT_ID}
-                                onChange={prefixHandlers.setPrefix}
-                                options={objectRoles}
-                                value={prefix}
-                            />
-                        </Box>
-                    ) : (
-                        <Box
-                            component="fieldset"
-                            sx={{
-                                border: '1px solid',
-                                borderColor: 'divider',
-                                borderRadius: 3,
-                                p: 1,
-                                pt: 0,
-                            }}
-                        >
-                            <Typography
-                                component="legend"
-                                sx={{
-                                    fontSize: 11,
-                                    ml: 0.5,
-                                    color: 'primary.main',
-                                }}
-                            >
-                                {intl.formatMessage({
-                                    id: 'admin.users.prefixInvitation.label.tenant',
-                                })}
-                            </Typography>
-                            <code
-                                style={{
-                                    padding: '2px 6px',
-                                    fontSize: '12px',
-                                    fontFamily: 'monospace',
-                                }}
-                            >
-                                {prefix}
-                            </code>
-                        </Box>
-                    )}
+                    <Box sx={{ pt: 1 }}>
+                        <PrefixedName
+                            prefixOnly
+                            disabled={objectRoles?.length == 1}
+                            label={intl.formatMessage({
+                                id: 'admin.users.prefixInvitation.label.tenant',
+                            })}
+                        />
+                    </Box>
+
                     <AutocompletedField
                         label={intl.formatMessage({
                             id: 'admin.users.prefixInvitation.label.capability',
