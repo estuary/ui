@@ -32,6 +32,7 @@ import {
 } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { basicSort_string } from 'src/utils/misc-utils';
+import { translateRedactionStrategy } from 'src/utils/schema-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ columns, row }: RowProps) {
@@ -83,9 +84,17 @@ function Row({ columns, row }: RowProps) {
                             placement="bottom-start"
                             title={
                                 redacted
-                                    ? intl.formatMessage({
-                                          id: 'projection.tooltip.locationRedacted',
-                                      })
+                                    ? intl.formatMessage(
+                                          {
+                                              id: 'projection.tooltip.locationRedacted',
+                                          },
+                                          {
+                                              strategy:
+                                                  translateRedactionStrategy(
+                                                      row.inference.redact
+                                                  ),
+                                          }
+                                      )
                                     : ''
                             }
                         >
@@ -114,9 +123,16 @@ function Row({ columns, row }: RowProps) {
                     placement="bottom-start"
                     title={
                         redacted
-                            ? intl.formatMessage({
-                                  id: 'projection.tooltip.locationRedacted',
-                              })
+                            ? intl.formatMessage(
+                                  {
+                                      id: 'projection.tooltip.locationRedacted',
+                                  },
+                                  {
+                                      strategy: translateRedactionStrategy(
+                                          row.inference.redact
+                                      ),
+                                  }
+                              )
                             : ''
                     }
                 >
