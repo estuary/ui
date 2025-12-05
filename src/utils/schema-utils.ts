@@ -225,27 +225,27 @@ interface PointerSegment {
 
 const templateSchemaProperties = (
     schema: CollectionSchemaAnnotations,
-    keyRoot: string,
+    rootPath: string,
     targetProperty: { id: string; value: object | undefined },
     pointerSegments: PointerSegment[],
     targetSegment: PointerSegment
 ): void => {
-    let nextKeyRoot = `${keyRoot}.${targetSegment.id}`;
+    let nextRootPath = `${rootPath}.${targetSegment.id}`;
 
-    if (!has(schema, nextKeyRoot)) {
-        set(schema, nextKeyRoot, {});
+    if (!has(schema, nextRootPath)) {
+        set(schema, nextRootPath, {});
     }
 
     if (targetSegment.index !== pointerSegments.length - 1) {
-        nextKeyRoot = `${nextKeyRoot}.properties`;
+        nextRootPath = `${nextRootPath}.properties`;
 
-        if (!has(schema, nextKeyRoot)) {
-            set(schema, nextKeyRoot, {});
+        if (!has(schema, nextRootPath)) {
+            set(schema, nextRootPath, {});
         }
 
         templateSchemaProperties(
             schema,
-            nextKeyRoot,
+            nextRootPath,
             targetProperty,
             pointerSegments,
             pointerSegments[targetSegment.index + 1]
@@ -254,8 +254,8 @@ const templateSchemaProperties = (
         return;
     }
 
-    set(schema, `${nextKeyRoot}.${targetProperty.id}`, targetProperty.value);
-    logRocketConsole('redact:set:final_path', { path: nextKeyRoot });
+    set(schema, `${nextRootPath}.${targetProperty.id}`, targetProperty.value);
+    logRocketConsole('redact:set:final_path', { path: nextRootPath });
 };
 
 export const setSchemaProperties = (
