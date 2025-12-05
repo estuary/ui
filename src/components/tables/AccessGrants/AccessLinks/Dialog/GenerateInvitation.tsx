@@ -256,80 +256,63 @@ function GenerateInvitation({
                                 <Box
                                     sx={{
                                         display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: 0.5,
+                                        alignItems: 'center',
+                                        gap: 1,
                                     }}
                                 >
+                                    <span>
+                                        {intl.formatMessage({
+                                            id: 'admin.users.prefixInvitation.label.scope.limited',
+                                        })}
+                                    </span>
                                     <Box
                                         sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 1,
+                                            display: 'inline-flex',
+                                            ml: -0.5,
+                                            flex: 1,
                                         }}
                                     >
-                                        <span>
-                                            {intl.formatMessage({
-                                                id: 'admin.users.prefixInvitation.label.scope.limited',
-                                            })}
-                                        </span>
-                                        <Box
+                                        <Typography
+                                            component="span"
                                             sx={{
-                                                display: 'inline-flex',
-                                                ml: -0.5,
-                                                flex: 1,
+                                                fontFamily: 'monospace',
+                                                fontSize: 12,
+                                                color:
+                                                    accessScope !== 'limited'
+                                                        ? palette.text.disabled
+                                                        : palette.text.primary,
                                             }}
                                         >
-                                            <Typography
-                                                component="span"
-                                                sx={{
-                                                    fontFamily: 'monospace',
-                                                    fontSize: 12,
-                                                    color:
-                                                        accessScope !==
-                                                        'limited'
-                                                            ? palette.text
-                                                                  .disabled
-                                                            : palette.text
-                                                                  .primary,
-                                                }}
-                                            >
-                                                {clampedPrefix}
-                                            </Typography>
-                                            <input
-                                                ref={subPrefixInputRef}
-                                                value={name}
-                                                placeholder="example"
-                                                disabled={
+                                            {clampedPrefix}
+                                        </Typography>
+                                        <input
+                                            ref={subPrefixInputRef}
+                                            value={name}
+                                            placeholder="example"
+                                            disabled={accessScope !== 'limited'}
+                                            onChange={(event) => {
+                                                prefixHandlers.setName(
+                                                    event.target.value
+                                                );
+                                            }}
+                                            style={{
+                                                marginLeft: -2,
+                                                border: 'none',
+                                                outline: 'none',
+                                                fontFamily: 'monospace',
+                                                fontSize: 12,
+                                                backgroundColor: 'transparent',
+                                                width: '100%',
+                                                color:
                                                     accessScope !== 'limited'
-                                                }
-                                                onChange={(event) => {
-                                                    prefixHandlers.setName(
-                                                        event.target.value
-                                                    );
-                                                }}
-                                                style={{
-                                                    marginLeft: -2,
-                                                    border: 'none',
-                                                    outline: 'none',
-                                                    fontFamily: 'monospace',
-                                                    fontSize: 12,
-                                                    backgroundColor:
-                                                        'transparent',
-                                                    width: '100%',
-                                                    color:
-                                                        accessScope !==
-                                                        'limited'
-                                                            ? palette.text
-                                                                  .disabled
-                                                            : nameError &&
-                                                                hasLength(name)
-                                                              ? palette.error
-                                                                    .main
-                                                              : palette.text
-                                                                    .primary,
-                                                }}
-                                            />
-                                        </Box>
+                                                        ? palette.text.disabled
+                                                        : nameError &&
+                                                            hasLength(name)
+                                                          ? palette.error.main
+                                                          : palette.text
+                                                                .primary,
+                                            }}
+                                        />
                                     </Box>
                                 </Box>
                             }
