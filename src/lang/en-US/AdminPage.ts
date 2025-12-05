@@ -101,7 +101,7 @@ export const AdminPage: Record<string, string> = {
     'admin.users.prefixInvitation.label.capability': `Capability`,
     'admin.users.prefixInvitation.label.reusable': `Reusable invite`,
     'admin.users.prefixInvitation.label.scope.full': `Grant access to all of `,
-    'admin.users.prefixInvitation.label.scope.limited': `Limit access to `,
+    'admin.users.prefixInvitation.label.scope.limited': `Restrict to `,
     'admin.users.prefixInvitation.cta.generateLink': `Create Invite Link`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,

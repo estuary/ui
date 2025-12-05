@@ -31,6 +31,7 @@ import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 // outside of advanced cases.
 const capabilityOptions = ['admin', 'read'];
 const typeOptions = ['single-use', 'multi-use'];
+const MAX_PREFIX_LENGTH = 12;
 
 const RadioOption = ({
     value,
@@ -108,6 +109,11 @@ function GenerateInvitation({
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
     const [accessScope, setAccessScope] = useState<string | null>(null);
     const subPrefixInputRef = useRef<HTMLInputElement>(null);
+
+    const clampedPrefix =
+        prefix.length > MAX_PREFIX_LENGTH + 5 // extra length for elipsis and slash
+            ? prefix.slice(0, MAX_PREFIX_LENGTH) + '.../'
+            : prefix;
 
     const handlers = {
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
@@ -224,7 +230,7 @@ function GenerateInvitation({
                                             fontSize: 12,
                                         }}
                                     >
-                                        {prefix}
+                                        {clampedPrefix}
                                     </span>
                                 </span>
                             }
@@ -277,7 +283,7 @@ function GenerateInvitation({
                                                     fontSize: 12,
                                                 }}
                                             >
-                                                {prefix}
+                                                {clampedPrefix}
                                             </Typography>
                                             <input
                                                 ref={subPrefixInputRef}
