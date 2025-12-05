@@ -483,6 +483,7 @@ export const Workflows: Record<string, string> = {
     'projection.error.alert.removalFailure': `Failed to update the server when removing field alias. Please try again.`,
     'projection.error.alert.duplicate': `Field name already in use for "{duplicateLocation}"`,
     'projection.error.alert.draftId': `draft ID or stored draft spec not found`,
+    'projection.error.alert.redactDefaultError': `An issue was encountered updating the redaction strategy for this location. Please try again.`,
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
     'projection.label.redactionStrategy': `Strategy`,

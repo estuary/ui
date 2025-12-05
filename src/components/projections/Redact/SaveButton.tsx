@@ -1,3 +1,4 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
 import type { RedactSaveButtonProps } from 'src/components/projections/types';
 
 import { Button } from '@mui/material';
@@ -8,9 +9,15 @@ import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/cre
 import { useEditorStore_queryResponse_mutate } from 'src/components/editor/Store/hooks';
 import { useRedactionAnnotation } from 'src/hooks/projections/useRedactionAnnotation';
 import { logRocketEvent } from 'src/services/shared';
+import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
 
-const SaveButton = ({ pointer, setOpen, strategy }: RedactSaveButtonProps) => {
+const SaveButton = ({
+    onClick,
+    pointer,
+    setError,
+    strategy,
+}: RedactSaveButtonProps) => {
     const intl = useIntl();
 
     const { updateRedactionAnnotation } = useRedactionAnnotation();
@@ -52,15 +59,23 @@ const SaveButton = ({ pointer, setOpen, strategy }: RedactSaveButtonProps) => {
                             strategy,
                         });
 
-                        setOpen(false);
+                        onClick();
                     },
-                    () => {
-                        logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
-                            errored: true,
-                            operation: 'redact',
-                            pointer,
-                            strategy,
-                        });
+                    (error) => {
+                        const formattedError: PostgrestError =
+                            typeof error === 'object'
+                                ? error
+                                : {
+                                      ...BASE_ERROR,
+                                      message:
+                                          typeof error === 'string'
+                                              ? error
+                                              : intl.formatMessage({
+                                                    id: 'projection.error.alert.redactDefaultError',
+                                                }),
+                                  };
+
+                        setError(formattedError);
                     }
                 );
             }}

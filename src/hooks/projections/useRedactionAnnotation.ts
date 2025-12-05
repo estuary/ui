@@ -7,10 +7,9 @@ import { cloneDeep } from 'lodash';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
-import {
-    useEditorStore_persistedDraftId,
-    useEditorStore_queryResponse_mutate,
-} from 'src/components/editor/Store/hooks';
+import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 import { hasWriteSchema, setSchemaProperties } from 'src/utils/schema-utils';
@@ -23,7 +22,6 @@ export const useRedactionAnnotation = () => {
     );
 
     const draftId = useEditorStore_persistedDraftId();
-    const mutateDraftSpecs = useEditorStore_queryResponse_mutate();
 
     const updateRedactionAnnotation = useCallback(
         async (pointer: string, strategy: RedactionStrategy_Schema | null) => {
@@ -33,21 +31,36 @@ export const useRedactionAnnotation = () => {
                   ? 'schema'
                   : undefined;
 
-            if (
-                !mutateDraftSpecs ||
-                !currentCollection ||
-                !collectionSpec ||
-                !schemaProp
-            ) {
+            if (!currentCollection || !collectionSpec || !schemaProp) {
+                logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                    errored: true,
+                    operation: 'redact',
+                    pointer,
+                    reason: 'essential client collection data missing',
+                    strategy,
+                });
+
                 return Promise.reject();
             }
 
             const spec: Schema = cloneDeep(collectionSpec);
 
-            setSchemaProperties(spec[schemaProp], pointer, {
-                id: 'redact',
-                value: strategy ? { strategy } : undefined,
-            });
+            try {
+                setSchemaProperties(spec[schemaProp], pointer, {
+                    id: 'redact',
+                    value: strategy ? { strategy } : undefined,
+                });
+            } catch {
+                logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                    errored: true,
+                    operation: 'redact',
+                    pointer,
+                    reason: 'failed to recursively set redaction annotation',
+                    strategy,
+                });
+
+                return Promise.reject();
+            }
 
             const updateResponse = await modifyDraftSpec(spec, {
                 draft_id: draftId,
@@ -56,12 +69,20 @@ export const useRedactionAnnotation = () => {
             });
 
             if (updateResponse.error) {
+                logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                    errored: true,
+                    operation: 'redact',
+                    pointer,
+                    reason: 'failed to update server',
+                    strategy,
+                });
+
                 return Promise.reject(updateResponse.error);
             }
 
             return Promise.resolve(updateResponse);
         },
-        [collectionSpec, currentCollection, draftId, mutateDraftSpecs]
+        [collectionSpec, currentCollection, draftId]
     );
 
     return { updateRedactionAnnotation };

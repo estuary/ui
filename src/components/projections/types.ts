@@ -1,3 +1,4 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
 import type { Dispatch, SetStateAction } from 'react';
 import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
 import type {
@@ -45,6 +46,7 @@ export interface ProjectionListProps {
 
 export interface RedactSaveButtonProps
     extends WithRequiredProperty<BaseProjectionProps, 'pointer'> {
-    setOpen: Dispatch<SetStateAction<boolean>>;
+    onClick: () => void;
+    setError: Dispatch<SetStateAction<PostgrestError | null>>;
     strategy: RedactionStrategy_Schema | null;
 }
