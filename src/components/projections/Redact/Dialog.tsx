@@ -67,21 +67,6 @@ const RedactFieldDialog = ({
                     </Box>
                 ) : null}
 
-                <Typography sx={{ mb: 3, width: 500 }}>
-                    {intl.formatMessage(
-                        {
-                            id: 'projection.dialog.redact.message',
-                        },
-                        {
-                            location: (
-                                <code style={{ fontWeight: 600 }}>
-                                    {pointer}
-                                </code>
-                            ),
-                        }
-                    )}
-                </Typography>
-
                 <Autocomplete
                     onChange={(_event, value) => {
                         if (error) {
