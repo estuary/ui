@@ -186,7 +186,8 @@ function GenerateInvitation({
                     <Box sx={{ pt: 1 }}>
                         <PrefixedName
                             prefixOnly
-                            disabled={objectRoles?.length == 1}
+                            defaultPrefix
+                            disabled={objectRoles?.length === 1}
                             label={intl.formatMessage({
                                 id: 'admin.users.prefixInvitation.label.tenant',
                             })}
@@ -271,7 +272,6 @@ function GenerateInvitation({
                                         <Box
                                             sx={{
                                                 display: 'inline-flex',
-                                                mt: 0.2,
                                                 ml: -0.5,
                                                 flex: 1,
                                             }}
@@ -324,7 +324,7 @@ function GenerateInvitation({
                             }
                         />
                     </RadioGroup>
-                    {accessScope == 'limited' && hasLength(name) && (
+                    {accessScope === 'limited' && hasLength(name) && (
                         <Typography
                             color={'error.main'}
                             fontSize={12}
