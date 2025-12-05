@@ -13,6 +13,9 @@ enum ConstraintTypes {
 
 type ConstraintType = keyof typeof ConstraintTypes;
 
+export type RedactionStrategy_Schema = 'block' | 'sha256';
+export type RedactionStrategy_Projection = 'REDACT_BLOCK' | 'REDACT_SHA256';
+
 export interface BaseMaterializationFields {
     recommended: boolean | number;
     exclude?: string[];
@@ -31,10 +34,23 @@ interface BuiltCollection {
 
 export interface BuiltProjection {
     field: string;
-    inference: any;
-    ptr?: string;
-    isPrimaryKey?: boolean;
+    inference: SchemaInference;
     explicit?: boolean;
+    isPrimaryKey?: boolean;
+    ptr?: string;
+}
+
+export interface CollectionSchemaAnnotations extends Schema {
+    properties?: CollectionSchemaProperties;
+    redact?: RedactDef;
+}
+
+export interface CollectionSchemaProperties {
+    [key: string]: CollectionSchemaAnnotations;
+}
+
+export interface CollectionSchema extends Schema {
+    properties?: CollectionSchemaProperties;
 }
 
 interface Constraint {
@@ -89,6 +105,14 @@ export interface ProjectionDef {
 
 export interface Projections {
     [field: string]: string | ProjectionDef;
+}
+
+export interface RedactDef {
+    strategy: RedactionStrategy_Schema;
+}
+
+interface SchemaInference extends Schema {
+    redact?: RedactionStrategy_Projection;
 }
 
 // The definition of a binding in the validation response.

@@ -7,6 +7,7 @@ import type {
 import type { FieldSelectionType } from 'src/components/fieldSelection/types';
 import type { FieldSelection } from 'src/stores/Binding/slices/FieldSelection';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { RedactionStrategy_Projection } from 'src/types/schemaModels';
 import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
 
 export interface BaseFieldOutcomeProps {
@@ -58,6 +59,7 @@ export interface FieldOutputProps {
 export interface ProjectionActionsProps {
     field: string;
     pointer: string | undefined;
+    redactionStrategy?: RedactionStrategy_Projection;
 }
 
 export interface EntityNameLinkProps {

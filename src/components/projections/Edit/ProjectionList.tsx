@@ -1,4 +1,4 @@
-import type { ProjectionListProps } from 'src/components/projections/Edit/types';
+import type { ProjectionListProps } from 'src/components/projections/types';
 
 import { useState } from 'react';
 

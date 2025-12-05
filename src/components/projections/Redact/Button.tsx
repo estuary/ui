@@ -1,7 +1,4 @@
-import type {
-    BaseButtonProps,
-    BaseProjectionProps,
-} from 'src/components/projections/types';
+import type { BaseRedactFieldProps } from 'src/components/projections/types';
 
 import { useState } from 'react';
 
@@ -9,13 +6,14 @@ import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import EditProjectionDialog from 'src/components/projections/Edit/Dialog';
+import RedactFieldDialog from 'src/components/projections/Redact/Dialog';
 
-function EditProjectionButton({
+const RedactFieldButton = ({
     disabled,
     field,
     pointer,
-}: BaseButtonProps & BaseProjectionProps) {
+    strategy,
+}: BaseRedactFieldProps) => {
     const intl = useIntl();
 
     const [open, setOpen] = useState(false);
@@ -34,17 +32,18 @@ function EditProjectionButton({
                 size="small"
                 variant="outlined"
             >
-                {intl.formatMessage({ id: 'cta.rename' })}
+                {intl.formatMessage({ id: 'cta.redact' })}
             </Button>
 
-            <EditProjectionDialog
+            <RedactFieldDialog
                 field={field}
                 open={open}
-                setOpen={setOpen}
                 pointer={pointer}
+                setOpen={setOpen}
+                strategy={strategy}
             />
         </>
     );
-}
+};
 
-export default EditProjectionButton;
+export default RedactFieldButton;

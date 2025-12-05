@@ -1,5 +1,8 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { EditProjectionDialogProps } from 'src/components/projections/Edit/types';
+import type {
+    BaseDialogProps,
+    BaseProjectionProps,
+} from 'src/components/projections/types';
 import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
 
 import { useState } from 'react';
@@ -30,7 +33,7 @@ function EditProjectionDialog({
     open,
     pointer,
     setOpen,
-}: EditProjectionDialogProps) {
+}: BaseDialogProps & BaseProjectionProps) {
     const intl = useIntl();
 
     const { setSingleProjection } = useUpdateDraftedProjection();

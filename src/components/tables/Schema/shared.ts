@@ -13,6 +13,11 @@ export const optionalColumns = Object.values(optionalColumnIntlKeys);
 
 export const columns: TableColumns[] = [
     {
+        field: null,
+        headerIntlKey: ' ',
+        width: 37,
+    },
+    {
         field: 'name',
         headerIntlKey: 'data.field',
         sticky: true,
@@ -33,3 +38,5 @@ export const columns: TableColumns[] = [
 ];
 
 export const ROW_TYPE_STRING = 'string';
+
+export const syntheticLocations = ['/_meta/flow_truncated', '/_meta/uuid'];
