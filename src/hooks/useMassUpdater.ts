@@ -168,7 +168,12 @@ function useMassUpdater({
             }
 
             // Try to publish the changes
-            const publishResponse = await createPublication(newDraftId, true);
+            const DO_NOT_MERGE_WITH_DRY_RUN_TRUE = true;
+            const publishResponse = await createPublication(
+                newDraftId,
+                DO_NOT_MERGE_WITH_DRY_RUN_TRUE
+            );
+
             if (publishResponse.error) {
                 return failed(publishResponse);
             }
