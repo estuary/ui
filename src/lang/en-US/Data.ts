@@ -33,7 +33,7 @@ export const Data: Record<string, string> = {
     'data.cidr': `CIDR Blocks`,
     'data.scope': `Scope`,
     'data.gcpServiceAccount': `GCP Service Account Email`,
-    'data.awsIamUserArn': `AWS IAM`,
+    'data.awsIamUserArn': `AWS IAM User ARN`,
     'data.idProvider': `IAM OIDC`,
     'data.errors': `Errors`,
     'data.completed': `Completed`,
