@@ -147,17 +147,18 @@ function useMassUpdater({
                 });
             });
 
+            // See if drafting the collections worked
             const draftCollectionsResponses = await Promise.all(
                 draftCollectionsPromises
             );
             const draftCollectionsErrors = draftCollectionsResponses.filter(
                 (r) => r.error
             );
-
             if (draftCollectionsErrors && draftCollectionsErrors.length > 0) {
                 return failed(draftCollectionsErrors[0]);
             }
 
+            // Put all the new specs on the draft
             const updateResponse = await massUpdateDraftSpecs(
                 newDraftId,
                 targetEntities[0].spec_type,
@@ -173,11 +174,17 @@ function useMassUpdater({
                 newDraftId,
                 DO_NOT_MERGE_WITH_DRY_RUN_TRUE
             );
-
             if (publishResponse.error) {
                 return failed(publishResponse);
             }
+
+            // We published so make sure the state is updated
             setPubID(publishResponse.data[0].id);
+
+            // THIS IS NOT WORKING!!!
+            // THIS IS NOT WORKING!!!
+            // THIS IS NOT WORKING!!!
+            // THIS IS NOT WORKING!!!
             incrementSuccessfulTransformations();
         },
         [
