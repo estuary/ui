@@ -478,7 +478,7 @@ export const Workflows: Record<string, string> = {
     'projection.dialog.add.header': `Alternate Name`,
     'projection.dialog.rename.header': `Redact Field`,
     'projection.dialog.add.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
-    'projection.dialog.redact.message': `Redact a field to prevent it from being captured.`,
+    'projection.dialog.redact.message': `Set a redaction strategy for location, {location}, to prevent all corresponding fields from being captured.`,
     'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
     'projection.error.alert.removalFailure': `Failed to update the server when removing field alias. Please try again.`,
     'projection.error.alert.duplicate': `Field name already in use for "{duplicateLocation}"`,

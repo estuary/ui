@@ -28,7 +28,6 @@ import { useIntl } from 'react-intl';
 import SaveButton from 'src/components/projections/Redact/SaveButton';
 import Error from 'src/components/shared/Error';
 import { diminishedTextColor } from 'src/context/Theme';
-import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
 import { translateRedactionStrategy } from 'src/utils/schema-utils';
 
 const options: RedactionStrategy_Schema[] = ['block', 'sha256'];
@@ -42,8 +41,6 @@ const RedactFieldDialog = ({
 }: BaseDialogProps & BaseRedactFieldProps) => {
     const intl = useIntl();
     const theme = useTheme();
-
-    const currentCollection = useBinding_currentCollection();
 
     const [error, setError] = useState<PostgrestError | null>(null);
     const [redactionStrategy, setRedactionStrategy] =
@@ -65,21 +62,21 @@ const RedactFieldDialog = ({
 
             <DialogContent>
                 {error ? (
-                    <Box style={{ marginBottom: 16 }}>
+                    <Box style={{ marginBottom: 16, width: 500 }}>
                         <Error condensed error={error} severity="error" />
                     </Box>
                 ) : null}
 
-                <Typography sx={{ mb: 3 }}>
+                <Typography sx={{ mb: 3, width: 500 }}>
                     {intl.formatMessage(
                         {
                             id: 'projection.dialog.redact.message',
                         },
                         {
-                            collection: (
-                                <span style={{ fontWeight: 500 }}>
-                                    {currentCollection}
-                                </span>
+                            location: (
+                                <code style={{ fontWeight: 600 }}>
+                                    {pointer}
+                                </code>
                             ),
                         }
                     )}
