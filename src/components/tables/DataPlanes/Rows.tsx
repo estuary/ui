@@ -21,8 +21,6 @@ interface RowProps {
     rowSx: any;
 }
 
-const SHRINK_CELL_CLASS = 'shrink-cell';
-
 function Row({ row, rowSx }: RowProps) {
     const dataPlaneOption = generateDataPlaneOption(row);
 
@@ -54,12 +52,12 @@ function Row({ row, rowSx }: RowProps) {
                     </Stack>
                 ) : null}
             </TableCell>
-            <TableCell className={SHRINK_CELL_CLASS}>
+            <TableCell>
                 {row.aws_iam_user_arn ? (
                     <SingleLineCode compact value={row.aws_iam_user_arn} />
                 ) : null}
             </TableCell>
-            <TableCell className={SHRINK_CELL_CLASS}>
+            <TableCell>
                 {row.gcp_service_account_email ? (
                     <SingleLineCode
                         compact
@@ -67,10 +65,10 @@ function Row({ row, rowSx }: RowProps) {
                     />
                 ) : null}
             </TableCell>
-            <TableCell className={SHRINK_CELL_CLASS}>
+            <TableCell>
                 <CopyCidrBlocks cidrBlocks={row.cidr_blocks} />
             </TableCell>
-            <TableCell className={SHRINK_CELL_CLASS}>
+            <TableCell>
                 {row.data_plane_fqdn ? (
                     <SingleLineCode
                         compact
@@ -91,9 +89,7 @@ function Rows({ data }: RowsProps) {
                 <Row
                     key={row.id}
                     row={row}
-                    rowSx={{
-                        ...getEntityTableRowSx(theme),
-                    }}
+                    rowSx={getEntityTableRowSx(theme)}
                 />
             ))}
         </>
