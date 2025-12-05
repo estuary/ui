@@ -1,11 +1,6 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { Dispatch, SetStateAction } from 'react';
 
-export interface NestingWarningProps {
-    objectRole: string;
-    show: boolean;
-}
-
 export interface GenerateInvitationProps {
     serverError: PostgrestError | null;
     setServerError: React.Dispatch<React.SetStateAction<PostgrestError | null>>;
