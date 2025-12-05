@@ -492,7 +492,7 @@ export const Workflows: Record<string, string> = {
     'projection.option.sha256.description': `Hash this field's value before storing it in your collection.`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
     'projection.tooltip.cannotExist': `The location cannot exist. It may be outside of permitted array bounds, is a disallowed property, or has an impossible type.`,
-    'projection.tooltip.locationRedacted': `This location is redacted using strategy {strategy}.`,
+    'projection.tooltip.locationRedacted': `This location is redacted using strategy, {strategy}.`,
 
     'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
     'schemaManagement.options.manual.label': `Manually manage schemas`,
