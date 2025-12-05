@@ -138,6 +138,9 @@ function EntityEdit({
         const newValue = resetDraftIdFlag ? null : persistedDraftId;
 
         logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+            rediscoveryRequired,
+            endpointConfigServerUpdateRequired,
+            resourceConfigServerUpdateRequired,
             newValue,
             component: 'EntityEdit',
         });
