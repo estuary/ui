@@ -99,6 +99,7 @@ function GenerateInvitation({
         name,
         nameError,
         objectRoles,
+        errors,
         prefix,
     } = useValidatePrefix({
         allowBlankName: false,
@@ -310,6 +311,17 @@ function GenerateInvitation({
                             }
                         />
                     </RadioGroup>
+                    {accessScope == 'limited' && hasLength(name) && (
+                        <Typography
+                            color={'error.main'}
+                            fontSize={12}
+                            sx={{
+                                textAlign: 'right',
+                            }}
+                        >
+                            {errors}
+                        </Typography>
+                    )}
                 </Box>
             </Box>
             <Box
