@@ -156,7 +156,7 @@ function GenerateInvitation({
     return (
         <Box
             sx={{
-                mb: 8,
+                mb: 2,
                 display: 'flex',
                 gap: 2,
                 flexDirection: 'column',
@@ -258,8 +258,8 @@ function GenerateInvitation({
                                         <Box
                                             sx={{
                                                 display: 'inline-flex',
-                                                py: 0.5,
-                                                ml: -0.3,
+                                                mt: 0.2,
+                                                ml: -0.5,
                                                 flex: 1,
                                             }}
                                         >
@@ -366,6 +366,7 @@ function GenerateInvitation({
                     })}
                 </Button>
             </Box>
+            <Divider orientation="horizontal" />
         </Box>
     );
 }
