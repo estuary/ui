@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react';
 import type { GenerateInvitationProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
-import { ReactNode, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
     Box,
@@ -334,9 +335,9 @@ function GenerateInvitation({
                             }
                         />
                     </RadioGroup>
-                    {accessScope === 'limited' && hasLength(name) && (
+                    {accessScope === 'limited' && hasLength(name) ? (
                         <Typography
-                            color={'error.main'}
+                            color="error.main"
                             fontSize={12}
                             sx={{
                                 textAlign: 'right',
@@ -344,7 +345,7 @@ function GenerateInvitation({
                         >
                             {errors}
                         </Typography>
-                    )}
+                    ) : null}
                 </Box>
             </Box>
             <Box
