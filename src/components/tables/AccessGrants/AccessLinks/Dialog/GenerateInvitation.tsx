@@ -1,7 +1,7 @@
 import type { GenerateInvitationProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
-import { ReactNode, useMemo, useRef, useState } from 'react';
+import { ReactNode, useRef, useState } from 'react';
 
 import {
     Box,
@@ -19,7 +19,6 @@ import { useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
 import PrefixedName from 'src/components/inputs/PrefixedName';
-import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
 import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
 import { useZustandStore } from 'src/context/Zustand/provider';
@@ -32,7 +31,6 @@ import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 // outside of advanced cases.
 const capabilityOptions = ['admin', 'read'];
 const typeOptions = ['single-use', 'multi-use'];
-const INPUT_ID = 'prefixed-name-input';
 
 const RadioOption = ({
     value,
@@ -153,6 +151,14 @@ function GenerateInvitation({
         },
     };
 
+    const onChange = (value: string, errors: string | null) => {
+        if (serverError) {
+            setServerError(null);
+        }
+
+        prefixHandlers.setPrefix(value);
+    };
+
     return (
         <Box
             sx={{
@@ -178,6 +184,7 @@ function GenerateInvitation({
                             label={intl.formatMessage({
                                 id: 'admin.users.prefixInvitation.label.tenant',
                             })}
+                            onChange={onChange}
                         />
                     </Box>
 
