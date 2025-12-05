@@ -46,7 +46,7 @@ export interface ProjectionListProps {
 
 export interface RedactSaveButtonProps
     extends WithRequiredProperty<BaseProjectionProps, 'pointer'> {
-    onClick: () => void;
+    closeDialog: () => void;
     setError: Dispatch<SetStateAction<PostgrestError | null>>;
     strategy: RedactionStrategy_Schema | null;
 }

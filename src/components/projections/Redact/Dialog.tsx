@@ -167,11 +167,11 @@ const RedactFieldDialog = ({
                 </Button>
 
                 <SaveButton
-                    field={field}
-                    onClick={() => {
+                    closeDialog={() => {
                         setError(null);
                         setOpen(false);
                     }}
+                    field={field}
                     pointer={pointer}
                     setError={setError}
                     strategy={redactionStrategy}

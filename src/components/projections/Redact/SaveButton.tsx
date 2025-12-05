@@ -13,7 +13,7 @@ import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
 
 const SaveButton = ({
-    onClick,
+    closeDialog,
     pointer,
     setError,
     strategy,
@@ -59,7 +59,7 @@ const SaveButton = ({
                             strategy,
                         });
 
-                        onClick();
+                        closeDialog();
                     },
                     (error) => {
                         const formattedError: PostgrestError =
