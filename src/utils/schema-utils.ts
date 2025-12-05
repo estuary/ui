@@ -16,6 +16,8 @@ import type {
 
 import { has, isEmpty, isPlainObject, set } from 'lodash';
 
+import { logRocketConsole } from 'src/services/shared';
+
 // These are inserted by the server and never would make sense as keys
 //  Make sure you lowercase these
 const invalidKeyPointers = [
@@ -253,6 +255,7 @@ const templateSchemaProperties = (
     }
 
     set(schema, `${nextKeyRoot}.${targetProperty.id}`, targetProperty.value);
+    logRocketConsole('redact:set:final_path', { path: nextKeyRoot });
 };
 
 export const setSchemaProperties = (
