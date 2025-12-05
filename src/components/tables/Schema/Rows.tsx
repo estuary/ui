@@ -138,9 +138,13 @@ function Row({ columns, row }: RowProps) {
                 >
                     <code
                         style={
-                            redacted
+                            row.inference.redact === 'REDACT_BLOCK'
                                 ? {
-                                      borderBottom: `1px dashed ${defaultOutlineColor[theme.palette.mode]}`,
+                                      borderBottom: `1px dashed ${
+                                          defaultOutlineColor[
+                                              theme.palette.mode
+                                          ]
+                                      }`,
                                       color: diminishedTextColor[
                                           theme.palette.mode
                                       ],
