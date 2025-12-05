@@ -59,6 +59,7 @@ function CopyCidrBlocks({ cidrBlocks }: Props) {
             </Select>
 
             <SingleLineCode
+                compact
                 value={
                     splitCidrBlocks[
                         selection === selectOptions[1] ? 'ipv6' : 'ipv4'

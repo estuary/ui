@@ -18,15 +18,16 @@ interface RowsProps {
 
 interface RowProps {
     row: BaseDataPlaneQuery;
+    rowSx: any;
 }
 
-function Row({ row }: RowProps) {
-    const theme = useTheme();
+const SHRINK_CELL_CLASS = 'shrink-cell';
 
+function Row({ row, rowSx }: RowProps) {
     const dataPlaneOption = generateDataPlaneOption(row);
 
     return (
-        <TableRow hover sx={getEntityTableRowSx(theme)}>
+        <TableRow hover sx={rowSx}>
             <TableCell>
                 {Boolean(dataPlaneOption.dataPlaneName) ? (
                     <Stack
@@ -53,28 +54,47 @@ function Row({ row }: RowProps) {
                     </Stack>
                 ) : null}
             </TableCell>
-            <TableCell>
+            <TableCell className={SHRINK_CELL_CLASS}>
                 {row.aws_iam_user_arn ? (
-                    <SingleLineCode value={row.aws_iam_user_arn} />
+                    <SingleLineCode compact value={row.aws_iam_user_arn} />
                 ) : null}
             </TableCell>
-            <TableCell>
+            <TableCell className={SHRINK_CELL_CLASS}>
                 {row.gcp_service_account_email ? (
-                    <SingleLineCode value={row.gcp_service_account_email} />
+                    <SingleLineCode
+                        compact
+                        value={row.gcp_service_account_email}
+                    />
                 ) : null}
             </TableCell>
-            <TableCell>
+            <TableCell className={SHRINK_CELL_CLASS}>
                 <CopyCidrBlocks cidrBlocks={row.cidr_blocks} />
+            </TableCell>
+            <TableCell className={SHRINK_CELL_CLASS}>
+                {row.data_plane_fqdn ? (
+                    <SingleLineCode
+                        compact
+                        value={`https://openid.estuary.dev/${row.data_plane_fqdn}`}
+                    />
+                ) : null}
             </TableCell>
         </TableRow>
     );
 }
 
 function Rows({ data }: RowsProps) {
+    const theme = useTheme();
+
     return (
         <>
             {data.map((row) => (
-                <Row key={row.id} row={row} />
+                <Row
+                    key={row.id}
+                    row={row}
+                    rowSx={{
+                        ...getEntityTableRowSx(theme),
+                    }}
+                />
             ))}
         </>
     );
