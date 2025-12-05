@@ -1,8 +1,10 @@
+import type { ChipOwnProps } from '@mui/material';
 import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
 
 import {
     Box,
     CircularProgress,
+    List,
     ListItemText,
     Stack,
     Typography,
@@ -10,11 +12,12 @@ import {
 } from '@mui/material';
 
 import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import ErrorLogs from 'src/components/shared/Entity/Error/Logs';
 import Error from 'src/components/shared/Error';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 
@@ -24,36 +27,85 @@ function SharedProgress({
     logToken,
     renderError,
     renderLogs,
+    renderBody,
     state,
-    successMessageID,
-    runningMessageID,
+    successIntlKey,
+    runningIntlKey,
+    groupedEntities,
 }: SharedProgressProps) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const skipped = state === ProgressStates.SKIPPED;
     const showErrors =
         (state === ProgressStates.FAILED || skipped) && error !== null;
 
-    return (
-        <Box
-            sx={{
-                pr: 3,
-            }}
-        >
+    let active = false;
+    let color: ChipOwnProps['color'] = 'default';
+    let labelIntlKey = runningIntlKey;
+    let statusIndicator = null;
+    if (state === ProgressStates.FAILED) {
+        color = 'error';
+        labelIntlKey = 'common.fail';
+        statusIndicator = (
+            <WarningCircle style={{ color: theme.palette.error.main }} />
+        );
+    } else if (state === ProgressStates.SUCCESS) {
+        color = 'success';
+        labelIntlKey = successIntlKey;
+        statusIndicator = (
+            <CheckCircle style={{ color: theme.palette.success.main }} />
+        );
+    } else if (state === ProgressStates.SKIPPED) {
+        color = 'warning';
+        labelIntlKey = 'common.skipped';
+        statusIndicator = (
+            <InfoCircle style={{ color: theme.palette.info.main }} />
+        );
+    } else {
+        active = true;
+        statusIndicator = <CircularProgress color="info" size={18} />;
+    }
+
+    let listContent = null;
+    if (groupedEntities && groupedEntities.length > 0) {
+        listContent = (
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'start' }}>
+                <Box sx={{ pt: 0.5 }}>{statusIndicator}</Box>
+                <Stack>
+                    <Stack direction="row" spacing={1}>
+                        <Typography variant="h6" component="span">
+                            {name}
+                        </Typography>
+                        {active ? null : (
+                            <OutlinedChip
+                                disableCursor
+                                color={color}
+                                variant="outlined"
+                                label={intl.formatMessage({
+                                    id: labelIntlKey,
+                                })}
+                            />
+                        )}
+                    </Stack>
+
+                    <List>
+                        {groupedEntities.map((entity, index) => {
+                            return (
+                                <ListItemText
+                                    key={`progress-list-${entity.catalog_name}-${index}`}
+                                    primary={entity.catalog_name}
+                                />
+                            );
+                        })}
+                    </List>
+                </Stack>
+            </Stack>
+        );
+    } else {
+        listContent = (
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                {state === ProgressStates.FAILED ? (
-                    <WarningCircle
-                        style={{ color: theme.palette.error.main }}
-                    />
-                ) : state === ProgressStates.SUCCESS ? (
-                    <CheckCircle
-                        style={{ color: theme.palette.success.main }}
-                    />
-                ) : state === ProgressStates.SKIPPED ? (
-                    <InfoCircle style={{ color: theme.palette.info.main }} />
-                ) : (
-                    <CircularProgress color="info" size={18} />
-                )}
+                {statusIndicator}
 
                 <ListItemText
                     primary={
@@ -61,21 +113,21 @@ function SharedProgress({
                             {name}
                         </Typography>
                     }
-                    secondary={
-                        <FormattedMessage
-                            id={
-                                state === ProgressStates.SUCCESS
-                                    ? successMessageID
-                                    : state === ProgressStates.SKIPPED
-                                      ? 'common.skipped'
-                                      : state === ProgressStates.FAILED
-                                        ? 'common.fail'
-                                        : runningMessageID
-                            }
-                        />
-                    }
+                    secondary={intl.formatMessage({
+                        id: labelIntlKey,
+                    })}
                 />
             </Stack>
+        );
+    }
+
+    return (
+        <Box
+            sx={{
+                pr: 3,
+            }}
+        >
+            {listContent}
 
             <Box sx={wrapperStyling}>
                 {showErrors ? (

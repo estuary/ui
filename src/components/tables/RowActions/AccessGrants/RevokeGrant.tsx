@@ -18,11 +18,11 @@ import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 export interface Props {
     grant: AccessGrantRowConfirmation;
     onFinish: (response: any) => void;
-    runningMessageID: string;
+    runningIntlKey: string;
     selectTableStoreName:
         | SelectTableStoreNames.ACCESS_GRANTS_USERS
         | SelectTableStoreNames.ACCESS_GRANTS_PREFIXES;
-    successMessageID: string;
+    successIntlKey: string;
 }
 
 const revokeGrant = async (
@@ -52,9 +52,9 @@ const revokeGrant = async (
 function RevokeGrant({
     grant,
     onFinish,
-    runningMessageID,
+    runningIntlKey,
     selectTableStoreName,
-    successMessageID,
+    successIntlKey,
 }: Props) {
     const [progress, setProgress] = useState<ProgressStates>(
         ProgressStates.RUNNING
@@ -94,8 +94,8 @@ function RevokeGrant({
         <Progress
             progress={progress}
             item={grant.message}
-            runningMessageID={runningMessageID}
-            successMessageID={successMessageID}
+            runningIntlKey={runningIntlKey}
+            successIntlKey={successIntlKey}
             error={error}
         />
     );

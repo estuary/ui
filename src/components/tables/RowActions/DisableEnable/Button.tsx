@@ -15,6 +15,9 @@ function DisableEnableButton({
         running: enabling ? 'common.enabling' : 'common.disabling',
         skipped: 'updateEntity.collection.skipped',
         success: enabling ? 'common.enabled' : 'common.disabled',
+        title: enabling
+            ? 'updateEntity.title.enable'
+            : 'updateEntity.title.disable',
     };
 
     // Collections do not have shards in the root they are nested inside
@@ -46,9 +49,10 @@ function DisableEnableButton({
                     entity={item}
                     onFinish={onFinish}
                     validateNewSpec
-                    skippedMessageID={messages.skipped}
-                    successMessageID={messages.success}
-                    runningMessageID={messages.running}
+                    skippedIntlKey={messages.skipped}
+                    successIntlKey={messages.success}
+                    runningIntlKey={messages.running}
+                    titleIntlKey={messages.title}
                     generateNewSpec={(spec) =>
                         generateDisabledSpec(spec, enabling, shardsAreNested)
                     }

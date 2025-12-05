@@ -58,6 +58,7 @@ export const EntityTable: Record<string, string> = {
     'entityTable.rowSelector.all': `All`,
     'entityTable.rowSelector.none': `None`,
 
+    'entityTable.update.title': `Fooing {updating} tasks`,
     'entityTable.delete.confirm': `All items will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
 
     'entityTable.viewDetails.aria': `View details of {name}`,
@@ -73,6 +74,10 @@ export const EntityTable: Record<string, string> = {
     // Update Entity
     'updateEntity.noLiveSpecs': `Unable to find entity on server.`,
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
+
+    'updateEntity.title.delete': `Delete {updating}`,
+    'updateEntity.title.disable': `Disable {updating}`,
+    'updateEntity.title.enable': `Enable {updating}`,
 
     // Entity Selector / Add Dialog
     'entityTable.captures.missing.header': `You currently have no captures. Click the captures icon on the menu bar to get started.`,

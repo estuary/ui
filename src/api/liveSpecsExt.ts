@@ -339,6 +339,45 @@ const getLiveSpecsByCatalogNames = async (
     );
 };
 
+export interface LiveSpecsExtQuery_GroupedUpdates {
+    catalog_name: string;
+    id: string;
+    last_pub_id: string;
+}
+
+const getLiveSpecsForGroupedUpdates = async (
+    specType: Entity,
+    catalogNames: string[]
+) => {
+    const limiter = pLimit(3);
+    const promises: Array<
+        Promise<PostgrestResponse<LiveSpecsExtQuery_GroupedUpdates>>
+    > = [];
+    let index = 0;
+
+    // TODO (retry) promise generator
+    const queryPromiseGenerator = (idx: number) => {
+        return supabaseClient
+            .from(TABLES.LIVE_SPECS_EXT)
+            .select(`catalog_name,id,last_pub_id`)
+            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE))
+            .eq('spec_type', specType);
+    };
+
+    while (index < catalogNames.length) {
+        // Have to do this to capture `index` correctly
+        const prom = queryPromiseGenerator(index);
+        promises.push(limiter(() => prom));
+
+        index = index + CHUNK_SIZE;
+    }
+
+    const responses = await Promise.all(promises);
+    return parsePagedFetchAllResponse<LiveSpecsExtQuery_GroupedUpdates>(
+        responses
+    );
+};
+
 const getLiveSpecsByConnectorId = async (
     specType: EntityWithCreateWorkflow,
     connectorId: string,
@@ -532,6 +571,7 @@ export {
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,
     getLiveSpecsByLiveSpecId,
+    getLiveSpecsForGroupedUpdates,
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_dataPlaneAuthReq,
