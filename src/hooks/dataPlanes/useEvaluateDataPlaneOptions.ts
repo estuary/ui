@@ -106,6 +106,7 @@ export const useEvaluateDataPlaneOptions = () => {
                             cidr_blocks: null,
                             gcp_service_account_email: null,
                             aws_iam_user_arn: null,
+                            data_plane_fqdn: null,
                         },
                         defaultDataPlaneName
                     );
@@ -132,6 +133,7 @@ export const useEvaluateDataPlaneOptions = () => {
                               cidr_blocks: null,
                               gcp_service_account_email: null,
                               aws_iam_user_arn: null,
+                              data_plane_fqdn: null,
                           },
                           existingDataPlane.name ?? ''
                       )

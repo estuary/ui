@@ -26,11 +26,13 @@ export interface BaseDataPlaneQuery {
     cidr_blocks: string[] | null;
     gcp_service_account_email: string | null;
     aws_iam_user_arn: string | null;
+    data_plane_fqdn: string | null;
     // aws_link_endpoints: AwsLinkEndpoint | null;
 }
 
 const COLUMNS = [
     'data_plane_name',
+    'data_plane_fqdn',
     'id',
     'reactor_address',
     'cidr_blocks',
@@ -72,6 +74,7 @@ const getDataPlanesForTable = (
             .ilike('data_plane_name', `${dataPlanePrefix}%`),
         [
             'data_plane_name',
+            'data_plane_fqdn',
             'reactor_address',
             'gcp_service_account_email',
             'aws_iam_user_arn',

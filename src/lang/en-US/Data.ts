@@ -34,6 +34,7 @@ export const Data: Record<string, string> = {
     'data.scope': `Scope`,
     'data.gcpServiceAccount': `GCP Service Account Email`,
     'data.awsIamUserArn': `AWS IAM User ARN`,
+    'data.idProvider': `IAM OIDC`,
     'data.errors': `Errors`,
     'data.completed': `Completed`,
     'data.ipv4': `IPv4`,

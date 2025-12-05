@@ -21,4 +21,8 @@ export const columns: TableColumns[] = [
         field: 'cidr_blocks',
         headerIntlKey: 'data.cidr',
     },
+    {
+        field: 'data_plane_fqdn',
+        headerIntlKey: 'data.idProvider',
+    },
 ];
