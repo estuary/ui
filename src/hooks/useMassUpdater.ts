@@ -1,30 +1,27 @@
 import type { CaptureQuery } from 'src/api/liveSpecsExt';
 import type { MassUpdateMatchData } from 'src/api/types';
 import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
-import type { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
-import type { SelectTableStoreNames } from 'src/stores/names';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
-import type { Entity } from 'src/types';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { createEntityDraft } from 'src/api/drafts';
-import { massUpdateDraftSpecs } from 'src/api/draftSpecs';
-import { getLiveSpecsByCatalogNames } from 'src/api/liveSpecsExt';
+import {
+    draftCollectionsEligibleForDeletion,
+    massUpdateDraftSpecs,
+} from 'src/api/draftSpecs';
+import { getLiveSpecsForGroupedUpdates } from 'src/api/liveSpecsExt';
 import { createPublication } from 'src/api/publications';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import usePublications from 'src/hooks/usePublications';
 import { jobSucceeded } from 'src/services/supabase';
+import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 export interface UseMassUpdaterProps {
     entities: CaptureQuery[];
     onFinish: (response: any) => void;
-    generateNewSpec: (
-        spec: LiveSpecsExtQueryWithSpec['spec']
-    ) => any | Promise<void>;
-    generateNewSpecType: (entity: CaptureQuery) => Entity | null;
     runningIntlKey: SharedProgressProps['runningIntlKey'];
     successIntlKey: SharedProgressProps['successIntlKey'];
     titleIntlKey: SharedProgressProps['titleIntlKey'];
@@ -34,16 +31,12 @@ export interface UseMassUpdaterProps {
         | SelectTableStoreNames.ENTITY_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
     skippedMessageID?: SharedProgressProps['skippedIntlKey'];
-    validateNewSpec?: boolean;
 }
 
 function useMassUpdater({
-    // entities,
-    generateNewSpec,
     onFinish,
     selectableStoreName,
     skippedMessageID,
-    validateNewSpec,
 }: UseMassUpdaterProps) {
     const updateStarted = useRef(false);
     const publishCompleted = useRef(false);
@@ -62,14 +55,13 @@ function useMassUpdater({
         selectableTableStoreSelectors.successfulTransformations.increment
     );
 
-    // TODO (mass row actions) - wire this back up
-    // const actionSettings = useZustandStore<
-    //     SelectableTableStore,
-    //     SelectableTableStore['actionSettings']
-    // >(selectableStoreName, selectableTableStoreSelectors.actionSettings.get);
+    const actionSettings = useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['actionSettings']
+    >(selectableStoreName, selectableTableStoreSelectors.actionSettings.get);
 
-    // const deleteCollections =
-    //     selectableStoreName === SelectTableStoreNames.CAPTURE;
+    const deleteCollections =
+        selectableStoreName === SelectTableStoreNames.CAPTURE;
 
     const massUpdateEntities = useCallback(
         async (targetEntities: CaptureQuery[]) => {
@@ -94,7 +86,10 @@ function useMassUpdater({
                 (datum) => datum.catalog_name
             );
 
-            const currentLiveSpecs = await getLiveSpecsByCatalogNames(
+            // TODO (mass row actions support disable)
+            //  we will need to make this query fetch the `spec` as well so
+            //  it can be updated.
+            const currentLiveSpecs = await getLiveSpecsForGroupedUpdates(
                 targetEntities[0].spec_type,
                 catalogsNeeded
             );
@@ -112,44 +107,56 @@ function useMassUpdater({
                 });
             }
 
-            const newSpecs: MassUpdateMatchData[] = currentLiveSpecs.data.map(
-                (datum) => {
-                    const spec = generateNewSpec(datum.spec);
-
-                    return {
-                        catalog_name: datum.catalog_name,
-                        // TODO (mass row actions) - do we wanna add this kinda stuff?
-                        // last_pub_id: datum.last_pub_id,
-                        spec,
-                    };
-                }
-            );
-
-            // TODO (mass row actions) - might want to validate each one
-            //  and mark _some_ as skipped?
-            if (validateNewSpec) {
-                if (!newSpecs.every(({ spec }) => Boolean(spec))) {
-                    if (skippedMessageID) {
-                        setError({
-                            message: skippedMessageID,
-                        });
-                    }
-                    return done(ProgressStates.SKIPPED, {});
-                }
-            }
-
             // Start by creating a draft we can update and publish
             const draftsResponse = await createEntityDraft(
-                'Delete / Enable / Disable triggered from UI'
+                // TODO (mass row actions support disable)
+                //  Update message based on action being taken
+                'Delete triggered from UI'
             );
             if (draftsResponse.error) {
                 return failed(draftsResponse);
             }
 
-            // Add the specific entity to the draft and make a spec
-            //  with the changed
+            // Make the draft so while we step through the tasks
+            //  we can start drafting the collections
             const newDraftId = draftsResponse.data[0].id;
             setDraftId(newDraftId);
+
+            const draftCollectionsPromises: Array<Promise<any>> = [];
+            const newSpecs: MassUpdateMatchData[] = [];
+            currentLiveSpecs.data.forEach(({ catalog_name, id }) => {
+                // TODO (mass row actions support disable)
+                //  We will need to allow a function like generateNewSpec but we
+                //  will also need to handle validateNewSpec. That gets weird now
+                //  that we create a draft BEFORE generating all the specs.
+
+                if (
+                    deleteCollections &&
+                    actionSettings.deleteAssociatedCollections?.includes(
+                        catalog_name
+                    )
+                ) {
+                    draftCollectionsPromises.push(
+                        draftCollectionsEligibleForDeletion(id, newDraftId)
+                    );
+                }
+
+                newSpecs.push({
+                    catalog_name,
+                    spec: null,
+                });
+            });
+
+            const draftCollectionsResponses = await Promise.all(
+                draftCollectionsPromises
+            );
+            const draftCollectionsErrors = draftCollectionsResponses.filter(
+                (r) => r.error
+            );
+
+            if (draftCollectionsErrors && draftCollectionsErrors.length > 0) {
+                return failed(draftCollectionsErrors[0]);
+            }
 
             const updateResponse = await massUpdateDraftSpecs(
                 newDraftId,
@@ -160,23 +167,8 @@ function useMassUpdater({
                 return failed(updateResponse);
             }
 
-            // if (
-            //     deleteCollections &&
-            //     actionSettings.deleteAssociatedCollections?.includes(entityName)
-            // ) {
-            //     const collectionsDraftSpecResponse =
-            //         await draftCollectionsEligibleForDeletion(
-            //             targetEntities.id,
-            //             newDraftId
-            //         );
-
-            //     if (collectionsDraftSpecResponse.error) {
-            //         return failed(collectionsDraftSpecResponse);
-            //     }
-            // }
-
             // Try to publish the changes
-            const publishResponse = await createPublication(newDraftId, false);
+            const publishResponse = await createPublication(newDraftId, true);
             if (publishResponse.error) {
                 return failed(publishResponse);
             }
@@ -184,11 +176,10 @@ function useMassUpdater({
             incrementSuccessfulTransformations();
         },
         [
-            generateNewSpec,
+            actionSettings.deleteAssociatedCollections,
+            deleteCollections,
             incrementSuccessfulTransformations,
             onFinish,
-            skippedMessageID,
-            validateNewSpec,
         ]
     );
 

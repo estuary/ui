@@ -33,12 +33,6 @@ function UpdateEntities(props: UseMassUpdaterProps) {
             renderError={(renderError_error, renderError_state) => {
                 const skipped = renderError_state === ProgressStates.SKIPPED;
 
-                console.log('renderError', {
-                    renderError_error,
-                    renderError_state,
-                    draftId,
-                });
-
                 return (
                     <>
                         {draftId ? (

@@ -8,8 +8,6 @@ import UpdateEntities from 'src/components/tables/RowActions/Shared/UpdateEntiti
 import { SelectTableStoreNames } from 'src/stores/names';
 
 function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
-    const generator = () => null;
-
     const isCapture =
         selectableTableStoreName === SelectTableStoreNames.CAPTURE;
 
@@ -42,8 +40,6 @@ function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
                     successIntlKey="common.deleted"
                     runningIntlKey="common.deleting"
                     titleIntlKey="updateEntity.title.delete"
-                    generateNewSpec={generator}
-                    generateNewSpecType={generator}
                     selectableStoreName={selectableTableStoreName}
                 />
             )}
