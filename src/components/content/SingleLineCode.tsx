@@ -14,7 +14,7 @@ const borderRadius = 3;
 
 function SingleLineCode({
     value,
-    compact: smallButton,
+    compact,
     subsequentCommandExists,
     sx,
 }: SingleLineCodeProps) {
@@ -81,7 +81,7 @@ function SingleLineCode({
                     color={transientButtonState}
                     onClick={copyToClipboard}
                     sx={{
-                        minWidth: smallButton ? 32 : 64,
+                        minWidth: compact ? 32 : 64,
                         px: 1,
                         borderTopLeftRadius: 0,
                         borderTopRightRadius: borderRadius,
