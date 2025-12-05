@@ -244,6 +244,8 @@ function GenerateInvitation({
                                     accessScope !== 'limited' &&
                                     !hasLength(name)
                                 ) {
+                                    // Focus the name input when switching to limited scope IF the name is empty
+                                    // (and not if the value is already defined to avoid unintentional edits)
                                     setTimeout(() => {
                                         subPrefixInputRef.current?.focus();
                                     }, 0);
@@ -281,6 +283,13 @@ function GenerateInvitation({
                                                 sx={{
                                                     fontFamily: 'monospace',
                                                     fontSize: 12,
+                                                    color:
+                                                        accessScope !==
+                                                        'limited'
+                                                            ? palette.text
+                                                                  .disabled
+                                                            : palette.text
+                                                                  .primary,
                                                 }}
                                             >
                                                 {clampedPrefix}
@@ -298,6 +307,7 @@ function GenerateInvitation({
                                                     );
                                                 }}
                                                 style={{
+                                                    marginLeft: -2,
                                                     border: 'none',
                                                     outline: 'none',
                                                     fontFamily: 'monospace',
