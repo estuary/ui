@@ -7,7 +7,7 @@ export interface InstructionsProps {
 }
 
 export interface TechnicalEmphasisProps {
-    intlKey: string;
+    children: React.ReactNode;
     enableBackground?: boolean;
 }
 

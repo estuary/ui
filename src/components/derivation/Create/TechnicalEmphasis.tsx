@@ -2,16 +2,12 @@ import type { TechnicalEmphasisProps } from 'src/components/derivation/Create/ty
 
 import { Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { codeBackground } from 'src/context/Theme';
 
 function TechnicalEmphasis({
     enableBackground,
-    intlKey,
+    children,
 }: TechnicalEmphasisProps) {
-    const intl = useIntl();
-
     return (
         <Typography
             component="code"
@@ -23,9 +19,7 @@ function TechnicalEmphasis({
                 fontFamily: 'Monospace',
             }}
         >
-            {intl.formatMessage({
-                id: intlKey,
-            })}
+            {children}
         </Typography>
     );
 }
