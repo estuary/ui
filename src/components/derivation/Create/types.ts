@@ -1,4 +1,4 @@
-import { TypographyProps } from '@mui/material';
+import type { TypographyProps } from '@mui/material';
 
 export interface ConfigHeaderProps {
     entityNameError: string | null;
