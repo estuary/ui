@@ -56,11 +56,14 @@ const RadioOption = ({
                 typography: {
                     fontSize: 13,
                     width: '100%',
+                    display: 'block',
+                    overflow: 'hidden',
                 },
             }}
             sx={{
                 m: 0,
                 px: 1,
+                width: '100%',
                 border: '1px solid',
                 borderColor: isSelected ? 'primary.main' : 'divider',
                 borderRadius: 3,
@@ -212,9 +215,11 @@ function GenerateInvitation({
                                 sx={{ lineHeight: 1 }}
                             >
                                 <Typography
-                                    noWrap
                                     component="span"
-                                    sx={{ lineHeight: 'inherit' }}
+                                    sx={{
+                                        lineHeight: 'inherit',
+                                        flexShrink: 0,
+                                    }}
                                 >
                                     {intl.formatMessage({
                                         id: 'admin.users.prefixInvitation.label.scope.full',
@@ -258,6 +263,7 @@ function GenerateInvitation({
                                     sx={{
                                         display: 'inline-flex',
                                         ml: -0.5,
+                                        flex: 1,
                                     }}
                                 >
                                     <TechnicalEmphasis
@@ -284,6 +290,7 @@ function GenerateInvitation({
                                             fontFamily: 'monospace',
                                             fontSize: 'inherit',
                                             backgroundColor: 'transparent',
+                                            width: '100%',
                                             color:
                                                 nameError && hasLength(name)
                                                     ? palette.error.main
