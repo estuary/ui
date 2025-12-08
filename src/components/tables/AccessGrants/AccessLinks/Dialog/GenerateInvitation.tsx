@@ -100,6 +100,7 @@ function GenerateInvitation({
     } = useValidatePrefix({
         allowBlankName: false,
         allowEndSlash: true,
+        defaultPrefix: true,
     });
 
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
