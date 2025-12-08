@@ -1,9 +1,7 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type {
-    BaseDialogProps,
-    BaseRedactFieldProps,
-} from 'src/components/projections/types';
+import type { BaseRedactFieldProps } from 'src/components/projections/types';
+import type { BaseDialogProps } from 'src/types';
 import type { RedactionStrategy_Schema } from 'src/types/schemaModels';
 
 import { useEffect, useState } from 'react';

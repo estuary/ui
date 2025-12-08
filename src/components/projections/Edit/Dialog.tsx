@@ -1,9 +1,7 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type {
-    BaseDialogProps,
-    BaseProjectionProps,
-} from 'src/components/projections/types';
+import type { BaseProjectionProps } from 'src/components/projections/types';
 import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
+import type { BaseDialogProps } from 'src/types';
 
 import { useState } from 'react';
 

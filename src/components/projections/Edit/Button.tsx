@@ -1,7 +1,5 @@
-import type {
-    BaseButtonProps,
-    BaseProjectionProps,
-} from 'src/components/projections/types';
+import type { BaseProjectionProps } from 'src/components/projections/types';
+import type { BaseButtonProps } from 'src/types';
 
 import { useState } from 'react';
 

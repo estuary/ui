@@ -1,20 +1,12 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { Dispatch, SetStateAction } from 'react';
 import type { ProjectionMetadata } from 'src/stores/Workflow/slices/Projections';
+import type { BaseButtonProps } from 'src/types';
 import type {
     RedactionStrategy_Projection,
     RedactionStrategy_Schema,
 } from 'src/types/schemaModels';
 import type { WithRequiredProperty } from 'src/types/utils';
-
-export interface BaseButtonProps {
-    disabled?: boolean;
-}
-
-export interface BaseDialogProps {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-}
 
 export interface BaseProjectionProps {
     field: string;
