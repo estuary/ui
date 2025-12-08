@@ -11,6 +11,7 @@ import {
     formatDataPlaneName,
     generateDataPlaneOption,
 } from 'src/utils/dataPlane-utils';
+import { OPENID_HOST } from 'src/utils/misc-utils';
 
 interface RowsProps {
     data: BaseDataPlaneQuery[];
@@ -72,7 +73,7 @@ function Row({ row, rowSx }: RowProps) {
                 {row.data_plane_fqdn ? (
                     <SingleLineCode
                         compact
-                        value={`https://openid.estuary.dev/${row.data_plane_fqdn}`}
+                        value={`${OPENID_HOST}/${row.data_plane_fqdn}`}
                     />
                 ) : null}
             </TableCell>
