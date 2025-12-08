@@ -132,7 +132,7 @@ function GenerateInvitation({
         generateInvitation: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
-            const objectRole = prefix + name;
+            const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
             const processedObject = appendWithForwardSlash(objectRole);
 
             generateGrantDirective(
