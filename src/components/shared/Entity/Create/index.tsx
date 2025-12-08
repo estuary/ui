@@ -27,7 +27,9 @@ import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
+import { CustomEvents } from 'src/services/types';
 import { useBinding_serverUpdateRequired } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
@@ -53,7 +55,8 @@ function EntityCreate({
     const { resetState } = useEntityWorkflowHelpers();
 
     // Binding Store
-    const bindingServerUpdateRequired = useBinding_serverUpdateRequired();
+    const resourceConfigServerUpdateRequired =
+        useBinding_serverUpdateRequired();
 
     // Details Form Store
     const detailsHydrationError = useDetailsFormStore(
@@ -107,15 +110,25 @@ function EntityCreate({
         const resetDraftIdFlag =
             entityNameChanged ||
             endpointConfigServerUpdateRequired ||
-            bindingServerUpdateRequired;
+            resourceConfigServerUpdateRequired;
 
-        setDraftId(resetDraftIdFlag ? null : persistedDraftId);
+        const newValue = resetDraftIdFlag ? null : persistedDraftId;
+
+        logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+            entityNameChanged,
+            endpointConfigServerUpdateRequired,
+            resourceConfigServerUpdateRequired,
+            newValue,
+            component: 'EntityCreate',
+        });
+
+        setDraftId(newValue);
     }, [
         setDraftId,
         endpointConfigServerUpdateRequired,
         entityNameChanged,
         persistedDraftId,
-        bindingServerUpdateRequired,
+        resourceConfigServerUpdateRequired,
     ]);
 
     // TODO (defect): Trigger the prompt data loss modal if the resource config section changes.
