@@ -18,17 +18,15 @@ const RedactFieldButton = ({
 
     const [open, setOpen] = useState(false);
 
-    const openDialog = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-
-        setOpen(true);
-    };
-
     return (
         <>
             <Button
                 disabled={disabled}
-                onClick={openDialog}
+                onClick={(event: React.MouseEvent<HTMLElement>) => {
+                    event.preventDefault();
+
+                    setOpen(true);
+                }}
                 size="small"
                 variant="outlined"
             >
