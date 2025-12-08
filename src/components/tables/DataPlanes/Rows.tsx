@@ -11,6 +11,7 @@ import {
     formatDataPlaneName,
     generateDataPlaneOption,
 } from 'src/utils/dataPlane-utils';
+import { OPENID_HOST } from 'src/utils/misc-utils';
 
 interface RowsProps {
     data: BaseDataPlaneQuery[];
@@ -18,15 +19,14 @@ interface RowsProps {
 
 interface RowProps {
     row: BaseDataPlaneQuery;
+    rowSx: any;
 }
 
-function Row({ row }: RowProps) {
-    const theme = useTheme();
-
+function Row({ row, rowSx }: RowProps) {
     const dataPlaneOption = generateDataPlaneOption(row);
 
     return (
-        <TableRow hover sx={getEntityTableRowSx(theme)}>
+        <TableRow hover sx={rowSx}>
             <TableCell>
                 {Boolean(dataPlaneOption.dataPlaneName) ? (
                     <Stack
@@ -55,26 +55,43 @@ function Row({ row }: RowProps) {
             </TableCell>
             <TableCell>
                 {row.aws_iam_user_arn ? (
-                    <SingleLineCode value={row.aws_iam_user_arn} />
+                    <SingleLineCode compact value={row.aws_iam_user_arn} />
                 ) : null}
             </TableCell>
             <TableCell>
                 {row.gcp_service_account_email ? (
-                    <SingleLineCode value={row.gcp_service_account_email} />
+                    <SingleLineCode
+                        compact
+                        value={row.gcp_service_account_email}
+                    />
                 ) : null}
             </TableCell>
             <TableCell>
                 <CopyCidrBlocks cidrBlocks={row.cidr_blocks} />
+            </TableCell>
+            <TableCell>
+                {row.data_plane_fqdn ? (
+                    <SingleLineCode
+                        compact
+                        value={`${OPENID_HOST}/${row.data_plane_fqdn}`}
+                    />
+                ) : null}
             </TableCell>
         </TableRow>
     );
 }
 
 function Rows({ data }: RowsProps) {
+    const theme = useTheme();
+
     return (
         <>
             {data.map((row) => (
-                <Row key={row.id} row={row} />
+                <Row
+                    key={row.id}
+                    row={row}
+                    rowSx={getEntityTableRowSx(theme)}
+                />
             ))}
         </>
     );
