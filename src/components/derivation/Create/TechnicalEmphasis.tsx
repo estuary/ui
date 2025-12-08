@@ -17,6 +17,7 @@ function TechnicalEmphasis({
                     : undefined,
                 fontWeight: 500,
                 fontFamily: 'Monospace',
+                fontSize: 'inherit',
             }}
         >
             {children}
