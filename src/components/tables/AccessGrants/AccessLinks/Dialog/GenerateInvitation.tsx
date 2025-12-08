@@ -12,6 +12,7 @@ import {
     FormControlLabel,
     Radio,
     RadioGroup,
+    Stack,
     Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -19,6 +20,7 @@ import { useTheme } from '@mui/material/styles';
 import { useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
+import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
@@ -48,19 +50,13 @@ const RadioOption = ({
     return (
         <FormControlLabel
             value={value}
-            control={
-                <Radio
-                    size="small"
-                    sx={{
-                        '&.MuiRadio-root:hover': {
-                            bgcolor: 'transparent !important',
-                        },
-                    }}
-                />
-            }
+            control={<Radio size="small" />}
             label={label}
             componentsProps={{
-                typography: { fontSize: 13, width: '100%' },
+                typography: {
+                    fontSize: 13,
+                    width: '100%',
+                },
             }}
             sx={{
                 m: 0,
@@ -110,6 +106,8 @@ function GenerateInvitation({
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
     const [accessScope, setAccessScope] = useState<string | null>(null);
     const subPrefixInputRef = useRef<HTMLInputElement>(null);
+
+    const limitedAccessScope = accessScope === 'limited';
 
     const clampedPrefix =
         prefix.length > MAX_PREFIX_LENGTH + 5 // extra length for elipsis and slash
@@ -167,34 +165,29 @@ function GenerateInvitation({
     };
 
     return (
-        <Box
+        <Stack
             sx={{
                 mb: 2,
-                display: 'flex',
-                gap: 2,
-                flexDirection: 'column',
+                justifyContent: 'flex-end',
             }}
+            spacing={2}
         >
-            <Box sx={{ display: 'flex', gap: 2 }}>
-                <Box
+            <Stack spacing={2} direction="row" sx={{ pt: 1 }}>
+                <Stack
+                    spacing={2}
                     sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2,
                         minWidth: 180,
                     }}
                 >
-                    <Box sx={{ pt: 1 }}>
-                        <PrefixedName
-                            prefixOnly
-                            defaultPrefix
-                            disabled={objectRoles?.length === 1}
-                            label={intl.formatMessage({
-                                id: 'admin.users.prefixInvitation.label.tenant',
-                            })}
-                            onChange={onChange}
-                        />
-                    </Box>
+                    <PrefixedName
+                        prefixOnly
+                        defaultPrefix
+                        disabled={objectRoles?.length === 1}
+                        label={intl.formatMessage({
+                            id: 'admin.users.prefixInvitation.label.tenant',
+                        })}
+                        onChange={onChange}
+                    />
 
                     <AutocompletedField
                         label={intl.formatMessage({
@@ -205,14 +198,13 @@ function GenerateInvitation({
                         defaultValue={capabilityOptions[0]}
                         changeHandler={handlers.setGrantCapability}
                     />
-                </Box>
+                </Stack>
 
                 <Divider flexItem orientation="vertical" />
 
                 <Box sx={{ flex: 1 }}>
                     <RadioGroup
                         sx={{
-                            pt: 1,
                             gap: 1.5,
                         }}
                         value={accessScope}
@@ -222,29 +214,27 @@ function GenerateInvitation({
                             value="full"
                             isSelected={accessScope === 'full'}
                             label={
-                                <span>
-                                    {intl.formatMessage({
-                                        id: 'admin.users.prefixInvitation.label.scope.full',
-                                    })}
-                                    <span
-                                        style={{
-                                            fontFamily: 'monospace',
-                                            fontSize: 12,
-                                        }}
-                                    >
+                                <Stack
+                                    direction="row"
+                                    spacing={0.5}
+                                    component="span"
+                                >
+                                    <Box component="span">
+                                        {intl.formatMessage({
+                                            id: 'admin.users.prefixInvitation.label.scope.full',
+                                        })}
+                                    </Box>
+                                    <TechnicalEmphasis>
                                         {clampedPrefix}
-                                    </span>
-                                </span>
+                                    </TechnicalEmphasis>
+                                </Stack>
                             }
                         />
                         <RadioOption
                             value="limited"
-                            isSelected={accessScope === 'limited'}
+                            isSelected={limitedAccessScope}
                             onClick={() => {
-                                if (
-                                    accessScope !== 'limited' &&
-                                    !hasLength(name)
-                                ) {
+                                if (!limitedAccessScope && !hasLength(name)) {
                                     // Focus the name input when switching to limited scope IF the name is empty
                                     // (and not if the value is already defined to avoid unintentional edits)
                                     setTimeout(() => {
@@ -253,72 +243,56 @@ function GenerateInvitation({
                                 }
                             }}
                             label={
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 1,
-                                    }}
-                                >
-                                    <span>
+                                <Stack spacing={0.5} direction="row">
+                                    <Box component="span">
                                         {intl.formatMessage({
                                             id: 'admin.users.prefixInvitation.label.scope.limited',
                                         })}
-                                    </span>
+                                    </Box>
                                     <Box
                                         sx={{
                                             display: 'inline-flex',
                                             ml: -0.5,
                                             flex: 1,
+                                            color: !limitedAccessScope
+                                                ? palette.text.disabled
+                                                : palette.text.primary,
                                         }}
                                     >
-                                        <Typography
-                                            component="span"
-                                            sx={{
-                                                fontFamily: 'monospace',
-                                                fontSize: 12,
-                                                color:
-                                                    accessScope !== 'limited'
-                                                        ? palette.text.disabled
-                                                        : palette.text.primary,
-                                            }}
-                                        >
+                                        <TechnicalEmphasis>
                                             {clampedPrefix}
-                                        </Typography>
+                                        </TechnicalEmphasis>
                                         <input
                                             ref={subPrefixInputRef}
                                             value={name}
                                             placeholder="example"
-                                            disabled={accessScope !== 'limited'}
+                                            disabled={!limitedAccessScope}
                                             onChange={(event) => {
                                                 prefixHandlers.setName(
                                                     event.target.value
                                                 );
                                             }}
                                             style={{
+                                                marginBottom: 1,
                                                 marginLeft: -2,
                                                 border: 'none',
                                                 outline: 'none',
                                                 fontFamily: 'monospace',
-                                                fontSize: 12,
+                                                fontSize: 'inherit',
                                                 backgroundColor: 'transparent',
                                                 width: '100%',
                                                 color:
-                                                    accessScope !== 'limited'
-                                                        ? palette.text.disabled
-                                                        : nameError &&
-                                                            hasLength(name)
-                                                          ? palette.error.main
-                                                          : palette.text
-                                                                .primary,
+                                                    nameError && hasLength(name)
+                                                        ? palette.error.main
+                                                        : 'inherit',
                                             }}
                                         />
                                     </Box>
-                                </Box>
+                                </Stack>
                             }
                         />
                     </RadioGroup>
-                    {accessScope === 'limited' && hasLength(name) ? (
+                    {limitedAccessScope && hasLength(name) ? (
                         <Typography
                             color="error.main"
                             fontSize={12}
@@ -330,15 +304,8 @@ function GenerateInvitation({
                         </Typography>
                     ) : null}
                 </Box>
-            </Box>
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginLeft: 'auto',
-                    gap: 1,
-                }}
-            >
+            </Stack>
+            <Stack spacing={2} direction="row" sx={{ alignSelf: 'flex-end' }}>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -363,7 +330,7 @@ function GenerateInvitation({
                 <Button
                     disabled={
                         accessScope === null ||
-                        (accessScope === 'limited' &&
+                        (limitedAccessScope &&
                             (hasLength(nameError) || !hasLength(name)))
                     }
                     onClick={handlers.generateInvitation}
@@ -372,9 +339,9 @@ function GenerateInvitation({
                         id: 'admin.users.prefixInvitation.cta.generateLink',
                     })}
                 </Button>
-            </Box>
+            </Stack>
             <Divider orientation="horizontal" />
-        </Box>
+        </Stack>
     );
 }
 
