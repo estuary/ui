@@ -7,6 +7,8 @@ import { codeBackground } from 'src/context/Theme';
 function TechnicalEmphasis({
     enableBackground,
     children,
+    sx,
+    ...restProps
 }: TechnicalEmphasisProps) {
     return (
         <Typography
@@ -18,7 +20,9 @@ function TechnicalEmphasis({
                 fontWeight: 500,
                 fontFamily: 'Monospace',
                 fontSize: 'inherit',
+                ...sx,
             }}
+            {...restProps}
         >
             {children}
         </Typography>
