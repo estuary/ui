@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import ChipList from 'src/components/shared/ChipList';
 import ErrorViewer from 'src/components/tables/RowActions/Shared/Progress/ErrorViewer';
 import LogViewer from 'src/components/tables/RowActions/Shared/Progress/LogViewer';
-import useRowActionSettings from 'src/components/tables/RowActions/Shared/useRowActionSettings';
+import useRowActionProgress from 'src/components/tables/RowActions/Shared/Progress/useRowActionProgress';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 function GroupedProgress({
@@ -25,7 +25,7 @@ function GroupedProgress({
     const intl = useIntl();
 
     const { active, color, labelIntlKey, showErrors, statusIndicator } =
-        useRowActionSettings({
+        useRowActionProgress({
             error,
             state,
             runningIntlKey,
@@ -39,6 +39,14 @@ function GroupedProgress({
                 pr: 3,
             }}
         >
+            {showErrors ? (
+                <ErrorViewer
+                    error={error}
+                    state={state}
+                    renderError={renderError}
+                />
+            ) : null}
+
             <Stack direction="row" spacing={1} sx={{ alignItems: 'start' }}>
                 <Stack>
                     <Stack direction="row" spacing={1}>
@@ -72,14 +80,6 @@ function GroupedProgress({
                     />
                 </Stack>
             </Stack>
-
-            {showErrors ? (
-                <ErrorViewer
-                    error={error}
-                    state={state}
-                    renderError={renderError}
-                />
-            ) : null}
 
             <LogViewer
                 logToken={logToken}

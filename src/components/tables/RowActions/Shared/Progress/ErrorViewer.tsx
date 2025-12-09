@@ -12,8 +12,11 @@ function ErrorViewer({ error, renderError, state }: ErrorViewerProps) {
 
     return (
         <Box sx={wrapperStyling}>
-            renderError ? ( renderError(error, state) ) : (
-            <Error error={error} hideTitle condensed noAlertBox={skipped} />)
+            {renderError ? (
+                renderError(error, state)
+            ) : (
+                <Error error={error} hideTitle condensed noAlertBox={skipped} />
+            )}
         </Box>
     );
 }

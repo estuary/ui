@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import ErrorViewer from 'src/components/tables/RowActions/Shared/Progress/ErrorViewer';
 import LogViewer from 'src/components/tables/RowActions/Shared/Progress/LogViewer';
-import useRowActionSettings from 'src/components/tables/RowActions/Shared/useRowActionSettings';
+import useRowActionProgress from 'src/components/tables/RowActions/Shared/Progress/useRowActionProgress';
 
 function IndividualProgress({
     name,
@@ -21,7 +21,7 @@ function IndividualProgress({
 }: IndividualProgressProps) {
     const intl = useIntl();
 
-    const { labelIntlKey, showErrors, statusIndicator } = useRowActionSettings({
+    const { labelIntlKey, showErrors, statusIndicator } = useRowActionProgress({
         error,
         state,
         runningIntlKey,

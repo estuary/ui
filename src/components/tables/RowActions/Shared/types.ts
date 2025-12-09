@@ -23,7 +23,7 @@ export enum ProgressStates {
     FAILED = 100,
 }
 
-interface BaseDefaultProps {
+export interface BaseProgressProps {
     error: any | null;
     name: string;
     runningIntlKey: string;
@@ -36,22 +36,27 @@ interface BaseDefaultProps {
     renderLogs?: Function | boolean;
 }
 
-export interface IndividualProgressProps extends BaseDefaultProps {
+export interface IndividualProgressProps extends BaseProgressProps {
     skippedIntlKey?: string;
 }
 
-export interface GroupedProgressProps extends BaseDefaultProps {
+export interface GroupedProgressProps extends BaseProgressProps {
     groupedEntities: LiveSpecsExtBaseQuery[];
 }
 
 export type LogViewerProps = Pick<
-    BaseDefaultProps,
+    BaseProgressProps,
     'logToken' | 'renderLogs' | 'state'
 >;
 
 export type ErrorViewerProps = Pick<
-    BaseDefaultProps,
+    BaseProgressProps,
     'renderError' | 'error' | 'state'
+>;
+
+export type UseRowActionProgressProps = Pick<
+    BaseProgressProps,
+    'runningIntlKey' | 'successIntlKey' | 'state' | 'error'
 >;
 
 export interface ConfirmationAlertProps {
