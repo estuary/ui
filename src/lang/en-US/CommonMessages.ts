@@ -103,7 +103,7 @@ export const CommonMessages: Record<string, string> = {
     // Common sections
     'connectionConfig.header': `Connection Config`,
 
-    'commin.pathShort.prefix': '.../{path}',
+    'common.pathShort.prefix': '.../',
 
     // Alert messages
     'alert.error': 'Error',

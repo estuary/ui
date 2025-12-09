@@ -113,9 +113,11 @@ function GenerateInvitation({
 
     const limitedAccessScope = accessScope === 'limited';
 
+    const elipsis = intl.formatMessage({ id: 'common.pathShort.prefix' });
+
     const clampedPrefix =
-        prefix.length > MAX_PREFIX_LENGTH + 5 // extra length for elipsis and slash
-            ? prefix.slice(0, MAX_PREFIX_LENGTH) + '.../'
+        prefix.length > MAX_PREFIX_LENGTH + elipsis.length + 1 // extra length for elipsis and slash
+            ? prefix.slice(0, MAX_PREFIX_LENGTH) + elipsis
             : prefix;
 
     const handlers = {
@@ -225,7 +227,10 @@ function GenerateInvitation({
                                         id: 'admin.users.prefixInvitation.label.scope.full',
                                     })}
                                 </Typography>
-                                <TechnicalEmphasis noWrap>
+                                <TechnicalEmphasis
+                                    noWrap
+                                    sx={{ lineHeight: 'inherit' }}
+                                >
                                     {prefix}
                                 </TechnicalEmphasis>
                             </Stack>
@@ -284,6 +289,7 @@ function GenerateInvitation({
                                             );
                                         }}
                                         style={{
+                                            marginBottom: 1,
                                             marginLeft: -2,
                                             border: 'none',
                                             outline: 'none',

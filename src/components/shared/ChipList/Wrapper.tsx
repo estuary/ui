@@ -27,14 +27,7 @@ function ChipWrapper({
     const intl = useIntl();
 
     const displayValue = stripPath
-        ? intl.formatMessage(
-              {
-                  id: 'commin.pathShort.prefix',
-              },
-              {
-                  path: stripPathing(val.display),
-              }
-          )
+        ? `${intl.formatMessage({ id: 'common.pathShort.prefix' })}${stripPathing(val.display)}`
         : val.display;
 
     // Set what we should display in the tooltip
