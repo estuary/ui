@@ -178,17 +178,10 @@ function useMassUpdater({
 
             // We published so make sure the state is updated
             setPubID(publishResponse.data[0].id);
-
-            // THIS IS NOT WORKING!!!
-            // THIS IS NOT WORKING!!!
-            // THIS IS NOT WORKING!!!
-            // THIS IS NOT WORKING!!!
-            incrementSuccessfulTransformations();
         },
         [
             actionSettings.deleteAssociatedCollections,
             deleteCollections,
-            incrementSuccessfulTransformations,
             onFinish,
         ]
     );
@@ -211,6 +204,7 @@ function useMassUpdater({
 
         if (success) {
             setState(ProgressStates.SUCCESS);
+            incrementSuccessfulTransformations();
         } else {
             setState(ProgressStates.FAILED);
             setError({});
@@ -218,14 +212,7 @@ function useMassUpdater({
 
         setLogToken(publication?.logs_token ?? null);
         onFinish(publication);
-    }, [onFinish, publication]);
-
-    useEffect(() => {
-        if (state === ProgressStates.SUCCESS) {
-            publishCompleted.current = true;
-            // incrementSuccessfulTransformations();
-        }
-    }, [state]);
+    }, [incrementSuccessfulTransformations, onFinish, publication]);
 
     return {
         massUpdateEntities,

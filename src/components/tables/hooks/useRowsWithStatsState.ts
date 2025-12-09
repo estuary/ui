@@ -6,7 +6,7 @@ import type {
 import type { SelectTableStoreNames } from 'src/stores/names';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -23,7 +23,6 @@ function useRowsWithStatsState(
     selectTableStoreName: SelectTableStoreNames,
     data: Data
 ) {
-    const previousCount = useRef<null | Number>(null);
     const catalogNames = useMemo(
         () =>
             data
@@ -63,10 +62,6 @@ function useRowsWithStatsState(
     >(selectTableStoreName, selectableTableStoreSelectors.stats.failed);
 
     useEffect(() => {
-        console.log('successfulTransformations = ', successfulTransformations);
-        console.log('previousCount.current = ', previousCount.current);
-
-        previousCount.current = successfulTransformations;
         mutateShardsList().catch(() => {});
     }, [mutateShardsList, successfulTransformations]);
 
