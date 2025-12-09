@@ -21,8 +21,8 @@ import { FieldList } from 'src/components/tables/cells/projections/FieldList';
 import { ProjectionActions } from 'src/components/tables/cells/projections/ProjectionActions';
 import {
     optionalColumnIntlKeys,
+    redactionRestrictedLocations,
     ROW_TYPE_STRING,
-    syntheticLocations,
 } from 'src/components/tables/Schema/shared';
 import {
     defaultOutlineColor,
@@ -65,7 +65,7 @@ function Row({ columns, row }: RowProps) {
     const redacted = Boolean(
         row.inference?.redact &&
             row?.ptr &&
-            !syntheticLocations.includes(row.ptr)
+            !redactionRestrictedLocations.includes(row.ptr)
     );
 
     return (
