@@ -11,8 +11,10 @@ import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hoo
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_currentCollection } from 'src/stores/Binding/hooks';
-import { hasOwnProperty } from 'src/utils/misc-utils';
-import { hasWriteSchema, setSchemaProperties } from 'src/utils/schema-utils';
+import {
+    getWriteSchemaProperty,
+    setSchemaProperties,
+} from 'src/utils/schema-utils';
 
 export const useRedactionAnnotation = () => {
     const currentCollection = useBinding_currentCollection();
@@ -25,11 +27,7 @@ export const useRedactionAnnotation = () => {
 
     const updateRedactionAnnotation = useCallback(
         async (pointer: string, strategy: RedactionStrategy_Schema | null) => {
-            const schemaProp = hasWriteSchema(collectionSpec)
-                ? 'writeSchema'
-                : hasOwnProperty(collectionSpec, 'schema')
-                  ? 'schema'
-                  : undefined;
+            const schemaProp = getWriteSchemaProperty(collectionSpec);
 
             if (!currentCollection || !collectionSpec || !schemaProp) {
                 logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {

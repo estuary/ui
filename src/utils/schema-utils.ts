@@ -17,6 +17,7 @@ import type {
 import { has, isEmpty, isPlainObject, set } from 'lodash';
 
 import { logRocketConsole } from 'src/services/shared';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
 // These are inserted by the server and never would make sense as keys
 //  Make sure you lowercase these
@@ -45,6 +46,13 @@ const hasReadSchema = (spec: any) => {
 const hasReadAndWriteSchema = (spec: any) => {
     return Boolean(hasReadSchema(spec) && hasWriteSchema(spec));
 };
+
+export const getWriteSchemaProperty = (collectionSpec: any) =>
+    hasWriteSchema(collectionSpec)
+        ? 'writeSchema'
+        : hasOwnProperty(collectionSpec, 'schema')
+          ? 'schema'
+          : undefined;
 
 const getProperSchemaScope = (spec: any) => {
     const readSchemaExists = hasReadSchema(spec);
