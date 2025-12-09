@@ -140,7 +140,7 @@ function useMassUpdater({
                 }
 
                 newSpecs.push({
-                    catalog_name: `${catalog_name}_faker`,
+                    catalog_name,
                     spec: null,
                 });
             });
@@ -167,11 +167,7 @@ function useMassUpdater({
             }
 
             // Try to publish the changes
-            const DO_NOT_MERGE_WITH_DRY_RUN_TRUE = true;
-            const publishResponse = await createPublication(
-                newDraftId,
-                DO_NOT_MERGE_WITH_DRY_RUN_TRUE
-            );
+            const publishResponse = await createPublication(newDraftId, false);
             if (publishResponse.error) {
                 return failed(publishResponse);
             }
