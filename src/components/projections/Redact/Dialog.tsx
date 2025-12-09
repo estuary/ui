@@ -171,6 +171,7 @@ const RedactFieldDialog = ({
                     }}
                     field={field}
                     pointer={pointer}
+                    previousStrategy={translateRedactionStrategy(strategy)}
                     setError={setError}
                     strategy={redactionStrategy}
                 />

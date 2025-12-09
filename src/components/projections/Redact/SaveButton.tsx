@@ -18,6 +18,7 @@ import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 const SaveButton = ({
     closeDialog,
     pointer,
+    previousStrategy,
     setError,
     strategy,
 }: RedactSaveButtonProps) => {
@@ -44,6 +45,18 @@ const SaveButton = ({
         <Button
             disabled={formActive || saving}
             onClick={() => {
+                if (previousStrategy === strategy) {
+                    logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                        operation: 'redact',
+                        pointer,
+                        previousStrategy,
+                        strategy,
+                    });
+
+                    closeDialog();
+                    return;
+                }
+
                 setSaving(true);
 
                 updateRedactionAnnotation(pointer, strategy)
