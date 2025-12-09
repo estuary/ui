@@ -36,7 +36,7 @@ export const useRedactionAnnotation = () => {
                     errored: true,
                     operation: 'redact',
                     pointer,
-                    reason: 'essential client collection data missing',
+                    reason: 'collection-data-missing',
                     strategy,
                 });
 
@@ -55,7 +55,7 @@ export const useRedactionAnnotation = () => {
                     errored: true,
                     operation: 'redact',
                     pointer,
-                    reason: 'failed to recursively set redaction annotation',
+                    reason: 'annotation-definition-failed',
                     strategy,
                 });
 
@@ -73,7 +73,7 @@ export const useRedactionAnnotation = () => {
                     errored: true,
                     operation: 'redact',
                     pointer,
-                    reason: 'failed to update server',
+                    reason: 'server-update-failed',
                     strategy,
                 });
 
