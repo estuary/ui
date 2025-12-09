@@ -282,7 +282,6 @@ function GenerateInvitation({
                                         ref={subPrefixInputRef}
                                         value={name}
                                         placeholder="example"
-                                        // disabled={!limitedAccessScope}
                                         onChange={(event) => {
                                             prefixHandlers.setName(
                                                 event.target.value
