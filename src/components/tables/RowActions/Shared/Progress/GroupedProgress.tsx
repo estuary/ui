@@ -47,6 +47,12 @@ function GroupedProgress({
                 />
             ) : null}
 
+            <LogViewer
+                logToken={logToken}
+                renderLogs={renderLogs}
+                state={state}
+            />
+
             <Stack direction="row" spacing={1} sx={{ alignItems: 'start' }}>
                 <Stack>
                     <Stack direction="row" spacing={1}>
@@ -80,12 +86,6 @@ function GroupedProgress({
                     />
                 </Stack>
             </Stack>
-
-            <LogViewer
-                logToken={logToken}
-                renderLogs={renderLogs}
-                state={state}
-            />
         </Stack>
     );
 }
