@@ -13,6 +13,7 @@ import EndpointConfigForm from 'src/components/shared/Entity/EndpointConfig/Form
 import { DOCUSAURUS_THEME } from 'src/components/shared/Entity/EndpointConfig/shared';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { logRocketEvent } from 'src/services/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_setServerUpdateRequired,
@@ -55,12 +56,24 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
 
     // Controlling if we need to show the generate button again
     const endpointConfigUpdated = useMemo(() => {
-        return endpointCanBeEmpty
+        const response = endpointCanBeEmpty
             ? false
             : !isEqual(endpointConfig, previousEndpointConfig);
+
+        logRocketEvent('EndpointConfig', {
+            configCompare: true,
+            response,
+            endpointCanBeEmpty,
+        });
+
+        return response;
     }, [endpointCanBeEmpty, endpointConfig, previousEndpointConfig]);
 
     useEffect(() => {
+        logRocketEvent('EndpointConfig', {
+            setUpdateRequired: true,
+            endpointConfigUpdated,
+        });
         setServerUpdateRequired(endpointConfigUpdated);
     }, [setServerUpdateRequired, endpointConfigUpdated]);
 
