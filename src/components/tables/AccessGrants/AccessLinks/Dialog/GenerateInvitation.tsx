@@ -214,12 +214,10 @@ function GenerateInvitation({
                                 spacing={0.5}
                                 component="span"
                                 alignItems="center"
-                                sx={{ lineHeight: 1 }}
                             >
                                 <Typography
                                     component="span"
                                     sx={{
-                                        lineHeight: 'inherit',
                                         flexShrink: 0,
                                     }}
                                 >
@@ -227,10 +225,7 @@ function GenerateInvitation({
                                         id: 'admin.users.prefixInvitation.label.scope.full',
                                     })}
                                 </Typography>
-                                <TechnicalEmphasis
-                                    noWrap
-                                    sx={{ lineHeight: 'inherit' }}
-                                >
+                                <TechnicalEmphasis noWrap>
                                     {prefix}
                                 </TechnicalEmphasis>
                             </Stack>
@@ -253,13 +248,8 @@ function GenerateInvitation({
                                 spacing={0.5}
                                 direction="row"
                                 alignItems="center"
-                                sx={{ lineHeight: 1 }}
                             >
-                                <Typography
-                                    noWrap
-                                    component="span"
-                                    sx={{ lineHeight: 'inherit' }}
-                                >
+                                <Typography noWrap component="span">
                                     {intl.formatMessage({
                                         id: 'admin.users.prefixInvitation.label.scope.limited',
                                     })}
@@ -273,6 +263,7 @@ function GenerateInvitation({
                                 >
                                     <TechnicalEmphasis
                                         sx={{
+                                            whiteSpace: 'nowrap',
                                             color: palette.text.disabled,
                                         }}
                                     >
@@ -288,7 +279,6 @@ function GenerateInvitation({
                                             );
                                         }}
                                         style={{
-                                            marginBottom: 1,
                                             marginLeft: -2,
                                             border: 'none',
                                             outline: 'none',
