@@ -171,7 +171,7 @@ function GenerateInvitation({
     };
 
     return (
-        <Stack sx={{ mb: 2 }} spacing={1}>
+        <Stack sx={{ mb: 2, minWidth: 500 }} spacing={1}>
             <Stack spacing={1} sx={{ pt: 1 }}>
                 <Stack spacing={1} direction="row">
                     <Box sx={{ flex: 1 }}>
@@ -180,7 +180,7 @@ function GenerateInvitation({
                             defaultPrefix
                             disabled={objectRoles?.length === 1}
                             label={intl.formatMessage({
-                                id: 'admin.users.prefixInvitation.label.tenant',
+                                id: 'terms.tenant',
                             })}
                             onChange={onChange}
                         />
