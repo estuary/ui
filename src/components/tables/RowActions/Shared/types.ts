@@ -74,7 +74,7 @@ export interface RowActionButtonProps {
 }
 
 export interface GroupedRowActionButtonProps {
-    messageID: string;
+    messageIntlKey: string;
     renderConfirmationMessage: (selectedNames: string[]) => ReactNode;
     renderProgress: (
         items: CaptureQuery[],

@@ -71,12 +71,14 @@ function SharedProgress({
     if (groupedEntities && groupedEntities.length > 0) {
         listContent = (
             <Stack direction="row" spacing={1} sx={{ alignItems: 'start' }}>
-                <Box sx={{ pt: 0.5 }}>{statusIndicator}</Box>
                 <Stack>
                     <Stack direction="row" spacing={1}>
+                        <Typography variant="h6" component="span">
+                            {name}
+                        </Typography>
                         {active ? (
                             <Typography variant="h6" component="span">
-                                {name}
+                                {statusIndicator}
                             </Typography>
                         ) : (
                             <OutlinedChip
@@ -122,7 +124,8 @@ function SharedProgress({
     }
 
     return (
-        <Box
+        <Stack
+            spacing={2}
             sx={{
                 pr: 3,
             }}
@@ -162,7 +165,7 @@ function SharedProgress({
             ) : null}
 
             {listContent}
-        </Box>
+        </Stack>
     );
 }
 

@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { Button, Dialog } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import GroupedProgressDialog from 'src/components/tables/RowActions/GroupedProgressDialog';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
@@ -14,11 +14,13 @@ import { useZustandStore } from 'src/context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 function GroupedRowActionButton({
-    messageID,
+    messageIntlKey,
     renderConfirmationMessage,
     renderProgress,
     selectableTableStoreName,
 }: GroupedRowActionButtonProps) {
+    const intl = useIntl();
+
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState(false);
@@ -86,7 +88,7 @@ function GroupedRowActionButton({
     return (
         <>
             <Button onClick={() => handlers.action()}>
-                <FormattedMessage id={messageID} />
+                {intl.formatMessage({ id: messageIntlKey })}
             </Button>
 
             <Dialog open={showProgress} maxWidth="md">

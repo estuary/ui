@@ -22,7 +22,7 @@ function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
 
     return (
         <GroupedRowActionButton
-            messageID="cta.delete"
+            messageIntlKey="cta.delete"
             renderConfirmationMessage={(selectedNames) => {
                 return (
                     <RowActionConfirmation
