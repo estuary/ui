@@ -1,6 +1,6 @@
 import type { CaptureQuery } from 'src/api/liveSpecsExt';
 import type { MassUpdateMatchData } from 'src/api/types';
-import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
+import type { GroupedProgressProps } from 'src/components/tables/RowActions/Shared/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -22,21 +22,19 @@ import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 export interface UseMassUpdaterProps {
     entities: CaptureQuery[];
     onFinish: (response: any) => void;
-    runningIntlKey: SharedProgressProps['runningIntlKey'];
-    successIntlKey: SharedProgressProps['successIntlKey'];
-    titleIntlKey: SharedProgressProps['titleIntlKey'];
+    runningIntlKey: GroupedProgressProps['runningIntlKey'];
+    successIntlKey: GroupedProgressProps['successIntlKey'];
+    titleIntlKey: GroupedProgressProps['titleIntlKey'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
         | SelectTableStoreNames.ENTITY_SELECTOR
         | SelectTableStoreNames.MATERIALIZATION;
-    skippedMessageID?: SharedProgressProps['skippedIntlKey'];
 }
 
 function useMassUpdater({
     onFinish,
     selectableStoreName,
-    skippedMessageID,
 }: UseMassUpdaterProps) {
     const updateStarted = useRef(false);
     const publishCompleted = useRef(false);

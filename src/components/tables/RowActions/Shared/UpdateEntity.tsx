@@ -1,5 +1,5 @@
 import type { CaptureQuery } from 'src/api/liveSpecsExt';
-import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
+import type { IndividualProgressProps } from 'src/components/tables/RowActions/Shared/types';
 import type { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 import type { Entity } from 'src/types';
@@ -15,7 +15,7 @@ import { getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
 import { createPublication } from 'src/api/publications';
 import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
 import Error from 'src/components/shared/Error';
-import SharedProgress from 'src/components/tables/RowActions/Shared/Progress';
+import IndividualProgress from 'src/components/tables/RowActions/Shared/Progress/IndividualProgress';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import usePublications from 'src/hooks/usePublications';
@@ -30,10 +30,10 @@ export interface UpdateEntityProps {
         spec: LiveSpecsExtQueryWithSpec['spec']
     ) => any | Promise<void>;
     generateNewSpecType: (entity: CaptureQuery) => Entity | null;
-    runningIntlKey: SharedProgressProps['runningIntlKey'];
-    titleIntlKey: SharedProgressProps['titleIntlKey'];
-    successIntlKey: SharedProgressProps['successIntlKey'];
-    skippedIntlKey?: SharedProgressProps['skippedIntlKey'];
+    runningIntlKey: IndividualProgressProps['runningIntlKey'];
+    titleIntlKey: IndividualProgressProps['titleIntlKey'];
+    successIntlKey: IndividualProgressProps['successIntlKey'];
+    skippedIntlKey?: IndividualProgressProps['skippedIntlKey'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
@@ -215,7 +215,7 @@ function UpdateEntity({
     }, [state, incrementSuccessfulTransformations]);
 
     return (
-        <SharedProgress
+        <IndividualProgress
             name={entity.catalog_name}
             error={error}
             logToken={logToken}

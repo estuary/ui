@@ -23,20 +23,36 @@ export enum ProgressStates {
     FAILED = 100,
 }
 
-export interface SharedProgressProps {
-    name: string;
+interface BaseDefaultProps {
     error: any | null;
+    name: string;
     runningIntlKey: string;
+    state: ProgressStates;
     successIntlKey: string;
     titleIntlKey: string;
-    state: ProgressStates;
     logToken?: string | null;
     renderBody?: (progressState: ProgressStates) => ReactNode;
     renderError?: (error: any, progressState: ProgressStates) => ReactNode;
     renderLogs?: Function | boolean;
-    skippedIntlKey?: string;
-    groupedEntities?: LiveSpecsExtBaseQuery[];
 }
+
+export interface IndividualProgressProps extends BaseDefaultProps {
+    skippedIntlKey?: string;
+}
+
+export interface GroupedProgressProps extends BaseDefaultProps {
+    groupedEntities: LiveSpecsExtBaseQuery[];
+}
+
+export type LogViewerProps = Pick<
+    BaseDefaultProps,
+    'logToken' | 'renderLogs' | 'state'
+>;
+
+export type ErrorViewerProps = Pick<
+    BaseDefaultProps,
+    'renderError' | 'error' | 'state'
+>;
 
 export interface ConfirmationAlertProps {
     messageId: string;

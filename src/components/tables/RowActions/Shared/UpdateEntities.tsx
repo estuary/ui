@@ -5,7 +5,7 @@ import { useMount } from 'react-use';
 
 import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
 import Error from 'src/components/shared/Error';
-import SharedProgress from 'src/components/tables/RowActions/Shared/Progress';
+import GroupedProgress from 'src/components/tables/RowActions/Shared/Progress/GroupedProgress';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import useMassUpdater from 'src/hooks/useMassUpdater';
 
@@ -24,7 +24,7 @@ function UpdateEntities(props: UseMassUpdaterProps) {
     });
 
     return (
-        <SharedProgress
+        <GroupedProgress
             name={intl.formatMessage(
                 {
                     id:
