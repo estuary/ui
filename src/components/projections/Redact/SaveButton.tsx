@@ -53,6 +53,7 @@ const SaveButton = ({
                                 operation: 'redact',
                                 pointer,
                                 strategy,
+                                dataExists: Boolean(response?.data?.[0]),
                             });
 
                             if (mutateDraftSpecs) {
