@@ -282,7 +282,7 @@ function GenerateInvitation({
                                         ref={subPrefixInputRef}
                                         value={name}
                                         placeholder="example"
-                                        disabled={!limitedAccessScope}
+                                        // disabled={!limitedAccessScope}
                                         onChange={(event) => {
                                             prefixHandlers.setName(
                                                 event.target.value
@@ -303,6 +303,9 @@ function GenerateInvitation({
                                                     : !limitedAccessScope
                                                       ? palette.text.disabled
                                                       : palette.text.primary,
+                                            pointerEvents: !limitedAccessScope
+                                                ? 'none'
+                                                : 'auto',
                                         }}
                                     />
                                 </Box>
