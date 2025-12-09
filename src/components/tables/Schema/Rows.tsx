@@ -21,7 +21,6 @@ import { FieldList } from 'src/components/tables/cells/projections/FieldList';
 import { ProjectionActions } from 'src/components/tables/cells/projections/ProjectionActions';
 import {
     optionalColumnIntlKeys,
-    redactionRestrictedLocations,
     ROW_TYPE_STRING,
 } from 'src/components/tables/Schema/shared';
 import {
@@ -62,11 +61,7 @@ function Row({ columns, row }: RowProps) {
         isColumnVisible(columns, optionalColumnIntlKeys.details);
 
     const fieldCannotExist = Boolean(row.inference.exists === 'CANNOT');
-    const redacted = Boolean(
-        row.inference?.redact &&
-            row?.ptr &&
-            !redactionRestrictedLocations.includes(row.ptr)
-    );
+    const redacted = Boolean(row.inference?.redact && row?.ptr);
 
     return (
         <TableRow

@@ -4,7 +4,6 @@ import { Stack, TableCell } from '@mui/material';
 
 import EditProjectionButton from 'src/components/projections/Edit/Button';
 import RedactFieldButton from 'src/components/projections/Redact/Button';
-import { redactionRestrictedLocations } from 'src/components/tables/Schema/shared';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 export const ProjectionActions = ({
@@ -23,7 +22,7 @@ export const ProjectionActions = ({
                     pointer={pointer}
                 />
 
-                {pointer && !redactionRestrictedLocations.includes(pointer) ? (
+                {pointer ? (
                     <RedactFieldButton
                         disabled={formActive}
                         field={field}

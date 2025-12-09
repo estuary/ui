@@ -15,6 +15,9 @@ import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
+// It should be noted that /_meta/flow_truncated and /_meta/uuid are synthetic locations.
+// Redaction annotations defined for these locations result in, effectively, a noop
+// on the backend.
 const SaveButton = ({
     closeDialog,
     pointer,
