@@ -2,7 +2,7 @@ import type { KeyValue } from 'src/components/shared/KeyValueList';
 
 import { Box, Breadcrumbs, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import KeyValueList from 'src/components/shared/KeyValueList';
@@ -49,6 +49,8 @@ function DraftErrors({
     enablePolling,
     enableAlertStyling,
 }: DraftErrorProps) {
+    const intl = useIntl();
+
     const { draftSpecErrors, count } = useDraftSpecErrors(
         draftId,
         enablePolling
@@ -94,13 +96,13 @@ function DraftErrors({
             <>
                 {count && count > errorLength ? (
                     <Typography>
-                        <FormattedMessage
-                            id="errors.preface.totalCount"
-                            values={{
+                        {intl.formatMessage(
+                            { id: 'errors.preface.totalCount' },
+                            {
                                 displaying: errorLength,
                                 total: count,
-                            }}
-                        />
+                            }
+                        )}
                     </Typography>
                 ) : null}
                 <KeyValueList data={errors} disableTypography />
