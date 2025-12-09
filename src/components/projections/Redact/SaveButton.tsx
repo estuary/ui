@@ -49,6 +49,12 @@ const SaveButton = ({
                 updateRedactionAnnotation(pointer, strategy)
                     .then(
                         (response) => {
+                            logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                                operation: 'redact',
+                                pointer,
+                                strategy,
+                            });
+
                             if (mutateDraftSpecs) {
                                 mutateDraftSpecs();
                             }
@@ -66,12 +72,6 @@ const SaveButton = ({
                                     undefined
                                 );
                             }
-
-                            logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
-                                operation: 'redact',
-                                pointer,
-                                strategy,
-                            });
 
                             closeDialog();
                         },
