@@ -25,7 +25,15 @@ function UpdateEntities(props: UseMassUpdaterProps) {
 
     return (
         <SharedProgress
-            name={intl.formatMessage({ id: titleIntlKey }, { updating })}
+            name={intl.formatMessage(
+                {
+                    id:
+                        state === ProgressStates.RUNNING
+                            ? runningIntlKey
+                            : titleIntlKey,
+                },
+                { updating }
+            )}
             groupedEntities={entities}
             error={error}
             logToken={logToken}
@@ -36,7 +44,11 @@ function UpdateEntities(props: UseMassUpdaterProps) {
                 return (
                     <>
                         {draftId ? (
-                            <DraftErrors draftId={draftId} enableAlertStyling />
+                            <DraftErrors
+                                draftId={draftId}
+                                enableAlertStyling
+                                maxErrors={5}
+                            />
                         ) : null}
 
                         {renderError_error?.message ? (

@@ -4,7 +4,6 @@ import type { SharedProgressProps } from 'src/components/tables/RowActions/Share
 import {
     Box,
     CircularProgress,
-    List,
     ListItemText,
     Stack,
     Typography,
@@ -14,6 +13,7 @@ import {
 import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import ChipList from 'src/components/shared/ChipList';
 import ErrorLogs from 'src/components/shared/Entity/Error/Logs';
 import Error from 'src/components/shared/Error';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
@@ -74,10 +74,11 @@ function SharedProgress({
                 <Box sx={{ pt: 0.5 }}>{statusIndicator}</Box>
                 <Stack>
                     <Stack direction="row" spacing={1}>
-                        <Typography variant="h6" component="span">
-                            {name}
-                        </Typography>
-                        {active ? null : (
+                        {active ? (
+                            <Typography variant="h6" component="span">
+                                {name}
+                            </Typography>
+                        ) : (
                             <OutlinedChip
                                 disableCursor
                                 color={color}
@@ -89,16 +90,15 @@ function SharedProgress({
                         )}
                     </Stack>
 
-                    <List>
-                        {groupedEntities.map((entity, index) => {
-                            return (
-                                <ListItemText
-                                    key={`progress-list-${entity.catalog_name}-${index}`}
-                                    primary={entity.catalog_name}
-                                />
-                            );
+                    <ChipList
+                        maxChips={10}
+                        values={groupedEntities.map((datum) => {
+                            return {
+                                display: datum.catalog_name,
+                                title: datum.catalog_name,
+                            };
                         })}
-                    </List>
+                    />
                 </Stack>
             </Stack>
         );
@@ -127,8 +127,6 @@ function SharedProgress({
                 pr: 3,
             }}
         >
-            {listContent}
-
             <Box sx={wrapperStyling}>
                 {showErrors ? (
                     renderError ? (
@@ -162,6 +160,8 @@ function SharedProgress({
                     ) : null}
                 </Box>
             ) : null}
+
+            {listContent}
         </Box>
     );
 }

@@ -12,6 +12,7 @@ export interface DraftErrorProps {
     draftId?: string | null;
     enablePolling?: boolean;
     enableAlertStyling?: boolean;
+    maxErrors?: number;
 }
 
 // Parse a draft error scope, which is generally a URL with a fragment-encoded
@@ -48,12 +49,14 @@ function DraftErrors({
     draftId,
     enablePolling,
     enableAlertStyling,
+    maxErrors,
 }: DraftErrorProps) {
     const intl = useIntl();
 
     const { draftSpecErrors, count } = useDraftSpecErrors(
         draftId,
-        enablePolling
+        enablePolling,
+        maxErrors
     );
 
     //Make sure we have errors to display

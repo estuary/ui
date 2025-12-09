@@ -142,7 +142,7 @@ function useMassUpdater({
                 }
 
                 newSpecs.push({
-                    catalog_name,
+                    catalog_name: `${catalog_name}_faker`,
                     spec: null,
                 });
             });
