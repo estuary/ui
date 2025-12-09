@@ -77,6 +77,7 @@ export const CommonMessages: Record<string, string> = {
     'terms.destinations': `Destinations`,
     'terms.destination.lowercase': `destination`,
     'terms.destinations.lowercase': `destinations`,
+    'terms.tenant': `Tenant`,
 
     // Terms V2
     // Not 100% sure on this approach yet. Like keeping all this together.
@@ -103,7 +104,7 @@ export const CommonMessages: Record<string, string> = {
     // Common sections
     'connectionConfig.header': `Connection Config`,
 
-    'commin.pathShort.prefix': '.../{path}',
+    'common.pathShort.prefix': '.../',
 
     // Alert messages
     'alert.error': 'Error',

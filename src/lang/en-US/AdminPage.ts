@@ -97,13 +97,12 @@ export const AdminPage: Record<string, string> = {
 
     'admin.users.cta.prefixInvitation': `Add Users`,
     'admin.users.prefixInvitation.header': `Add Users`,
+    'admin.users.prefixInvitation.label.tenant': `Tenant`,
     'admin.users.prefixInvitation.label.capability': `Capability`,
-    'admin.users.prefixInvitation.label.type': `Type`,
+    'admin.users.prefixInvitation.label.reusable': `Reusable invite`,
+    'admin.users.prefixInvitation.label.scope.full': `Grant access to all of`,
+    'admin.users.prefixInvitation.label.scope.limited': `Restrict to`,
     'admin.users.prefixInvitation.cta.generateLink': `Create Invite Link`,
-
-    'admin.users.prefixInvitation.nesting.title': `Access Limited`,
-    'admin.users.prefixInvitation.nesting': `User will have access to all tasks beginning with the prefix: `,
-    'admin.users.prefixInvitation.nesting.instructions': `Remove to share access to entire tenant.`,
 
     'admin.prefix.cta.issueGrant': `Grant Access`,
     'admin.prefix.issueGrant.header': `Share Data`,
