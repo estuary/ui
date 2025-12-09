@@ -14,16 +14,15 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Stack,
     TextField,
     Typography,
     useTheme,
 } from '@mui/material';
 
-import { Check } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import SaveButton from 'src/components/projections/Redact/SaveButton';
+import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
 import Error from 'src/components/shared/Error';
 import { diminishedTextColor } from 'src/context/Theme';
 import { translateRedactionStrategy } from 'src/utils/schema-utils';
@@ -91,37 +90,10 @@ const RedactFieldDialog = ({
                             sx={{ width: 500 }}
                         />
                     )}
-                    renderOption={(renderOptionProps, option, state) => {
-                        const { key, ...optionProps } = renderOptionProps;
-
-                        return (
-                            <Box
-                                {...optionProps}
-                                component="li"
-                                key={key}
-                                style={{
-                                    alignItems: 'flex-start',
-                                    display: 'flex',
-                                    paddingLeft: 10,
-                                    paddingRight: 8,
-                                }}
-                            >
-                                {state.selected ? (
-                                    <Check
-                                        style={{
-                                            color: theme.palette.primary.main,
-                                            fontSize: 12,
-                                            marginRight: 4,
-                                            marginTop: 2,
-                                        }}
-                                    />
-                                ) : (
-                                    <Box
-                                        style={{ width: 18, marginRight: 4 }}
-                                    />
-                                )}
-
-                                <Stack>
+                    renderOption={(renderOptionProps, option, state) => (
+                        <SelectableAutocompleteOption
+                            Content={
+                                <>
                                     <Typography
                                         style={{
                                             fontWeight: 500,
@@ -145,10 +117,12 @@ const RedactFieldDialog = ({
                                             id: `projection.option.${option}.description`,
                                         })}
                                     </Typography>
-                                </Stack>
-                            </Box>
-                        );
-                    }}
+                                </>
+                            }
+                            renderOptionProps={renderOptionProps}
+                            state={state}
+                        />
+                    )}
                     value={redactionStrategy}
                 />
             </DialogContent>
