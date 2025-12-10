@@ -1,3 +1,5 @@
+import type { TypographyProps } from '@mui/material';
+
 export interface ConfigHeaderProps {
     entityNameError: string | null;
 }
@@ -6,8 +8,7 @@ export interface InstructionsProps {
     draftId: string | null;
 }
 
-export interface TechnicalEmphasisProps {
-    intlKey: string;
+export interface TechnicalEmphasisProps extends TypographyProps {
     enableBackground?: boolean;
 }
 
