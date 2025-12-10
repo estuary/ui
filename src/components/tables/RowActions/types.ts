@@ -44,3 +44,20 @@ export interface GroupedProgressDialogProps {
     ) => ReactNode;
     finished: Function;
 }
+
+export interface BaseConfirmationProps {
+    count: number;
+}
+
+export interface DisableEnableConfirmationProps extends BaseConfirmationProps {
+    enabling: boolean;
+}
+
+export interface DisableEnableButtonProps {
+    enabling: boolean;
+    selectableTableStoreName:
+        | SelectTableStoreNames.CAPTURE
+        | SelectTableStoreNames.COLLECTION // never tested
+        | SelectTableStoreNames.ENTITY_SELECTOR
+        | SelectTableStoreNames.MATERIALIZATION;
+}

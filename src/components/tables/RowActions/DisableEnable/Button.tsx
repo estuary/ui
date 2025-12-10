@@ -1,4 +1,4 @@
-import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/DisableEnable/types';
+import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/types';
 
 import DisableEnableConfirmation from 'src/components/tables/RowActions/DisableEnable/Confirmation';
 import RowActionButton from 'src/components/tables/RowActions/Shared/Button';
@@ -33,10 +33,8 @@ function DisableEnableButton({
                         selected={selectedNames}
                         message={
                             <DisableEnableConfirmation
+                                count={selectedNames.length}
                                 enabling={enabling}
-                                selectableTableStoreName={
-                                    selectableTableStoreName
-                                }
                             />
                         }
                         selectableTableStoreName={selectableTableStoreName}

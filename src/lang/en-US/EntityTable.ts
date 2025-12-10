@@ -58,8 +58,8 @@ export const EntityTable: Record<string, string> = {
     'entityTable.rowSelector.all': `All`,
     'entityTable.rowSelector.none': `None`,
 
-    'entityTable.update.title': `Fooing {updating} tasks`,
-    'entityTable.delete.confirm': `All items will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
+    'entityTable.disableEnable.confirm': `{count} {count, plural, one {item} other {items}} listed below will be {setting}.`,
+    'entityTable.delete.confirm': `{count} {count, plural, one {item} other {items}} listed below will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
 
     'entityTable.viewDetails.aria': `View details of {name}`,
     'entityTable.edit.aria': `Edit specification of {name}`,

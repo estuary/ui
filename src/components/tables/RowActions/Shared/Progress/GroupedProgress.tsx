@@ -56,12 +56,9 @@ function GroupedProgress({
             <Stack direction="row" spacing={1} sx={{ alignItems: 'start' }}>
                 <Stack>
                     <Stack direction="row" spacing={1}>
-                        <Typography variant="h6" component="span">
-                            {name}
-                        </Typography>
                         {active ? (
                             <Typography variant="h6" component="span">
-                                {statusIndicator}
+                                {name} {statusIndicator}
                             </Typography>
                         ) : (
                             <OutlinedChip

@@ -27,7 +27,9 @@ function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
                 return (
                     <RowActionConfirmation
                         selected={selectedNames}
-                        message={<DeleteConfirmation />}
+                        message={
+                            <DeleteConfirmation count={selectedNames.length} />
+                        }
                         selectableTableStoreName={selectableTableStoreName}
                         settings={settings}
                     />
