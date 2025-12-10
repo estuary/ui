@@ -6,7 +6,6 @@ import type {
     RowConfirmation,
 } from 'src/components/tables/RowActions/types';
 import type { TableActionSettings } from 'src/stores/Tables/Store';
-import type { LiveSpecsExtBaseQuery } from 'src/types';
 
 export const ProgressFinished = 60;
 
@@ -25,11 +24,9 @@ export enum ProgressStates {
 
 export interface BaseProgressProps {
     error: any | null;
-    name: string;
-    runningIntlKey: string;
     state: ProgressStates;
+    runningIntlKey: string;
     successIntlKey: string;
-    titleIntlKey: string;
     logToken?: string | null;
     renderBody?: (progressState: ProgressStates) => ReactNode;
     renderError?: (error: any, progressState: ProgressStates) => ReactNode;
@@ -37,11 +34,12 @@ export interface BaseProgressProps {
 }
 
 export interface IndividualProgressProps extends BaseProgressProps {
+    name: string;
     skippedIntlKey?: string;
 }
 
 export interface GroupedProgressProps extends BaseProgressProps {
-    groupedEntities: LiveSpecsExtBaseQuery[];
+    updatingCount: number;
 }
 
 export type LogViewerProps = Pick<

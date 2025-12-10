@@ -31,7 +31,6 @@ export interface UpdateEntityProps {
     ) => any | Promise<void>;
     generateNewSpecType: (entity: CaptureQuery) => Entity | null;
     runningIntlKey: IndividualProgressProps['runningIntlKey'];
-    titleIntlKey: IndividualProgressProps['titleIntlKey'];
     successIntlKey: IndividualProgressProps['successIntlKey'];
     skippedIntlKey?: IndividualProgressProps['skippedIntlKey'];
     selectableStoreName:
@@ -51,7 +50,6 @@ function UpdateEntity({
     skippedIntlKey,
     successIntlKey,
     selectableStoreName,
-    titleIntlKey,
     validateNewSpec,
 }: UpdateEntityProps) {
     const updateStarted = useRef(false);
@@ -244,7 +242,6 @@ function UpdateEntity({
             state={state}
             runningIntlKey={runningIntlKey}
             successIntlKey={successIntlKey}
-            titleIntlKey={titleIntlKey}
         />
     );
 }

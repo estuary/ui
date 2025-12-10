@@ -1,18 +1,17 @@
-import type { AlertColor } from '@mui/material';
 import type { GroupedProgressProps } from 'src/components/tables/RowActions/Shared/types';
 
 import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import AlertBox from 'src/components/shared/AlertBox';
-import ChipList from 'src/components/shared/ChipList';
 import ErrorViewer from 'src/components/tables/RowActions/Shared/Progress/ErrorViewer';
 import LogViewer from 'src/components/tables/RowActions/Shared/Progress/LogViewer';
 import useRowActionProgress from 'src/components/tables/RowActions/Shared/Progress/useRowActionProgress';
+import { useEntityType } from 'src/context/EntityContext';
+import { ENTITY_SETTINGS } from 'src/settings/entity';
 
 function GroupedProgress({
-    name,
+    updatingCount,
     error,
     logToken,
     renderError,
@@ -21,26 +20,33 @@ function GroupedProgress({
     state,
     successIntlKey,
     runningIntlKey,
-    groupedEntities,
 }: GroupedProgressProps) {
     const intl = useIntl();
+    const entityType = useEntityType();
 
-    const { active, color, labelIntlKey, showErrors, statusIndicator } =
-        useRowActionProgress({
-            error,
-            state,
-            runningIntlKey,
-            successIntlKey,
-        });
+    const { labelIntlKey, showErrors, statusIndicator } = useRowActionProgress({
+        error,
+        state,
+        runningIntlKey,
+        successIntlKey,
+    });
 
-    const severity: AlertColor =
-        color === 'success'
-            ? 'success'
-            : color === 'error'
-              ? 'error'
-              : color === 'warning'
-                ? 'warning'
-                : 'info';
+    const label = intl.formatMessage(
+        {
+            id: labelIntlKey,
+        },
+        {
+            count: updatingCount,
+            itemType: intl.formatMessage(
+                {
+                    id: ENTITY_SETTINGS[entityType].pluralId,
+                },
+                {
+                    count: updatingCount,
+                }
+            ),
+        }
+    );
 
     return (
         <Stack
@@ -49,6 +55,10 @@ function GroupedProgress({
                 pr: 3,
             }}
         >
+            <Typography variant="h6" component="span">
+                {statusIndicator} {label}
+            </Typography>
+
             {showErrors ? (
                 <ErrorViewer
                     error={error}
@@ -62,42 +72,6 @@ function GroupedProgress({
                 renderLogs={renderLogs}
                 state={state}
             />
-
-            <Stack direction="row" spacing={1} sx={{ alignItems: 'start' }}>
-                <Stack>
-                    <Stack direction="row" spacing={1}>
-                        {active ? (
-                            <Typography variant="h6" component="span">
-                                {statusIndicator} {name}
-                            </Typography>
-                        ) : (
-                            <AlertBox severity={severity} short>
-                                {intl.formatMessage({
-                                    id: labelIntlKey,
-                                })}
-                            </AlertBox>
-                            // <OutlinedChip
-                            //     disableCursor
-                            //     color={color}
-                            //     variant="outlined"
-                            //     label={intl.formatMessage({
-                            //         id: labelIntlKey,
-                            //     })}
-                            // />
-                        )}
-                    </Stack>
-
-                    <ChipList
-                        maxChips={10}
-                        values={groupedEntities.map((datum) => {
-                            return {
-                                display: datum.catalog_name,
-                                title: datum.catalog_name,
-                            };
-                        })}
-                    />
-                </Stack>
-            </Stack>
         </Stack>
     );
 }

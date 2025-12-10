@@ -24,7 +24,6 @@ export interface UseMassUpdaterProps {
     onFinish: (response: any) => void;
     runningIntlKey: GroupedProgressProps['runningIntlKey'];
     successIntlKey: GroupedProgressProps['successIntlKey'];
-    titleIntlKey: GroupedProgressProps['titleIntlKey'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
@@ -140,7 +139,7 @@ function useMassUpdater({
                 }
 
                 newSpecs.push({
-                    catalog_name,
+                    catalog_name: `${catalog_name}-error1`,
                     spec: null,
                 });
             });
@@ -167,7 +166,7 @@ function useMassUpdater({
             }
 
             // Try to publish the changes
-            const publishResponse = await createPublication(newDraftId, false);
+            const publishResponse = await createPublication(newDraftId, true);
             if (publishResponse.error) {
                 return failed(publishResponse);
             }

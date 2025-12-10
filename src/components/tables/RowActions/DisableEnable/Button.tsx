@@ -50,7 +50,6 @@ function DisableEnableButton({
                     skippedIntlKey={messages.skipped}
                     successIntlKey={messages.success}
                     runningIntlKey={messages.running}
-                    titleIntlKey={messages.title}
                     generateNewSpec={(spec) =>
                         generateDisabledSpec(spec, enabling, shardsAreNested)
                     }
