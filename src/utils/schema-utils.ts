@@ -226,6 +226,9 @@ export const isCollectionSchemaWithProperties = (
 ): value is WithRequiredProperty<CollectionSchema, 'properties'> =>
     'properties' in value;
 
+export const parsePointerEscapeCharacters = (value: string) =>
+    value.replace(/~1/g, '/').replace(/~0/g, '~');
+
 interface PointerSegment {
     id: string;
     index: number;
@@ -278,7 +281,7 @@ export const setSchemaProperties = (
     const pointerSegments: PointerSegment[] = pointer
         .split('/')
         .filter((id) => id.length !== 0)
-        .map((id, index) => ({ id, index }));
+        .map((id, index) => ({ id: parsePointerEscapeCharacters(id), index }));
 
     schema.properties ??= {};
 
