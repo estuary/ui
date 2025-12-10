@@ -13,9 +13,8 @@ import {
 } from 'src/api/draftSpecs';
 import { getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
 import { createPublication } from 'src/api/publications';
-import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
-import Error from 'src/components/shared/Error';
 import IndividualProgress from 'src/components/tables/RowActions/Shared/Progress/IndividualProgress';
+import RenderError from 'src/components/tables/RowActions/Shared/Progress/RenderError';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import usePublications from 'src/hooks/usePublications';
@@ -218,27 +217,13 @@ function UpdateEntity({
             error={error}
             logToken={logToken}
             renderLogs
-            renderError={(renderError_error, renderError_state) => {
-                const skipped = renderError_state === ProgressStates.SKIPPED;
-
-                return (
-                    <>
-                        {draftId ? (
-                            <DraftErrors draftId={draftId} enableAlertStyling />
-                        ) : null}
-
-                        {renderError_error?.message ? (
-                            <Error
-                                error={renderError_error}
-                                severity={skipped ? 'info' : undefined}
-                                hideIcon={skipped}
-                                condensed
-                                hideTitle
-                            />
-                        ) : null}
-                    </>
-                );
-            }}
+            renderError={(renderError_error, renderError_state) => (
+                <RenderError
+                    draftId={draftId}
+                    error={renderError_error}
+                    skipped={renderError_state === ProgressStates.SKIPPED}
+                />
+            )}
             state={state}
             runningIntlKey={runningIntlKey}
             successIntlKey={successIntlKey}

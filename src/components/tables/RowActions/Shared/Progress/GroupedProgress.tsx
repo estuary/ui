@@ -1,6 +1,6 @@
 import type { GroupedProgressProps } from 'src/components/tables/RowActions/Shared/types';
 
-import { Stack, Typography } from '@mui/material';
+import { ListItemText, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -16,7 +16,6 @@ function GroupedProgress({
     logToken,
     renderError,
     renderLogs,
-    renderBody,
     state,
     successIntlKey,
     runningIntlKey,
@@ -55,9 +54,17 @@ function GroupedProgress({
                 pr: 3,
             }}
         >
-            <Typography variant="h6" component="span">
-                {statusIndicator} {label}
-            </Typography>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                {statusIndicator}
+
+                <ListItemText
+                    primary={
+                        <Typography variant="h6" component="span">
+                            {label}
+                        </Typography>
+                    }
+                />
+            </Stack>
 
             {showErrors ? (
                 <ErrorViewer

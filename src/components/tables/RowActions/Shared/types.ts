@@ -28,13 +28,13 @@ export interface BaseProgressProps {
     runningIntlKey: string;
     successIntlKey: string;
     logToken?: string | null;
-    renderBody?: (progressState: ProgressStates) => ReactNode;
     renderError?: (error: any, progressState: ProgressStates) => ReactNode;
     renderLogs?: Function | boolean;
 }
 
 export interface IndividualProgressProps extends BaseProgressProps {
     name: string;
+    renderBody?: (progressState: ProgressStates) => ReactNode;
     skippedIntlKey?: string;
 }
 
@@ -106,4 +106,10 @@ export interface GroupedRowActionButtonProps {
 export interface ConfirmationWithExplanationProps {
     message: string | ReactNode;
     selected: AccessGrantRowConfirmation[];
+}
+
+export interface RenderErrorProps {
+    draftId: string | null;
+    error: any;
+    skipped?: boolean;
 }
