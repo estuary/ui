@@ -139,7 +139,7 @@ function useMassUpdater({
                 }
 
                 newSpecs.push({
-                    catalog_name: `${catalog_name}-error1`,
+                    catalog_name,
                     spec: null,
                 });
             });
@@ -166,7 +166,7 @@ function useMassUpdater({
             }
 
             // Try to publish the changes
-            const publishResponse = await createPublication(newDraftId, true);
+            const publishResponse = await createPublication(newDraftId, false);
             if (publishResponse.error) {
                 return failed(publishResponse);
             }
