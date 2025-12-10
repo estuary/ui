@@ -7,7 +7,7 @@ import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
 
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
-function useRowActionSettings({
+function useRowActionProgress({
     runningIntlKey,
     successIntlKey,
     state,
@@ -55,4 +55,4 @@ function useRowActionSettings({
     };
 }
 
-export default useRowActionSettings;
+export default useRowActionProgress;
