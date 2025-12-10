@@ -2,8 +2,8 @@ import type { UseMassUpdaterProps } from 'src/hooks/useMassUpdater';
 
 import { useMount } from 'react-use';
 
-import GroupedProgress from 'src/components/tables/RowActions/Shared/Progress/GroupedProgress';
-import RenderError from 'src/components/tables/RowActions/Shared/Progress/RenderError';
+import GroupedProgress from 'src/components/tables/RowActions/Shared/progress/GroupedProgress';
+import RenderError from 'src/components/tables/RowActions/Shared/progress/RenderError';
 import useMassUpdater from 'src/hooks/useMassUpdater';
 
 function UpdateEntities(props: UseMassUpdaterProps) {

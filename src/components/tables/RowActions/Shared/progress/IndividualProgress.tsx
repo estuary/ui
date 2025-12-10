@@ -4,20 +4,20 @@ import { ListItemText, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import ErrorViewer from 'src/components/tables/RowActions/Shared/Progress/ErrorViewer';
-import LogViewer from 'src/components/tables/RowActions/Shared/Progress/LogViewer';
-import useRowActionProgress from 'src/components/tables/RowActions/Shared/Progress/useRowActionProgress';
+import ErrorViewer from 'src/components/tables/RowActions/Shared/progress/ErrorViewer';
+import LogViewer from 'src/components/tables/RowActions/Shared/progress/LogViewer';
+import useRowActionProgress from 'src/components/tables/RowActions/Shared/progress/useRowActionProgress';
 
 function IndividualProgress({
-    name,
     error,
     logToken,
+    name,
+    renderBody,
     renderError,
     renderLogs,
-    renderBody,
+    runningIntlKey,
     state,
     successIntlKey,
-    runningIntlKey,
 }: IndividualProgressProps) {
     const intl = useIntl();
 

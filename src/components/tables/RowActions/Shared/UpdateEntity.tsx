@@ -13,8 +13,8 @@ import {
 } from 'src/api/draftSpecs';
 import { getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
 import { createPublication } from 'src/api/publications';
-import IndividualProgress from 'src/components/tables/RowActions/Shared/Progress/IndividualProgress';
-import RenderError from 'src/components/tables/RowActions/Shared/Progress/RenderError';
+import IndividualProgress from 'src/components/tables/RowActions/Shared/progress/IndividualProgress';
+import RenderError from 'src/components/tables/RowActions/Shared/progress/RenderError';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import usePublications from 'src/hooks/usePublications';
@@ -213,10 +213,13 @@ function UpdateEntity({
 
     return (
         <IndividualProgress
-            name={entity.catalog_name}
             error={error}
             logToken={logToken}
+            name={entity.catalog_name}
             renderLogs
+            runningIntlKey={runningIntlKey}
+            state={state}
+            successIntlKey={successIntlKey}
             renderError={(renderError_error, renderError_state) => (
                 <RenderError
                     draftId={draftId}
@@ -224,9 +227,6 @@ function UpdateEntity({
                     skipped={renderError_state === ProgressStates.SKIPPED}
                 />
             )}
-            state={state}
-            runningIntlKey={runningIntlKey}
-            successIntlKey={successIntlKey}
         />
     );
 }

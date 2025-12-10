@@ -4,9 +4,9 @@ import { ListItemText, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import ErrorViewer from 'src/components/tables/RowActions/Shared/Progress/ErrorViewer';
-import LogViewer from 'src/components/tables/RowActions/Shared/Progress/LogViewer';
-import useRowActionProgress from 'src/components/tables/RowActions/Shared/Progress/useRowActionProgress';
+import ErrorViewer from 'src/components/tables/RowActions/Shared/progress/ErrorViewer';
+import LogViewer from 'src/components/tables/RowActions/Shared/progress/LogViewer';
+import useRowActionProgress from 'src/components/tables/RowActions/Shared/progress/useRowActionProgress';
 import { useEntityType } from 'src/context/EntityContext';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
 
