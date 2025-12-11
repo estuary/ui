@@ -160,7 +160,7 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
                             label={intl.formatMessage({
                                 id: 'data.internalId',
                             })}
-                            value={dataPlane.data_plane_name || ''}
+                            value={dataPlane.data_plane_name}
                         />
 
                         {dataPlane.aws_iam_user_arn ? (
