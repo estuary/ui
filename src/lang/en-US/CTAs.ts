@@ -60,4 +60,5 @@ export const CTAs: Record<string, string> = {
     'cta.exit': `Exit`,
     'cta.rename': `Rename`,
     'cta.inviteLink': `Invite Link`,
+    'cta.redact': `Redact`,
 };

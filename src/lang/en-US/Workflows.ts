@@ -476,15 +476,23 @@ export const Workflows: Record<string, string> = {
 
     // Projections
     'projection.dialog.add.header': `Alternate Name`,
+    'projection.dialog.rename.header': `Redact Field`,
     'projection.dialog.add.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
     'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
     'projection.error.alert.removalFailure': `Failed to update the server when removing field alias. Please try again.`,
     'projection.error.alert.duplicate': `Field name already in use for "{duplicateLocation}"`,
     'projection.error.alert.draftId': `draft ID or stored draft spec not found`,
+    'projection.error.alert.redactDefaultError': `An issue was encountered updating the redaction strategy for this location. Please try again.`,
     'projection.label.fieldName.current': `Current Name`,
     'projection.label.fieldName.new': `New Name`,
+    'projection.label.redactionStrategy': `Strategy`,
+    'projection.option.block.label': `Block`,
+    'projection.option.sha256.label': `Hash`,
+    'projection.option.block.description': `Prevent this field from being captured into your collection.`,
+    'projection.option.sha256.description': `Hash this field's value before storing it in your collection.`,
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
     'projection.tooltip.cannotExist': `The location cannot exist. It may be outside of permitted array bounds, is a disallowed property, or has an impossible type.`,
+    'projection.tooltip.locationRedacted': `This location is redacted using strategy: {strategy}.`,
 
     'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
     'schemaManagement.options.manual.label': `Manually manage schemas`,
