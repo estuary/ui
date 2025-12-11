@@ -11,10 +11,10 @@ export const columns: TableColumns[] = [
     },
     {
         field: null, // not sortable
-        headerIntlKey: 'data.cidr_ipv4',
+        headerIntlKey: 'data.ipv4',
     },
     {
         field: null, // not sortable
-        headerIntlKey: 'data.cidr_ipv6',
+        headerIntlKey: 'data.ipv6',
     },
 ];
