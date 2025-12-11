@@ -98,7 +98,7 @@ export const massUpdateDraftSpecs = async (
     draftId: string,
     specType: Entity,
     specs: MassUpdateMatchData[],
-    detail?: string
+    detail: string
 ) => {
     if (specs.length > 0) {
         const limiter = pLimit(3);
