@@ -32,11 +32,7 @@ interface DataPlaneDialogProps {
     selectedRow: BaseDataPlaneQuery | null;
 }
 
-function DataPlaneDialog({
-    open,
-    onClose,
-    selectedRow,
-}: DataPlaneDialogProps) {
+function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
     const intl = useIntl();
     const theme = useTheme();
     const parseCidrBlocks = useParseCidrBlocks();
@@ -70,10 +66,7 @@ function DataPlaneDialog({
                             mb: 1,
                         }}
                     >
-                        <DialogTitle
-                            id="data-plane-dialog-title"
-                            sx={{ p: 0 }}
-                        >
+                        <DialogTitle id="data-plane-dialog-title" sx={{ p: 0 }}>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -91,9 +84,7 @@ function DataPlaneDialog({
                                         )}
                                         hidePrefix
                                         logoSize={30}
-                                        scope={
-                                            selectedDataPlaneOption.scope
-                                        }
+                                        scope={selectedDataPlaneOption.scope}
                                     />
                                 ) : null}
                             </Box>
@@ -133,8 +124,8 @@ function DataPlaneDialog({
                                 </Typography>
                                 <Typography color="text.secondary">
                                     {
-                                        selectedDataPlaneOption
-                                            .dataPlaneName.provider
+                                        selectedDataPlaneOption.dataPlaneName
+                                            .provider
                                     }
                                 </Typography>
                             </Box>
@@ -169,13 +160,17 @@ function DataPlaneDialog({
                             </Typography>
                             <Box sx={{ display: 'flex', gap: 1 }}>
                                 <TextField
-                                    value={
-                                        selectedRow.data_plane_name || ''
-                                    }
+                                    value={selectedRow.data_plane_name || ''}
                                     disabled
                                     size="small"
                                     fullWidth
-                                    sx={{ flex: 1 }}
+                                    sx={{
+                                        'flex': 1,
+                                        '& .MuiInputBase-input': {
+                                            fontWeight: 500,
+                                            fontFamily: 'Monospace',
+                                        },
+                                    }}
                                 />
                                 <CopyToClipboardButton
                                     writeValue={
@@ -202,7 +197,13 @@ function DataPlaneDialog({
                                         disabled
                                         size="small"
                                         fullWidth
-                                        sx={{ flex: 1 }}
+                                        sx={{
+                                            'flex': 1,
+                                            '& .MuiInputBase-input': {
+                                                fontWeight: 500,
+                                                fontFamily: 'Monospace',
+                                            },
+                                        }}
                                     />
                                     <CopyToClipboardButton
                                         writeValue={
@@ -232,7 +233,13 @@ function DataPlaneDialog({
                                         disabled
                                         size="small"
                                         fullWidth
-                                        sx={{ flex: 1 }}
+                                        sx={{
+                                            'flex': 1,
+                                            '& .MuiInputBase-input': {
+                                                fontWeight: 500,
+                                                fontFamily: 'Monospace',
+                                            },
+                                        }}
                                     />
                                     <CopyToClipboardButton
                                         writeValue={
@@ -260,7 +267,13 @@ function DataPlaneDialog({
                                         disabled
                                         size="small"
                                         fullWidth
-                                        sx={{ flex: 1 }}
+                                        sx={{
+                                            'flex': 1,
+                                            '& .MuiInputBase-input': {
+                                                fontWeight: 500,
+                                                fontFamily: 'Monospace',
+                                            },
+                                        }}
                                     />
                                     <CopyToClipboardButton
                                         writeValue={`${OPENID_HOST}/${selectedRow.data_plane_fqdn}`}
@@ -286,7 +299,13 @@ function DataPlaneDialog({
                                         disabled
                                         size="small"
                                         fullWidth
-                                        sx={{ flex: 1 }}
+                                        sx={{
+                                            'flex': 1,
+                                            '& .MuiInputBase-input': {
+                                                fontWeight: 500,
+                                                fontFamily: 'Monospace',
+                                            },
+                                        }}
                                     />
                                     <CopyToClipboardButton
                                         writeValue={
@@ -314,7 +333,13 @@ function DataPlaneDialog({
                                         disabled
                                         size="small"
                                         fullWidth
-                                        sx={{ flex: 1 }}
+                                        sx={{
+                                            'flex': 1,
+                                            '& .MuiInputBase-input': {
+                                                fontWeight: 500,
+                                                fontFamily: 'Monospace',
+                                            },
+                                        }}
                                     />
                                     <CopyToClipboardButton
                                         writeValue={
