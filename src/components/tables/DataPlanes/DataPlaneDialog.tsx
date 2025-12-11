@@ -23,22 +23,62 @@ import {
 } from 'src/utils/dataPlane-utils';
 import { OPENID_HOST } from 'src/utils/misc-utils';
 
+interface DataPlaneDialogFieldProps {
+    label: string;
+    value: string | null;
+    showCopyButton?: boolean;
+}
+
+function DataPlaneDialogField({
+    label,
+    value,
+    showCopyButton = true,
+}: DataPlaneDialogFieldProps) {
+    return (
+        <Stack>
+            <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                {label}
+            </Typography>
+            {showCopyButton ? (
+                <Stack direction="row" spacing={1}>
+                    <TextField
+                        value={value || ''}
+                        disabled
+                        size="small"
+                        fullWidth
+                        sx={{
+                            'flex': 1,
+                            '& .MuiInputBase-input': {
+                                fontWeight: 500,
+                                fontFamily: 'Monospace',
+                            },
+                        }}
+                    />
+                    <CopyToClipboardButton writeValue={value} />
+                </Stack>
+            ) : (
+                <Typography color="text.secondary">{value || '-'}</Typography>
+            )}
+        </Stack>
+    );
+}
+
 interface DataPlaneDialogProps {
     open: boolean;
     onClose: () => void;
-    selectedRow: BaseDataPlaneQuery | null;
+    dataPlane: BaseDataPlaneQuery | null;
 }
 
-function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
+function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
     const intl = useIntl();
     const theme = useTheme();
     const parseCidrBlocks = useParseCidrBlocks();
 
-    const selectedDataPlaneOption = selectedRow
-        ? generateDataPlaneOption(selectedRow)
+    const dataPlaneDetails = dataPlane
+        ? generateDataPlaneOption(dataPlane)
         : null;
 
-    const { ipv4, ipv6 } = parseCidrBlocks(selectedRow?.cidr_blocks);
+    const { ipv4, ipv6 } = parseCidrBlocks(dataPlane?.cidr_blocks);
 
     return (
         <Dialog
@@ -48,7 +88,7 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
             fullWidth
             aria-labelledby="data-plane-dialog-title"
         >
-            {selectedRow && selectedDataPlaneOption ? (
+            {dataPlane && dataPlaneDetails ? (
                 <DialogContent>
                     <Stack
                         direction="row"
@@ -62,17 +102,17 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                 alignItems="center"
                                 spacing={1}
                             >
-                                {selectedDataPlaneOption.dataPlaneName ? (
+                                {dataPlaneDetails.dataPlaneName ? (
                                     <DataPlane
                                         dataPlaneName={
-                                            selectedDataPlaneOption.dataPlaneName
+                                            dataPlaneDetails.dataPlaneName
                                         }
                                         formattedSuffix={formatDataPlaneName(
-                                            selectedDataPlaneOption.dataPlaneName
+                                            dataPlaneDetails.dataPlaneName
                                         )}
                                         hidePrefix
                                         logoSize={30}
-                                        scope={selectedDataPlaneOption.scope}
+                                        scope={dataPlaneDetails.scope}
                                     />
                                 ) : null}
                             </Stack>
@@ -99,233 +139,75 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                     </Typography>
 
                     <Stack spacing={3}>
-                        {selectedDataPlaneOption.dataPlaneName?.provider ? (
-                            <Stack>
-                                <Typography
-                                    variant="subtitle2"
-                                    fontWeight={600}
-                                    gutterBottom
-                                >
-                                    {intl.formatMessage({
-                                        id: 'data.cloudProvider',
-                                    })}
-                                </Typography>
-                                <Typography color="text.secondary">
-                                    {
-                                        selectedDataPlaneOption.dataPlaneName
-                                            .provider
-                                    }
-                                </Typography>
-                            </Stack>
+                        {dataPlaneDetails.dataPlaneName?.provider ? (
+                            <DataPlaneDialogField
+                                label={intl.formatMessage({
+                                    id: 'data.cloudProvider',
+                                })}
+                                value={dataPlaneDetails.dataPlaneName.provider}
+                                showCopyButton={false}
+                            />
                         ) : null}
 
-                        <Stack>
-                            <Typography
-                                variant="subtitle2"
-                                fontWeight={600}
-                                gutterBottom
-                            >
-                                {intl.formatMessage({ id: 'data.name' })}
-                            </Typography>
-                            <Typography color="text.secondary">
-                                {selectedDataPlaneOption.dataPlaneName
+                        <DataPlaneDialogField
+                            label={intl.formatMessage({ id: 'data.name' })}
+                            value={
+                                dataPlaneDetails.dataPlaneName
                                     ? formatDataPlaneName(
-                                          selectedDataPlaneOption.dataPlaneName
+                                          dataPlaneDetails.dataPlaneName
                                       )
-                                    : '-'}
-                            </Typography>
-                        </Stack>
+                                    : '-'
+                            }
+                            showCopyButton={false}
+                        />
 
-                        <Stack>
-                            <Typography
-                                variant="subtitle2"
-                                fontWeight={600}
-                                gutterBottom
-                            >
-                                {intl.formatMessage({
-                                    id: 'data.internalId',
+                        <DataPlaneDialogField
+                            label={intl.formatMessage({
+                                id: 'data.internalId',
+                            })}
+                            value={dataPlane.data_plane_name || ''}
+                        />
+
+                        {dataPlane.aws_iam_user_arn ? (
+                            <DataPlaneDialogField
+                                label={intl.formatMessage({
+                                    id: 'data.awsIamUserArn',
                                 })}
-                            </Typography>
-                            <Stack direction="row" spacing={1}>
-                                <TextField
-                                    value={selectedRow.data_plane_name || ''}
-                                    disabled
-                                    size="small"
-                                    fullWidth
-                                    sx={{
-                                        'flex': 1,
-                                        '& .MuiInputBase-input': {
-                                            fontWeight: 500,
-                                            fontFamily: 'Monospace',
-                                        },
-                                    }}
-                                />
-                                <CopyToClipboardButton
-                                    writeValue={
-                                        selectedRow.data_plane_name || ''
-                                    }
-                                />
-                            </Stack>
-                        </Stack>
-
-                        {selectedRow.aws_iam_user_arn ? (
-                            <Stack>
-                                <Typography
-                                    variant="subtitle2"
-                                    fontWeight={600}
-                                    gutterBottom
-                                >
-                                    {intl.formatMessage({
-                                        id: 'data.awsIamUserArn',
-                                    })}
-                                </Typography>
-                                <Stack direction="row" spacing={1}>
-                                    <TextField
-                                        value={selectedRow.aws_iam_user_arn}
-                                        disabled
-                                        size="small"
-                                        fullWidth
-                                        sx={{
-                                            'flex': 1,
-                                            '& .MuiInputBase-input': {
-                                                fontWeight: 500,
-                                                fontFamily: 'Monospace',
-                                            },
-                                        }}
-                                    />
-                                    <CopyToClipboardButton
-                                        writeValue={
-                                            selectedRow.aws_iam_user_arn
-                                        }
-                                    />
-                                </Stack>
-                            </Stack>
+                                value={dataPlane.aws_iam_user_arn}
+                            />
                         ) : null}
 
-                        {selectedRow.gcp_service_account_email ? (
-                            <Stack>
-                                <Typography
-                                    variant="subtitle2"
-                                    fontWeight={600}
-                                    gutterBottom
-                                >
-                                    {intl.formatMessage({
-                                        id: 'data.gcpServiceAccount',
-                                    })}
-                                </Typography>
-                                <Stack direction="row" spacing={1}>
-                                    <TextField
-                                        value={
-                                            selectedRow.gcp_service_account_email
-                                        }
-                                        disabled
-                                        size="small"
-                                        fullWidth
-                                        sx={{
-                                            'flex': 1,
-                                            '& .MuiInputBase-input': {
-                                                fontWeight: 500,
-                                                fontFamily: 'Monospace',
-                                            },
-                                        }}
-                                    />
-                                    <CopyToClipboardButton
-                                        writeValue={
-                                            selectedRow.gcp_service_account_email
-                                        }
-                                    />
-                                </Stack>
-                            </Stack>
+                        {dataPlane.gcp_service_account_email ? (
+                            <DataPlaneDialogField
+                                label={intl.formatMessage({
+                                    id: 'data.gcpServiceAccount',
+                                })}
+                                value={dataPlane.gcp_service_account_email}
+                            />
                         ) : null}
 
-                        {selectedRow.data_plane_fqdn ? (
-                            <Stack>
-                                <Typography
-                                    variant="subtitle2"
-                                    fontWeight={600}
-                                    gutterBottom
-                                >
-                                    {selectedRow.data_plane_fqdn}
-                                    {intl.formatMessage({
-                                        id: 'data.idProvider',
-                                    })}
-                                </Typography>
-                                <Stack direction="row" spacing={1}>
-                                    <TextField
-                                        value={`${OPENID_HOST}/${selectedRow.data_plane_fqdn}`}
-                                        disabled
-                                        size="small"
-                                        fullWidth
-                                        sx={{
-                                            'flex': 1,
-                                            '& .MuiInputBase-input': {
-                                                fontWeight: 500,
-                                                fontFamily: 'Monospace',
-                                            },
-                                        }}
-                                    />
-                                    <CopyToClipboardButton
-                                        writeValue={`${OPENID_HOST}/${selectedRow.data_plane_fqdn}`}
-                                    />
-                                </Stack>
-                            </Stack>
+                        {dataPlane.data_plane_fqdn ? (
+                            <DataPlaneDialogField
+                                label={intl.formatMessage({
+                                    id: 'data.idProvider',
+                                })}
+                                value={`${OPENID_HOST}/${dataPlane.data_plane_fqdn}`}
+                            />
                         ) : null}
 
-                        <Stack>
-                            <Typography
-                                variant="subtitle2"
-                                fontWeight={600}
-                                gutterBottom
-                            >
-                                {intl.formatMessage({
-                                    id: 'data.ipv4',
-                                })}
-                            </Typography>
-                            <Stack direction="row" spacing={1}>
-                                <TextField
-                                    value={ipv4}
-                                    disabled
-                                    size="small"
-                                    fullWidth
-                                    sx={{
-                                        'flex': 1,
-                                        '& .MuiInputBase-input': {
-                                            fontWeight: 500,
-                                            fontFamily: 'Monospace',
-                                        },
-                                    }}
-                                />
-                                <CopyToClipboardButton writeValue={ipv4} />
-                            </Stack>
-                        </Stack>
+                        <DataPlaneDialogField
+                            label={intl.formatMessage({
+                                id: 'data.ipv4',
+                            })}
+                            value={ipv4}
+                        />
 
-                        <Stack>
-                            <Typography
-                                variant="subtitle2"
-                                fontWeight={600}
-                                gutterBottom
-                            >
-                                {intl.formatMessage({
-                                    id: 'data.ipv6',
-                                })}
-                            </Typography>
-                            <Stack direction="row" spacing={1}>
-                                <TextField
-                                    value={ipv6}
-                                    disabled
-                                    size="small"
-                                    fullWidth
-                                    sx={{
-                                        'flex': 1,
-                                        '& .MuiInputBase-input': {
-                                            fontWeight: 500,
-                                            fontFamily: 'Monospace',
-                                        },
-                                    }}
-                                />
-                                <CopyToClipboardButton writeValue={ipv6} />
-                            </Stack>
-                        </Stack>
+                        <DataPlaneDialogField
+                            label={intl.formatMessage({
+                                id: 'data.ipv6',
+                            })}
+                            value={ipv6}
+                        />
                     </Stack>
                 </DialogContent>
             ) : null}

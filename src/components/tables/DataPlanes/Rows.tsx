@@ -2,12 +2,7 @@ import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 
 import { useMemo, useState } from 'react';
 
-import {
-    Stack,
-    TableCell,
-    TableRow,
-    useTheme,
-} from '@mui/material';
+import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
 import { InfoCircle } from 'iconoir-react';
 
@@ -112,7 +107,7 @@ function Rows({ data }: RowsProps) {
             <DataPlaneDialog
                 open={Boolean(selectedRow)}
                 onClose={handleCloseModal}
-                selectedRow={selectedRow}
+                dataPlane={selectedRow}
             />
         </>
     );
