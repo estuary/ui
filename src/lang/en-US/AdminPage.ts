@@ -127,7 +127,7 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.public.table.noContent.header': `No data planes found`,
     'admin.dataPlanes.public.table.noContent.message': `There was an issue reaching our servers. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
 
-    'admin.dataPlanes.table.filterLabel': `Filter by Name or Reactor Address`,
+    'admin.dataPlanes.table.filterLabel': `Filter by Name`,
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.notifications': `Notifications`,
