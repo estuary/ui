@@ -1,4 +1,4 @@
-import type { LogProps } from 'src/components/logs';
+import type { ErrorLogsProps } from 'src/components/shared/Entity/Error/types';
 
 import { useState } from 'react';
 
@@ -10,13 +10,6 @@ import { useIntl } from 'react-intl';
 import Logs from 'src/components/logs';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { linkButtonSx } from 'src/context/Theme';
-
-export interface ErrorLogsProps {
-    logToken?: string | null;
-    defaultOpen?: boolean;
-    height?: number;
-    logProps?: Omit<LogProps, 'token' | 'height'>;
-}
 
 function ErrorLogs({
     logToken,

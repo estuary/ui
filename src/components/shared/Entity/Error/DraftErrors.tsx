@@ -1,3 +1,4 @@
+import type { DraftErrorProps } from 'src/components/shared/Entity/Error/types';
 import type { KeyValue } from 'src/components/shared/KeyValueList';
 
 import { Box, Breadcrumbs, Typography } from '@mui/material';
@@ -7,13 +8,6 @@ import { useIntl } from 'react-intl';
 import AlertBox from 'src/components/shared/AlertBox';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import useDraftSpecErrors from 'src/hooks/useDraftSpecErrors';
-
-export interface DraftErrorProps {
-    draftId?: string | null;
-    enablePolling?: boolean;
-    enableAlertStyling?: boolean;
-    maxErrors?: number;
-}
 
 // Parse a draft error scope, which is generally a URL with a fragment-encoded
 // JSON pointer, into structured bread crumb components.
