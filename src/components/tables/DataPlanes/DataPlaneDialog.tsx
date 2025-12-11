@@ -1,9 +1,6 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 
-import { useMemo } from 'react';
-
 import {
-    Box,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -41,10 +38,7 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
         ? generateDataPlaneOption(selectedRow)
         : null;
 
-    const selectedSplitCidrBlocks = useMemo(
-        () => (selectedRow ? parseCidrBlocks(selectedRow.cidr_blocks) : null),
-        [selectedRow, parseCidrBlocks]
-    );
+    const { ipv4, ipv6 } = parseCidrBlocks(selectedRow?.cidr_blocks);
 
     return (
         <Dialog
@@ -54,25 +48,19 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
             fullWidth
             aria-labelledby="data-plane-dialog-title"
         >
-            {selectedRow &&
-            selectedDataPlaneOption &&
-            selectedSplitCidrBlocks ? (
+            {selectedRow && selectedDataPlaneOption ? (
                 <DialogContent>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            mb: 1,
-                        }}
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        sx={{ mb: 1 }}
                     >
                         <DialogTitle id="data-plane-dialog-title" sx={{ p: 0 }}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1,
-                                }}
+                            <Stack
+                                direction="row"
+                                alignItems="center"
+                                spacing={1}
                             >
                                 {selectedDataPlaneOption.dataPlaneName ? (
                                     <DataPlane
@@ -87,7 +75,7 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                         scope={selectedDataPlaneOption.scope}
                                     />
                                 ) : null}
-                            </Box>
+                            </Stack>
                         </DialogTitle>
 
                         <IconButton onClick={onClose} size="small">
@@ -98,7 +86,7 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                 }}
                             />
                         </IconButton>
-                    </Box>
+                    </Stack>
 
                     <Typography
                         variant="body2"
@@ -112,7 +100,7 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
 
                     <Stack spacing={3}>
                         {selectedDataPlaneOption.dataPlaneName?.provider ? (
-                            <Box>
+                            <Stack>
                                 <Typography
                                     variant="subtitle2"
                                     fontWeight={600}
@@ -128,10 +116,10 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                             .provider
                                     }
                                 </Typography>
-                            </Box>
+                            </Stack>
                         ) : null}
 
-                        <Box>
+                        <Stack>
                             <Typography
                                 variant="subtitle2"
                                 fontWeight={600}
@@ -146,9 +134,9 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                       )
                                     : '-'}
                             </Typography>
-                        </Box>
+                        </Stack>
 
-                        <Box>
+                        <Stack>
                             <Typography
                                 variant="subtitle2"
                                 fontWeight={600}
@@ -158,7 +146,7 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                     id: 'data.internalId',
                                 })}
                             </Typography>
-                            <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Stack direction="row" spacing={1}>
                                 <TextField
                                     value={selectedRow.data_plane_name || ''}
                                     disabled
@@ -177,11 +165,11 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                         selectedRow.data_plane_name || ''
                                     }
                                 />
-                            </Box>
-                        </Box>
+                            </Stack>
+                        </Stack>
 
                         {selectedRow.aws_iam_user_arn ? (
-                            <Box>
+                            <Stack>
                                 <Typography
                                     variant="subtitle2"
                                     fontWeight={600}
@@ -191,7 +179,7 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                         id: 'data.awsIamUserArn',
                                     })}
                                 </Typography>
-                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                <Stack direction="row" spacing={1}>
                                     <TextField
                                         value={selectedRow.aws_iam_user_arn}
                                         disabled
@@ -210,12 +198,12 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                             selectedRow.aws_iam_user_arn
                                         }
                                     />
-                                </Box>
-                            </Box>
+                                </Stack>
+                            </Stack>
                         ) : null}
 
                         {selectedRow.gcp_service_account_email ? (
-                            <Box>
+                            <Stack>
                                 <Typography
                                     variant="subtitle2"
                                     fontWeight={600}
@@ -225,7 +213,7 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                         id: 'data.gcpServiceAccount',
                                     })}
                                 </Typography>
-                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                <Stack direction="row" spacing={1}>
                                     <TextField
                                         value={
                                             selectedRow.gcp_service_account_email
@@ -246,22 +234,23 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                             selectedRow.gcp_service_account_email
                                         }
                                     />
-                                </Box>
-                            </Box>
+                                </Stack>
+                            </Stack>
                         ) : null}
 
                         {selectedRow.data_plane_fqdn ? (
-                            <Box>
+                            <Stack>
                                 <Typography
                                     variant="subtitle2"
                                     fontWeight={600}
                                     gutterBottom
                                 >
+                                    {selectedRow.data_plane_fqdn}
                                     {intl.formatMessage({
                                         id: 'data.idProvider',
                                     })}
                                 </Typography>
-                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                <Stack direction="row" spacing={1}>
                                     <TextField
                                         value={`${OPENID_HOST}/${selectedRow.data_plane_fqdn}`}
                                         disabled
@@ -278,77 +267,65 @@ function DataPlaneDialog({ open, onClose, selectedRow }: DataPlaneDialogProps) {
                                     <CopyToClipboardButton
                                         writeValue={`${OPENID_HOST}/${selectedRow.data_plane_fqdn}`}
                                     />
-                                </Box>
-                            </Box>
+                                </Stack>
+                            </Stack>
                         ) : null}
 
-                        {selectedSplitCidrBlocks.ipv4 ? (
-                            <Box>
-                                <Typography
-                                    variant="subtitle2"
-                                    fontWeight={600}
-                                    gutterBottom
-                                >
-                                    {intl.formatMessage({
-                                        id: 'data.ipv4',
-                                    })}
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: 1 }}>
-                                    <TextField
-                                        value={selectedSplitCidrBlocks.ipv4}
-                                        disabled
-                                        size="small"
-                                        fullWidth
-                                        sx={{
-                                            'flex': 1,
-                                            '& .MuiInputBase-input': {
-                                                fontWeight: 500,
-                                                fontFamily: 'Monospace',
-                                            },
-                                        }}
-                                    />
-                                    <CopyToClipboardButton
-                                        writeValue={
-                                            selectedSplitCidrBlocks.ipv4
-                                        }
-                                    />
-                                </Box>
-                            </Box>
-                        ) : null}
+                        <Stack>
+                            <Typography
+                                variant="subtitle2"
+                                fontWeight={600}
+                                gutterBottom
+                            >
+                                {intl.formatMessage({
+                                    id: 'data.ipv4',
+                                })}
+                            </Typography>
+                            <Stack direction="row" spacing={1}>
+                                <TextField
+                                    value={ipv4}
+                                    disabled
+                                    size="small"
+                                    fullWidth
+                                    sx={{
+                                        'flex': 1,
+                                        '& .MuiInputBase-input': {
+                                            fontWeight: 500,
+                                            fontFamily: 'Monospace',
+                                        },
+                                    }}
+                                />
+                                <CopyToClipboardButton writeValue={ipv4} />
+                            </Stack>
+                        </Stack>
 
-                        {selectedSplitCidrBlocks.ipv6 ? (
-                            <Box>
-                                <Typography
-                                    variant="subtitle2"
-                                    fontWeight={600}
-                                    gutterBottom
-                                >
-                                    {intl.formatMessage({
-                                        id: 'data.ipv6',
-                                    })}
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: 1 }}>
-                                    <TextField
-                                        value={selectedSplitCidrBlocks.ipv6}
-                                        disabled
-                                        size="small"
-                                        fullWidth
-                                        sx={{
-                                            'flex': 1,
-                                            '& .MuiInputBase-input': {
-                                                fontWeight: 500,
-                                                fontFamily: 'Monospace',
-                                            },
-                                        }}
-                                    />
-                                    <CopyToClipboardButton
-                                        writeValue={
-                                            selectedSplitCidrBlocks.ipv6
-                                        }
-                                    />
-                                </Box>
-                            </Box>
-                        ) : null}
+                        <Stack>
+                            <Typography
+                                variant="subtitle2"
+                                fontWeight={600}
+                                gutterBottom
+                            >
+                                {intl.formatMessage({
+                                    id: 'data.ipv6',
+                                })}
+                            </Typography>
+                            <Stack direction="row" spacing={1}>
+                                <TextField
+                                    value={ipv6}
+                                    disabled
+                                    size="small"
+                                    fullWidth
+                                    sx={{
+                                        'flex': 1,
+                                        '& .MuiInputBase-input': {
+                                            fontWeight: 500,
+                                            fontFamily: 'Monospace',
+                                        },
+                                    }}
+                                />
+                                <CopyToClipboardButton writeValue={ipv6} />
+                            </Stack>
+                        </Stack>
                     </Stack>
                 </DialogContent>
             ) : null}
