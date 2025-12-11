@@ -113,7 +113,11 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
                             ) : null}
                         </DialogTitle>
 
-                        <IconButton onClick={onClose} size="small">
+                        <IconButton
+                            onClick={onClose}
+                            size="small"
+                            aria-label={intl.formatMessage({ id: 'cta.close' })}
+                        >
                             <Xmark
                                 style={{
                                     fontSize: '1rem',
