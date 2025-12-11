@@ -9,19 +9,15 @@ import {
     diminishedTextColor,
 } from 'src/context/Theme';
 
-const customProps = ['diminishedText', 'disableCursor'] as const;
-
 export const OutlinedChip = styled(Chip, {
     // TODO (typing): Consider creating a typed, utility function for property forwarding
     //   that is able to handle an array of properties.
-    shouldForwardProp: (prop) =>
-        !customProps.includes(prop as (typeof customProps)[number]),
+    shouldForwardProp: (props) => props !== 'diminishedText',
 })<
     ChipProps & {
         diminishedText?: boolean;
-        disableCursor?: boolean;
     }
->(({ color, diminishedText, disableCursor, style, theme }) => {
+>(({ color, diminishedText, style, theme }) => {
     const colorKey = color ?? 'default';
 
     const background =
@@ -40,7 +36,7 @@ export const OutlinedChip = styled(Chip, {
 
     return {
         'border': border,
-        'cursor': disableCursor ? 'default' : 'pointer',
+        'cursor': 'pointer',
         'height': 'auto',
         'minHeight': 23,
         '&:hover': {
