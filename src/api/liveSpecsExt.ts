@@ -342,7 +342,6 @@ const getLiveSpecsByCatalogNames = async (
 export interface LiveSpecsExtQuery_GroupedUpdates {
     catalog_name: string;
     id: string;
-    last_pub_id: string;
 }
 
 const getLiveSpecsForGroupedUpdates = async (
@@ -357,18 +356,20 @@ const getLiveSpecsForGroupedUpdates = async (
 
     // TODO (retry) promise generator
     const queryPromiseGenerator = (idx: number) => {
-        return supabaseClient
-            .from(TABLES.LIVE_SPECS_EXT)
-            .select(`catalog_name,id,last_pub_id`)
-            .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE))
-            .eq('spec_type', specType);
+        return (
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                // TODO (mass row actions support disable)
+                // We would need to fetch the spec as well for disable
+                .select(`catalog_name,id`)
+                .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE))
+                .eq('spec_type', specType)
+        );
     };
 
     while (index < catalogNames.length) {
-        // Have to do this to capture `index` correctly
         const prom = queryPromiseGenerator(index);
         promises.push(limiter(() => prom));
-
         index = index + CHUNK_SIZE;
     }
 

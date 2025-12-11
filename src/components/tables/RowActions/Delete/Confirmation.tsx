@@ -9,8 +9,6 @@ import AlertBox from 'src/components/shared/AlertBox';
 function DeleteConfirmation({ count }: BaseConfirmationProps) {
     const intl = useIntl();
 
-    console.log('count', count);
-
     return (
         <AlertBox severity="warning" short>
             <Typography component="div">

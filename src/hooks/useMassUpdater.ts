@@ -15,6 +15,7 @@ import { createPublication } from 'src/api/publications';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import usePublications from 'src/hooks/usePublications';
+import { logRocketEvent } from 'src/services/shared';
 import { jobSucceeded } from 'src/services/supabase';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
@@ -70,6 +71,14 @@ function useMassUpdater({
             // Mark that we have started updating
             updateStarted.current = true;
 
+            // Log out
+            const uuid = crypto.randomUUID();
+            logRocketEvent('Task', {
+                action: 'delete',
+                grouped: true,
+                uuid,
+            });
+
             const done = (progressState: ProgressStates, response: any) => {
                 setState(progressState);
                 onFinish(response);
@@ -108,7 +117,7 @@ function useMassUpdater({
             const draftsResponse = await createEntityDraft(
                 // TODO (mass row actions support disable)
                 //  Update message based on action being taken
-                'Delete triggered from UI'
+                `Dashboard : delete : init : ${uuid}`
             );
             if (draftsResponse.error) {
                 return failed(draftsResponse);
@@ -159,7 +168,8 @@ function useMassUpdater({
             const updateResponse = await massUpdateDraftSpecs(
                 newDraftId,
                 targetEntities[0].spec_type,
-                newSpecs
+                newSpecs,
+                `Dashboard : delete : clear spec : ${uuid}`
             );
             if (updateResponse.error) {
                 return failed(updateResponse);
