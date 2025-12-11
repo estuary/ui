@@ -87,8 +87,6 @@ export interface DraftSpecsExtQuery_BySpecTypeReduced {
 export interface MassUpdateMatchData {
     catalog_name: string;
     spec: any;
-    // Only used to RowActions as of Q4 2025
-    last_pub_id?: string;
 }
 
 export interface MassCreateDraftSpecsData {
