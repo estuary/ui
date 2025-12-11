@@ -65,18 +65,20 @@ const SaveButton = ({
                 updateRedactionAnnotation(pointer, strategy)
                     .then(
                         (response) => {
+                            const dataExists = Boolean(response?.data?.[0]);
+
                             logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
                                 operation: 'redact',
                                 pointer,
                                 strategy,
-                                dataExists: Boolean(response?.data?.[0]),
+                                dataExists,
                             });
 
                             if (mutateDraftSpecs) {
                                 mutateDraftSpecs();
                             }
 
-                            if (response?.data?.[0]) {
+                            if (dataExists) {
                                 const { catalog_name, spec } = response.data[0];
 
                                 setCollectionData({
