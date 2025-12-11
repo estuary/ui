@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { submitDirective } from 'src/api/directives';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
@@ -32,6 +32,8 @@ function AcceptGrant({
     grantedPrefix,
     grantedCapability,
 }: Props) {
+    const intl = useIntl();
+
     const { jobStatusPoller } = useJobStatusPoller();
     const mutate_userInfoSummary = useUserInfoSummaryStore(
         (state) => state.mutate
@@ -119,14 +121,14 @@ function AcceptGrant({
             ) : null}
 
             <Typography variant="h5" align="center">
-                <FormattedMessage id="tenant.grantDirective.header" />
+                {intl.formatMessage({ id: 'tenant.grantDirective.header' })}
             </Typography>
 
             <Typography>
-                <FormattedMessage
-                    id="tenant.grantDirective.message"
-                    values={{ grantedCapability: <b>{grantedCapability}</b> }}
-                />
+                {intl.formatMessage(
+                    { id: 'tenant.grantDirective.message' },
+                    { grantedCapability: <b>{grantedCapability}</b> }
+                )}
             </Typography>
 
             <Box
@@ -134,6 +136,7 @@ function AcceptGrant({
                     p: 1,
                     border: (theme) => defaultOutline[theme.palette.mode],
                     borderRadius: 3,
+                    overflow: 'auto',
                 }}
             >
                 <Typography>{grantedPrefix}</Typography>
@@ -153,7 +156,7 @@ function AcceptGrant({
                     onClick={applyDirective}
                     sx={{ mt: 2 }}
                 >
-                    <FormattedMessage id="cta.continue" />
+                    {intl.formatMessage({ id: 'cta.accept' })}
                 </SafeLoadingButton>
             </Box>
         </Stack>
