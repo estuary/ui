@@ -8,8 +8,6 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useEffect, useMemo } from 'react';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import { useZustandStore } from 'src/context/Zustand/provider';
 import useShardHydration from 'src/hooks/shards/useShardHydration';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
@@ -48,7 +46,7 @@ function useRowsWithStatsState(
         SelectableTableStore['successfulTransformations']
     >(
         selectTableStoreName,
-        useShallow(selectableTableStoreSelectors.successfulTransformations.get)
+        selectableTableStoreSelectors.successfulTransformations.get
     );
 
     const stats = useZustandStore<
@@ -62,6 +60,9 @@ function useRowsWithStatsState(
     >(selectTableStoreName, selectableTableStoreSelectors.stats.failed);
 
     useEffect(() => {
+        // TODO (perf) - should look at debouncing this possibly
+        //  however if we switch to GQL first I think that will
+        //  handle it
         mutateShardsList().catch(() => {});
     }, [mutateShardsList, successfulTransformations]);
 
