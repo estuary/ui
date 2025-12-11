@@ -7,6 +7,8 @@ import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
 
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
+// Broke this hook out to allow the two components to share stuff
+//  ONLY for these two rows and not to be used elsewhere (that's why it isn't in the hooks folder)
 function useRowActionProgress({
     runningIntlKey,
     successIntlKey,
