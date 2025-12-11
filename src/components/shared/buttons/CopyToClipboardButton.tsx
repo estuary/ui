@@ -22,18 +22,20 @@ function CopyToClipboardButton({
         useState<TransientButtonState>(undefined);
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(writeValue).then(
-            () => {
-                setTransientButtonState('success');
+        if (writeValue) {
+            navigator.clipboard.writeText(writeValue).then(
+                () => {
+                    setTransientButtonState('success');
 
-                setTimeout(() => setTransientButtonState(undefined), 2000);
-            },
-            () => {
-                setTransientButtonState('error');
+                    setTimeout(() => setTransientButtonState(undefined), 2000);
+                },
+                () => {
+                    setTransientButtonState('error');
 
-                setTimeout(() => setTransientButtonState(undefined), 2000);
-            }
-        );
+                    setTimeout(() => setTransientButtonState(undefined), 2000);
+                }
+            );
+        }
     };
 
     const icon = getButtonIcon(theme, transientButtonState);
@@ -44,6 +46,7 @@ function CopyToClipboardButton({
                 size="small"
                 color={transientButtonState}
                 onClick={copyToClipboard}
+                disabled={!writeValue}
             >
                 {icon}
             </IconButton>
