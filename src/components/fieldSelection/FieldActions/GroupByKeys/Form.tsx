@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 
 import {
     Autocomplete,
-    Box,
     Stack,
     TextField,
     Typography,
@@ -14,10 +13,10 @@ import {
 } from '@mui/material';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { Check } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
+import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
 import { diminishedTextColor, truncateTextSx } from 'src/context/Theme';
 import { isValidCollectionKey } from 'src/utils/schema-utils';
 
@@ -63,7 +62,6 @@ const GroupByKeysForm = ({
             }}
             renderOption={(renderOptionProps, option, state) => {
                 const { field, projection } = option;
-                const { key, ...optionProps } = renderOptionProps;
 
                 const fieldTypes: string[] =
                     projection?.inference?.types.map((fieldType: string) => {
@@ -78,70 +76,54 @@ const GroupByKeysForm = ({
                     }) ?? [];
 
                 return (
-                    <Box
-                        {...optionProps}
-                        component="li"
-                        key={key}
-                        style={{
-                            alignItems: 'flex-start',
-                            display: 'flex',
-                            paddingLeft: 10,
-                            paddingRight: 8,
-                        }}
-                    >
-                        {state.selected ? (
-                            <Check
-                                style={{
-                                    color: theme.palette.primary.main,
-                                    fontSize: 12,
-                                    marginRight: 4,
-                                    marginTop: 2,
-                                }}
-                            />
-                        ) : (
-                            <Box style={{ width: 18, marginRight: 4 }} />
-                        )}
-
-                        <Stack>
-                            <Stack
-                                direction="row"
-                                style={{ alignItems: 'center' }}
-                            >
-                                <Typography
-                                    style={{ fontWeight: 500, marginBottom: 4 }}
+                    <SelectableAutocompleteOption
+                        Content={
+                            <>
+                                <Stack
+                                    direction="row"
+                                    style={{ alignItems: 'center' }}
                                 >
-                                    {field}
-                                </Typography>
-
-                                {fieldTypes.length > 0 ? (
                                     <Typography
-                                        component="span"
                                         style={{
-                                            fontFamily: 'monospace',
-                                            marginLeft: 8,
+                                            fontWeight: 500,
+                                            marginBottom: 4,
                                         }}
-                                        variant="body2"
                                     >
-                                        [{fieldTypes.join(', ')}]
+                                        {field}
+                                    </Typography>
+
+                                    {fieldTypes.length > 0 ? (
+                                        <Typography
+                                            component="span"
+                                            style={{
+                                                fontFamily: 'monospace',
+                                                marginLeft: 8,
+                                            }}
+                                            variant="body2"
+                                        >
+                                            [{fieldTypes.join(', ')}]
+                                        </Typography>
+                                    ) : null}
+                                </Stack>
+
+                                {projection?.inference?.description ? (
+                                    <Typography
+                                        sx={{
+                                            ...truncateTextSx,
+                                            color: diminishedTextColor[
+                                                theme.palette.mode
+                                            ],
+                                            width: fieldWidth - 75,
+                                        }}
+                                    >
+                                        {projection.inference.description}
                                     </Typography>
                                 ) : null}
-                            </Stack>
-
-                            {projection?.inference?.description ? (
-                                <Typography
-                                    sx={{
-                                        ...truncateTextSx,
-                                        color: diminishedTextColor[
-                                            theme.palette.mode
-                                        ],
-                                        width: fieldWidth - 75,
-                                    }}
-                                >
-                                    {projection.inference.description}
-                                </Typography>
-                            ) : null}
-                        </Stack>
-                    </Box>
+                            </>
+                        }
+                        renderOptionProps={renderOptionProps}
+                        state={state}
+                    />
                 );
             }}
             renderTags={(tagValues, getTagProps, ownerState) => {

@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl';
 
 import KeyValueList from 'src/components/shared/KeyValueList';
 import useDraftSpecErrors from 'src/hooks/useDraftSpecErrors';
+import { parsePointerEscapeCharacters } from 'src/utils/schema-utils';
 
 export interface DraftErrorProps {
     draftId?: string | null;
@@ -28,7 +29,7 @@ function parseScopeCrumbs(scope: string): string[] {
         // Split the pointer into its components, de-escaping each,
         // and adding to `parts`.
         ptr.split('/').forEach((component) =>
-            parts.push(component.replace(/~1/g, '/').replace(/~0/g, '~'))
+            parts.push(parsePointerEscapeCharacters(component))
         );
     } else {
         parts.push(scope);

@@ -1,13 +1,23 @@
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
 import type { Schema } from 'src/types';
-import type { BuiltProjection } from 'src/types/schemaModels';
+import type {
+    BuiltProjection,
+    CollectionSchema,
+    CollectionSchemaAnnotations,
+    RedactionStrategy_Projection,
+    RedactionStrategy_Schema,
+} from 'src/types/schemaModels';
+import type { WithRequiredProperty } from 'src/types/utils';
 import type {
     BasicCollectionDef,
     SkimProjectionResponse,
     SplitCollectionDef,
 } from 'src/types/wasm';
 
-import { isEmpty, isPlainObject } from 'lodash';
+import { has, isEmpty, isPlainObject, set } from 'lodash';
+
+import { logRocketConsole } from 'src/services/shared';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
 // These are inserted by the server and never would make sense as keys
 //  Make sure you lowercase these
@@ -36,6 +46,13 @@ const hasReadSchema = (spec: any) => {
 const hasReadAndWriteSchema = (spec: any) => {
     return Boolean(hasReadSchema(spec) && hasWriteSchema(spec));
 };
+
+export const getWriteSchemaProperty = (collectionSpec: any) =>
+    hasWriteSchema(collectionSpec)
+        ? 'writeSchema'
+        : hasOwnProperty(collectionSpec, 'schema')
+          ? 'schema'
+          : undefined;
 
 const getProperSchemaScope = (spec: any) => {
     const readSchemaExists = hasReadSchema(spec);
@@ -202,4 +219,90 @@ export {
     hasWriteSchema,
     moveUpdatedSchemaToReadSchema,
     reduceBuiltProjections,
+};
+
+export const isCollectionSchemaWithProperties = (
+    value: WithRequiredProperty<CollectionSchema, 'properties'>
+): value is WithRequiredProperty<CollectionSchema, 'properties'> =>
+    'properties' in value;
+
+export const parsePointerEscapeCharacters = (value: string) =>
+    value.replace(/~1/g, '/').replace(/~0/g, '~');
+
+interface PointerSegment {
+    id: string;
+    index: number;
+}
+
+const templateSchemaProperties = (
+    schema: CollectionSchemaAnnotations,
+    rootPath: string,
+    targetProperty: { id: string; value: object | undefined },
+    pointerSegments: PointerSegment[],
+    targetSegment: PointerSegment
+): void => {
+    let nextRootPath = `${rootPath}.${targetSegment.id}`;
+
+    if (!has(schema, nextRootPath)) {
+        set(schema, nextRootPath, {});
+    }
+
+    if (targetSegment.index !== pointerSegments.length - 1) {
+        nextRootPath = `${nextRootPath}.properties`;
+
+        if (!has(schema, nextRootPath)) {
+            set(schema, nextRootPath, {});
+        }
+
+        templateSchemaProperties(
+            schema,
+            nextRootPath,
+            targetProperty,
+            pointerSegments,
+            pointerSegments[targetSegment.index + 1]
+        );
+
+        return;
+    }
+
+    set(schema, `${nextRootPath}.${targetProperty.id}`, targetProperty.value);
+    logRocketConsole('redact:set:final_path', { path: nextRootPath });
+};
+
+export const setSchemaProperties = (
+    schema: any,
+    pointer: string | undefined,
+    targetProperty: { id: string; value: object | undefined }
+): void => {
+    if (!pointer) {
+        return;
+    }
+
+    const pointerSegments: PointerSegment[] = pointer
+        .split('/')
+        .filter((id) => id.length !== 0)
+        .map((id, index) => ({ id: parsePointerEscapeCharacters(id), index }));
+
+    schema.properties ??= {};
+
+    templateSchemaProperties(
+        schema,
+        'properties',
+        targetProperty,
+        pointerSegments,
+        pointerSegments[0]
+    );
+};
+
+export const translateRedactionStrategy = (
+    value: RedactionStrategy_Projection | null | undefined
+): RedactionStrategy_Schema | null => {
+    switch (value) {
+        case 'REDACT_BLOCK':
+            return 'block';
+        case 'REDACT_SHA256':
+            return 'sha256';
+        default:
+            return null;
+    }
 };
