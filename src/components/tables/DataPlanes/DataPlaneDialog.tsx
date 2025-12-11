@@ -51,6 +51,7 @@ function DataPlaneDialogField({
                             '& .MuiInputBase-input': {
                                 fontWeight: 500,
                                 fontFamily: 'Monospace',
+                                fontSize: 12,
                             },
                         }}
                     />
@@ -97,25 +98,19 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
                         sx={{ mb: 1 }}
                     >
                         <DialogTitle id="data-plane-dialog-title" sx={{ p: 0 }}>
-                            <Stack
-                                direction="row"
-                                alignItems="center"
-                                spacing={1}
-                            >
-                                {dataPlaneDetails.dataPlaneName ? (
-                                    <DataPlane
-                                        dataPlaneName={
-                                            dataPlaneDetails.dataPlaneName
-                                        }
-                                        formattedSuffix={formatDataPlaneName(
-                                            dataPlaneDetails.dataPlaneName
-                                        )}
-                                        hidePrefix
-                                        logoSize={30}
-                                        scope={dataPlaneDetails.scope}
-                                    />
-                                ) : null}
-                            </Stack>
+                            {dataPlaneDetails.dataPlaneName ? (
+                                <DataPlane
+                                    dataPlaneName={
+                                        dataPlaneDetails.dataPlaneName
+                                    }
+                                    formattedSuffix={formatDataPlaneName(
+                                        dataPlaneDetails.dataPlaneName
+                                    )}
+                                    hidePrefix
+                                    logoSize={30}
+                                    scope={dataPlaneDetails.scope}
+                                />
+                            ) : null}
                         </DialogTitle>
 
                         <IconButton onClick={onClose} size="small">
