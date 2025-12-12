@@ -1,22 +1,13 @@
-import {
-    Box,
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    Stack,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
 import {
     DataPlaneDialogField,
     ServiceAccountIdentityField,
 } from './DialogFields';
 import { DataPlaneDialogProps } from './types';
-import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import {
@@ -28,7 +19,6 @@ import { OPENID_HOST } from 'src/utils/misc-utils';
 
 function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
     const intl = useIntl();
-    const theme = useTheme();
     const parseCidrBlocks = useParseCidrBlocks();
 
     const dataPlaneDetails = dataPlane
@@ -47,52 +37,33 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
         >
             {dataPlane && dataPlaneDetails ? (
                 <>
-                    <DialogTitle id="data-plane-dialog-title">
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                            }}
+                    <DialogTitleWithClose
+                        id="data-plane-dialog-title"
+                        onClose={onClose}
+                    >
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="flex-start"
                         >
-                            <Stack
-                                direction="row"
-                                alignItems="center"
-                                justifyContent="space-between"
-                                // sx={{ mb: 1 }}
+                            <DataPlaneIcon
+                                provider={
+                                    dataPlaneDetails.dataPlaneName.provider
+                                }
+                                scope={dataPlaneDetails.scope}
+                                size={30}
+                            />
+                            <Typography
+                                variant="h6"
+                                sx={{ ml: 1, fontWeight: 600 }}
                             >
-                                <DataPlaneIcon
-                                    provider={
-                                        dataPlaneDetails.dataPlaneName.provider
-                                    }
-                                    scope={dataPlaneDetails.scope}
-                                    size={30}
-                                />
-                                <Typography
-                                    variant="h6"
-                                    sx={{ ml: 1, fontWeight: 600 }}
-                                >
-                                    {getRegionDisplayName(
-                                        dataPlaneDetails.dataPlaneName.provider,
-                                        dataPlaneDetails.dataPlaneName.region
-                                    )}
-                                </Typography>
-                            </Stack>{' '}
-                            <IconButton
-                                onClick={onClose}
-                                size="small"
-                                aria-label={intl.formatMessage({
-                                    id: 'cta.close',
-                                })}
-                            >
-                                <Xmark
-                                    style={{
-                                        fontSize: '1rem',
-                                        color: theme.palette.text.primary,
-                                    }}
-                                />
-                            </IconButton>
-                        </Box>
+                                {getRegionDisplayName(
+                                    dataPlaneDetails.dataPlaneName.provider,
+                                    dataPlaneDetails.dataPlaneName.region
+                                )}
+                            </Typography>
+                        </Stack>
+
                         <Typography
                             variant="body2"
                             color="text.secondary"
@@ -102,7 +73,7 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
                                 id: 'admin.dataPlanes.dialog.description',
                             })}
                         </Typography>
-                    </DialogTitle>
+                    </DialogTitleWithClose>
                     <DialogContent>
                         <Stack spacing={1}>
                             {dataPlaneDetails.dataPlaneName?.provider ? (
