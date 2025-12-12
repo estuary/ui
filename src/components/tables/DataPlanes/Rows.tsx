@@ -10,6 +10,7 @@ import {
     useTheme,
 } from '@mui/material';
 
+import { RowProps, RowsProps } from './types';
 import { InfoCircle } from 'iconoir-react';
 
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
@@ -20,16 +21,6 @@ import {
     getRegionDisplayName,
 } from 'src/utils/cloudRegions';
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
-
-interface RowsProps {
-    data: BaseDataPlaneQuery[];
-}
-
-interface RowProps {
-    row: BaseDataPlaneQuery;
-    rowSx: any;
-    onRowClick: (row: BaseDataPlaneQuery) => void;
-}
 
 function Row({ row, rowSx, onRowClick }: RowProps) {
     const { dataPlaneName, scope } = generateDataPlaneOption(row);

@@ -9,16 +9,14 @@ import {
     useTheme,
 } from '@mui/material';
 
+import {
+    DataPlaneDialogFieldProps,
+    ServiceAccountIdentityFieldProps,
+} from './types';
 import { Check, Copy } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 type CloudProvider = 'aws' | 'gcp';
-
-interface DataPlaneDialogFieldProps {
-    label: string;
-    value: string | null;
-    showCopyButton?: boolean;
-}
 
 export function DataPlaneDialogField({
     label,
@@ -108,11 +106,6 @@ export function DataPlaneDialogField({
             )}
         </Stack>
     );
-}
-
-interface ServiceAccountIdentityFieldProps {
-    awsArn: string | null;
-    gcpEmail: string | null;
 }
 
 export function ServiceAccountIdentityField({

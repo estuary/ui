@@ -1,5 +1,3 @@
-import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
-
 import {
     Box,
     Dialog,
@@ -11,6 +9,11 @@ import {
     useTheme,
 } from '@mui/material';
 
+import {
+    DataPlaneDialogField,
+    ServiceAccountIdentityField,
+} from './DialogFields';
+import { DataPlaneDialogProps } from './types';
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
@@ -22,17 +25,6 @@ import {
 } from 'src/utils/cloudRegions';
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 import { OPENID_HOST } from 'src/utils/misc-utils';
-
-import {
-    DataPlaneDialogField,
-    ServiceAccountIdentityField,
-} from './DialogFields';
-
-interface DataPlaneDialogProps {
-    open: boolean;
-    onClose: () => void;
-    dataPlane: BaseDataPlaneQuery | null;
-}
 
 function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
     const intl = useIntl();
