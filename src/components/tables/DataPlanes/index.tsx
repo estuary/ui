@@ -82,6 +82,7 @@ function DataPlanesTable() {
                 selectableTableStoreName={selectableTableStoreName}
                 tableAriaLabelKey="admin.dataPlanes.table.aria.label"
                 showToolbar
+                hideFilter
                 toolbar={<ToggleDataPlaneScope />}
             />
         </TableHydrator>
