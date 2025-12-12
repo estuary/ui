@@ -24,5 +24,5 @@ export interface ButtonWithPopperProps extends BaseComponentProps {
 }
 
 export interface CopyToClipboardButtonProps extends BaseComponentProps {
-    writeValue: string | null | undefined;
+    writeValue: string;
 }
