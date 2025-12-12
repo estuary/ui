@@ -1,5 +1,6 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 import type { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import type { LiveSpecsExtQuery_GroupedUpdates } from 'src/api/types';
 import type { SortingProps } from 'src/services/supabase';
 import type {
     CatalogStats,
@@ -338,11 +339,6 @@ const getLiveSpecsByCatalogNames = async (
         responses
     );
 };
-
-export interface LiveSpecsExtQuery_GroupedUpdates {
-    catalog_name: string;
-    id: string;
-}
 
 const getLiveSpecsForGroupedUpdates = async (
     specType: Entity,

@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { AccessGrantRowConfirmation } from 'src/components/tables/RowActions/AccessGrants/types';
+import type { RevokeGrantProps } from 'src/components/tables/RowActions/AccessGrants/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useEffect, useState } from 'react';
@@ -14,16 +14,6 @@ import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfo
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
-
-export interface Props {
-    grant: AccessGrantRowConfirmation;
-    onFinish: (response: any) => void;
-    runningIntlKey: string;
-    selectTableStoreName:
-        | SelectTableStoreNames.ACCESS_GRANTS_USERS
-        | SelectTableStoreNames.ACCESS_GRANTS_PREFIXES;
-    successIntlKey: string;
-}
 
 const revokeGrant = async (
     grantId: string,
@@ -55,7 +45,7 @@ function RevokeGrant({
     runningIntlKey,
     selectTableStoreName,
     successIntlKey,
-}: Props) {
+}: RevokeGrantProps) {
     const [progress, setProgress] = useState<ProgressStates>(
         ProgressStates.RUNNING
     );
