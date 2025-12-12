@@ -42,9 +42,6 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
                 '&:hover .info-icon': {
                     opacity: 1,
                 },
-                '&:hover .hover-link': {
-                    textDecoration: 'underline',
-                },
                 '& td': {
                     py: 1,
                 },
@@ -63,18 +60,16 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
                     </Typography>
                 </Stack>
             </TableCell>
-            <TableCell className="hover-link">
+            <TableCell>
                 {getRegionDisplayName(
                     dataPlaneName.provider,
                     dataPlaneName.region
                 )}
             </TableCell>
-            <TableCell className="hover-link" sx={{ fontFamily: 'monospace' }}>
+            <TableCell sx={{ fontFamily: 'monospace' }}>
                 {dataPlaneName.region}
             </TableCell>
-            <TableCell className="hover-link" sx={{ fontFamily: 'monospace' }}>
-                {ipv4}
-            </TableCell>
+            <TableCell sx={{ fontFamily: 'monospace' }}>{ipv4}</TableCell>
         </TableRow>
     );
 }
@@ -104,12 +99,12 @@ function Rows({ data }: RowsProps) {
                     onRowClick={handleRowClick}
                 />
             ))}
-            {selectedRow && (
+            {selectedRow ? (
                 <DataPlaneDialog
                     onClose={handleCloseModal}
                     dataPlane={selectedRow}
                 />
-            )}
+            ) : null}
         </>
     );
 }

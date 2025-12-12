@@ -66,7 +66,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
             </DialogTitleWithClose>
             <DialogContent>
                 <Stack spacing={1}>
-                    {dataPlaneName.provider && (
+                    {dataPlaneName.provider ? (
                         <DataPlaneDialogField
                             label={intl.formatMessage({
                                 id: 'admin.dataPlanes.dialog.cloudProvider',
@@ -76,8 +76,8 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             )}
                             showCopyButton={false}
                         />
-                    )}
-                    {dataPlaneName.region && (
+                    ) : null}
+                    {dataPlaneName.region ? (
                         <DataPlaneDialogField
                             label={intl.formatMessage({
                                 id: 'admin.dataPlanes.column.header.region',
@@ -85,7 +85,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             value={dataPlaneName.region}
                             showCopyButton={false}
                         />
-                    )}
+                    ) : null}
                     <DataPlaneDialogField
                         label={intl.formatMessage({
                             id: 'admin.dataPlanes.dialog.internalId',
@@ -135,14 +135,14 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             },
                         ]}
                     />
-                    {dataPlane.data_plane_fqdn && (
+                    {dataPlane.data_plane_fqdn ? (
                         <DataPlaneDialogField
                             label={intl.formatMessage({
                                 id: 'data.idProvider',
                             })}
                             value={`${OPENID_HOST}/${dataPlane.data_plane_fqdn}`}
                         />
-                    )}
+                    ) : null}
                 </Stack>
             </DialogContent>
         </Dialog>
