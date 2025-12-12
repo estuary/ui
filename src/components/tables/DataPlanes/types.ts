@@ -1,9 +1,8 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 
 export interface DataPlaneDialogProps {
-    open: boolean;
     onClose: () => void;
-    dataPlane: BaseDataPlaneQuery | null;
+    dataPlane: BaseDataPlaneQuery;
 }
 
 export interface RowsProps {

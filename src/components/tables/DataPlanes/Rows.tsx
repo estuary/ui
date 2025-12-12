@@ -104,12 +104,12 @@ function Rows({ data }: RowsProps) {
                     onRowClick={handleRowClick}
                 />
             ))}
-
-            <DataPlaneDialog
-                open={Boolean(selectedRow)}
-                onClose={handleCloseModal}
-                dataPlane={selectedRow}
-            />
+            {selectedRow && (
+                <DataPlaneDialog
+                    onClose={handleCloseModal}
+                    dataPlane={selectedRow}
+                />
+            )}
         </>
     );
 }
