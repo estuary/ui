@@ -118,18 +118,19 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         ]}
                     />
                     <ToggleField
+                        lowercaseButton
                         label={intl.formatMessage({
                             id: 'admin.dataPlanes.dialog.ips',
                         })}
                         options={[
                             {
                                 key: 'ipv4',
-                                label: 'IPv4',
+                                label: 'v4',
                                 value: ipv4,
                             },
                             {
                                 key: 'ipv6',
-                                label: 'IPv6',
+                                label: 'v6',
                                 value: ipv6,
                             },
                         ]}

@@ -106,7 +106,11 @@ export function DataPlaneDialogField({
     );
 }
 
-export function ToggleField({ label, options }: ToggleFieldProps) {
+export function ToggleField({
+    label,
+    options,
+    lowercaseButton,
+}: ToggleFieldProps) {
     const theme = useTheme();
     const [isCopied, setIsCopied] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -180,7 +184,14 @@ export function ToggleField({ label, options }: ToggleFieldProps) {
                             value={opt.key}
                             sx={{ py: 0.25, px: 1, borderRadius: 3 }}
                         >
-                            <Typography variant="caption">
+                            <Typography
+                                variant="caption"
+                                sx={
+                                    lowercaseButton
+                                        ? { textTransform: 'none' }
+                                        : undefined
+                                }
+                            >
                                 {opt.label}
                             </Typography>
                         </ToggleButton>

@@ -30,4 +30,5 @@ export interface ToggleOption {
 export interface ToggleFieldProps {
     label: string;
     options: ToggleOption[];
+    lowercaseButton?: boolean;
 }
