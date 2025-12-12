@@ -123,10 +123,12 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.column.header.region': `Region`,
     'admin.dataPlanes.table.aria.label': `Data Planes Table`,
 
-    'admin.dataPlanes.dialog.cloud_provider': `Cloud Provider`,
-    'admin.dataPlanes.dialog.internal_id': `Internal ID`,
+    'admin.dataPlanes.dialog.cloudProvider': `Cloud Provider`,
+    'admin.dataPlanes.dialog.internalId': `Internal ID`,
     'admin.dataPlanes.dialog.description': `Data plane details and configuration`,
-    'admin.dataPlanes.dialog.service_account_identity': `Service Account Identity`,
+    'admin.dataPlanes.dialog.serviceAccountIdentity': `Service Account Identity`,
+    'admin.dataPlanes.dialog.ips': `IPs`,
+    'admin.dataPlanes.dialog.notAvailable': `not available`,
 
     // There are dynamically generated in src/components/tables/DataPlanes/index.tsx
     'admin.dataPlanes.private.table.noContent.header': `No private data planes found`,

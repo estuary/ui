@@ -1,14 +1,15 @@
 import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
 
 import { Dialog, DialogContent, Stack, Typography } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import {
     DataPlaneDialogField,
-    ServiceAccountIdentityField,
+    ToggleField,
 } from 'src/components/tables/DataPlanes/DialogFields';
-import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import {
     getProviderDisplayName,
@@ -37,7 +38,7 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
             fullWidth
             aria-labelledby={TITLE_ID}
         >
-            {dataPlane && dataPlaneDetails ? (
+            {dataPlane && dataPlaneDetails && dataPlaneDetails.dataPlaneName ? (
                 <>
                     <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>
                         <Stack
@@ -78,7 +79,7 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
                             {dataPlaneDetails.dataPlaneName?.provider ? (
                                 <DataPlaneDialogField
                                     label={intl.formatMessage({
-                                        id: 'admin.dataPlanes.dialog.cloud_provider',
+                                        id: 'admin.dataPlanes.dialog.cloudProvider',
                                     })}
                                     value={getProviderDisplayName(
                                         dataPlaneDetails.dataPlaneName.provider
@@ -86,11 +87,10 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
                                     showCopyButton={false}
                                 />
                             ) : null}
-
                             {dataPlaneDetails.dataPlaneName?.region ? (
                                 <DataPlaneDialogField
                                     label={intl.formatMessage({
-                                        id: 'admin.dataPlanes.column.header.region_code',
+                                        id: 'admin.dataPlanes.column.header.region',
                                     })}
                                     value={
                                         dataPlaneDetails.dataPlaneName.region
@@ -98,19 +98,54 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
                                     showCopyButton={false}
                                 />
                             ) : null}
-
                             <DataPlaneDialogField
                                 label={intl.formatMessage({
-                                    id: 'admin.dataPlanes.dialog.internal_id',
+                                    id: 'admin.dataPlanes.dialog.internalId',
                                 })}
                                 value={dataPlane.data_plane_name}
                             />
-
-                            <ServiceAccountIdentityField
-                                awsArn={dataPlane.aws_iam_user_arn}
-                                gcpEmail={dataPlane.gcp_service_account_email}
+                            <ToggleField
+                                label={intl.formatMessage({
+                                    id: 'admin.dataPlanes.dialog.serviceAccountIdentity',
+                                })}
+                                options={[
+                                    {
+                                        key: 'aws',
+                                        label: 'AWS',
+                                        value:
+                                            dataPlane.aws_iam_user_arn ??
+                                            intl.formatMessage({
+                                                id: 'admin.dataPlanes.dialog.notAvailable',
+                                            }),
+                                    },
+                                    {
+                                        key: 'gcp',
+                                        label: 'GCP',
+                                        value:
+                                            dataPlane.gcp_service_account_email ??
+                                            intl.formatMessage({
+                                                id: 'admin.dataPlanes.dialog.notAvailable',
+                                            }),
+                                    },
+                                ]}
                             />
-
+                            <ToggleField
+                                label={intl.formatMessage({
+                                    id: 'admin.dataPlanes.dialog.ips',
+                                })}
+                                options={[
+                                    {
+                                        key: 'ipv4',
+                                        label: 'IPv4',
+                                        value: ipv4,
+                                    },
+                                    {
+                                        key: 'ipv6',
+                                        label: 'IPv6',
+                                        value: ipv6,
+                                    },
+                                ]}
+                            />
                             {dataPlane.data_plane_fqdn ? (
                                 <DataPlaneDialogField
                                     label={intl.formatMessage({
@@ -119,20 +154,6 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
                                     value={`${OPENID_HOST}/${dataPlane.data_plane_fqdn}`}
                                 />
                             ) : null}
-
-                            <DataPlaneDialogField
-                                label={intl.formatMessage({
-                                    id: 'data.ipv4',
-                                })}
-                                value={ipv4}
-                            />
-
-                            <DataPlaneDialogField
-                                label={intl.formatMessage({
-                                    id: 'data.ipv6',
-                                })}
-                                value={ipv6}
-                            />
                         </Stack>
                     </DialogContent>
                 </>

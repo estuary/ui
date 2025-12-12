@@ -1,6 +1,6 @@
 import type {
     DataPlaneDialogFieldProps,
-    ServiceAccountIdentityFieldProps,
+    ToggleFieldProps,
 } from 'src/components/tables/DataPlanes/types';
 
 import { useState } from 'react';
@@ -13,10 +13,8 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { Check, Copy } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
-type CloudProvider = 'aws' | 'gcp';
+import { Check, Copy } from 'iconoir-react';
 
 export function DataPlaneDialogField({
     label,
@@ -108,34 +106,30 @@ export function DataPlaneDialogField({
     );
 }
 
-export function ServiceAccountIdentityField({
-    awsArn,
-    gcpEmail,
-}: ServiceAccountIdentityFieldProps) {
-    const intl = useIntl();
+export function ToggleField({ label, options }: ToggleFieldProps) {
     const theme = useTheme();
     const [isCopied, setIsCopied] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isToggleHovered, setIsToggleHovered] = useState(false);
 
-    const hasAws = Boolean(awsArn);
-    const hasGcp = Boolean(gcpEmail);
+    const validOptions = options.filter((opt) => Boolean(opt.value));
 
-    const [selectedProvider, setSelectedProvider] = useState<CloudProvider>(
-        hasAws ? 'aws' : 'gcp'
+    const [selectedKey, setSelectedKey] = useState<string>(
+        validOptions[0]?.key ?? ''
     );
 
-    const handleProviderChange = (
+    const handleSelectionChange = (
         _event: React.MouseEvent<HTMLElement>,
-        newProvider: CloudProvider | null
+        newKey: string | null
     ) => {
-        if (newProvider !== null) {
-            setSelectedProvider(newProvider);
+        if (newKey !== null) {
+            setSelectedKey(newKey);
             setIsCopied(false);
         }
     };
 
-    const currentValue = selectedProvider === 'aws' ? awsArn : gcpEmail;
+    const currentOption = validOptions.find((opt) => opt.key === selectedKey);
+    const currentValue = currentOption?.value ?? null;
 
     const handleCopy = () => {
         if (currentValue) {
@@ -146,7 +140,7 @@ export function ServiceAccountIdentityField({
         }
     };
 
-    if (!hasAws && !hasGcp) {
+    if (validOptions.length === 0) {
         return null;
     }
 
@@ -169,34 +163,29 @@ export function ServiceAccountIdentityField({
                 }}
             >
                 <Typography variant="subtitle2" fontWeight={600}>
-                    {intl.formatMessage({
-                        id: 'admin.dataPlanes.dialog.service_account_identity',
-                    })}
+                    {label}
                 </Typography>
-                {hasAws && hasGcp ? (
-                    <ToggleButtonGroup
-                        value={selectedProvider}
-                        exclusive
-                        onChange={handleProviderChange}
-                        onClick={(e) => e.stopPropagation()}
-                        onMouseEnter={() => setIsToggleHovered(true)}
-                        onMouseLeave={() => setIsToggleHovered(false)}
-                        size="small"
-                    >
+                <ToggleButtonGroup
+                    value={selectedKey}
+                    exclusive
+                    onChange={handleSelectionChange}
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseEnter={() => setIsToggleHovered(true)}
+                    onMouseLeave={() => setIsToggleHovered(false)}
+                    size="small"
+                >
+                    {validOptions.map((opt) => (
                         <ToggleButton
-                            value="aws"
+                            key={opt.key}
+                            value={opt.key}
                             sx={{ py: 0.25, px: 1, borderRadius: 3 }}
                         >
-                            <Typography variant="caption">AWS</Typography>
+                            <Typography variant="caption">
+                                {opt.label}
+                            </Typography>
                         </ToggleButton>
-                        <ToggleButton
-                            value="gcp"
-                            sx={{ py: 0.25, px: 1, borderRadius: 3 }}
-                        >
-                            <Typography variant="caption">GCP</Typography>
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                ) : null}
+                    ))}
+                </ToggleButtonGroup>
             </Stack>
             <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography

@@ -22,7 +22,13 @@ export interface DataPlaneDialogFieldProps {
     showCopyButton?: boolean;
 }
 
-export interface ServiceAccountIdentityFieldProps {
-    awsArn: string | null;
-    gcpEmail: string | null;
+export interface ToggleOption {
+    key: string;
+    label: string;
+    value: string | null;
+}
+
+export interface ToggleFieldProps {
+    label: string;
+    options: ToggleOption[];
 }
