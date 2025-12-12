@@ -1,4 +1,4 @@
-import type { FieldEditorProps } from 'src/components/projections/Edit/types';
+import type { FieldEditorProps } from 'src/components/projections/types';
 
 import {
     FormHelperText,
