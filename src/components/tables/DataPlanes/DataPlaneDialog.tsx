@@ -17,6 +17,8 @@ import {
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 import { OPENID_HOST } from 'src/utils/misc-utils';
 
+const TITLE_ID = 'data-plane-dialog-title';
+
 function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
     const intl = useIntl();
     const parseCidrBlocks = useParseCidrBlocks();
@@ -33,14 +35,11 @@ function DataPlaneDialog({ open, onClose, dataPlane }: DataPlaneDialogProps) {
             onClose={onClose}
             maxWidth="sm"
             fullWidth
-            aria-labelledby="data-plane-dialog-title"
+            aria-labelledby={TITLE_ID}
         >
             {dataPlane && dataPlaneDetails ? (
                 <>
-                    <DialogTitleWithClose
-                        id="data-plane-dialog-title"
-                        onClose={onClose}
-                    >
+                    <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>
                         <Stack
                             direction="row"
                             alignItems="center"
