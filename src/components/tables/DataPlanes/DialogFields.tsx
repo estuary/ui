@@ -1,3 +1,8 @@
+import type {
+    DataPlaneDialogFieldProps,
+    ServiceAccountIdentityFieldProps,
+} from 'src/components/tables/DataPlanes/types';
+
 import { useState } from 'react';
 
 import {
@@ -8,11 +13,6 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-
-import {
-    DataPlaneDialogFieldProps,
-    ServiceAccountIdentityFieldProps,
-} from './types';
 import { Check, Copy } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
@@ -173,7 +173,7 @@ export function ServiceAccountIdentityField({
                         id: 'admin.dataPlanes.dialog.service_account_identity',
                     })}
                 </Typography>
-                {hasAws && hasGcp && (
+                {hasAws && hasGcp ? (
                     <ToggleButtonGroup
                         value={selectedProvider}
                         exclusive
@@ -196,7 +196,7 @@ export function ServiceAccountIdentityField({
                             <Typography variant="caption">GCP</Typography>
                         </ToggleButton>
                     </ToggleButtonGroup>
-                )}
+                ) : null}
             </Stack>
             <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography

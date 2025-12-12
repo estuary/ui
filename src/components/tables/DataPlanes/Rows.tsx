@@ -1,4 +1,5 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { RowProps, RowsProps } from 'src/components/tables/DataPlanes/types';
 
 import { useState } from 'react';
 
@@ -9,8 +10,6 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-
-import { RowProps, RowsProps } from './types';
 import { InfoCircle } from 'iconoir-react';
 
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';

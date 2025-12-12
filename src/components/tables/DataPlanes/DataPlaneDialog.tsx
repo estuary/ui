@@ -1,13 +1,13 @@
-import { Dialog, DialogContent, Stack, Typography } from '@mui/material';
+import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
 
-import {
-    DataPlaneDialogField,
-    ServiceAccountIdentityField,
-} from './DialogFields';
-import { DataPlaneDialogProps } from './types';
+import { Dialog, DialogContent, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import {
+    DataPlaneDialogField,
+    ServiceAccountIdentityField,
+} from 'src/components/tables/DataPlanes/DialogFields';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import {
