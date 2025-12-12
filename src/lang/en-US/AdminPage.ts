@@ -117,17 +117,22 @@ export const AdminPage: Record<string, string> = {
 
     'admin.dataPlanes.private.option': `Private`,
     'admin.dataPlanes.public.option': `Public`,
-
     'admin.dataPlanes.header': `Data Planes`,
+    'admin.dataPlanes.column.header.provider': `Provider`,
+    'admin.dataPlanes.column.header.location': `Location`,
+    'admin.dataPlanes.column.header.region_code': `Region Code`,
     'admin.dataPlanes.table.aria.label': `Data Planes Table`,
+
+    'admin.dataPlanes.dialog.cloud_provider': `Cloud Provider`,
+    'admin.dataPlanes.dialog.internal_id': `Internal ID`,
+    'admin.dataPlanes.dialog.description': `Data plane details and configuration`,
+    'admin.dataPlanes.dialog.service_account_identity': `Service Account Identity`,
 
     // There are dynamically generated in src/components/tables/DataPlanes/index.tsx
     'admin.dataPlanes.private.table.noContent.header': `No private data planes found`,
     'admin.dataPlanes.private.table.noContent.message': `To configure a private data plane, please contact support.`,
     'admin.dataPlanes.public.table.noContent.header': `No data planes found`,
     'admin.dataPlanes.public.table.noContent.message': `There was an issue reaching our servers. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
-
-    'admin.dataPlanes.table.filterLabel': `Filter by Name`,
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.notifications': `Notifications`,
