@@ -120,7 +120,7 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.header': `Data Planes`,
     'admin.dataPlanes.column.header.provider': `Provider`,
     'admin.dataPlanes.column.header.location': `Location`,
-    'admin.dataPlanes.column.header.region_code': `Region Code`,
+    'admin.dataPlanes.column.header.region': `Region`,
     'admin.dataPlanes.table.aria.label': `Data Planes Table`,
 
     'admin.dataPlanes.dialog.cloud_provider': `Cloud Provider`,

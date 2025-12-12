@@ -1,5 +1,8 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
-import type { RowProps, RowsProps } from 'src/components/tables/DataPlanes/types';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/DataPlanes/types';
 
 import { useState } from 'react';
 
@@ -10,11 +13,11 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { InfoCircle } from 'iconoir-react';
 
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import {
     getProviderShortName,
     getRegionDisplayName,
@@ -23,6 +26,8 @@ import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
 
 function Row({ row, rowSx, onRowClick }: RowProps) {
     const { dataPlaneName, scope } = generateDataPlaneOption(row);
+    const parseCidrBlocks = useParseCidrBlocks();
+    const { ipv4 } = parseCidrBlocks(row.cidr_blocks);
 
     return (
         <TableRow
@@ -37,19 +42,15 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
                 '&:hover .info-icon': {
                     opacity: 1,
                 },
+                '&:hover .hover-link': {
+                    textDecoration: 'underline',
+                },
                 '& td': {
                     py: 1,
                 },
             }}
             onClick={() => onRowClick(row)}
         >
-            <TableCell>
-                <InfoCircle
-                    className="info-icon"
-                    fontSize={12}
-                    style={{ display: 'block' }}
-                />
-            </TableCell>
             <TableCell>
                 <Stack direction="row" spacing={1} alignItems="center">
                     <DataPlaneIcon
@@ -62,13 +63,18 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
                     </Typography>
                 </Stack>
             </TableCell>
-            <TableCell>
+            <TableCell className="hover-link">
                 {getRegionDisplayName(
                     dataPlaneName.provider,
                     dataPlaneName.region
                 )}
             </TableCell>
-            <TableCell>{dataPlaneName.region}</TableCell>
+            <TableCell className="hover-link" sx={{ fontFamily: 'monospace' }}>
+                {dataPlaneName.region}
+            </TableCell>
+            <TableCell className="hover-link" sx={{ fontFamily: 'monospace' }}>
+                {ipv4}
+            </TableCell>
         </TableRow>
     );
 }
