@@ -1,29 +1,29 @@
-import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/DisableEnable/types';
+import type { DisableEnableConfirmationProps } from 'src/components/tables/RowActions/types';
 
 import { Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 
-function DisableEnableConfirmation({ enabling }: DisableEnableButtonProps) {
+function DisableEnableConfirmation({
+    count,
+    enabling,
+}: DisableEnableConfirmationProps) {
+    const intl = useIntl();
+
     return (
         <AlertBox severity="info" short>
             <Typography component="div">
-                <FormattedMessage
-                    id="capturesTable.disableEnable.confirm"
-                    values={{
-                        setting: (
-                            <FormattedMessage
-                                id={
-                                    enabling
-                                        ? 'common.enabled'
-                                        : 'common.disabled'
-                                }
-                            />
-                        ),
-                    }}
-                />
+                {intl.formatMessage(
+                    { id: 'entityTable.disableEnable.confirm' },
+                    {
+                        count,
+                        setting: intl.formatMessage({
+                            id: enabling ? 'common.enabled' : 'common.disabled',
+                        }),
+                    }
+                )}
             </Typography>
         </AlertBox>
     );

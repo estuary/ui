@@ -2,14 +2,12 @@ import type { SettingMetadata } from 'src/components/tables/RowActions/Shared/ty
 import type { DeleteButtonProps } from 'src/components/tables/RowActions/types';
 
 import DeleteConfirmation from 'src/components/tables/RowActions/Delete/Confirmation';
-import RowActionButton from 'src/components/tables/RowActions/Shared/Button';
 import RowActionConfirmation from 'src/components/tables/RowActions/Shared/Confirmation';
-import UpdateEntity from 'src/components/tables/RowActions/Shared/UpdateEntity';
+import GroupedRowActionButton from 'src/components/tables/RowActions/Shared/GroupedButton';
+import UpdateEntities from 'src/components/tables/RowActions/Shared/UpdateEntities';
 import { SelectTableStoreNames } from 'src/stores/names';
 
 function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
-    const generator = () => null;
-
     const isCapture =
         selectableTableStoreName === SelectTableStoreNames.CAPTURE;
 
@@ -23,27 +21,26 @@ function DeleteButton({ selectableTableStoreName }: DeleteButtonProps) {
         : undefined;
 
     return (
-        <RowActionButton
-            messageID="cta.delete"
+        <GroupedRowActionButton
+            messageIntlKey="cta.delete"
             renderConfirmationMessage={(selectedNames) => {
                 return (
                     <RowActionConfirmation
                         selected={selectedNames}
-                        message={<DeleteConfirmation />}
+                        message={
+                            <DeleteConfirmation count={selectedNames.length} />
+                        }
                         selectableTableStoreName={selectableTableStoreName}
                         settings={settings}
                     />
                 );
             }}
-            renderProgress={(item, index, onFinish) => (
-                <UpdateEntity
-                    key={`Item-delete-${index}`}
-                    entity={item}
+            renderProgress={(entities, onFinish) => (
+                <UpdateEntities
+                    entities={entities}
                     onFinish={onFinish}
-                    successMessageID="common.deleted"
-                    runningMessageID="common.deleting"
-                    generateNewSpec={generator}
-                    generateNewSpecType={generator}
+                    successIntlKey="updateEntity.success.delete"
+                    runningIntlKey="updateEntity.running.delete"
                     selectableStoreName={selectableTableStoreName}
                 />
             )}

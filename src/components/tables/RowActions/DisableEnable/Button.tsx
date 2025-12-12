@@ -1,4 +1,4 @@
-import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/DisableEnable/types';
+import type { DisableEnableButtonProps } from 'src/components/tables/RowActions/types';
 
 import DisableEnableConfirmation from 'src/components/tables/RowActions/DisableEnable/Confirmation';
 import RowActionButton from 'src/components/tables/RowActions/Shared/Button';
@@ -15,6 +15,9 @@ function DisableEnableButton({
         running: enabling ? 'common.enabling' : 'common.disabling',
         skipped: 'updateEntity.collection.skipped',
         success: enabling ? 'common.enabled' : 'common.disabled',
+        title: enabling
+            ? 'updateEntity.title.enable'
+            : 'updateEntity.title.disable',
     };
 
     // Collections do not have shards in the root they are nested inside
@@ -30,10 +33,8 @@ function DisableEnableButton({
                         selected={selectedNames}
                         message={
                             <DisableEnableConfirmation
+                                count={selectedNames.length}
                                 enabling={enabling}
-                                selectableTableStoreName={
-                                    selectableTableStoreName
-                                }
                             />
                         }
                         selectableTableStoreName={selectableTableStoreName}
@@ -46,9 +47,9 @@ function DisableEnableButton({
                     entity={item}
                     onFinish={onFinish}
                     validateNewSpec
-                    skippedMessageID={messages.skipped}
-                    successMessageID={messages.success}
-                    runningMessageID={messages.running}
+                    skippedIntlKey={messages.skipped}
+                    successIntlKey={messages.success}
+                    runningIntlKey={messages.running}
                     generateNewSpec={(spec) =>
                         generateDisabledSpec(spec, enabling, shardsAreNested)
                     }

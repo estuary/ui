@@ -7,6 +7,7 @@ export type KnownEvents =
     | 'SkimProjections'
     | 'StoreCleaner'
     | 'SourceCapture'
+    | 'Task'
     | 'WorkflowStore'
     | 'evaluate_field_selection';
 

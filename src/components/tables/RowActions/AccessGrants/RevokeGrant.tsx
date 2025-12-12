@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { AccessGrantRowConfirmation } from 'src/components/tables/RowActions/AccessGrants/types';
+import type { RevokeGrantProps } from 'src/components/tables/RowActions/AccessGrants/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useEffect, useState } from 'react';
@@ -14,16 +14,6 @@ import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfo
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
-
-export interface Props {
-    grant: AccessGrantRowConfirmation;
-    onFinish: (response: any) => void;
-    runningMessageID: string;
-    selectTableStoreName:
-        | SelectTableStoreNames.ACCESS_GRANTS_USERS
-        | SelectTableStoreNames.ACCESS_GRANTS_PREFIXES;
-    successMessageID: string;
-}
 
 const revokeGrant = async (
     grantId: string,
@@ -52,10 +42,10 @@ const revokeGrant = async (
 function RevokeGrant({
     grant,
     onFinish,
-    runningMessageID,
+    runningIntlKey,
     selectTableStoreName,
-    successMessageID,
-}: Props) {
+    successIntlKey,
+}: RevokeGrantProps) {
     const [progress, setProgress] = useState<ProgressStates>(
         ProgressStates.RUNNING
     );
@@ -94,8 +84,8 @@ function RevokeGrant({
         <Progress
             progress={progress}
             item={grant.message}
-            runningMessageID={runningMessageID}
-            successMessageID={successMessageID}
+            runningIntlKey={runningIntlKey}
+            successIntlKey={successIntlKey}
             error={error}
         />
     );

@@ -60,6 +60,9 @@ function useRowsWithStatsState(
     >(selectTableStoreName, selectableTableStoreSelectors.stats.failed);
 
     useEffect(() => {
+        // TODO (perf) - should look at debouncing this possibly
+        //  however if we switch to GQL first I think that will
+        //  handle it
         mutateShardsList().catch(() => {});
     }, [mutateShardsList, successfulTransformations]);
 

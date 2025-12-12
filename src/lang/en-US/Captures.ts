@@ -7,7 +7,6 @@ export const Captures: Record<string, string> = {
     'capturesTable.title': `Your Captures`,
     'capturesTable.cta.new': `New Capture`,
     'capturesTable.filterLabel': `Filter captures`,
-    'capturesTable.disableEnable.confirm': `All items listed below will be {setting}.`,
     'capturesTable.delete.removeCollectionsOption': `Delete all collections associated with this capture. Collections used by active tasks will be skipped.`,
     'capturesTable.ctaGroup.aria': `capture table available actions`,
     'capturesTable.cta.materialize': `${CTAs['cta.materialize']} ${CommonMessages['terms.collections']}`,
