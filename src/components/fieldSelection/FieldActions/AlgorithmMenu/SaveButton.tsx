@@ -34,7 +34,10 @@ export default function SaveButton({
                 );
 
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
-                    fieldsRecommended,
+                    fieldsRecommended:
+                        typeof fieldsRecommended === 'undefined'
+                            ? 'undefined'
+                            : fieldsRecommended,
                     recommendedFlag,
                     selectionAlgorithm,
                 });
