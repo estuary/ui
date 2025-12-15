@@ -102,6 +102,18 @@ export const getLogRocketSettings = (): Settings | null => {
     return null;
 };
 
+export const getPostHogSettings = () => {
+    if (import.meta.env.VITE_PH_ENABLED === ENABLED) {
+        return {
+            apiHost: import.meta.env.VITE_PH_API_HOST ?? null,
+            publicToken: import.meta.env.VITE_PH_PUBLIC_API_TOKEN ?? null,
+            idUser: import.meta.env.VITE_PH_ID_USER === ENABLED,
+        };
+    }
+
+    return null;
+};
+
 export const getEncryptionSettings = () => {
     const encryptionEndpoint = import.meta.env.VITE_ENCRYPTION_URL;
 

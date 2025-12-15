@@ -2,6 +2,8 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useEffect } from 'react';
 
+import posthog from 'posthog-js';
+
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import {
@@ -37,6 +39,8 @@ const UserStoreProvider = ({ children }: BaseComponentProps) => {
                     logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
                         trigger: 'UserContext:session',
                     });
+                    console.log('logout');
+                    posthog.reset();
                     return;
                 }
 

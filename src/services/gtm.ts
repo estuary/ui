@@ -1,5 +1,6 @@
 import type { Schema } from 'src/types';
 
+import { posthogCapture } from 'src/services/posthog';
 import { getGoogleTageManagerSettings } from 'src/utils/env-utils';
 
 // GTM is loaded/initialized in index.html
@@ -20,6 +21,8 @@ export const fireGtmEvent = (event: EVENTS, data: Schema | undefined = {}) => {
             ...data,
         });
     }
+
+    posthogCapture(event, data);
 };
 
 export const setGtmData = (data?: Schema) => {

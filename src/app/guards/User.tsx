@@ -13,6 +13,7 @@ import type { BaseComponentProps } from 'src/types';
 import { Navigate } from 'react-router';
 
 import { identifyUser } from 'src/services/logrocket';
+import { posthogIdentify } from 'src/services/posthog';
 
 function UserGuard({ children }: BaseComponentProps) {
     // We only want to idenfity users once. Since the user object changes
@@ -25,6 +26,7 @@ function UserGuard({ children }: BaseComponentProps) {
         if (user && !identifiedUser.current) {
             identifiedUser.current = true;
             identifyUser(user);
+            posthogIdentify(user);
         }
     }, [user]);
 
