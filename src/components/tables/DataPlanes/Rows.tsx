@@ -34,14 +34,6 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
             hover
             sx={{
                 ...rowSx,
-                'cursor': 'pointer',
-                '& .info-icon': {
-                    opacity: 0,
-                    transition: 'opacity 0.15s ease-in-out',
-                },
-                '&:hover .info-icon': {
-                    opacity: 1,
-                },
                 '& td': {
                     py: 1,
                 },

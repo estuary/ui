@@ -1,7 +1,6 @@
-// Cloud provider region display names
 // Sources:
 // - AWS: https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
-// - GCP: https://cloud.google.com/about/locations
+// - GCP: https://status.cloud.google.com/regional/americas
 
 const AWS_REGIONS: Record<string, string> = {
     'af-south-1': 'Africa (Cape Town)',
