@@ -151,6 +151,9 @@
         "vitest": "^3.1.2",
         "vitest-mock-extended": "^3.0.1"
     },
+    "peerDependencies": {
+        "dayjs": "^1.11.19"
+    },
     "overrides": {
         "msw": {
             "path-to-regexp": "^8.0.0"
