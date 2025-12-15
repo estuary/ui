@@ -18,7 +18,6 @@
         "lint:fix": "eslint --fix --ext js,jsx,ts,tsx .",
         "maintenance:off": "rm public/maintenance",
         "maintenance:on": "touch public/maintenance",
-        "pre_commit": "npm run licenses && npm run typecheck",
         "preview": "vite preview",
         "start": "npm run licenses && vite",
         "test": "vitest",
