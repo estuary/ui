@@ -13,6 +13,7 @@ import {
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import {
     getProviderDisplayName,
+    getProviderShortName,
     getRegionDisplayName,
 } from 'src/utils/cloudRegions';
 import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
@@ -99,7 +100,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         options={[
                             {
                                 key: 'aws',
-                                label: 'AWS',
+                                label: getProviderShortName('aws'),
                                 value:
                                     dataPlane.aws_iam_user_arn ??
                                     intl.formatMessage({
@@ -108,7 +109,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             },
                             {
                                 key: 'gcp',
-                                label: 'GCP',
+                                label: getProviderShortName('gcp'),
                                 value:
                                     dataPlane.gcp_service_account_email ??
                                     intl.formatMessage({
