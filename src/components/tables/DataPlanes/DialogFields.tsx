@@ -30,7 +30,7 @@ function useCopyToClipboard() {
         }
     };
 
-    return { isCopied, handleCopy, setIsCopied };
+    return { isCopied, setIsCopied, handleCopy };
 }
 
 function CopyIconIndicator({
@@ -101,14 +101,7 @@ export function DataPlaneDialogField({
                 {label}
             </Typography>
             {showCopyButton ? (
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={1}
-                    sx={{
-                        transition: 'background-color 0.1s ease-in-out',
-                    }}
-                >
+                <Stack direction="row" alignItems="center" spacing={1}>
                     <TechnicalEmphasis
                         sx={{
                             color: 'text.secondary',
