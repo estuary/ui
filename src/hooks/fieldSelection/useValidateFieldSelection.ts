@@ -282,9 +282,9 @@ export default function useValidateFieldSelection() {
                                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
                                     validationError: true,
                                     missingResponseValue: !response.value,
-                                    missingResponseResult:
-                                        response.value &&
-                                        !response.value.result,
+                                    missingResponseResult: Boolean(
+                                        response.value && !response.value.result
+                                    ),
                                 });
 
                                 return;
