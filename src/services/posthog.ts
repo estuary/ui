@@ -27,9 +27,12 @@ export const posthogIdentify = (user: User) => {
         return;
     }
 
-    const { id, avatar, ...theRest } = userDetails;
+    const { id, email, emailVerified, userName, usedSSO } = userDetails;
     return posthog.identify(id, {
         lastLogin: new Date(),
-        ...theRest,
+        email,
+        emailVerified,
+        userName,
+        usedSSO,
     });
 };
