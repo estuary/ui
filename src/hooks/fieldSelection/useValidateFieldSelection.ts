@@ -279,6 +279,14 @@ export default function useValidateFieldSelection() {
                     responses.forEach((response) => {
                         if (isPromiseFulfilledResult(response)) {
                             if (!response.value || !response.value.result) {
+                                logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                                    validationError: true,
+                                    missingResponseValue: !response.value,
+                                    missingResponseResult:
+                                        response.value &&
+                                        !response.value.result,
+                                });
+
                                 return;
                             }
 
