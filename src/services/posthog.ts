@@ -23,16 +23,13 @@ export const posthogIdentify = (user: User) => {
     }
     const userDetails = getUserDetails(user);
 
-    if (!userDetails) {
+    if (!userDetails || posthog._isIdentified()) {
         return;
     }
 
-    const { id, email, emailVerified, userName, usedSSO } = userDetails;
+    const { id, avatar, ...theRest } = userDetails;
     return posthog.identify(id, {
         lastLogin: new Date(),
-        email,
-        emailVerified,
-        userName,
-        usedSSO,
+        ...theRest,
     });
 };
