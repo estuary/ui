@@ -16,16 +16,12 @@ import {
 
 import { Check, Copy } from 'iconoir-react';
 
-export function DataPlaneDialogField({
-    label,
-    value,
-    showCopyButton = true,
-}: DataPlaneDialogFieldProps) {
-    const theme = useTheme();
-    const [isCopied, setIsCopied] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
+import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 
-    const handleCopy = () => {
+function useCopyToClipboard() {
+    const [isCopied, setIsCopied] = useState(false);
+
+    const handleCopy = (value: string | null) => {
         if (value) {
             navigator.clipboard.writeText(value).then(() => {
                 setIsCopied(true);
@@ -34,9 +30,64 @@ export function DataPlaneDialogField({
         }
     };
 
+    return { isCopied, handleCopy, setIsCopied };
+}
+
+function CopyIconIndicator({
+    isCopied,
+    isHovered,
+    hideOnHover = false,
+}: {
+    isCopied: boolean;
+    isHovered: boolean;
+    hideOnHover?: boolean;
+}) {
+    const theme = useTheme();
+
+    return (
+        <Box
+            sx={{
+                position: 'relative',
+                width: 12,
+                height: 12,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
+        >
+            <Check
+                style={{
+                    position: 'absolute',
+                    fontSize: 12,
+                    color: theme.palette.success.main,
+                    opacity: isCopied ? 1 : 0,
+                    transition: 'opacity 0.1s ease-out',
+                }}
+            />
+            <Copy
+                style={{
+                    position: 'absolute',
+                    fontSize: 12,
+                    color: theme.palette.text.disabled,
+                    opacity: !isCopied && isHovered && !hideOnHover ? 1 : 0,
+                    transition: 'opacity 0.1s ease-in',
+                }}
+            />
+        </Box>
+    );
+}
+
+export function DataPlaneDialogField({
+    label,
+    value,
+    showCopyButton = true,
+}: DataPlaneDialogFieldProps) {
+    const { isCopied, handleCopy } = useCopyToClipboard();
+    const [isHovered, setIsHovered] = useState(false);
+
     return (
         <Stack
-            onClick={showCopyButton ? handleCopy : undefined}
+            onClick={showCopyButton ? () => handleCopy(value) : undefined}
             onMouseEnter={showCopyButton ? () => setIsHovered(true) : undefined}
             onMouseLeave={
                 showCopyButton ? () => setIsHovered(false) : undefined
@@ -58,49 +109,22 @@ export function DataPlaneDialogField({
                         transition: 'background-color 0.1s ease-in-out',
                     }}
                 >
-                    <Typography
+                    <TechnicalEmphasis
                         sx={{
-                            fontWeight: 500,
-                            fontFamily: 'Monospace',
-                            fontSize: 12,
                             color: 'text.secondary',
+                            fontSize: 12,
                             lineHeight: 1,
                         }}
                     >
-                        {value || '-'}
-                    </Typography>
-                    <Box
-                        sx={{
-                            position: 'relative',
-                            width: 12,
-                            height: 12,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        <Check
-                            style={{
-                                position: 'absolute',
-                                fontSize: 12,
-                                color: theme.palette.success.main,
-                                opacity: isCopied ? 1 : 0,
-                                transition: 'opacity 0.1s ease-out',
-                            }}
-                        />
-                        <Copy
-                            style={{
-                                position: 'absolute',
-                                fontSize: 12,
-                                color: theme.palette.text.disabled,
-                                opacity: !isCopied && isHovered ? 1 : 0,
-                                transition: 'opacity 0.1s ease-in',
-                            }}
-                        />
-                    </Box>
+                        {value}
+                    </TechnicalEmphasis>
+                    <CopyIconIndicator
+                        isCopied={isCopied}
+                        isHovered={isHovered}
+                    />
                 </Stack>
             ) : (
-                <Typography color="text.secondary">{value || '-'}</Typography>
+                <Typography color="text.secondary">{value ?? '-'}</Typography>
             )}
         </Stack>
     );
@@ -111,8 +135,7 @@ export function ToggleField({
     options,
     lowercaseButton,
 }: ToggleFieldProps) {
-    const theme = useTheme();
-    const [isCopied, setIsCopied] = useState(false);
+    const { isCopied, handleCopy, setIsCopied } = useCopyToClipboard();
     const [isHovered, setIsHovered] = useState(false);
     const [isToggleHovered, setIsToggleHovered] = useState(false);
 
@@ -135,15 +158,6 @@ export function ToggleField({
     const currentOption = validOptions.find((opt) => opt.key === selectedKey);
     const currentValue = currentOption?.value ?? null;
 
-    const handleCopy = () => {
-        if (currentValue) {
-            navigator.clipboard.writeText(currentValue).then(() => {
-                setIsCopied(true);
-                setTimeout(() => setIsCopied(false), 3000);
-            });
-        }
-    };
-
     if (validOptions.length === 0) {
         return null;
     }
@@ -154,7 +168,7 @@ export function ToggleField({
                 py: 1,
                 cursor: currentValue ? 'pointer' : 'default',
             }}
-            onClick={handleCopy}
+            onClick={() => handleCopy(currentValue)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -173,6 +187,7 @@ export function ToggleField({
                     value={selectedKey}
                     exclusive
                     onChange={handleSelectionChange}
+                    // prevent the ToggleButtonGroup from triggering copy on click
                     onClick={(e) => e.stopPropagation()}
                     onMouseEnter={() => setIsToggleHovered(true)}
                     onMouseLeave={() => setIsToggleHovered(false)}
@@ -199,49 +214,19 @@ export function ToggleField({
                 </ToggleButtonGroup>
             </Stack>
             <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography
+                <TechnicalEmphasis
                     sx={{
-                        fontWeight: 500,
-                        fontFamily: 'Monospace',
-                        fontSize: 12,
                         color: 'text.secondary',
-                        lineHeight: 1,
+                        fontSize: 12,
                     }}
                 >
-                    {currentValue || '-'}
-                </Typography>
-                <Box
-                    sx={{
-                        position: 'relative',
-                        width: 12,
-                        height: 12,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Check
-                        style={{
-                            position: 'absolute',
-                            fontSize: 12,
-                            color: theme.palette.success.main,
-                            opacity: isCopied ? 1 : 0,
-                            transition: 'opacity 0.1s ease-out',
-                        }}
-                    />
-                    <Copy
-                        style={{
-                            position: 'absolute',
-                            fontSize: 12,
-                            color: theme.palette.text.disabled,
-                            opacity:
-                                !isCopied && isHovered && !isToggleHovered
-                                    ? 1
-                                    : 0,
-                            transition: 'opacity 0.1s ease-in',
-                        }}
-                    />
-                </Box>
+                    {currentValue}
+                </TechnicalEmphasis>
+                <CopyIconIndicator
+                    isCopied={isCopied}
+                    isHovered={isHovered}
+                    hideOnHover={isToggleHovered}
+                />
             </Stack>
         </Stack>
     );
