@@ -8,7 +8,6 @@ import { useState } from 'react';
 import {
     Box,
     Stack,
-    ToggleButton,
     ToggleButtonGroup,
     Typography,
     useTheme,
@@ -17,6 +16,7 @@ import {
 import { Check, Copy } from 'iconoir-react';
 
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
+import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 function CopyIconIndicator({
@@ -172,11 +172,7 @@ export function ToggleField({
                     size="small"
                 >
                     {validOptions.map((opt) => (
-                        <ToggleButton
-                            key={opt.key}
-                            value={opt.key}
-                            sx={{ py: 0.25, px: 1, borderRadius: 3 }}
-                        >
+                        <OutlinedToggleButton key={opt.key} value={opt.key}>
                             <Typography
                                 variant="caption"
                                 sx={
@@ -187,7 +183,7 @@ export function ToggleField({
                             >
                                 {opt.label}
                             </Typography>
-                        </ToggleButton>
+                        </OutlinedToggleButton>
                     ))}
                 </ToggleButtonGroup>
             </Stack>
