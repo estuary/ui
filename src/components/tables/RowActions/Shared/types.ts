@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { CaptureQuery } from 'src/api/liveSpecsExt';
 import type { AccessGrantRowConfirmation } from 'src/components/tables/RowActions/AccessGrants/types';
 import type {
     RowActionSupportedTableStoreName,
@@ -21,17 +22,40 @@ export enum ProgressStates {
     FAILED = 100,
 }
 
-export interface SharedProgressProps {
-    name: string;
+export interface BaseProgressProps {
     error: any | null;
+    state: ProgressStates;
+    runningIntlKey: string;
+    successIntlKey: string;
     logToken?: string | null;
     renderError?: (error: any, progressState: ProgressStates) => ReactNode;
     renderLogs?: Function | boolean;
-    skippedMessageID?: string;
-    runningMessageID: string;
-    successMessageID: string;
-    state: ProgressStates;
 }
+
+export interface IndividualProgressProps extends BaseProgressProps {
+    name: string;
+    renderBody?: (progressState: ProgressStates) => ReactNode;
+    skippedIntlKey?: string;
+}
+
+export interface GroupedProgressProps extends BaseProgressProps {
+    updatingCount: number;
+}
+
+export type LogViewerProps = Pick<
+    BaseProgressProps,
+    'logToken' | 'renderLogs' | 'state'
+>;
+
+export type ErrorViewerProps = Pick<
+    BaseProgressProps,
+    'renderError' | 'error' | 'state'
+>;
+
+export type UseRowActionProgressProps = Pick<
+    BaseProgressProps,
+    'runningIntlKey' | 'successIntlKey' | 'state' | 'error'
+>;
 
 export interface ConfirmationAlertProps {
     messageId: string;
@@ -68,8 +92,24 @@ export interface RowActionButtonProps {
     selectableTableStoreName: RowActionSupportedTableStoreName;
 }
 
+export interface GroupedRowActionButtonProps {
+    messageIntlKey: string;
+    renderConfirmationMessage: (selectedNames: string[]) => ReactNode;
+    renderProgress: (
+        items: CaptureQuery[],
+        onFinish: (response: any) => void
+    ) => ReactNode;
+    selectableTableStoreName: RowActionSupportedTableStoreName;
+}
+
 // Mainly for Access Grants and Data Sharing
 export interface ConfirmationWithExplanationProps {
     message: string | ReactNode;
     selected: AccessGrantRowConfirmation[];
+}
+
+export interface RenderErrorProps {
+    draftId: string | null;
+    error: any;
+    skipped?: boolean;
 }
