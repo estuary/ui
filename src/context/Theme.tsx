@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
+import { Check, Copy, Square, XmarkCircle } from 'iconoir-react';
 import { useLocalStorage } from 'react-use';
 
 import CheckSquare from 'src/icons/CheckSquare';
