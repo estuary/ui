@@ -5,7 +5,6 @@ import { Dialog, DialogContent, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
-import DataPlane from 'src/components/shared/Entity/DataPlane';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import {
     DataPlaneDialogField,
@@ -37,7 +36,11 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
             fullWidth
             aria-labelledby={TITLE_ID}
         >
-            <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>
+            <DialogTitleWithClose
+                id={TITLE_ID}
+                onClose={onClose}
+                sx={{ pb: 0 }}
+            >
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -55,28 +58,17 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         )}
                     </Typography>
                 </Stack>
-                <DataPlane
-                    dataPlaneName={dataPlaneName}
-                    formattedSuffix={getRegionDisplayName(
-                        dataPlaneName.provider,
-                        dataPlaneName.region
-                    )}
-                    hideScopeIcon
-                    logoSize={30}
-                    scope={scope}
-                />
-
+            </DialogTitleWithClose>
+            <DialogContent>
                 <Typography
                     variant="body2"
                     color="text.secondary"
-                    sx={{ mt: 1, mb: 2 }}
+                    sx={{ mt: 0, mb: 2 }}
                 >
                     {intl.formatMessage({
                         id: 'admin.dataPlanes.dialog.description',
                     })}
                 </Typography>
-            </DialogTitleWithClose>
-            <DialogContent>
                 <Stack spacing={1}>
                     {dataPlaneName.provider ? (
                         <DataPlaneDialogField
