@@ -36,11 +36,9 @@ function useCopyToClipboard() {
 function CopyIconIndicator({
     isCopied,
     isHovered,
-    hideOnHover = false,
 }: {
     isCopied: boolean;
     isHovered: boolean;
-    hideOnHover?: boolean;
 }) {
     const theme = useTheme();
 
@@ -69,7 +67,7 @@ function CopyIconIndicator({
                     position: 'absolute',
                     fontSize: 12,
                     color: theme.palette.text.disabled,
-                    opacity: !isCopied && isHovered && !hideOnHover ? 1 : 0,
+                    opacity: !isCopied && isHovered ? 1 : 0,
                     transition: 'opacity 0.1s ease-in',
                 }}
             />
@@ -217,8 +215,7 @@ export function ToggleField({
                 </TechnicalEmphasis>
                 <CopyIconIndicator
                     isCopied={isCopied}
-                    isHovered={isHovered}
-                    hideOnHover={isToggleHovered}
+                    isHovered={isHovered && !isToggleHovered}
                 />
             </Stack>
         </Stack>
