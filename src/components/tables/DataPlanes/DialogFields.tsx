@@ -66,7 +66,7 @@ export function DataPlaneDialogField({
     value,
     showCopyButton = true,
 }: DataPlaneDialogFieldProps) {
-    const { isCopied, handleCopy } = useCopyToClipboard();
+    const { isCopied, handleCopy } = useCopyToClipboard('DataPlaneDialogField');
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -112,7 +112,8 @@ export function ToggleField({
     options,
     lowercaseButton,
 }: ToggleFieldProps) {
-    const { isCopied, handleCopy, setIsCopied } = useCopyToClipboard();
+    const { isCopied, handleCopy, setIsCopied } =
+        useCopyToClipboard('ToggleField');
     const [isHovered, setIsHovered] = useState(false);
     const [isToggleHovered, setIsToggleHovered] = useState(false);
 

@@ -5,6 +5,7 @@ import { Dialog, DialogContent, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import DataPlane from 'src/components/shared/Entity/DataPlane';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import {
     DataPlaneDialogField,
@@ -54,6 +55,16 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         )}
                     </Typography>
                 </Stack>
+                <DataPlane
+                    dataPlaneName={dataPlaneName}
+                    formattedSuffix={getRegionDisplayName(
+                        dataPlaneName.provider,
+                        dataPlaneName.region
+                    )}
+                    hideScopeIcon
+                    logoSize={30}
+                    scope={scope}
+                />
 
                 <Typography
                     variant="body2"

@@ -583,7 +583,7 @@ export const getEntityTableRowSx = (
     };
 };
 
-export type TransientButtonState = 'success' | 'error' | undefined;
+type TransientButtonState = 'success' | undefined;
 export const getButtonIcon = (
     theme: Theme,
     buttonState: TransientButtonState
@@ -591,10 +591,6 @@ export const getButtonIcon = (
     switch (buttonState) {
         case 'success':
             return <Check style={{ color: theme.palette.success.main }} />;
-        case 'error':
-            return (
-                <WarningCircle style={{ color: theme.palette.error.main }} />
-            );
         default:
             return <Copy style={{ color: theme.palette.primary.main }} />;
     }
