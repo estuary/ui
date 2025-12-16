@@ -62,12 +62,12 @@ import isEmpty from 'lodash/isEmpty';
 import { useMount } from 'react-use';
 
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import CombinatorProperties from 'src/forms/renderers/Overrides/material/complex/CombinatorProperties';
+import CombinatorProperties from 'src/forms/overrides/material/complex/CombinatorProperties';
 import {
     discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
-} from 'src/forms/renderers/shared';
+} from 'src/forms/shared';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 

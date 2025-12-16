@@ -10,12 +10,12 @@ import type { BaseGrant, Grant_UserExt } from 'src/types';
 import { isEmpty, isObject } from 'lodash';
 import { createSearchParams } from 'react-router-dom';
 
-import { derefSchema } from 'src/services/jsonforms';
 import { logRocketConsole } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
+export const OPENID_HOST = 'https://openid.estuary.dev';
 
 export const RESPONSE_DATA_LIMIT = 1000;
 
@@ -226,11 +226,6 @@ export const basicSort_string = (
 
     // descending means to flip the comparison order
     return b.localeCompare(a);
-};
-
-export const getDereffedSchema = async (val: any) => {
-    const response = val ? await derefSchema(val) : val;
-    return response;
 };
 
 export const configCanBeEmpty = (schema: any) => {

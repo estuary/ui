@@ -28,6 +28,7 @@ import {
     generateMaterializationResourceSpec,
     getResourceConfigPointers,
 } from 'src/services/ajv';
+import { getDereffedSchema } from 'src/services/jsonforms';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
@@ -57,7 +58,7 @@ import {
 import { getStoreWithToggleDisableSettings } from 'src/stores/Binding/slices/ToggleDisable';
 import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
 import { BindingStoreNames } from 'src/stores/names';
-import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 import { parsePostgresInterval } from 'src/utils/time-utils';
 import {

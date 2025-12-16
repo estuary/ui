@@ -2,10 +2,12 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 
 export type KnownEvents =
     | 'Auth'
+    | 'EndpointConfig'
     | 'ResetInvalidSetting'
     | 'SkimProjections'
     | 'StoreCleaner'
     | 'SourceCapture'
+    | 'Task'
     | 'WorkflowStore'
     | 'evaluate_field_selection';
 

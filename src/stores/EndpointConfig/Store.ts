@@ -1,7 +1,6 @@
 import type { EndpointConfigState } from 'src/stores/EndpointConfig/types';
 import type { CustomError } from 'src/stores/extensions/CustomErrors';
 import type { JsonFormsData } from 'src/types';
-import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
@@ -11,6 +10,8 @@ import produce from 'immer';
 import { isEmpty } from 'lodash';
 
 import { createJSONFormDefaults } from 'src/services/ajv';
+import { getDereffedSchema } from 'src/services/jsonforms';
+import { logRocketEvent } from 'src/services/shared';
 import {
     fetchErrors,
     filterErrors,
@@ -21,11 +22,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
-import {
-    configCanBeEmpty,
-    getDereffedSchema,
-    hasLength,
-} from 'src/utils/misc-utils';
+import { configCanBeEmpty, hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 const STORE_KEY = 'Endpoint Config';
@@ -74,8 +71,7 @@ const getInitialStateData = (): Pick<
 });
 
 const getInitialState = (
-    set: NamedSet<EndpointConfigState>,
-    get: StoreApi<EndpointConfigState>['getState']
+    set: NamedSet<EndpointConfigState>
 ): EndpointConfigState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
@@ -177,6 +173,12 @@ const getInitialState = (
     setServerUpdateRequired: (updateRequired) => {
         set(
             produce((state: EndpointConfigState) => {
+                logRocketEvent('EndpointConfig', {
+                    storeUpdate: true,
+                    endpointCanBeEmpty: state.endpointCanBeEmpty,
+                    updateRequired,
+                });
+
                 state.serverUpdateRequired = state.endpointCanBeEmpty
                     ? false
                     : updateRequired;
@@ -213,7 +215,7 @@ const getInitialState = (
 
 export const useEndpointConfigStore = create<EndpointConfigState>()(
     devtools(
-        (set, get) => getInitialState(set, get),
+        (set) => getInitialState(set),
         devtoolsOptions('general-endpoint-config')
     )
 );

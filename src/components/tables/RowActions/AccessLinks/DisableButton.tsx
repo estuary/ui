@@ -100,8 +100,8 @@ function DisableButton() {
                             <DisableDirective
                                 key={`remove-directive-${index}`}
                                 linkConfig={item}
-                                successMessageID="common.disabled"
-                                runningMessageID="common.disabling"
+                                successIntlKey="common.disabled"
+                                runningIntlKey="common.disabling"
                                 onFinish={onFinish}
                             />
                         )}

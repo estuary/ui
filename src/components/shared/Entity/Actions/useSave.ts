@@ -280,7 +280,8 @@ function useSave(
             const massUpdateResponse = await massUpdateDraftSpecs(
                 draftId,
                 'collection',
-                collectionsToUpdate
+                collectionsToUpdate,
+                'Dashboard : collection reset : update'
             );
             if (massUpdateResponse.error) {
                 onFailure({

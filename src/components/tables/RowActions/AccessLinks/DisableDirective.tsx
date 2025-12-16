@@ -15,8 +15,8 @@ const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
 
 export interface DisableDirectiveProps {
     linkConfig: RowConfirmation;
-    runningMessageID: string;
-    successMessageID: string;
+    runningIntlKey: string;
+    successIntlKey: string;
     onFinish: (response: any) => void;
 }
 
@@ -40,8 +40,8 @@ const disableInvitation = async (
 
 function DisableDirective({
     linkConfig,
-    runningMessageID,
-    successMessageID,
+    runningIntlKey,
+    successIntlKey,
     onFinish,
 }: DisableDirectiveProps) {
     const [progress, setProgress] = useState<ProgressStates>(
@@ -71,8 +71,8 @@ function DisableDirective({
         <Progress
             progress={progress}
             item={linkConfig.message}
-            runningMessageID={runningMessageID}
-            successMessageID={successMessageID}
+            runningIntlKey={runningIntlKey}
+            successIntlKey={successIntlKey}
             error={error}
         />
     );

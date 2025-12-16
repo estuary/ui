@@ -36,8 +36,8 @@ function CopyCidrBlocks({ cidrBlocks }: Props) {
             direction="row"
             spacing={1}
             sx={{
-                maxWidth: 'fit-content',
                 minWidth: 'fit-content',
+                width: '100%',
             }}
         >
             <Select
@@ -59,6 +59,10 @@ function CopyCidrBlocks({ cidrBlocks }: Props) {
             </Select>
 
             <SingleLineCode
+                compact
+                sx={{
+                    flex: '1 0 auto',
+                }}
                 value={
                     splitCidrBlocks[
                         selection === selectOptions[1] ? 'ipv6' : 'ipv4'

@@ -47,7 +47,7 @@ import {
     withJsonFormsContext,
 } from '@jsonforms/react';
 
-import { getDiscriminatorIndex } from 'src/forms/renderers/shared';
+import { getDiscriminatorIndex } from 'src/forms/shared';
 import {
     CHILDREN_HAVE_VALUE,
     LAYOUT_PATH,
