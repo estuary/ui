@@ -4,7 +4,7 @@ The web UI for Estuary Flow.
 
 # How to install?
 
-Make sure Node and npm are installed.
+Ensure `node` and `npm` are both installed. Please check `package.json` for version info.
 
 Run: `npm install`
 

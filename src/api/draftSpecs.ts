@@ -97,7 +97,8 @@ export const massCreateDraftSpecs = async (
 export const massUpdateDraftSpecs = async (
     draftId: string,
     specType: Entity,
-    specs: MassUpdateMatchData[]
+    specs: MassUpdateMatchData[],
+    detail: string
 ) => {
     if (specs.length > 0) {
         const limiter = pLimit(3);
@@ -112,7 +113,7 @@ export const massUpdateDraftSpecs = async (
                     ...spec,
                     draft_id: draftId,
                     spec_type: specType,
-                    detail: 'Dashboard : collection reset : update',
+                    detail,
                 })),
                 { onConflict: 'draft_id, catalog_name' }
             );
