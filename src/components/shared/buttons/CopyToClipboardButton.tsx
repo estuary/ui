@@ -1,11 +1,9 @@
 import type { CopyToClipboardButtonProps } from 'src/components/shared/buttons/types';
-import type { TransientButtonState } from 'src/context/Theme';
-
-import { useState } from 'react';
 
 import { Button, IconButton, useTheme } from '@mui/material';
 
 import { getButtonIcon } from 'src/context/Theme';
+import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 // TODO (maybe) this might make less sense as a component
 //  and way more as a headless hook. So if you have to add more
@@ -18,32 +16,15 @@ function CopyToClipboardButton({
 }: CopyToClipboardButtonProps) {
     const theme = useTheme();
 
-    const [transientButtonState, setTransientButtonState] =
-        useState<TransientButtonState>(undefined);
-
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(writeValue).then(
-            () => {
-                setTransientButtonState('success');
-
-                setTimeout(() => setTransientButtonState(undefined), 2000);
-            },
-            () => {
-                setTransientButtonState('error');
-
-                setTimeout(() => setTransientButtonState(undefined), 2000);
-            }
-        );
-    };
-
-    const icon = getButtonIcon(theme, transientButtonState);
+    const { isCopied, handleCopy } = useCopyToClipboard();
+    const icon = getButtonIcon(theme, isCopied ? 'success' : undefined);
 
     if (!children) {
         return (
             <IconButton
                 size="small"
-                color={transientButtonState}
-                onClick={copyToClipboard}
+                color={isCopied ? 'success' : undefined}
+                onClick={() => handleCopy(writeValue)}
             >
                 {icon}
             </IconButton>
@@ -55,8 +36,8 @@ function CopyToClipboardButton({
             variant="text"
             size="small"
             endIcon={icon}
-            color={transientButtonState}
-            onClick={copyToClipboard}
+            color={isCopied ? 'success' : undefined}
+            onClick={() => handleCopy(writeValue)}
         >
             {children}
         </Button>
