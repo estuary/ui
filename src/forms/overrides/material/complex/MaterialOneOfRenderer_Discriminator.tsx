@@ -46,6 +46,7 @@ import {
     Hidden,
     Tab,
     Tabs,
+    Typography,
 } from '@mui/material';
 
 import {
@@ -269,7 +270,14 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 combinatorKeyword="oneOf"
                 path={path}
             />
-            {singleOption ? null : (
+            {singleOption ? (
+                // TODO (jsonforms) - we have wanted to hide this but some
+                //  connectors work better with it showing (ex: materialize-iceberg)
+                //  so we left it in for now.
+                <Typography sx={{ fontWeight: 500, fontSize: 14 }}>
+                    {oneOfRenderInfos[0].label}
+                </Typography>
+            ) : (
                 <Tabs value={selectedIndex} onChange={handleTabChange}>
                     {oneOfRenderInfos.map((oneOfRenderInfo) => (
                         <Tab
