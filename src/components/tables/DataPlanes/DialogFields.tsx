@@ -198,7 +198,7 @@ export function ToggleField({
                 </TechnicalEmphasis>
                 <CopyIconIndicator
                     isCopied={isCopied}
-                    isHovered={isHovered && !isToggleHovered}
+                    isHovered={Boolean(isHovered && !isToggleHovered)}
                 />
             </Stack>
         </Stack>
