@@ -163,6 +163,11 @@ const TestJsonForms = () => {
                             3. Open the browser console to see details related
                             to the state, schema, and ui schema.
                         </Box>
+                        <Box>
+                            Due to how the UI manages things during edit. The
+                            oAuth "Authenticated" chip will always show as
+                            authenticated.
+                        </Box>
                     </AlertBox>
 
                     <JsonForms

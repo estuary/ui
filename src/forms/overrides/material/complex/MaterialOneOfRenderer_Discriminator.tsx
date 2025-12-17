@@ -34,7 +34,7 @@ import type {
     RankedTester,
 } from '@jsonforms/core';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import {
     Button,
@@ -51,28 +51,67 @@ import {
 import {
     and,
     createCombinatorRenderInfos,
+    decode,
     isOneOfControl,
     rankWith,
     schemaMatches,
 } from '@jsonforms/core';
 import { JsonFormsDispatch } from '@jsonforms/react';
 
-import { keys } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
-import { useMount } from 'react-use';
 
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import CombinatorProperties from 'src/forms/overrides/material/complex/CombinatorProperties';
+import { INJECTED } from 'src/forms/renderers/OAuth/shared';
 import {
     discriminator,
     getDiscriminator,
     getDiscriminatorDefaultValue,
 } from 'src/forms/shared';
 import { withCustomJsonFormsOneOfDiscriminatorProps } from 'src/services/jsonforms/JsonFormsContext';
+import { logRocketEvent } from 'src/services/shared';
 import { hasOwnProperty } from 'src/utils/misc-utils';
+
+const renderer = 'Custom_MaterialOneOfRenderer_Discriminator';
 
 export interface OwnOneOfProps extends OwnPropsOfControl {
     indexOfFittingSchema?: number;
+}
+
+// Customization: do not prompt user if they are:
+//  only the discriminator is changing
+//      ex: first click of authentication (usually will only contain discriminator)
+//  only the discriminator is changing and others are blank or INJECTED
+//      ex: clicks after the first of authentication
+//      ex: any click off a tab that is for oAuth
+//  the data is totally empty (ex: parsers)
+function skipTabChangePrompt(data: any, prop: string): boolean {
+    // No data at all - we can skip
+    if (isEmpty(data)) {
+        return true;
+    }
+
+    for (const key in data) {
+        // If it is the discriminator we can ignore
+        if (key === prop) {
+            continue;
+        }
+
+        const value = data[key];
+
+        // Check if value is a non-null object - recurse into it
+        if (typeof value === 'object' && value !== null) {
+            if (!skipTabChangePrompt(value, prop)) {
+                return false;
+            }
+        }
+        // For non-object values, check if they're non-empty and not INJECTED
+        else if (value !== '' && value !== INJECTED) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 export const Custom_MaterialOneOfRenderer_Discriminator = ({
@@ -93,6 +132,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
 }: CombinatorRendererProps) => {
     const isEdit = useEntityWorkflow_Editing();
 
+    const defaultDiscriminator = useRef(true);
     const [open, setOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(
         indexOfFittingSchema || 0
@@ -113,12 +153,11 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
         uischemas
     );
 
-    console.log('possibleSchemas', possibleSchemas);
-
     const discriminatorProperty = getDiscriminator(schema);
 
     oneOfRenderInfos.map((renderer) => {
         const { uischema: rendererUischema } = renderer as any;
+
         rendererUischema.elements = rendererUischema.elements.filter(
             (el: any) => {
                 // Remove any that are missing elements or somehow don't have scope (should never happen)
@@ -129,17 +168,22 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 //      This is not supported out of the box https://jsonforms.discourse.group/t/use-default-uischema-and-only-apply-rule-to-one-field/1742
                 //  So we have to look at the pathSegments and filter our the one that matches the discriminator
                 //      This should be safe according to JSONForms https://jsonforms.discourse.group/t/hiding-a-specific-path-when-rendering-a-complex-oneof/2795
-                // const pathSegments = el.scope?.split('/');
-                // PUT THIS BACK IN
-                // if (pathSegments && pathSegments.length > 0) {
-                //     // Get the last segment as that should match property names
-                //     //  based on `isRequired` in jsonforms/packages/core/src/mappers/renderer.ts
-                //     return (
-                //         decode(pathSegments[pathSegments.length - 1]) !==
-                //         discriminatorProperty
-                //     );
-                // }
-                // PUT THIS BACK IN
+
+                const pathSegments = el.scope?.split('/');
+                if (pathSegments && pathSegments.length > 0) {
+                    // Get the last segment as that should match property names
+                    //  based on `isRequired` in jsonforms/packages/core/src/mappers/renderer.ts
+                    const renderOneOfOption =
+                        decode(pathSegments[pathSegments.length - 1]) !==
+                        discriminatorProperty;
+
+                    logRocketEvent('JsonForms', {
+                        renderer,
+                        renderOneOfOption,
+                    });
+
+                    return renderOneOfOption;
+                }
 
                 return true;
             }
@@ -147,8 +191,6 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
 
         return renderer;
     });
-
-    console.log('oneOfRenderInfos', oneOfRenderInfos);
 
     const openNewTab = (newIndex: number) => {
         const tabSchema = oneOfRenderInfos[newIndex].schema;
@@ -173,23 +215,27 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     const handleTabChange = useCallback(
         (_event: any, newOneOfIndex: number) => {
             setNewSelectedIndex(newOneOfIndex);
-            // Customization: do not prompt user if they are only
-            //  overwriting the discriminator as it is a single property.
-            const keysInData = keys(data);
-            if (
-                (keysInData.length === 1 &&
-                    keysInData[0] === discriminatorProperty) ||
-                isEmpty(data)
-            ) {
+
+            // Customization: Skip prompting when changing tab
+            if (skipTabChangePrompt(data, discriminatorProperty)) {
+                logRocketEvent('JsonForms', {
+                    renderer,
+                    skippingTabChangePrompt: true,
+                });
                 openNewTab(newOneOfIndex);
-            } else {
-                setOpen(true);
+                return;
             }
+
+            setOpen(true);
         },
         [setOpen, setSelectedIndex, data]
     );
 
-    useMount(() => {
+    // Customization : Need to handle defaulting for Pydantic schemas
+    //  They will return an `enum` with a single value and that will not
+    //  be defaulted properly unless it is rendered. Since we are hiding the
+    //  discriminator now we need to make sure it is set
+    if (defaultDiscriminator.current) {
         if (
             !isEdit &&
             required &&
@@ -200,11 +246,21 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 discriminatorProperty
             );
 
+            logRocketEvent('JsonForms', {
+                renderer,
+                defaultingDiscriminatorProperty: true,
+                defaultVal,
+            });
+
+            defaultDiscriminator.current = false;
+
             handleChange(path, {
                 [discriminatorProperty]: defaultVal?.[discriminatorProperty],
             });
         }
-    });
+    }
+
+    const singleOption = oneOfRenderInfos.length === 1;
 
     return (
         <Hidden xsUp={!visible}>
@@ -213,15 +269,17 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 combinatorKeyword="oneOf"
                 path={path}
             />
-            <Tabs value={selectedIndex} onChange={handleTabChange}>
-                {oneOfRenderInfos.map((oneOfRenderInfo) => (
-                    <Tab
-                        key={oneOfRenderInfo.label}
-                        label={oneOfRenderInfo.label}
-                        disabled={!enabled}
-                    />
-                ))}
-            </Tabs>
+            {singleOption ? null : (
+                <Tabs value={selectedIndex} onChange={handleTabChange}>
+                    {oneOfRenderInfos.map((oneOfRenderInfo) => (
+                        <Tab
+                            key={oneOfRenderInfo.label}
+                            label={oneOfRenderInfo.label}
+                            disabled={!enabled}
+                        />
+                    ))}
+                </Tabs>
+            )}
             {oneOfRenderInfos.map(
                 (oneOfRenderInfo, oneOfIndex) =>
                     selectedIndex === oneOfIndex && (
