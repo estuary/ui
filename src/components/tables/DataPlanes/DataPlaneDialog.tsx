@@ -1,6 +1,6 @@
 import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
 
-import { Dialog, DialogContent, Stack, Typography } from '@mui/material';
+import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -57,6 +57,14 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                     <Typography variant="h6" sx={{ ml: 1, fontWeight: 600 }}>
                         {formatDataPlaneName(dataPlaneName)}
                     </Typography>
+                    <Badge
+                        sx={{
+                            ml: 5,
+                        }}
+                        badgeContent={scope}
+                        color="secondary"
+                        invisible={scope == 'public'}
+                    />
                 </Stack>
             </DialogTitleWithClose>
             <DialogContent>
