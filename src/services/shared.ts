@@ -56,7 +56,8 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
 };
 
 export const logRocketEvent = (
-    event: CustomEvents | KnownEvents | string,
+    // (string & {}) preserves autocomplete for CustomEvents and KnownEvents while allowing arbitrary strings
+    event: CustomEvents | KnownEvents | (string & {}),
     eventProperties?: any
 ) => {
     // Just want to be very very safe

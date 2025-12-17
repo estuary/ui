@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
 
 // TODO: use React Context to pass component name instead of an argument
 export function useCopyToClipboard(componentName: string) {
@@ -16,8 +15,8 @@ export function useCopyToClipboard(componentName: string) {
                 },
                 () => {
                     setIsCopied(false);
-                    logRocketEvent(CustomEvents.ERROR_SILENT, {
-                        newValue: value,
+                    logRocketEvent('Error_Silent', {
+                        copiedValue: value,
                         component: componentName,
                     });
                 }

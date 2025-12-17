@@ -9,7 +9,8 @@ export type KnownEvents =
     | 'SourceCapture'
     | 'Task'
     | 'WorkflowStore'
-    | 'evaluate_field_selection';
+    | 'evaluate_field_selection'
+    | 'Error_Silent';
 
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
 //  KnownEvents type
@@ -47,7 +48,6 @@ export enum CustomEvents {
     ERROR_BOUNDARY_PAYMENT_METHODS = 'Error_Boundary_Displayed:PaymentMethods',
     ERROR_DISPLAYED = 'Error_Displayed',
     ERROR_MISSING_MESSAGE = 'Error_Missing_Message',
-    ERROR_SILENT = 'Error_Silent',
     FIELD_SELECTION = 'FieldSelection',
     FIELD_SELECTION_REFRESH_AUTO = 'Field_Selection_Refresh:Auto',
     FIELD_SELECTION_REFRESH_MANUAL = 'Field_Selection_Refresh:Manual',
