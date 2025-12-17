@@ -48,7 +48,7 @@ function SingleLineCode({
                     id: 'common.copied',
                 })}
                 placement="right"
-                open={!!isCopied}
+                open={isCopied}
                 arrow
                 disableFocusListener
                 disableHoverListener

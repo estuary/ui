@@ -6,10 +6,8 @@ import { useIntl } from 'react-intl';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
-import {
-    DataPlaneDialogField,
-    ToggleField,
-} from 'src/components/tables/DataPlanes/DialogFields';
+import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';
+import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import {
     getProviderDisplayName,
