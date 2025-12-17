@@ -6,23 +6,17 @@ import type {
 
 import { useState } from 'react';
 
-import {
-    Stack,
-    TableCell,
-    TableRow,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
+import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
-    getProviderShortName,
-    getRegionDisplayName,
-} from 'src/utils/cloudRegions';
-import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
+    formatDataPlaneName,
+    generateDataPlaneOption,
+} from 'src/utils/dataPlane-utils';
 
 function Row({ row, rowSx, onRowClick }: RowProps) {
     const { dataPlaneName, scope } = generateDataPlaneOption(row);
@@ -47,19 +41,14 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
                         scope={scope}
                         size={20}
                     />
-                    <Typography>
-                        {getProviderShortName(dataPlaneName.provider)}
-                    </Typography>
                 </Stack>
             </TableCell>
+            <TableCell>{formatDataPlaneName(dataPlaneName)}</TableCell>
             <TableCell>
                 {getRegionDisplayName(
                     dataPlaneName.provider,
                     dataPlaneName.region
                 )}
-            </TableCell>
-            <TableCell sx={{ fontFamily: 'monospace' }}>
-                {dataPlaneName.region}
             </TableCell>
             <TableCell sx={{ fontFamily: 'monospace' }}>{ipv4}</TableCell>
         </TableRow>

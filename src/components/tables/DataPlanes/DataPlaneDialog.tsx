@@ -16,7 +16,10 @@ import {
     getProviderShortName,
     getRegionDisplayName,
 } from 'src/utils/cloudRegions';
-import { generateDataPlaneOption } from 'src/utils/dataPlane-utils';
+import {
+    formatDataPlaneName,
+    generateDataPlaneOption,
+} from 'src/utils/dataPlane-utils';
 import { OPENID_HOST } from 'src/utils/misc-utils';
 
 const TITLE_ID = 'data-plane-dialog-title';
@@ -52,10 +55,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         size={30}
                     />
                     <Typography variant="h6" sx={{ ml: 1, fontWeight: 600 }}>
-                        {getRegionDisplayName(
-                            dataPlaneName.provider,
-                            dataPlaneName.region
-                        )}
+                        {formatDataPlaneName(dataPlaneName)}
                     </Typography>
                 </Stack>
             </DialogTitleWithClose>
@@ -86,7 +86,10 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             label={intl.formatMessage({
                                 id: 'admin.dataPlanes.column.header.region',
                             })}
-                            value={dataPlaneName.region}
+                            value={getRegionDisplayName(
+                                dataPlaneName.provider,
+                                dataPlaneName.region
+                            )}
                             showCopyButton={false}
                         />
                     ) : null}

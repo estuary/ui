@@ -118,6 +118,7 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.private.option': `Private`,
     'admin.dataPlanes.public.option': `Public`,
     'admin.dataPlanes.header': `Data Planes`,
+    'admin.dataPlanes.column.header.name': `Name`,
     'admin.dataPlanes.column.header.provider': `Provider`,
     'admin.dataPlanes.column.header.location': `Location`,
     'admin.dataPlanes.column.header.region': `Region`,
