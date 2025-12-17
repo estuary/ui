@@ -1,111 +1,14 @@
-import type {
-    DataPlaneDialogFieldProps,
-    ToggleFieldProps,
-} from 'src/components/tables/DataPlanes/types';
+import type { ToggleFieldProps } from 'src/components/tables/DataPlanes/types';
 
 import { useState } from 'react';
 
-import {
-    Box,
-    Stack,
-    ToggleButtonGroup,
-    Typography,
-    useTheme,
-} from '@mui/material';
-
-import { Check, Copy } from 'iconoir-react';
+import { Stack, ToggleButtonGroup, Typography } from '@mui/material';
 
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
-function CopyIconIndicator({
-    isCopied,
-    isHovered,
-}: {
-    isCopied: boolean;
-    isHovered: boolean;
-}) {
-    const theme = useTheme();
-
-    return (
-        <Box
-            sx={{
-                position: 'relative',
-                width: 12,
-                height: 12,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
-        >
-            <Check
-                style={{
-                    position: 'absolute',
-                    fontSize: 12,
-                    color: theme.palette.success.main,
-                    opacity: isCopied ? 1 : 0,
-                    transition: 'opacity 0.1s ease-out',
-                }}
-            />
-            <Copy
-                style={{
-                    position: 'absolute',
-                    fontSize: 12,
-                    color: theme.palette.text.disabled,
-                    opacity: !isCopied && isHovered ? 1 : 0,
-                    transition: 'opacity 0.1s ease-in',
-                }}
-            />
-        </Box>
-    );
-}
-
-export function DataPlaneDialogField({
-    label,
-    value,
-    showCopyButton = true,
-}: DataPlaneDialogFieldProps) {
-    const { isCopied, handleCopy } = useCopyToClipboard('DataPlaneDialogField');
-    const [isHovered, setIsHovered] = useState(false);
-
-    return (
-        <Stack
-            onClick={showCopyButton ? () => handleCopy(value) : undefined}
-            onMouseEnter={showCopyButton ? () => setIsHovered(true) : undefined}
-            onMouseLeave={
-                showCopyButton ? () => setIsHovered(false) : undefined
-            }
-            sx={{
-                py: 1,
-                cursor: showCopyButton && value ? 'pointer' : 'default',
-            }}
-        >
-            <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-                {label}
-            </Typography>
-            {showCopyButton ? (
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <TechnicalEmphasis
-                        sx={{
-                            color: 'text.secondary',
-                            fontSize: 12,
-                            lineHeight: 1,
-                        }}
-                    >
-                        {value}
-                    </TechnicalEmphasis>
-                    <CopyIconIndicator
-                        isCopied={isCopied}
-                        isHovered={isHovered}
-                    />
-                </Stack>
-            ) : (
-                <Typography color="text.secondary">{value ?? '-'}</Typography>
-            )}
-        </Stack>
-    );
-}
+import CopyIconIndicator from 'src/components/tables/DataPlanes/DialogFields/CopyIconIndicator';
 
 export function ToggleField({
     label,
