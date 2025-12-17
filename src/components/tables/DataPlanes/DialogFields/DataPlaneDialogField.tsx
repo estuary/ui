@@ -5,9 +5,8 @@ import { useState } from 'react';
 import { Stack, Typography } from '@mui/material';
 
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
-import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
-
 import CopyIconIndicator from 'src/components/tables/DataPlanes/DialogFields/CopyIconIndicator';
+import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 export function DataPlaneDialogField({
     label,
