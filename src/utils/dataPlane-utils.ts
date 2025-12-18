@@ -70,14 +70,24 @@ export async function dataPlaneFetcher_list(
     selector: ShardSelector,
     key: 'ShardsList'
 ): Promise<Shard[] | ResponseError['body']> {
-    // This can throw an error! Used within fetchers within SWR that is fine and SWR will handle it
-    // TODO (typing)
-    // I hate this but I need to get the bug finished
-    const result = await shardClient.list(selector as any);
+    // This is just a guess on what will work
+    const TIMEOUT_MS = 7500;
 
-    // Check for an error
+    // data plane library allows calls to run forever so we fake this
+    //  this does NOT cancel the call and it will keep running in the background
+    //  but we should be replacing this with GQL anyway so it is okay (Q4 2025)
+    const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('synthetic_timeout')), TIMEOUT_MS);
+    });
+
+    // Race the actual call against the timeout
+    const result = await Promise.race([
+        shardClient.list(selector as any),
+        timeoutPromise,
+    ]);
+
     if (result.err()) {
-        // Unwrap the error, log the error, and reject the response
+        // Unwrap the error, log the error, and reject
         const error = result.unwrap_err();
         logRocketConsole(`${key} : error : `, error);
         return Promise.reject(error.body);
@@ -86,7 +96,7 @@ export async function dataPlaneFetcher_list(
     try {
         // No error so should be fine to unwrap
         const unwrappedResponse = result.unwrap();
-        return await Promise.resolve(unwrappedResponse);
+        return unwrappedResponse;
     } catch (error: unknown) {
         // This is just here to be safe. We'll keep an eye on it and possibly remove
         logRocketConsole(`${key} : unwrapError : `, error);
