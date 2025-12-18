@@ -4,21 +4,14 @@ import { useState } from 'react';
 
 import { Stack, ToggleButtonGroup, Typography } from '@mui/material';
 
-import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
+import SingleLineCode from 'src/components/content/SingleLineCode';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
-import CopyIconIndicator from 'src/components/tables/DataPlanes/DialogFields/CopyIconIndicator';
-import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 export function ToggleField({
     label,
     options,
     lowercaseButton,
 }: ToggleFieldProps) {
-    const { isCopied, handleCopy, setIsCopied } =
-        useCopyToClipboard('ToggleField');
-    const [isHovered, setIsHovered] = useState(false);
-    const [isToggleHovered, setIsToggleHovered] = useState(false);
-
     const validOptions = options.filter((opt) => Boolean(opt.value));
 
     const [selectedKey, setSelectedKey] = useState<string>(
@@ -31,7 +24,6 @@ export function ToggleField({
     ) => {
         if (newKey !== null) {
             setSelectedKey(newKey);
-            setIsCopied(false);
         }
     };
 
@@ -46,11 +38,7 @@ export function ToggleField({
         <Stack
             sx={{
                 py: 1,
-                cursor: currentValue ? 'pointer' : 'default',
             }}
-            onClick={() => handleCopy(currentValue)}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
         >
             <Stack
                 direction="row"
@@ -67,10 +55,6 @@ export function ToggleField({
                     value={selectedKey}
                     exclusive
                     onChange={handleSelectionChange}
-                    // prevent the ToggleButtonGroup from triggering copy on click
-                    onClick={(e) => e.stopPropagation()}
-                    onMouseEnter={() => setIsToggleHovered(true)}
-                    onMouseLeave={() => setIsToggleHovered(false)}
                     size="small"
                 >
                     {validOptions.map((opt) => (
@@ -89,20 +73,8 @@ export function ToggleField({
                     ))}
                 </ToggleButtonGroup>
             </Stack>
-            <Stack direction="row" alignItems="center" spacing={1}>
-                <TechnicalEmphasis
-                    sx={{
-                        color: 'text.secondary',
-                        fontSize: 12,
-                    }}
-                >
-                    {currentValue}
-                </TechnicalEmphasis>
-                <CopyIconIndicator
-                    isCopied={isCopied}
-                    isHovered={Boolean(isHovered && !isToggleHovered)}
-                />
-            </Stack>
+
+            <SingleLineCode value={currentValue ?? '-'} />
         </Stack>
     );
 }
