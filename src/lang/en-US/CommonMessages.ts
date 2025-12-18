@@ -38,7 +38,6 @@ export const CommonMessages: Record<string, string> = {
     'common.tenant.creationForm': `Organization`,
     'common.recommended': `Recommended`,
     'common.copied': `Copied`,
-    'common.copyFailed': `Failed to copy`,
     'common.synchronizing': `Synchronizing`,
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,

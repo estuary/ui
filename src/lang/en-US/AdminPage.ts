@@ -117,17 +117,25 @@ export const AdminPage: Record<string, string> = {
 
     'admin.dataPlanes.private.option': `Private`,
     'admin.dataPlanes.public.option': `Public`,
-
     'admin.dataPlanes.header': `Data Planes`,
+    'admin.dataPlanes.column.header.name': `Name`,
+    'admin.dataPlanes.column.header.provider': `Provider`,
+    'admin.dataPlanes.column.header.location': `Location`,
+    'admin.dataPlanes.column.header.region': `Region`,
     'admin.dataPlanes.table.aria.label': `Data Planes Table`,
+
+    'admin.dataPlanes.dialog.cloudProvider': `Cloud Provider`,
+    'admin.dataPlanes.dialog.internalId': `Internal ID`,
+    'admin.dataPlanes.dialog.description': `Data plane details and configuration`,
+    'admin.dataPlanes.dialog.serviceAccountIdentity': `Service Account Identity`,
+    'admin.dataPlanes.dialog.ips': `IPs`,
+    'admin.dataPlanes.dialog.notAvailable': `not available`,
 
     // There are dynamically generated in src/components/tables/DataPlanes/index.tsx
     'admin.dataPlanes.private.table.noContent.header': `No private data planes found`,
     'admin.dataPlanes.private.table.noContent.message': `To configure a private data plane, please contact support.`,
     'admin.dataPlanes.public.table.noContent.header': `No data planes found`,
     'admin.dataPlanes.public.table.noContent.message': `There was an issue reaching our servers. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
-
-    'admin.dataPlanes.table.filterLabel': `Filter by Name or Reactor Address`,
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.notifications': `Notifications`,
