@@ -3,7 +3,7 @@ import type { Options } from 'pretty-bytes';
 import type { DataByHourStatType } from 'src/components/graphs/types';
 import type { CatalogStats_Details } from 'src/types';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useTheme } from '@mui/material';
 
@@ -21,6 +21,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { DateTime } from 'luxon';
 import prettyBytes from 'pretty-bytes';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 import readable from 'readable-numbers';
 
 import {
@@ -75,6 +76,7 @@ function DataByHourGraph({ id, stats = [] }: Props) {
     const { shortFormat, longFormat, getTimeZone, labelKey } =
         LUXON_GRAIN_SETTINGS[range.grain];
 
+    const resizeListener = useRef<EventListener | null>(null);
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
     const [renderingTimezone, setRenderingTimezone] = useState<string>('');
@@ -103,13 +105,17 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                 // Save off chart into state
                 setMyChart(chart);
 
-                // wire up resizing
-                window.addEventListener('resize', () => {
-                    chart.resize();
-                });
+                resizeListener.current = () => chart.resize();
+                window.addEventListener('resize', resizeListener.current);
             }
         }
     }, [id, myChart]);
+
+    useUnmount(() => {
+        if (resizeListener.current) {
+            window.removeEventListener('resize', resizeListener.current);
+        }
+    });
 
     // Update the "last updated" string shown as an xAxis label
     // Want to format with seconds to show more of a "ticking clock" to users

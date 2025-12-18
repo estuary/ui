@@ -15,3 +15,11 @@ export const getEditorTotalHeight = (
         2
     );
 };
+
+export const CANCEL_EXCEPTION = 'Canceled';
+export const ignorableEditorException = (event: any) => {
+    return (
+        event?.reason?.message === CANCEL_EXCEPTION ||
+        event?.reason?.name === CANCEL_EXCEPTION
+    );
+};

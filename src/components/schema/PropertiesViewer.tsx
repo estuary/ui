@@ -1,4 +1,4 @@
-import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor';
+import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor/types';
 import type { FieldFilter } from 'src/components/schema/types';
 
 import { useState } from 'react';
