@@ -16,7 +16,6 @@ import {
 
 interface UseShardHydrationSettings {
     defaultMessageId?: ShardStatusMessageIds;
-    errorOnAllFailed?: boolean;
 }
 
 function useShardHydration(
@@ -51,16 +50,6 @@ function useShardHydration(
 
     // Handle data
     useEffect(() => {
-        if (settings?.errorOnAllFailed && data?.allCallsFailed) {
-            setShardsError({
-                ...error,
-                message: intl.formatMessage({
-                    id: 'detailsPanel.shardDetails.fetchError.allFailed',
-                }),
-            });
-            return;
-        }
-
         if (data) {
             if (data.shards.length > 0) {
                 setShards(data.shards);
@@ -74,15 +63,7 @@ function useShardHydration(
             // Only show error if there is no data
             setShardsError(error ?? null);
         }
-    }, [
-        data,
-        error,
-        setDictionaryHydrated,
-        setShardsError,
-        setShards,
-        intl,
-        settings?.errorOnAllFailed,
-    ]);
+    }, [data, error, setDictionaryHydrated, setShardsError, setShards, intl]);
 
     return useMemo(
         () => ({

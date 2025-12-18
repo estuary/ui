@@ -17,11 +17,7 @@ import useShardHydration from 'src/hooks/shards/useShardHydration';
 export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
     const intl = useIntl();
 
-    useShardHydration([taskName], {
-        // Need to care that calls failed so we can tell the user we couldn't get their
-        //  url when creating a webhook capture
-        errorOnAllFailed: true,
-    });
+    useShardHydration([taskName]);
 
     const entityType = useEntityType();
     const { endpoints, gatewayHostname } = useShardEndpoints(
@@ -52,7 +48,11 @@ export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
         );
     }
 
-    return message ? (
+    if (!message) {
+        return null;
+    }
+
+    return (
         <Box
             sx={{
                 gap: '10px',
@@ -64,5 +64,5 @@ export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
         >
             {message}
         </Box>
-    ) : null;
+    );
 }

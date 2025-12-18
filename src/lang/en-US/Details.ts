@@ -61,7 +61,6 @@ export const Details: Record<string, string> = {
     'detailsPanel.logs.title': `Logs`,
     'detailsPanel.logs.notFound': `Logs for this build cannot be found. This is likely a permissions issue. You don't have permissions to view other users' logs by default.`,
     'detailsPanel.shardDetails.fetchError': `Unable to fetch shard status`,
-    'detailsPanel.shardDetails.fetchError.allFailed': `An issue was encountered fetching shard details for this task. ${RETRY_AND_CONTACT}`,
     'detailsPanel.shardDetails.docLink': `Docs`,
     'detailsPanel.shardDetails.title': `Shard Information`,
     'detailsPanel.shardDetails.status.label': `Status`,
