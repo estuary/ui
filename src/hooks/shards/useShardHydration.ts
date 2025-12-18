@@ -2,8 +2,6 @@ import type { ShardStatusMessageIds } from 'src/stores/ShardDetail/types';
 
 import { useEffect, useMemo } from 'react';
 
-import { useIntl } from 'react-intl';
-
 import useShardsList from 'src/hooks/shards/useShardsList';
 import useShardStatusDefaultColor from 'src/hooks/shards/useShardStatusDefaultColor';
 import {
@@ -22,8 +20,6 @@ function useShardHydration(
     querySettings: any[],
     settings?: UseShardHydrationSettings
 ) {
-    const intl = useIntl();
-
     const defaultStatusColor = useShardStatusDefaultColor();
 
     const { data, error, ...queryResponse } = useShardsList(querySettings);
