@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { Check, Copy, Square, XmarkCircle } from 'iconoir-react';
+import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
 import { useLocalStorage } from 'react-use';
 
 import CheckSquare from 'src/icons/CheckSquare';
@@ -583,7 +583,7 @@ export const getEntityTableRowSx = (
     };
 };
 
-type TransientButtonState = 'success' | undefined;
+export type TransientButtonState = 'success' | 'error' | undefined;
 export const getButtonIcon = (
     theme: Theme,
     buttonState: TransientButtonState
@@ -591,6 +591,10 @@ export const getButtonIcon = (
     switch (buttonState) {
         case 'success':
             return <Check style={{ color: theme.palette.success.main }} />;
+        case 'error':
+            return (
+                <WarningCircle style={{ color: theme.palette.error.main }} />
+            );
         default:
             return <Copy style={{ color: theme.palette.primary.main }} />;
     }
