@@ -1,16 +1,29 @@
+import type { ReactNode } from 'react';
 import type { GenerateInvitationProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
-import { Button, Grid } from '@mui/material';
+import {
+    Box,
+    Button,
+    Checkbox,
+    Divider,
+    FormControlLabel,
+    Radio,
+    RadioGroup,
+    Stack,
+    Typography,
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 import { useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
+import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import PrefixedName from 'src/components/inputs/PrefixedName';
+import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
-import NestingWarning from 'src/components/tables/AccessGrants/AccessLinks/Dialog/NestingWarning';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
@@ -21,12 +34,56 @@ import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 // outside of advanced cases.
 const capabilityOptions = ['admin', 'read'];
 const typeOptions = ['single-use', 'multi-use'];
+const MAX_PREFIX_LENGTH = 12;
+
+const RadioOption = ({
+    value,
+    label,
+    isSelected,
+    onClick,
+}: {
+    value: string;
+    label: ReactNode;
+    isSelected: boolean;
+    onClick?: () => void;
+}) => {
+    return (
+        <FormControlLabel
+            value={value}
+            control={<Radio size="small" />}
+            label={label}
+            componentsProps={{
+                typography: {
+                    fontSize: 13,
+                    width: '100%',
+                    display: 'block',
+                    overflow: 'hidden',
+                },
+            }}
+            sx={{
+                m: 0,
+                px: 1,
+                width: '100%',
+                border: '1px solid',
+                borderColor: isSelected ? 'primary.main' : 'divider',
+                borderRadius: 3,
+                ...(!isSelected && {
+                    '&:hover': {
+                        backgroundColor: 'action.hover',
+                    },
+                }),
+            }}
+            onClick={onClick}
+        />
+    );
+};
 
 function GenerateInvitation({
     serverError,
     setServerError,
 }: GenerateInvitationProps) {
     const intl = useIntl();
+    const { palette } = useTheme();
 
     const hydrate = useZustandStore<
         SelectableTableStore,
@@ -36,14 +93,32 @@ function GenerateInvitation({
         selectableTableStoreSelectors.query.hydrate
     );
 
-    const [objectRole, setObjectRole] = useState('');
-    const [objectRoleHasErrors, setObjectRoleHasErrors] = useState(false);
+    const {
+        handlers: prefixHandlers,
+        name,
+        nameError,
+        objectRoles,
+        errors,
+        prefix,
+    } = useValidatePrefix({
+        allowBlankName: false,
+        allowEndSlash: true,
+        defaultPrefix: true,
+    });
 
     const [capability, setCapability] = useState<string>(capabilityOptions[0]);
     const [reusability, setReusability] = useState<string>(typeOptions[0]);
+    const [accessScope, setAccessScope] = useState<string | null>(null);
+    const subPrefixInputRef = useRef<HTMLInputElement>(null);
 
-    const [showNestingWarning, setShowNestingWarning] =
-        useState<boolean>(false);
+    const limitedAccessScope = accessScope === 'limited';
+
+    const elipsis = intl.formatMessage({ id: 'common.pathShort.prefix' });
+
+    const clampedPrefix =
+        prefix.length > MAX_PREFIX_LENGTH + elipsis.length + 1 // extra length for elipsis and slash
+            ? prefix.slice(0, MAX_PREFIX_LENGTH) + elipsis
+            : prefix;
 
     const handlers = {
         setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
@@ -63,6 +138,7 @@ function GenerateInvitation({
         generateInvitation: (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
+            const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
             const processedObject = appendWithForwardSlash(objectRole);
 
             generateGrantDirective(
@@ -91,82 +167,190 @@ function GenerateInvitation({
             setServerError(null);
         }
 
-        setObjectRole(value);
-        setObjectRoleHasErrors(Boolean(errors));
+        prefixHandlers.setPrefix(value);
     };
 
     return (
-        <Grid
-            container
-            spacing={2}
-            sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
-        >
-            <Grid
-                item
-                xs={12}
-                sx={showNestingWarning ? { mb: 1 } : { display: 'none' }}
-            >
-                <NestingWarning
-                    objectRole={objectRole}
-                    show={showNestingWarning}
-                />
-            </Grid>
+        <Stack sx={{ mb: 2, minWidth: 500 }} spacing={1}>
+            <Stack spacing={1} sx={{ pt: 1 }}>
+                <Stack spacing={1} direction="row">
+                    <Box sx={{ flex: 1 }}>
+                        <PrefixedName
+                            prefixOnly
+                            defaultPrefix
+                            disabled={objectRoles?.length === 1}
+                            label={intl.formatMessage({
+                                id: 'terms.tenant',
+                            })}
+                            onChange={onChange}
+                        />
+                    </Box>
+                    <Box sx={{ minWidth: 150 }}>
+                        <AutocompletedField
+                            label={intl.formatMessage({
+                                id: 'admin.users.prefixInvitation.label.capability',
+                            })}
+                            required
+                            options={capabilityOptions}
+                            defaultValue={capabilityOptions[0]}
+                            changeHandler={handlers.setGrantCapability}
+                        />
+                    </Box>
+                </Stack>
 
-            <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
-                <PrefixedName
-                    allowBlankName
-                    allowEndSlash
-                    defaultPrefix
-                    label={intl.formatMessage({
-                        id: 'common.tenant',
-                    })}
-                    onChange={onChange}
-                    onNameChange={(prefixedName) => {
-                        setShowNestingWarning(
-                            Boolean(prefixedName && prefixedName.length > 0)
-                        );
+                <RadioGroup
+                    sx={{
+                        gap: 1,
                     }}
-                    required
-                    validateOnLoad
-                />
-            </Grid>
-
-            <Grid item xs={4} md={2}>
-                <AutocompletedField
+                    value={accessScope}
+                    onChange={(event) => setAccessScope(event.target.value)}
+                >
+                    <RadioOption
+                        value="full"
+                        isSelected={accessScope === 'full'}
+                        label={
+                            <Stack
+                                direction="row"
+                                spacing={0.5}
+                                component="span"
+                                alignItems="center"
+                            >
+                                <Typography
+                                    component="span"
+                                    sx={{
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    {intl.formatMessage({
+                                        id: 'admin.users.prefixInvitation.label.scope.full',
+                                    })}
+                                </Typography>
+                                <TechnicalEmphasis noWrap>
+                                    {prefix}
+                                </TechnicalEmphasis>
+                            </Stack>
+                        }
+                    />
+                    <RadioOption
+                        value="limited"
+                        isSelected={limitedAccessScope}
+                        onClick={() => {
+                            if (!limitedAccessScope && !hasLength(name)) {
+                                // Focus the name input when switching to limited scope IF the name is empty
+                                // (and not if the value is already defined to avoid unintentional edits)
+                                setTimeout(() => {
+                                    subPrefixInputRef.current?.focus();
+                                }, 0);
+                            }
+                        }}
+                        label={
+                            <Stack
+                                spacing={0.5}
+                                direction="row"
+                                alignItems="center"
+                            >
+                                <Typography noWrap component="span">
+                                    {intl.formatMessage({
+                                        id: 'admin.users.prefixInvitation.label.scope.limited',
+                                    })}
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        display: 'inline-flex',
+                                        ml: -0.5,
+                                        flex: 1,
+                                    }}
+                                >
+                                    <TechnicalEmphasis
+                                        sx={{
+                                            whiteSpace: 'nowrap',
+                                            color: palette.text.disabled,
+                                        }}
+                                    >
+                                        {clampedPrefix}
+                                    </TechnicalEmphasis>
+                                    <input
+                                        ref={subPrefixInputRef}
+                                        value={name}
+                                        placeholder="example"
+                                        onChange={(event) => {
+                                            prefixHandlers.setName(
+                                                event.target.value
+                                            );
+                                        }}
+                                        style={{
+                                            marginLeft: -2,
+                                            border: 'none',
+                                            outline: 'none',
+                                            fontFamily: 'monospace',
+                                            fontSize: 'inherit',
+                                            backgroundColor: 'transparent',
+                                            width: '100%',
+                                            color:
+                                                nameError && hasLength(name)
+                                                    ? palette.error.main
+                                                    : !limitedAccessScope
+                                                      ? palette.text.disabled
+                                                      : palette.text.primary,
+                                            pointerEvents: !limitedAccessScope
+                                                ? 'none'
+                                                : 'auto',
+                                        }}
+                                    />
+                                </Box>
+                            </Stack>
+                        }
+                    />
+                </RadioGroup>
+                {limitedAccessScope && hasLength(name) && hasLength(errors) ? (
+                    <Typography
+                        color="error.main"
+                        fontSize={12}
+                        sx={{
+                            textAlign: 'right',
+                        }}
+                    >
+                        {errors}
+                    </Typography>
+                ) : null}
+            </Stack>
+            <Stack spacing={2} direction="row" sx={{ alignSelf: 'flex-end' }}>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={reusability === 'multi-use'}
+                            onChange={(event) => {
+                                handlers.setGrantReusability(
+                                    event,
+                                    event.target.checked
+                                        ? 'multi-use'
+                                        : 'single-use'
+                                );
+                            }}
+                        />
+                    }
                     label={intl.formatMessage({
-                        id: 'admin.users.prefixInvitation.label.capability',
+                        id: 'admin.users.prefixInvitation.label.reusable',
                     })}
-                    required
-                    options={capabilityOptions}
-                    defaultValue={capabilityOptions[0]}
-                    changeHandler={handlers.setGrantCapability}
+                    componentsProps={{
+                        typography: { fontSize: 12 },
+                    }}
                 />
-            </Grid>
-
-            <Grid item xs={4} md={2}>
-                <AutocompletedField
-                    label={intl.formatMessage({
-                        id: 'admin.users.prefixInvitation.label.type',
-                    })}
-                    required
-                    options={typeOptions}
-                    defaultValue={typeOptions[0]}
-                    changeHandler={handlers.setGrantReusability}
-                />
-            </Grid>
-
-            <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
                 <Button
-                    disabled={objectRoleHasErrors}
+                    disabled={
+                        accessScope === null ||
+                        (limitedAccessScope &&
+                            (hasLength(nameError) || !hasLength(name)))
+                    }
                     onClick={handlers.generateInvitation}
-                    sx={{ flexGrow: 1 }}
                 >
                     {intl.formatMessage({
                         id: 'admin.users.prefixInvitation.cta.generateLink',
                     })}
                 </Button>
-            </Grid>
-        </Grid>
+            </Stack>
+            <Divider />
+        </Stack>
     );
 }
 

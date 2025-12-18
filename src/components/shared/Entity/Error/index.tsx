@@ -1,6 +1,4 @@
-import type { DraftErrorProps } from 'src/components/shared/Entity/Error/DraftErrors';
-import type { ErrorLogsProps } from 'src/components/shared/Entity/Error/Logs';
-import type { ErrorProps } from 'src/components/shared/Error';
+import type { EntityErrorProps } from 'src/components/shared/Entity/Error/types';
 
 import { useRef } from 'react';
 
@@ -15,14 +13,7 @@ import HeaderSummary from 'src/components/shared/Entity/HeaderSummary';
 import Error from 'src/components/shared/Error';
 import useScrollIntoView from 'src/hooks/useScrollIntoView';
 
-interface Props {
-    title: string;
-    error?: ErrorProps['error'];
-    logToken?: ErrorLogsProps['logToken'];
-    draftId?: DraftErrorProps['draftId'];
-}
-
-function EntityError({ logToken, error, title, draftId }: Props) {
+function EntityError({ logToken, error, title, draftId }: EntityErrorProps) {
     const scrollToTarget = useRef<HTMLDivElement>(null);
     const scrollIntoView = useScrollIntoView(scrollToTarget);
     const discoveredDraftId = useEditorStore_discoveredDraftId();

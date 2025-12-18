@@ -18,7 +18,11 @@ function Instructions({ draftId }: InstructionsProps) {
             labelKey: 'newTransform.steps.1',
             labelValues: {
                 emphasis: (
-                    <TechnicalEmphasis intlKey="newTransform.steps.1.emphasis" />
+                    <TechnicalEmphasis>
+                        {intl.formatMessage({
+                            id: 'newTransform.steps.1.emphasis',
+                        })}
+                    </TechnicalEmphasis>
                 ),
             },
             contentSections: ['linked'],
@@ -41,10 +45,11 @@ function Instructions({ draftId }: InstructionsProps) {
             contentSections: ['details', 'linked'],
             detailsValues: {
                 emphasis: (
-                    <TechnicalEmphasis
-                        enableBackground
-                        intlKey="newTransform.steps.5.details.emphasis"
-                    />
+                    <TechnicalEmphasis enableBackground>
+                        {intl.formatMessage({
+                            id: 'newTransform.steps.5.details.emphasis',
+                        })}
+                    </TechnicalEmphasis>
                 ),
             },
         },

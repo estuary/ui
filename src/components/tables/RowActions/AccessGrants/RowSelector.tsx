@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react';
-import type { SelectTableStoreNames } from 'src/stores/names';
+import type { RowSelectorProps } from 'src/components/tables/RowActions/AccessGrants/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useState } from 'react';
@@ -13,14 +12,10 @@ import DeleteButton from 'src/components/tables/RowActions/AccessGrants/DeleteBu
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
-interface Props {
-    additionalCTA: ReactNode;
-    selectTableStoreName:
-        | SelectTableStoreNames.ACCESS_GRANTS_USERS
-        | SelectTableStoreNames.ACCESS_GRANTS_PREFIXES;
-}
-
-function RowSelector({ additionalCTA, selectTableStoreName }: Props) {
+function RowSelector({
+    additionalCTA,
+    selectTableStoreName,
+}: RowSelectorProps) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 

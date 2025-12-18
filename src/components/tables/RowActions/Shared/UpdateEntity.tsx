@@ -1,5 +1,5 @@
 import type { CaptureQuery } from 'src/api/liveSpecsExt';
-import type { SharedProgressProps } from 'src/components/tables/RowActions/Shared/types';
+import type { IndividualProgressProps } from 'src/components/tables/RowActions/Shared/types';
 import type { LiveSpecsExtQueryWithSpec } from 'src/hooks/useLiveSpecsExt';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 import type { Entity } from 'src/types';
@@ -13,10 +13,8 @@ import {
 } from 'src/api/draftSpecs';
 import { getLatestLiveSpecByName } from 'src/api/liveSpecsExt';
 import { createPublication } from 'src/api/publications';
-import AlertBox from 'src/components/shared/AlertBox';
-import DraftErrors from 'src/components/shared/Entity/Error/DraftErrors';
-import Error from 'src/components/shared/Error';
-import SharedProgress from 'src/components/tables/RowActions/Shared/Progress';
+import IndividualProgress from 'src/components/tables/RowActions/Shared/progress/IndividualProgress';
+import RenderError from 'src/components/tables/RowActions/Shared/progress/RenderError';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import usePublications from 'src/hooks/usePublications';
@@ -31,9 +29,9 @@ export interface UpdateEntityProps {
         spec: LiveSpecsExtQueryWithSpec['spec']
     ) => any | Promise<void>;
     generateNewSpecType: (entity: CaptureQuery) => Entity | null;
-    runningMessageID: SharedProgressProps['runningMessageID'];
-    skippedMessageID?: SharedProgressProps['skippedMessageID'];
-    successMessageID: SharedProgressProps['successMessageID'];
+    runningIntlKey: IndividualProgressProps['runningIntlKey'];
+    successIntlKey: IndividualProgressProps['successIntlKey'];
+    skippedIntlKey?: IndividualProgressProps['skippedIntlKey'];
     selectableStoreName:
         | SelectTableStoreNames.CAPTURE
         | SelectTableStoreNames.COLLECTION
@@ -47,9 +45,9 @@ function UpdateEntity({
     generateNewSpecType,
     entity,
     onFinish,
-    runningMessageID,
-    skippedMessageID,
-    successMessageID,
+    runningIntlKey,
+    skippedIntlKey,
+    successIntlKey,
     selectableStoreName,
     validateNewSpec,
 }: UpdateEntityProps) {
@@ -120,9 +118,9 @@ function UpdateEntity({
             const newSpec = generateNewSpec(liveSpecResponse.data.spec);
             if (validateNewSpec && !newSpec) {
                 // If we have a skipped message ID set it to the error
-                if (skippedMessageID) {
+                if (skippedIntlKey) {
                     setError({
-                        message: skippedMessageID,
+                        message: skippedIntlKey,
                     });
                 }
                 return done(ProgressStates.SKIPPED, {});
@@ -214,37 +212,21 @@ function UpdateEntity({
     }, [state, incrementSuccessfulTransformations]);
 
     return (
-        <SharedProgress
-            name={entity.catalog_name}
+        <IndividualProgress
             error={error}
             logToken={logToken}
+            name={entity.catalog_name}
             renderLogs
-            renderError={(renderError_error, renderError_state) => {
-                const skipped = renderError_state === ProgressStates.SKIPPED;
-
-                return (
-                    <>
-                        {draftId ? (
-                            <AlertBox short hideIcon severity="error">
-                                <DraftErrors draftId={draftId} />
-                            </AlertBox>
-                        ) : null}
-
-                        {renderError_error?.message ? (
-                            <Error
-                                error={renderError_error}
-                                severity={skipped ? 'info' : undefined}
-                                hideIcon={skipped}
-                                condensed
-                                hideTitle
-                            />
-                        ) : null}
-                    </>
-                );
-            }}
+            runningIntlKey={runningIntlKey}
             state={state}
-            runningMessageID={runningMessageID}
-            successMessageID={successMessageID}
+            successIntlKey={successIntlKey}
+            renderError={(renderError_error, renderError_state) => (
+                <RenderError
+                    draftId={draftId}
+                    error={renderError_error}
+                    skipped={renderError_state === ProgressStates.SKIPPED}
+                />
+            )}
         />
     );
 }

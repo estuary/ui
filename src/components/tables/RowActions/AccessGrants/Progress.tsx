@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ProgressProps } from 'src/components/tables/RowActions/AccessGrants/types';
 
 import {
     Box,
@@ -14,15 +14,6 @@ import { FormattedMessage } from 'react-intl';
 import Error from 'src/components/shared/Error';
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
-interface Props {
-    error: any | null;
-    item: string | ReactNode;
-    progress: ProgressStates;
-    runningMessageID: string;
-    successMessageID: string;
-    renderError?: Function;
-}
-
 const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 
 function Progress({
@@ -30,9 +21,9 @@ function Progress({
     item,
     progress,
     renderError,
-    runningMessageID,
-    successMessageID,
-}: Props) {
+    runningIntlKey,
+    successIntlKey,
+}: ProgressProps) {
     const theme = useTheme();
 
     return (
@@ -56,10 +47,10 @@ function Progress({
                         <FormattedMessage
                             id={
                                 progress === ProgressStates.SUCCESS
-                                    ? successMessageID
+                                    ? successIntlKey
                                     : progress === ProgressStates.FAILED
                                       ? 'common.fail'
-                                      : runningMessageID
+                                      : runningIntlKey
                             }
                         />
                     }

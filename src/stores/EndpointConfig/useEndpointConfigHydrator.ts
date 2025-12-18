@@ -11,6 +11,7 @@ import { useEntityWorkflow } from 'src/context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 import { getEndpointConfig } from 'src/utils/connector-utils';
@@ -153,6 +154,9 @@ export const useEndpointConfigHydrator = () => {
                 workflow === 'capture_create' ||
                 workflow === 'materialization_create'
             ) {
+                logRocketEvent('EndpointConfig', {
+                    hydrationDefault: true,
+                });
                 setServerUpdateRequired(true);
             }
 

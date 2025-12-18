@@ -1,7 +1,7 @@
 import type { JsonFormsCore } from '@jsonforms/core';
 import type { TableCellProps } from '@mui/material';
 import type { PostgrestError } from '@supabase/supabase-js';
-import type { ReactNode } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
@@ -464,4 +464,13 @@ export interface SourceCaptureDef {
     fieldsRecommended?: boolean | number;
     targetSchema?: TargetSchemas; // targetSchema was renamed to targetNaming
     targetNaming?: TargetSchemas;
+}
+
+export interface BaseButtonProps {
+    disabled?: boolean;
+}
+
+export interface BaseDialogProps {
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
 }

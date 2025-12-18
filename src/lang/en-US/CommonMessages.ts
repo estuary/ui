@@ -77,6 +77,7 @@ export const CommonMessages: Record<string, string> = {
     'terms.destinations': `Destinations`,
     'terms.destination.lowercase': `destination`,
     'terms.destinations.lowercase': `destinations`,
+    'terms.tenant': `Tenant`,
 
     // Terms V2
     // Not 100% sure on this approach yet. Like keeping all this together.
@@ -84,8 +85,8 @@ export const CommonMessages: Record<string, string> = {
     //  is just how react-intl handles it and we might end up rolling our own.
     'terms.bindings.plural': `{count, plural, one {binding} other {bindings}}`,
     'terms.collections.plural': `{count, plural, one {collection} other {collections}}`,
-    'terms.destinations.plural': `{count, plural, one {destination} other {destinations}}`,
-    'terms.sources.plural': `{count, plural, one {source} other {sources}}`,
+    'terms.destinations.plural': `{count, plural, one {materialization} other {materializations}}`,
+    'terms.sources.plural': `{count, plural, one {capture} other {captures}}`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -103,7 +104,7 @@ export const CommonMessages: Record<string, string> = {
     // Common sections
     'connectionConfig.header': `Connection Config`,
 
-    'commin.pathShort.prefix': '.../{path}',
+    'common.pathShort.prefix': '.../',
 
     // Alert messages
     'alert.error': 'Error',

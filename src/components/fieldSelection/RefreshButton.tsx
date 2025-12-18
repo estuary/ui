@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { Box, Button } from '@mui/material';
 
 import { Refresh } from 'iconoir-react';
@@ -22,6 +24,12 @@ function RefreshButton({ buttonLabelId, refresh }: Props) {
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     const formActive = useFormStateStore_isActive();
+
+    useEffect(() => {
+        logRocketEvent(CustomEvents.FIELD_SELECTION, {
+            hydrating: selectionsHydrating,
+        });
+    }, [selectionsHydrating]);
 
     return (
         <Box>
