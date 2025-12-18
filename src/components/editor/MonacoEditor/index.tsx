@@ -1,5 +1,5 @@
 import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import type { Entity } from 'src/types';
+import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -36,27 +36,6 @@ import {
     ICON_SIZE,
     ignorableEditorException,
 } from 'src/utils/editor-utils';
-
-type EditorChangeHandler = (
-    newVal: any,
-    path: string,
-    specType: Entity,
-    scope?: string
-) => any;
-
-export interface MonacoEditorProps {
-    localZustandScope: boolean;
-    disabled?: boolean;
-    onChange?: EditorChangeHandler;
-    height?: number;
-    toolbarHeight?: number;
-    editorSchemaScope?: string; // Used to scope the schema editor
-    defaultLanguage?: 'json' | 'sql';
-    defaultValue?: string;
-    path?: string;
-    editorLabel?: string;
-    manuallySynced?: boolean;
-}
 
 function MonacoEditor({
     localZustandScope,
