@@ -28,12 +28,13 @@ import {
 } from 'src/components/editor/Store/hooks';
 import { EditorStatus } from 'src/components/editor/Store/types';
 import { editorToolBarSx } from 'src/context/Theme';
-import { logRocketConsole } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { stringifyJSON } from 'src/services/stringify';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
     ICON_SIZE,
+    ignorableEditorException,
 } from 'src/utils/editor-utils';
 
 type EditorChangeHandler = (
@@ -266,6 +267,23 @@ function MonacoEditor({
             setStatus(EditorStatus.IDLE, evaluatedPath);
         }
     }, [evaluatedPath, setStatus, manuallySynced]);
+
+    useEffect(() => {
+        // This cancel exception is thrown but does not seem to cause any
+        //  issues for users. I think we're safe to ignore this for now.
+        // https://github.com/microsoft/monaco-editor/issues/4389
+        const handler = (event: any) => {
+            if (ignorableEditorException(event)) {
+                event.preventDefault();
+            }
+
+            logRocketEvent('MonacoEditor', {
+                unhandledrejection: true,
+            });
+        };
+        window.addEventListener('unhandledrejection', handler);
+        return () => window.removeEventListener('unhandledrejection', handler);
+    }, []);
 
     const handlers = {
         change: (value: any, ev: any) => {

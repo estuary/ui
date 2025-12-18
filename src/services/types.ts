@@ -3,6 +3,7 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 export type KnownEvents =
     | 'Auth'
     | 'EndpointConfig'
+    | 'MonacoEditor'
     | 'ResetInvalidSetting'
     | 'SkimProjections'
     | 'StoreCleaner'
