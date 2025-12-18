@@ -63,7 +63,7 @@ function useShardHydration(
             // Only show error if there is no data
             setShardsError(error ?? null);
         }
-    }, [data, error, setDictionaryHydrated, setShardsError, setShards, intl]);
+    }, [data, error, setDictionaryHydrated, setShardsError, setShards]);
 
     return useMemo(
         () => ({
