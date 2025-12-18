@@ -270,7 +270,7 @@ function MonacoEditor({
 
     useEffect(() => {
         // This cancel exception is thrown but does not seem to cause any
-        //  issues for users. I think we're safe to ignore this for now.
+        //  issues for users. I think we're safe to ignore this for now (Q4 2025)
         // https://github.com/microsoft/monaco-editor/issues/4389
         const handler = (event: any) => {
             if (ignorableEditorException(event)) {
