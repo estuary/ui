@@ -1,6 +1,9 @@
 import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
+const RETRY_AND_CONTACT =
+    'Reload the page and if the issue persists, please contact support.';
+
 export const Details: Record<string, string> = {
     'details.tabs.overview': `Overview`,
     'details.tabs.alerts': `Alerts`,
@@ -52,7 +55,7 @@ export const Details: Record<string, string> = {
     'details.spec.cta.formatted': `Table`,
     'details.spec.cta.raw': `Code`,
 
-    'details.taskEndpoints.error.message': `An issue was encountered formatting the connector endpoint(s) for this task. Reload the page and if the issue persists, please contact support.`,
+    'details.taskEndpoints.error.message': `An issue was encountered formatting the connector endpoint(s) for this task. ${RETRY_AND_CONTACT}`,
 
     // Details Panel
     'detailsPanel.logs.title': `Logs`,
