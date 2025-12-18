@@ -17,8 +17,9 @@ import useShardHydration from 'src/hooks/shards/useShardHydration';
 export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
     const intl = useIntl();
 
-    // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
     useShardHydration([taskName], {
+        // Need to care that calls failed so we can tell the user we couldn't get their
+        //  url when creating a webhook capture
         errorOnAllFailed: true,
     });
 

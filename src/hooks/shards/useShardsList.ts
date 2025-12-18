@@ -60,7 +60,7 @@ const useShardsList = (catalogNames: string[]) => {
             return fetchShardList(name, session, reactorAuthorization);
         });
 
-        // We have fetched so assume they all failed until proven otherwise
+        // We have no clue if those worked so assume everything failed until proven otherwise
         let allCallsFailed = true;
         const shardResponses = await Promise.allSettled(shardPromises);
         shardResponses.forEach((shardResponse, index) => {
@@ -86,10 +86,6 @@ const useShardsList = (catalogNames: string[]) => {
             }
         });
 
-        // If EVERYTHING failed when a single catalog was fetched
-        //  then go ahead and return an error. This is mainly for details
-        //  page displaying the shard status of a specific catalog so we
-        //  can show a special status
         if (allCallsFailed) {
             logRocketEvent('ShardsList', {
                 allFailed: true,
