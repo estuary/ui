@@ -1,3 +1,5 @@
+import type { Schema } from 'src/types';
+
 import { createDefaultValue } from '@jsonforms/core';
 
 import { forIn } from 'lodash';
@@ -11,14 +13,12 @@ export const getDiscriminator = (schema: any) => {
 export const getDiscriminatorDefaultValue = (
     tabSchemaProps: any,
     discriminatorProperty: string
-) => {
+): Schema => {
     // Go through all the props and set them into the object.
     //  If it is the discriminator then try to set the default
     //      value, then the const, and finally default to an empty string.
     //  If it is any other value then go ahead and create the value
-    const defaultVal: {
-        [k: string]: any;
-    } = {};
+    const defaultVal: Schema = {};
     forIn(tabSchemaProps, (val: any, key: string) => {
         defaultVal[key] =
             key === discriminatorProperty
@@ -34,7 +34,7 @@ export const getDiscriminatorDefaultValue = (
 //  a schema. However, when we edit a schema we can end up with an option that
 //  contains errors. The NetSuite connector Authentication is what caught this. the
 //  `user_pass` option contains two fields that are encrypted and so they are empty
-//  during edit. This mean that JsonForms would not find the
+//  during edit. This mean that JsonForms would not find them
 export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
     const discriminatorProperty = getDiscriminator(schema);
 
