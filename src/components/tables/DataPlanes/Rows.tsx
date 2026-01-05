@@ -1,88 +1,74 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/DataPlanes/types';
+
+import { useState } from 'react';
 
 import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
-import SingleLineCode from 'src/components/content/SingleLineCode';
-import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
-import CopyCidrBlocks from 'src/components/shared/CopyCidrBlocks';
-import DataPlane from 'src/components/shared/Entity/DataPlane';
+import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
+import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
     formatDataPlaneName,
     generateDataPlaneOption,
 } from 'src/utils/dataPlane-utils';
-import { OPENID_HOST } from 'src/utils/misc-utils';
 
-interface RowsProps {
-    data: BaseDataPlaneQuery[];
-}
-
-interface RowProps {
-    row: BaseDataPlaneQuery;
-    rowSx: any;
-}
-
-function Row({ row, rowSx }: RowProps) {
-    const dataPlaneOption = generateDataPlaneOption(row);
+function Row({ row, rowSx, onRowClick }: RowProps) {
+    const { dataPlaneName, scope } = generateDataPlaneOption(row);
+    const parseCidrBlocks = useParseCidrBlocks();
+    const { ipv4 } = parseCidrBlocks(row.cidr_blocks);
 
     return (
-        <TableRow hover sx={rowSx}>
+        <TableRow
+            hover
+            sx={{
+                ...rowSx,
+                '& td': {
+                    py: 1,
+                },
+            }}
+            onClick={() => onRowClick(row)}
+        >
             <TableCell>
-                {Boolean(dataPlaneOption.dataPlaneName) ? (
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{
-                            justifyContent: 'space-between',
-                            minWidth: 'fit-content',
-                            whiteSpace: 'nowrap',
-                        }}
-                    >
-                        <DataPlane
-                            dataPlaneName={dataPlaneOption.dataPlaneName}
-                            formattedSuffix={formatDataPlaneName(
-                                dataPlaneOption.dataPlaneName
-                            )}
-                            hidePrefix
-                            logoSize={30}
-                            scope={dataPlaneOption.scope}
-                        />
-                        <CopyToClipboardButton
-                            writeValue={dataPlaneOption.dataPlaneName.whole}
-                        />
-                    </Stack>
-                ) : null}
-            </TableCell>
-            <TableCell>
-                {row.aws_iam_user_arn ? (
-                    <SingleLineCode compact value={row.aws_iam_user_arn} />
-                ) : null}
-            </TableCell>
-            <TableCell>
-                {row.gcp_service_account_email ? (
-                    <SingleLineCode
-                        compact
-                        value={row.gcp_service_account_email}
+                <Stack direction="row" spacing={1} alignItems="center">
+                    <DataPlaneIcon
+                        provider={dataPlaneName.provider}
+                        scope={scope}
+                        size={20}
                     />
-                ) : null}
+                </Stack>
             </TableCell>
+            <TableCell>{formatDataPlaneName(dataPlaneName)}</TableCell>
             <TableCell>
-                <CopyCidrBlocks cidrBlocks={row.cidr_blocks} />
+                {getRegionDisplayName(
+                    dataPlaneName.provider,
+                    dataPlaneName.region
+                )}
             </TableCell>
-            <TableCell>
-                {row.data_plane_fqdn ? (
-                    <SingleLineCode
-                        compact
-                        value={`${OPENID_HOST}/${row.data_plane_fqdn}`}
-                    />
-                ) : null}
-            </TableCell>
+            <TableCell sx={{ fontFamily: 'monospace' }}>{ipv4}</TableCell>
         </TableRow>
     );
 }
 
 function Rows({ data }: RowsProps) {
     const theme = useTheme();
+
+    const [selectedRow, setSelectedRow] = useState<BaseDataPlaneQuery | null>(
+        null
+    );
+
+    const handleRowClick = (row: BaseDataPlaneQuery) => {
+        setSelectedRow(row);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedRow(null);
+    };
 
     return (
         <>
@@ -91,8 +77,15 @@ function Rows({ data }: RowsProps) {
                     key={row.id}
                     row={row}
                     rowSx={getEntityTableRowSx(theme)}
+                    onRowClick={handleRowClick}
                 />
             ))}
+            {selectedRow ? (
+                <DataPlaneDialog
+                    onClose={handleCloseModal}
+                    dataPlane={selectedRow}
+                />
+            ) : null}
         </>
     );
 }

@@ -10,7 +10,8 @@ export type KnownEvents =
     | 'SourceCapture'
     | 'Task'
     | 'WorkflowStore'
-    | 'evaluate_field_selection';
+    | 'evaluate_field_selection'
+    | 'Error_Silent';
 
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
 //  KnownEvents type

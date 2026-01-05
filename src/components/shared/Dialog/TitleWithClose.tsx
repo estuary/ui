@@ -1,3 +1,4 @@
+import type { SxProps, Theme } from '@mui/material';
 import type { BaseComponentProps } from 'src/types';
 
 import { DialogTitle, IconButton } from '@mui/material';
@@ -8,6 +9,7 @@ import { useIntl } from 'react-intl';
 export interface DialogTitleProps extends BaseComponentProps {
     id: string;
     onClose: () => void;
+    sx?: SxProps<Theme>;
 }
 
 function DialogTitleWithClose({
