@@ -33,7 +33,7 @@ import { stringifyJSON } from 'src/services/stringify';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
-    getEditorEventType,
+    getEditorEventReason,
     ICON_SIZE,
     ignorableEditorException,
 } from 'src/utils/editor-utils';
@@ -258,7 +258,7 @@ function MonacoEditor({
             }
 
             logRocketEvent('MonacoEditor', {
-                eventType: getEditorEventType(event),
+                reason: getEditorEventReason(event),
                 unhandledrejection: true,
             });
         };
