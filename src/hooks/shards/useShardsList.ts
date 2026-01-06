@@ -33,20 +33,20 @@ const useShardsList = (catalogNames: string[]) => {
             return response;
         }
 
-        const catalogsToFetch = catalogNames.filter(
+        const targetCatalogNames = catalogNames.filter(
             (name) => (failureCountsRef.current[name] ?? 0) < MAX_FAILURES
         );
 
         // This should land here the first time everything failed
         //  next time it should get handled up above the filter.
-        if (catalogsToFetch.length === 0) {
+        if (targetCatalogNames.length === 0) {
             logRocketEvent('ShardsList', {
-                everythingFailed: true,
+                allFailed: true,
             });
             return response;
         }
 
-        const shardPromises = catalogsToFetch.map(async (name) => {
+        const shardPromises = targetCatalogNames.map(async (name) => {
             const reactorAuthorization = taskAuthorizations
                 .filter((authorization) =>
                     authorization.shardIdPrefix.includes(name)
@@ -64,7 +64,7 @@ const useShardsList = (catalogNames: string[]) => {
         let allCallsFailed = true;
         const shardResponses = await Promise.allSettled(shardPromises);
         shardResponses.forEach((shardResponse, index) => {
-            const catalogName = catalogsToFetch[index];
+            const catalogName = targetCatalogNames[index];
 
             if (
                 isPromiseFulfilledResult(shardResponse) &&

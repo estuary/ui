@@ -75,7 +75,7 @@ export async function dataPlaneFetcher_list(
     key: 'ShardsList'
 ): Promise<Shard[] | ResponseError['body']> {
     // TODO (GQL) - once we can fetch the status from GQL I don't think we'll
-    //  need to handle adding in a synthentic timeout.;
+    //  need to handle adding in a synthentic timeout.
     // data plane library allows calls to run forever so we fake this
     //  this does NOT cancel the call and it will keep running in the background
     //  but we should be replacing this with GQL anyway so it is okay (Q4 2025)
