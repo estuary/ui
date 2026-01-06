@@ -165,8 +165,8 @@ const TestJsonForms = () => {
                         </Box>
                         <Box>
                             Due to how the UI manages things during edit. The
-                            oAuth "Authenticated" chip will always show as
-                            authenticated.
+                            oAuth &quot;Authenticated&quot; chip will always
+                            show as authenticated.
                         </Box>
                     </AlertBox>
 
