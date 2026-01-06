@@ -18,13 +18,13 @@ export const getEditorTotalHeight = (
 
 export const CANCEL_EXCEPTION = 'Canceled';
 export const getEditorEventType = (event: any) => {
-    const eventType = ignorableEditorException(event);
-    return eventType === CANCEL_EXCEPTION;
-};
-export const ignorableEditorException = (event: any) => {
     if (!event || !event.reason) {
         return null;
     }
 
     return event.reason.message ?? event.reason.name ?? null;
+};
+export const ignorableEditorException = (event: any) => {
+    const eventType = getEditorEventType(event);
+    return eventType === CANCEL_EXCEPTION;
 };
