@@ -4,6 +4,7 @@ export type KnownEvents =
     | 'Auth'
     | 'EndpointConfig'
     | 'JsonForms'
+    | 'MonacoEditor'
     | 'ResetInvalidSetting'
     | 'SkimProjections'
     | 'StoreCleaner'
