@@ -262,17 +262,17 @@ const OAuthproviderRenderer = ({
                     {showAuthenticated ? (
                         <Chip
                             disabled={!enabled || loading}
-                            label={
-                                <FormattedMessage id="oauth.authenticated" />
-                            }
+                            label={intl.formatMessage({
+                                id: 'oauth.authenticated',
+                            })}
                             color="success"
                             onDelete={setConfigToDefault}
                         />
                     ) : (
                         <Chip
-                            label={
-                                <FormattedMessage id="oauth.unauthenticated" />
-                            }
+                            label={intl.formatMessage({
+                                id: 'oauth.unauthenticated',
+                            })}
                             color="warning"
                         />
                     )}

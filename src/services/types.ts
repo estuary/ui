@@ -4,6 +4,7 @@ export type KnownEvents =
     | 'Auth'
     | 'DataPlaneGateway'
     | 'EndpointConfig'
+    | 'JsonForms'
     | 'MonacoEditor'
     | 'ResetInvalidSetting'
     | 'SkimProjections'
