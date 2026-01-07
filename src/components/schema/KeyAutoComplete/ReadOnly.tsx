@@ -51,14 +51,10 @@ function ReadOnly({ value }: Props) {
             <SchemaKeyHeader />
 
             {valueEmpty ? (
-                <AlertBox
-                    short
-                    severity="warning"
-                    title={
-                        <FormattedMessage id="keyAutoComplete.keys.missing.title" />
-                    }
-                >
-                    <FormattedMessage id="keyAutoComplete.keys.missing.message" />
+                <AlertBox short severity="warning">
+                    {intl.formatMessage({
+                        id: 'keyAutoComplete.keys.missing.title',
+                    })}
                 </AlertBox>
             ) : (
                 <Stack

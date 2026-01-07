@@ -442,15 +442,14 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.table.filter.option.all': `All`,
     'schemaEditor.table.filter.option.must': `Must exist`,
     'schemaEditor.table.filter.option.may': `May exist`,
-    'schemaEditor.editing.disabled.title': `Editing disabled`,
-    'schemaEditor.editing.disabled.message': `To edit collections, disable "${optIntoDiscovery}" under "${autoDiscoverHeader}"`,
+
+    'schemaEditor.view.title': `Collection Schema Editor`,
 
     'keyAutoComplete.keys.group.must': `Fields that always exist`,
     'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,
     'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,
     'keyAutoComplete.keys.invalid.message.readOnly': `Field is not a valid key. Please update the schema.`,
-    'keyAutoComplete.keys.missing.title': `Key is empty`,
-    'keyAutoComplete.keys.missing.message': `All collections require a key. Please provide a key to continue.`,
+    'keyAutoComplete.keys.missing.title': `empty`,
     'keyAutoComplete.noOptions.message': `Without a valid schema we cannot provide options for the key. Please fix schema.`,
     'keyAutoComplete.noUsableKeys.message': `No fields in the schema are valid keys. Please update schema.`,
 

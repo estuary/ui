@@ -2,20 +2,15 @@ import { useEffect, useState } from 'react';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import ResourceConfig from 'src/components/collection/ResourceConfig';
 import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
-import DisabledWarning from 'src/components/collection/schema/Editor/DisabledWarning';
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 import ControlledEditor from 'src/components/editor/Bindings/ControlledEditor';
 import SchemaEditCLIButton from 'src/components/editor/Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from 'src/components/editor/Bindings/SchemaEdit/Toggle';
-import {
-    useBindingsEditorStore_collectionData,
-    useBindingsEditorStore_collectionInitializationAlert,
-    useBindingsEditorStore_schemaUpdateErrored,
-} from 'src/components/editor/Bindings/Store/hooks';
+import { useBindingsEditorStore_collectionData } from 'src/components/editor/Bindings/Store/hooks';
 import BindingsTabs, { tabProps } from 'src/components/editor/Bindings/Tabs';
 import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
 import {
@@ -23,6 +18,7 @@ import {
     useEditorStore_setCurrentCatalog,
     useEditorStore_setSpecs,
 } from 'src/components/editor/Store/hooks';
+import ValidationMessages from 'src/components/schema/ValidationMessages';
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useEntityType } from 'src/context/EntityContext';
@@ -40,6 +36,7 @@ interface Props {
 }
 
 function BindingsEditor({ itemType, readOnly = false }: Props) {
+    const intl = useIntl();
     const entityType = useEntityType();
 
     const initializeCollectionDraft = useInitializeCollectionDraft();
@@ -52,10 +49,6 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
 
     // Bindings Editor Store
     const collectionData = useBindingsEditorStore_collectionData();
-    const collectionInitializationAlert =
-        useBindingsEditorStore_collectionInitializationAlert();
-
-    const schemaUpdateErrored = useBindingsEditorStore_schemaUpdateErrored();
 
     // Task Draft Editor Store
     const persistedDraftId = useEditorStore_persistedDraftId();
@@ -104,29 +97,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                         />
                     ) : collectionData || collectionData === null ? (
                         <Stack spacing={2}>
-                            {schemaUpdateErrored ? (
-                                <AlertBox severity="warning" short>
-                                    <FormattedMessage id="workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError" />
-                                </AlertBox>
-                            ) : null}
-
-                            {collectionInitializationAlert ? (
-                                <AlertBox
-                                    short
-                                    severity={
-                                        collectionInitializationAlert.severity
-                                    }
-                                    title={
-                                        <FormattedMessage id="workflows.collectionSelector.error.title.editorInitialization" />
-                                    }
-                                >
-                                    <FormattedMessage
-                                        id={
-                                            collectionInitializationAlert.messageId
-                                        }
-                                    />
-                                </AlertBox>
-                            ) : null}
+                            <ValidationMessages />
 
                             {persistedDraftId ? (
                                 <Box
@@ -140,9 +111,13 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                         variant="formSectionHeader"
                                         sx={{ mr: 1 }}
                                     >
-                                        <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                        {intl.formatMessage({
+                                            id: 'workflows.collectionSelector.header.collectionSchema',
+                                        })}
                                         <ExternalLink link="https://docs.estuary.dev/concepts/collections/#schemas">
-                                            <FormattedMessage id="terms.documentation" />
+                                            {intl.formatMessage({
+                                                id: 'terms.documentation',
+                                            })}
                                         </ExternalLink>
                                     </Typography>
 
@@ -154,11 +129,11 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                                 </Box>
                             ) : (
                                 <Typography variant="h6" sx={{ mr: 1 }}>
-                                    <FormattedMessage id="workflows.collectionSelector.header.collectionSchema" />
+                                    {intl.formatMessage({
+                                        id: 'workflows.collectionSelector.header.collectionSchema',
+                                    })}
                                 </Typography>
                             )}
-
-                            <DisabledWarning />
 
                             {collectionData ? (
                                 collectionData.belongsToDraft ? (
@@ -183,26 +158,30 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                         <AlertBox
                             severity="warning"
                             short
-                            title={
-                                <FormattedMessage id="workflows.collectionSelector.error.title.missingCollectionSchema" />
-                            }
+                            title={intl.formatMessage({
+                                id: 'workflows.collectionSelector.error.title.missingCollectionSchema',
+                            })}
                         >
                             <Typography>
-                                <FormattedMessage
-                                    id="workflows.collectionSelector.error.message.missingCollectionSchema"
-                                    values={{
+                                {intl.formatMessage(
+                                    {
+                                        id: 'workflows.collectionSelector.error.message.missingCollectionSchema',
+                                    },
+                                    {
                                         itemType,
                                         entityType,
-                                    }}
-                                />
+                                    }
+                                )}
                             </Typography>
                             <Typography>
-                                <FormattedMessage
-                                    id="workflows.collectionSelector.error.fix.missingCollectionSchema"
-                                    values={{
+                                {intl.formatMessage(
+                                    {
+                                        id: 'workflows.collectionSelector.error.fix.missingCollectionSchema',
+                                    },
+                                    {
                                         itemType,
-                                    }}
-                                />
+                                    }
+                                )}
                             </Typography>
                         </AlertBox>
                     )}

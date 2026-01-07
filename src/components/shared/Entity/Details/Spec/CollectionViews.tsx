@@ -65,7 +65,7 @@ function CollectionSpecViews({ presentation }: Props) {
             <>
                 <ReadOnly value={currentCatalog?.spec.key} />
 
-                <PropertiesViewer disabled />
+                <PropertiesViewer />
             </>
         );
     } else {

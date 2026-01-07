@@ -1,3 +1,4 @@
+import type { CollectionSchemaEditorProps } from 'src/components/collection/schema/Editor/types';
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
 import type { Schema } from 'src/types';
 
@@ -5,33 +6,32 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Grid, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useUpdateEffect } from 'react-use';
 
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 import SkimProjectionErrors from 'src/components/collection/schema/Editor/SkimProjectionErrors';
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import {
-    useBindingsEditorStore_editModeEnabled,
     useBindingsEditorStore_populateSkimProjectionResponse,
     useBindingsEditorStore_schemaUpdated,
     useBindingsEditorStore_setCollectionData,
     useBindingsEditorStore_skimProjectionResponseDoneProcessing,
 } from 'src/components/editor/Bindings/Store/hooks';
+import EditorView from 'src/components/schema/EditorView';
 import KeyAutoComplete from 'src/components/schema/KeyAutoComplete';
 import PropertiesViewer from 'src/components/schema/PropertiesViewer';
 import { useEntityType } from 'src/context/EntityContext';
 import { useProjectionsForSkim } from 'src/hooks/projections/useProjectionsForSkim';
-import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
 
-export interface Props {
-    entityName?: string;
-    localZustandScope?: boolean;
-}
+function CollectionSchemaEditor({
+    entityName,
+    localZustandScope,
+}: CollectionSchemaEditorProps) {
+    const intl = useIntl();
 
-function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     const [editorSchemaScope, setEditorSchemaScope] = useState<
         AllowedScopes | undefined
     >(undefined);
@@ -57,8 +57,6 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         useBindingsEditorStore_skimProjectionResponseDoneProcessing();
     const populateSkimProjectionResponse =
         useBindingsEditorStore_populateSkimProjectionResponse();
-    const editModeEnabled = useBindingsEditorStore_editModeEnabled();
-    const disableSchemaEditing = useDisableSchemaEditing();
 
     useEffect(() => {
         if (draftSpec?.spec && entityName) {
@@ -142,7 +140,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
                             }}
                         >
                             <Typography variant="subtitle1" component="div">
-                                <FormattedMessage id="entityName.label" />
+                                {intl.formatMessage({ id: 'entityName.label' })}
                             </Typography>
 
                             <Typography sx={{ ml: 1.5 }}>
@@ -154,13 +152,15 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
                 <SkimProjectionErrors />
 
-                <KeyAutoComplete
-                    value={draftSpec.spec.key}
-                    disabled={!editModeEnabled || disableSchemaEditing}
-                    onChange={onKeyChange}
-                />
-                <PropertiesViewer
-                    disabled={!editModeEnabled || disableSchemaEditing}
+                <KeyAutoComplete disabled={true} value={draftSpec.spec.key} />
+                <PropertiesViewer />
+
+                <EditorView
+                    keyProps={{
+                        disabled: false,
+                        onChange: onKeyChange,
+                        value: draftSpec.spec.key,
+                    }}
                     editorProps={{
                         localZustandScope,
                         onChange: onPropertiesViewerChange,

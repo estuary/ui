@@ -1,4 +1,3 @@
-import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor';
 import type { FieldFilter } from 'src/components/schema/types';
 
 import { useState } from 'react';
@@ -11,7 +10,6 @@ import {
     useBindingsEditorStore_skimProjectionResponseEmpty,
     useBindingsEditorStore_skimProjectionResponseError,
 } from 'src/components/editor/Bindings/Store/hooks';
-import MonacoEditor from 'src/components/editor/MonacoEditor';
 import ExistFilter from 'src/components/schema/ExistFilter';
 import AlertBox from 'src/components/shared/AlertBox';
 import SchemaPropertiesTable from 'src/components/tables/Schema';
@@ -20,14 +18,7 @@ import TableColumnSelector from 'src/components/tables/TableColumnSelector';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { TablePrefixes } from 'src/stores/Tables/hooks';
 
-interface Props {
-    disabled: boolean;
-    editorProps?: Partial<MonacoEditorProps>;
-}
-
-const EDITOR_HEIGHT = 404;
-
-function PropertiesViewer({ disabled, editorProps }: Props) {
+function PropertiesViewer() {
     const intl = useIntl();
 
     const workflow = useEntityWorkflow();
@@ -58,28 +49,26 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                     {intl.formatMessage({ id: 'schemaEditor.fields.label' })}
                 </Typography>
 
-                {disabled ? (
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{ alignItems: 'center' }}
-                    >
-                        <Box style={{ width: 150 }}>
-                            <ExistFilter
-                                fieldFilter={fieldFilter}
-                                setFieldFilter={setFieldFilter}
-                                disabled={skimProjectionResponseEmpty}
-                            />
-                        </Box>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <Box style={{ width: 150 }}>
+                        <ExistFilter
+                            fieldFilter={fieldFilter}
+                            setFieldFilter={setFieldFilter}
+                            disabled={skimProjectionResponseEmpty}
+                        />
+                    </Box>
 
-                        {isCaptureWorkflow ? (
-                            <TableColumnSelector
-                                optionalColumns={optionalColumns}
-                                tablePrefix={TablePrefixes.schemaViewer}
-                            />
-                        ) : null}
-                    </Stack>
-                ) : null}
+                    {isCaptureWorkflow ? (
+                        <TableColumnSelector
+                            optionalColumns={optionalColumns}
+                            tablePrefix={TablePrefixes.schemaViewer}
+                        />
+                    ) : null}
+                </Stack>
             </Stack>
 
             <Collapse
@@ -100,17 +89,9 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 </AlertBox>
             </Collapse>
 
-            {disabled ? (
-                <Box style={{ width: '100%' }}>
-                    <SchemaPropertiesTable filter={fieldFilter} />
-                </Box>
-            ) : (
-                <MonacoEditor
-                    localZustandScope
-                    height={EDITOR_HEIGHT}
-                    {...editorProps}
-                />
-            )}
+            <Box style={{ width: '100%' }}>
+                <SchemaPropertiesTable filter={fieldFilter} />
+            </Box>
         </Grid>
     );
 }

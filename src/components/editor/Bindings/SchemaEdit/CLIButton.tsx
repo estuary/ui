@@ -10,7 +10,6 @@ import {
     useBindingsEditorStore_editModeEnabled,
 } from 'src/components/editor/Bindings/Store/hooks';
 import ButtonWithPopper from 'src/components/shared/buttons/ButtonWithPopper';
-import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function SchemaEditCLIButton() {
@@ -20,8 +19,6 @@ function SchemaEditCLIButton() {
     const collectionData = useBindingsEditorStore_collectionData();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
 
-    const disableSchemaEditing = useDisableSchemaEditing();
-
     // Form State
     const isActive = useFormStateStore_isActive();
 
@@ -30,7 +27,7 @@ function SchemaEditCLIButton() {
     return collectionData ? (
         <ButtonWithPopper
             buttonProps={{
-                disabled: isActive || disableSchemaEditing,
+                disabled: isActive,
                 variant: 'text',
             }}
             popper={
