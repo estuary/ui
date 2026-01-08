@@ -2,13 +2,17 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 
 export type KnownEvents =
     | 'Auth'
+    | 'DataPlaneGateway'
     | 'EndpointConfig'
+    | 'JsonForms'
+    | 'MonacoEditor'
     | 'ResetInvalidSetting'
     | 'SkimProjections'
     | 'StoreCleaner'
     | 'SourceCapture'
     | 'Task'
     | 'WorkflowStore'
+    | 'ShardsList'
     | 'evaluate_field_selection'
     | 'Error_Silent';
 
