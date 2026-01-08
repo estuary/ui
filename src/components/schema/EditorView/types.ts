@@ -1,4 +1,4 @@
-import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor';
+import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor/types';
 import type { KeyAutoCompleteProps } from 'src/components/schema/KeyAutoComplete/types';
 
 export interface FooProps {}
