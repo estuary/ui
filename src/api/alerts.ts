@@ -119,7 +119,7 @@ export type ExistingAlertSubscriptionQuery = Pick<
 
 export type AlertSubscriptionsExtendedQuery = Pick<
     AlertSubscription,
-    'id' | 'updated_at' | 'catalog_prefix' | 'email'
+    'id' | 'updated_at' | 'catalog_prefix' | 'email' | 'include_alert_types'
 >;
 
 export type DataProcessingAlertQuery = Pick<
@@ -154,7 +154,9 @@ const getNotificationSubscriptionsForTable = (
     return defaultTableFilter<AlertSubscriptionsExtendedQuery>(
         supabaseClient
             .from(TABLES.ALERT_SUBSCRIPTIONS)
-            .select(`id, updated_at, catalog_prefix, email`)
+            .select(
+                `id, updated_at, catalog_prefix, email, include_alert_types`
+            )
             .like('catalog_prefix', `${catalogPrefix}%`),
         ['catalog_prefix', 'email'],
         searchQuery,

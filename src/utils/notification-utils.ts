@@ -13,11 +13,12 @@ export const snackbarSettings: OptionsObject = {
 };
 
 export interface UserSubscription {
-    subscriptionId: string;
     email: string;
+    subscriptionId: string;
 }
 
 export interface PrefixSubscription {
+    alertTypes: string[];
     userSubscriptions: UserSubscription[];
     lastUpdated: string;
 }
@@ -27,13 +28,13 @@ export interface PrefixSubscriptionDictionary {
 }
 
 interface SubscriptionMetadata {
-    id: string;
     email: string;
+    id: string;
     lastUpdated: Date;
 }
 
 interface SubscriptionDictionary {
-    [prefix: string]: SubscriptionMetadata[];
+    [prefix: string]: { alertTypes: string[]; meta: SubscriptionMetadata[] };
 }
 
 export const formatNotificationSubscriptionsByPrefix = (
@@ -41,29 +42,34 @@ export const formatNotificationSubscriptionsByPrefix = (
 ) => {
     const processedQuery: SubscriptionDictionary = {};
 
-    data.forEach((query) => {
-        if (Object.hasOwn(processedQuery, query.catalog_prefix)) {
-            processedQuery[query.catalog_prefix].push({
-                id: query.id,
-                email: query.email,
-                lastUpdated: query.updated_at,
-            });
-        } else {
-            processedQuery[query.catalog_prefix] = [
-                {
-                    id: query.id,
-                    email: query.email,
-                    lastUpdated: query.updated_at,
-                },
-            ];
+    data.forEach(
+        ({ catalog_prefix, email, id, include_alert_types, updated_at }) => {
+            if (Object.hasOwn(processedQuery, catalog_prefix)) {
+                processedQuery[catalog_prefix].meta.push({
+                    email,
+                    id,
+                    lastUpdated: updated_at,
+                });
+            } else {
+                processedQuery[catalog_prefix] = {
+                    alertTypes: include_alert_types.sort(),
+                    meta: [
+                        {
+                            email,
+                            id,
+                            lastUpdated: updated_at,
+                        },
+                    ],
+                };
+            }
         }
-    });
+    );
 
     const subscriptions: { [prefix: string]: PrefixSubscription } = {};
 
     if (!isEmpty(processedQuery)) {
-        Object.entries(processedQuery).forEach(([prefix, configs]) => {
-            const updateTimestamps = configs.map((config) =>
+        Object.entries(processedQuery).forEach(([prefix, config]) => {
+            const updateTimestamps = config.meta.map((config) =>
                 new Date(config.lastUpdated).valueOf()
             );
 
@@ -72,11 +78,12 @@ export const formatNotificationSubscriptionsByPrefix = (
             ).toUTCString();
 
             subscriptions[prefix] = {
-                userSubscriptions: configs.map(({ id, email }) => ({
-                    subscriptionId: id,
-                    email,
-                })),
+                alertTypes: config.alertTypes,
                 lastUpdated,
+                userSubscriptions: config.meta.map(({ email, id }) => ({
+                    email,
+                    subscriptionId: id,
+                })),
             };
         });
     }

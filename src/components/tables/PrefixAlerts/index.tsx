@@ -23,6 +23,10 @@ const columns: TableColumns[] = [
     },
     {
         field: null,
+        headerIntlKey: 'entityTable.data.alertTypes',
+    },
+    {
+        field: null,
         headerIntlKey: 'alerts.config.table.label.alertMethod',
     },
     {
@@ -72,29 +76,29 @@ function PrefixAlertTable() {
             selectableTableStoreName={SelectTableStoreNames.PREFIX_ALERTS}
         >
             <EntityTable
+                columns={columns}
+                columnToSort={columnToSort}
+                filterLabel="alerts.config.table.filterLabel"
+                header={null}
                 noExistingDataContentIds={{
                     header: 'alerts.config.table.noContent.header',
                     message: 'alerts.config.table.noContent.message',
                     disableDoclink: true,
                 }}
-                columns={columns}
+                pagination={pagination}
                 renderTableRows={(data) => <Rows data={data} />}
                 rowsPerPage={rowsPerPage}
-                setRowsPerPage={setRowsPerPage}
-                pagination={pagination}
-                setPagination={setPagination}
                 searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header={null}
-                filterLabel="alerts.config.table.filterLabel"
                 selectableTableStoreName={selectableTableStoreName}
+                setColumnToSort={setColumnToSort}
+                setPagination={setPagination}
+                setRowsPerPage={setRowsPerPage}
+                setSearchQuery={setSearchQuery}
+                setSortDirection={setSortDirection}
                 showToolbar
-                toolbar={<AlertGenerateButton />}
+                sortDirection={sortDirection}
                 tableAriaLabelKey="alerts.config.table.aria.label"
+                toolbar={<AlertGenerateButton />}
             />
         </TableHydrator>
     );

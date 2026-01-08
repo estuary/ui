@@ -22,6 +22,12 @@ function Row({ row }: RowProps) {
             <TableCell>{prefix}</TableCell>
 
             <ChipListCell
+                values={data.alertTypes}
+                stripPath={false}
+                maxChips={1}
+            />
+
+            <ChipListCell
                 values={data.userSubscriptions.map(({ email }) => email)}
                 stripPath={false}
                 maxChips={3}
