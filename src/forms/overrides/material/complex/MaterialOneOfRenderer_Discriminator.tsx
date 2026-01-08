@@ -156,21 +156,18 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
 
     const discriminatorProperty = getDiscriminator(schema);
 
-    oneOfRenderInfos.map((renderer) => {
-        const { uischema: rendererUischema } = renderer as any;
+    oneOfRenderInfos.map((oneOfRenderer) => {
+        const { uischema: rendererUischema } = oneOfRenderer as any;
 
         rendererUischema.elements = rendererUischema.elements.filter(
             (el: any) => {
-                // Remove any that are missing elements or somehow don't have scope (should never happen)
-                if (el === null || !el.scope) return false;
-
                 // We now want to try to hide the input that is rendering the discriminator
                 //  since we are rendering the tabs this is just duplicating information
                 //      This is not supported out of the box https://jsonforms.discourse.group/t/use-default-uischema-and-only-apply-rule-to-one-field/1742
                 //  So we have to look at the pathSegments and filter our the one that matches the discriminator
                 //      This should be safe according to JSONForms https://jsonforms.discourse.group/t/hiding-a-specific-path-when-rendering-a-complex-oneof/2795
 
-                const pathSegments = el.scope?.split('/');
+                const pathSegments = el?.scope?.split('/');
                 if (pathSegments && pathSegments.length > 0) {
                     // Get the last segment as that should match property names
                     //  based on `isRequired` in jsonforms/packages/core/src/mappers/renderer.ts
@@ -186,11 +183,12 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                     return renderOneOfOption;
                 }
 
+                // Default to rendering things as this is how JsonForms handles things
                 return true;
             }
         );
 
-        return renderer;
+        return oneOfRenderer;
     });
 
     const openNewTab = (newIndex: number) => {
