@@ -37,7 +37,7 @@
         "@dnd-kit/utilities": "^3.2.1",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
-        "@estuary/flow-web": "^0.6.0",
+        "@estuary/flow-web": "https://github.com/estuary/flow/releases/download/dev-next/estuary-flow-web.tgz",
         "@jsonforms/core": "^3.2.1",
         "@jsonforms/material-renderers": "^3.2.1",
         "@jsonforms/react": "^3.2.1",
