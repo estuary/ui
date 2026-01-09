@@ -13,3 +13,9 @@ npm run hack-in-dpg /...PATH_TO_REPO.../data-plane-gateway/
 ```
 
 After that you should see a new tarball generated. You will need to update `package.json` to reference this file and clean up the old file.
+
+# What is flow-web doing in here?
+
+We could install this from https://github.com/estuary/flow/releases/tag/dev-next directly and it could be okay. However, it _might_ cause an issue during a `npm ci` build when that changes sha.
+
+Until we have a way to pin to a specific version we are inlining it.
