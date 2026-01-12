@@ -29,7 +29,7 @@ export const Authentication: Record<string, string> = {
     'login.register.marketing.title': `${CommonMessages.productName} is the Universal Data Layer for real-time streaming and batch data integration`,
     'login.register.quote.name': `Jonni Lundy`,
     'login.register.quote.employment': `COO, Resend`,
-    'login.register.quote.body': `"Estuary Flow transformed how we operationalize our data for fraud, security, support, and beyond.. Instead of unreliable, expensive backfills, we have real-time visibility into platform activity. The proactive support and hands-on approach make all the difference."`,
+    'login.register.quote.body': `"${CommonMessages.company} transformed how we operationalize our data for fraud, security, support, and beyond. Instead of unreliable, expensive backfills, we have real-time visibility into platform activity. The proactive support and hands-on approach make all the difference."`,
 
     'login.register.alt.coalesce': `Coalesce`,
     'login.register.alt.resend': `Resend`,

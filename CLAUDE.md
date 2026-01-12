@@ -5,8 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Prerequisites
 
 - Node.js >= 20, npm ^10 (defined in `package.json`)
-- [Estuary Flow](https://github.com/estuary/flow) installed and running locally
-- [Supabase CLI](https://github.com/supabase/cli) running locally
+- [Estuary](https://github.com/estuary/flow) installed and running locally
 - GitHub authentication token in `~/.npmrc` for `@estuary/flow-web` package:
     ```
     //npm.pkg.github.com/:_authToken=YOUR_TOKEN
