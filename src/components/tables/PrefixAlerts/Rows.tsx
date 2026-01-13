@@ -1,17 +1,12 @@
-import type { PrefixSubscription } from 'src/utils/notification-utils';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/PrefixAlerts/types';
 
 import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
-
-interface RowsProps {
-    data: [string, PrefixSubscription][];
-}
-
-interface RowProps {
-    row: [string, PrefixSubscription];
-}
 
 function Row({ row }: RowProps) {
     const prefix = row[0];
