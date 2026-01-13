@@ -13,6 +13,11 @@ export const getDiscriminator = (schema: any) => {
         if (schema[discriminator].propertyName) {
             return schema[discriminator].propertyName;
         }
+
+        // AJV does not support discriminator.mapping
+        //  We might want to end up adding custom handling for this
+        //  however it seems we are fine for now (Q1 2026)
+        // if (schema[discriminator].mapping) {...}
     }
 
     return null;
@@ -74,8 +79,7 @@ export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
     return indexOfFittingSchema;
 };
 
-// Currently (2026 Q1) just for when OAuth is inside an array
-//  This came up with a Pydantic powered connector for Source-Shopify-Native
+// Currently (Q1 2026) just for when OAuth
 export const isInsideArray = (path: any) => {
     if (!path) {
         return false;
