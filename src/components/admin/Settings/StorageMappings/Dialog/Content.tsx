@@ -3,9 +3,8 @@ import { Box, DialogContent, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import RepublicationError from 'src/components/admin/Settings/StorageMappings/Dialog/Error';
-import StorageMappingForm from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
+import { StorageMappingForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
 import RepublicationLogs from 'src/components/admin/Settings/StorageMappings/Dialog/Logs';
-import ProviderSelector from 'src/components/admin/Settings/StorageMappings/Dialog/ProviderSelector';
 import { REPUBLICATION_FAILURE_MESSAGE_ID } from 'src/components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import Error from 'src/components/shared/Error';
@@ -16,7 +15,6 @@ function StorageMappingContent() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const logToken = useStorageMappingStore((state) => state.logToken);
-    const provider = useStorageMappingStore((state) => state.provider);
     const serverError = useStorageMappingStore((state) => state.serverError);
 
     return (
@@ -42,15 +40,9 @@ function StorageMappingContent() {
                     token={logToken}
                 />
             ) : (
-                <>
-                    <ProviderSelector />
-
-                    {provider ? (
-                        <ErrorBoundryWrapper>
-                            <StorageMappingForm />
-                        </ErrorBoundryWrapper>
-                    ) : null}
-                </>
+                <ErrorBoundryWrapper>
+                    <StorageMappingForm />
+                </ErrorBoundryWrapper>
             )}
         </DialogContent>
     );

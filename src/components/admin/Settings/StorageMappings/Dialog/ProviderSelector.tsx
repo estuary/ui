@@ -2,7 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
+import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import { hasLength } from 'src/utils/misc-utils';
 
