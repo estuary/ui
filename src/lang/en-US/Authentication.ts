@@ -19,7 +19,7 @@ export const Authentication: Record<string, string> = {
     'login.register.perks1': `{emphasis} required`,
     'login.register.perks2.emphasis': `free trial`,
     'login.register.perks2': `30 days {emphasis}`,
-    'login.register.perks3': `Build streaming and batch data flows fast, no code or infrastructure.`,
+    'login.register.perks3': `Build streaming and batch ${CommonMessages['terms.dataFlow'].toLowerCase()}s fast, no code or infrastructure.`,
     'login.register.perks3.emphasis': ``,
     'login.register.perks4': `Move data across 200+ sources and destinations instantly.`,
     'login.register.perks4.emphasis': ``,

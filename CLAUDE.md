@@ -139,13 +139,13 @@ Use of `lazy()` for route-level code splitting (captures, materializations, coll
 
 **Form Generation Pipeline**:
 
-1. Take Flow connector JSON schema
+1. Take connector JSON schema
 2. Dereference `$ref` pointers
 3. Generate UI schema in `src/services/jsonforms/index.ts` (~28KB logic)
 4. Apply custom renderers for special fields (OAuth, Duration, Discriminator, DataPlane)
 5. Bind to Zustand store data
 
-**Custom Flow Annotations** (defined in `src/types/jsonforms.ts`):
+**Custom Connector Schema Annotations** (defined in `src/types/jsonforms.ts`):
 
 - `secret`: Password/token fields
 - `airbyte_secret`: Airbyte-specific secrets
@@ -160,7 +160,7 @@ Use of `lazy()` for route-level code splitting (captures, materializations, coll
 - Duration: ISO 8601 interval autocomplete and special UX handling
 - Discriminator: Handles OneOf selection even when encrypted fields break validation
 
-**Validation**: AJV with custom Flow annotation support configured in `src/services/ajv.ts`
+**Validation**: AJV with custom annotation support configured in `src/services/ajv.ts`
 
 ### Key Directory Structure
 

@@ -203,7 +203,7 @@ export const inituser = async (
     }
 
     //Wait for processing
-    await expect(page.getByText('Welcome to Flow!')).toBeVisible();
+    await expect(page.getByText('Welcome to Estuary!')).toBeVisible();
 
     if (logout) {
         await page.goto('http://localhost:3000/logout');
