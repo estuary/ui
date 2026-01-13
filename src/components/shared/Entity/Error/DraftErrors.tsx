@@ -1,17 +1,14 @@
+import type { DraftErrorProps } from 'src/components/shared/Entity/Error/types';
 import type { KeyValue } from 'src/components/shared/KeyValueList';
 
 import { Box, Breadcrumbs, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
+import AlertBox from 'src/components/shared/AlertBox';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import useDraftSpecErrors from 'src/hooks/useDraftSpecErrors';
 import { parsePointerEscapeCharacters } from 'src/utils/schema-utils';
-
-export interface DraftErrorProps {
-    draftId?: string | null;
-    enablePolling?: boolean;
-}
 
 // Parse a draft error scope, which is generally a URL with a fragment-encoded
 // JSON pointer, into structured bread crumb components.
@@ -43,10 +40,18 @@ function parseScopeCrumbs(scope: string): string[] {
     return parts;
 }
 
-function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
+function DraftErrors({
+    draftId,
+    enablePolling,
+    enableAlertStyling,
+    maxErrors,
+}: DraftErrorProps) {
+    const intl = useIntl();
+
     const { draftSpecErrors, count } = useDraftSpecErrors(
         draftId,
-        enablePolling
+        enablePolling,
+        maxErrors
     );
 
     //Make sure we have errors to display
@@ -85,22 +90,32 @@ function DraftErrors({ draftId, enablePolling }: DraftErrorProps) {
             };
         });
 
-        return (
-            <Box>
+        const content = (
+            <>
                 {count && count > errorLength ? (
                     <Typography>
-                        <FormattedMessage
-                            id="errors.preface.totalCount"
-                            values={{
+                        {intl.formatMessage(
+                            { id: 'errors.preface.totalCount' },
+                            {
                                 displaying: errorLength,
                                 total: count,
-                            }}
-                        />
+                            }
+                        )}
                     </Typography>
                 ) : null}
                 <KeyValueList data={errors} disableTypography />
-            </Box>
+            </>
         );
+
+        if (enableAlertStyling) {
+            return (
+                <AlertBox short hideIcon severity="error">
+                    {content}
+                </AlertBox>
+            );
+        }
+
+        return <Box>{content}</Box>;
     } else {
         return null;
     }

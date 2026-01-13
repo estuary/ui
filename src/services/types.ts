@@ -2,13 +2,19 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 
 export type KnownEvents =
     | 'Auth'
+    | 'DataPlaneGateway'
     | 'EndpointConfig'
+    | 'JsonForms'
+    | 'MonacoEditor'
     | 'ResetInvalidSetting'
     | 'SkimProjections'
     | 'StoreCleaner'
     | 'SourceCapture'
+    | 'Task'
     | 'WorkflowStore'
-    | 'evaluate_field_selection';
+    | 'ShardsList'
+    | 'evaluate_field_selection'
+    | 'Error_Silent';
 
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
 //  KnownEvents type

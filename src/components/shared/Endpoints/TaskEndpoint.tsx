@@ -17,7 +17,6 @@ import useShardHydration from 'src/hooks/shards/useShardHydration';
 export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
     const intl = useIntl();
 
-    // The id and spec_type are irrelevant in useShardsList, but they're required to be there.
     useShardHydration([taskName]);
 
     const entityType = useEntityType();
@@ -49,7 +48,11 @@ export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
         );
     }
 
-    return message ? (
+    if (!message) {
+        return null;
+    }
+
+    return (
         <Box
             sx={{
                 gap: '10px',
@@ -61,5 +64,5 @@ export function TaskEndpoint({ reactorAddress, taskName }: TaskEndpointProps) {
         >
             {message}
         </Box>
-    ) : null;
+    );
 }

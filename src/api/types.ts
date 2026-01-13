@@ -94,3 +94,8 @@ export interface MassCreateDraftSpecsData {
     expect_pub_id: string;
     spec: any;
 }
+
+export interface LiveSpecsExtQuery_GroupedUpdates {
+    catalog_name: string;
+    id: string;
+}

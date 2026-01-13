@@ -25,8 +25,8 @@ const useParseCidrBlocks = () => {
                 });
 
                 return {
-                    ipv4: ipv4.length > 0 ? ipv4.join(',') : null,
-                    ipv6: ipv6.length > 0 ? ipv6.join(',') : null,
+                    ipv4: ipv4.length > 0 ? ipv4.join(', ') : null,
+                    ipv6: ipv6.length > 0 ? ipv6.join(', ') : null,
                 };
             }
 

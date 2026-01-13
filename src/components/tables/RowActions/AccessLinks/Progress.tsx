@@ -15,8 +15,8 @@ import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 interface Props {
     progress: ProgressStates;
     item: string;
-    successMessageID: string;
-    runningMessageID: string;
+    successIntlKey: string;
+    runningIntlKey: string;
     error: any | null;
     renderError?: Function;
 }
@@ -26,8 +26,8 @@ const wrapperStyling = { mb: 1, ml: 3, width: '100%' };
 function Progress({
     progress,
     item,
-    successMessageID,
-    runningMessageID,
+    successIntlKey,
+    runningIntlKey,
     error,
     renderError,
 }: Props) {
@@ -54,10 +54,10 @@ function Progress({
                         <FormattedMessage
                             id={
                                 progress === ProgressStates.SUCCESS
-                                    ? successMessageID
+                                    ? successIntlKey
                                     : progress === ProgressStates.FAILED
                                       ? 'common.fail'
-                                      : runningMessageID
+                                      : runningIntlKey
                             }
                         />
                     }
