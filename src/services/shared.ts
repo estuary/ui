@@ -44,11 +44,7 @@ export const getUserDetails = (
 };
 
 export const logRocketConsole = (message: string, ...props: any[]) => {
-    // Just want to be very very safe
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (LogRocket?.log) {
-        LogRocket.log(message, props);
-    }
+    LogRocket.log(message, props);
 
     if (!isProduction) {
         console.log(message, props);
@@ -60,11 +56,8 @@ export const logRocketEvent = (
     event: CustomEvents | KnownEvents | (string & {}),
     eventProperties?: any
 ) => {
-    // Just want to be very very safe
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (LogRocket?.track) {
-        LogRocket.track(event, eventProperties);
-    }
+    // !!! NO POSTHOG TRACKING HERE !!! - this could leak confiential information
+    LogRocket.track(event, eventProperties);
 
     logRocketConsole(`Event Logging : ${event}`, eventProperties);
 };
