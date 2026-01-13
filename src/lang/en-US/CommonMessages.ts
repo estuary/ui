@@ -6,7 +6,7 @@ export const CommonMessages: Record<string, string> = {
     'expressFlowIntegration': `Powered by Estuary`,
     'spec': `data flow specification`,
 
-    'common.browserTitle': `Flow`,
+    'common.browserTitle': `Estuary`,
     'common.loading': `Loading...`,
     'common.running': `Running...`,
     'common.deleting': `Deleting...`,
