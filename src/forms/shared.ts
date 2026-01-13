@@ -14,10 +14,10 @@ export const getDiscriminator = (schema: any) => {
             return schema[discriminator].propertyName;
         }
 
-        // AJV does not support discriminator.mapping
+        // TODO (JSONForms) - AJV does not support discriminator.mapping
         //  We might want to end up adding custom handling for this
         //  however it seems we are fine for now (Q1 2026)
-        // if (schema[discriminator].mapping) {...}
+        // if (schema[discriminator].mapping) {...wire up this handling somehow?...}
     }
 
     return null;
