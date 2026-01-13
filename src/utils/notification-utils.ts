@@ -52,7 +52,7 @@ export const formatNotificationSubscriptionsByPrefix = (
                 });
             } else {
                 processedQuery[catalog_prefix] = {
-                    alertTypes: include_alert_types.sort(),
+                    alertTypes: include_alert_types?.sort() ?? [],
                     meta: [
                         {
                             email,

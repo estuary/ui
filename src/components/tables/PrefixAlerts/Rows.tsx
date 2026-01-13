@@ -7,6 +7,7 @@ import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
+import { UNDERSCORE_RE } from 'src/validation';
 
 function Row({ row }: RowProps) {
     const prefix = row[0];
@@ -17,7 +18,9 @@ function Row({ row }: RowProps) {
             <TableCell>{prefix}</TableCell>
 
             <ChipListCell
-                values={data.alertTypes}
+                values={data.alertTypes.map((value) =>
+                    value.replace(UNDERSCORE_RE, ' ')
+                )}
                 stripPath={false}
                 maxChips={1}
             />

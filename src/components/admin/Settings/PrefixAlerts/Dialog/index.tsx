@@ -15,6 +15,7 @@ import {
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import AlertTypeField from 'src/components/admin/Settings/PrefixAlerts/Dialog/AlertTypeField';
 import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/EmailListField';
 import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
@@ -97,6 +98,8 @@ function AlertSubscriptionDialog({
                     }}
                 >
                     <PrefixField staticPrefix={staticPrefix} />
+
+                    <AlertTypeField />
 
                     <EmailListField open={open} />
                 </Grid>
