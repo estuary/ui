@@ -45,12 +45,13 @@ npm run test:debug      # Debug tests with inspector
 
 ```bash
 npm run generate-supabase-types     # Generate types from Supabase schema
-npm run generate-flow-types         # Generate Flow catalog types (requires Flow installed)
+npm run generate-flow-types         # Generate types from estuary/flow (requires Flow installed)
 ```
 
 ### Local Development Hacks
 
 ```bash
+npm run hack-in-web-flow           # Use to pull latest @estuary/flow-web build
 npm run hack-in-local-web-flow     # Use local @estuary/flow-web build
 npm run hack-in-dpg                # Use local data-plane-gateway build
 ```
@@ -183,7 +184,7 @@ Use of `lazy()` for route-level code splitting (captures, materializations, coll
 - Tables: live_specs, draft_specs, publications, tenants, auth_roles
 - RPCs: auth_roles, user_info_summary, view_logs, billing_report
 
-**Flow GraphQL Server**: Real-time catalog data
+**GraphQL Server**: Real-time catalog data
 
 - Configured via `VITE_GQL_URL` environment variable
 - Pagination using before/after cursors
