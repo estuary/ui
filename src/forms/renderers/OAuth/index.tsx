@@ -73,8 +73,6 @@ const OAuthproviderRenderer = ({
         }
     }, [hasOwnPathProp, options, path]);
 
-    // This is the field in an anyOf/oneOf/etc. that is used
-    //      to tell which option is selected
     const discriminatorProperty = useMemo(() => {
         let schemaToCheck;
 
@@ -82,7 +80,7 @@ const OAuthproviderRenderer = ({
         //  an anyOf/oneOf or inside an array.
         // If we are inside of an array then the path is pointing to something
         //  like "properties.0.credentials" and we should not look into it for
-        //  the discriminator as this is the path to the data and not the schema
+        //  the discriminator as this is the path to the data and not the schema.
         // If we are not inside an array we are probably in an anyOf|oneOf and
         //  should look there for the discriminator property.
         if (hasOwnPathProp && !isInsideArray(path)) {
