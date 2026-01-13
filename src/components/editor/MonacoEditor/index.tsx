@@ -1,5 +1,5 @@
 import type * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
-import type { Entity } from 'src/types';
+import type { MonacoEditorProps } from 'src/components/editor/MonacoEditor/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -28,34 +28,15 @@ import {
 } from 'src/components/editor/Store/hooks';
 import { EditorStatus } from 'src/components/editor/Store/types';
 import { editorToolBarSx } from 'src/context/Theme';
-import { logRocketConsole } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { stringifyJSON } from 'src/services/stringify';
 import {
     DEFAULT_HEIGHT,
     DEFAULT_TOOLBAR_HEIGHT,
+    getEditorEventReason,
     ICON_SIZE,
+    ignorableEditorException,
 } from 'src/utils/editor-utils';
-
-type EditorChangeHandler = (
-    newVal: any,
-    path: string,
-    specType: Entity,
-    scope?: string
-) => any;
-
-export interface MonacoEditorProps {
-    localZustandScope: boolean;
-    disabled?: boolean;
-    onChange?: EditorChangeHandler;
-    height?: number;
-    toolbarHeight?: number;
-    editorSchemaScope?: string; // Used to scope the schema editor
-    defaultLanguage?: 'json' | 'sql';
-    defaultValue?: string;
-    path?: string;
-    editorLabel?: string;
-    manuallySynced?: boolean;
-}
 
 function MonacoEditor({
     localZustandScope,
@@ -266,6 +247,24 @@ function MonacoEditor({
             setStatus(EditorStatus.IDLE, evaluatedPath);
         }
     }, [evaluatedPath, setStatus, manuallySynced]);
+
+    useEffect(() => {
+        // This cancel exception is thrown but does not seem to cause any
+        //  issues for users. I think we're safe to ignore this for now (Q4 2025)
+        // https://github.com/microsoft/monaco-editor/issues/4389
+        const handler = (event: any) => {
+            if (ignorableEditorException(event)) {
+                event.preventDefault();
+            }
+
+            logRocketEvent('MonacoEditor', {
+                reason: getEditorEventReason(event),
+                unhandledrejection: true,
+            });
+        };
+        window.addEventListener('unhandledrejection', handler);
+        return () => window.removeEventListener('unhandledrejection', handler);
+    }, []);
 
     const handlers = {
         change: (value: any, ev: any) => {

@@ -1,6 +1,6 @@
 import type { SeriesConfig } from 'src/utils/billing-utils';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useConstant from 'use-constant';
 
 import { useTheme } from '@mui/material';
@@ -21,6 +21,7 @@ import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 
 import {
     getTooltipItem,
@@ -41,6 +42,7 @@ function TaskHoursByMonthGraph() {
     const billingStoreHydrated = useBillingStore((state) => state.hydrated);
     const invoices = useBillingStore((state) => state.invoices);
 
+    const resizeListener = useRef<EventListener | null>(null);
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
     const today = useConstant(() => new Date());
@@ -98,10 +100,6 @@ function TaskHoursByMonthGraph() {
 
                 setMyChart(chartDom && echarts.init(chartDom));
             }
-
-            window.addEventListener('resize', () => {
-                myChart?.resize();
-            });
 
             const option = {
                 xAxis: {
@@ -185,6 +183,9 @@ function TaskHoursByMonthGraph() {
                 },
             };
 
+            resizeListener.current = () => myChart?.resize();
+            window.addEventListener('resize', resizeListener.current);
+
             myChart?.setOption(option);
         }
     }, [
@@ -198,6 +199,12 @@ function TaskHoursByMonthGraph() {
         theme.palette.text.primary,
         tooltipConfig,
     ]);
+
+    useUnmount(() => {
+        if (resizeListener.current) {
+            window.removeEventListener('resize', resizeListener.current);
+        }
+    });
 
     return <div id={chartContainerId} style={{ height: CARD_AREA_HEIGHT }} />;
 }

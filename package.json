@@ -27,6 +27,7 @@
         "generate-flow-types": "cd deps/flow && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
         "generate-supabase-types": "node ./scripts/generateSupabaseTypes",
         "hack-in-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh",
+        "hack-in-web-flow": "./deps/flow-web/hack-in-prod.sh",
         "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh"
     },
     "dependencies": {
@@ -37,7 +38,7 @@
         "@dnd-kit/utilities": "^3.2.1",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
-        "@estuary/flow-web": "^0.6.0",
+        "@estuary/flow-web": "file:__inline-deps__/estuary-flow-web-20260109-163823.tgz",
         "@jsonforms/core": "^3.2.1",
         "@jsonforms/material-renderers": "^3.2.1",
         "@jsonforms/react": "^3.2.1",
