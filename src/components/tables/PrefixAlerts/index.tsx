@@ -24,6 +24,7 @@ const columns: TableColumns[] = [
     {
         field: null,
         headerIntlKey: 'entityTable.data.alertTypes',
+        width: 225,
     },
     {
         field: null,
