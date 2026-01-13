@@ -1,5 +1,5 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/useConfigurationSchema';
+import type { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
 import type { JsonFormsData } from 'src/types';
 
 export interface StorageMappingState {

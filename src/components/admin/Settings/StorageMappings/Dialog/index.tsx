@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { Dialog } from '@mui/material';
 
-import StorageMappingActions from 'src/components/admin/Settings/StorageMappings/Dialog/Actions';
+// import StorageMappingActions from 'src/components/admin/Settings/StorageMappings/Dialog/Actions';
 import StorageMappingContent from 'src/components/admin/Settings/StorageMappings/Dialog/Content';
 import StorageMappingTitle from 'src/components/admin/Settings/StorageMappings/Dialog/Title';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
@@ -25,12 +25,12 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
     };
 
     return (
-        <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
+        <Dialog open={open} maxWidth="sm" fullWidth aria-labelledby={TITLE_ID}>
             <StorageMappingTitle closeDialog={closeDialog} />
 
             <StorageMappingContent />
-
-            <StorageMappingActions closeDialog={closeDialog} />
+            {/* commented out to prevent spamming network errors in the console during development */}
+            {/* <StorageMappingActions closeDialog={closeDialog} /> */}
         </Dialog>
     );
 }
