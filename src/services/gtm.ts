@@ -9,7 +9,11 @@ type EVENTS =
     | 'Connector_Search'
     | 'Register'
     | 'RegisterFailed'
-    | 'Payment_Entered';
+    | 'Payment_Entered'
+
+    // For Google these are fired from TagManager
+    | 'test_click'
+    | 'save_and_publish_click';
 
 const { allowedToRun } = getGoogleTageManagerSettings();
 

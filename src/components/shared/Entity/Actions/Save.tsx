@@ -10,6 +10,7 @@ import {
 } from 'src/components/editor/Store/hooks';
 import useSave from 'src/components/shared/Entity/Actions/useSave';
 import { entityHeaderButtonSx } from 'src/context/Theme';
+import { fireGtmEvent } from 'src/services/gtm';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function EntityCreateSave({
@@ -29,18 +30,23 @@ function EntityCreateSave({
 
     const formActive = useFormStateStore_isActive();
 
+    const isDryRun = dryRun === true;
+
     return (
         <Button
             disabled={disabled || isSaving || formActive}
             sx={entityHeaderButtonSx}
             onClick={() => {
                 void save(draftId);
+                fireGtmEvent(
+                    isDryRun ? 'test_click' : 'save_and_publish_click'
+                );
             }}
         >
             {intl.formatMessage({
                 id: buttonLabelId
                     ? buttonLabelId
-                    : dryRun === true
+                    : isDryRun
                       ? `cta.testConfig${loading ? '.active' : ''}`
                       : `cta.saveEntity${loading ? '.active' : ''}`,
             })}
