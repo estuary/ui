@@ -1,6 +1,6 @@
 # Estuary UI
 
-The web UI for Estuary Flow.
+The web UI for Estuary.
 
 # How to install?
 
@@ -35,7 +35,7 @@ To get logs you will need to grab this "pub id" and update the query... details 
 
 # How to start/run?
 
-Make sure [Estuary Flow](https://github.com/estuary/flow) and [Supabase CLI](https://github.com/supabase/cli) are installed and running.
+Make sure [Estuary](https://github.com/estuary/flow) is running.
 
 Run: `npm start`
 
