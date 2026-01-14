@@ -104,18 +104,15 @@ export const getLogRocketSettings = (): Settings | null => {
 
 export const getPostHogSettings = () => {
     if (import.meta.env.VITE_PH_ENABLED === ENABLED) {
-        if (
-            !import.meta.env.VITE_PH_API_HOST ||
-            !import.meta.env.VITE_PH_PUBLIC_API_TOKEN
-        ) {
-            return null;
-        }
-
-        return {
+        const settings = {
             apiHost: import.meta.env.VITE_PH_API_HOST ?? null,
             publicToken: import.meta.env.VITE_PH_PUBLIC_API_TOKEN ?? null,
             idUser: import.meta.env.VITE_PH_ID_USER === ENABLED,
         };
+
+        if (Boolean(settings.apiHost && settings.publicToken)) {
+            return settings;
+        }
     }
 
     return null;
