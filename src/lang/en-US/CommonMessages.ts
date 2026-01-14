@@ -2,9 +2,11 @@ export const endpointConfigHeader = `Endpoint Config`;
 export const CommonMessages: Record<string, string> = {
     // Misc
     'company': `Estuary`,
-    'productName': `Estuary Flow`,
+    'productName': `Estuary`,
     'expressFlowIntegration': `Powered by Estuary`,
-    'common.browserTitle': `Flow`,
+    'spec': `data flow specification`,
+
+    'common.browserTitle': `Estuary`,
     'common.loading': `Loading...`,
     'common.running': `Running...`,
     'common.deleting': `Deleting...`,

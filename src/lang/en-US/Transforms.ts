@@ -47,7 +47,7 @@ export const Transforms: Record<string, string> = {
     'newTransform.schema.cta.generatePreview': `Preview`,
     'newTransform.schema.dataPreview.header': `Data Preview`,
 
-    'newTransform.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.next']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'newTransform.finalReview.instructions': `The following ${CommonMessages.spec} was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.next']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'newTransform.editor.streaming.header': `Streaming`,
     'newTransform.editor.streaming.description': `Used for selecting columns and creating aggregations`,

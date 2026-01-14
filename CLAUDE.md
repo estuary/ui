@@ -5,8 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Prerequisites
 
 - Node.js >= 20, npm ^10 (defined in `package.json`)
-- [Estuary Flow](https://github.com/estuary/flow) installed and running locally
-- [Supabase CLI](https://github.com/supabase/cli) running locally
+- [Estuary](https://github.com/estuary/flow) installed and running locally
 - GitHub authentication token in `~/.npmrc` for `@estuary/flow-web` package:
     ```
     //npm.pkg.github.com/:_authToken=YOUR_TOKEN
@@ -46,12 +45,13 @@ npm run test:debug      # Debug tests with inspector
 
 ```bash
 npm run generate-supabase-types     # Generate types from Supabase schema
-npm run generate-flow-types         # Generate Flow catalog types (requires Flow installed)
+npm run generate-flow-types         # Generate types from estuary/flow (requires Flow installed)
 ```
 
 ### Local Development Hacks
 
 ```bash
+npm run hack-in-web-flow           # Use to pull latest @estuary/flow-web build
 npm run hack-in-local-web-flow     # Use local @estuary/flow-web build
 npm run hack-in-dpg                # Use local data-plane-gateway build
 ```
@@ -140,13 +140,13 @@ Use of `lazy()` for route-level code splitting (captures, materializations, coll
 
 **Form Generation Pipeline**:
 
-1. Take Flow connector JSON schema
+1. Take connector JSON schema
 2. Dereference `$ref` pointers
 3. Generate UI schema in `src/services/jsonforms/index.ts` (~28KB logic)
 4. Apply custom renderers for special fields (OAuth, Duration, Discriminator, DataPlane)
 5. Bind to Zustand store data
 
-**Custom Flow Annotations** (defined in `src/types/jsonforms.ts`):
+**Custom Connector Schema Annotations** (defined in `src/types/jsonforms.ts`):
 
 - `secret`: Password/token fields
 - `airbyte_secret`: Airbyte-specific secrets
@@ -161,7 +161,7 @@ Use of `lazy()` for route-level code splitting (captures, materializations, coll
 - Duration: ISO 8601 interval autocomplete and special UX handling
 - Discriminator: Handles OneOf selection even when encrypted fields break validation
 
-**Validation**: AJV with custom Flow annotation support configured in `src/services/ajv.ts`
+**Validation**: AJV with custom annotation support configured in `src/services/ajv.ts`
 
 ### Key Directory Structure
 
@@ -184,7 +184,7 @@ Use of `lazy()` for route-level code splitting (captures, materializations, coll
 - Tables: live_specs, draft_specs, publications, tenants, auth_roles
 - RPCs: auth_roles, user_info_summary, view_logs, billing_report
 
-**Flow GraphQL Server**: Real-time catalog data
+**GraphQL Server**: Real-time catalog data
 
 - Configured via `VITE_GQL_URL` environment variable
 - Pagination using before/after cursors

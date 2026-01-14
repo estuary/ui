@@ -8,8 +8,8 @@ export const AdminPage: Record<string, string> = {
     'admin.roles.message.docLink': `authorization settings`,
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
 
-    'admin.cli_api.header': `Programmatic Access to Flow`,
-    'admin.cli_api.message': `Use Refresh and Access tokens to connect to Flow programmatically.`,
+    'admin.cli_api.header': `Programmatic Access to ${CommonMessages.productName}`,
+    'admin.cli_api.message': `Use Refresh and Access tokens to connect to ${CommonMessages.productName} programmatically.`,
     'admin.cli_api.accessToken': `Access Token`,
     'admin.cli_api.accessToken.message': `Access tokens enable authentication using flowctl.`,
     'admin.cli_api.refreshToken': `Refresh Token`,
@@ -25,7 +25,7 @@ export const AdminPage: Record<string, string> = {
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
     'admin.billing.header': `Billing`,
-    'admin.billing.message.freeTier': `The free tier lets you try Flow with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
+    'admin.billing.message.freeTier': `The free tier lets you try ${CommonMessages.productName} with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
     'admin.billing.message.paidTier': `Cloud tier`,
     'admin.billing.message.external': ` `,
     'admin.billing.message.external.gcp': `GCP Marketplace`,
@@ -152,7 +152,7 @@ export const AdminPage: Record<string, string> = {
     'storageMappingsTable.message1': `No results found.`,
     'storageMappingsTable.message2': `We couldn't find any results matching your search. Please try a different filter.`,
     'storageMappings.status.active': `Primary`,
-    'storageMappings.prefix.description': `The Flow prefix you want to configure`,
+    'storageMappings.prefix.description': `The prefix you want to configure`,
     'storageMappings.provider.label': `Provider`,
     'storageMappings.provider.description': `The provider (ex: S3, GCP) you are using`,
     'storageMappings.bucket.label': `Bucket`,
