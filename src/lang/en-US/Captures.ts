@@ -27,7 +27,7 @@ export const Captures: Record<string, string> = {
     'captureCreate.config.source.homepage': `Home`,
     'captureCreate.save.failed': `Capture creation failed. See below for details:`,
     'captureCreate.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureCreate.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureCreate.finalReview.instructions': `The following ${CommonMessages.spec} was generated from the details you provided. To make changes, you can enter new values in the form above and click "${CTAs['cta.generateCatalog.capture']}" again. You can also edit the specification file directly below. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureCreate.collections.heading': `3. Output Collections`,
     'captureCreate.collectionSelector.heading': `Collection Selector`,
@@ -61,7 +61,7 @@ export const Captures: Record<string, string> = {
     'captureEdit.config.source.homepage': `Home`,
     'captureEdit.save.failed': `Capture edit failed. See below for details:`,
     'captureEdit.editor.default': `Before you can edit the capture specification, you must fill out the Connection Configuration section and click "${CTAs['cta.generateCatalog.capture']}." `,
-    'captureEdit.finalReview.instructions': `The following Flow specification was generated from the details you provided. To make changes, you can enter new values in the form above or edit the JSON file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
+    'captureEdit.finalReview.instructions': `The following ${CommonMessages.spec} was generated from the details you provided. To make changes, you can enter new values in the form above or edit the JSON file directly. Click "${CTAs['cta.saveEntity']}" to proceed.`,
 
     'captureEdit.collections.heading': `3. Target Collections`,
     'captureEdit.collectionSelector.heading': `Collection Selector`,

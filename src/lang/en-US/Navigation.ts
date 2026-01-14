@@ -11,7 +11,7 @@ export const Navigation: Record<string, string> = {
 
     'helpMenu.ariaLabel': `Open Help Menu`,
     'helpMenu.tooltip': `Helpful Links`,
-    'helpMenu.docs': `Flow Docs`,
+    'helpMenu.docs': `Docs`,
     'helpMenu.docs.link': `https://docs.estuary.dev/`,
     'helpMenu.slack': `Estuary Slack`,
     'helpMenu.slack.link': `https://join.slack.com/t/estuary-dev/shared_invite/zt-86nal6yr-VPbv~YfZE9Q~6Zl~gmZdFQ`,
