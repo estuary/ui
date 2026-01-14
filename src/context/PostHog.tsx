@@ -5,9 +5,9 @@ import posthog from 'posthog-js';
 
 import { getPostHogSettings } from 'src/utils/env-utils';
 
-const postHogSettings = getPostHogSettings();
-
 (() => {
+    const postHogSettings = getPostHogSettings();
+
     if (typeof window === 'undefined' || !postHogSettings) {
         return;
     }
