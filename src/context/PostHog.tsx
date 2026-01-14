@@ -14,7 +14,7 @@ const postHogSettings = getPostHogSettings();
 
     posthog.init(postHogSettings.publicToken, {
         api_host: postHogSettings.apiHost,
-        defaults: '2025-05-24',
+        defaults: '2025-11-30',
         cookieless_mode: 'on_reject',
     });
 })();
