@@ -2,6 +2,7 @@ import type { EntityCreateSaveButtonProps } from 'src/components/shared/Entity/A
 
 import { Button } from '@mui/material';
 
+import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
 
 import {
@@ -10,7 +11,6 @@ import {
 } from 'src/components/editor/Store/hooks';
 import useSave from 'src/components/shared/Entity/Actions/useSave';
 import { entityHeaderButtonSx } from 'src/context/Theme';
-import { fireGtmEvent } from 'src/services/gtm';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 function EntityCreateSave({
@@ -21,6 +21,7 @@ function EntityCreateSave({
     logEvent,
     onFailure,
 }: EntityCreateSaveButtonProps) {
+    const postHog = usePostHog();
     const intl = useIntl();
 
     const save = useSave(logEvent, onFailure, dryRun);
@@ -38,7 +39,7 @@ function EntityCreateSave({
             sx={entityHeaderButtonSx}
             onClick={() => {
                 void save(draftId);
-                fireGtmEvent(
+                postHog.capture(
                     isDryRun ? 'test_click' : 'save_and_publish_click'
                 );
             }}

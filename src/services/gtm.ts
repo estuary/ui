@@ -1,6 +1,5 @@
 import type { Schema } from 'src/types';
 
-import { posthogCapture } from 'src/services/posthog';
 import { getGoogleTageManagerSettings } from 'src/utils/env-utils';
 
 // GTM is loaded/initialized in index.html
@@ -10,8 +9,6 @@ type EVENTS =
     | 'Register'
     | 'RegisterFailed'
     | 'Payment_Entered'
-
-    // For Google these are fired from TagManager
     | 'test_click'
     | 'save_and_publish_click';
 
@@ -25,8 +22,6 @@ export const fireGtmEvent = (event: EVENTS, data: Schema | undefined = {}) => {
             ...data,
         });
     }
-
-    posthogCapture(event, data);
 };
 
 export const setGtmData = (data?: Schema) => {

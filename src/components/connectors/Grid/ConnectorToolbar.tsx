@@ -9,6 +9,7 @@ import useConstant from 'use-constant';
 
 import { Grid, Toolbar } from '@mui/material';
 
+import { usePostHog } from '@posthog/react';
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -24,6 +25,7 @@ function ConnectorToolbar({
     setProtocol,
     setSearchQuery,
 }: ConnectorToolbarProps) {
+    const postHog = usePostHog();
     const intl = useIntl();
     const isFiltering = useRef(false);
 
@@ -62,6 +64,10 @@ function ConnectorToolbar({
                 // Only fire the event if there is a query to send back
                 if (hasQuery) {
                     fireGtmEvent('Connector_Search', { filterQuery });
+
+                    postHog.capture('Connector_Search', {
+                        filterQuery,
+                    });
                 }
             },
             750

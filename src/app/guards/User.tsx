@@ -10,12 +10,14 @@ import 'react-reflex/styles.css';
 
 import type { BaseComponentProps } from 'src/types';
 
+import { usePostHog } from '@posthog/react';
 import { Navigate } from 'react-router';
 
 import { identifyUser } from 'src/services/logrocket';
-import { posthogIdentify } from 'src/services/posthog';
+import { getUserDetails } from 'src/services/shared';
 
 function UserGuard({ children }: BaseComponentProps) {
+    const postHog = usePostHog();
     // We only want to idenfity users once. Since the user object changes
     //  everytime the user focuses on the tab we could end up spamming calls.
     const identifiedUser = useRef(false);
@@ -26,9 +28,22 @@ function UserGuard({ children }: BaseComponentProps) {
         if (user && !identifiedUser.current) {
             identifiedUser.current = true;
             identifyUser(user);
-            posthogIdentify(user);
+
+            const userDetails = getUserDetails(user);
+            if (userDetails && !postHog._isIdentified()) {
+                const { id, email, emailVerified, userName, usedSSO } =
+                    userDetails;
+
+                postHog.identify(id, {
+                    lastLogin: new Date(),
+                    email,
+                    emailVerified,
+                    userName,
+                    usedSSO,
+                });
+            }
         }
-    }, [user]);
+    }, [postHog, user]);
 
     return (
         // eslint-disable-next-line react/jsx-no-useless-fragment
