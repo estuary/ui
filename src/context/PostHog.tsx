@@ -17,7 +17,10 @@ import { getPostHogSettings } from 'src/utils/env-utils';
         defaults: '2025-11-30',
         cookieless_mode: 'always', // we do not have a cookie banner
         capture_performance: false, // we can monitor performance with LR
-        disable_session_recording: true, // we do not want to record users
+        disable_conversations: true, // do not use
+        disable_product_tours: true, // do not use
+        disable_session_recording: true, // do not use
+        disable_surveys: true, // do not use
     });
 })();
 
