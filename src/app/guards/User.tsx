@@ -35,8 +35,8 @@ function UserGuard({ children }: BaseComponentProps) {
             const userDetails = getUserDetails(user);
             if (
                 userDetails &&
-                !postHog._isIdentified() &&
-                postHogSettings?.idUser
+                postHogSettings?.idUser &&
+                !postHog._isIdentified()
             ) {
                 const { id, email, emailVerified, userName, usedSSO } =
                     userDetails;
