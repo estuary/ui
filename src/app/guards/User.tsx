@@ -15,6 +15,9 @@ import { Navigate } from 'react-router';
 
 import { identifyUser } from 'src/services/logrocket';
 import { getUserDetails } from 'src/services/shared';
+import { getPostHogSettings } from 'src/utils/env-utils';
+
+const postHogSettings = getPostHogSettings();
 
 function UserGuard({ children }: BaseComponentProps) {
     const postHog = usePostHog();
@@ -30,7 +33,11 @@ function UserGuard({ children }: BaseComponentProps) {
             identifyUser(user);
 
             const userDetails = getUserDetails(user);
-            if (userDetails && !postHog._isIdentified()) {
+            if (
+                userDetails &&
+                !postHog._isIdentified() &&
+                postHogSettings?.idUser
+            ) {
                 const { id, email, emailVerified, userName, usedSSO } =
                     userDetails;
 
