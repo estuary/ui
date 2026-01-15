@@ -100,7 +100,7 @@ export const startSessionWithUser = async (
 
     console.log('startingSession:login:start');
     const email = authSettings?.email ?? `${name}${emailDomain}`;
-    await expect(page.getByText('Get started with Estuary Flow')).toBeVisible();
+    await expect(page.getByText('Get started with Estuary')).toBeVisible();
     await page.getByLabel('Email').type(email);
     await page.getByRole('button', { name: 'Sign in with magic link' }).click();
     await expect(
@@ -180,9 +180,7 @@ export const inituser = async (
         console.log(`tenant:started:${name},${newTenant}`);
 
         // Wait for load
-        await expect(
-            page.getByText(`Get started with Estuary Flow`)
-        ).toBeVisible();
+        await expect(page.getByText(`Get started with Estuary`)).toBeVisible();
         await expect(page.getByText(`Where did you hear about`)).toBeVisible();
 
         // Create Tenant
@@ -205,7 +203,7 @@ export const inituser = async (
     }
 
     //Wait for processing
-    await expect(page.getByText('Welcome to Flow!')).toBeVisible();
+    await expect(page.getByText('Welcome to Estuary!')).toBeVisible();
 
     if (logout) {
         await page.goto('http://localhost:3000/logout');

@@ -34,13 +34,13 @@ export const RouteTitles: Record<string, string> = {
     //  The some of these strings are generated in login/Basic and login/Enterprise
     'routeTitle.login': `Manage Your Data Pipelines`,
     'routeTitle.login.prefix': `${CommonMessages.productName} Dashboard`,
-    'routeTitle.login.description': `Access the Estuary Flow dashboard to manage real-time data pipelines, integrations, and configurations in one place.`,
+    'routeTitle.login.description': `Access the ${CommonMessages.productName} dashboard to manage real-time data pipelines, integrations, and configurations in one place.`,
 
     'routeTitle.login.sso': `Secure Access to Your Account`,
-    'routeTitle.login.sso.prefix': `Estuary Flow SSO Login`,
-    'routeTitle.login.sso.description': `Log in securely to Estuary Flow using Single Sign-On (SSO) and manage your data pipelines with ease.`,
+    'routeTitle.login.sso.prefix': `${CommonMessages.productName} SSO Login`,
+    'routeTitle.login.sso.description': `Log in securely to ${CommonMessages.productName} using Single Sign-On (SSO) and manage your data pipelines with ease.`,
 
-    'routeTitle.register': `Build Data Pipelines`,
+    'routeTitle.register': `The Right-time Data Platform`,
     'routeTitle.register.prefix': `Register for ${CommonMessages.productName}`,
-    'routeTitle.register.description': `Create your free Estuary Flow account and start building real-time data pipelines with ease. No credit card required, and enjoy a 30-day free trial`,
+    'routeTitle.register.description': `Create your free ${CommonMessages.productName} account and start building real-time data pipelines with ease. No credit card required, and enjoy a 30-day free trial`,
 };

@@ -1,1 +1,1 @@
-Please see [Estuary Flow](https://github.com/estuary/flow/blob/master/CONTRIBUTING.md)
+Please view [estuary/flow/CONTRIBUTING.md](https://github.com/estuary/flow/blob/master/CONTRIBUTING.md)
