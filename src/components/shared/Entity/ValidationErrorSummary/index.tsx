@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { AlertTitle, Collapse } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import DetailsErrors from 'src/components/shared/Entity/ValidationErrorSummary/DetailsErrors';
@@ -37,6 +37,7 @@ function ValidationErrorSummary({
     hideIcon,
     ErrorComponent,
 }: Props) {
+    const intl = useIntl();
     const scrollToTarget = useRef<HTMLDivElement>(null);
     const scrollIntoView = useScrollIntoView(scrollToTarget);
 
@@ -91,9 +92,9 @@ function ValidationErrorSummary({
                 ref={scrollToTarget}
             >
                 <AlertTitle>
-                    <FormattedMessage
-                        id={headerMessageId ?? defaultHeaderMessageId}
-                    />
+                    {intl.formatMessage({
+                        id: headerMessageId ?? defaultHeaderMessageId,
+                    })}
                 </AlertTitle>
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
