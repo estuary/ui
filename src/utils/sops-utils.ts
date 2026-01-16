@@ -24,9 +24,8 @@ export const copyEncryptedEndpointConfig = (
             encryptedSuffixIndex !== -1
                 ? key.slice(0, encryptedSuffixIndex)
                 : null;
-
-        // Check which key to use
         const keyToUse = truncatedKey ?? key;
+
         if (Array.isArray(value)) {
             // TODO (SOPS array) - if we add support for encrypted arrays then
             //  this is where it would go and maybe something like below:
@@ -46,8 +45,6 @@ export const copyEncryptedEndpointConfig = (
                 return item;
             });
         } else if (isPlainObject(value)) {
-            // Handle nested objects
-
             // Make sure the nested element is populated
             response[keyToUse] ??= {};
 
