@@ -4,13 +4,9 @@ import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import EndpointConfigHeader from 'src/components/shared/Entity/EndpointConfig/Header';
 import SectionContent from 'src/components/shared/Entity/EndpointConfig/SectionContent';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
-import HydrationError from 'src/components/shared/HydrationError';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import {
-    useEndpointConfig_hydrationErrorsExist,
-    useEndpointConfigStore_errorsExist,
-} from 'src/stores/EndpointConfig/hooks';
+import { useEndpointConfigStore_errorsExist } from 'src/stores/EndpointConfig/hooks';
 
 function EndpointConfig({
     hideBorder,
@@ -25,7 +21,6 @@ function EndpointConfig({
     const draftId = useEditorStore_id();
 
     // Endpoint Config Store
-    const hydrationErrorsExist = useEndpointConfig_hydrationErrorsExist();
     const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
 
     // Workflow related props
@@ -55,7 +50,6 @@ function EndpointConfig({
             hideBorder={hideBorder}
             header={<EndpointConfigHeader />}
         >
-            {hydrationErrorsExist ? <HydrationError /> : null}
             <SectionContent readOnly={readOnly} />
         </WrapperWithHeader>
     );
