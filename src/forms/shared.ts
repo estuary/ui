@@ -16,7 +16,7 @@ export const getDiscriminator = (schema: any) => {
 
         // TODO (JSONForms) - AJV does not support discriminator.mapping
         //  We might want to end up adding custom handling for this
-        //  however it seems we are fine for now (Q1 2026)
+        //  however it seems we are fine for now (as of 2026 Q1)
         // if (schema[discriminator].mapping) {...wire up this handling somehow?...}
     }
 
@@ -79,7 +79,7 @@ export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
     return indexOfFittingSchema;
 };
 
-// Currently (Q1 2026) just for when OAuth
+// Just for when OAuth (as of 2026 Q1)
 export const isInsideArray = (path: string): boolean => {
     if (!path || typeof path !== 'string') {
         return false;

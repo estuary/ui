@@ -96,6 +96,7 @@ describe('copyEncryptedEndpointConfig', () => {
         });
 
         // TODO (SOPS array) - we should probably add support for this to be safe
+        //  This is something SOPS supports but we are probably safe for now (as of Q1 2026)
         test(`encrypted arrays are IGNORED`, () => {
             inputSpec = {
                 ...BASE_MOCK,
