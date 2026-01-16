@@ -7,6 +7,9 @@ import { createJSONFormDefaults } from 'src/services/ajv';
 
 const sopsKey = 'sops';
 
+// This is mainly public so we can test easier. If you think
+//  you need to call this directly think about it A LOT and
+//  talk it through with the team first.
 export const copyEncryptedEndpointConfig = (
     encryptedEndpointConfig: { [key: string]: any },
     encryptedSuffix: string,
