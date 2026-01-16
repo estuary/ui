@@ -80,8 +80,8 @@ export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
 };
 
 // Currently (Q1 2026) just for when OAuth
-export const isInsideArray = (path: any) => {
-    if (!path) {
+export const isInsideArray = (path: string): boolean => {
+    if (!path || typeof path !== 'string') {
         return false;
     }
 
