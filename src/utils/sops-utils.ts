@@ -7,7 +7,7 @@ import { createJSONFormDefaults } from 'src/services/ajv';
 
 const sopsKey = 'sops';
 
-const copyEncryptedEndpointConfig = (
+export const copyEncryptedEndpointConfig = (
     encryptedEndpointConfig: { [key: string]: any },
     encryptedSuffix: string,
     overrideJsonFormDefaults?: boolean
@@ -25,11 +25,27 @@ const copyEncryptedEndpointConfig = (
                 ? key.slice(0, encryptedSuffixIndex)
                 : null;
 
-        if (isPlainObject(value)) {
-            // Handle nested objects
+        // Check which key to use
+        const keyToUse = truncatedKey ?? key;
+        if (Array.isArray(value)) {
+            // TODO (SOPS array) - if we add support for encrypted arrays then
+            //  this is where it would go
+            response[keyToUse] = value.map((item) => {
+                // Since we are inside of an array we only have to care about if this is an object
+                //  otherwise just return the values. This is because I do not think SOPs supports something
+                //  like `foo_sops: ["ENC[AES25...","ENC[AES25...","ENC[AES25..."]`
+                if (isPlainObject(item)) {
+                    return copyEncryptedEndpointConfig(
+                        item,
+                        encryptedSuffix,
+                        overrideJsonFormDefaults
+                    );
+                }
 
-            // Check which key to use
-            const keyToUse = truncatedKey ?? key;
+                return item;
+            });
+        } else if (isPlainObject(value)) {
+            // Handle nested objects
 
             // Make sure the nested element is populated
             response[keyToUse] ??= {};
@@ -37,7 +53,8 @@ const copyEncryptedEndpointConfig = (
             // start recursion so we can clone deeply
             response[keyToUse] = copyEncryptedEndpointConfig(
                 encryptedEndpointConfig[key],
-                encryptedSuffix
+                encryptedSuffix,
+                overrideJsonFormDefaults
             );
         } else if (overrideJsonFormDefaults && truncatedKey) {
             // handle populating encrypted keys/props
