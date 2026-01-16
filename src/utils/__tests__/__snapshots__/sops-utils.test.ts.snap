@@ -13,11 +13,9 @@ exports[`copyEncryptedEndpointConfig > when nothing is encrypted > should return
   "nestedVals": {
     "nested1": {
       "nested2": {
-        "nested3": {
-          "booleanVals": true,
-          "numericalVals": 1,
-          "stringVals": "foo",
-        },
+        "booleanVals": true,
+        "numericalVals": 1,
+        "stringVals": "foo",
       },
     },
   },
@@ -44,11 +42,9 @@ exports[`copyEncryptedEndpointConfig > when values are encrypted - they should b
   "nestedVals": {
     "nested1": {
       "nested2": {
-        "nested3": {
-          "booleanVals": true,
-          "numericalVals": 1,
-          "stringVals": "foo",
-        },
+        "booleanVals": true,
+        "numericalVals": 1,
+        "stringVals": "foo",
       },
     },
   },
@@ -75,11 +71,9 @@ exports[`copyEncryptedEndpointConfig > when values are encrypted - they should b
   "nestedVals": {
     "nested1": {
       "nested2": {
-        "nested3": {
-          "booleanVals": true,
-          "numericalVals": 1,
-          "stringVals": "foo",
-        },
+        "booleanVals": true,
+        "numericalVals": 1,
+        "stringVals": "foo",
       },
     },
   },
@@ -118,11 +112,9 @@ exports[`copyEncryptedEndpointConfig > when values are encrypted - they should b
   "nestedVals": {
     "nested1": {
       "nested2": {
-        "nested3": {
-          "booleanVals": true,
-          "numericalVals": 1,
-          "stringVals": "foo",
-        },
+        "booleanVals": true,
+        "numericalVals": 1,
+        "stringVals": "foo",
       },
     },
   },
@@ -144,11 +136,9 @@ exports[`copyEncryptedEndpointConfig > when values are encrypted - they should b
   "nestedVals": {
     "nested1": {
       "nested2": {
-        "nested3": {
-          "booleanVals": true,
-          "numericalVals": 1,
-          "stringVals": "foo",
-        },
+        "booleanVals": true,
+        "numericalVals": 1,
+        "stringVals": "foo",
       },
     },
   },

@@ -2,31 +2,31 @@ import type { Schema } from 'src/types';
 
 import { copyEncryptedEndpointConfig } from 'src/utils/sops-utils';
 
-const ROOT_MOCKS = {
-    stringVals: 'foo',
-    numericalVals: 1,
-    booleanVals: true,
-};
+describe('copyEncryptedEndpointConfig', () => {
+    const sopsSuffix = '_sops';
 
-const NESTED_MOCKS = {
-    listVals: [1, 'two', { three: 3 }],
-    nestedVals: {
-        nested1: {
-            nested2: {
-                nested3: {
+    const ROOT_MOCKS = {
+        stringVals: 'foo',
+        numericalVals: 1,
+        booleanVals: true,
+    };
+
+    const NESTED_MOCKS = {
+        listVals: [1, 'two', { three: 3 }],
+        nestedVals: {
+            nested1: {
+                nested2: {
                     ...ROOT_MOCKS,
                 },
             },
         },
-    },
-};
+    };
 
-const BASE_MOCK = {
-    ...ROOT_MOCKS,
-    ...NESTED_MOCKS,
-};
+    const BASE_MOCK = {
+        ...ROOT_MOCKS,
+        ...NESTED_MOCKS,
+    };
 
-describe('copyEncryptedEndpointConfig', () => {
     let inputSpec: Schema = {};
 
     beforeEach(() => {
@@ -34,12 +34,11 @@ describe('copyEncryptedEndpointConfig', () => {
     });
 
     describe('when nothing is encrypted', () => {
-        beforeEach(() => {
-            inputSpec = { ...BASE_MOCK };
-        });
         test('should return exact copy', () => {
+            inputSpec = { ...BASE_MOCK };
+
             expect(
-                copyEncryptedEndpointConfig(inputSpec, 'sops', false)
+                copyEncryptedEndpointConfig(inputSpec, sopsSuffix, false)
             ).toMatchSnapshot();
         });
     });
