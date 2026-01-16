@@ -29,7 +29,8 @@ export const copyEncryptedEndpointConfig = (
         const keyToUse = truncatedKey ?? key;
         if (Array.isArray(value)) {
             // TODO (SOPS array) - if we add support for encrypted arrays then
-            //  this is where it would go
+            //  this is where it would go and maybe something like below:
+            // if truncatedKey response[keyToUse] = value.map(() => null) else
             response[keyToUse] = value.map((item) => {
                 // Since we are inside of an array we only have to care about if this is an object
                 //  otherwise just return the values. This is because I do not think SOPs supports something
