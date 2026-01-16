@@ -34,9 +34,6 @@ export const copyEncryptedEndpointConfig = (
             //  this is where it would go and maybe something like below:
             // if truncatedKey response[keyToUse] = value.map(() => null) else
             response[keyToUse] = value.map((item) => {
-                // Since we are inside of an array we only have to care about if this is an object
-                //  otherwise just return the values. This is because I do not think SOPs supports something
-                //  like `foo_sops: ["ENC[AES25...","ENC[AES25...","ENC[AES25..."]`
                 if (isPlainObject(item)) {
                     return copyEncryptedEndpointConfig(
                         item,
