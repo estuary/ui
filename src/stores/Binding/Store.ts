@@ -1098,13 +1098,13 @@ const getInitialState = (
     setResourceSchema: async (val) => {
         const resolved = await getDereffedSchema(val);
 
+        if (!resolved) {
+            get().setHydrationErrorsExist(true);
+            return;
+        }
+
         set(
             produce((state: BindingState) => {
-                if (!resolved) {
-                    state.setHydrationErrorsExist(true);
-                    return;
-                }
-
                 state.resourceSchema = resolved;
 
                 // TODO (web flow wasm - source capture - possible perf improvement)
@@ -1118,7 +1118,7 @@ const getInitialState = (
                 });
 
                 if (!resourceConfigPointers) {
-                    state.setHydrationErrorsExist(true);
+                    state.hydrationErrorsExist = true;
                     return;
                 }
 
