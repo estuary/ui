@@ -1,0 +1,158 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`copyEncryptedEndpointConfig > when nothing is encrypted > should return exact copy 1`] = `
+{
+  "booleanVals": true,
+  "listVals": [
+    1,
+    "two",
+    {
+      "three": 3,
+    },
+  ],
+  "nestedVals": {
+    "nested1": {
+      "nested2": {
+        "nested3": {
+          "booleanVals": true,
+          "numericalVals": 1,
+          "stringVals": "foo",
+        },
+      },
+    },
+  },
+  "numericalVals": 1,
+  "stringVals": "foo",
+}
+`;
+
+exports[`copyEncryptedEndpointConfig > when values are encrypted - they should be removed > encrypted arrays are IGNORED 1`] = `
+{
+  "booleanVals": true,
+  "foo": [
+    "whatever",
+    "whatever",
+    "whatever",
+  ],
+  "listVals": [
+    1,
+    "two",
+    {
+      "three": 3,
+    },
+  ],
+  "nestedVals": {
+    "nested1": {
+      "nested2": {
+        "nested3": {
+          "booleanVals": true,
+          "numericalVals": 1,
+          "stringVals": "foo",
+        },
+      },
+    },
+  },
+  "numericalVals": 1,
+  "stringVals": "foo",
+}
+`;
+
+exports[`copyEncryptedEndpointConfig > when values are encrypted - they should be removed > from encrypted keys in objects 1`] = `
+{
+  "booleanVals": true,
+  "foo": {
+    "nested1": {
+      "nested2": {},
+    },
+  },
+  "listVals": [
+    1,
+    "two",
+    {
+      "three": 3,
+    },
+  ],
+  "nestedVals": {
+    "nested1": {
+      "nested2": {
+        "nested3": {
+          "booleanVals": true,
+          "numericalVals": 1,
+          "stringVals": "foo",
+        },
+      },
+    },
+  },
+  "numericalVals": 1,
+  "stringVals": "foo",
+}
+`;
+
+exports[`copyEncryptedEndpointConfig > when values are encrypted - they should be removed > from encrypted keys in objects in arrays 1`] = `
+{
+  "booleanVals": true,
+  "foo": [
+    {
+      "booleanVals": true,
+      "numericalVals": 1,
+      "stringVals": "foo",
+    },
+    {
+      "booleanVals": true,
+      "numericalVals": 1,
+      "stringVals": "foo",
+    },
+    {
+      "booleanVals": true,
+      "numericalVals": 1,
+      "stringVals": "foo",
+    },
+  ],
+  "listVals": [
+    1,
+    "two",
+    {
+      "three": 3,
+    },
+  ],
+  "nestedVals": {
+    "nested1": {
+      "nested2": {
+        "nested3": {
+          "booleanVals": true,
+          "numericalVals": 1,
+          "stringVals": "foo",
+        },
+      },
+    },
+  },
+  "numericalVals": 1,
+  "stringVals": "foo",
+}
+`;
+
+exports[`copyEncryptedEndpointConfig > when values are encrypted - they should be removed > from encrypted keys in the root 1`] = `
+{
+  "booleanVals": true,
+  "listVals": [
+    1,
+    "two",
+    {
+      "three": 3,
+    },
+  ],
+  "nestedVals": {
+    "nested1": {
+      "nested2": {
+        "nested3": {
+          "booleanVals": true,
+          "numericalVals": 1,
+          "stringVals": "foo",
+        },
+      },
+    },
+  },
+  "numericalVals": 1,
+  "stringVals": "foo",
+}
+`;

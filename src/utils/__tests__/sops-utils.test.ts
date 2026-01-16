@@ -28,22 +28,19 @@ const BASE_MOCK = {
 
 describe('copyEncryptedEndpointConfig', () => {
     let inputSpec: Schema = {};
-    let outputSpec: Schema = {};
 
     beforeEach(() => {
         inputSpec = {};
-        outputSpec = {};
     });
 
     describe('when nothing is encrypted', () => {
         beforeEach(() => {
             inputSpec = { ...BASE_MOCK };
-            outputSpec = { ...BASE_MOCK };
         });
         test('should return exact copy', () => {
             expect(
                 copyEncryptedEndpointConfig(inputSpec, 'sops', false)
-            ).toEqual(outputSpec);
+            ).toMatchSnapshot();
         });
     });
 
@@ -53,13 +50,10 @@ describe('copyEncryptedEndpointConfig', () => {
                 ...BASE_MOCK,
                 foo_sops: 'whatever',
             };
-            outputSpec = {
-                ...BASE_MOCK,
-            };
 
             expect(
                 copyEncryptedEndpointConfig(inputSpec, '_sops', false)
-            ).toEqual(outputSpec);
+            ).toMatchSnapshot();
         });
 
         test(`from encrypted keys in objects`, () => {
@@ -73,18 +67,10 @@ describe('copyEncryptedEndpointConfig', () => {
                     },
                 },
             };
-            outputSpec = {
-                ...BASE_MOCK,
-                foo: {
-                    nested1: {
-                        nested2: {},
-                    },
-                },
-            };
 
             expect(
                 copyEncryptedEndpointConfig(inputSpec, '_sops', false)
-            ).toEqual(outputSpec);
+            ).toMatchSnapshot();
         });
 
         test(`from encrypted keys in objects in arrays`, () => {
@@ -105,14 +91,9 @@ describe('copyEncryptedEndpointConfig', () => {
                     },
                 ],
             };
-            outputSpec = {
-                ...BASE_MOCK,
-                foo: [{ ...ROOT_MOCKS }, { ...ROOT_MOCKS }, { ...ROOT_MOCKS }],
-            };
-
             expect(
                 copyEncryptedEndpointConfig(inputSpec, '_sops', false)
-            ).toEqual(outputSpec);
+            ).toMatchSnapshot();
         });
 
         // TODO (SOPS array) - we should probably add support for this to be safe
@@ -121,14 +102,10 @@ describe('copyEncryptedEndpointConfig', () => {
                 ...BASE_MOCK,
                 foo_sops: ['whatever', 'whatever', 'whatever'],
             };
-            outputSpec = {
-                ...BASE_MOCK,
-                foo: ['whatever', 'whatever', 'whatever'],
-            };
 
             expect(
                 copyEncryptedEndpointConfig(inputSpec, '_sops', false)
-            ).toEqual(outputSpec);
+            ).toMatchSnapshot();
         });
     });
 });
