@@ -18,9 +18,6 @@ interface Props {
     closeDialog: ButtonProps['onClick'];
 }
 
-const docsUrl =
-    'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';
-
 function StorageMappingTitle({ closeDialog }: Props) {
     const theme = useTheme();
 
@@ -33,16 +30,13 @@ function StorageMappingTitle({ closeDialog }: Props) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                pb: 0,
             }}
         >
             <Stack direction="row" spacing={1}>
                 <Typography variant="h6">
                     <FormattedMessage id="storageMappings.configureStorage.label" />
                 </Typography>
-
-                <ExternalLink link={docsUrl}>
-                    <FormattedMessage id="terms.documentation" />
-                </ExternalLink>
             </Stack>
 
             <IconButton disabled={saving} onClick={closeDialog}>

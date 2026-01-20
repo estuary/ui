@@ -161,7 +161,7 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.message': `Create a Storage Mapping to govern where your data is stored. The primary storage mapping is where new data is written to, both primary and other storage mappings are used to read existing data from.`,
 
     'storageMappings.configureStorage.label': `Configure Storage`,
-    'storageMappings.dialog.generate.description': `Configure a new storage mapping for your collection data.`,
+    'storageMappings.dialog.generate.description': `Configure a new collection storage for your data.`,
     'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage location.`,
     'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,
     'storageMappings.dialog.generate.providerOption.CUSTOM': `An S3-compatible Endpoint`,

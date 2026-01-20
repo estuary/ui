@@ -1,4 +1,9 @@
-import type { FieldValues, Path, UseFormRegister } from 'react-hook-form';
+import type {
+    FieldValues,
+    Path,
+    RegisterOptions,
+    UseFormRegister,
+} from 'react-hook-form';
 
 import { FormControl, FormLabel, NativeSelect } from '@mui/material';
 
@@ -14,6 +19,8 @@ interface SelectFieldProps<T extends FieldValues> {
     options: Option[];
     disabled?: boolean;
     error?: boolean;
+    required?: boolean;
+    rules?: RegisterOptions<T, Path<T>>;
 }
 
 export function SelectField<T extends FieldValues>({
@@ -23,11 +30,19 @@ export function SelectField<T extends FieldValues>({
     options,
     disabled = false,
     error = false,
+    required = false,
+    rules,
 }: SelectFieldProps<T>) {
     return (
-        <FormControl fullWidth size="small" error={error} disabled={disabled}>
+        <FormControl
+            fullWidth
+            size="small"
+            error={error}
+            disabled={disabled}
+            required={required}
+        >
             <NativeSelect
-                {...register(name)}
+                {...register(name, rules)}
                 sx={{
                     // px: 1,
                     py: 0.5,
