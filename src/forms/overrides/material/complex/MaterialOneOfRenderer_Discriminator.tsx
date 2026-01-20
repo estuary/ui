@@ -244,7 +244,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
             logRocketEvent('JsonForms', {
                 renderer,
                 defaultingDiscriminatorProperty: true,
-                defaultVal,
+                defaultDiscriminator: defaultVal?.[discriminatorProperty],
             });
 
             defaultDiscriminator.current = false;
