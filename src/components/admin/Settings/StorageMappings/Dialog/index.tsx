@@ -2,10 +2,12 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { Dialog } from '@mui/material';
 
-// import StorageMappingActions from 'src/components/admin/Settings/StorageMappings/Dialog/Actions';
+import { FormProvider, useForm } from 'react-hook-form';
+
+import StorageMappingActions from 'src/components/admin/Settings/StorageMappings/Dialog/Actions';
 import StorageMappingContent from 'src/components/admin/Settings/StorageMappings/Dialog/Content';
+import { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import StorageMappingTitle from 'src/components/admin/Settings/StorageMappings/Dialog/Title';
-import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 
 interface Props {
     open: boolean;
@@ -15,23 +17,40 @@ interface Props {
 const TITLE_ID = 'configure-storage-dialog-title';
 
 function ConfigureStorageDialog({ open, setOpen }: Props) {
-    const resetState = useStorageMappingStore((state) => state.resetState);
+    const methods = useForm<StorageMappingFormData>({
+        mode: 'onBlur',
+        defaultValues: {
+            catalog_prefix: '',
+            provider: '',
+            region: '',
+            bucket: '',
+            storage_prefix: '',
+            data_plane: '',
+            select_additional: false,
+        },
+    });
 
-    const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-
+    const closeDialog = () => {
         setOpen(false);
-        resetState();
+        methods.reset();
+    };
+
+    const onSubmit = (data: StorageMappingFormData) => {
+        console.log('save', data);
     };
 
     return (
-        <Dialog open={open} maxWidth="sm" fullWidth aria-labelledby={TITLE_ID}>
-            <StorageMappingTitle closeDialog={closeDialog} />
+        <FormProvider {...methods}>
+            <Dialog open={open} maxWidth="sm" fullWidth aria-labelledby={TITLE_ID}>
+                <StorageMappingTitle closeDialog={closeDialog} />
 
-            <StorageMappingContent />
-            {/* commented out to prevent spamming network errors in the console during development */}
-            {/* <StorageMappingActions closeDialog={closeDialog} /> */}
-        </Dialog>
+                <StorageMappingContent />
+                <StorageMappingActions
+                    onClose={closeDialog}
+                    onSave={methods.handleSubmit(onSubmit)}
+                />
+            </Dialog>
+        </FormProvider>
     );
 }
 
