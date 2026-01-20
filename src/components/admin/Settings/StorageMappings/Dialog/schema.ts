@@ -10,3 +10,8 @@ export interface StorageMappingFormData {
     select_additional: boolean;
     use_same_region: boolean;
 }
+
+export interface ConnectionTestResult {
+    status: 'idle' | 'testing' | 'success' | 'error';
+    errorMessage?: string;
+}

@@ -18,6 +18,7 @@ export function WizardDialog({
     steps,
     onComplete,
     validateStep,
+    canProceed: canProceedFn,
     title,
     titleId = 'wizard-dialog-title',
     maxWidth = 'sm',
@@ -93,6 +94,7 @@ export function WizardDialog({
             goToPrevious,
             goToStep,
             isNavigating,
+            canProceedFn,
         }),
         [
             currentStep,
@@ -104,6 +106,7 @@ export function WizardDialog({
             goToPrevious,
             goToStep,
             isNavigating,
+            canProceedFn,
         ]
     );
 
@@ -111,6 +114,10 @@ export function WizardDialog({
         onClose();
         // Step reset is handled by TransitionProps.onExited
     }, [onClose]);
+
+    // Use step-specific title if defined, otherwise fall back to default title
+    const currentStepConfig = steps[currentStep];
+    const displayTitle = currentStepConfig?.title ?? title;
 
     return (
         <WizardContext.Provider value={contextValue}>
@@ -122,7 +129,7 @@ export function WizardDialog({
                 TransitionProps={{ onExited: handleExited }}
             >
                 <DialogTitleWithClose id={titleId} onClose={handleClose}>
-                    {title}
+                    {displayTitle}
                 </DialogTitleWithClose>
 
                 <WizardContent />

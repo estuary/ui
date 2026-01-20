@@ -97,14 +97,14 @@ const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
 const PROVIDER_OPTIONS = Object.values(CloudProviderCodes).map((code) => ({
     value: code,
     label:
-        code === CloudProviderCodes.S3 ? 'Amazon S3' : 'Google Cloud Storage',
+        code === CloudProviderCodes.AWS ? 'Amazon S3' : 'Google Cloud Storage',
 }));
 
 const getRegionOptions = (provider: CloudProviderCodes | '') => {
     const regions =
-        provider === CloudProviderCodes.S3
+        provider === CloudProviderCodes.AWS
             ? AWS_REGIONS
-            : provider === CloudProviderCodes.GCS
+            : provider === CloudProviderCodes.GCP
               ? GCP_REGIONS
               : [];
 
@@ -491,7 +491,11 @@ export function StorageMappingForm() {
                                 <Controller
                                     name="provider"
                                     control={control}
-                                    rules={{ required: !useSameRegion && 'Provider is required' }}
+                                    rules={{
+                                        required:
+                                            !useSameRegion &&
+                                            'Provider is required',
+                                    }}
                                     render={({ field }) => (
                                         <FormControl
                                             fullWidth
@@ -524,7 +528,11 @@ export function StorageMappingForm() {
                                 <Controller
                                     name="region"
                                     control={control}
-                                    rules={{ required: !useSameRegion && 'Region is required' }}
+                                    rules={{
+                                        required:
+                                            !useSameRegion &&
+                                            'Region is required',
+                                    }}
                                     render={({ field }) => (
                                         <FormControl
                                             fullWidth
@@ -587,7 +595,10 @@ export function StorageMappingForm() {
                                 <Checkbox
                                     checked={useSameRegion}
                                     onChange={(e) =>
-                                        setValue('use_same_region', e.target.checked)
+                                        setValue(
+                                            'use_same_region',
+                                            e.target.checked
+                                        )
                                     }
                                     size="small"
                                 />
