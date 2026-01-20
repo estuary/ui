@@ -61,7 +61,6 @@ import { JsonFormsDispatch } from '@jsonforms/react';
 
 import isEmpty from 'lodash/isEmpty';
 
-import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import CombinatorProperties from 'src/forms/overrides/material/complex/CombinatorProperties';
 import { INJECTED } from 'src/forms/renderers/OAuth/shared';
 import {
@@ -131,8 +130,6 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     enabled,
     required,
 }: CombinatorRendererProps) => {
-    const isEdit = useEntityWorkflow_Editing();
-
     const defaultDiscriminator = useRef(true);
     const [open, setOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(
@@ -166,7 +163,6 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 //      This is not supported out of the box https://jsonforms.discourse.group/t/use-default-uischema-and-only-apply-rule-to-one-field/1742
                 //  So we have to look at the pathSegments and filter our the one that matches the discriminator
                 //      This should be safe according to JSONForms https://jsonforms.discourse.group/t/hiding-a-specific-path-when-rendering-a-complex-oneof/2795
-
                 const pathSegments = el?.scope?.split('/');
                 if (pathSegments && pathSegments.length > 0) {
                     // Get the last segment as that should match property names
@@ -235,11 +231,11 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     //  be defaulted properly unless it is rendered. Since we are hiding the
     //  discriminator now we need to make sure it is set
     if (defaultDiscriminator.current) {
-        if (
-            !isEdit &&
-            required &&
-            !hasOwnProperty(data, discriminatorProperty)
-        ) {
+        // We should set this for both edit and create. This is mainly to support
+        //  the source-shopify-native connector as it can contain multiple discriminators
+        //  in the stores array. If we do not set this on edit then the user cannot add
+        //  new stores.
+        if (required && !hasOwnProperty(data, discriminatorProperty)) {
             const defaultVal = getDiscriminatorDefaultValue(
                 possibleSchemas?.[selectedIndex]?.properties,
                 discriminatorProperty
