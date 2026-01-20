@@ -1,20 +1,20 @@
 import type { Dispatch, SetStateAction } from 'react';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { Dialog } from '@mui/material';
+import { useMemo } from 'react';
 
 import { FormProvider, useForm } from 'react-hook-form';
+import { FormattedMessage } from 'react-intl';
 
-import StorageMappingActions from 'src/components/admin/Settings/StorageMappings/Dialog/Actions';
 import StorageMappingContent from 'src/components/admin/Settings/StorageMappings/Dialog/Content';
-import { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
-import StorageMappingTitle from 'src/components/admin/Settings/StorageMappings/Dialog/Title';
+import TestConnectionStep from 'src/components/admin/Settings/StorageMappings/Dialog/steps/TestConnectionStep';
+import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 
 interface Props {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
-
-const TITLE_ID = 'configure-storage-dialog-title';
 
 function ConfigureStorageDialog({ open, setOpen }: Props) {
     const methods = useForm<StorageMappingFormData>({
@@ -27,29 +27,64 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
             storage_prefix: '',
             data_plane: '',
             select_additional: false,
+            use_same_region: true,
         },
     });
+
+    const steps: WizardStep[] = useMemo(
+        () => [
+            {
+                id: 'configure',
+                label: (
+                    <FormattedMessage id="storageMappings.wizard.step.configure" />
+                ),
+                component: <StorageMappingContent />,
+            },
+            {
+                id: 'test',
+                label: (
+                    <FormattedMessage id="storageMappings.wizard.step.test" />
+                ),
+                component: <TestConnectionStep />,
+            },
+        ],
+        []
+    );
 
     const closeDialog = () => {
         setOpen(false);
         methods.reset();
     };
 
-    const onSubmit = (data: StorageMappingFormData) => {
-        console.log('save', data);
+    const validateStep = async (stepIndex: number): Promise<boolean> => {
+        console.log('Validating step', stepIndex);
+        if (stepIndex === 0) {
+            // Validate form on first step before proceeding
+            return methods.trigger();
+        }
+        return true;
+    };
+
+    const handleComplete = async () => {
+        const data = methods.getValues();
+        console.log('Wizard completed with data:', data);
+        // TODO: Submit storage mapping to API
+        closeDialog();
     };
 
     return (
         <FormProvider {...methods}>
-            <Dialog open={open} maxWidth="sm" fullWidth aria-labelledby={TITLE_ID}>
-                <StorageMappingTitle closeDialog={closeDialog} />
-
-                <StorageMappingContent />
-                <StorageMappingActions
-                    onClose={closeDialog}
-                    onSave={methods.handleSubmit(onSubmit)}
-                />
-            </Dialog>
+            <WizardDialog
+                open={open}
+                onClose={closeDialog}
+                steps={steps}
+                validateStep={validateStep}
+                onComplete={handleComplete}
+                title={
+                    <FormattedMessage id="storageMappings.configureStorage.label" />
+                }
+                titleId="configure-storage-dialog-title"
+            />
         </FormProvider>
     );
 }
