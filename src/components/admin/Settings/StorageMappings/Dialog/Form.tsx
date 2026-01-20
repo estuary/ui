@@ -112,13 +112,26 @@ const getRegionOptions = (provider: CloudProviderCodes | '') => {
 };
 
 export function StorageMappingForm() {
+    const {
+        control,
+        register,
+        watch,
+        setValue,
+        formState: { errors },
+    } = useFormContext<StorageMappingFormData>();
+
     const [dataPlaneOptions, setDataPlaneOptions] = useState<
         BaseDataPlaneQuery[]
     >([]);
-    const [includePublic, setIncludePublic] = useState<boolean | null>(null);
     const [additionalDataPlanes, setAdditionalDataPlanes] = useState<
         { value: string; label: string }[]
     >([]);
+    const selectedDataPlaneId = watch('data_plane');
+    const provider = watch('provider');
+    const selectAdditional = watch('select_additional');
+    const useSameRegion = watch('use_same_region');
+    const allowPublic = watch('allow_public');
+    const regionOptions = useMemo(() => getRegionOptions(provider), [provider]);
 
     useEffect(() => {
         // Use mock data for development
@@ -132,31 +145,15 @@ export function StorageMappingForm() {
         // });
     }, []);
 
-    // Set includePublic default based on whether private data planes are available
+    // Auto-enable "allow public" if there are no private data planes
     useEffect(() => {
-        if (includePublic === null && dataPlaneOptions.length > 0) {
-            const hasPrivate = dataPlaneOptions.some(
-                (option) =>
-                    getDataPlaneScope(option.data_plane_name) === 'private'
-            );
-            // Default to not including public if private data planes are available
-            setIncludePublic(!hasPrivate);
+        const hasPrivate = dataPlaneOptions.some(
+            (option) => getDataPlaneScope(option.data_plane_name) === 'private'
+        );
+        if (dataPlaneOptions.length > 0 && !hasPrivate) {
+            setValue('allow_public', true);
         }
-    }, [dataPlaneOptions, includePublic]);
-
-    const {
-        control,
-        register,
-        watch,
-        setValue,
-        formState: { errors },
-    } = useFormContext<StorageMappingFormData>();
-
-    const selectedDataPlaneId = watch('data_plane');
-    const provider = watch('provider');
-    const selectAdditional = watch('select_additional');
-    const useSameRegion = watch('use_same_region');
-    const regionOptions = useMemo(() => getRegionOptions(provider), [provider]);
+    }, [dataPlaneOptions, setValue]);
 
     // Remove the default data plane from additional data planes when it changes
     useEffect(() => {
@@ -167,9 +164,9 @@ export function StorageMappingForm() {
         }
     }, [selectedDataPlaneId]);
 
-    // Remove public data planes from additional data planes when includePublic is unchecked
+    // Remove public data planes from additional data planes when allowPublic is unchecked
     useEffect(() => {
-        if (!includePublic) {
+        if (!allowPublic) {
             setAdditionalDataPlanes((prev) =>
                 prev.filter((dp) => {
                     const dataPlane = dataPlaneOptions.find(
@@ -183,7 +180,7 @@ export function StorageMappingForm() {
                 })
             );
         }
-    }, [includePublic, dataPlaneOptions]);
+    }, [allowPublic, dataPlaneOptions]);
 
     const selectedDataPlane = useMemo(() => {
         if (!selectedDataPlaneId) return null;
@@ -217,7 +214,7 @@ export function StorageMappingForm() {
                     if (!hasPrivateDataPlanes) {
                         return true;
                     }
-                    return scope === 'private' || includePublic;
+                    return scope === 'private' || allowPublic;
                 })
                 .map((option) => {
                     const scope = getDataPlaneScope(option.data_plane_name);
@@ -231,7 +228,7 @@ export function StorageMappingForm() {
                     };
                 })
                 .sort((a, b) => a.label.localeCompare(b.label)),
-        [dataPlaneOptions, hasPrivateDataPlanes, includePublic]
+        [dataPlaneOptions, hasPrivateDataPlanes, allowPublic]
     );
 
     return (
@@ -416,9 +413,12 @@ export function StorageMappingForm() {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={includePublic ?? false}
+                                    checked={allowPublic}
                                     onChange={(e) =>
-                                        setIncludePublic(e.target.checked)
+                                        setValue(
+                                            'allow_public',
+                                            e.target.checked
+                                        )
                                     }
                                     disabled={!hasPrivateDataPlanes}
                                     size="small"
