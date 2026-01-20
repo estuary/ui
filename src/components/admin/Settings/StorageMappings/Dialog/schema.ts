@@ -1,4 +1,4 @@
-import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
+import type { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
 
 export interface StorageMappingFormData {
     catalog_prefix: string;
@@ -8,4 +8,5 @@ export interface StorageMappingFormData {
     storage_prefix: string;
     data_plane: string;
     select_additional: boolean;
+    use_same_region: boolean;
 }

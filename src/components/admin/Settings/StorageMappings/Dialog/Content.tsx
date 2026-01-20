@@ -1,4 +1,4 @@
-import { DialogContent, Link, Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 
 import { StorageMappingForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
@@ -8,7 +8,7 @@ const docsUrl =
 
 function StorageMappingContent() {
     return (
-        <DialogContent>
+        <>
             <Typography sx={{ mb: 4 }}>
                 Configure a new storage mapping for your collection data. For
                 more information and access requirements, see the{' '}
@@ -21,7 +21,7 @@ function StorageMappingContent() {
             <ErrorBoundryWrapper>
                 <StorageMappingForm />
             </ErrorBoundryWrapper>
-        </DialogContent>
+        </>
     );
 }
 

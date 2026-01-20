@@ -115,8 +115,7 @@ export function StorageMappingForm() {
     const [dataPlaneOptions, setDataPlaneOptions] = useState<
         BaseDataPlaneQuery[]
     >([]);
-    const [includePublic, setIncludePublic] = useState(true);
-    const [useSameRegion, setUseSameRegion] = useState(true);
+    const [includePublic, setIncludePublic] = useState<boolean | null>(null);
     const [additionalDataPlanes, setAdditionalDataPlanes] = useState<
         { value: string; label: string }[]
     >([]);
@@ -133,6 +132,18 @@ export function StorageMappingForm() {
         // });
     }, []);
 
+    // Set includePublic default based on whether private data planes are available
+    useEffect(() => {
+        if (includePublic === null && dataPlaneOptions.length > 0) {
+            const hasPrivate = dataPlaneOptions.some(
+                (option) =>
+                    getDataPlaneScope(option.data_plane_name) === 'private'
+            );
+            // Default to not including public if private data planes are available
+            setIncludePublic(!hasPrivate);
+        }
+    }, [dataPlaneOptions, includePublic]);
+
     const {
         control,
         register,
@@ -144,6 +155,7 @@ export function StorageMappingForm() {
     const selectedDataPlaneId = watch('data_plane');
     const provider = watch('provider');
     const selectAdditional = watch('select_additional');
+    const useSameRegion = watch('use_same_region');
     const regionOptions = useMemo(() => getRegionOptions(provider), [provider]);
 
     // Remove the default data plane from additional data planes when it changes
@@ -404,7 +416,7 @@ export function StorageMappingForm() {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={includePublic}
+                                    checked={includePublic ?? false}
                                     onChange={(e) =>
                                         setIncludePublic(e.target.checked)
                                     }
@@ -479,7 +491,7 @@ export function StorageMappingForm() {
                                 <Controller
                                     name="provider"
                                     control={control}
-                                    rules={{ required: 'Provider is required' }}
+                                    rules={{ required: !useSameRegion && 'Provider is required' }}
                                     render={({ field }) => (
                                         <FormControl
                                             fullWidth
@@ -512,7 +524,7 @@ export function StorageMappingForm() {
                                 <Controller
                                     name="region"
                                     control={control}
-                                    rules={{ required: 'Region is required' }}
+                                    rules={{ required: !useSameRegion && 'Region is required' }}
                                     render={({ field }) => (
                                         <FormControl
                                             fullWidth
@@ -575,7 +587,7 @@ export function StorageMappingForm() {
                                 <Checkbox
                                     checked={useSameRegion}
                                     onChange={(e) =>
-                                        setUseSameRegion(e.target.checked)
+                                        setValue('use_same_region', e.target.checked)
                                     }
                                     size="small"
                                 />
