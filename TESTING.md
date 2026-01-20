@@ -90,3 +90,13 @@ You will want to do all the same testing as you do on Create - but just in the e
 1.
 
 #### Materialization
+
+### Special Cases
+
+There are some "types" of connectors that we a little bit different need to be kept in mind.
+
+#### Pydantic
+
+`Pydantic` is a Python tool that is used by the Connectors team. It tends to output schemas that are technically correct but written in a manner that seems a bit "off" from how a person might generate them. The main thing that has hurt us before is how `Pydantic` handles `oneOf`, `anyOf`, and `discriminator`.
+
+These can be [found here](https://github.com/search?q=repo%3Aestuary%2Fconnectors+path%3Asource-*%2Fpyproject.toml+%22pydantic+%3D%22&type=code) and should always be included in your testing.
