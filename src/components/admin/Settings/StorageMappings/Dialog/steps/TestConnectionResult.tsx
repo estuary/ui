@@ -103,21 +103,72 @@ interface ConnectionInstructionsProps {
     provider?: string;
     bucket?: string;
     iamArn?: string;
+    gcpServiceAccountEmail?: string;
 }
 
 function ConnectionInstructions({
     provider,
     bucket,
     iamArn,
+    gcpServiceAccountEmail,
 }: ConnectionInstructionsProps) {
     const theme = useTheme();
 
     if (provider === 'gcp' || provider === CloudProviderCodes.GCP) {
+        const serviceAccount =
+            gcpServiceAccountEmail ||
+            'flow@estuary-data.iam.gserviceaccount.com';
+
         return (
-            <Typography>
-                To grant Estuary access to your Google Cloud Storage bucket,
-                please follow these steps:
-            </Typography>
+            <Stack spacing={2}>
+                <Typography variant="subtitle2" fontWeight={700}>
+                    Step 1: Copy the Service Account Email
+                </Typography>
+                <Typography variant="body2">
+                    Grant this service account access to your GCS bucket:
+                </Typography>
+                <Box
+                    component="pre"
+                    sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        bgcolor: codeBackground[theme.palette.mode],
+                        overflow: 'auto',
+                        fontSize: 13,
+                        fontFamily: 'monospace',
+                    }}
+                >
+                    {serviceAccount}
+                </Box>
+
+                <Typography variant="subtitle2" fontWeight={700}>
+                    Step 2: Grant bucket permissions
+                </Typography>
+                <Typography variant="body2">
+                    Using the Google Cloud Console or gsutil, grant the service
+                    account the following roles on your bucket{' '}
+                    <TechnicalEmphasis>{bucket || 'your-bucket'}</TechnicalEmphasis>:
+                </Typography>
+                <Box
+                    component="pre"
+                    sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        bgcolor: codeBackground[theme.palette.mode],
+                        overflow: 'auto',
+                        fontSize: 13,
+                        fontFamily: 'monospace',
+                    }}
+                >
+                    {`gsutil iam ch serviceAccount:${serviceAccount}:objectAdmin gs://${bucket || 'your-bucket'}`}
+                </Box>
+
+                <Typography variant="body2">
+                    Or in the Cloud Console, navigate to your bucket, click
+                    &quot;Permissions&quot;, then &quot;Grant Access&quot;, and add the service
+                    account with the &quot;Storage Object Admin&quot; role.
+                </Typography>
+            </Stack>
         );
     }
     if (provider === 'aws' || provider === CloudProviderCodes.AWS) {
@@ -205,8 +256,8 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
     const formData = getValues();
     const isTesting = result.status === 'testing' || result.status === 'idle';
 
-    // Derive provider, region, and IAM ARN from data plane
-    const { provider, displayProvider, displayRegion, iamArn } = useMemo(() => {
+    // Derive provider, region, and service account info from data plane
+    const { provider, displayProvider, displayRegion, iamArn, gcpServiceAccountEmail } = useMemo(() => {
         const dataPlane = MOCK_DATA_PLANES.find(
             (dp) => dp.id === formData.data_plane
         );
@@ -222,6 +273,7 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
                 displayProvider: getProviderLabel(parsedName.provider),
                 displayRegion: parsedName.region || '—',
                 iamArn: dataPlane.aws_iam_user_arn ?? undefined,
+                gcpServiceAccountEmail: dataPlane.gcp_service_account_email ?? undefined,
             };
         }
         return {
@@ -229,6 +281,7 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
             displayProvider: getProviderLabel(formData.provider),
             displayRegion: formData.region || '—',
             iamArn: dataPlane?.aws_iam_user_arn ?? undefined,
+            gcpServiceAccountEmail: dataPlane?.gcp_service_account_email ?? undefined,
         };
     }, [
         formData.use_same_region,
@@ -292,6 +345,7 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
                 provider={provider}
                 bucket={formData.bucket}
                 iamArn={iamArn}
+                gcpServiceAccountEmail={gcpServiceAccountEmail}
             />
 
             <Box

@@ -37,6 +37,7 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
             data_plane: '',
             select_additional: false,
             use_same_region: true,
+            allow_public: false,
         },
     });
 

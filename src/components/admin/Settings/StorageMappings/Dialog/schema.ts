@@ -9,6 +9,7 @@ export interface StorageMappingFormData {
     data_plane: string;
     select_additional: boolean;
     use_same_region: boolean;
+    allow_public: boolean;
 }
 
 export interface ConnectionTestResult {
