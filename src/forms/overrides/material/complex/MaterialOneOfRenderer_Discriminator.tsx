@@ -230,11 +230,11 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     //  They will return an `enum` with a single value and that will not
     //  be defaulted properly unless it is rendered. Since we are hiding the
     //  discriminator now we need to make sure it is set
+    // We should set this for both edit and create. This is mainly to support
+    //  the source-shopify-native connector as it can contain multiple discriminators
+    //  in the stores array. If we do not set this on edit then the user cannot add
+    //  new stores.
     if (defaultDiscriminator.current) {
-        // We should set this for both edit and create. This is mainly to support
-        //  the source-shopify-native connector as it can contain multiple discriminators
-        //  in the stores array. If we do not set this on edit then the user cannot add
-        //  new stores.
         if (required && !hasOwnProperty(data, discriminatorProperty)) {
             const defaultVal = getDiscriminatorDefaultValue(
                 possibleSchemas?.[selectedIndex]?.properties,
