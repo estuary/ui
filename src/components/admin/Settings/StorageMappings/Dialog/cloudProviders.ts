@@ -1,6 +1,6 @@
 export enum CloudProviderCodes {
-    GCS = 'GCS',
-    S3 = 'S3',
+    GCP = 'gcp',
+    AWS = 'aws',
 }
 
 export const AWS_REGIONS: string[] = [

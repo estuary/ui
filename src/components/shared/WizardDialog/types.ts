@@ -7,6 +7,8 @@ export interface WizardStep {
     label: ReactNode;
     /** The component to render for this step */
     component: ReactNode;
+    /** Title for the dialog when on this step */
+    title?: ReactNode;
     /** Whether the back button should be shown (default: true for steps > 0) */
     canGoBack?: boolean;
     /** Custom label for the next/submit button */
@@ -34,6 +36,8 @@ export interface WizardContextValue {
     goToStep: (index: number) => void;
     /** Whether navigation is currently in progress */
     isNavigating: boolean;
+    /** Function to check if the next/save button should be enabled */
+    canProceedFn?: (stepIndex: number) => boolean;
 }
 
 export interface WizardDialogProps {
@@ -47,8 +51,10 @@ export interface WizardDialogProps {
     onComplete?: () => void | Promise<void>;
     /** Validation function called before navigating to next step. Return true to proceed, false to block. */
     validateStep?: (stepIndex: number) => boolean | Promise<boolean>;
-    /** Dialog title */
-    title: ReactNode;
+    /** Function to check if the next/save button should be enabled. Called on each render. */
+    canProceed?: (stepIndex: number) => boolean;
+    /** Default dialog title (used when step doesn't define its own title) */
+    title?: ReactNode;
     /** Accessible ID for the dialog title */
     titleId?: string;
     /** Max width of the dialog */
