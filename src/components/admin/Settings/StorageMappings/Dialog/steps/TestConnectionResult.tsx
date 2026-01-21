@@ -18,63 +18,14 @@ import {
 import { CheckCircle, Refresh, WarningTriangle } from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
 
-import { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
+import { MOCK_DATA_PLANES } from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
 import {
     getDataPlaneScope,
     parseDataPlaneName,
 } from 'src/utils/dataPlane-utils';
-
-// TODO: Import from shared location or pass as prop
-const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
-    {
-        id: '00000000-0000-0000-0000-000000000001',
-        data_plane_name: 'ops/dp/public/gcp-us-central1-prod',
-        reactor_address: 'https://us-central1.v1.estuary-data.dev',
-        cidr_blocks: null,
-        gcp_service_account_email: 'flow@estuary-data.iam.gserviceaccount.com',
-        aws_iam_user_arn: null,
-        data_plane_fqdn: 'us-central1.v1.estuary-data.dev',
-    },
-    {
-        id: '00000000-0000-0000-0000-000000000002',
-        data_plane_name: 'ops/dp/public/gcp-us-east1-prod',
-        reactor_address: 'https://us-east1.v1.estuary-data.dev',
-        cidr_blocks: null,
-        gcp_service_account_email: 'flow@estuary-data.iam.gserviceaccount.com',
-        aws_iam_user_arn: null,
-        data_plane_fqdn: 'us-east1.v1.estuary-data.dev',
-    },
-    {
-        id: '00000000-0000-0000-0000-000000000003',
-        data_plane_name: 'ops/dp/public/aws-us-east-1',
-        reactor_address: 'https://aws-us-east-1.v1.estuary-data.dev',
-        cidr_blocks: null,
-        gcp_service_account_email: null,
-        aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow',
-        data_plane_fqdn: 'aws-us-east-1.v1.estuary-data.dev',
-    },
-    {
-        id: '00000000-0000-0000-0000-000000000004',
-        data_plane_name: 'ops/dp/public/aws-eu-west-1',
-        reactor_address: 'https://aws-eu-west-1.v1.estuary-data.dev',
-        cidr_blocks: null,
-        gcp_service_account_email: null,
-        aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow',
-        data_plane_fqdn: 'aws-eu-west-1.v1.estuary-data.dev',
-    },
-    {
-        id: '00000000-0000-0000-0000-000000000005',
-        data_plane_name: 'ops/dp/private/acme-corp/gcp-us-central1-prod',
-        reactor_address: 'https://acme-prod.estuary-data.dev',
-        cidr_blocks: ['10.0.0.0/8', '172.16.0.0/12'],
-        gcp_service_account_email: 'flow@acme-corp.iam.gserviceaccount.com',
-        aws_iam_user_arn: null,
-        data_plane_fqdn: 'acme-prod.estuary-data.dev',
-    },
-];
 
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
@@ -100,10 +51,10 @@ const getProviderLabel = (provider: string): string => {
 };
 
 interface ConnectionInstructionsProps {
-    provider?: string;
-    bucket?: string;
-    iamArn?: string;
-    gcpServiceAccountEmail?: string;
+    provider: string;
+    bucket: string;
+    iamArn: string;
+    gcpServiceAccountEmail: string;
 }
 
 function ConnectionInstructions({
@@ -145,9 +96,20 @@ function ConnectionInstructions({
                     Step 2: Grant bucket permissions
                 </Typography>
                 <Typography variant="body2">
-                    Using the Google Cloud Console or gsutil, grant the service
-                    account the following roles on your bucket{' '}
-                    <TechnicalEmphasis>{bucket || 'your-bucket'}</TechnicalEmphasis>:
+                    Using the Google Cloud Console or{' '}
+                    <TechnicalEmphasis>gsutil</TechnicalEmphasis>, grant the
+                    service account the following roles on your bucket{' '}
+                    <TechnicalEmphasis
+                        enableBackground
+                        sx={{
+                            borderRadius: 2,
+                            px: 0.5,
+                            py: 0.2,
+                        }}
+                    >
+                        {bucket || 'your-bucket'}
+                    </TechnicalEmphasis>
+                    :
                 </Typography>
                 <Box
                     component="pre"
@@ -160,13 +122,14 @@ function ConnectionInstructions({
                         fontFamily: 'monospace',
                     }}
                 >
-                    {`gsutil iam ch serviceAccount:${serviceAccount}:objectAdmin gs://${bucket || 'your-bucket'}`}
+                    {`gsutil iam ch serviceAccount:${serviceAccount}:admin gs://${bucket || 'your-bucket'}`}
                 </Box>
 
                 <Typography variant="body2">
                     Or in the Cloud Console, navigate to your bucket, click
-                    &quot;Permissions&quot;, then &quot;Grant Access&quot;, and add the service
-                    account with the &quot;Storage Object Admin&quot; role.
+                    &quot;Permissions&quot;, then &quot;Grant Access&quot;, and
+                    add the service account with the &quot;Storage Admin&quot;
+                    role.
                 </Typography>
             </Stack>
         );
@@ -188,6 +151,7 @@ function ConnectionInstructions({
                             's3:PutObject',
                             's3:DeleteObject',
                             's3:ListBucket',
+                            's3:GetBucketPolicy',
                         ],
                         Resource: [
                             `arn:aws:s3:::${bucket || 'your-bucket'}`,
@@ -257,7 +221,13 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
     const isTesting = result.status === 'testing' || result.status === 'idle';
 
     // Derive provider, region, and service account info from data plane
-    const { provider, displayProvider, displayRegion, iamArn, gcpServiceAccountEmail } = useMemo(() => {
+    const {
+        provider,
+        displayProvider,
+        displayRegion,
+        iamArn,
+        gcpServiceAccountEmail,
+    } = useMemo(() => {
         const dataPlane = MOCK_DATA_PLANES.find(
             (dp) => dp.id === formData.data_plane
         );
@@ -273,7 +243,8 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
                 displayProvider: getProviderLabel(parsedName.provider),
                 displayRegion: parsedName.region || '—',
                 iamArn: dataPlane.aws_iam_user_arn ?? undefined,
-                gcpServiceAccountEmail: dataPlane.gcp_service_account_email ?? undefined,
+                gcpServiceAccountEmail:
+                    dataPlane.gcp_service_account_email ?? undefined,
             };
         }
         return {
@@ -281,7 +252,8 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
             displayProvider: getProviderLabel(formData.provider),
             displayRegion: formData.region || '—',
             iamArn: dataPlane?.aws_iam_user_arn ?? undefined,
-            gcpServiceAccountEmail: dataPlane?.gcp_service_account_email ?? undefined,
+            gcpServiceAccountEmail:
+                dataPlane?.gcp_service_account_email ?? undefined,
         };
     }, [
         formData.use_same_region,

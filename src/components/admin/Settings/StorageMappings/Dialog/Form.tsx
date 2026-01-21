@@ -35,7 +35,7 @@ import {
 } from 'src/utils/dataPlane-utils';
 
 // Example data planes for development
-const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
+export const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
     // Public data planes
     {
         id: '00000000-0000-0000-0000-000000000001',
@@ -43,7 +43,7 @@ const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
         reactor_address: 'https://us-central1.v1.estuary-data.dev',
         cidr_blocks: null,
         gcp_service_account_email: 'flow@estuary-data.iam.gserviceaccount.com',
-        aws_iam_user_arn: null,
+        aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow',
         data_plane_fqdn: 'us-central1.v1.estuary-data.dev',
     },
     {
@@ -52,7 +52,7 @@ const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
         reactor_address: 'https://us-east1.v1.estuary-data.dev',
         cidr_blocks: null,
         gcp_service_account_email: 'flow@estuary-data.iam.gserviceaccount.com',
-        aws_iam_user_arn: null,
+        aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow',
         data_plane_fqdn: 'us-east1.v1.estuary-data.dev',
     },
     {
@@ -60,7 +60,7 @@ const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
         data_plane_name: 'ops/dp/public/aws-us-east-1',
         reactor_address: 'https://aws-us-east-1.v1.estuary-data.dev',
         cidr_blocks: null,
-        gcp_service_account_email: null,
+        gcp_service_account_email: 'flow@estuary-data.iam.gserviceaccount.com',
         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow',
         data_plane_fqdn: 'aws-us-east-1.v1.estuary-data.dev',
     },
@@ -69,7 +69,7 @@ const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
         data_plane_name: 'ops/dp/public/aws-eu-west-1',
         reactor_address: 'https://aws-eu-west-1.v1.estuary-data.dev',
         cidr_blocks: null,
-        gcp_service_account_email: null,
+        gcp_service_account_email: 'flow@estuary-data.iam.gserviceaccount.com',
         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow',
         data_plane_fqdn: 'aws-eu-west-1.v1.estuary-data.dev',
     },
@@ -80,7 +80,7 @@ const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
         reactor_address: 'https://acme-prod.estuary-data.dev',
         cidr_blocks: ['10.0.0.0/8', '172.16.0.0/12'],
         gcp_service_account_email: 'flow@acme-corp.iam.gserviceaccount.com',
-        aws_iam_user_arn: null,
+        aws_iam_user_arn: 'arn:aws:iam::987654321098:user/acme-flow',
         data_plane_fqdn: 'acme-prod.estuary-data.dev',
     },
     // {
@@ -88,7 +88,7 @@ const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
     //     data_plane_name: 'ops/dp/private/acme-corp/aws-us-west-2-staging',
     //     reactor_address: 'https://acme-staging.estuary-data.dev',
     //     cidr_blocks: ['10.0.0.0/8'],
-    //     gcp_service_account_email: null,
+    //     gcp_service_account_email: 'flow@acme-staging.iam.gserviceaccount.com',
     //     aws_iam_user_arn: 'arn:aws:iam::987654321098:user/acme-flow',
     //     data_plane_fqdn: 'acme-staging.estuary-data.dev',
     // },
