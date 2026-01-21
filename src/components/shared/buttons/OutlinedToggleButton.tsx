@@ -12,7 +12,7 @@ const OutlinedToggleButton = styled(ToggleButton)(({
     selected,
     theme,
 }) => {
-    const colorKey = color ?? 'primary';
+    const colorKey = color === 'standard' || !color ? 'primary' : color;
 
     return {
         'padding': '3px 9px',

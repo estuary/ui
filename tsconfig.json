@@ -24,7 +24,6 @@
         },
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
-        "suppressImplicitAnyIndexErrors": true,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "isolatedModules": true,

@@ -13,10 +13,9 @@ export const useProjectionsForSkim = () => {
 
     return useMemo(() => {
         if (collection && projections?.[collection]) {
-            const response = {};
+            const response: Record<string, string> = {};
             Object.values(projections[collection]).forEach((metadata) => {
                 metadata.forEach((datum) => {
-                    response[datum.field] ??= {};
                     response[datum.field] = datum.location;
                 });
             });

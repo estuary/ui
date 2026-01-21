@@ -138,12 +138,13 @@ export const getFullSource = (
         response.fullSource = Object.entries(response.fullSource).reduce(
             (filtered, [key, val]) => {
                 if (val !== REMOVE_DURING_GENERATION) {
+                    // @ts-expect-error - Object.entries returns string keys, but these are valid FullSource keys
                     filtered[key] = val;
                 }
 
                 return filtered;
             },
-            {}
+            {} as typeof response.fullSource
         );
     }
 

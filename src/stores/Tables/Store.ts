@@ -326,8 +326,10 @@ export const getInitialState = (
                                 Object.entries(currentStat).forEach(
                                     ([key, value]) => {
                                         if (typeof value === 'number') {
+                                            // @ts-expect-error - Object.entries returns string keys, but these are valid stat keys
                                             currentStat[key] ||= 0;
-                                            currentStat[key] += datum[key];
+                                            // @ts-expect-error - same as above
+                                            currentStat[key] += datum[key] ?? 0;
                                         }
                                     }
                                 );
