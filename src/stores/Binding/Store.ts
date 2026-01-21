@@ -1118,7 +1118,6 @@ const getInitialState = (
                 });
 
                 if (!resourceConfigPointers) {
-                    state.hydrationErrorsExist = true;
                     return;
                 }
 
