@@ -31,6 +31,8 @@ export const DATE_TIME_RE = new RegExp(
 
 export const MAC_ADDR_RE = new RegExp(/^([0-9A-F]{2}:){7}([0-9A-F]{2})$/i);
 
+export const UNDERSCORE_RE = new RegExp(/_+/g);
+
 export const validateCatalogName = (
     value: string,
     allowBlank?: boolean,

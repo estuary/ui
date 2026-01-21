@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import {
     Autocomplete,
-    Chip,
     FormControl,
     FormHelperText,
     ListItem,
@@ -21,6 +20,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import UserAvatar from 'src/components/shared/UserAvatar';
 import usePrefixAdministrators from 'src/hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'src/hooks/useUserInformationByPrefix';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { hasLength } from 'src/utils/misc-utils';
 
 type Values = (Grant_UserExt | string)[];
@@ -228,7 +228,7 @@ function EmailSelector({
                                 : value.user_email;
 
                         return (
-                            <Chip
+                            <OutlinedChip
                                 {...tagProps}
                                 color={
                                     !simpleEmailRegEx.test(email)
@@ -238,6 +238,7 @@ function EmailSelector({
                                 key={`email-tag-${email}-${index}`}
                                 label={email}
                                 size="small"
+                                variant="outlined"
                             />
                         );
                     });
