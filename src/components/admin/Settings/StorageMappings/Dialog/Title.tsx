@@ -12,7 +12,6 @@ import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
-import ExternalLink from 'src/components/shared/ExternalLink';
 
 interface Props {
     closeDialog: ButtonProps['onClick'];

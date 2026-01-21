@@ -1,13 +1,14 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type {
     ConnectionTestResult,
+    ConnectionTestResults,
     StorageMappingFormData,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useMemo, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
+import { flushSync } from 'react-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FormattedMessage } from 'react-intl';
 
@@ -21,10 +22,10 @@ interface Props {
 }
 
 function ConfigureStorageDialog({ open, setOpen }: Props) {
-    const [testResult, setTestResult] = useState<ConnectionTestResult>({
-        status: 'idle',
-    });
-    const testPromiseRef = useRef<Promise<ConnectionTestResult> | null>(null);
+    const [testResults, setTestResults] = useState<ConnectionTestResults>({});
+    const testPromisesRef = useRef<Map<string, Promise<ConnectionTestResult>>>(
+        new Map()
+    );
 
     const methods = useForm<StorageMappingFormData>({
         mode: 'onBlur',
@@ -34,19 +35,21 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
             region: '',
             bucket: '',
             storage_prefix: '',
-            data_plane: '',
+            data_planes: [],
             select_additional: false,
             use_same_region: true,
             allow_public: false,
         },
     });
 
-    const runConnectionTest = async (): Promise<ConnectionTestResult> => {
+    const runConnectionTest = async (
+        _dataPlaneId: string
+    ): Promise<ConnectionTestResult> => {
         // TODO: Replace with actual connection test API call
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         // Simulate success (or failure based on some condition)
-        const success = Math.random() > 0.3; // 70% success rate for demo
+        const success = Math.random() > 0.5; // 50% success rate for demo
         if (success) {
             return { status: 'success' };
         } else {
@@ -58,27 +61,57 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         }
     };
 
-    const startConnectionTest = () => {
-        // Use flushSync to ensure the 'testing' state is applied immediately
-        // This prevents the save button from flashing enabled during transition
-        flushSync(() => {
-            setTestResult({ status: 'testing' });
+    const startConnectionTests = useCallback(() => {
+        const dataPlaneIds = methods.getValues('data_planes');
+
+        // Initialize all data planes to 'testing' state
+        const initialResults: ConnectionTestResults = {};
+        dataPlaneIds.forEach((id) => {
+            initialResults[id] = { status: 'testing' };
         });
 
-        const promise = runConnectionTest();
-        testPromiseRef.current = promise;
+        flushSync(() => {
+            setTestResults(initialResults);
+        });
+
+        // Clear old promises and start new tests
+        testPromisesRef.current.clear();
+
+        dataPlaneIds.forEach((dataPlaneId) => {
+            const promise = runConnectionTest(dataPlaneId);
+            testPromisesRef.current.set(dataPlaneId, promise);
+
+            promise.then((result) => {
+                // Only update if this is still the current test for this data plane
+                if (testPromisesRef.current.get(dataPlaneId) === promise) {
+                    setTestResults((prev) => ({
+                        ...prev,
+                        [dataPlaneId]: result,
+                    }));
+                }
+            });
+        });
+    }, [methods]);
+
+    const handleRetry = useCallback((dataPlaneId: string) => {
+        // Set this specific data plane to testing
+        setTestResults((prev) => ({
+            ...prev,
+            [dataPlaneId]: { status: 'testing' },
+        }));
+
+        const promise = runConnectionTest(dataPlaneId);
+        testPromisesRef.current.set(dataPlaneId, promise);
 
         promise.then((result) => {
-            // Only update if this is still the current test
-            if (testPromiseRef.current === promise) {
-                setTestResult(result);
+            if (testPromisesRef.current.get(dataPlaneId) === promise) {
+                setTestResults((prev) => ({
+                    ...prev,
+                    [dataPlaneId]: result,
+                }));
             }
         });
-    };
-
-    const handleRetry = () => {
-        startConnectionTest();
-    };
+    }, []);
 
     const steps: WizardStep[] = useMemo(
         () => [
@@ -105,21 +138,37 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 ),
                 component: (
                     <TestConnectionResult
-                        result={testResult}
+                        results={testResults}
                         onRetry={handleRetry}
                     />
                 ),
             },
         ],
-        [testResult]
+        [testResults, handleRetry]
     );
 
     const closeDialog = () => {
         setOpen(false);
         methods.reset();
-        setTestResult({ status: 'idle' });
-        testPromiseRef.current = null;
+        setTestResults({});
+        testPromisesRef.current.clear();
     };
+
+    // Check if all data planes have completed testing successfully
+    const allTestsPassed = useMemo(() => {
+        const dataPlaneIds = methods.getValues('data_planes');
+        if (dataPlaneIds.length === 0) return false;
+        return dataPlaneIds.every(
+            (id) => testResults[id]?.status === 'success'
+        );
+    }, [testResults, methods]);
+
+    // Check if any tests are currently running
+    const anyTestRunning = useMemo(() => {
+        return Object.values(testResults).some(
+            (result) => result.status === 'testing'
+        );
+    }, [testResults]);
 
     const validateStep = async (stepIndex: number): Promise<boolean> => {
         if (stepIndex === 0) {
@@ -129,24 +178,24 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 return false;
             }
 
-            // Start connection test (don't wait for it)
-            startConnectionTest();
+            // Start connection tests for all data planes
+            startConnectionTests();
 
             // Proceed to step 2 immediately to show progress
             return true;
         }
         if (stepIndex === 1) {
-            // Only allow save when connection test passed
-            return testResult.status === 'success';
+            // Only allow save when all connection tests passed
+            return allTestsPassed;
         }
         return true;
     };
 
     const canProceed = (stepIndex: number): boolean => {
-        // Disable button on step 1 until test passes
-        // Also disable on step 0 if test is in progress (during transition)
-        if (stepIndex === 1 || testResult.status === 'testing') {
-            return testResult.status === 'success';
+        // Disable button on step 1 until all tests pass
+        // Also disable on step 0 if any test is in progress (during transition)
+        if (stepIndex === 1 || anyTestRunning) {
+            return allTestsPassed;
         }
         return true;
     };

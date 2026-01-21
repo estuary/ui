@@ -1,11 +1,15 @@
 import type {
     ConnectionTestResult,
+    ConnectionTestResults,
     StorageMappingFormData,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Box,
     Button,
     CircularProgress,
@@ -15,14 +19,21 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { CheckCircle, Refresh, WarningTriangle } from 'iconoir-react';
+import {
+    CheckCircle,
+    NavArrowDown,
+    Refresh,
+    WarningTriangle,
+} from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
 
+import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
 import { MOCK_DATA_PLANES } from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
 import {
+    formatDataPlaneName,
     getDataPlaneScope,
     parseDataPlaneName,
 } from 'src/utils/dataPlane-utils';
@@ -36,8 +47,8 @@ const anchorMap: Record<string, string> = {
 };
 
 interface TestConnectionResultProps {
-    result: ConnectionTestResult;
-    onRetry: () => void;
+    results: ConnectionTestResults;
+    onRetry: (dataPlaneId: string) => void;
 }
 
 const getProviderLabel = (provider: string): string => {
@@ -49,6 +60,115 @@ const getProviderLabel = (provider: string): string => {
     }
     return provider || '—';
 };
+
+interface ConnectionStatusBadgeProps {
+    result: ConnectionTestResult;
+    compact?: boolean;
+}
+
+function ConnectionStatusBadge({
+    result,
+    compact = false,
+}: ConnectionStatusBadgeProps) {
+    const isTesting = result.status === 'testing' || result.status === 'idle';
+
+    if (isTesting) {
+        return (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <CircularProgress size={compact ? 16 : 20} color="inherit" />
+            </Box>
+        );
+    }
+
+    if (result.status === 'success') {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    color: 'success.main',
+                }}
+            >
+                <Typography variant="body2">Ready</Typography>
+                <CheckCircle
+                    width={compact ? 16 : 20}
+                    height={compact ? 16 : 20}
+                />
+            </Box>
+        );
+    }
+
+    if (result.status === 'error') {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    color: 'warning.main',
+                }}
+            >
+                <Typography variant="body2">Needs Attention</Typography>
+                <WarningTriangle
+                    width={compact ? 16 : 20}
+                    height={compact ? 16 : 20}
+                />
+            </Box>
+        );
+    }
+
+    return null;
+}
+
+interface ConnectionErrorDetailsProps {
+    result: ConnectionTestResult;
+    errorMessage?: string;
+    onRetry: () => void;
+}
+
+function ConnectionErrorDetails({
+    result,
+    errorMessage,
+    onRetry,
+}: ConnectionErrorDetailsProps) {
+    const message = errorMessage || result.errorMessage || 'Connection failed';
+    const isRetrying = result.status === 'testing';
+
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                color: 'warning.main',
+            }}
+        >
+            <Typography variant="body2" sx={{ flex: 1 }}>
+                {message}
+            </Typography>
+            <Button
+                variant="text"
+                size="small"
+                disabled={isRetrying}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onRetry();
+                }}
+                startIcon={
+                    isRetrying ? (
+                        <CircularProgress size={16} color="inherit" />
+                    ) : (
+                        <Refresh width={16} height={16} />
+                    )
+                }
+                sx={{ ml: 1 }}
+            >
+                {isRetrying ? 'Retrying...' : 'Retry'}
+            </Button>
+        </Box>
+    );
+}
 
 interface ConnectionInstructionsProps {
     provider: string;
@@ -203,22 +323,51 @@ function ConnectionInstructions({
     return <Typography>Connection instructions go here.</Typography>;
 }
 
-function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
+function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
     const theme = useTheme();
     const { getValues } = useFormContext<StorageMappingFormData>();
     const formData = getValues();
-    const isTesting = result.status === 'testing' || result.status === 'idle';
 
-    // Derive provider, region, and service account info from data plane
-    const {
-        provider,
-        displayProvider,
-        displayRegion,
-        iamArn,
-        gcpServiceAccountEmail,
-    } = useMemo(() => {
+    const [expandedPanel, setExpandedPanel] = useState<string | false>(false);
+    const prevResultsRef = useRef<ConnectionTestResults>({});
+    const [lastErrorMessages, setLastErrorMessages] = useState<
+        Record<string, string>
+    >({});
+
+    // Track error messages and collapse accordion when connection succeeds
+    useEffect(() => {
+        // Capture error messages when they occur
+        Object.entries(results).forEach(([id, result]) => {
+            if (result.status === 'error' && result.errorMessage) {
+                setLastErrorMessages((prev) => ({
+                    ...prev,
+                    [id]: result.errorMessage!,
+                }));
+            }
+        });
+
+        // Collapse accordion on status change to success
+        if (expandedPanel) {
+            const prevStatus = prevResultsRef.current[expandedPanel]?.status;
+            const currentStatus = results[expandedPanel]?.status;
+            if (prevStatus !== 'success' && currentStatus === 'success') {
+                setExpandedPanel(false);
+            }
+        }
+        prevResultsRef.current = results;
+    }, [results, expandedPanel]);
+
+    // Get all selected data planes
+    const allDataPlanes = useMemo(() => {
+        return (formData.data_planes ?? [])
+            .map((id: string) => MOCK_DATA_PLANES.find((dp) => dp.id === id))
+            .filter(Boolean) as BaseDataPlaneQuery[];
+    }, [formData.data_planes]);
+
+    // Derive provider, region for display (from primary data plane or form)
+    const { provider, displayProvider, displayRegion } = useMemo(() => {
         const dataPlane = MOCK_DATA_PLANES.find(
-            (dp) => dp.id === formData.data_plane
+            (dp) => dp.id === formData.data_planes?.[0]
         );
 
         if (formData.use_same_region && dataPlane) {
@@ -231,25 +380,31 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
                 provider: parsedName.provider,
                 displayProvider: getProviderLabel(parsedName.provider),
                 displayRegion: parsedName.region || '—',
-                iamArn: dataPlane.aws_iam_user_arn ?? undefined,
-                gcpServiceAccountEmail:
-                    dataPlane.gcp_service_account_email ?? undefined,
             };
         }
         return {
             provider: formData.provider,
             displayProvider: getProviderLabel(formData.provider),
             displayRegion: formData.region || '—',
-            iamArn: dataPlane?.aws_iam_user_arn ?? undefined,
-            gcpServiceAccountEmail:
-                dataPlane?.gcp_service_account_email ?? undefined,
         };
     }, [
         formData.use_same_region,
-        formData.data_plane,
+        formData.data_planes,
         formData.provider,
         formData.region,
     ]);
+
+    const getDataPlaneLabel = (dataPlane: BaseDataPlaneQuery) => {
+        const scope = getDataPlaneScope(dataPlane.data_plane_name);
+        const parsedName = parseDataPlaneName(dataPlane.data_plane_name, scope);
+        return formatDataPlaneName(parsedName);
+    };
+
+    const handleAccordionChange =
+        (panel: string) =>
+        (_event: React.SyntheticEvent, isExpanded: boolean) => {
+            setExpandedPanel(isExpanded ? panel : false);
+        };
 
     return (
         <Stack spacing={3}>
@@ -302,69 +457,120 @@ function TestConnectionResult({ result, onRetry }: TestConnectionResultProps) {
                 </TechnicalEmphasis>
             </Box>
 
-            <ConnectionInstructions
-                provider={provider}
-                bucket={formData.bucket}
-                iamArn={iamArn}
-                gcpServiceAccountEmail={gcpServiceAccountEmail}
-            />
+            {allDataPlanes.length === 1 ? (
+                <>
+                    <ConnectionInstructions
+                        provider={provider}
+                        bucket={formData.bucket}
+                        iamArn={allDataPlanes[0].aws_iam_user_arn ?? ''}
+                        gcpServiceAccountEmail={
+                            allDataPlanes[0].gcp_service_account_email ?? ''
+                        }
+                    />
+                    <ConnectionStatusBadge
+                        result={
+                            results[allDataPlanes[0].id] ?? { status: 'idle' }
+                        }
+                    />
+                    {results[allDataPlanes[0].id]?.status === 'error' ||
+                    (results[allDataPlanes[0].id]?.status === 'testing' &&
+                        lastErrorMessages[allDataPlanes[0].id]) ? (
+                        <ConnectionErrorDetails
+                            result={
+                                results[allDataPlanes[0].id] ?? { status: 'idle' }
+                            }
+                            errorMessage={lastErrorMessages[allDataPlanes[0].id]}
+                            onRetry={() => onRetry(allDataPlanes[0].id)}
+                        />
+                    ) : null}
+                </>
+            ) : (
+                <Stack spacing={1}>
+                    <Typography variant="body2" color="text.secondary">
+                        Configure access for each data plane:
+                    </Typography>
+                    {allDataPlanes.map((dataPlane) => {
+                        const testResult = results[dataPlane.id] ?? {
+                            status: 'idle',
+                        };
 
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2,
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor:
-                        result.status === 'success'
-                            ? 'success.main'
-                            : result.status === 'error'
-                              ? 'error.main'
-                              : 'action.hover',
-                    color:
-                        result.status === 'success' || result.status === 'error'
-                            ? 'common.white'
-                            : 'text.primary',
-                }}
-            >
-                {isTesting ? (
-                    <>
-                        <CircularProgress size={24} color="inherit" />
-                        <Typography>Testing connection...</Typography>
-                    </>
-                ) : null}
-                {result.status === 'success' ? (
-                    <>
-                        <CheckCircle />
-                        <Typography>Connection successful!</Typography>
-                    </>
-                ) : null}
-                {result.status === 'error' ? (
-                    <>
-                        <WarningTriangle />
-                        <Typography sx={{ flex: 1 }}>
-                            {result.errorMessage}
-                        </Typography>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            onClick={onRetry}
-                            startIcon={<Refresh />}
-                            sx={{
-                                'color': 'common.white',
-                                'borderColor': 'common.white',
-                                '&:hover': {
-                                    borderColor: 'common.white',
-                                    bgcolor: 'rgba(255,255,255,0.1)',
-                                },
-                            }}
-                        >
-                            Retry
-                        </Button>
-                    </>
-                ) : null}
-            </Box>
+                        return (
+                            <Accordion
+                                key={dataPlane.id}
+                                expanded={expandedPanel === dataPlane.id}
+                                onChange={handleAccordionChange(dataPlane.id)}
+                                disableGutters
+                                sx={{
+                                    '&:before': { display: 'none' },
+                                    'border': 1,
+                                    'borderColor':
+                                        testResult.status === 'success'
+                                            ? 'success.main'
+                                            : testResult.status === 'error'
+                                              ? 'warning.main'
+                                              : 'divider',
+                                    'borderRadius': 2,
+                                    '&:first-of-type': { borderRadius: 2 },
+                                    '&:last-of-type': { borderRadius: 2 },
+                                }}
+                            >
+                                <AccordionSummary
+                                    expandIcon={<NavArrowDown />}
+                                    sx={{ minHeight: 48 }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            width: '100%',
+                                            pr: 1,
+                                        }}
+                                    >
+                                        <Typography fontWeight={600}>
+                                            {getDataPlaneLabel(dataPlane)}
+                                        </Typography>
+                                        <ConnectionStatusBadge
+                                            result={testResult}
+                                            compact
+                                        />
+                                    </Box>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Stack spacing={2}>
+                                        {testResult.status === 'error' ||
+                                        (testResult.status === 'testing' &&
+                                            lastErrorMessages[dataPlane.id]) ? (
+                                            <ConnectionErrorDetails
+                                                result={testResult}
+                                                errorMessage={
+                                                    lastErrorMessages[
+                                                        dataPlane.id
+                                                    ]
+                                                }
+                                                onRetry={() =>
+                                                    onRetry(dataPlane.id)
+                                                }
+                                            />
+                                        ) : null}
+                                        <ConnectionInstructions
+                                            provider={provider}
+                                            bucket={formData.bucket}
+                                            iamArn={
+                                                dataPlane.aws_iam_user_arn ?? ''
+                                            }
+                                            gcpServiceAccountEmail={
+                                                dataPlane.gcp_service_account_email ??
+                                                ''
+                                            }
+                                        />
+                                    </Stack>
+                                </AccordionDetails>
+                            </Accordion>
+                        );
+                    })}
+                </Stack>
+            )}
         </Stack>
     );
 }

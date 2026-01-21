@@ -6,7 +6,7 @@ export interface StorageMappingFormData {
     region: string;
     bucket: string;
     storage_prefix: string;
-    data_plane: string;
+    data_planes: string[];
     select_additional: boolean;
     use_same_region: boolean;
     allow_public: boolean;
@@ -16,3 +16,5 @@ export interface ConnectionTestResult {
     status: 'idle' | 'testing' | 'success' | 'error';
     errorMessage?: string;
 }
+
+export type ConnectionTestResults = Record<string, ConnectionTestResult>;
