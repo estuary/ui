@@ -19,13 +19,13 @@ import {
 import { HelpCircle } from 'iconoir-react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import {
     AWS_REGIONS,
     CloudProviderCodes,
     GCP_REGIONS,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
-import { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import {
@@ -126,30 +126,14 @@ export function StorageMappingForm() {
         formState: { errors },
     } = useFormContext<StorageMappingFormData>();
 
-    const [dataPlaneOptions, setDataPlaneOptions] = useState<
-        BaseDataPlaneQuery[]
-    >([]);
-    const [additionalDataPlanes, setAdditionalDataPlanes] = useState<
-        { value: string; label: string }[]
-    >([]);
-    const selectedDataPlaneId = watch('data_plane');
+    // TODO: Replace with real data plane fetch
+    const [dataPlaneOptions] = useState<BaseDataPlaneQuery[]>(MOCK_DATA_PLANES);
+    const selectedDataPlaneIds = watch('data_planes');
     const provider = watch('provider');
     const selectAdditional = watch('select_additional');
     const useSameRegion = watch('use_same_region');
     const allowPublic = watch('allow_public');
     const regionOptions = useMemo(() => getRegionOptions(provider), [provider]);
-
-    useEffect(() => {
-        // Use mock data for development
-        setDataPlaneOptions(MOCK_DATA_PLANES);
-
-        // Uncomment to use real data
-        // getDataPlaneOptions().then((response) => {
-        //     if (response.data) {
-        //         setDataPlaneOptions(response.data);
-        //     }
-        // });
-    }, []);
 
     // Auto-enable "allow public" if there are no private data planes
     useEffect(() => {
@@ -161,38 +145,29 @@ export function StorageMappingForm() {
         }
     }, [dataPlaneOptions, setValue]);
 
-    // Remove the default data plane from additional data planes when it changes
+    // Remove public data planes when allowPublic is unchecked
     useEffect(() => {
-        if (selectedDataPlaneId) {
-            setAdditionalDataPlanes((prev) =>
-                prev.filter((dp) => dp.value !== selectedDataPlaneId)
-            );
+        if (!allowPublic && selectedDataPlaneIds?.length > 0) {
+            const filtered = selectedDataPlaneIds.filter((id) => {
+                const dataPlane = dataPlaneOptions.find(
+                    (option) => option.id === id
+                );
+                if (!dataPlane) return false;
+                return (
+                    getDataPlaneScope(dataPlane.data_plane_name) === 'private'
+                );
+            });
+            if (filtered.length !== selectedDataPlaneIds.length) {
+                setValue('data_planes', filtered);
+            }
         }
-    }, [selectedDataPlaneId]);
+    }, [allowPublic, dataPlaneOptions, selectedDataPlaneIds, setValue]);
 
-    // Remove public data planes from additional data planes when allowPublic is unchecked
-    useEffect(() => {
-        if (!allowPublic) {
-            setAdditionalDataPlanes((prev) =>
-                prev.filter((dp) => {
-                    const dataPlane = dataPlaneOptions.find(
-                        (option) => option.id === dp.value
-                    );
-                    if (!dataPlane) return false;
-                    return (
-                        getDataPlaneScope(dataPlane.data_plane_name) ===
-                        'private'
-                    );
-                })
-            );
-        }
-    }, [allowPublic, dataPlaneOptions]);
-
+    // Get the primary (first) selected data plane for display
     const selectedDataPlane = useMemo(() => {
-        if (!selectedDataPlaneId) return null;
-        const dataPlane = dataPlaneOptions.find(
-            (dp) => dp.id === selectedDataPlaneId
-        );
+        const primaryId = selectedDataPlaneIds?.[0];
+        if (!primaryId) return null;
+        const dataPlane = dataPlaneOptions.find((dp) => dp.id === primaryId);
         if (!dataPlane) return null;
 
         const scope = getDataPlaneScope(dataPlane.data_plane_name);
@@ -201,7 +176,7 @@ export function StorageMappingForm() {
             ...dataPlane,
             parsedName,
         };
-    }, [selectedDataPlaneId, dataPlaneOptions]);
+    }, [selectedDataPlaneIds, dataPlaneOptions]);
 
     const hasPrivateDataPlanes = useMemo(
         () =>
@@ -258,140 +233,134 @@ export function StorageMappingForm() {
             <CardWrapper>
                 <Stack spacing={2}>
                     {selectAdditional ? (
-                        <>
-                            <Autocomplete
-                                multiple
-                                disableClearable
-                                value={[
-                                    ...dataPlaneSelectOptions.filter(
-                                        (opt) =>
-                                            opt.value === selectedDataPlaneId
-                                    ),
-                                    ...additionalDataPlanes,
-                                ]}
-                                onChange={(_event, newValue) => {
-                                    if (newValue.length > 0) {
-                                        setValue(
-                                            'data_plane',
-                                            newValue[0].value
-                                        );
-                                        setAdditionalDataPlanes(
-                                            newValue.slice(1)
-                                        );
-                                    } else {
-                                        setValue('data_plane', '');
-                                        setAdditionalDataPlanes([]);
-                                    }
-                                }}
-                                options={dataPlaneSelectOptions}
-                                getOptionLabel={(option) => option.label}
-                                isOptionEqualToValue={(option, value) =>
-                                    option.value === value.value
-                                }
-                                renderTags={(value, getTagProps) => (
-                                    <Box sx={{ width: '100%' }}>
-                                        {value.length > 0 && (
+                        <Autocomplete
+                            multiple
+                            disableClearable
+                            value={
+                                // Preserve selection order by mapping from IDs
+                                (selectedDataPlaneIds ?? [])
+                                    .map((id) =>
+                                        dataPlaneSelectOptions.find(
+                                            (opt) => opt.value === id
+                                        )
+                                    )
+                                    .filter(Boolean) as {
+                                    value: string;
+                                    label: string;
+                                }[]
+                            }
+                            onChange={(_event, newValue) => {
+                                setValue(
+                                    'data_planes',
+                                    newValue.map((v) => v.value)
+                                );
+                            }}
+                            options={dataPlaneSelectOptions}
+                            getOptionLabel={(option) => option.label}
+                            isOptionEqualToValue={(option, value) =>
+                                option.value === value.value
+                            }
+                            renderTags={(value, getTagProps) => (
+                                <Box sx={{ width: '100%' }}>
+                                    {value.length > 0 ? (
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1,
+                                                mb: value.length > 1 ? 0.5 : 0,
+                                            }}
+                                        >
                                             <Box
+                                                component="span"
                                                 sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 1,
-                                                    mb:
-                                                        value.length > 1
-                                                            ? 0.5
-                                                            : 0,
+                                                    typography: 'caption',
+                                                    color: 'text.secondary',
                                                 }}
                                             >
-                                                <Box
-                                                    component="span"
-                                                    sx={{
-                                                        typography: 'caption',
-                                                        color: 'text.secondary',
-                                                    }}
-                                                >
-                                                    Default:
-                                                </Box>
-                                                <Chip
-                                                    {...getTagProps({
-                                                        index: 0,
-                                                    })}
-                                                    label={value[0].label}
-                                                    size="small"
-                                                    color="primary"
-                                                />
+                                                Default:
                                             </Box>
-                                        )}
-                                        {value.length > 1 && (
+                                            <Chip
+                                                {...getTagProps({
+                                                    index: 0,
+                                                })}
+                                                label={value[0].label}
+                                                size="small"
+                                                color="primary"
+                                            />
+                                        </Box>
+                                    ) : null}
+                                    {value.length > 1 ? (
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'flex-start',
+                                                gap: 1,
+                                            }}
+                                        >
                                             <Box
+                                                component="span"
                                                 sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'flex-start',
-                                                    gap: 1,
+                                                    typography: 'caption',
+                                                    color: 'text.secondary',
+                                                    lineHeight: '24px',
                                                 }}
                                             >
-                                                <Box
-                                                    component="span"
-                                                    sx={{
-                                                        typography: 'caption',
-                                                        color: 'text.secondary',
-                                                        lineHeight: '24px',
-                                                    }}
-                                                >
-                                                    Additional:
-                                                </Box>
-                                                <Stack spacing={0.5}>
-                                                    {value
-                                                        .slice(1)
-                                                        .map((option, i) => (
-                                                            <Chip
-                                                                {...getTagProps(
-                                                                    {
-                                                                        index:
-                                                                            i +
-                                                                            1,
-                                                                    }
-                                                                )}
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                label={
-                                                                    option.label
-                                                                }
-                                                                size="small"
-                                                            />
-                                                        ))}
-                                                </Stack>
+                                                Additional:
                                             </Box>
-                                        )}
-                                    </Box>
-                                )}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="Data Planes"
-                                        size="small"
-                                        required
-                                        error={!!errors.data_plane}
-                                        // variant="outlined"
-                                    />
-                                )}
-                                size="small"
-                            />
-                        </>
+                                            <Stack spacing={0.5}>
+                                                {value
+                                                    .slice(1)
+                                                    .map((option, i) => (
+                                                        <Chip
+                                                            {...getTagProps({
+                                                                index: i + 1,
+                                                            })}
+                                                            key={option.value}
+                                                            label={option.label}
+                                                            size="small"
+                                                        />
+                                                    ))}
+                                            </Stack>
+                                        </Box>
+                                    ) : null}
+                                </Box>
+                            )}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Data Planes"
+                                    size="small"
+                                    required
+                                    error={!!errors.data_planes}
+                                />
+                            )}
+                            size="small"
+                        />
                     ) : (
                         <Controller
-                            name="data_plane"
+                            name="data_planes"
                             control={control}
-                            rules={{ required: 'Data plane is required' }}
+                            rules={{
+                                validate: (value) =>
+                                    value?.length > 0 ||
+                                    'Data plane is required',
+                            }}
                             render={({ field }) => (
                                 <FormControl
                                     fullWidth
                                     size="small"
                                     required
-                                    error={!!errors.data_plane}
+                                    error={!!errors.data_planes}
                                 >
                                     <InputLabel>Data Plane</InputLabel>
-                                    <Select {...field} label="Data Plane">
+                                    <Select
+                                        value={field.value?.[0] ?? ''}
+                                        onChange={(e) =>
+                                            field.onChange([e.target.value])
+                                        }
+                                        label="Data Plane"
+                                    >
                                         {dataPlaneSelectOptions.map(
                                             (option) => (
                                                 <MenuItem
@@ -438,7 +407,7 @@ export function StorageMappingForm() {
                             }}
                         />
 
-                        {dataPlaneSelectOptions.length > 1 && (
+                        {dataPlaneSelectOptions.length > 1 ? (
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -459,7 +428,7 @@ export function StorageMappingForm() {
                                     },
                                 }}
                             />
-                        )}
+                        ) : null}
                     </Box>
                 </Stack>
             </CardWrapper>
