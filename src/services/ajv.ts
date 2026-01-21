@@ -165,8 +165,7 @@ export const getResourceConfigPointers = (
 
         return response.pointers;
 
-        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-    } catch (e: any) {
+    } catch (e: unknown) {
         return null;
     }
 };
@@ -192,8 +191,7 @@ export const generateMaterializationResourceSpec = (
 
         return JSON.parse(response);
 
-        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-    } catch (e: any) {
+    } catch (e: unknown) {
         console.error('generateMaterializationResourceSpec failed', e);
         return null;
     }
