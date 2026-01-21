@@ -18,7 +18,6 @@ export const useProjectionsForSkim = () => {
             const response: Record<string, any> = {};
             Object.values(projections[collection]).forEach((metadata) => {
                 metadata.forEach((datum) => {
-                    response[datum.field] ??= {};
                     response[datum.field] = datum.location;
                 });
             });

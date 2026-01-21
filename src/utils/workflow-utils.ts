@@ -143,6 +143,7 @@ export const getFullSource = (
         ).reduce(
             (filtered, [key, val]) => {
                 if (val !== REMOVE_DURING_GENERATION) {
+                    // @ts-expect-error - Object.entries returns string keys, but these are valid FullSource keys
                     filtered[key] = val;
                 }
 

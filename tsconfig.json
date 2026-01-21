@@ -35,7 +35,12 @@
         "resolveJsonModule": true,
         "typeRoots": ["src/types", "node_modules/@types"]
     },
-    "include": ["src", "deps/flow/flow.d.ts", "deps/supabase/types.d.ts"],
+    "include": [
+        "src",
+        "deps/flow/flow.d.ts",
+        "deps/supabase/types.d.ts",
+        "__mocks__/vitest-env.d.ts"
+    ],
     "exclude": [
         "node_modules",
         "build",

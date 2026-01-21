@@ -182,6 +182,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                                 x-react-window-item-height={tallHeight}
                             >
                                 <BasicOption
+                                    // @ts-expect-error ptr is optional but BasicOption expects string
                                     pointer={ptr}
                                     types={inference.types}
                                 />
@@ -200,6 +201,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                     } else {
                         RowContent = (
                             <BasicOption
+                                // @ts-expect-error ptr is optional but BasicOption expects string
                                 pointer={ptr}
                                 types={inference.types}
                             />
