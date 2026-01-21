@@ -93,10 +93,14 @@ You will want to do all the same testing as you do on Create - but just in the e
 
 ### Special Cases
 
-There are some "types" of connectors that we a little bit different need to be kept in mind.
+There are some connectors that require special handling and have been known to break our assumptions.
+
+If you are adding this kind of handling ensure you add a comment with some details on why it is added so we can more easily find them in the future.
 
 #### Pydantic
 
-`Pydantic` is a Python tool that is used by the Connectors team. It tends to output schemas that are technically correct but written in a manner that seems a bit "off" from how a person might generate them. The main thing that has hurt us before is how `Pydantic` handles `oneOf`, `anyOf`, and `discriminator`.
+`Pydantic` is a Python tool that is used by the Connectors team. It tends to output schemas that are technically correct but written in a manner that seems a bit "off" from how a person might write them. The main thing that has cause bugs before is how `Pydantic` handles `oneOf`, `anyOf`, and `discriminator`.
 
-These can be [found here](https://github.com/search?q=repo%3Aestuary%2Fconnectors+path%3Asource-*%2Fpyproject.toml+%22pydantic+%3D%22&type=code) and should always be included in your testing.
+These connectors can be [found here](https://github.com/search?q=repo%3Aestuary%2Fconnectors+path%3Asource-*%2Fpyproject.toml+%22pydantic+%3D%22&type=code) and should always be included in your testing.
+
+You can also find a lot of the special handling by just seraching for `Pydantic` in the code.
