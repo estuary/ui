@@ -1,6 +1,7 @@
 import type { EndpointConfigState } from 'src/stores/EndpointConfig/types';
 import type { CustomError } from 'src/stores/extensions/CustomErrors';
 import type { JsonFormsData } from 'src/types';
+import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
@@ -71,7 +72,8 @@ const getInitialStateData = (): Pick<
 });
 
 const getInitialState = (
-    set: NamedSet<EndpointConfigState>
+    set: NamedSet<EndpointConfigState>,
+    get: StoreApi<EndpointConfigState>['getState']
 ): EndpointConfigState => ({
     ...getInitialStateData(),
     ...getStoreWithHydrationSettings(STORE_KEY, set),
@@ -94,12 +96,14 @@ const getInitialState = (
 
     setEndpointSchema: async (val) => {
         const resolved = await getDereffedSchema(val);
+
+        if (!resolved) {
+            get().setHydrationErrorsExist(true);
+            return;
+        }
+
         set(
             produce((state: EndpointConfigState) => {
-                if (!resolved) {
-                    state.setHydrationErrorsExist(true);
-                    return;
-                }
                 state.endpointSchema = resolved;
                 state.endpointCanBeEmpty = configCanBeEmpty(resolved);
 
@@ -215,7 +219,7 @@ const getInitialState = (
 
 export const useEndpointConfigStore = create<EndpointConfigState>()(
     devtools(
-        (set) => getInitialState(set),
+        (set, get) => getInitialState(set, get),
         devtoolsOptions('general-endpoint-config')
     )
 );
