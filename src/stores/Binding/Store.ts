@@ -1118,6 +1118,11 @@ const getInitialState = (
                 });
 
                 if (!resourceConfigPointers) {
+                    // If we did not get pointers we should be okay to carry on like normal. Previously (pre 2026 Q1)
+                    //  we were setting a "hydration error" here but that was not being stored properly due to https://github.com/estuary/ui/issues/1870
+                    // Pretty sure we are safe just carrying on if we cannot get the pointers. This is mainly true until the
+                    //  pointers we need to fetch are potentially changed. So until then this should be safe to just ignore this
+                    //  being empty and carry on.
                     return;
                 }
 
