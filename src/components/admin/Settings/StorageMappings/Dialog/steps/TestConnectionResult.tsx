@@ -96,20 +96,9 @@ function ConnectionInstructions({
                     Step 2: Grant bucket permissions
                 </Typography>
                 <Typography variant="body2">
-                    Using the Google Cloud Console or{' '}
-                    <TechnicalEmphasis>gsutil</TechnicalEmphasis>, grant the
-                    service account the following roles on your bucket{' '}
-                    <TechnicalEmphasis
-                        enableBackground
-                        sx={{
-                            borderRadius: 2,
-                            px: 0.5,
-                            py: 0.2,
-                        }}
-                    >
-                        {bucket || 'your-bucket'}
-                    </TechnicalEmphasis>
-                    :
+                    Using <TechnicalEmphasis>gsutil</TechnicalEmphasis>, grant
+                    the admin role to the the service account using the
+                    following command:
                 </Typography>
                 <Box
                     component="pre"
