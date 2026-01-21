@@ -4,10 +4,23 @@ import { createDefaultValue } from '@jsonforms/core';
 
 import { forIn } from 'lodash';
 
+import { hasLength } from 'src/utils/misc-utils';
+
 export const discriminator = 'discriminator';
 
 export const getDiscriminator = (schema: any) => {
-    return schema[discriminator] ? schema[discriminator].propertyName : null;
+    if (schema?.[discriminator]) {
+        if (schema[discriminator].propertyName) {
+            return schema[discriminator].propertyName;
+        }
+
+        // TODO (JSONForms) - AJV does not support discriminator.mapping
+        //  We might want to end up adding custom handling for this
+        //  however it seems we are fine for now (as of 2026 Q1)
+        // if (schema[discriminator].mapping) {...wire up this handling somehow?...}
+    }
+
+    return null;
 };
 
 export const getDiscriminatorDefaultValue = (
@@ -64,4 +77,16 @@ export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
     });
 
     return indexOfFittingSchema;
+};
+
+// Just for when OAuth (as of 2026 Q1)
+export const isInsideArray = (path: string): boolean => {
+    if (!path || typeof path !== 'string') {
+        return false;
+    }
+
+    return (
+        hasLength(path) &&
+        path.split('.').some((segment: string) => /^\d+$/.test(segment))
+    );
 };

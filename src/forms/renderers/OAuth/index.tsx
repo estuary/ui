@@ -21,6 +21,7 @@ import { useOauthHandler } from 'src/forms/renderers/OAuth/useOauthHandler';
 import {
     getDiscriminator,
     getDiscriminatorDefaultValue,
+    isInsideArray,
 } from 'src/forms/shared';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -58,6 +59,7 @@ const OAuthproviderRenderer = ({
     const provider = useMemo(() => startCase(providerVal), [providerVal]);
 
     // This usually means the control is nested inside a tab
+    //  It can also mean nested inside of an array (properties.0.credentials)
     const hasOwnPathProp = hasLength(path);
 
     // Fetch the path we should use to fire onChange. This is kinda janky
@@ -71,13 +73,17 @@ const OAuthproviderRenderer = ({
         }
     }, [hasOwnPathProp, options, path]);
 
-    // This is the field in an anyOf/oneOf/etc. that is used
-    //      to tell which option is selected
     const discriminatorProperty = useMemo(() => {
         let schemaToCheck;
 
-        if (hasOwnPathProp) {
-            // First check the parent if we are nested
+        // See if we have a path. That means we are either inside of
+        //  an anyOf/oneOf or inside an array.
+        // If we are inside of an array then the path is pointing to something
+        //  like "properties.0.credentials" and we should not look into it for
+        //  the discriminator as this is the path to the data and not the schema.
+        // If we are not inside an array we are probably in an anyOf|oneOf and
+        //  should look there for the discriminator property.
+        if (hasOwnPathProp && !isInsideArray(path)) {
             schemaToCheck = rootSchema.properties?.[path];
         } else {
             // Now just check the schema we're in
@@ -107,7 +113,7 @@ const OAuthproviderRenderer = ({
     //  to special default values that we can check for
     const setConfigToDefault = useCallback(() => {
         logRocketEvent(CustomEvents.OAUTH_DEFAULTING, {
-            discriminatorProperty,
+            discriminatorProperty: discriminatorProperty ?? 'null',
             discriminatorExists: Boolean(defaults[discriminatorProperty]),
         });
         logRocketConsole(`${CustomEvents.OAUTH_DEFAULTING}:defaults`, defaults);
