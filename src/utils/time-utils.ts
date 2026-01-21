@@ -19,7 +19,7 @@ export const parsePostgresInterval = (
             ][]
         ).forEach(([timeUnit, unitValue]) => {
             if (unitValue === 0) {
-                intervalObject[timeUnit] = undefined;
+                delete intervalObject[timeUnit as keyof DurationObjectUnits];
             }
         });
     }
