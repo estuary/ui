@@ -164,7 +164,6 @@ export const getResourceConfigPointers = (
         }
 
         return response.pointers;
-
     } catch (e: unknown) {
         return null;
     }
@@ -190,7 +189,6 @@ export const generateMaterializationResourceSpec = (
         }
 
         return JSON.parse(response);
-
     } catch (e: unknown) {
         console.error('generateMaterializationResourceSpec failed', e);
         return null;
