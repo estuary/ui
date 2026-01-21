@@ -102,7 +102,6 @@ export const useBinding_resourceConfigOfBindingProperty = <
             if (!bindingUUID) {
                 return null;
             }
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return state.resourceConfigs[bindingUUID]?.[property] ?? null;
         })
     );
@@ -119,7 +118,6 @@ export const useBinding_resourceConfigOfMetaBindingProperty = <
             if (!bindingUUID) {
                 return null;
             }
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return state.resourceConfigs[bindingUUID]?.meta?.[property];
         })
     );
