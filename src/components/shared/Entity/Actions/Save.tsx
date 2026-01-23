@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import PreSaveWarning from 'src/components/editor/Bindings/Backfill/PreSaveWarning';
+import PreSaveConfirmation from 'src/components/editor/Bindings/Backfill/PreSaveConfirmation';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -47,7 +47,7 @@ function EntityCreateSave({
                             dialogProps: {
                                 maxWidth: 'sm',
                             },
-                            message: <PreSaveWarning />,
+                            message: <PreSaveConfirmation />,
                         })
                         .then(async (confirmed: any) => {
                             if (confirmed) {

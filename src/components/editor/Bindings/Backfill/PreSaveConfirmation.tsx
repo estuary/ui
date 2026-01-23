@@ -4,7 +4,7 @@ import { useMount } from 'react-use';
 import AlertBox from 'src/components/shared/AlertBox';
 import { logRocketEvent } from 'src/services/shared';
 
-function PreSaveWarning() {
+function PreSaveConfirmation() {
     const intl = useIntl();
 
     useMount(() => {
@@ -18,14 +18,14 @@ function PreSaveWarning() {
             short
             severity="warning"
             title={intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.preSaveWarning.title',
+                id: 'workflows.dataFlowBackfill.preSaveConfirmation.title',
             })}
         >
             {intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.preSaveWarning.message',
+                id: 'workflows.dataFlowBackfill.preSaveConfirmation.message',
             })}
         </AlertBox>
     );
 }
 
-export default PreSaveWarning;
+export default PreSaveConfirmation;
