@@ -78,11 +78,11 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
             // Eventually we can make this like TableSettings but since only
             //  a single confirmation needs it just supporting a key is fine
             if (userSettings.doNotShowAgainStorageKey) {
-                // Check if user has marked this as skipped
-                const storedValue = localStorage.getItem(
-                    userSettings.doNotShowAgainStorageKey
-                );
-                if (storedValue === SKIP_CONFIRMATION_VALUE) {
+                if (
+                    localStorage.getItem(
+                        userSettings.doNotShowAgainStorageKey
+                    ) === SKIP_CONFIRMATION_VALUE
+                ) {
                     logRocketEvent('Confirmation', {
                         status: 'skipped',
                         localStorageKey: userSettings.doNotShowAgainStorageKey,
