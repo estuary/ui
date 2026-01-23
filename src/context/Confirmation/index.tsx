@@ -72,6 +72,8 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
         },
     };
 
+    console.log('settings', settings);
+
     return (
         <ConfirmationModalContext.Provider
             value={{ setContinueAllowed, showConfirmation: handlers.show }}
@@ -91,7 +93,8 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
 
                 <DialogContent>
                     <Box id={DESCRIPTION_ID} color="text.primary">
-                        {typeof settings.message === 'string'
+                        {typeof settings.message === 'string' &&
+                        settings.message.length > 0
                             ? intl.formatMessage({ id: settings.message })
                             : settings.message}
                     </Box>

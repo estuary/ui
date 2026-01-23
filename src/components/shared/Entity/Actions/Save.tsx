@@ -12,6 +12,7 @@ import {
 import useSave from 'src/components/shared/Entity/Actions/useSave';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { entityHeaderButtonSx } from 'src/context/Theme';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -25,6 +26,8 @@ function EntityCreateSave({
     onFailure,
 }: EntityCreateSaveButtonProps) {
     const intl = useIntl();
+
+    const entityWorkFlow = useEntityWorkflow();
 
     const save = useSave(logEvent, onFailure, dryRun);
 
@@ -41,7 +44,11 @@ function EntityCreateSave({
             disabled={disabled || isSaving || formActive}
             sx={entityHeaderButtonSx}
             onClick={() => {
-                if (!dryRun && collectionsBeingBackfilled.length > 0) {
+                if (
+                    !dryRun &&
+                    entityWorkFlow === 'capture_edit' &&
+                    collectionsBeingBackfilled.length > 0
+                ) {
                     confirmationModalContext
                         ?.showConfirmation({
                             dialogProps: {
