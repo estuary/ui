@@ -14,6 +14,7 @@ import {
     DialogContent,
     DialogTitle,
     FormControlLabel,
+    Stack,
     Switch,
 } from '@mui/material';
 
@@ -163,7 +164,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                         />
                     ) : null}
 
-                    <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
+                    <Stack direction="row" spacing={2}>
                         <Button variant="text" onClick={handlers.dismiss}>
                             {intl.formatMessage({ id: settings.cancelText })}
                         </Button>
@@ -176,7 +177,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                         >
                             {intl.formatMessage({ id: settings.confirmText })}
                         </Button>
-                    </Box>
+                    </Stack>
                 </DialogActions>
             </Dialog>
         </ConfirmationModalContext.Provider>
