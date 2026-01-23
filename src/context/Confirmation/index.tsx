@@ -19,7 +19,7 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
+import { logRocketEvent } from 'src/services/shared';
 
 const LABEL_ID = 'alert-dialog-title';
 const DESCRIPTION_ID = 'alert-dialog-description';
@@ -86,7 +86,6 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                     logRocketEvent('Confirmation', {
                         status: 'skipped',
                         localStorageKey: userSettings.doNotShowAgainStorageKey,
-                        localStorageVal: storedValue ?? DEFAULT_FILTER,
                     });
                     return Promise.resolve(true);
                 }
@@ -102,7 +101,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
             setShowConfirmationModal(true);
 
             logRocketEvent('Confirmation', {
-                status: 'shown',
+                status: 'show',
             });
 
             return new Promise((resolve) => {
@@ -149,9 +148,13 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                                 <Switch
                                     size="small"
                                     checked={doNotShowAgain}
-                                    onChange={(_event, checked) =>
-                                        setDoNotShowAgain(checked)
-                                    }
+                                    onChange={(_event, checked) => {
+                                        setDoNotShowAgain(checked);
+                                        logRocketEvent('Confirmation', {
+                                            status: 'updating',
+                                            doNotShowAgain: checked,
+                                        });
+                                    }}
                                 />
                             }
                             label={intl.formatMessage({
