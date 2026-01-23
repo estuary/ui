@@ -15,7 +15,7 @@ import {
     DialogTitle,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 const LABEL_ID = 'alert-dialog-title';
 const DESCRIPTION_ID = 'alert-dialog-description';
@@ -33,6 +33,8 @@ const ConfirmationModalContext =
     createContext<IConfirmationModalContext | null>(null);
 
 const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
+    const intl = useIntl();
+
     const [settings, setSettings] =
         useState<IConfirmationModalOptions>(getDefaultSettings());
     const [showConfirmationModal, setShowConfirmationModal] =
@@ -84,22 +86,20 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                 {...(settings.dialogProps ?? {})}
             >
                 <DialogTitle id={LABEL_ID}>
-                    <FormattedMessage id={settings.title} />
+                    {intl.formatMessage({ id: settings.title })}
                 </DialogTitle>
 
                 <DialogContent>
                     <Box id={DESCRIPTION_ID} color="text.primary">
-                        {typeof settings.message === 'string' ? (
-                            <FormattedMessage id={settings.message} />
-                        ) : (
-                            settings.message
-                        )}
+                        {typeof settings.message === 'string'
+                            ? intl.formatMessage({ id: settings.message })
+                            : settings.message}
                     </Box>
                 </DialogContent>
 
                 <DialogActions style={{ padding: '16px 24px' }}>
                     <Button variant="text" onClick={handlers.dismiss}>
-                        <FormattedMessage id={settings.cancelText} />
+                        {intl.formatMessage({ id: settings.cancelText })}
                     </Button>
 
                     <Button
@@ -108,7 +108,7 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                         autoFocus
                         disabled={disableClick || !continueAllowed}
                     >
-                        <FormattedMessage id={settings.confirmText} />
+                        {intl.formatMessage({ id: settings.confirmText })}
                     </Button>
                 </DialogActions>
             </Dialog>
