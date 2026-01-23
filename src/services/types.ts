@@ -3,6 +3,7 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 export type KnownEvents =
     | 'Auth'
     | 'DataPlaneGateway'
+    | 'Data_Flow_Reset'
     | 'EndpointConfig'
     | 'JsonForms'
     | 'MonacoEditor'
@@ -21,7 +22,6 @@ export type KnownEvents =
 export enum CustomEvents {
     AUTHORIZE_TASK = 'AuthorizeTask',
     AUTH_SIGNOUT = 'Auth_Signout',
-    DATA_FLOW_RESET = 'Data_Flow_Reset',
     BINDINGS_EXPECTED_MISSING = 'Bindings_Expected_Missing',
     BINDINGS_RESOURCE_CONFIG_MISSING = 'Bindings_Resource_Config_Missing',
     CAPTURE_CREATE = 'Capture_Create',
