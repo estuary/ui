@@ -2,6 +2,7 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 
 export type KnownEvents =
     | 'Auth'
+    | 'Confirmation'
     | 'DataPlaneGateway'
     | 'Data_Flow_Reset'
     | 'EndpointConfig'

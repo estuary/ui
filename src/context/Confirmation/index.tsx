@@ -13,12 +13,17 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    FormControlLabel,
+    Switch,
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import { DEFAULT_FILTER, logRocketEvent } from 'src/services/shared';
+
 const LABEL_ID = 'alert-dialog-title';
 const DESCRIPTION_ID = 'alert-dialog-description';
+const SKIP_CONFIRMATION_VALUE = 'yes';
 
 const getDefaultSettings = (): IConfirmationModalOptions => {
     return {
@@ -26,6 +31,7 @@ const getDefaultSettings = (): IConfirmationModalOptions => {
         message: '',
         confirmText: 'cta.continue',
         cancelText: 'cta.cancel',
+        doNotShowAgainText: 'confirm.doNotShowAgain',
     };
 };
 
@@ -43,10 +49,20 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
 
     const [continueAllowed, setContinueAllowed] = useState<boolean>(true);
     const [disableClick, setDisableClick] = useState<boolean>(false);
+    const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
 
     const handlers = {
         confirm: () => {
             setDisableClick(true);
+
+            // Save "do not show again" preference to local storage if applicable
+            if (doNotShowAgain && settings.doNotShowAgainStorageKey) {
+                localStorage.setItem(
+                    settings.doNotShowAgainStorageKey,
+                    SKIP_CONFIRMATION_VALUE
+                );
+            }
+
             resolver.current?.(true);
             setShowConfirmationModal(false);
         },
@@ -58,21 +74,42 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
             userSettings: IConfirmationModalOptions,
             continueAllowedDefault = true
         ) => {
+            // TODO (Localstorage)
+            // Eventually we can make this like TableSettings but since only
+            //  a single confirmation needs it just supporting a key is fine
+            if (userSettings.doNotShowAgainStorageKey) {
+                // Check if user has marked this as skipped
+                const storedValue = localStorage.getItem(
+                    userSettings.doNotShowAgainStorageKey
+                );
+                if (storedValue === SKIP_CONFIRMATION_VALUE) {
+                    logRocketEvent('Confirmation', {
+                        status: 'skipped',
+                        localStorageKey: userSettings.doNotShowAgainStorageKey,
+                        localStorageVal: storedValue ?? DEFAULT_FILTER,
+                    });
+                    return Promise.resolve(true);
+                }
+            }
+
             setContinueAllowed(continueAllowedDefault);
             setSettings({
                 ...getDefaultSettings(),
                 ...userSettings,
             });
             setDisableClick(false);
+            setDoNotShowAgain(false);
             setShowConfirmationModal(true);
+
+            logRocketEvent('Confirmation', {
+                status: 'shown',
+            });
 
             return new Promise((resolve) => {
                 resolver.current = resolve;
             });
         },
     };
-
-    console.log('settings', settings);
 
     return (
         <ConfirmationModalContext.Provider
@@ -100,19 +137,43 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                     </Box>
                 </DialogContent>
 
-                <DialogActions style={{ padding: '16px 24px' }}>
-                    <Button variant="text" onClick={handlers.dismiss}>
-                        {intl.formatMessage({ id: settings.cancelText })}
-                    </Button>
+                <DialogActions
+                    style={{
+                        padding: '16px 24px',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    {settings.doNotShowAgainStorageKey ? (
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    size="small"
+                                    checked={doNotShowAgain}
+                                    onChange={(_event, checked) =>
+                                        setDoNotShowAgain(checked)
+                                    }
+                                />
+                            }
+                            label={intl.formatMessage({
+                                id: settings.doNotShowAgainText,
+                            })}
+                        />
+                    ) : null}
 
-                    <Button
-                        variant="outlined"
-                        onClick={handlers.confirm}
-                        autoFocus
-                        disabled={disableClick || !continueAllowed}
-                    >
-                        {intl.formatMessage({ id: settings.confirmText })}
-                    </Button>
+                    <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
+                        <Button variant="text" onClick={handlers.dismiss}>
+                            {intl.formatMessage({ id: settings.cancelText })}
+                        </Button>
+
+                        <Button
+                            variant="outlined"
+                            onClick={handlers.confirm}
+                            autoFocus
+                            disabled={disableClick || !continueAllowed}
+                        >
+                            {intl.formatMessage({ id: settings.confirmText })}
+                        </Button>
+                    </Box>
                 </DialogActions>
             </Dialog>
         </ConfirmationModalContext.Provider>

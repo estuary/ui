@@ -1,3 +1,5 @@
+import { Stack } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
@@ -14,17 +16,19 @@ function PreSaveConfirmation() {
     });
 
     return (
-        <AlertBox
-            short
-            severity="warning"
-            title={intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.preSaveConfirmation.title',
-            })}
-        >
-            {intl.formatMessage({
-                id: 'workflows.dataFlowBackfill.preSaveConfirmation.message',
-            })}
-        </AlertBox>
+        <Stack spacing={1}>
+            <AlertBox
+                short
+                severity="warning"
+                title={intl.formatMessage({
+                    id: 'workflows.dataFlowBackfill.preSaveConfirmation.title',
+                })}
+            >
+                {intl.formatMessage({
+                    id: 'workflows.dataFlowBackfill.preSaveConfirmation.message',
+                })}
+            </AlertBox>
+        </Stack>
     );
 }
 

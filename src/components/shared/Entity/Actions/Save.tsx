@@ -16,6 +16,7 @@ import { useEntityWorkflow } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 function EntityCreateSave({
     buttonLabelId,
@@ -54,6 +55,8 @@ function EntityCreateSave({
                             dialogProps: {
                                 maxWidth: 'sm',
                             },
+                            doNotShowAgainStorageKey:
+                                LocalStorageKeys.CONFIRMATION_DISMISS_DATAFLOW_RESET,
                             message: <PreSaveConfirmation />,
                         })
                         .then(async (confirmed: any) => {
