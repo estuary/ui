@@ -6,7 +6,7 @@ import { useMount } from 'react-use';
 import AlertBox from 'src/components/shared/AlertBox';
 import { logRocketEvent } from 'src/services/shared';
 
-function PreSaveConfirmation() {
+export function PreSaveConfirmation() {
     const intl = useIntl();
 
     useMount(() => {
@@ -31,5 +31,3 @@ function PreSaveConfirmation() {
         </Stack>
     );
 }
-
-export default PreSaveConfirmation;

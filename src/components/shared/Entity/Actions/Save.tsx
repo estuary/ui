@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import PreSaveConfirmation from 'src/components/editor/Bindings/Backfill/PreSaveConfirmation';
+import { PreSaveConfirmation } from 'src/components/editor/Bindings/Backfill/PreSaveConfirmation';
 import {
     useEditorStore_id,
     useEditorStore_isSaving,
@@ -54,6 +54,7 @@ function EntityCreateSave({
                         ?.showConfirmation({
                             dialogProps: {
                                 maxWidth: 'sm',
+                                sx: { minWidth: 375 },
                             },
                             doNotShowAgainStorageKey:
                                 LocalStorageKeys.CONFIRMATION_DISMISS_DATAFLOW_RESET,
