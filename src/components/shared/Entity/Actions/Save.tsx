@@ -59,7 +59,7 @@ function EntityCreateSave({
                                 LocalStorageKeys.CONFIRMATION_DISMISS_DATAFLOW_RESET,
                             message: <PreSaveConfirmation />,
                         })
-                        .then(async (confirmed: any) => {
+                        .then((confirmed: true) => {
                             if (confirmed) {
                                 void save(draftId);
                             }
