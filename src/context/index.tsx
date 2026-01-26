@@ -5,6 +5,7 @@ import ContentProvider from 'src/context/Content';
 import GlobalProviders from 'src/context/GlobalProviders';
 import IconoirProvider from 'src/context/Iconoir';
 import NotificationProvider from 'src/context/Notifications';
+import { PHProvider } from 'src/context/PostHog';
 import { SidePanelDocsProvider } from 'src/context/SidePanelDocs';
 import SwrConfigProvider from 'src/context/SWR';
 import { TableSettingsProvider } from 'src/context/TableSettings';
@@ -17,27 +18,29 @@ const AppProviders = ({ children }: BaseComponentProps) => {
     return (
         <ContentProvider>
             <UpdateHelmetProvider>
-                <ThemeProvider>
-                    <IconoirProvider>
-                        <ErrorBoundryWrapper>
-                            <NotificationProvider>
-                                <SwrConfigProvider>
-                                    <UrqlConfigProvider>
-                                        <UserStoreProvider>
-                                            <GlobalProviders>
-                                                <SidePanelDocsProvider>
-                                                    <TableSettingsProvider>
-                                                        {children}
-                                                    </TableSettingsProvider>
-                                                </SidePanelDocsProvider>
-                                            </GlobalProviders>
-                                        </UserStoreProvider>
-                                    </UrqlConfigProvider>
-                                </SwrConfigProvider>
-                            </NotificationProvider>
-                        </ErrorBoundryWrapper>
-                    </IconoirProvider>
-                </ThemeProvider>
+                <PHProvider>
+                    <ThemeProvider>
+                        <IconoirProvider>
+                            <ErrorBoundryWrapper>
+                                <NotificationProvider>
+                                    <SwrConfigProvider>
+                                        <UrqlConfigProvider>
+                                            <UserStoreProvider>
+                                                <GlobalProviders>
+                                                    <SidePanelDocsProvider>
+                                                        <TableSettingsProvider>
+                                                            {children}
+                                                        </TableSettingsProvider>
+                                                    </SidePanelDocsProvider>
+                                                </GlobalProviders>
+                                            </UserStoreProvider>
+                                        </UrqlConfigProvider>
+                                    </SwrConfigProvider>
+                                </NotificationProvider>
+                            </ErrorBoundryWrapper>
+                        </IconoirProvider>
+                    </ThemeProvider>
+                </PHProvider>
             </UpdateHelmetProvider>
         </ContentProvider>
     );
