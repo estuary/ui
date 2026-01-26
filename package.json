@@ -72,7 +72,7 @@
         "jose": "^4.15.5",
         "json-ptr": "^3.1.1",
         "json-refs": "^3.0.15",
-        "lodash": "^4.17.21",
+        "lodash": "^4.17.23",
         "logrocket": "^10.1.1",
         "logrocket-react": "^5.0.1",
         "luxon": "^3.7.1",
