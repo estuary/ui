@@ -10,6 +10,7 @@ const changesRejected = 'rejected due to incompatible collection updates';
 
 const autoDiscoverHeader = `Schema Evolution`;
 const optIntoDiscovery = `Automatically keep schemas up to date`;
+const backfillModeName = `Backfill Mode`;
 
 // TODO (optimization): Consolidate duplicate create and edit messages.
 export const Workflows: Record<string, string> = {
@@ -155,12 +156,12 @@ export const Workflows: Record<string, string> = {
     'collectionReset.editor.warning.title': `Editing disabled`,
     'collectionReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow'].toLowerCase()} you cannot manually edit your spec.`,
 
-    'workflows.dataFlowBackfill.label': `Backfill Mode`,
+    'workflows.dataFlowBackfill.label': `${backfillModeName}`,
     'workflows.dataFlowBackfill.options.reset.label': `Dataflow Reset`,
     'workflows.dataFlowBackfill.options.reset.description': `Backfill data from the source, reset inferred schemas, drop and re-create all destination tables and derivations.`,
     'workflows.dataFlowBackfill.options.incremental.label': `Incremental backfill (advanced)`,
     'workflows.dataFlowBackfill.options.incremental.description': `Re-extract all source data and Insert or Append into your existing destination tables without dropping and recreating them.`,
-    'workflows.dataFlowBackfill.preSaveConfirmation.title': `Understand the impact of Backfill Mode`,
+    'workflows.dataFlowBackfill.preSaveConfirmation.title': `Understand the impact of ${backfillModeName}`,
     'workflows.dataFlowBackfill.preSaveConfirmation.message': `Dataflow reset truncates your collections, which will drop data from any downstream destinations. Selecting "Incremental Backfill" will maintain existing data which may be desirable if delta updates materializations exist downstream.`,
 
     'workflows.dataPlane.description': `Choose the data plane you would like to use.`,
