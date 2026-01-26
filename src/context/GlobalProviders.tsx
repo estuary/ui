@@ -25,6 +25,8 @@ if (
 //  before the `createClient` call made below for Supabase
 initLogRocket();
 
+// PostHog's init is in `ui/src/context/PostHog.tsx`
+
 // Setup immer
 enableMapSet();
 setAutoFreeze(false);

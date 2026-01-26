@@ -2,6 +2,7 @@ import type { EntityCreateSaveButtonProps } from 'src/components/shared/Entity/A
 
 import { Button } from '@mui/material';
 
+import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
 
 import {
@@ -20,6 +21,7 @@ function EntityCreateSave({
     logEvent,
     onFailure,
 }: EntityCreateSaveButtonProps) {
+    const postHog = usePostHog();
     const intl = useIntl();
 
     const save = useSave(logEvent, onFailure, dryRun);
@@ -29,18 +31,23 @@ function EntityCreateSave({
 
     const formActive = useFormStateStore_isActive();
 
+    const isDryRun = dryRun === true;
+
     return (
         <Button
             disabled={disabled || isSaving || formActive}
             sx={entityHeaderButtonSx}
             onClick={() => {
                 void save(draftId);
+                postHog.capture(
+                    isDryRun ? 'test_click' : 'save_and_publish_click'
+                );
             }}
         >
             {intl.formatMessage({
                 id: buttonLabelId
                     ? buttonLabelId
-                    : dryRun === true
+                    : isDryRun
                       ? `cta.testConfig${loading ? '.active' : ''}`
                       : `cta.saveEntity${loading ? '.active' : ''}`,
             })}

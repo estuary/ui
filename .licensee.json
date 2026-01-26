@@ -41,6 +41,9 @@
         "// BSL (only when hacking it in)": "0.0.0",
         "flow-web": "0.5.12",
 
+        "// Apache": "0.0.0",
+        "posthog-js": "1.321.2",
+
         "// LGPL - only used for image processing and easy to remove": "0.0.0",
         "@img/sharp-libvips-linux-x64": "1.1.0",
         "@img/sharp-libvips-linuxmusl-x64": "1.1.0",
