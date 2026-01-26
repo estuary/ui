@@ -11,7 +11,11 @@ function WizardContent() {
         return null;
     }
 
-    return <DialogContent sx={{ p: 4 }}>{currentStepConfig.component}</DialogContent>;
+    return (
+        <DialogContent sx={{ p: 4 }}>
+            {currentStepConfig.component}
+        </DialogContent>
+    );
 }
 
 export default WizardContent;
