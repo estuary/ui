@@ -1,3 +1,4 @@
+import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import type {
     ConnectionTestResult,
     ConnectionTestResults,
@@ -27,7 +28,6 @@ import {
 } from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
 
-import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
 import { MOCK_DATA_PLANES } from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
@@ -477,9 +477,13 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
                         lastErrorMessages[allDataPlanes[0].id]) ? (
                         <ConnectionErrorDetails
                             result={
-                                results[allDataPlanes[0].id] ?? { status: 'idle' }
+                                results[allDataPlanes[0].id] ?? {
+                                    status: 'idle',
+                                }
                             }
-                            errorMessage={lastErrorMessages[allDataPlanes[0].id]}
+                            errorMessage={
+                                lastErrorMessages[allDataPlanes[0].id]
+                            }
                             onRetry={() => onRetry(allDataPlanes[0].id)}
                         />
                     ) : null}

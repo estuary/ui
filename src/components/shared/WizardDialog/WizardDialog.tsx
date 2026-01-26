@@ -43,13 +43,10 @@ export function WizardDialog({
             // Run custom step validation if provided
             if (validateStep) {
                 const stepValid = await validateStep(currentStep);
-                console.log('Validation result:', stepValid);
                 if (!stepValid) {
                     return false;
                 }
             }
-
-            console.log('Current step:', currentStep, 'isLastStep:', isLastStep);
 
             if (isLastStep) {
                 // On last step, call onComplete
@@ -58,7 +55,6 @@ export function WizardDialog({
                 }
             } else {
                 // Move to next step
-                console.log('Advancing to next step');
                 setCurrentStep((prev) => prev + 1);
             }
 

@@ -1,10 +1,11 @@
+import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import {
-    Autocomplete,
     Box,
     Checkbox,
-    Chip,
     Fade,
     FormControl,
     FormControlLabel,
@@ -19,15 +20,14 @@ import {
 import { HelpCircle } from 'iconoir-react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import {
     AWS_REGIONS,
     CloudProviderCodes,
     GCP_REGIONS,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
-import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import CardWrapper from 'src/components/shared/CardWrapper';
+import { RHFMultiSelectWithDefault } from 'src/components/shared/forms/RHFMultiSelectWithDefault';
 import {
     formatDataPlaneName,
     getDataPlaneScope,
@@ -233,109 +233,17 @@ export function StorageMappingForm() {
             <CardWrapper>
                 <Stack spacing={2}>
                     {selectAdditional ? (
-                        <Autocomplete
-                            multiple
-                            disableClearable
-                            value={
-                                // Preserve selection order by mapping from IDs
-                                (selectedDataPlaneIds ?? [])
-                                    .map((id) =>
-                                        dataPlaneSelectOptions.find(
-                                            (opt) => opt.value === id
-                                        )
-                                    )
-                                    .filter(Boolean) as {
-                                    value: string;
-                                    label: string;
-                                }[]
-                            }
-                            onChange={(_event, newValue) => {
-                                setValue(
-                                    'data_planes',
-                                    newValue.map((v) => v.value)
-                                );
-                            }}
+                        <RHFMultiSelectWithDefault<StorageMappingFormData>
+                            name="data_planes"
+                            label="Data Planes"
                             options={dataPlaneSelectOptions}
-                            getOptionLabel={(option) => option.label}
-                            isOptionEqualToValue={(option, value) =>
-                                option.value === value.value
-                            }
-                            renderTags={(value, getTagProps) => (
-                                <Box sx={{ width: '100%' }}>
-                                    {value.length > 0 ? (
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: 1,
-                                                mb: value.length > 1 ? 0.5 : 0,
-                                            }}
-                                        >
-                                            <Box
-                                                component="span"
-                                                sx={{
-                                                    typography: 'caption',
-                                                    color: 'text.secondary',
-                                                }}
-                                            >
-                                                Default:
-                                            </Box>
-                                            <Chip
-                                                {...getTagProps({
-                                                    index: 0,
-                                                })}
-                                                label={value[0].label}
-                                                size="small"
-                                                color="primary"
-                                            />
-                                        </Box>
-                                    ) : null}
-                                    {value.length > 1 ? (
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                alignItems: 'flex-start',
-                                                gap: 1,
-                                            }}
-                                        >
-                                            <Box
-                                                component="span"
-                                                sx={{
-                                                    typography: 'caption',
-                                                    color: 'text.secondary',
-                                                    lineHeight: '24px',
-                                                }}
-                                            >
-                                                Additional:
-                                            </Box>
-                                            <Stack spacing={0.5}>
-                                                {value
-                                                    .slice(1)
-                                                    .map((option, i) => (
-                                                        <Chip
-                                                            {...getTagProps({
-                                                                index: i + 1,
-                                                            })}
-                                                            key={option.value}
-                                                            label={option.label}
-                                                            size="small"
-                                                        />
-                                                    ))}
-                                            </Stack>
-                                        </Box>
-                                    ) : null}
-                                </Box>
-                            )}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Data Planes"
-                                    size="small"
-                                    required
-                                    error={!!errors.data_planes}
-                                />
-                            )}
-                            size="small"
+                            required
+                            rules={{
+                                validate: (value) =>
+                                    (Array.isArray(value) &&
+                                        value.length > 0) ||
+                                    'At least one data plane is required',
+                            }}
                         />
                     ) : (
                         <Controller

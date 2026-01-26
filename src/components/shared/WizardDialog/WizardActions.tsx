@@ -39,13 +39,12 @@ function WizardActions() {
                 onClick={goToNext}
                 disabled={isNavigating || !canProceed}
             >
-                {currentStepConfig?.nextLabel ?? (
-                    isLastStep ? (
+                {currentStepConfig?.nextLabel ??
+                    (isLastStep ? (
                         <FormattedMessage id="cta.save" />
                     ) : (
                         <FormattedMessage id="cta.next" />
-                    )
-                )}
+                    ))}
             </Button>
         </DialogActions>
     );
