@@ -11,6 +11,12 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FormattedMessage } from 'react-intl';
+import { useClient } from 'urql';
+
+import {
+    testSingleDataPlaneConnection,
+    testStorageConnection,
+} from 'src/api/storageMappingsGql';
 
 import StorageMappingContent from 'src/components/admin/Settings/StorageMappings/Dialog/Content';
 import TestConnectionResult from 'src/components/admin/Settings/StorageMappings/Dialog/steps/TestConnectionResult';
@@ -22,6 +28,8 @@ interface Props {
 }
 
 function ConfigureStorageDialog({ open, setOpen }: Props) {
+    const client = useClient();
+
     const [testResults, setTestResults] = useState<ConnectionTestResults>({});
     const testPromisesRef = useRef<Map<string, Promise<ConnectionTestResult>>>(
         new Map()
@@ -42,27 +50,9 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         },
     });
 
-    const runConnectionTest = async (
-        _dataPlaneId: string
-    ): Promise<ConnectionTestResult> => {
-        // TODO: Replace with actual connection test API call
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        // Simulate success (or failure based on some condition)
-        const success = Math.random() > 0.5; // 50% success rate for demo
-        if (success) {
-            return { status: 'success' };
-        } else {
-            return {
-                status: 'error',
-                errorMessage:
-                    'Unable to access bucket. Please verify your bucket name and permissions.',
-            };
-        }
-    };
-
     const startConnectionTests = useCallback(() => {
-        const dataPlaneIds = methods.getValues('data_planes');
+        const formData = methods.getValues();
+        const dataPlaneIds = formData.data_planes;
 
         // Initialize all data planes to 'testing' state
         const initialResults: ConnectionTestResults = {};
@@ -74,15 +64,44 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
             setTestResults(initialResults);
         });
 
-        // Clear old promises and start new tests
+        // Clear old promises and start new test
         testPromisesRef.current.clear();
 
-        dataPlaneIds.forEach((dataPlaneId) => {
-            const promise = runConnectionTest(dataPlaneId);
+        // Run the connection test for all data planes
+        const promise = testStorageConnection(client, formData, dataPlaneIds);
+
+        // Track promise for each data plane (all use same promise)
+        dataPlaneIds.forEach((id) => {
+            testPromisesRef.current.set(id, promise.then((results) => results[id]));
+        });
+
+        promise.then((results) => {
+            // Update all results at once
+            setTestResults((prev) => ({
+                ...prev,
+                ...results,
+            }));
+        });
+    }, [client, methods]);
+
+    const handleRetry = useCallback(
+        (dataPlaneId: string) => {
+            const formData = methods.getValues();
+
+            // Set this specific data plane to testing
+            setTestResults((prev) => ({
+                ...prev,
+                [dataPlaneId]: { status: 'testing' },
+            }));
+
+            const promise = testSingleDataPlaneConnection(
+                client,
+                formData,
+                dataPlaneId
+            );
             testPromisesRef.current.set(dataPlaneId, promise);
 
             promise.then((result) => {
-                // Only update if this is still the current test for this data plane
                 if (testPromisesRef.current.get(dataPlaneId) === promise) {
                     setTestResults((prev) => ({
                         ...prev,
@@ -90,28 +109,9 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                     }));
                 }
             });
-        });
-    }, [methods]);
-
-    const handleRetry = useCallback((dataPlaneId: string) => {
-        // Set this specific data plane to testing
-        setTestResults((prev) => ({
-            ...prev,
-            [dataPlaneId]: { status: 'testing' },
-        }));
-
-        const promise = runConnectionTest(dataPlaneId);
-        testPromisesRef.current.set(dataPlaneId, promise);
-
-        promise.then((result) => {
-            if (testPromisesRef.current.get(dataPlaneId) === promise) {
-                setTestResults((prev) => ({
-                    ...prev,
-                    [dataPlaneId]: result,
-                }));
-            }
-        });
-    }, []);
+        },
+        [client, methods]
+    );
 
     // Check if all data planes have completed testing successfully
     const allTestsPassed = useMemo(() => {
