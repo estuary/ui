@@ -5,7 +5,7 @@ import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Box, Grid, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 import { Editor } from '@monaco-editor/react';
@@ -49,17 +49,28 @@ function ListView({
     );
 
     const rowsByKey = useMemo(() => {
-        if (error === null && !!data) {
-            return Object.assign(
-                {},
-                ...data.documents.map((record) => ({
-                    [buildRecordKey(record)]: record,
-                }))
-            ) as Record<string, JournalRecord<Record<string, any>>>;
+        if (error === null && data) {
+            return data.documents.reduce(
+                (acc, record) => {
+                    acc[buildRecordKey(record)] = record;
+                    return acc;
+                },
+                {} as Record<string, JournalRecord<Record<string, any>>>
+            );
         } else {
             return {};
         }
     }, [buildRecordKey, data, error]);
+
+    const rows = useMemo(
+        () => Object.keys(rowsByKey).map((k) => ({ key: k, id: k })),
+        [rowsByKey]
+    );
+
+    const selectedRecordJson = useMemo(
+        () => stringifyJSON(rowsByKey[selectedKey]),
+        [rowsByKey, selectedKey]
+    );
 
     useEffect(() => {
         if (!isEmpty(rowsByKey)) {
@@ -83,17 +94,14 @@ function ListView({
                         <DataGrid
                             columns={[
                                 {
-                                    field: 'key',
                                     headerName: intl.formatMessage({
                                         id: 'detailsPanel.dataPreview.listView.header',
                                     }),
+                                    field: 'key',
                                     flex: 1,
                                 },
                             ]}
-                            rows={Object.entries(rowsByKey).map(([k]) => ({
-                                key: k,
-                                id: k,
-                            }))}
+                            rows={rows}
                             hideFooter
                             disableColumnSelector
                             columnHeaderHeight={40}
@@ -109,25 +117,19 @@ function ListView({
                         />
                     }
                     details={
-                        <Box
-                            sx={{
-                                m: 2,
-                            }}
-                        >
-                            <Editor
-                                height={300}
-                                value={stringifyJSON(rowsByKey[selectedKey])}
-                                defaultLanguage="json"
-                                theme={
-                                    monacoEditorComponentBackground[
-                                        theme.palette.mode
-                                    ]
-                                }
-                                saveViewState={false}
-                                // path={currentBindingUUID}
-                                options={{ readOnly: true }}
-                            />
-                        </Box>
+                        <Editor
+                            height={315}
+                            value={selectedRecordJson}
+                            defaultLanguage="json"
+                            theme={
+                                monacoEditorComponentBackground[
+                                    theme.palette.mode
+                                ]
+                            }
+                            saveViewState={false}
+                            // path={currentBindingUUID}
+                            options={{ readOnly: true }}
+                        />
                     }
                 />
             )}

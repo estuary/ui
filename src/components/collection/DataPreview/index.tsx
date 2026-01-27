@@ -3,9 +3,10 @@ import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { useMemo } from 'react';
 
-import { Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { Refresh } from 'iconoir-react';
+import prettyBytes from 'pretty-bytes';
 import { useIntl } from 'react-intl';
 
 import HydrationError from 'src/components/collection/DataPreview/HydrationError';
@@ -164,7 +165,22 @@ export function DataPreview({ collectionName }: Props) {
                 ) : readError ? (
                     <HydrationError readError={readError} />
                 ) : isLoading ? (
-                    <ListViewSkeleton />
+                    <>
+                        <Box>
+                            <Typography variant="body2" color="text.secondary">
+                                {journalData?.progress.docCount}
+
+                                {prettyBytes(
+                                    journalData?.progress.byteCount ?? 0,
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    }
+                                )}
+                            </Typography>
+                        </Box>
+                        <ListViewSkeleton />
+                    </>
                 ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (
                     <ListView journalData={journalData} spec={spec} />
                 ) : null}

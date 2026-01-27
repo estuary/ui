@@ -59,6 +59,7 @@ export async function loadDocuments({
     documentCount,
     maxBytes,
     offsets,
+    onProgress,
 }: LoadDocumentsProps): Promise<LoadDocumentsResponse> {
     if (!client || !journalName || journalName.length === 0) {
         console.warn('Cannot load documents without client and journal');
@@ -174,6 +175,12 @@ export async function loadDocuments({
             documents = returnAllDocs
                 ? readResponse.allDocs
                 : readResponse.allDocs.slice(minDocCount * -1);
+
+            // Report progress after each read
+            onProgress?.({
+                docCount: documents.length,
+                byteCount: range[1] - range[0],
+            });
         }
     };
 
@@ -188,6 +195,12 @@ export async function loadDocuments({
             const readResponse = await attemptToRead(start, end);
             range = readResponse.range;
             documents = readResponse.allDocs;
+
+            // Report progress after initial read
+            onProgress?.({
+                docCount: documents.length,
+                byteCount: range[1] - range[0],
+            });
 
             if (documents.length === 0) {
                 logRocketConsole(
