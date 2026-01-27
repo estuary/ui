@@ -67,6 +67,9 @@ import {
 import { hasOwnProperty } from 'src/utils/misc-utils';
 import { ISO_8601_DURATION_PATTERN } from 'src/validation';
 
+// JsonSchema extended with custom connector annotations (multiline, secret, advanced, etc.)
+type ExtendedJsonSchema = JsonSchema & Record<string, unknown>;
+
 /////////////////////////////////////////////////////////
 //  CUSTOM FUNCTIONS AND SETTINGS
 /////////////////////////////////////////////////////////
@@ -110,8 +113,7 @@ const schemaHasFormat = (
 
 const schemaHasMultilineProp = (schema: JsonSchema): boolean => {
     if (Object.hasOwn(schema, 'multiline')) {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        return schema['multiline'] === true;
+        return (schema as ExtendedJsonSchema)['multiline'] === true;
     } else {
         return false;
     }
@@ -122,16 +124,16 @@ const schemaHasSecretProp = (schema: JsonSchema): boolean => {
         Object.hasOwn(schema, 'secret') ||
         Object.hasOwn(schema, 'airbyte_secret')
     ) {
-        // eslint-disable-next-line @typescript-eslint/dot-notation
-        return schema['secret'] === true || schema['airbyte_secret'] === true;
+        const s = schema as ExtendedJsonSchema;
+        return s['secret'] === true || s['airbyte_secret'] === true;
     } else {
         return false;
     }
 };
 
-const containsSshEndpoint = (schema: any): boolean => {
+const containsSshEndpoint = (schema: JsonSchema): boolean => {
     if (Object.hasOwn(schema, 'properties')) {
-        if (Object.hasOwn(schema.properties, Options.sshEndpoint)) {
+        if (Object.hasOwn(schema.properties!, Options.sshEndpoint)) {
             return true;
         }
     }
@@ -140,8 +142,7 @@ const containsSshEndpoint = (schema: any): boolean => {
 };
 
 const isAdvancedConfig = (schema: JsonSchema): boolean => {
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    return schema[ADVANCED] === true;
+    return (schema as ExtendedJsonSchema)[ADVANCED] === true;
 };
 
 const getTypeOtherThanNull = (
@@ -576,7 +577,7 @@ const generateUISchema = (
             addOption(
                 oAuthCTAControl,
                 Options.oauthProvider,
-                jsonSchema[Annotations.oAuthProvider]
+                (jsonSchema as ExtendedJsonSchema)[Annotations.oAuthProvider]
             );
             addOption(
                 oAuthCTAControl,

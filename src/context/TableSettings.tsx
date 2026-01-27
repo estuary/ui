@@ -38,9 +38,6 @@ export const TableSettingsProvider = ({ children }: BaseComponentProps) => {
                 [TablePrefixes.alertHistoryForEntity]: {
                     shownOptionalColumns: [],
                 },
-                [TablePrefixes.alertsForEntity]: {
-                    shownOptionalColumns: [],
-                },
                 [TablePrefixes.fieldSelection]: {
                     shownOptionalColumns: [],
                 },

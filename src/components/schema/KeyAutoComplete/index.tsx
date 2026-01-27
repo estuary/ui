@@ -105,13 +105,15 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                 {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={skimProjectionResponseEmpty}
                 getOptionLabel={getValue}
-                groupBy={(option) => option.exists}
+                groupBy={(option) => option.inference?.exists ?? ''}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
+                    // @ts-expect-error value is string[] but options is BuiltProjection[]
                     return option.ptr === optionValue;
                 }}
                 options={keys}
                 readOnly={disableInput}
+                // @ts-expect-error value is string[] but options is BuiltProjection[]
                 value={localCopyValue}
                 onChange={async (event, newValues, reason) => {
                     if (changeHandler) {
@@ -177,6 +179,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                                 x-react-window-item-height={tallHeight}
                             >
                                 <BasicOption
+                                    // @ts-expect-error ptr is optional but BasicOption expects string
                                     pointer={ptr}
                                     types={inference.types}
                                 />
@@ -195,6 +198,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                     } else {
                         RowContent = (
                             <BasicOption
+                                // @ts-expect-error ptr is optional but BasicOption expects string
                                 pointer={ptr}
                                 types={inference.types}
                             />

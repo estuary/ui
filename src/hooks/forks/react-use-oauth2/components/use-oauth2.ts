@@ -100,9 +100,8 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                     }
 
                     // Not the best approach but just need to be safe since so much can go wrong
-                    // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-                } catch (genericError: any) {
-                    await onError(genericError.toString());
+                } catch (genericError: unknown) {
+                    await onError(String(genericError));
                     setLoading(false);
                     cleanup(intervalRef, popupRef, handleMessageListener);
                 }

@@ -26,7 +26,7 @@ const getInitialState = (
     addPublication: (val) => {
         set(
             produce((state: QueuedTasksStore) => {
-                state.publications[val] = null;
+                state.publications[val] = { response: null };
             }),
             false,
             'Publication added to Queued Tasks'

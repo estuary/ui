@@ -21,7 +21,7 @@ const getChildSize = (child: ReactChild) => {
     }
 
     // Might be the raw string or node that'll be rendered
-    const itemToRender = child[1];
+    const itemToRender = Array.isArray(child) ? child[1] : undefined;
     const itemHeight =
         itemToRender?.props?.['x-react-window-item-height'] ?? itemSize;
 

@@ -15,7 +15,7 @@ export const copyEncryptedEndpointConfig = (
     encryptedSuffix: string,
     overrideJsonFormDefaults?: boolean
 ) => {
-    const response = {};
+    const response: Record<string, unknown> = {};
     Object.entries(encryptedEndpointConfig).forEach(([key, value]) => {
         // Check if key is a sops key.
         const encryptedSuffixIndex = key.lastIndexOf(encryptedSuffix);
