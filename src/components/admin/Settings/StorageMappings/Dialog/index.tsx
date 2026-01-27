@@ -17,7 +17,6 @@ import {
     testSingleDataPlaneConnection,
     testStorageConnection,
 } from 'src/api/storageMappingsGql';
-
 import StorageMappingContent from 'src/components/admin/Settings/StorageMappings/Dialog/Content';
 import TestConnectionResult from 'src/components/admin/Settings/StorageMappings/Dialog/steps/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
@@ -72,7 +71,10 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
 
         // Track promise for each data plane (all use same promise)
         dataPlaneIds.forEach((id) => {
-            testPromisesRef.current.set(id, promise.then((results) => results[id]));
+            testPromisesRef.current.set(
+                id,
+                promise.then((results) => results[id])
+            );
         });
 
         promise.then((results) => {
@@ -144,6 +146,10 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                     <FormattedMessage id="storageMappings.wizard.cta.testConnection" />
                 ),
                 canProceed: () => methods.formState.isValid,
+                onProceed: () => {
+                    startConnectionTests();
+                    return true;
+                },
             },
             {
                 id: 'test',
@@ -162,7 +168,14 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 canProceed: () => allTestsPassed && !anyTestRunning,
             },
         ],
-        [testResults, handleRetry, methods.formState.isValid, allTestsPassed, anyTestRunning]
+        [
+            testResults,
+            handleRetry,
+            methods.formState.isValid,
+            allTestsPassed,
+            anyTestRunning,
+            startConnectionTests,
+        ]
     );
 
     const closeDialog = () => {
@@ -170,14 +183,6 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         methods.reset();
         setTestResults({});
         testPromisesRef.current.clear();
-    };
-
-    const onProceed = async (stepIndex: number): Promise<boolean> => {
-        if (stepIndex === 0) {
-            // Start connection tests for all data planes
-            startConnectionTests();
-        }
-        return true;
     };
 
     const handleComplete = async () => {
@@ -193,7 +198,6 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 open={open}
                 onClose={closeDialog}
                 steps={steps}
-                onProceed={onProceed}
                 onComplete={handleComplete}
                 titleId="configure-storage-dialog-title"
             />
