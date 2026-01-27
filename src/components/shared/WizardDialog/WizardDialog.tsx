@@ -18,7 +18,6 @@ export function WizardDialog({
     steps,
     onComplete,
     onProceed,
-    canProceed: canProceedFn,
     title,
     titleId = 'wizard-dialog-title',
     maxWidth = 'sm',
@@ -90,7 +89,6 @@ export function WizardDialog({
             goToPrevious,
             goToStep,
             isNavigating,
-            canProceedFn,
         }),
         [
             currentStep,
@@ -102,7 +100,6 @@ export function WizardDialog({
             goToPrevious,
             goToStep,
             isNavigating,
-            canProceedFn,
         ]
     );
 
