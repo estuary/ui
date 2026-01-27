@@ -1,7 +1,4 @@
-import type {
-    LoadDocumentsOffsets,
-    LoadProgress,
-} from 'src/hooks/journals/types';
+import type { LoadDocumentsOffsets } from 'src/hooks/journals/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -169,10 +166,6 @@ const useJournalData = (
         useState<Awaited<ReturnType<typeof loadDocuments>>>();
     const [error, setError] = useState<any>(null);
     const [loading, setLoading] = useState(false);
-    const [progress, setProgress] = useState<LoadProgress>({
-        docCount: 0,
-        byteCount: 0,
-    });
 
     const refreshData = useCallback(
         async (offsets?: LoadDocumentsOffsets) => {
@@ -184,7 +177,6 @@ const useJournalData = (
             ) {
                 try {
                     setLoading(true);
-                    setProgress({ docCount: 0, byteCount: 0 });
 
                     const docs = await loadDocuments({
                         journalName,
@@ -192,7 +184,6 @@ const useJournalData = (
                         documentCount: settings?.desiredCount,
                         maxBytes: settings?.maxBytes ?? MAX_DOCUMENT_SIZE,
                         offsets,
-                        onProgress: setProgress,
                     });
 
                     if (fetchCancelHack.current) {
@@ -248,13 +239,12 @@ const useJournalData = (
             data,
             error,
             loading,
-            progress,
             refresh: (newOffset?: LoadDocumentsOffsets) => {
                 failures.current = 0;
                 void refreshData(newOffset);
             },
         }),
-        [data, error, loading, progress, refreshData]
+        [data, error, loading, refreshData]
     );
 };
 

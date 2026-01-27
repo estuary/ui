@@ -15,20 +15,12 @@ export interface LoadDocumentsOffsets {
     endOffset: number;
 }
 
-export interface LoadProgress {
-    docCount: number;
-    byteCount: number;
-}
-
-export type ProgressCallback = (progress: LoadProgress) => void;
-
 export interface LoadDocumentsProps {
     maxBytes: number;
     client?: JournalClient;
     documentCount?: number;
     journalName?: string;
     offsets?: LoadDocumentsOffsets;
-    onProgress?: ProgressCallback;
 }
 
 export interface LoadDocumentsResponse {
