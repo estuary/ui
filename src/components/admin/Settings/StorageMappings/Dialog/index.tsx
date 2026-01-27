@@ -28,7 +28,7 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
     );
 
     const methods = useForm<StorageMappingFormData>({
-        mode: 'onBlur',
+        mode: 'onChange',
         defaultValues: {
             catalog_prefix: '',
             provider: '',
@@ -170,28 +170,18 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         );
     }, [testResults]);
 
-    const validateStep = async (stepIndex: number): Promise<boolean> => {
+    const onProceed = async (stepIndex: number): Promise<boolean> => {
         if (stepIndex === 0) {
-            // Validate form first
-            const isValid = await methods.trigger();
-            if (!isValid) {
-                return false;
-            }
-
             // Start connection tests for all data planes
             startConnectionTests();
-
-            // Proceed to step 2 immediately to show progress
-            return true;
-        }
-        if (stepIndex === 1) {
-            // Only allow save when all connection tests passed
-            return allTestsPassed;
         }
         return true;
     };
 
     const canProceed = (stepIndex: number): boolean => {
+        if (stepIndex === 0) {
+            return methods.formState.isValid;
+        }
         // Disable button on step 1 until all tests pass
         // Also disable on step 0 if any test is in progress (during transition)
         if (stepIndex === 1 || anyTestRunning) {
@@ -213,7 +203,7 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 open={open}
                 onClose={closeDialog}
                 steps={steps}
-                validateStep={validateStep}
+                onProceed={onProceed}
                 canProceed={canProceed}
                 onComplete={handleComplete}
                 titleId="configure-storage-dialog-title"
