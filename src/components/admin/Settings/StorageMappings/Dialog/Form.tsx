@@ -10,11 +10,13 @@ import {
     FormControl,
     FormControlLabel,
     InputLabel,
+    Link,
     MenuItem,
     Select,
     Stack,
     TextField,
     Tooltip,
+    Typography,
 } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
@@ -33,6 +35,9 @@ import {
     getDataPlaneScope,
     parseDataPlaneName,
 } from 'src/utils/dataPlane-utils';
+
+const docsUrl =
+    'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';
 
 // Example data planes for development
 export const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
@@ -213,309 +218,335 @@ export function StorageMappingForm() {
     );
 
     return (
-        <Stack spacing={2}>
-            {/* {JSON.stringify(dataPlaneOptions)} */}
-            <CardWrapper>
-                <TextField
-                    {...register('catalog_prefix', {
-                        required: 'Estuary prefix is required',
-                    })}
-                    label="Estuary Prefix"
-                    required
-                    error={!!errors.catalog_prefix}
-                    helperText={errors.catalog_prefix?.message}
-                    fullWidth
-                    size="small"
-                    // variant="outlined"
-                    // sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
-                />
-            </CardWrapper>
-            <CardWrapper>
-                <Stack spacing={2}>
-                    {selectAdditional ? (
-                        <RHFMultiSelectWithDefault<StorageMappingFormData>
-                            name="data_planes"
-                            label="Data Planes"
-                            options={dataPlaneSelectOptions}
-                            required
-                            rules={{
-                                validate: (value) =>
-                                    (Array.isArray(value) &&
-                                        value.length > 0) ||
-                                    'At least one data plane is required',
-                            }}
-                        />
-                    ) : (
-                        <Controller
-                            name="data_planes"
-                            control={control}
-                            rules={{
-                                validate: (value) =>
-                                    value?.length > 0 ||
-                                    'Data plane is required',
-                            }}
-                            render={({ field }) => (
-                                <FormControl
-                                    fullWidth
-                                    size="small"
-                                    required
-                                    error={!!errors.data_planes}
-                                >
-                                    <InputLabel>Data Plane</InputLabel>
-                                    <Select
-                                        value={field.value?.[0] ?? ''}
-                                        onChange={(e) =>
-                                            field.onChange([e.target.value])
-                                        }
-                                        label="Data Plane"
-                                    >
-                                        {dataPlaneSelectOptions.map(
-                                            (option) => (
-                                                <MenuItem
-                                                    key={option.value}
-                                                    value={option.value}
-                                                >
-                                                    {option.label}
-                                                </MenuItem>
-                                            )
-                                        )}
-                                    </Select>
-                                </FormControl>
-                            )}
-                        />
-                    )}
-
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            gap: 2,
-                            // pl: 2,
-                            color: 'text.secondary',
-                        }}
-                    >
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={allowPublic}
-                                    onChange={(e) =>
-                                        setValue(
-                                            'allow_public',
-                                            e.target.checked
-                                        )
-                                    }
-                                    disabled={!hasPrivateDataPlanes}
-                                    size="small"
-                                />
-                            }
-                            label="Allow public data planes"
-                            slotProps={{
-                                typography: {
-                                    variant: 'body2',
-                                },
-                            }}
-                        />
-
-                        {dataPlaneSelectOptions.length > 1 ? (
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={selectAdditional}
-                                        onChange={(e) =>
-                                            setValue(
-                                                'select_additional',
-                                                e.target.checked
-                                            )
-                                        }
-                                        size="small"
-                                    />
-                                }
-                                label="Select multiple data planes"
-                                slotProps={{
-                                    typography: {
-                                        variant: 'body2',
-                                    },
+        <>
+            <Typography sx={{ mb: 4 }}>
+                Configure a new storage mapping for your collection data. For
+                more information and access requirements, see the{' '}
+                <Link href={docsUrl} target="_blank" rel="noopener noreferrer">
+                    documentation
+                </Link>
+                .
+            </Typography>
+            <Stack spacing={2}>
+                {/* {JSON.stringify(dataPlaneOptions)} */}
+                <CardWrapper>
+                    <TextField
+                        {...register('catalog_prefix', {
+                            required: 'Estuary prefix is required',
+                        })}
+                        label="Estuary Prefix"
+                        required
+                        error={!!errors.catalog_prefix}
+                        helperText={errors.catalog_prefix?.message}
+                        fullWidth
+                        size="small"
+                        // variant="outlined"
+                        // sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
+                    />
+                </CardWrapper>
+                <CardWrapper>
+                    <Stack spacing={2}>
+                        {selectAdditional ? (
+                            <RHFMultiSelectWithDefault<StorageMappingFormData>
+                                name="data_planes"
+                                label="Data Planes"
+                                options={dataPlaneSelectOptions}
+                                required
+                                rules={{
+                                    validate: (value) =>
+                                        (Array.isArray(value) &&
+                                            value.length > 0) ||
+                                        'At least one data plane is required',
                                 }}
                             />
-                        ) : null}
-                    </Box>
-                </Stack>
-            </CardWrapper>
-
-            <CardWrapper>
-                <TextField
-                    {...register('bucket', {
-                        required: 'Bucket is required',
-                    })}
-                    // variant="outlined"
-                    required
-                    label="Bucket"
-                    error={!!errors.bucket}
-                    helperText={
-                        errors.bucket?.message ??
-                        'Bucket into which Estuary will store data'
-                    }
-                    fullWidth
-                    size="small"
-                />
-                <Stack
-                    spacing={2}
-                    sx={{ /* pl: 2, */ color: 'text.secondary' }}
-                >
-                    <Box sx={{ position: 'relative', height: 40 }}>
-                        <Fade in={!useSameRegion}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: 2,
-                                    position: 'absolute',
-                                    inset: 0,
+                        ) : (
+                            <Controller
+                                name="data_planes"
+                                control={control}
+                                rules={{
+                                    validate: (value) =>
+                                        value?.length > 0 ||
+                                        'Data plane is required',
                                 }}
-                            >
-                                <Controller
-                                    name="provider"
-                                    control={control}
-                                    rules={{
-                                        deps: ['use_same_region'],
-                                        validate: (value, formValues) =>
-                                            formValues.use_same_region ||
-                                            !!value ||
-                                            'Cloud provider is required',
-                                    }}
-                                    render={({ field }) => (
-                                        <FormControl
-                                            fullWidth
-                                            size="small"
-                                            required
-                                            error={!!errors.provider}
+                                render={({ field }) => (
+                                    <FormControl
+                                        fullWidth
+                                        size="small"
+                                        required
+                                        error={!!errors.data_planes}
+                                    >
+                                        <InputLabel>Data Plane</InputLabel>
+                                        <Select
+                                            value={field.value?.[0] ?? ''}
+                                            onChange={(e) =>
+                                                field.onChange([e.target.value])
+                                            }
+                                            label="Data Plane"
                                         >
-                                            <InputLabel>
-                                                Cloud Provider
-                                            </InputLabel>
-                                            <Select
-                                                {...field}
-                                                label="Cloud Provider"
-                                            >
-                                                {PROVIDER_OPTIONS.map(
-                                                    (option) => (
-                                                        <MenuItem
-                                                            key={option.value}
-                                                            value={option.value}
-                                                        >
-                                                            {option.label}
-                                                        </MenuItem>
-                                                    )
-                                                )}
-                                            </Select>
-                                        </FormControl>
-                                    )}
-                                />
-
-                                <Controller
-                                    name="region"
-                                    control={control}
-                                    rules={{
-                                        deps: ['use_same_region'],
-                                        validate: (value, formValues) =>
-                                            formValues.use_same_region ||
-                                            !!value ||
-                                            'Region is required',
-                                    }}
-                                    render={({ field }) => (
-                                        <FormControl
-                                            fullWidth
-                                            size="small"
-                                            required
-                                            error={!!errors.region}
-                                            disabled={!provider}
-                                        >
-                                            <InputLabel>Region</InputLabel>
-                                            <Select {...field} label="Region">
-                                                {regionOptions.map((option) => (
+                                            {dataPlaneSelectOptions.map(
+                                                (option) => (
                                                     <MenuItem
                                                         key={option.value}
                                                         value={option.value}
                                                     >
                                                         {option.label}
                                                     </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    )}
-                                />
-                            </Box>
-                        </Fade>
-                        <Fade in={useSameRegion}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: 4,
-                                    position: 'absolute',
-                                    inset: 0,
-                                    alignItems: 'center',
+                                                )
+                                            )}
+                                        </Select>
+                                    </FormControl>
+                                )}
+                            />
+                        )}
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                gap: 2,
+                                // pl: 2,
+                                color: 'text.secondary',
+                            }}
+                        >
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={allowPublic}
+                                        onChange={(e) =>
+                                            setValue(
+                                                'allow_public',
+                                                e.target.checked
+                                            )
+                                        }
+                                        disabled={!hasPrivateDataPlanes}
+                                        size="small"
+                                    />
+                                }
+                                label="Allow public data planes"
+                                slotProps={{
+                                    typography: {
+                                        variant: 'body2',
+                                    },
                                 }}
-                            >
-                                <Box sx={{ typography: 'body2' }}>
-                                    <strong>Cloud provider:</strong>{' '}
-                                    <TechnicalEmphasis>
-                                        {selectedDataPlane?.parsedName.provider
-                                            ? selectedDataPlane.parsedName
-                                                  .provider === 'gcp'
-                                                ? 'Google Cloud Storage'
-                                                : 'Amazon S3'
-                                            : '—'}
-                                    </TechnicalEmphasis>
-                                </Box>
-                                <Box sx={{ typography: 'body2' }}>
-                                    <strong>Region:</strong>{' '}
-                                    <TechnicalEmphasis>
-                                        {' '}
-                                        {selectedDataPlane?.parsedName.region ??
-                                            '—'}
-                                    </TechnicalEmphasis>
-                                </Box>
-                            </Box>
-                        </Fade>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Controller
-                            name="use_same_region"
-                            control={control}
-                            render={({ field }) => (
+                            />
+
+                            {dataPlaneSelectOptions.length > 1 ? (
                                 <FormControlLabel
                                     control={
                                         <Checkbox
-                                            checked={field.value}
+                                            checked={selectAdditional}
                                             onChange={(e) =>
-                                                field.onChange(e.target.checked)
+                                                setValue(
+                                                    'select_additional',
+                                                    e.target.checked
+                                                )
                                             }
                                             size="small"
                                         />
                                     }
-                                    label="Storage bucket and default data plane are in the same region"
+                                    label="Select multiple data planes"
                                     slotProps={{
                                         typography: {
                                             variant: 'body2',
                                         },
                                     }}
                                 />
-                            )}
-                        />
-                        <Tooltip title="To avoid egress fees, we recommend using the same region as the default data plane.">
-                            <HelpCircle
-                                fontSize="small"
-                                style={{ cursor: 'pointer' }}
-                            />
-                        </Tooltip>
-                    </Box>
+                            ) : null}
+                        </Box>
+                    </Stack>
+                </CardWrapper>
+
+                <CardWrapper>
                     <TextField
-                        {...register('storage_prefix')}
-                        label="Storage Prefix"
+                        {...register('bucket', {
+                            required: 'Bucket is required',
+                        })}
+                        // variant="outlined"
+                        required
+                        label="Bucket"
+                        error={!!errors.bucket}
+                        helperText={
+                            errors.bucket?.message ??
+                            'Bucket into which Estuary will store data'
+                        }
                         fullWidth
                         size="small"
-                        helperText="Optional prefix of keys written to the bucket"
                     />
-                </Stack>
-            </CardWrapper>
-        </Stack>
+                    <Stack
+                        spacing={2}
+                        sx={{ /* pl: 2, */ color: 'text.secondary' }}
+                    >
+                        <Box sx={{ position: 'relative', height: 40 }}>
+                            <Fade in={!useSameRegion}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        gap: 2,
+                                        position: 'absolute',
+                                        inset: 0,
+                                    }}
+                                >
+                                    <Controller
+                                        name="provider"
+                                        control={control}
+                                        rules={{
+                                            deps: ['use_same_region'],
+                                            validate: (value, formValues) =>
+                                                formValues.use_same_region ||
+                                                !!value ||
+                                                'Cloud provider is required',
+                                        }}
+                                        render={({ field }) => (
+                                            <FormControl
+                                                fullWidth
+                                                size="small"
+                                                required
+                                                error={!!errors.provider}
+                                            >
+                                                <InputLabel>
+                                                    Cloud Provider
+                                                </InputLabel>
+                                                <Select
+                                                    {...field}
+                                                    label="Cloud Provider"
+                                                >
+                                                    {PROVIDER_OPTIONS.map(
+                                                        (option) => (
+                                                            <MenuItem
+                                                                key={
+                                                                    option.value
+                                                                }
+                                                                value={
+                                                                    option.value
+                                                                }
+                                                            >
+                                                                {option.label}
+                                                            </MenuItem>
+                                                        )
+                                                    )}
+                                                </Select>
+                                            </FormControl>
+                                        )}
+                                    />
+
+                                    <Controller
+                                        name="region"
+                                        control={control}
+                                        rules={{
+                                            deps: ['use_same_region'],
+                                            validate: (value, formValues) =>
+                                                formValues.use_same_region ||
+                                                !!value ||
+                                                'Region is required',
+                                        }}
+                                        render={({ field }) => (
+                                            <FormControl
+                                                fullWidth
+                                                size="small"
+                                                required
+                                                error={!!errors.region}
+                                                disabled={!provider}
+                                            >
+                                                <InputLabel>Region</InputLabel>
+                                                <Select
+                                                    {...field}
+                                                    label="Region"
+                                                >
+                                                    {regionOptions.map(
+                                                        (option) => (
+                                                            <MenuItem
+                                                                key={
+                                                                    option.value
+                                                                }
+                                                                value={
+                                                                    option.value
+                                                                }
+                                                            >
+                                                                {option.label}
+                                                            </MenuItem>
+                                                        )
+                                                    )}
+                                                </Select>
+                                            </FormControl>
+                                        )}
+                                    />
+                                </Box>
+                            </Fade>
+                            <Fade in={useSameRegion}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        gap: 4,
+                                        position: 'absolute',
+                                        inset: 0,
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Box sx={{ typography: 'body2' }}>
+                                        <strong>Cloud provider:</strong>{' '}
+                                        <TechnicalEmphasis>
+                                            {selectedDataPlane?.parsedName
+                                                .provider
+                                                ? selectedDataPlane.parsedName
+                                                      .provider === 'gcp'
+                                                    ? 'Google Cloud Storage'
+                                                    : 'Amazon S3'
+                                                : '—'}
+                                        </TechnicalEmphasis>
+                                    </Box>
+                                    <Box sx={{ typography: 'body2' }}>
+                                        <strong>Region:</strong>{' '}
+                                        <TechnicalEmphasis>
+                                            {' '}
+                                            {selectedDataPlane?.parsedName
+                                                .region ?? '—'}
+                                        </TechnicalEmphasis>
+                                    </Box>
+                                </Box>
+                            </Fade>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Controller
+                                name="use_same_region"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={field.value}
+                                                onChange={(e) =>
+                                                    field.onChange(
+                                                        e.target.checked
+                                                    )
+                                                }
+                                                size="small"
+                                            />
+                                        }
+                                        label="Storage bucket and default data plane are in the same region"
+                                        slotProps={{
+                                            typography: {
+                                                variant: 'body2',
+                                            },
+                                        }}
+                                    />
+                                )}
+                            />
+                            <Tooltip title="To avoid egress fees, we recommend using the same region as the default data plane.">
+                                <HelpCircle
+                                    fontSize="small"
+                                    style={{ cursor: 'pointer' }}
+                                />
+                            </Tooltip>
+                        </Box>
+                        <TextField
+                            {...register('storage_prefix')}
+                            label="Storage Prefix"
+                            fullWidth
+                            size="small"
+                            helperText="Optional prefix of keys written to the bucket"
+                        />
+                    </Stack>
+                </CardWrapper>
+            </Stack>
+        </>
     );
 }

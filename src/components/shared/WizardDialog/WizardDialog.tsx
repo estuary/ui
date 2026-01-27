@@ -12,14 +12,14 @@ import { WizardContext } from 'src/components/shared/WizardDialog/context';
 import WizardActions from 'src/components/shared/WizardDialog/WizardActions';
 import WizardContent from 'src/components/shared/WizardDialog/WizardContent';
 
+const TITLE_ID = 'wizard-dialog-title';
+
 export function WizardDialog({
     open,
     onClose,
     steps,
     onComplete,
-    onProceed,
     title,
-    titleId = 'wizard-dialog-title',
     maxWidth = 'sm',
     initialStep = 0,
 }: WizardDialogProps) {
@@ -49,14 +49,6 @@ export function WizardDialog({
                 }
             }
 
-            // Run dialog-level onProceed callback if provided (for API calls, saving data, etc.)
-            if (onProceed) {
-                const shouldProceed = await onProceed(currentStep);
-                if (!shouldProceed) {
-                    return false;
-                }
-            }
-
             if (isLastStep) {
                 // On last step, call onComplete
                 if (onComplete) {
@@ -71,7 +63,7 @@ export function WizardDialog({
         } finally {
             setIsNavigating(false);
         }
-    }, [currentStep, isLastStep, onComplete, onProceed, steps]);
+    }, [currentStep, isLastStep, onComplete, steps]);
 
     const goToPrevious = useCallback(() => {
         if (!isFirstStep) {
@@ -128,10 +120,10 @@ export function WizardDialog({
                 open={open}
                 maxWidth={maxWidth}
                 fullWidth
-                aria-labelledby={titleId}
+                aria-labelledby={TITLE_ID}
                 TransitionProps={{ onExited: handleExited }}
             >
-                <DialogTitleWithClose id={titleId} onClose={handleClose}>
+                <DialogTitleWithClose id={TITLE_ID} onClose={handleClose}>
                     {displayTitle}
                 </DialogTitleWithClose>
 
