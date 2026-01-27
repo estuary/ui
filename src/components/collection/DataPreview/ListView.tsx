@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Grid, useTheme } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
-import ReactJson from '@microlink/react-json-view';
+import { Editor } from '@monaco-editor/react';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
@@ -17,9 +17,10 @@ import ListAndDetails from 'src/components/editor/ListAndDetails';
 import Error from 'src/components/shared/Error';
 import {
     dataGridListStyling,
-    jsonViewTheme,
+    monacoEditorComponentBackground,
     semiTransparentBackground,
 } from 'src/context/Theme';
+import { stringifyJSON } from 'src/services/stringify';
 
 interface PreviewJsonModeProps {
     spec: LiveSpecsQuery_details;
@@ -110,19 +111,21 @@ function ListView({
                     details={
                         <Box
                             sx={{
-                                'm': 2,
-                                '& .react-json-view': {
-                                    backgroundColor: 'transparent !important',
-                                },
+                                m: 2,
                             }}
                         >
-                            <ReactJson
-                                style={{ wordBreak: 'break-all' }}
-                                quotesOnKeys={false}
-                                src={rowsByKey[selectedKey]}
-                                theme={jsonViewTheme[theme.palette.mode]}
-                                displayObjectSize={false}
-                                displayDataTypes={false}
+                            <Editor
+                                height={300}
+                                value={stringifyJSON(rowsByKey[selectedKey])}
+                                defaultLanguage="json"
+                                theme={
+                                    monacoEditorComponentBackground[
+                                        theme.palette.mode
+                                    ]
+                                }
+                                saveViewState={false}
+                                // path={currentBindingUUID}
+                                options={{ readOnly: true }}
                             />
                         </Box>
                     }
