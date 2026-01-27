@@ -1,9 +1,9 @@
-import type { Client } from 'urql';
 import type {
     ConnectionTestResult,
     ConnectionTestResults,
     StorageMappingFormData,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { Client } from 'urql';
 
 import { gql } from 'urql';
 
@@ -69,7 +69,9 @@ const mockTestStorageConnection = async (
     dataPlaneIds: string[]
 ): Promise<ConnectionTestResults> => {
     // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) =>
+        setTimeout(resolve, Math.floor(Math.random() * 1500) + 1000)
+    );
 
     const results: ConnectionTestResults = {};
 
@@ -181,6 +183,13 @@ export const testSingleDataPlaneConnection = async (
     formData: StorageMappingFormData,
     dataPlaneId: string
 ): Promise<ConnectionTestResult> => {
-    const results = await testStorageConnection(client, formData, [dataPlaneId]);
-    return results[dataPlaneId] ?? { status: 'error', errorMessage: 'Unknown error' };
+    const results = await testStorageConnection(client, formData, [
+        dataPlaneId,
+    ]);
+    return (
+        results[dataPlaneId] ?? {
+            status: 'error',
+            errorMessage: 'Unknown error',
+        }
+    );
 };

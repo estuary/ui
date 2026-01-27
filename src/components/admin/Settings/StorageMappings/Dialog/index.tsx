@@ -8,16 +8,16 @@ import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 
+import { StorageMappingForm } from './Form';
 import { flushSync } from 'react-dom';
 import { FormProvider, useForm } from 'react-hook-form';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useClient } from 'urql';
 
 import {
     testSingleDataPlaneConnection,
     testStorageConnection,
 } from 'src/api/storageMappingsGql';
-import StorageMappingContent from 'src/components/admin/Settings/StorageMappings/Dialog/Content';
 import TestConnectionResult from 'src/components/admin/Settings/StorageMappings/Dialog/steps/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 
@@ -27,6 +27,7 @@ interface Props {
 }
 
 function ConfigureStorageDialog({ open, setOpen }: Props) {
+    const intl = useIntl();
     const client = useClient();
 
     const [testResults, setTestResults] = useState<ConnectionTestResults>({});
@@ -135,16 +136,16 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         () => [
             {
                 id: 'configure',
-                label: (
-                    <FormattedMessage id="storageMappings.wizard.step.configure" />
-                ),
-                title: (
-                    <FormattedMessage id="storageMappings.wizard.title.configure" />
-                ),
-                component: <StorageMappingContent />,
-                nextLabel: (
-                    <FormattedMessage id="storageMappings.wizard.cta.testConnection" />
-                ),
+                label: intl.formatMessage({
+                    id: 'storageMappings.wizard.step.configure',
+                }),
+                title: intl.formatMessage({
+                    id: 'storageMappings.wizard.title.configure',
+                }),
+                component: <StorageMappingForm />,
+                nextLabel: intl.formatMessage({
+                    id: 'storageMappings.wizard.cta.testConnection',
+                }),
                 canProceed: () => methods.formState.isValid,
                 onProceed: () => {
                     startConnectionTests();
@@ -153,12 +154,12 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
             },
             {
                 id: 'test',
-                label: (
-                    <FormattedMessage id="storageMappings.wizard.step.test" />
-                ),
-                title: (
-                    <FormattedMessage id="storageMappings.wizard.title.test" />
-                ),
+                label: intl.formatMessage({
+                    id: 'storageMappings.wizard.step.test',
+                }),
+                title: intl.formatMessage({
+                    id: 'storageMappings.wizard.title.test',
+                }),
                 component: (
                     <TestConnectionResult
                         results={testResults}
@@ -169,6 +170,7 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
             },
         ],
         [
+            intl,
             testResults,
             handleRetry,
             methods.formState.isValid,
@@ -180,6 +182,8 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
 
     const closeDialog = () => {
         setOpen(false);
+
+        // reset state in case parent keeps this dialog mounted
         methods.reset();
         setTestResults({});
         testPromisesRef.current.clear();
@@ -199,7 +203,6 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 onClose={closeDialog}
                 steps={steps}
                 onComplete={handleComplete}
-                titleId="configure-storage-dialog-title"
             />
         </FormProvider>
     );

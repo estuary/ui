@@ -17,8 +17,8 @@ export interface WizardStep {
     optional?: boolean;
     /** Function to check if the next/save button should be enabled for this step */
     canProceed?: () => boolean;
-    /** Async callback when user attempts to proceed from this step. Return true to proceed, false to block. */
-    onProceed?: () => Promise<boolean>;
+    /** Callback when user attempts to proceed from this step. Return true to proceed, false to block. */
+    onProceed?: () => Promise<boolean> | boolean;
 }
 
 export interface WizardContextValue {
@@ -51,12 +51,8 @@ export interface WizardDialogProps {
     steps: WizardStep[];
     /** Callback when wizard is completed (last step next button clicked) */
     onComplete?: () => void | Promise<void>;
-    /** Async callback when user attempts to proceed. Use for API calls, saving data, etc. Return true to proceed, false to block. */
-    onProceed?: (stepIndex: number) => Promise<boolean>;
     /** Default dialog title (used when step doesn't define its own title) */
     title?: ReactNode;
-    /** Accessible ID for the dialog title */
-    titleId?: string;
     /** Max width of the dialog */
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     /** Initial step index (default: 0) */

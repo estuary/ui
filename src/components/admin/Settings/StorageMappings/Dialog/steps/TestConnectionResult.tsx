@@ -121,17 +121,17 @@ function ConnectionStatusBadge({
     return null;
 }
 
-interface ConnectionErrorDetailsProps {
+interface ConnectionErrorProps {
     result: ConnectionTestResult;
     errorMessage?: string;
     onRetry: () => void;
 }
 
-function ConnectionErrorDetails({
+function ConnectionError({
     result,
     errorMessage,
     onRetry,
-}: ConnectionErrorDetailsProps) {
+}: ConnectionErrorProps) {
     const message = errorMessage || result.errorMessage || 'Connection failed';
     const isRetrying = result.status === 'testing';
 
@@ -156,17 +156,165 @@ function ConnectionErrorDetails({
                     onRetry();
                 }}
                 startIcon={
-                    isRetrying ? (
-                        <CircularProgress size={16} color="inherit" />
-                    ) : (
-                        <Refresh width={16} height={16} />
-                    )
+                    !isRetrying ? <Refresh width={16} height={16} /> : null
                 }
                 sx={{ ml: 1 }}
             >
                 {isRetrying ? 'Retrying...' : 'Retry'}
             </Button>
         </Box>
+    );
+}
+
+interface GcpConnectionInstructionsProps {
+    bucket: string;
+    gcpServiceAccountEmail: string;
+}
+
+function GcpConnectionInstructions({
+    bucket,
+    gcpServiceAccountEmail,
+}: GcpConnectionInstructionsProps) {
+    const theme = useTheme();
+    const serviceAccount =
+        gcpServiceAccountEmail || 'flow@estuary-data.iam.gserviceaccount.com';
+
+    return (
+        <Stack spacing={2}>
+            <Typography variant="subtitle2" fontWeight={700}>
+                Step 1: Copy the Service Account Email
+            </Typography>
+            <Typography variant="body2">
+                Grant this service account access to your GCS bucket:
+            </Typography>
+            <Box
+                component="pre"
+                sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: codeBackground[theme.palette.mode],
+                    overflow: 'auto',
+                    fontSize: 13,
+                    fontFamily: 'monospace',
+                }}
+            >
+                {serviceAccount}
+            </Box>
+
+            <Typography variant="subtitle2" fontWeight={700}>
+                Step 2: Grant bucket permissions
+            </Typography>
+            <Typography variant="body2">
+                Using <TechnicalEmphasis>gsutil</TechnicalEmphasis>, grant the
+                admin role to the the service account using the following
+                command:
+            </Typography>
+            <Box
+                component="pre"
+                sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: codeBackground[theme.palette.mode],
+                    overflow: 'auto',
+                    fontSize: 13,
+                    fontFamily: 'monospace',
+                }}
+            >
+                {`gsutil iam ch serviceAccount:${serviceAccount}:admin gs://${bucket || 'your-bucket'}`}
+            </Box>
+
+            <Typography variant="body2">
+                Or in the Cloud Console, navigate to your bucket, click
+                &quot;Permissions&quot;, then &quot;Grant Access&quot;, and add
+                the service account with the &quot;Storage Admin&quot; role.
+            </Typography>
+        </Stack>
+    );
+}
+
+interface AwsConnectionInstructionsProps {
+    bucket: string;
+    iamArn: string;
+}
+
+function AwsConnectionInstructions({
+    bucket,
+    iamArn,
+}: AwsConnectionInstructionsProps) {
+    const theme = useTheme();
+    const bucketPolicy = JSON.stringify(
+        {
+            Version: '2012-10-17',
+            Statement: [
+                {
+                    Effect: 'Allow',
+                    Principal: {
+                        AWS:
+                            iamArn ||
+                            'arn:aws:iam::123456789012:role/estuary-flow-role',
+                    },
+                    Action: [
+                        's3:GetObject',
+                        's3:PutObject',
+                        's3:DeleteObject',
+                        's3:ListBucket',
+                        's3:GetBucketPolicy',
+                    ],
+                    Resource: [
+                        `arn:aws:s3:::${bucket || 'your-bucket'}`,
+                        `arn:aws:s3:::${bucket || 'your-bucket'}/*`,
+                    ],
+                },
+            ],
+        },
+        null,
+        2
+    );
+
+    return (
+        <Stack spacing={2}>
+            <Typography variant="subtitle2" fontWeight={700}>
+                Step 1: Copy the IAM Role ARN
+            </Typography>
+            <Typography variant="body2">
+                Add this ARN to your S3 bucket policy or IAM role trust
+                relationship:
+            </Typography>
+            <Box
+                component="pre"
+                sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: codeBackground[theme.palette.mode],
+                    overflow: 'auto',
+                    fontSize: 13,
+                    fontFamily: 'monospace',
+                }}
+            >
+                {iamArn || 'arn:aws:iam::123456789012:role/estuary-flow-role'}
+            </Box>
+
+            <Typography variant="subtitle2" fontWeight={700}>
+                Step 2: Apply this bucket policy
+            </Typography>
+            <Typography variant="body2">
+                Add this policy to your S3 bucket to grant the necessary
+                permissions:
+            </Typography>
+            <Box
+                component="pre"
+                sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: codeBackground[theme.palette.mode],
+                    overflow: 'auto',
+                    fontSize: 13,
+                    fontFamily: 'monospace',
+                }}
+            >
+                {bucketPolicy}
+            </Box>
+        </Stack>
     );
 }
 
@@ -183,142 +331,16 @@ function ConnectionInstructions({
     iamArn,
     gcpServiceAccountEmail,
 }: ConnectionInstructionsProps) {
-    const theme = useTheme();
-
     if (provider === 'gcp' || provider === CloudProviderCodes.GCP) {
-        const serviceAccount =
-            gcpServiceAccountEmail ||
-            'flow@estuary-data.iam.gserviceaccount.com';
-
         return (
-            <Stack spacing={2}>
-                <Typography variant="subtitle2" fontWeight={700}>
-                    Step 1: Copy the Service Account Email
-                </Typography>
-                <Typography variant="body2">
-                    Grant this service account access to your GCS bucket:
-                </Typography>
-                <Box
-                    component="pre"
-                    sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: codeBackground[theme.palette.mode],
-                        overflow: 'auto',
-                        fontSize: 13,
-                        fontFamily: 'monospace',
-                    }}
-                >
-                    {serviceAccount}
-                </Box>
-
-                <Typography variant="subtitle2" fontWeight={700}>
-                    Step 2: Grant bucket permissions
-                </Typography>
-                <Typography variant="body2">
-                    Using <TechnicalEmphasis>gsutil</TechnicalEmphasis>, grant
-                    the admin role to the the service account using the
-                    following command:
-                </Typography>
-                <Box
-                    component="pre"
-                    sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: codeBackground[theme.palette.mode],
-                        overflow: 'auto',
-                        fontSize: 13,
-                        fontFamily: 'monospace',
-                    }}
-                >
-                    {`gsutil iam ch serviceAccount:${serviceAccount}:admin gs://${bucket || 'your-bucket'}`}
-                </Box>
-
-                <Typography variant="body2">
-                    Or in the Cloud Console, navigate to your bucket, click
-                    &quot;Permissions&quot;, then &quot;Grant Access&quot;, and
-                    add the service account with the &quot;Storage Admin&quot;
-                    role.
-                </Typography>
-            </Stack>
+            <GcpConnectionInstructions
+                bucket={bucket}
+                gcpServiceAccountEmail={gcpServiceAccountEmail}
+            />
         );
     }
     if (provider === 'aws' || provider === CloudProviderCodes.AWS) {
-        const bucketPolicy = JSON.stringify(
-            {
-                Version: '2012-10-17',
-                Statement: [
-                    {
-                        Effect: 'Allow',
-                        Principal: {
-                            AWS:
-                                iamArn ||
-                                'arn:aws:iam::123456789012:role/estuary-flow-role',
-                        },
-                        Action: [
-                            's3:GetObject',
-                            's3:PutObject',
-                            's3:DeleteObject',
-                            's3:ListBucket',
-                            's3:GetBucketPolicy',
-                        ],
-                        Resource: [
-                            `arn:aws:s3:::${bucket || 'your-bucket'}`,
-                            `arn:aws:s3:::${bucket || 'your-bucket'}/*`,
-                        ],
-                    },
-                ],
-            },
-            null,
-            2
-        );
-
-        return (
-            <Stack spacing={2}>
-                <Typography variant="subtitle2" fontWeight={700}>
-                    Step 1: Copy the IAM Role ARN
-                </Typography>
-                <Typography variant="body2">
-                    Add this ARN to your S3 bucket policy or IAM role trust
-                    relationship:
-                </Typography>
-                <Box
-                    component="pre"
-                    sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: codeBackground[theme.palette.mode],
-                        overflow: 'auto',
-                        fontSize: 13,
-                        fontFamily: 'monospace',
-                    }}
-                >
-                    {iamArn ||
-                        'arn:aws:iam::123456789012:role/estuary-flow-role'}
-                </Box>
-
-                <Typography variant="subtitle2" fontWeight={700}>
-                    Step 2: Apply this bucket policy
-                </Typography>
-                <Typography variant="body2">
-                    Add this policy to your S3 bucket to grant the necessary
-                    permissions:
-                </Typography>
-                <Box
-                    component="pre"
-                    sx={{
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: codeBackground[theme.palette.mode],
-                        overflow: 'auto',
-                        fontSize: 13,
-                        fontFamily: 'monospace',
-                    }}
-                >
-                    {bucketPolicy}
-                </Box>
-            </Stack>
-        );
+        return <AwsConnectionInstructions bucket={bucket} iamArn={iamArn} />;
     }
     return <Typography>Connection instructions go here.</Typography>;
 }
@@ -514,7 +536,7 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
                                     {testResult.status === 'error' ||
                                     (testResult.status === 'testing' &&
                                         lastErrorMessages[dataPlane.id]) ? (
-                                        <ConnectionErrorDetails
+                                        <ConnectionError
                                             result={testResult}
                                             errorMessage={
                                                 lastErrorMessages[dataPlane.id]
