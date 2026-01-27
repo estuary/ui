@@ -49,8 +49,8 @@ export interface WizardDialogProps {
     steps: WizardStep[];
     /** Callback when wizard is completed (last step next button clicked) */
     onComplete?: () => void | Promise<void>;
-    /** Validation function called before navigating to next step. Return true to proceed, false to block. */
-    validateStep?: (stepIndex: number) => boolean | Promise<boolean>;
+    /** Async callback when user attempts to proceed. Use for API calls, saving data, etc. Return true to proceed, false to block. */
+    onProceed?: (stepIndex: number) => Promise<boolean>;
     /** Function to check if the next/save button should be enabled. Called on each render. */
     canProceed?: (stepIndex: number) => boolean;
     /** Default dialog title (used when step doesn't define its own title) */

@@ -375,9 +375,11 @@ export function StorageMappingForm() {
                                     name="provider"
                                     control={control}
                                     rules={{
-                                        required:
-                                            !useSameRegion &&
-                                            'Provider is required',
+                                        deps: ['use_same_region'],
+                                        validate: (value, formValues) =>
+                                            formValues.use_same_region ||
+                                            !!value ||
+                                            'Cloud provider is required',
                                     }}
                                     render={({ field }) => (
                                         <FormControl
@@ -412,8 +414,10 @@ export function StorageMappingForm() {
                                     name="region"
                                     control={control}
                                     rules={{
-                                        required:
-                                            !useSameRegion &&
+                                        deps: ['use_same_region'],
+                                        validate: (value, formValues) =>
+                                            formValues.use_same_region ||
+                                            !!value ||
                                             'Region is required',
                                     }}
                                     render={({ field }) => (
@@ -473,25 +477,28 @@ export function StorageMappingForm() {
                         </Fade>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={useSameRegion}
-                                    onChange={(e) =>
-                                        setValue(
-                                            'use_same_region',
-                                            e.target.checked
-                                        )
+                        <Controller
+                            name="use_same_region"
+                            control={control}
+                            render={({ field }) => (
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={field.value}
+                                            onChange={(e) =>
+                                                field.onChange(e.target.checked)
+                                            }
+                                            size="small"
+                                        />
                                     }
-                                    size="small"
+                                    label="Storage bucket and default data plane are in the same region"
+                                    slotProps={{
+                                        typography: {
+                                            variant: 'body2',
+                                        },
+                                    }}
                                 />
-                            }
-                            label="Storage bucket and default data plane are in the same region"
-                            slotProps={{
-                                typography: {
-                                    variant: 'body2',
-                                },
-                            }}
+                            )}
                         />
                         <Tooltip title="To avoid egress fees, we recommend using the same region as the default data plane.">
                             <HelpCircle

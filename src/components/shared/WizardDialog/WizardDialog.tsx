@@ -17,7 +17,7 @@ export function WizardDialog({
     onClose,
     steps,
     onComplete,
-    validateStep,
+    onProceed,
     canProceed: canProceedFn,
     title,
     titleId = 'wizard-dialog-title',
@@ -40,10 +40,10 @@ export function WizardDialog({
         setIsNavigating(true);
 
         try {
-            // Run custom step validation if provided
-            if (validateStep) {
-                const stepValid = await validateStep(currentStep);
-                if (!stepValid) {
+            // Run onProceed callback if provided (for API calls, saving data, etc.)
+            if (onProceed) {
+                const shouldProceed = await onProceed(currentStep);
+                if (!shouldProceed) {
                     return false;
                 }
             }
@@ -62,7 +62,7 @@ export function WizardDialog({
         } finally {
             setIsNavigating(false);
         }
-    }, [currentStep, isLastStep, onComplete, validateStep]);
+    }, [currentStep, isLastStep, onComplete, onProceed]);
 
     const goToPrevious = useCallback(() => {
         if (!isFirstStep) {
