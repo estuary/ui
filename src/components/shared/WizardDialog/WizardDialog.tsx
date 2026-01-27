@@ -39,7 +39,17 @@ export function WizardDialog({
         setIsNavigating(true);
 
         try {
-            // Run onProceed callback if provided (for API calls, saving data, etc.)
+            const currentStepConfig = steps[currentStep];
+
+            // Run step-specific onProceed callback if provided
+            if (currentStepConfig?.onProceed) {
+                const shouldProceed = await currentStepConfig.onProceed();
+                if (!shouldProceed) {
+                    return false;
+                }
+            }
+
+            // Run dialog-level onProceed callback if provided (for API calls, saving data, etc.)
             if (onProceed) {
                 const shouldProceed = await onProceed(currentStep);
                 if (!shouldProceed) {
@@ -61,7 +71,7 @@ export function WizardDialog({
         } finally {
             setIsNavigating(false);
         }
-    }, [currentStep, isLastStep, onComplete, onProceed]);
+    }, [currentStep, isLastStep, onComplete, onProceed, steps]);
 
     const goToPrevious = useCallback(() => {
         if (!isFirstStep) {

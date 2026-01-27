@@ -17,6 +17,8 @@ export interface WizardStep {
     optional?: boolean;
     /** Function to check if the next/save button should be enabled for this step */
     canProceed?: () => boolean;
+    /** Async callback when user attempts to proceed from this step. Return true to proceed, false to block. */
+    onProceed?: () => Promise<boolean>;
 }
 
 export interface WizardContextValue {
