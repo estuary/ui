@@ -13,12 +13,11 @@ function WizardActions() {
         isNavigating,
         steps,
         currentStep,
-        canProceedFn,
     } = useWizard();
 
     const currentStepConfig = steps[currentStep];
     const showBack = !isFirstStep && currentStepConfig?.canGoBack !== false;
-    const canProceed = canProceedFn ? canProceedFn(currentStep) : true;
+    const canProceed = currentStepConfig?.canProceed?.() ?? true;
 
     return (
         <DialogActions sx={{ p: 4, pt: 2 }}>

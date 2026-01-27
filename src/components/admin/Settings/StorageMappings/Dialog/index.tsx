@@ -113,47 +113,6 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         });
     }, []);
 
-    const steps: WizardStep[] = useMemo(
-        () => [
-            {
-                id: 'configure',
-                label: (
-                    <FormattedMessage id="storageMappings.wizard.step.configure" />
-                ),
-                title: (
-                    <FormattedMessage id="storageMappings.wizard.title.configure" />
-                ),
-                component: <StorageMappingContent />,
-                nextLabel: (
-                    <FormattedMessage id="storageMappings.wizard.cta.testConnection" />
-                ),
-            },
-            {
-                id: 'test',
-                label: (
-                    <FormattedMessage id="storageMappings.wizard.step.test" />
-                ),
-                title: (
-                    <FormattedMessage id="storageMappings.wizard.title.test" />
-                ),
-                component: (
-                    <TestConnectionResult
-                        results={testResults}
-                        onRetry={handleRetry}
-                    />
-                ),
-            },
-        ],
-        [testResults, handleRetry]
-    );
-
-    const closeDialog = () => {
-        setOpen(false);
-        methods.reset();
-        setTestResults({});
-        testPromisesRef.current.clear();
-    };
-
     // Check if all data planes have completed testing successfully
     const allTestsPassed = useMemo(() => {
         const dataPlaneIds = methods.getValues('data_planes');
@@ -170,22 +129,53 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         );
     }, [testResults]);
 
+    const steps: WizardStep[] = useMemo(
+        () => [
+            {
+                id: 'configure',
+                label: (
+                    <FormattedMessage id="storageMappings.wizard.step.configure" />
+                ),
+                title: (
+                    <FormattedMessage id="storageMappings.wizard.title.configure" />
+                ),
+                component: <StorageMappingContent />,
+                nextLabel: (
+                    <FormattedMessage id="storageMappings.wizard.cta.testConnection" />
+                ),
+                canProceed: () => methods.formState.isValid,
+            },
+            {
+                id: 'test',
+                label: (
+                    <FormattedMessage id="storageMappings.wizard.step.test" />
+                ),
+                title: (
+                    <FormattedMessage id="storageMappings.wizard.title.test" />
+                ),
+                component: (
+                    <TestConnectionResult
+                        results={testResults}
+                        onRetry={handleRetry}
+                    />
+                ),
+                canProceed: () => allTestsPassed && !anyTestRunning,
+            },
+        ],
+        [testResults, handleRetry, methods.formState.isValid, allTestsPassed, anyTestRunning]
+    );
+
+    const closeDialog = () => {
+        setOpen(false);
+        methods.reset();
+        setTestResults({});
+        testPromisesRef.current.clear();
+    };
+
     const onProceed = async (stepIndex: number): Promise<boolean> => {
         if (stepIndex === 0) {
             // Start connection tests for all data planes
             startConnectionTests();
-        }
-        return true;
-    };
-
-    const canProceed = (stepIndex: number): boolean => {
-        if (stepIndex === 0) {
-            return methods.formState.isValid;
-        }
-        // Disable button on step 1 until all tests pass
-        // Also disable on step 0 if any test is in progress (during transition)
-        if (stepIndex === 1 || anyTestRunning) {
-            return allTestsPassed;
         }
         return true;
     };
@@ -204,7 +194,6 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 onClose={closeDialog}
                 steps={steps}
                 onProceed={onProceed}
-                canProceed={canProceed}
                 onComplete={handleComplete}
                 titleId="configure-storage-dialog-title"
             />

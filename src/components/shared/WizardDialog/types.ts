@@ -15,6 +15,8 @@ export interface WizardStep {
     nextLabel?: ReactNode;
     /** Whether this step can be skipped */
     optional?: boolean;
+    /** Function to check if the next/save button should be enabled for this step */
+    canProceed?: () => boolean;
 }
 
 export interface WizardContextValue {
@@ -36,8 +38,6 @@ export interface WizardContextValue {
     goToStep: (index: number) => void;
     /** Whether navigation is currently in progress */
     isNavigating: boolean;
-    /** Function to check if the next/save button should be enabled */
-    canProceedFn?: (stepIndex: number) => boolean;
 }
 
 export interface WizardDialogProps {
@@ -51,8 +51,6 @@ export interface WizardDialogProps {
     onComplete?: () => void | Promise<void>;
     /** Async callback when user attempts to proceed. Use for API calls, saving data, etc. Return true to proceed, false to block. */
     onProceed?: (stepIndex: number) => Promise<boolean>;
-    /** Function to check if the next/save button should be enabled. Called on each render. */
-    canProceed?: (stepIndex: number) => boolean;
     /** Default dialog title (used when step doesn't define its own title) */
     title?: ReactNode;
     /** Accessible ID for the dialog title */
