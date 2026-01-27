@@ -1,12 +1,17 @@
-import type { GridRowSelectionModel } from '@mui/x-data-grid';
 import type { JournalRecord } from 'src/hooks/journals/types';
 import type { useJournalData } from 'src/hooks/journals/useJournalData';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Grid, useTheme } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import {
+    Grid,
+    List,
+    ListItemButton,
+    ListItemText,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { Editor } from '@monaco-editor/react';
 import { JsonPointer } from 'json-ptr';
@@ -16,11 +21,15 @@ import { useIntl } from 'react-intl';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import Error from 'src/components/shared/Error';
 import {
-    dataGridListStyling,
+    defaultOutline,
+    historyCompareBorder,
+    historyCompareColors,
     monacoEditorComponentBackground,
     semiTransparentBackground,
 } from 'src/context/Theme';
 import { stringifyJSON } from 'src/services/stringify';
+
+const LIST_VIEW_HEIGHT = 425;
 
 interface PreviewJsonModeProps {
     spec: LiveSpecsQuery_details;
@@ -32,9 +41,6 @@ function ListView({
     journalData: { data, error },
 }: PreviewJsonModeProps) {
     const [selectedKey, setSelectedKey] = useState<string>('');
-    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
-        []
-    );
 
     const theme = useTheme();
     const intl = useIntl();
@@ -76,7 +82,6 @@ function ListView({
         if (!isEmpty(rowsByKey)) {
             const firstKey = Object.keys(rowsByKey)[0];
             setSelectedKey(firstKey);
-            setSelectionModel([firstKey]);
         }
     }, [rowsByKey]);
 
@@ -90,45 +95,79 @@ function ListView({
                         semiTransparentBackground[theme.palette.mode]
                     }
                     displayBorder
+                    height={LIST_VIEW_HEIGHT}
                     list={
-                        <DataGrid
-                            columns={[
-                                {
-                                    headerName: intl.formatMessage({
-                                        id: 'detailsPanel.dataPreview.listView.header',
-                                    }),
-                                    field: 'key',
-                                    flex: 1,
-                                },
-                            ]}
-                            rows={rows}
-                            hideFooter
-                            disableColumnSelector
-                            columnHeaderHeight={40}
-                            rowCount={data?.documents.length}
-                            onRowClick={(params) =>
-                                setSelectedKey(params.row.key)
-                            }
-                            rowSelectionModel={selectionModel}
-                            onRowSelectionModelChange={(newSelectionModel) => {
-                                setSelectionModel(newSelectionModel);
-                            }}
-                            sx={{ ...dataGridListStyling, border: 'none' }}
-                        />
+                        <>
+                            <Typography
+                                component="div"
+                                sx={{
+                                    p: 1,
+                                    fontWeight: 500,
+                                    textTransform: 'uppercase',
+                                }}
+                            >
+                                {intl.formatMessage({
+                                    id: 'detailsPanel.dataPreview.listView.header',
+                                })}
+                            </Typography>
+                            <List
+                                sx={{
+                                    ['& li.Mui-selected']: {
+                                        cursor: 'unset',
+                                        borderLeft: `${historyCompareBorder} ${
+                                            historyCompareColors[
+                                                theme.palette.mode
+                                            ][1]
+                                        }`,
+                                    },
+                                    ['& li']: {
+                                        borderBottom: () =>
+                                            defaultOutline[theme.palette.mode],
+                                    },
+                                }}
+                            >
+                                {rows.map((row) => {
+                                    const selected = selectedKey === row.key;
+
+                                    return (
+                                        <ListItemButton
+                                            component="li"
+                                            key={`data-preview-${row.key}`}
+                                            selected={selected}
+                                            onClick={() => {
+                                                setSelectedKey(row.key);
+                                            }}
+                                        >
+                                            <ListItemText>
+                                                <Typography
+                                                    component="span"
+                                                    variant={
+                                                        selected
+                                                            ? 'subtitle2'
+                                                            : undefined
+                                                    }
+                                                >
+                                                    {row.key}
+                                                </Typography>
+                                            </ListItemText>
+                                        </ListItemButton>
+                                    );
+                                })}
+                            </List>
+                        </>
                     }
                     details={
                         <Editor
-                            height={315}
-                            value={selectedRecordJson}
                             defaultLanguage="json"
+                            height={LIST_VIEW_HEIGHT}
+                            options={{ readOnly: true }}
+                            saveViewState={false}
+                            value={selectedRecordJson}
                             theme={
                                 monacoEditorComponentBackground[
                                     theme.palette.mode
                                 ]
                             }
-                            saveViewState={false}
-                            // path={currentBindingUUID}
-                            options={{ readOnly: true }}
                         />
                     }
                 />
