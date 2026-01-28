@@ -23,6 +23,16 @@ interface RHFSelectProps<TFieldValues extends FieldValues>
     rules?: RegisterOptions<TFieldValues, Path<TFieldValues>>;
     /** Placeholder shown when no value is selected */
     placeholder?: ReactNode;
+    /**
+     * Transform the form value before displaying in the Select.
+     * Useful when form stores arrays but Select expects single value.
+     */
+    valueTransform?: (value: unknown) => string;
+    /**
+     * Transform the selected value before calling onChange.
+     * Useful when form stores arrays but Select provides single value.
+     */
+    onChangeTransform?: (value: string) => unknown;
 }
 
 /**
@@ -38,6 +48,8 @@ export function RHFSelect<TFieldValues extends FieldValues>({
     helperText,
     rules,
     placeholder,
+    valueTransform,
+    onChangeTransform,
 }: RHFSelectProps<TFieldValues>) {
     const {
         control,
@@ -60,38 +72,55 @@ export function RHFSelect<TFieldValues extends FieldValues>({
             name={name}
             control={control}
             rules={rules}
-            render={({ field }) => (
-                <FormControl
-                    fullWidth
-                    size="small"
-                    required={required}
-                    disabled={disabled}
-                    error={hasError}
-                >
-                    <InputLabel>{label}</InputLabel>
-                    <Select
-                        {...field}
-                        label={label}
-                        displayEmpty={!!placeholder}
+            render={({ field }) => {
+                const displayValue = valueTransform
+                    ? valueTransform(field.value)
+                    : (field.value ?? '');
+
+                const handleChange = (value: string) => {
+                    const newValue = onChangeTransform
+                        ? onChangeTransform(value)
+                        : value;
+                    field.onChange(newValue);
+                };
+
+                return (
+                    <FormControl
+                        fullWidth
+                        size="small"
+                        required={required}
+                        disabled={disabled}
+                        error={hasError}
                     >
-                        {placeholder ? (
-                            <MenuItem value="" disabled>
-                                {placeholder}
-                            </MenuItem>
+                        <InputLabel>{label}</InputLabel>
+                        <Select
+                            value={displayValue}
+                            onChange={(e) => handleChange(e.target.value)}
+                            onBlur={field.onBlur}
+                            name={field.name}
+                            ref={field.ref}
+                            label={label}
+                            displayEmpty={!!placeholder}
+                        >
+                            {placeholder ? (
+                                <MenuItem value="" disabled>
+                                    {placeholder}
+                                </MenuItem>
+                            ) : null}
+                            {options.map((option) => (
+                                <MenuItem key={option.value} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        {hasError || helperText ? (
+                            <FormHelperText>
+                                {errorMessage ?? helperText}
+                            </FormHelperText>
                         ) : null}
-                        {options.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    {hasError || helperText ? (
-                        <FormHelperText>
-                            {errorMessage ?? helperText}
-                        </FormHelperText>
-                    ) : null}
-                </FormControl>
-            )}
+                    </FormControl>
+                );
+            }}
         />
     );
 }
