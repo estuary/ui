@@ -5,6 +5,7 @@ import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
+    Box,
     Grid,
     List,
     ListItemButton,
@@ -168,18 +169,18 @@ function ListView({
                         //  editor does not start growing. Weird that this is not happening with
                         //  the DiffEditor and ui/src/components/shared/Entity/Details/Alerts/Details/ServerError.tsx
                         //  needed a different fix
-                        <div
+                        <Box
                             style={{
+                                height: `${LIST_VIEW_HEIGHT}px`,
                                 position: 'relative',
                                 width: '100%',
-                                height: `${LIST_VIEW_HEIGHT}px`,
                             }}
                         >
-                            <div
+                            <Box
                                 style={{
-                                    position: 'absolute',
                                     inset: 0,
                                     overflow: 'hidden',
+                                    position: 'absolute',
                                 }}
                             >
                                 <Editor
@@ -199,8 +200,8 @@ function ListView({
                                         ]
                                     }
                                 />
-                            </div>
-                        </div>
+                            </Box>
+                        </Box>
                     }
                 />
             )}
