@@ -211,6 +211,12 @@ export async function loadDocuments({
             range,
             status,
         },
+        // TODO (journals)
+        // This feels weird to me as we stop fetching after a certain document count.
+        //  So this should also be checking documents?.length ?? 0 < documentCount. However,
+        //  that is checking something slightly different. So I wonder if we need a third boolean
+        //  to store if we got the amount of docs we wanted AND store if we are still on a single
+        //  read meaning we have not processed _that_ much data.
         tooFewDocuments: documentCount ? start <= 0 : false,
         tooManyBytes: head - start >= maxBytes,
     };

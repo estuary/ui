@@ -41,7 +41,7 @@ export const Ops: Record<string, string> = {
     'journals.tooManyBytes.title': `Large documents`,
     'journals.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
     'journals.tooManyBytesAndNoDocuments.title': `Read limit reached`,
-    'journals.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and didn't find even reach the end of one document! This probably means that your documents are huge.`,
+    'journals.tooManyBytesAndNoDocuments.message': `We reached the limit of how much data a web browser can comfortably read, and did not find any documents. This probably means that your documents are huge.`,
 
     // Shard Status
     'shardStatus.primary': `PRIMARY`,
