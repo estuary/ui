@@ -28,7 +28,7 @@ import {
 } from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
 
-import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
+import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import { MOCK_DATA_PLANES } from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';

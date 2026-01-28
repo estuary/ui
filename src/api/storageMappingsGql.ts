@@ -1,11 +1,12 @@
 import type {
     ConnectionTestResult,
     ConnectionTestResults,
-    StorageMappingFormData,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { Client } from 'urql';
 
-import { gql } from 'urql';
+import { useCallback } from 'react';
+
+import { gql, useClient } from 'urql';
 
 // Toggle for mock mode while GraphQL backend is in development
 const USE_MOCK = true;
@@ -40,6 +41,8 @@ interface CreateStorageMappingVariables {
     dryRun: boolean;
 }
 
+type CreateStorageMappingInput = Omit<CreateStorageMappingVariables, 'dryRun'>;
+
 // GraphQL Mutation
 const CREATE_STORAGE_MAPPING = gql<
     CreateStorageMappingResponse,
@@ -65,7 +68,7 @@ const CREATE_STORAGE_MAPPING = gql<
 
 // Mock implementation for development
 const mockTestStorageConnection = async (
-    _formData: StorageMappingFormData,
+    _input: CreateStorageMappingInput,
     dataPlaneIds: string[]
 ): Promise<ConnectionTestResults> => {
     // Simulate network delay
@@ -130,21 +133,11 @@ const parseHealthCheckErrors = (
 // Real GraphQL implementation
 const realTestStorageConnection = async (
     client: Client,
-    formData: StorageMappingFormData,
+    input: CreateStorageMappingInput,
     dataPlaneIds: string[]
 ): Promise<ConnectionTestResults> => {
     const result = await client.mutation(CREATE_STORAGE_MAPPING, {
-        catalogPrefix: formData.catalog_prefix,
-        storage: {
-            stores: [
-                {
-                    provider: formData.provider,
-                    bucket: formData.bucket,
-                    prefix: formData.storage_prefix || undefined,
-                },
-            ],
-            data_planes: dataPlaneIds,
-        },
+        ...input,
         dryRun: true,
     });
 
@@ -160,36 +153,90 @@ const realTestStorageConnection = async (
     return results;
 };
 
-// Main export - tests storage connection for all specified data planes
-export const testStorageConnection = async (
-    client: Client | null,
-    formData: StorageMappingFormData,
-    dataPlaneIds: string[]
-): Promise<ConnectionTestResults> => {
-    if (USE_MOCK) {
-        return mockTestStorageConnection(formData, dataPlaneIds);
-    }
-
-    if (!client) {
-        throw new Error('URQL client is required for GraphQL operations');
-    }
-
-    return realTestStorageConnection(client, formData, dataPlaneIds);
+// Mock implementation for creating storage mapping
+const mockCreateStorageMapping = async (
+    input: CreateStorageMappingInput
+): Promise<CreateStorageMappingResult> => {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return {
+        created: true,
+        catalogPrefix: input.catalogPrefix,
+    };
 };
 
-// Export for testing individual data plane (used for retry)
-export const testSingleDataPlaneConnection = async (
-    client: Client | null,
-    formData: StorageMappingFormData,
-    dataPlaneId: string
-): Promise<ConnectionTestResult> => {
-    const results = await testStorageConnection(client, formData, [
-        dataPlaneId,
-    ]);
-    return (
-        results[dataPlaneId] ?? {
-            status: 'error',
-            errorMessage: 'Unknown error',
-        }
+// Real GraphQL implementation for creating storage mapping
+const realCreateStorageMapping = async (
+    client: Client,
+    input: CreateStorageMappingInput
+): Promise<CreateStorageMappingResult> => {
+    const result = await client.mutation(CREATE_STORAGE_MAPPING, {
+        ...input,
+        dryRun: false,
+    });
+
+    if (result.error) {
+        throw new Error(
+            result.error.graphQLErrors?.[0]?.message ??
+                result.error.message ??
+                'Failed to create storage mapping'
+        );
+    }
+
+    if (!result.data?.createStorageMapping) {
+        throw new Error('No response from createStorageMapping mutation');
+    }
+
+    return result.data.createStorageMapping;
+};
+
+// Hook that provides storage mapping service methods
+export function useStorageMappingService() {
+    const client = useClient();
+
+    const testConnection = useCallback(
+        async (
+            input: CreateStorageMappingInput,
+            dataPlaneIds: string[]
+        ): Promise<ConnectionTestResults> => {
+            if (USE_MOCK) {
+                return mockTestStorageConnection(input, dataPlaneIds);
+            }
+            return realTestStorageConnection(client, input, dataPlaneIds);
+        },
+        [client]
     );
-};
+
+    const testSingleConnection = useCallback(
+        async (
+            input: CreateStorageMappingInput,
+            dataPlaneId: string
+        ): Promise<ConnectionTestResult> => {
+            const results = await testConnection(input, [dataPlaneId]);
+            return (
+                results[dataPlaneId] ?? {
+                    status: 'error',
+                    errorMessage: 'Unknown error',
+                }
+            );
+        },
+        [testConnection]
+    );
+
+    const create = useCallback(
+        async (
+            input: CreateStorageMappingInput
+        ): Promise<CreateStorageMappingResult> => {
+            if (USE_MOCK) {
+                return mockCreateStorageMapping(input);
+            }
+            return realCreateStorageMapping(client, input);
+        },
+        [client]
+    );
+
+    return {
+        testConnection,
+        testSingleConnection,
+        create,
+    };
+}

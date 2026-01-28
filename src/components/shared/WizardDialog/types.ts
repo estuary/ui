@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react';
 
 export interface WizardStep {
-    /** Unique identifier for the step */
-    id: string;
     /** Display label for the step (shown in stepper) */
     label: ReactNode;
     /** The component to render for this step */
