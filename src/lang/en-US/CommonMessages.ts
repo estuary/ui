@@ -2,9 +2,11 @@ export const endpointConfigHeader = `Endpoint Config`;
 export const CommonMessages: Record<string, string> = {
     // Misc
     'company': `Estuary`,
-    'productName': `Estuary Flow`,
+    'productName': `Estuary`,
     'expressFlowIntegration': `Powered by Estuary`,
-    'common.browserTitle': `Flow`,
+    'spec': `data flow specification`,
+
+    'common.browserTitle': `Estuary`,
     'common.loading': `Loading...`,
     'common.running': `Running...`,
     'common.deleting': `Deleting...`,
@@ -134,6 +136,7 @@ export const CommonMessages: Record<string, string> = {
     'confirm.title': `Are you sure?`,
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
     'confirm.oauth': `You are in the process of OAuth. If you continue, you will lose your changes.`,
+    'confirm.doNotShowAgain': `Do not show again`,
 
     // TODO (entity-status): Reassess once a decision is made regarding the language
     //   used to contextualize entity status.

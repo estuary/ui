@@ -7,7 +7,10 @@ import { createJSONFormDefaults } from 'src/services/ajv';
 
 const sopsKey = 'sops';
 
-const copyEncryptedEndpointConfig = (
+// This is mainly public so we can test easier. If you think
+//  you need to call this directly think about it A LOT and
+//  talk it through with the team first.
+export const copyEncryptedEndpointConfig = (
     encryptedEndpointConfig: { [key: string]: any },
     encryptedSuffix: string,
     overrideJsonFormDefaults?: boolean
@@ -24,20 +27,32 @@ const copyEncryptedEndpointConfig = (
             encryptedSuffixIndex !== -1
                 ? key.slice(0, encryptedSuffixIndex)
                 : null;
+        const keyToUse = truncatedKey ?? key;
 
-        if (isPlainObject(value)) {
-            // Handle nested objects
+        if (Array.isArray(value)) {
+            // TODO (SOPS array) - if we add support for encrypted arrays then
+            //  this is where it would go and maybe something like below:
+            // if truncatedKey response[keyToUse] = value.map(() => null) else
+            response[keyToUse] = value.map((item) => {
+                if (isPlainObject(item)) {
+                    return copyEncryptedEndpointConfig(
+                        item,
+                        encryptedSuffix,
+                        overrideJsonFormDefaults
+                    );
+                }
 
-            // Check which key to use
-            const keyToUse = truncatedKey ?? key;
-
+                return item;
+            });
+        } else if (isPlainObject(value)) {
             // Make sure the nested element is populated
             response[keyToUse] ??= {};
 
             // start recursion so we can clone deeply
             response[keyToUse] = copyEncryptedEndpointConfig(
                 encryptedEndpointConfig[key],
-                encryptedSuffix
+                encryptedSuffix,
+                overrideJsonFormDefaults
             );
         } else if (overrideJsonFormDefaults && truncatedKey) {
             // handle populating encrypted keys/props

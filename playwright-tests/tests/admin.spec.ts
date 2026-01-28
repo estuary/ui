@@ -223,7 +223,7 @@ test.describe.serial('Admin:', () => {
 
         test('shows details about the free tier', async () => {
             await expect(page.locator('#root')).toContainText(
-                'The free tier lets you try Flow with up to 2 tasks and 10GB per month'
+                'The free tier lets you try Estuary with up to 2 tasks and 10GB per month'
             );
         });
 

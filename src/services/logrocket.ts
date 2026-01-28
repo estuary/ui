@@ -43,6 +43,7 @@ const maskEverythingURLs = [
     'googletagmanager.com',
     'stripe.com',
     'stripe.network',
+    'posthog.com',
 
     // If it is a source file we do not really care about the contents
     'static/',
@@ -238,10 +239,6 @@ export const identifyUser = (user: User) => {
             traits.email = userDetails?.email ?? DEFAULT_FILTER;
         }
 
-        // Just want to be very very safe
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (LogRocket) {
-            LogRocket.identify(user.id, traits);
-        }
+        LogRocket.identify(user.id, traits);
     }
 };

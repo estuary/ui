@@ -1,22 +1,27 @@
 import { Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 import { WarningCircle } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import ExternalLink from 'src/components/shared/ExternalLink';
-import { useEndpointConfigStore_errorsExist } from 'src/stores/EndpointConfig/hooks';
+import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
 
 function EndpointConfigHeader() {
+    const intl = useIntl();
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
-    const endpointConfigErrorsExist = useEndpointConfigStore_errorsExist();
+    const [endpointConfigErrorsExist, hydrationErrorsExist] =
+        useEndpointConfigStore((state) => [
+            state.errorsExist,
+            state.hydrationErrorsExist,
+        ]);
     const docsURL = useSidePanelDocsStore((state) => state.url);
 
     return (
         <>
-            {endpointConfigErrorsExist ? (
+            {endpointConfigErrorsExist || hydrationErrorsExist ? (
                 <WarningCircle
                     style={{
                         marginRight: 8,
@@ -27,7 +32,9 @@ function EndpointConfigHeader() {
             ) : null}
 
             <Typography variant="subtitle1">
-                <FormattedMessage id="entityCreate.endpointConfig.heading" />
+                {intl.formatMessage({
+                    id: 'entityCreate.endpointConfig.heading',
+                })}
             </Typography>
 
             {belowMd && docsURL && docsURL.length > 0 ? (
@@ -35,7 +42,9 @@ function EndpointConfigHeader() {
                     <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
 
                     <ExternalLink link={docsURL}>
-                        <FormattedMessage id="entityCreate.cta.docs" />
+                        {intl.formatMessage({
+                            id: 'entityCreate.cta.docs',
+                        })}
                     </ExternalLink>
                 </>
             ) : null}

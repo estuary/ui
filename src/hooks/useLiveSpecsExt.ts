@@ -47,7 +47,6 @@ export interface LiveSpecsExtQueryWithSpec extends LiveSpecsExtQuery {
 const defaultResponse: LiveSpecsExtQuery[] = [];
 const queryColumns = [
     'id',
-    'spec',
     'writes_to',
     'reads_from',
     'spec_type',

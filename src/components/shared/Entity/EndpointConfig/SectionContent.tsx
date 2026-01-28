@@ -12,6 +12,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import EndpointConfigForm from 'src/components/shared/Entity/EndpointConfig/Form';
 import { DOCUSAURUS_THEME } from 'src/components/shared/Entity/EndpointConfig/shared';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
+import HydrationError from 'src/components/shared/HydrationError';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -36,8 +37,8 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
     ]);
 
     // Endpoint Config Store
-    const endpointCanBeEmpty = useEndpointConfigStore(
-        (state) => state.endpointCanBeEmpty
+    const [endpointCanBeEmpty, hydrationErrorsExist] = useEndpointConfigStore(
+        (state) => [state.endpointCanBeEmpty, state.hydrationErrorsExist]
     );
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const previousEndpointConfig =
@@ -111,6 +112,8 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
 
     return (
         <ErrorBoundryWrapper>
+            {hydrationErrorsExist ? <HydrationError /> : null}
+
             {readOnly ? (
                 <Box sx={{ mb: 3 }}>
                     <AlertBox severity="info" short>

@@ -33,7 +33,7 @@ const gcsProviderSchema = {
     required: ['bucket'],
     properties: {
         bucket: {
-            description: 'Bucket into which Flow will store data.',
+            description: 'Bucket into which Estuary will store data.',
             type: 'string',
             pattern: '(^[a-z0-9][a-z0-9\\-_\\.]{1,60}[a-z0-9]$)',
         },
@@ -57,7 +57,7 @@ const s3ProviderSchema = {
     required: ['bucket', 'region'],
     properties: {
         bucket: {
-            description: 'Bucket into which Flow will store data.',
+            description: 'Bucket into which Estuary will store data.',
             type: 'string',
             pattern:
                 '(^(([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])\\.)*([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])$)',

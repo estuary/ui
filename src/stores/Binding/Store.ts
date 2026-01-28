@@ -1098,13 +1098,13 @@ const getInitialState = (
     setResourceSchema: async (val) => {
         const resolved = await getDereffedSchema(val);
 
+        if (!resolved) {
+            get().setHydrationErrorsExist(true);
+            return;
+        }
+
         set(
             produce((state: BindingState) => {
-                if (!resolved) {
-                    state.setHydrationErrorsExist(true);
-                    return;
-                }
-
                 state.resourceSchema = resolved;
 
                 // TODO (web flow wasm - source capture - possible perf improvement)
@@ -1118,7 +1118,10 @@ const getInitialState = (
                 });
 
                 if (!resourceConfigPointers) {
-                    state.setHydrationErrorsExist(true);
+                    // If we did not get pointers we should be okay to carry on like normal. Previously (pre 2026 Q1)
+                    //  we were setting a "hydration error" here but that was not being stored properly due to https://github.com/estuary/ui/issues/1870
+                    // Pretty sure we are safe just carrying on if we cannot get the pointers. This is mainly true until the
+                    //  pointers we need to fetch are potentially changed. So until then this should be safe.
                     return;
                 }
 

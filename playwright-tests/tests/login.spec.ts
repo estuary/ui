@@ -5,7 +5,7 @@ test('has basic functionality', async ({ page }) => {
 
     // Make sure the title is right
     await expect(page).toHaveTitle(
-        'Estuary Flow Dashboard | Manage Your Data Pipelines'
+        'Estuary Dashboard | Manage Your Data Pipelines'
     );
 
     // Switch to register
@@ -13,11 +13,11 @@ test('has basic functionality', async ({ page }) => {
 
     // Register updates UI
     await expect(page).toHaveTitle(
-        'Register for Estuary Flow | Build Data Pipelines'
+        'Register for Estuary | Build Data Pipelines'
     );
     await expect(
         page.getByRole('heading', {
-            name: 'Get started with Estuary Flow',
+            name: 'Get started with Estuary',
         })
     ).toBeVisible();
     await expect(page.locator('#root')).toContainText(
@@ -28,7 +28,7 @@ test('has basic functionality', async ({ page }) => {
     await page.getByText('Sign In').click();
     await expect(
         page.getByRole('heading', {
-            name: 'Get started with Estuary Flow',
+            name: 'Get started with Estuary',
         })
     ).toBeVisible();
     await expect(page.getByRole('link')).toContainText('Sign in with SSO');
