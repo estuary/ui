@@ -1,19 +1,26 @@
-import type { FieldValues, Path, RegisterOptions } from 'react-hook-form';
-import type {
-    RHFBaseProps,
-    SelectOption,
-} from 'src/components/shared/forms/types';
+import type { ReactNode } from 'react';
+import type { RegisterOptions } from 'react-hook-form';
+import type { SelectOption } from 'src/components/shared/forms/types';
 
 import { Autocomplete, Box, Chip, Stack, TextField } from '@mui/material';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
-interface RHFMultiSelectWithDefaultProps<TFieldValues extends FieldValues>
-    extends RHFBaseProps<TFieldValues> {
+interface RHFMultiSelectWithDefaultProps {
+    /** Field name matching a path in the form schema */
+    name: string;
+    /** Input label */
+    label: string;
+    /** Whether the field is required */
+    required?: boolean;
+    /** Whether the field is disabled */
+    disabled?: boolean;
+    /** Helper text shown below the input */
+    helperText?: ReactNode;
     /** Available options for selection */
     options: SelectOption[];
     /** Validation rules */
-    rules?: RegisterOptions<TFieldValues, Path<TFieldValues>>;
+    rules?: RegisterOptions;
     /** Label for the first (default) selection */
     defaultLabel?: string;
     /** Label for additional selections */
@@ -26,7 +33,7 @@ interface RHFMultiSelectWithDefaultProps<TFieldValues extends FieldValues>
  *
  * The order of selection is preserved - the first item selected becomes the "default".
  */
-export function RHFMultiSelectWithDefault<TFieldValues extends FieldValues>({
+export function RHFMultiSelectWithDefault({
     name,
     label,
     options,
@@ -36,11 +43,11 @@ export function RHFMultiSelectWithDefault<TFieldValues extends FieldValues>({
     rules,
     defaultLabel = 'Default:',
     additionalLabel = 'Additional:',
-}: RHFMultiSelectWithDefaultProps<TFieldValues>) {
+}: RHFMultiSelectWithDefaultProps) {
     const {
         control,
         formState: { errors },
-    } = useFormContext<TFieldValues>();
+    } = useFormContext();
 
     // Get nested error by path
     const error = name.split('.').reduce<unknown>((obj, key) => {

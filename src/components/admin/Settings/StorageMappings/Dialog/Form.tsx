@@ -5,14 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import {
     Box,
-    Checkbox,
     Fade,
-    FormControl,
-    FormControlLabel,
-    InputLabel,
     Link,
-    MenuItem,
-    Select,
     Stack,
     TextField,
     Tooltip,
@@ -20,7 +14,7 @@ import {
 } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import {
     AWS_REGIONS,
@@ -29,7 +23,9 @@ import {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import CardWrapper from 'src/components/shared/CardWrapper';
+import { RHFCheckbox } from 'src/components/shared/forms/RHFCheckbox';
 import { RHFMultiSelectWithDefault } from 'src/components/shared/forms/RHFMultiSelectWithDefault';
+import { RHFSelect } from 'src/components/shared/forms/RHFSelect';
 import {
     formatDataPlaneName,
     getDataPlaneScope,
@@ -124,7 +120,6 @@ const getRegionOptions = (provider: CloudProviderCodes | '') => {
 
 export function StorageMappingForm() {
     const {
-        control,
         register,
         watch,
         setValue,
@@ -228,7 +223,6 @@ export function StorageMappingForm() {
                 .
             </Typography>
             <Stack spacing={2}>
-                {/* {JSON.stringify(dataPlaneOptions)} */}
                 <CardWrapper>
                     <TextField
                         {...register('catalog_prefix', {
@@ -247,7 +241,7 @@ export function StorageMappingForm() {
                 <CardWrapper>
                     <Stack spacing={2}>
                         {selectAdditional ? (
-                            <RHFMultiSelectWithDefault<StorageMappingFormData>
+                            <RHFMultiSelectWithDefault
                                 name="data_planes"
                                 label="Data Planes"
                                 options={dataPlaneSelectOptions}
@@ -260,42 +254,21 @@ export function StorageMappingForm() {
                                 }}
                             />
                         ) : (
-                            <Controller
+                            <RHFSelect<StorageMappingFormData>
                                 name="data_planes"
-                                control={control}
+                                label="Data Plane"
+                                options={dataPlaneSelectOptions}
+                                required
                                 rules={{
                                     validate: (value) =>
-                                        value?.length > 0 ||
+                                        (Array.isArray(value) &&
+                                            value.length > 0) ||
                                         'Data plane is required',
                                 }}
-                                render={({ field }) => (
-                                    <FormControl
-                                        fullWidth
-                                        size="small"
-                                        required
-                                        error={!!errors.data_planes}
-                                    >
-                                        <InputLabel>Data Plane</InputLabel>
-                                        <Select
-                                            value={field.value?.[0] ?? ''}
-                                            onChange={(e) =>
-                                                field.onChange([e.target.value])
-                                            }
-                                            label="Data Plane"
-                                        >
-                                            {dataPlaneSelectOptions.map(
-                                                (option) => (
-                                                    <MenuItem
-                                                        key={option.value}
-                                                        value={option.value}
-                                                    >
-                                                        {option.label}
-                                                    </MenuItem>
-                                                )
-                                            )}
-                                        </Select>
-                                    </FormControl>
-                                )}
+                                valueTransform={(value) =>
+                                    (value as string[])?.[0] ?? ''
+                                }
+                                onChangeTransform={(value) => [value]}
                             />
                         )}
 
@@ -307,48 +280,16 @@ export function StorageMappingForm() {
                                 color: 'text.secondary',
                             }}
                         >
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={allowPublic}
-                                        onChange={(e) =>
-                                            setValue(
-                                                'allow_public',
-                                                e.target.checked
-                                            )
-                                        }
-                                        disabled={!hasPrivateDataPlanes}
-                                        size="small"
-                                    />
-                                }
+                            <RHFCheckbox<StorageMappingFormData>
+                                name="allow_public"
                                 label="Allow public data planes"
-                                slotProps={{
-                                    typography: {
-                                        variant: 'body2',
-                                    },
-                                }}
+                                disabled={!hasPrivateDataPlanes}
                             />
 
                             {dataPlaneSelectOptions.length > 1 ? (
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={selectAdditional}
-                                            onChange={(e) =>
-                                                setValue(
-                                                    'select_additional',
-                                                    e.target.checked
-                                                )
-                                            }
-                                            size="small"
-                                        />
-                                    }
+                                <RHFCheckbox<StorageMappingFormData>
+                                    name="select_additional"
                                     label="Select multiple data planes"
-                                    slotProps={{
-                                        typography: {
-                                            variant: 'body2',
-                                        },
-                                    }}
                                 />
                             ) : null}
                         </Box>
@@ -360,7 +301,6 @@ export function StorageMappingForm() {
                         {...register('bucket', {
                             required: 'Bucket is required',
                         })}
-                        // variant="outlined"
                         required
                         label="Bucket"
                         error={!!errors.bucket}
@@ -371,10 +311,7 @@ export function StorageMappingForm() {
                         fullWidth
                         size="small"
                     />
-                    <Stack
-                        spacing={2}
-                        sx={{ /* pl: 2, */ color: 'text.secondary' }}
-                    >
+                    <Stack spacing={2} sx={{ color: 'text.secondary' }}>
                         <Box sx={{ position: 'relative', height: 40 }}>
                             <Fade in={!useSameRegion}>
                                 <Box
@@ -385,9 +322,11 @@ export function StorageMappingForm() {
                                         inset: 0,
                                     }}
                                 >
-                                    <Controller
+                                    <RHFSelect<StorageMappingFormData>
                                         name="provider"
-                                        control={control}
+                                        label="Cloud Provider"
+                                        options={PROVIDER_OPTIONS}
+                                        required
                                         rules={{
                                             deps: ['use_same_region'],
                                             validate: (value, formValues) =>
@@ -395,42 +334,14 @@ export function StorageMappingForm() {
                                                 !!value ||
                                                 'Cloud provider is required',
                                         }}
-                                        render={({ field }) => (
-                                            <FormControl
-                                                fullWidth
-                                                size="small"
-                                                required
-                                                error={!!errors.provider}
-                                            >
-                                                <InputLabel>
-                                                    Cloud Provider
-                                                </InputLabel>
-                                                <Select
-                                                    {...field}
-                                                    label="Cloud Provider"
-                                                >
-                                                    {PROVIDER_OPTIONS.map(
-                                                        (option) => (
-                                                            <MenuItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </MenuItem>
-                                                        )
-                                                    )}
-                                                </Select>
-                                            </FormControl>
-                                        )}
                                     />
 
-                                    <Controller
+                                    <RHFSelect<StorageMappingFormData>
                                         name="region"
-                                        control={control}
+                                        label="Region"
+                                        options={regionOptions}
+                                        required
+                                        disabled={!provider}
                                         rules={{
                                             deps: ['use_same_region'],
                                             validate: (value, formValues) =>
@@ -438,36 +349,6 @@ export function StorageMappingForm() {
                                                 !!value ||
                                                 'Region is required',
                                         }}
-                                        render={({ field }) => (
-                                            <FormControl
-                                                fullWidth
-                                                size="small"
-                                                required
-                                                error={!!errors.region}
-                                                disabled={!provider}
-                                            >
-                                                <InputLabel>Region</InputLabel>
-                                                <Select
-                                                    {...field}
-                                                    label="Region"
-                                                >
-                                                    {regionOptions.map(
-                                                        (option) => (
-                                                            <MenuItem
-                                                                key={
-                                                                    option.value
-                                                                }
-                                                                value={
-                                                                    option.value
-                                                                }
-                                                            >
-                                                                {option.label}
-                                                            </MenuItem>
-                                                        )
-                                                    )}
-                                                </Select>
-                                            </FormControl>
-                                        )}
                                     />
                                 </Box>
                             </Fade>
@@ -505,30 +386,9 @@ export function StorageMappingForm() {
                             </Fade>
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Controller
+                            <RHFCheckbox<StorageMappingFormData>
                                 name="use_same_region"
-                                control={control}
-                                render={({ field }) => (
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                checked={field.value}
-                                                onChange={(e) =>
-                                                    field.onChange(
-                                                        e.target.checked
-                                                    )
-                                                }
-                                                size="small"
-                                            />
-                                        }
-                                        label="Storage bucket and default data plane are in the same region"
-                                        slotProps={{
-                                            typography: {
-                                                variant: 'body2',
-                                            },
-                                        }}
-                                    />
-                                )}
+                                label="Storage bucket and default data plane are in the same region"
                             />
                             <Tooltip title="To avoid egress fees, we recommend using the same region as the default data plane.">
                                 <HelpCircle
