@@ -5,7 +5,6 @@ import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
-    Box,
     Grid,
     List,
     ListItemButton,
@@ -20,6 +19,7 @@ import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 
+import { EditorResizeWrapper } from 'src/components/editor/EditorResizeWrapper';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import Error from 'src/components/shared/Error';
 import {
@@ -164,44 +164,25 @@ function ListView({
                         </Stack>
                     }
                     details={
-                        // TODO (monaco resize)
-                        // This is required so that when the List is resized super small the
-                        //  editor does not start growing. Weird that this is not happening with
-                        //  the DiffEditor and ui/src/components/shared/Entity/Details/Alerts/Details/ServerError.tsx
-                        //  needed a different fix
-                        <Box
-                            style={{
-                                height: `${LIST_VIEW_HEIGHT}px`,
-                                position: 'relative',
-                                width: '100%',
-                            }}
-                        >
-                            <Box
-                                style={{
-                                    inset: 0,
-                                    overflow: 'hidden',
-                                    position: 'absolute',
+                        <EditorResizeWrapper editorHeight={LIST_VIEW_HEIGHT}>
+                            <Editor
+                                defaultLanguage="json"
+                                height={`${LIST_VIEW_HEIGHT}px`}
+                                options={{
+                                    automaticLayout: true,
+                                    domReadOnly: true,
+                                    lineNumbers: 'off',
+                                    readOnly: true,
                                 }}
-                            >
-                                <Editor
-                                    defaultLanguage="json"
-                                    height={`${LIST_VIEW_HEIGHT}px`}
-                                    options={{
-                                        automaticLayout: true,
-                                        domReadOnly: true,
-                                        lineNumbers: 'off',
-                                        readOnly: true,
-                                    }}
-                                    saveViewState={false}
-                                    value={selectedRecordJson}
-                                    theme={
-                                        monacoEditorComponentBackground[
-                                            theme.palette.mode
-                                        ]
-                                    }
-                                />
-                            </Box>
-                        </Box>
+                                saveViewState={false}
+                                value={selectedRecordJson}
+                                theme={
+                                    monacoEditorComponentBackground[
+                                        theme.palette.mode
+                                    ]
+                                }
+                            />
+                        </EditorResizeWrapper>
                     }
                 />
             )}
