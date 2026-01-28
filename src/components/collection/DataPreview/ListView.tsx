@@ -9,6 +9,7 @@ import {
     List,
     ListItemButton,
     ListItemText,
+    Stack,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -102,7 +103,7 @@ function ListView({
                         //  sharing much and it felt weird. If we end up having more selectable lists
                         //  manually generated then we probably want to look into how we can make these
                         //  reusable more (maybe just a headless hook?)
-                        <>
+                        <Stack>
                             <Typography
                                 component="div"
                                 sx={{
@@ -159,24 +160,47 @@ function ListView({
                                     );
                                 })}
                             </List>
-                        </>
+                        </Stack>
                     }
                     details={
-                        <Editor
-                            defaultLanguage="json"
-                            height={LIST_VIEW_HEIGHT}
-                            options={{
-                                lineNumbers: 'off',
-                                readOnly: true,
+                        // TODO (monaco resize)
+                        // This is required so that when the List is resized super small the
+                        //  editor does not start growing. Weird that this is not happening with
+                        //  the DiffEditor and ui/src/components/shared/Entity/Details/Alerts/Details/ServerError.tsx
+                        //  needed a different fix
+                        <div
+                            style={{
+                                position: 'relative',
+                                width: '100%',
+                                height: `${LIST_VIEW_HEIGHT}px`,
                             }}
-                            saveViewState={false}
-                            value={selectedRecordJson}
-                            theme={
-                                monacoEditorComponentBackground[
-                                    theme.palette.mode
-                                ]
-                            }
-                        />
+                        >
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    inset: 0,
+                                    overflow: 'hidden',
+                                }}
+                            >
+                                <Editor
+                                    defaultLanguage="json"
+                                    height={`${LIST_VIEW_HEIGHT}px`}
+                                    options={{
+                                        automaticLayout: true,
+                                        domReadOnly: true,
+                                        lineNumbers: 'off',
+                                        readOnly: true,
+                                    }}
+                                    saveViewState={false}
+                                    value={selectedRecordJson}
+                                    theme={
+                                        monacoEditorComponentBackground[
+                                            theme.palette.mode
+                                        ]
+                                    }
+                                />
+                            </div>
+                        </div>
                     }
                 />
             )}
