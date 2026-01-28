@@ -97,6 +97,11 @@ function ListView({
                     displayBorder
                     height={LIST_VIEW_HEIGHT}
                     list={
+                        // BASED ON: src/components/shared/Entity/Details/History/PublicationList.tsx
+                        // I thought about making this a `styled()` component however it ended up not
+                        //  sharing much and it felt weird. If we end up having more selectable lists
+                        //  manually generated then we probably want to look into how we can make these
+                        //  reusable more (maybe just a headless hook?)
                         <>
                             <Typography
                                 component="div"
