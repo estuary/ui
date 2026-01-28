@@ -12,13 +12,9 @@ import { StorageMappingForm } from './Form';
 import { flushSync } from 'react-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
-import { useClient } from 'urql';
 
-import {
-    testSingleDataPlaneConnection,
-    testStorageConnection,
-} from 'src/api/storageMappingsGql';
-import TestConnectionResult from 'src/components/admin/Settings/StorageMappings/Dialog/steps/TestConnectionResult';
+import { useStorageMappingService } from 'src/api/storageMappingsGql';
+import TestConnectionResult from 'src/components/admin/Settings/StorageMappings/Dialog/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 
 interface Props {
@@ -26,23 +22,41 @@ interface Props {
     setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function ConfigureStorageDialog({ open, setOpen }: Props) {
+function buildMappingFromFormData(
+    data: StorageMappingFormData
+): Omit<
+    Parameters<ReturnType<typeof useStorageMappingService>['create']>[0],
+    'dryRun'
+> {
+    return {
+        catalogPrefix: data.catalog_prefix,
+        storage: {
+            stores: [
+                {
+                    provider: data.provider,
+                    bucket: data.bucket,
+                    prefix: data.storage_prefix,
+                },
+            ],
+            data_planes: data.data_planes,
+        },
+        detail: undefined,
+    };
+}
+
+export function ConfigureStorageWizard({ open, setOpen }: Props) {
     const intl = useIntl();
-    const client = useClient();
+    const { testConnection, testSingleConnection, create } =
+        useStorageMappingService();
 
     const [testResults, setTestResults] = useState<ConnectionTestResults>({});
-    const testPromisesRef = useRef<Map<string, Promise<ConnectionTestResult>>>(
-        new Map()
-    );
+    const testPromisesRef = useRef<
+        Record<string, Promise<ConnectionTestResult>>
+    >({});
 
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {
-            catalog_prefix: '',
-            provider: '',
-            region: '',
-            bucket: '',
-            storage_prefix: '',
             data_planes: [],
             select_additional: false,
             use_same_region: true,
@@ -52,6 +66,7 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
 
     const startConnectionTests = useCallback(() => {
         const formData = methods.getValues();
+        const input = buildMappingFromFormData(formData);
         const dataPlaneIds = formData.data_planes;
 
         // Initialize all data planes to 'testing' state
@@ -65,16 +80,15 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         });
 
         // Clear old promises and start new test
-        testPromisesRef.current.clear();
+        testPromisesRef.current = {};
 
         // Run the connection test for all data planes
-        const promise = testStorageConnection(client, formData, dataPlaneIds);
+        const promise = testConnection(input, dataPlaneIds);
 
         // Track promise for each data plane (all use same promise)
         dataPlaneIds.forEach((id) => {
-            testPromisesRef.current.set(
-                id,
-                promise.then((results) => results[id])
+            testPromisesRef.current[id] = promise.then(
+                (results) => results[id]
             );
         });
 
@@ -85,11 +99,12 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 ...results,
             }));
         });
-    }, [client, methods]);
+    }, [testConnection, methods]);
 
     const handleRetry = useCallback(
         (dataPlaneId: string) => {
             const formData = methods.getValues();
+            const input = buildMappingFromFormData(formData);
 
             // Set this specific data plane to testing
             setTestResults((prev) => ({
@@ -97,15 +112,11 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 [dataPlaneId]: { status: 'testing' },
             }));
 
-            const promise = testSingleDataPlaneConnection(
-                client,
-                formData,
-                dataPlaneId
-            );
-            testPromisesRef.current.set(dataPlaneId, promise);
+            const promise = testSingleConnection(input, dataPlaneId);
+            testPromisesRef.current[dataPlaneId] = promise;
 
             promise.then((result) => {
-                if (testPromisesRef.current.get(dataPlaneId) === promise) {
+                if (testPromisesRef.current[dataPlaneId] === promise) {
                     setTestResults((prev) => ({
                         ...prev,
                         [dataPlaneId]: result,
@@ -113,7 +124,7 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 }
             });
         },
-        [client, methods]
+        [testSingleConnection, methods]
     );
 
     // Check if all data planes have completed testing successfully
@@ -135,7 +146,6 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
     const steps: WizardStep[] = useMemo(
         () => [
             {
-                id: 'configure',
                 label: intl.formatMessage({
                     id: 'storageMappings.wizard.step.configure',
                 }),
@@ -153,7 +163,6 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
                 },
             },
             {
-                id: 'test',
                 label: intl.formatMessage({
                     id: 'storageMappings.wizard.step.test',
                 }),
@@ -186,13 +195,12 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         // reset state in case parent keeps this dialog mounted
         methods.reset();
         setTestResults({});
-        testPromisesRef.current.clear();
+        testPromisesRef.current = {};
     };
 
     const handleComplete = async () => {
         const data = methods.getValues();
-        console.log('Wizard completed with data:', data);
-        // TODO: Submit storage mapping to API
+        await create(buildMappingFromFormData(data));
         closeDialog();
     };
 
@@ -207,5 +215,3 @@ function ConfigureStorageDialog({ open, setOpen }: Props) {
         </FormProvider>
     );
 }
-
-export default ConfigureStorageDialog;

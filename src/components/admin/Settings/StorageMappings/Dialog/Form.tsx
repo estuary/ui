@@ -26,7 +26,7 @@ import {
     AWS_REGIONS,
     CloudProviderCodes,
     GCP_REGIONS,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/cloudProviders';
+} from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { RHFMultiSelectWithDefault } from 'src/components/shared/forms/RHFMultiSelectWithDefault';
