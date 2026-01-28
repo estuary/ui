@@ -165,7 +165,10 @@ function ListView({
                         <Editor
                             defaultLanguage="json"
                             height={LIST_VIEW_HEIGHT}
-                            options={{ readOnly: true }}
+                            options={{
+                                lineNumbers: 'off',
+                                readOnly: true,
+                            }}
                             saveViewState={false}
                             value={selectedRecordJson}
                             theme={
