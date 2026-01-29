@@ -12,9 +12,14 @@ export const parsePostgresInterval = (
     const intervalObject = Duration.fromISOTime(interval).toObject();
 
     if (removeZeros) {
-        Object.entries(intervalObject).forEach(([timeUnit, unitValue]) => {
+        (
+            Object.entries(intervalObject) as [
+                keyof typeof intervalObject,
+                number | undefined,
+            ][]
+        ).forEach(([timeUnit, unitValue]) => {
             if (unitValue === 0) {
-                delete intervalObject[timeUnit as keyof DurationObjectUnits];
+                intervalObject[timeUnit] = undefined;
             }
         });
     }
