@@ -12,6 +12,9 @@ const OutlinedToggleButton = styled(ToggleButton)(({
     selected,
     theme,
 }) => {
+    // MUI has ToggleButton automagically handles the color `standard` to be `primary` in their
+    //  component. So this is mirroring that.
+    //  See: material-ui/packages/mui-material/src/ToggleButton/ToggleButton.js
     const colorKey = color === 'standard' || !color ? 'primary' : color;
 
     return {
