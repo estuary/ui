@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import { Stack } from '@mui/material';
 
+import { usePostHog } from '@posthog/react';
 import { useMount, useUnmount } from 'react-use';
 
 import { submitDirective } from 'src/api/directives';
@@ -47,6 +48,7 @@ const submit_onboard = async (
 };
 
 const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
+    const postHog = usePostHog();
     const { jobStatusPoller } = useJobStatusPoller();
 
     // Onboarding Store
@@ -114,6 +116,9 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         tenant: requestedTenant,
                         ignore_referrer: true,
                     });
+                    postHog.capture('Register', {
+                        tenant: requestedTenant,
+                    });
                     trackEvent(`${directiveName}:Complete`, directive);
                     void mutate();
                 },
@@ -127,6 +132,10 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         tenantAlreadyTaken: tenantTaken,
                         tenant: requestedTenant,
                         ignore_referrer: true,
+                    });
+                    postHog.capture('RegisterFailed', {
+                        tenantAlreadyTaken: tenantTaken,
+                        tenant: requestedTenant,
                     });
                     trackEvent(`${directiveName}:Error`, directive);
 

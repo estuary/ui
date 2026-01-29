@@ -11,6 +11,9 @@ declare global {
         monaco: any;
         MonacoEnvironment: Environment;
         __REDUX_DEVTOOLS_EXTENSION__: any;
+        posthog?: {
+            init: Function;
+        };
         // TODO (integrity | logrocket)
         // When we load in LogRocket with a script tag we'll want this
         // LogRocket?: {

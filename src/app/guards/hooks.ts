@@ -70,7 +70,7 @@ const useDirectiveGuard = (
     //  extra hook calls that end up getting "confused"
     useEffect(() => {
         logRocketEvent(CustomEvents.DIRECTIVE_GUARD_STATE, {
-            state: directiveState,
+            state: directiveState ?? 'null',
         });
         setCalculatedState(directiveState);
     }, [directiveState]);
