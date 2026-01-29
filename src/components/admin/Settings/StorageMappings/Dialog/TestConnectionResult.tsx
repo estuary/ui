@@ -1,37 +1,19 @@
 import type {
-    ConnectionTestResult,
     ConnectionTestResults,
     StorageMappingFormData,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Box,
-    Button,
-    CircularProgress,
-    Link,
-    Stack,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Box, Link, Stack, Typography, useTheme } from '@mui/material';
 
-import {
-    CheckCircle,
-    NavArrowDown,
-    Refresh,
-    WarningTriangle,
-} from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
 
 import { useDataPlanes } from 'src/api/dataPlanesGql';
+import { DataPlaneAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlaneAccordion';
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
-import { toPresentableName } from 'src/utils/dataPlane-utils';
 
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
@@ -55,290 +37,6 @@ const getProviderLabel = (provider: string): string => {
     }
     return provider || '—';
 };
-
-interface ConnectionStatusBadgeProps {
-    result: ConnectionTestResult;
-    compact?: boolean;
-}
-
-function ConnectionStatusBadge({
-    result,
-    compact = false,
-}: ConnectionStatusBadgeProps) {
-    const isTesting = result.status === 'testing' || result.status === 'idle';
-
-    if (isTesting) {
-        return (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <CircularProgress size={compact ? 16 : 20} color="inherit" />
-            </Box>
-        );
-    }
-
-    if (result.status === 'success') {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    color: 'success.main',
-                }}
-            >
-                <Typography variant="body2">Ready</Typography>
-                <CheckCircle
-                    width={compact ? 16 : 20}
-                    height={compact ? 16 : 20}
-                />
-            </Box>
-        );
-    }
-
-    if (result.status === 'error') {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    color: 'warning.main',
-                }}
-            >
-                <Typography variant="body2">Needs Attention</Typography>
-                <WarningTriangle
-                    width={compact ? 16 : 20}
-                    height={compact ? 16 : 20}
-                />
-            </Box>
-        );
-    }
-
-    return null;
-}
-
-interface ConnectionErrorProps {
-    result: ConnectionTestResult;
-    errorMessage?: string;
-    onRetry: () => void;
-}
-
-function ConnectionError({
-    result,
-    errorMessage,
-    onRetry,
-}: ConnectionErrorProps) {
-    const message = errorMessage || result.errorMessage || 'Connection failed';
-    const isRetrying = result.status === 'testing';
-
-    return (
-        <Box
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                color: 'warning.main',
-            }}
-        >
-            <Typography variant="body2" sx={{ flex: 1 }}>
-                {message}
-            </Typography>
-            <Button
-                variant="text"
-                size="small"
-                disabled={isRetrying}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onRetry();
-                }}
-                startIcon={
-                    !isRetrying ? <Refresh width={16} height={16} /> : null
-                }
-                sx={{ ml: 1 }}
-            >
-                {isRetrying ? 'Retrying...' : 'Retry'}
-            </Button>
-        </Box>
-    );
-}
-
-interface GcpConnectionInstructionsProps {
-    bucket: string;
-    gcpServiceAccountEmail: string;
-}
-
-function GcpConnectionInstructions({
-    bucket,
-    gcpServiceAccountEmail,
-}: GcpConnectionInstructionsProps) {
-    const theme = useTheme();
-    const serviceAccount =
-        gcpServiceAccountEmail || 'flow@estuary-data.iam.gserviceaccount.com';
-
-    return (
-        <Stack spacing={2}>
-            <Typography variant="subtitle2" fontWeight={700}>
-                Step 1: Copy the Service Account Email
-            </Typography>
-            <Typography variant="body2">
-                Grant this service account access to your GCS bucket:
-            </Typography>
-            <Box
-                component="pre"
-                sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: codeBackground[theme.palette.mode],
-                    overflow: 'auto',
-                    fontSize: 13,
-                    fontFamily: 'monospace',
-                }}
-            >
-                {serviceAccount}
-            </Box>
-
-            <Typography variant="subtitle2" fontWeight={700}>
-                Step 2: Grant bucket permissions
-            </Typography>
-            <Typography variant="body2">
-                Using <TechnicalEmphasis>gsutil</TechnicalEmphasis>, grant the
-                admin role to the the service account using the following
-                command:
-            </Typography>
-            <Box
-                component="pre"
-                sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: codeBackground[theme.palette.mode],
-                    overflow: 'auto',
-                    fontSize: 13,
-                    fontFamily: 'monospace',
-                }}
-            >
-                {`gsutil iam ch serviceAccount:${serviceAccount}:admin gs://${bucket || 'your-bucket'}`}
-            </Box>
-
-            <Typography variant="body2">
-                Or in the Cloud Console, navigate to your bucket, click
-                &quot;Permissions&quot;, then &quot;Grant Access&quot;, and add
-                the service account with the &quot;Storage Admin&quot; role.
-            </Typography>
-        </Stack>
-    );
-}
-
-interface AwsConnectionInstructionsProps {
-    bucket: string;
-    iamArn: string;
-}
-
-function AwsConnectionInstructions({
-    bucket,
-    iamArn,
-}: AwsConnectionInstructionsProps) {
-    const theme = useTheme();
-    const bucketPolicy = JSON.stringify(
-        {
-            Version: '2012-10-17',
-            Statement: [
-                {
-                    Effect: 'Allow',
-                    Principal: {
-                        AWS:
-                            iamArn ||
-                            'arn:aws:iam::123456789012:role/estuary-flow-role',
-                    },
-                    Action: [
-                        's3:GetObject',
-                        's3:PutObject',
-                        's3:DeleteObject',
-                        's3:ListBucket',
-                        's3:GetBucketPolicy',
-                    ],
-                    Resource: [
-                        `arn:aws:s3:::${bucket || 'your-bucket'}`,
-                        `arn:aws:s3:::${bucket || 'your-bucket'}/*`,
-                    ],
-                },
-            ],
-        },
-        null,
-        2
-    );
-
-    return (
-        <Stack spacing={2}>
-            <Typography variant="subtitle2" fontWeight={700}>
-                Step 1: Copy the IAM Role ARN
-            </Typography>
-            <Typography variant="body2">
-                Add this ARN to your S3 bucket policy or IAM role trust
-                relationship:
-            </Typography>
-            <Box
-                component="pre"
-                sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: codeBackground[theme.palette.mode],
-                    overflow: 'auto',
-                    fontSize: 13,
-                    fontFamily: 'monospace',
-                }}
-            >
-                {iamArn || 'arn:aws:iam::123456789012:role/estuary-flow-role'}
-            </Box>
-
-            <Typography variant="subtitle2" fontWeight={700}>
-                Step 2: Apply this bucket policy
-            </Typography>
-            <Typography variant="body2">
-                Add this policy to your S3 bucket to grant the necessary
-                permissions:
-            </Typography>
-            <Box
-                component="pre"
-                sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: codeBackground[theme.palette.mode],
-                    overflow: 'auto',
-                    fontSize: 13,
-                    fontFamily: 'monospace',
-                }}
-            >
-                {bucketPolicy}
-            </Box>
-        </Stack>
-    );
-}
-
-interface ConnectionInstructionsProps {
-    provider: string;
-    bucket: string;
-    iamArn: string;
-    gcpServiceAccountEmail: string;
-}
-
-function ConnectionInstructions({
-    provider,
-    bucket,
-    iamArn,
-    gcpServiceAccountEmail,
-}: ConnectionInstructionsProps) {
-    if (provider === 'gcp' || provider === CloudProviderCodes.GCP) {
-        return (
-            <GcpConnectionInstructions
-                bucket={bucket}
-                gcpServiceAccountEmail={gcpServiceAccountEmail}
-            />
-        );
-    }
-    if (provider === 'aws' || provider === CloudProviderCodes.AWS) {
-        return <AwsConnectionInstructions bucket={bucket} iamArn={iamArn} />;
-    }
-    return <Typography>Connection instructions go here.</Typography>;
-}
 
 function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
     const theme = useTheme();
@@ -381,7 +79,7 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
         const primaryDataPlane = formData.data_planes?.[0];
         const dataPlane = primaryDataPlane
             ? dataPlaneOptions.find(
-                  (dp) => dp.data_plane_name === primaryDataPlane.dataPlaneName
+                  (dp) => dp.dataPlaneName === primaryDataPlane.dataPlaneName
               )
             : undefined;
 
@@ -404,12 +102,6 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
         formData.provider,
         formData.region,
     ]);
-
-    const handleAccordionChange =
-        (panel: string) =>
-        (_event: React.SyntheticEvent, isExpanded: boolean) => {
-            setExpandedPanel(isExpanded ? panel : false);
-        };
 
     return (
         <Stack spacing={3}>
@@ -468,91 +160,28 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
 
             <Stack spacing={1}>
                 {formData.data_planes?.map((dataPlane) => {
-                    const testResult = results[dataPlane.data_plane_name] ?? {
+                    const testResult = results[dataPlane.dataPlaneName] ?? {
                         status: 'idle',
                     };
 
                     return (
-                        <Accordion
-                            key={dataPlane.data_plane_name}
-                            expanded={
-                                expandedPanel === dataPlane.data_plane_name
+                        <DataPlaneAccordion
+                            key={dataPlane.dataPlaneName}
+                            dataPlane={dataPlane}
+                            testResult={testResult}
+                            expanded={expandedPanel === dataPlane.dataPlaneName}
+                            onExpandedChange={(isExpanded) =>
+                                setExpandedPanel(
+                                    isExpanded ? dataPlane.dataPlaneName : false
+                                )
                             }
-                            onChange={handleAccordionChange(
-                                dataPlane.data_plane_name
-                            )}
-                            disableGutters
-                            sx={{
-                                '&:before': { display: 'none' },
-                                'border': 1,
-                                'borderColor':
-                                    testResult.status === 'success'
-                                        ? 'success.main'
-                                        : testResult.status === 'error'
-                                          ? 'warning.main'
-                                          : 'divider',
-                                'borderRadius': 2,
-                                '&:first-of-type': { borderRadius: 2 },
-                                '&:last-of-type': { borderRadius: 2 },
-                            }}
-                        >
-                            <AccordionSummary
-                                expandIcon={<NavArrowDown />}
-                                sx={{ minHeight: 48 }}
-                            >
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        width: '100%',
-                                        pr: 1,
-                                    }}
-                                >
-                                    <Typography fontWeight={600}>
-                                        {toPresentableName(dataPlane)}
-                                    </Typography>
-                                    <ConnectionStatusBadge
-                                        result={testResult}
-                                        compact
-                                    />
-                                </Box>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Stack spacing={2}>
-                                    {testResult.status === 'error' ||
-                                    (testResult.status === 'testing' &&
-                                        lastErrorMessages[
-                                            dataPlane.data_plane_name
-                                        ]) ? (
-                                        <ConnectionError
-                                            result={testResult}
-                                            errorMessage={
-                                                lastErrorMessages[
-                                                    dataPlane.data_plane_name
-                                                ]
-                                            }
-                                            onRetry={() =>
-                                                onRetry(
-                                                    dataPlane.data_plane_name
-                                                )
-                                            }
-                                        />
-                                    ) : null}
-                                    <ConnectionInstructions
-                                        provider={provider}
-                                        bucket={formData.bucket}
-                                        iamArn={
-                                            dataPlane.aws_iam_user_arn ?? ''
-                                        }
-                                        gcpServiceAccountEmail={
-                                            dataPlane.gcp_service_account_email ??
-                                            ''
-                                        }
-                                    />
-                                </Stack>
-                            </AccordionDetails>
-                        </Accordion>
+                            lastErrorMessage={
+                                lastErrorMessages[dataPlane.dataPlaneName]
+                            }
+                            onRetry={() => onRetry(dataPlane.dataPlaneName)}
+                            provider={provider}
+                            bucket={formData.bucket}
+                        />
                     );
                 })}
             </Stack>
