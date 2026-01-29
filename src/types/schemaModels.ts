@@ -40,6 +40,8 @@ export interface BuiltProjection {
     ptr?: string;
 }
 
+export type BuiltProjection_ValidKey = BuiltProjection & { ptr: string };
+
 export interface CollectionSchemaAnnotations extends Schema {
     properties?: CollectionSchemaProperties;
     redact?: RedactDef;

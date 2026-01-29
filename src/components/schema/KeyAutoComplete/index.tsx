@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { KeyAutoCompleteProps } from 'src/components/schema/KeyAutoComplete/types';
-import type { BuiltProjection } from 'src/types/schemaModels';
+import type { BuiltProjection_ValidKey } from 'src/types/schemaModels';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -23,7 +23,7 @@ import {
 } from 'src/components/editor/Bindings/Store/hooks';
 import BasicOption from 'src/components/schema/KeyAutoComplete/options/Basic';
 import ReadOnly from 'src/components/schema/KeyAutoComplete/ReadOnly';
-import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
+import { isValidKeyOption } from 'src/components/schema/KeyAutoComplete/shared';
 import SortableTags from 'src/components/schema/KeyAutoComplete/SortableTags';
 import { autoCompleteDefaults_Virtual_Multiple } from 'src/components/shared/AutoComplete/DefaultProps';
 import { useEntityType } from 'src/context/EntityContext';
@@ -32,7 +32,7 @@ import { hasLength } from 'src/utils/misc-utils';
 import { reduceBuiltProjections } from 'src/utils/schema-utils';
 
 const tallHeight = 71;
-const getValue = (option: BuiltProjection) => {
+const getValue = (option: BuiltProjection_ValidKey) => {
     return option.ptr ?? '';
 };
 
@@ -64,9 +64,10 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
             : [];
 
         return orderBy(
-            filter(skimProjectionResponses, (field) =>
-                keyIsValidOption(skimProjectionResponse_Keys, field.ptr)
-            ).reduce<BuiltProjection[]>(reduceBuiltProjections, []),
+            filter(
+                skimProjectionResponses,
+                isValidKeyOption(skimProjectionResponse_Keys)
+            ).reduce<BuiltProjection_ValidKey[]>(reduceBuiltProjections, []),
             // Order first by exists so groups do not duplicate in the dropdown
             ['inference.exists', 'inference.ptr'],
             ['desc', 'asc']
@@ -108,12 +109,14 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                 groupBy={(option) => option.inference?.exists ?? ''}
                 inputValue={inputValue}
                 isOptionEqualToValue={(option, optionValue) => {
-                    // @ts-expect-error value is string[] but options is BuiltProjection[]
+                    // MUI has issues with typing options different from values
+                    //  see: https://github.com/mui/material-ui/issues/23708
+                    // @ts-expect-error value is string[] but options is BuiltProjection_ValidKey[]
                     return option.ptr === optionValue;
                 }}
                 options={keys}
                 readOnly={disableInput}
-                // @ts-expect-error value is string[] but options is BuiltProjection[]
+                // @ts-expect-error value is string[] but options is BuiltProjection_ValidKey[]
                 value={localCopyValue}
                 onChange={async (event, newValues, reason) => {
                     if (changeHandler) {
@@ -179,7 +182,6 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                                 x-react-window-item-height={tallHeight}
                             >
                                 <BasicOption
-                                    // @ts-expect-error ptr is optional but BasicOption expects string
                                     pointer={ptr}
                                     types={inference.types}
                                 />
@@ -198,7 +200,6 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                     } else {
                         RowContent = (
                             <BasicOption
-                                // @ts-expect-error ptr is optional but BasicOption expects string
                                 pointer={ptr}
                                 types={inference.types}
                             />
