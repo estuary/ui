@@ -15,6 +15,7 @@ import type { StorageMappingDictionary } from 'src/types';
 
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 
+import { DataPlaneNode } from 'src/api/dataPlanesGql';
 import { client } from 'src/services/client';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import {
@@ -204,7 +205,7 @@ export const getJournals = async (
         { data: { selector } },
         brokerToken
     );
-
+/** @deprecated Scope is returned by dataplane gql query */
 export const getDataPlaneScope = (
     dataPlaneName: string
 ): DataPlaneOption['scope'] => {
@@ -250,6 +251,24 @@ const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
     return [provider, region, cluster];
 };
 
+export function toPresentableName(dp: DataPlaneNode): string {
+    const dataPlaneName = parseDataPlaneName(dp.dataPlaneName, dp.scope);
+    return formatDataPlaneName(dataPlaneName);
+}
+
+export function toPresentableCloudProvider(dp: DataPlaneNode): string {
+    if (dp.cloudProvider.toLowerCase() === 'aws') {
+        return 'Amazon Web Services';
+    } else if (dp.cloudProvider.toLowerCase() === 'gcp') {
+        return 'Google Cloud Platform';
+    } else if (dp.cloudProvider.toLowerCase() === 'azure') {
+        return 'Microsoft Azure';
+    } else {
+        return dp.cloudProvider;
+    }
+}
+
+/** @deprecated details are now returned by dataplane gql query */
 export const parseDataPlaneName = (
     dataPlaneName: string,
     scope: DataPlaneOption['scope']
@@ -281,7 +300,7 @@ export const parseDataPlaneName = (
 
     return { cluster, prefix, provider, region, whole: dataPlaneName };
 };
-
+/** @deprecated use toPresentableName(dataPlane: DataPlaneNode) */
 export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
     const { cluster, provider, region, whole } = dataPlaneName;
 
@@ -296,6 +315,7 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
 //   from a hook. Given the matched storage mapping must be matched to figure
 //   out what the default data-plane name is, it makes more sense to call this
 //   util from a hook that can reference storage mapping state directly.
+/** @deprecated  */
 export const generateDataPlaneOption = (
     { data_plane_name, id, reactor_address, cidr_blocks }: BaseDataPlaneQuery,
     defaultDataPlaneName?: string

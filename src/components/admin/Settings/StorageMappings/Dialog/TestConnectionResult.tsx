@@ -1,4 +1,3 @@
-import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import type {
     ConnectionTestResult,
     ConnectionTestResults,
@@ -27,17 +26,12 @@ import {
     WarningTriangle,
 } from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
-import useSWR from 'swr';
 
-import { getDataPlaneOptions } from 'src/api/dataPlanes';
+import { useDataPlanes } from 'src/api/dataPlanesGql';
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
-import {
-    formatDataPlaneName,
-    getDataPlaneScope,
-    parseDataPlaneName,
-} from 'src/utils/dataPlane-utils';
+import { toPresentableName } from 'src/utils/dataPlane-utils';
 
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
@@ -351,10 +345,7 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
     const { getValues } = useFormContext<StorageMappingFormData>();
     const formData = getValues();
 
-    const { data: dataPlaneResponse } = useSWR('dataPlanes', () =>
-        getDataPlaneOptions()
-    );
-    const dataPlaneOptions = dataPlaneResponse?.data ?? [];
+    const { dataPlanes: dataPlaneOptions } = useDataPlanes();
 
     const [expandedPanel, setExpandedPanel] = useState<string | false>(false);
     const prevResultsRef = useRef<ConnectionTestResults>({});
@@ -385,17 +376,6 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
         prevResultsRef.current = results;
     }, [results, expandedPanel]);
 
-    // Get all selected data planes
-    const allDataPlanes = useMemo(() => {
-        return (formData.data_planes ?? [])
-            .map((selectedDp) =>
-                dataPlaneOptions.find(
-                    (dp) => dp.data_plane_name === selectedDp.dataPlaneName
-                )
-            )
-            .filter(Boolean) as BaseDataPlaneQuery[];
-    }, [formData.data_planes, dataPlaneOptions]);
-
     // Derive provider, region for display (from primary data plane or form)
     const { provider, displayProvider, displayRegion } = useMemo(() => {
         const primaryDataPlane = formData.data_planes?.[0];
@@ -406,21 +386,16 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
             : undefined;
 
         if (formData.use_same_region && dataPlane) {
-            const scope = getDataPlaneScope(dataPlane.data_plane_name);
-            const parsedName = parseDataPlaneName(
-                dataPlane.data_plane_name,
-                scope
-            );
             return {
-                provider: parsedName.provider,
-                displayProvider: getProviderLabel(parsedName.provider),
-                displayRegion: parsedName.region || '—',
+                provider: dataPlane.cloudProvider,
+                displayProvider: getProviderLabel(dataPlane.cloudProvider),
+                displayRegion: dataPlane.region,
             };
         }
         return {
             provider: formData.provider,
             displayProvider: getProviderLabel(formData.provider),
-            displayRegion: formData.region || '—',
+            displayRegion: formData.region,
         };
     }, [
         dataPlaneOptions,
@@ -429,12 +404,6 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
         formData.provider,
         formData.region,
     ]);
-
-    const getDataPlaneLabel = (dataPlane: BaseDataPlaneQuery) => {
-        const scope = getDataPlaneScope(dataPlane.data_plane_name);
-        const parsedName = parseDataPlaneName(dataPlane.data_plane_name, scope);
-        return formatDataPlaneName(parsedName);
-    };
 
     const handleAccordionChange =
         (panel: string) =>
@@ -498,7 +467,7 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
             </Box>
 
             <Stack spacing={1}>
-                {allDataPlanes.map((dataPlane) => {
+                {formData.data_planes?.map((dataPlane) => {
                     const testResult = results[dataPlane.data_plane_name] ?? {
                         status: 'idle',
                     };
@@ -541,7 +510,7 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
                                     }}
                                 >
                                     <Typography fontWeight={600}>
-                                        {getDataPlaneLabel(dataPlane)}
+                                        {toPresentableName(dataPlane)}
                                     </Typography>
                                     <ConnectionStatusBadge
                                         result={testResult}

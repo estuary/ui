@@ -27,70 +27,12 @@ import { RHFCheckbox } from 'src/components/shared/forms/RHFCheckbox';
 import { RHFMultiSelectWithDefault } from 'src/components/shared/forms/RHFMultiSelectWithDefault';
 import { RHFSelect } from 'src/components/shared/forms/RHFSelect';
 import {
-    formatDataPlaneName,
-    getDataPlaneScope,
-    parseDataPlaneName,
+    toPresentableCloudProvider,
+    toPresentableName,
 } from 'src/utils/dataPlane-utils';
 
 const docsUrl =
     'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';
-
-// // Example data planes for development
-// export const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
-//     // Public data planes
-//     {
-//         id: '00000000-0000-0000-0000-000000000001',
-//         dataPlaneName: 'ops/dp/public/gcp-us-central1-prod',
-//         reactor_address: 'https://us-central1.v1.estuary-data.dev',
-//         cidr_blocks: null,
-//         gcp_service_account_email:
-//             'flow-gcp-us-central1@estuary-data.iam.gserviceaccount.com',
-//         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-gcp-us-central1',
-//         data_plane_fqdn: 'us-central1.v1.estuary-data.dev',
-//     },
-//     {
-//         id: '00000000-0000-0000-0000-000000000002',
-//         dataPlaneName: 'ops/dp/public/gcp-us-east1-prod',
-//         reactor_address: 'https://us-east1.v1.estuary-data.dev',
-//         cidr_blocks: null,
-//         gcp_service_account_email:
-//             'flow-gcp-us-east1@estuary-data.iam.gserviceaccount.com',
-//         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-gcp-us-east1',
-//         data_plane_fqdn: 'us-east1.v1.estuary-data.dev',
-//     },
-//     {
-//         id: '00000000-0000-0000-0000-000000000003',
-//         dataPlaneName: 'ops/dp/public/aws-us-east-1',
-//         reactor_address: 'https://aws-us-east-1.v1.estuary-data.dev',
-//         cidr_blocks: null,
-//         gcp_service_account_email:
-//             'flow-aws-us-east-1@estuary-data.iam.gserviceaccount.com',
-//         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-aws-us-east-1',
-//         data_plane_fqdn: 'aws-us-east-1.v1.estuary-data.dev',
-//     },
-//     {
-//         id: '00000000-0000-0000-0000-000000000004',
-//         dataPlaneName: 'ops/dp/public/aws-eu-west-1',
-//         reactor_address: 'https://aws-eu-west-1.v1.estuary-data.dev',
-//         cidr_blocks: null,
-//         gcp_service_account_email:
-//             'flow-aws-eu-west-1@estuary-data.iam.gserviceaccount.com',
-//         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-aws-eu-west-1',
-//         data_plane_fqdn: 'aws-eu-west-1.v1.estuary-data.dev',
-//     },
-//     // Private data planes
-//     {
-//         id: '00000000-0000-0000-0000-000000000005',
-//         dataPlaneName: 'ops/dp/private/acme-corp/gcp-us-central1-prod',
-//         reactor_address: 'https://acme-prod.estuary-data.dev',
-//         cidr_blocks: ['10.0.0.0/8', '172.16.0.0/12'],
-//         gcp_service_account_email:
-//             'flow-acme-gcp-us-central1@acme-corp.iam.gserviceaccount.com',
-//         aws_iam_user_arn:
-//             'arn:aws:iam::987654321098:user/flow-acme-gcp-us-central1',
-//         data_plane_fqdn: 'acme-prod.estuary-data.dev',
-//     },
-// ];
 
 const PROVIDER_OPTIONS = Object.values(CloudProviderCodes).map((code) => ({
     value: code,
@@ -110,6 +52,8 @@ const getRegionOptions = (provider: CloudProviderCodes | '') => {
 };
 
 export function StorageMappingForm() {
+    const { dataPlanes: allDataPlanes } = useDataPlanes();
+
     const {
         register,
         watch,
@@ -117,7 +61,6 @@ export function StorageMappingForm() {
         formState: { errors },
     } = useFormContext<StorageMappingFormData>();
 
-    const { dataPlanes: dataPlaneOptions } = useDataPlanes();
     const selectedDataPlanes = watch('data_planes');
     const provider = watch('provider');
     const selectAdditional = watch('select_additional');
@@ -125,80 +68,61 @@ export function StorageMappingForm() {
     const allowPublic = watch('allow_public');
     const regionOptions = useMemo(() => getRegionOptions(provider), [provider]);
 
-    // Auto-enable "allow public" if there are no private data planes
-    useEffect(() => {
-        const hasPrivate = dataPlaneOptions.some((option) => option.isPrivate);
-        if (dataPlaneOptions.length > 0 && !hasPrivate) {
-            setValue('allow_public', true);
-        }
-    }, [dataPlaneOptions, setValue]);
-    // Remove public data planes when allowPublic is unchecked
-    useEffect(() => {
-        if (!allowPublic && selectedDataPlanes?.length > 0) {
-            const filtered = selectedDataPlanes.filter((dp) => dp.isPrivate);
-            if (filtered.length !== selectedDataPlanes.length) {
-                setValue('data_planes', filtered);
-            }
-        }
-    }, [allowPublic, dataPlaneOptions, selectedDataPlanes, setValue]);
-
-    // Get the primary (first) selected data plane for display
-    const selectedDataPlane = useMemo(() => {
-        const primaryDataPlane = selectedDataPlanes?.[0];
-        if (!primaryDataPlane) return null;
-        const dataPlane = dataPlaneOptions.find(
-            (dp) => dp.dataPlaneName === primaryDataPlane.dataPlaneName
-        );
-        if (!dataPlane) return null;
-
-        const scope = getDataPlaneScope(dataPlane.dataPlaneName);
-        const parsedName = parseDataPlaneName(dataPlane.dataPlaneName, scope);
-        return {
-            ...dataPlane,
-            parsedName,
-        };
-    }, [selectedDataPlanes, dataPlaneOptions]);
-
-    const hasPrivateDataPlanes = useMemo(
-        () =>
-            dataPlaneOptions.some(
-                (option) =>
-                    getDataPlaneScope(option.dataPlaneName) === 'private'
-            ),
-        [dataPlaneOptions]
+    const [hasPrivate, hasPublic] = useMemo(
+        () => [
+            allDataPlanes.some((option) => option.isPrivate),
+            allDataPlanes.some((option) => !option.isPrivate),
+        ],
+        [allDataPlanes]
     );
 
-    const dataPlaneSelectOptions = useMemo(
+    // Auto-select "allow public" if there are no private options
+    // (Checkbox will be hidden if there are no public options)
+    useEffect(() => {
+        setValue('allow_public', !hasPrivate);
+    }, [hasPrivate, setValue]);
+
+    // Remove public data planes when allowPublic is unchecked
+    useEffect(() => {
+        if (!allowPublic && selectedDataPlanes.some((dp) => !dp.isPrivate)) {
+            setValue(
+                'data_planes',
+                selectedDataPlanes.filter((dp) => dp.isPrivate)
+            );
+        }
+    }, [allowPublic, selectedDataPlanes, setValue]);
+
+    const filteredDataPlanes = useMemo(
         () =>
-            dataPlaneOptions
+            allDataPlanes
                 .filter((option) => {
-                    const scope = getDataPlaneScope(option.dataPlaneName);
-                    if (!hasPrivateDataPlanes) {
+                    // if we only have private OR public, show all options
+                    if (hasPrivate != hasPublic) {
                         return true;
                     }
-                    return scope === 'private' || allowPublic;
+                    return option.isPrivate || allowPublic;
                 })
-                .map((option) => {
-                    const scope = getDataPlaneScope(option.dataPlaneName);
-                    const parsedName = parseDataPlaneName(
-                        option.dataPlaneName,
-                        scope
-                    );
-                    return {
-                        value: option.dataPlaneName,
-                        label: `${formatDataPlaneName(parsedName)} (${scope})`,
-                    };
+                .sort((a, b) => {
+                    // Private data planes first, then alphabetically
+                    if (a.isPrivate !== b.isPrivate) {
+                        return a.isPrivate ? -1 : 1;
+                    }
+
+                    return a.dataPlaneName.localeCompare(b.dataPlaneName);
                 })
-                .sort((a, b) => a.label.localeCompare(b.label)),
-        [dataPlaneOptions, hasPrivateDataPlanes, allowPublic]
+                .map((option) => ({
+                    value: option.dataPlaneName,
+                    label: `${toPresentableName(option)} (${option.scope})`,
+                })),
+        [allDataPlanes, hasPrivate, allowPublic]
     );
 
     // Convert a data plane name to a DataPlane object
     const nameToDataPlane = useCallback(
         (name: string): DataPlaneNode | null =>
-            dataPlaneOptions.find((opt) => opt.dataPlaneName === name) ?? null,
+            allDataPlanes.find((opt) => opt.dataPlaneName === name) ?? null,
 
-        [dataPlaneOptions]
+        [allDataPlanes]
     );
 
     return (
@@ -229,14 +153,14 @@ export function StorageMappingForm() {
                 </CardWrapper>
                 <CardWrapper>
                     <Stack spacing={2}>
-                        {selectAdditional ? (
+                        {filteredDataPlanes.length > 1 && selectAdditional ? (
                             <RHFMultiSelectWithDefault<
                                 StorageMappingFormData,
                                 'data_planes'
                             >
                                 name="data_planes"
                                 label="Data Planes"
-                                options={dataPlaneSelectOptions}
+                                options={filteredDataPlanes}
                                 required
                                 rules={{
                                     validate: (value) =>
@@ -260,7 +184,7 @@ export function StorageMappingForm() {
                             <RHFSelect<StorageMappingFormData, 'data_planes'>
                                 name="data_planes"
                                 label="Data Plane"
-                                options={dataPlaneSelectOptions}
+                                options={filteredDataPlanes}
                                 required
                                 rules={{
                                     validate: (value) =>
@@ -285,13 +209,16 @@ export function StorageMappingForm() {
                                 color: 'text.secondary',
                             }}
                         >
-                            <RHFCheckbox<StorageMappingFormData>
-                                name="allow_public"
-                                label="Allow public data planes"
-                                disabled={!hasPrivateDataPlanes}
-                            />
-
-                            {dataPlaneSelectOptions.length > 1 ? (
+                            {hasPublic ? (
+                                <RHFCheckbox<StorageMappingFormData>
+                                    name="allow_public"
+                                    label="Allow public data planes"
+                                    // disabled because this will be checked by default
+                                    // if there are no private options
+                                    disabled={!hasPrivate}
+                                />
+                            ) : null}
+                            {filteredDataPlanes.length > 1 ? (
                                 <RHFCheckbox<StorageMappingFormData>
                                     name="select_additional"
                                     label="Select multiple data planes"
@@ -370,21 +297,18 @@ export function StorageMappingForm() {
                                     <Box sx={{ typography: 'body2' }}>
                                         <strong>Cloud provider:</strong>{' '}
                                         <TechnicalEmphasis>
-                                            {selectedDataPlane?.parsedName
-                                                .provider
-                                                ? selectedDataPlane.parsedName
-                                                      .provider === 'gcp'
-                                                    ? 'Google Cloud Storage'
-                                                    : 'Amazon S3'
+                                            {selectedDataPlanes[0]
+                                                ? toPresentableCloudProvider(
+                                                      selectedDataPlanes[0]
+                                                  )
                                                 : '—'}
                                         </TechnicalEmphasis>
                                     </Box>
                                     <Box sx={{ typography: 'body2' }}>
                                         <strong>Region:</strong>{' '}
                                         <TechnicalEmphasis>
-                                            {' '}
-                                            {selectedDataPlane?.parsedName
-                                                .region ?? '—'}
+                                            {selectedDataPlanes[0]?.region ??
+                                                '—'}
                                         </TechnicalEmphasis>
                                     </Box>
                                 </Box>
