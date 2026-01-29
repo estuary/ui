@@ -135,10 +135,14 @@ export const getFullSource = (
     }
 
     if (filterOutRemovable) {
-        response.fullSource = Object.entries(response.fullSource).reduce(
+        response.fullSource = (
+            Object.entries(response.fullSource) as [
+                keyof typeof response.fullSource,
+                any,
+            ][]
+        ).reduce(
             (filtered, [key, val]) => {
                 if (val !== REMOVE_DURING_GENERATION) {
-                    // @ts-expect-error - Object.entries returns string keys, but these are valid FullSource keys
                     filtered[key] = val;
                 }
 
