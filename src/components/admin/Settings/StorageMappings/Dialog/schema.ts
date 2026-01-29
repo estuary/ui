@@ -1,3 +1,5 @@
+import { DataPlaneNode } from 'src/api/dataPlanesGql';
+
 export enum CloudProviderCodes {
     GCP = 'gcp',
     AWS = 'aws',
@@ -138,7 +140,7 @@ export interface StorageMappingFormData {
     region: string;
     bucket: string;
     storage_prefix: string;
-    data_planes: string[];
+    data_planes: DataPlaneNode[];
     select_additional: boolean;
     use_same_region: boolean;
     allow_public: boolean;

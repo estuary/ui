@@ -6,10 +6,11 @@ import type { Client } from 'urql';
 
 import { useCallback } from 'react';
 
+import { DataPlaneNode } from './dataPlanesGql';
 import { gql, useClient } from 'urql';
 
 // Toggle for mock mode while GraphQL backend is in development
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 // GraphQL Types
 interface HealthCheckError {
@@ -69,7 +70,7 @@ const CREATE_STORAGE_MAPPING = gql<
 // Mock implementation for development
 const mockTestStorageConnection = async (
     _input: CreateStorageMappingInput,
-    dataPlaneIds: string[]
+    dataPlanes: DataPlaneNode[]
 ): Promise<ConnectionTestResults> => {
     // Simulate network delay
     await new Promise((resolve) =>
@@ -78,10 +79,10 @@ const mockTestStorageConnection = async (
 
     const results: ConnectionTestResults = {};
 
-    dataPlaneIds.forEach((id) => {
+    dataPlanes.forEach((dp) => {
         // 50% success rate for demo purposes
         const success = Math.random() > 0.5;
-        results[id] = success
+        results[dp.dataPlaneName] = success
             ? { status: 'success' }
             : {
                   status: 'error',
@@ -96,13 +97,13 @@ const mockTestStorageConnection = async (
 // Parse GraphQL errors to extract health check errors per data plane
 const parseHealthCheckErrors = (
     errors: Array<{ extensions?: { healthCheckErrors?: HealthCheckError[] } }>,
-    dataPlaneIds: string[]
+    dataPlanes: DataPlaneNode[]
 ): ConnectionTestResults => {
     const results: ConnectionTestResults = {};
 
     // Initialize all as success (will be overwritten if errors found)
-    dataPlaneIds.forEach((id) => {
-        results[id] = { status: 'success' };
+    dataPlanes.forEach((dp) => {
+        results[dp.dataPlaneName] = { status: 'success' };
     });
 
     // Process errors from extensions
@@ -110,15 +111,15 @@ const parseHealthCheckErrors = (
         const healthCheckErrors = error.extensions?.healthCheckErrors;
         if (healthCheckErrors) {
             healthCheckErrors.forEach((hcError) => {
-                // Match error to data plane by prefix
-                const matchingDataPlane = dataPlaneIds.find(
-                    (id) =>
-                        hcError.dataPlane === id ||
-                        hcError.dataPlane.startsWith(id)
+                // Match error to data plane by name
+                const matchingDataPlane = dataPlanes.find(
+                    (dp) =>
+                        hcError.dataPlane === dp.dataPlaneName ||
+                        hcError.dataPlane.startsWith(dp.dataPlaneName + ':')
                 );
 
                 if (matchingDataPlane) {
-                    results[matchingDataPlane] = {
+                    results[matchingDataPlane.dataPlaneName] = {
                         status: 'error',
                         errorMessage: hcError.error,
                     };
@@ -134,7 +135,7 @@ const parseHealthCheckErrors = (
 const realTestStorageConnection = async (
     client: Client,
     input: CreateStorageMappingInput,
-    dataPlaneIds: string[]
+    dataPlanes: DataPlaneNode[]
 ): Promise<ConnectionTestResults> => {
     const result = await client.mutation(CREATE_STORAGE_MAPPING, {
         ...input,
@@ -142,13 +143,13 @@ const realTestStorageConnection = async (
     });
 
     if (result.error?.graphQLErrors && result.error.graphQLErrors.length > 0) {
-        return parseHealthCheckErrors(result.error.graphQLErrors, dataPlaneIds);
+        return parseHealthCheckErrors(result.error.graphQLErrors, dataPlanes);
     }
 
     // No errors means all connections succeeded
     const results: ConnectionTestResults = {};
-    dataPlaneIds.forEach((id) => {
-        results[id] = { status: 'success' };
+    dataPlanes.forEach((dp) => {
+        results[dp.dataPlaneName] = { status: 'success' };
     });
     return results;
 };
@@ -196,12 +197,12 @@ export function useStorageMappingService() {
     const testConnection = useCallback(
         async (
             input: CreateStorageMappingInput,
-            dataPlaneIds: string[]
+            dataPlanes: DataPlaneNode[]
         ): Promise<ConnectionTestResults> => {
             if (USE_MOCK) {
-                return mockTestStorageConnection(input, dataPlaneIds);
+                return mockTestStorageConnection(input, dataPlanes);
             }
-            return realTestStorageConnection(client, input, dataPlaneIds);
+            return realTestStorageConnection(client, input, dataPlanes);
         },
         [client]
     );
@@ -209,11 +210,11 @@ export function useStorageMappingService() {
     const testSingleConnection = useCallback(
         async (
             input: CreateStorageMappingInput,
-            dataPlaneId: string
+            dataPlane: DataPlaneNode
         ): Promise<ConnectionTestResult> => {
-            const results = await testConnection(input, [dataPlaneId]);
+            const results = await testConnection(input, [dataPlane]);
             return (
-                results[dataPlaneId] ?? {
+                results[dataPlane.dataPlaneName] ?? {
                     status: 'error',
                     errorMessage: 'Unknown error',
                 }

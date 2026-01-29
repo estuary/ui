@@ -1,30 +1,41 @@
-import type { ReactNode } from 'react';
-import type { RegisterOptions } from 'react-hook-form';
-import type { SelectOption } from 'src/components/shared/forms/types';
+import type {
+    FieldValues,
+    Path,
+    PathValue,
+    RegisterOptions,
+} from 'react-hook-form';
+import type {
+    RHFBaseProps,
+    SelectOption,
+} from 'src/components/shared/forms/types';
 
 import { Autocomplete, Box, Chip, Stack, TextField } from '@mui/material';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
-interface RHFMultiSelectWithDefaultProps {
-    /** Field name matching a path in the form schema */
-    name: string;
-    /** Input label */
-    label: string;
-    /** Whether the field is required */
-    required?: boolean;
-    /** Whether the field is disabled */
-    disabled?: boolean;
-    /** Helper text shown below the input */
-    helperText?: ReactNode;
+interface RHFMultiSelectWithDefaultProps<
+    TFieldValues extends FieldValues,
+    TName extends Path<TFieldValues> = Path<TFieldValues>,
+> extends Omit<RHFBaseProps<TFieldValues>, 'name'> {
+    name: TName;
     /** Available options for selection */
     options: SelectOption[];
     /** Validation rules */
-    rules?: RegisterOptions;
+    rules?: RegisterOptions<TFieldValues, TName>;
     /** Label for the first (default) selection */
     defaultLabel?: string;
     /** Label for additional selections */
     additionalLabel?: string;
+    /**
+     * Transform the form value before displaying in the Autocomplete.
+     * Useful when form stores objects but Autocomplete expects string values.
+     */
+    valueTransform?: (value: PathValue<TFieldValues, TName>) => string[];
+    /**
+     * Transform the selected values before calling onChange.
+     * Useful when form stores objects but Autocomplete provides string values.
+     */
+    onChangeTransform?: (values: string[]) => PathValue<TFieldValues, TName>;
 }
 
 /**
@@ -32,8 +43,19 @@ interface RHFMultiSelectWithDefaultProps {
  * and "additional" selections with separate visual groupings.
  *
  * The order of selection is preserved - the first item selected becomes the "default".
+ *
+ * @example
+ * // With transforms for object arrays
+ * <RHFMultiSelectWithDefault<FormData>
+ *     name="data_planes"
+ *     valueTransform={(value) => value.map((dp) => dp.name)}
+ *     onChangeTransform={(names) => names.map(nameToDataPlane)}
+ * />
  */
-export function RHFMultiSelectWithDefault({
+export function RHFMultiSelectWithDefault<
+    TFieldValues extends FieldValues,
+    TName extends Path<TFieldValues> = Path<TFieldValues>,
+>({
     name,
     label,
     options,
@@ -43,11 +65,13 @@ export function RHFMultiSelectWithDefault({
     rules,
     defaultLabel = 'Default:',
     additionalLabel = 'Additional:',
-}: RHFMultiSelectWithDefaultProps) {
+    valueTransform,
+    onChangeTransform,
+}: RHFMultiSelectWithDefaultProps<TFieldValues, TName>) {
     const {
         control,
         formState: { errors },
-    } = useFormContext();
+    } = useFormContext<TFieldValues>();
 
     // Get nested error by path
     const error = name.split('.').reduce<unknown>((obj, key) => {
@@ -66,7 +90,11 @@ export function RHFMultiSelectWithDefault({
             rules={rules}
             render={({ field }) => {
                 // Field value is an array of option values (strings)
-                const selectedValues = (field.value ?? []) as string[];
+                const selectedValues = valueTransform
+                    ? valueTransform(
+                          field.value as PathValue<TFieldValues, TName>
+                      )
+                    : ((field.value ?? []) as string[]);
 
                 // Map selected values back to full options, preserving order
                 const selectedOptions = selectedValues
@@ -80,7 +108,11 @@ export function RHFMultiSelectWithDefault({
                         disabled={disabled}
                         value={selectedOptions}
                         onChange={(_event, newValue) => {
-                            field.onChange(newValue.map((v) => v.value));
+                            const newValues = newValue.map((v) => v.value);
+                            const transformedValue = onChangeTransform
+                                ? onChangeTransform(newValues)
+                                : newValues;
+                            field.onChange(transformedValue);
                         }}
                         options={options}
                         getOptionLabel={(option) => option.label}

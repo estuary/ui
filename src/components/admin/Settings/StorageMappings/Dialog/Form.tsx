@@ -1,7 +1,6 @@
-import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import {
     Box,
@@ -16,6 +15,7 @@ import {
 import { HelpCircle } from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
 
+import { DataPlaneNode, useDataPlanes } from 'src/api/dataPlanesGql';
 import {
     AWS_REGIONS,
     CloudProviderCodes,
@@ -35,71 +35,62 @@ import {
 const docsUrl =
     'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';
 
-// Example data planes for development
-export const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
-    // Public data planes
-    {
-        id: '00000000-0000-0000-0000-000000000001',
-        data_plane_name: 'ops/dp/public/gcp-us-central1-prod',
-        reactor_address: 'https://us-central1.v1.estuary-data.dev',
-        cidr_blocks: null,
-        gcp_service_account_email:
-            'flow-gcp-us-central1@estuary-data.iam.gserviceaccount.com',
-        aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-gcp-us-central1',
-        data_plane_fqdn: 'us-central1.v1.estuary-data.dev',
-    },
-    {
-        id: '00000000-0000-0000-0000-000000000002',
-        data_plane_name: 'ops/dp/public/gcp-us-east1-prod',
-        reactor_address: 'https://us-east1.v1.estuary-data.dev',
-        cidr_blocks: null,
-        gcp_service_account_email:
-            'flow-gcp-us-east1@estuary-data.iam.gserviceaccount.com',
-        aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-gcp-us-east1',
-        data_plane_fqdn: 'us-east1.v1.estuary-data.dev',
-    },
-    {
-        id: '00000000-0000-0000-0000-000000000003',
-        data_plane_name: 'ops/dp/public/aws-us-east-1',
-        reactor_address: 'https://aws-us-east-1.v1.estuary-data.dev',
-        cidr_blocks: null,
-        gcp_service_account_email:
-            'flow-aws-us-east-1@estuary-data.iam.gserviceaccount.com',
-        aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-aws-us-east-1',
-        data_plane_fqdn: 'aws-us-east-1.v1.estuary-data.dev',
-    },
-    {
-        id: '00000000-0000-0000-0000-000000000004',
-        data_plane_name: 'ops/dp/public/aws-eu-west-1',
-        reactor_address: 'https://aws-eu-west-1.v1.estuary-data.dev',
-        cidr_blocks: null,
-        gcp_service_account_email:
-            'flow-aws-eu-west-1@estuary-data.iam.gserviceaccount.com',
-        aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-aws-eu-west-1',
-        data_plane_fqdn: 'aws-eu-west-1.v1.estuary-data.dev',
-    },
-    // Private data planes
-    {
-        id: '00000000-0000-0000-0000-000000000005',
-        data_plane_name: 'ops/dp/private/acme-corp/gcp-us-central1-prod',
-        reactor_address: 'https://acme-prod.estuary-data.dev',
-        cidr_blocks: ['10.0.0.0/8', '172.16.0.0/12'],
-        gcp_service_account_email:
-            'flow-acme-gcp-us-central1@acme-corp.iam.gserviceaccount.com',
-        aws_iam_user_arn:
-            'arn:aws:iam::987654321098:user/flow-acme-gcp-us-central1',
-        data_plane_fqdn: 'acme-prod.estuary-data.dev',
-    },
-    // {
-    //     id: '00000000-0000-0000-0000-000000000006',
-    //     data_plane_name: 'ops/dp/private/acme-corp/aws-us-west-2-staging',
-    //     reactor_address: 'https://acme-staging.estuary-data.dev',
-    //     cidr_blocks: ['10.0.0.0/8'],
-    //     gcp_service_account_email: 'flow@acme-staging.iam.gserviceaccount.com',
-    //     aws_iam_user_arn: 'arn:aws:iam::987654321098:user/acme-flow',
-    //     data_plane_fqdn: 'acme-staging.estuary-data.dev',
-    // },
-];
+// // Example data planes for development
+// export const MOCK_DATA_PLANES: BaseDataPlaneQuery[] = [
+//     // Public data planes
+//     {
+//         id: '00000000-0000-0000-0000-000000000001',
+//         dataPlaneName: 'ops/dp/public/gcp-us-central1-prod',
+//         reactor_address: 'https://us-central1.v1.estuary-data.dev',
+//         cidr_blocks: null,
+//         gcp_service_account_email:
+//             'flow-gcp-us-central1@estuary-data.iam.gserviceaccount.com',
+//         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-gcp-us-central1',
+//         data_plane_fqdn: 'us-central1.v1.estuary-data.dev',
+//     },
+//     {
+//         id: '00000000-0000-0000-0000-000000000002',
+//         dataPlaneName: 'ops/dp/public/gcp-us-east1-prod',
+//         reactor_address: 'https://us-east1.v1.estuary-data.dev',
+//         cidr_blocks: null,
+//         gcp_service_account_email:
+//             'flow-gcp-us-east1@estuary-data.iam.gserviceaccount.com',
+//         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-gcp-us-east1',
+//         data_plane_fqdn: 'us-east1.v1.estuary-data.dev',
+//     },
+//     {
+//         id: '00000000-0000-0000-0000-000000000003',
+//         dataPlaneName: 'ops/dp/public/aws-us-east-1',
+//         reactor_address: 'https://aws-us-east-1.v1.estuary-data.dev',
+//         cidr_blocks: null,
+//         gcp_service_account_email:
+//             'flow-aws-us-east-1@estuary-data.iam.gserviceaccount.com',
+//         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-aws-us-east-1',
+//         data_plane_fqdn: 'aws-us-east-1.v1.estuary-data.dev',
+//     },
+//     {
+//         id: '00000000-0000-0000-0000-000000000004',
+//         dataPlaneName: 'ops/dp/public/aws-eu-west-1',
+//         reactor_address: 'https://aws-eu-west-1.v1.estuary-data.dev',
+//         cidr_blocks: null,
+//         gcp_service_account_email:
+//             'flow-aws-eu-west-1@estuary-data.iam.gserviceaccount.com',
+//         aws_iam_user_arn: 'arn:aws:iam::123456789012:user/flow-aws-eu-west-1',
+//         data_plane_fqdn: 'aws-eu-west-1.v1.estuary-data.dev',
+//     },
+//     // Private data planes
+//     {
+//         id: '00000000-0000-0000-0000-000000000005',
+//         dataPlaneName: 'ops/dp/private/acme-corp/gcp-us-central1-prod',
+//         reactor_address: 'https://acme-prod.estuary-data.dev',
+//         cidr_blocks: ['10.0.0.0/8', '172.16.0.0/12'],
+//         gcp_service_account_email:
+//             'flow-acme-gcp-us-central1@acme-corp.iam.gserviceaccount.com',
+//         aws_iam_user_arn:
+//             'arn:aws:iam::987654321098:user/flow-acme-gcp-us-central1',
+//         data_plane_fqdn: 'acme-prod.estuary-data.dev',
+//     },
+// ];
 
 const PROVIDER_OPTIONS = Object.values(CloudProviderCodes).map((code) => ({
     value: code,
@@ -126,9 +117,8 @@ export function StorageMappingForm() {
         formState: { errors },
     } = useFormContext<StorageMappingFormData>();
 
-    // TODO: Replace with real data plane fetch
-    const [dataPlaneOptions] = useState<BaseDataPlaneQuery[]>(MOCK_DATA_PLANES);
-    const selectedDataPlaneIds = watch('data_planes');
+    const { dataPlanes: dataPlaneOptions } = useDataPlanes();
+    const selectedDataPlanes = watch('data_planes');
     const provider = watch('provider');
     const selectAdditional = watch('select_additional');
     const useSameRegion = watch('use_same_region');
@@ -137,52 +127,43 @@ export function StorageMappingForm() {
 
     // Auto-enable "allow public" if there are no private data planes
     useEffect(() => {
-        const hasPrivate = dataPlaneOptions.some(
-            (option) => getDataPlaneScope(option.data_plane_name) === 'private'
-        );
+        const hasPrivate = dataPlaneOptions.some((option) => option.isPrivate);
         if (dataPlaneOptions.length > 0 && !hasPrivate) {
             setValue('allow_public', true);
         }
     }, [dataPlaneOptions, setValue]);
-
     // Remove public data planes when allowPublic is unchecked
     useEffect(() => {
-        if (!allowPublic && selectedDataPlaneIds?.length > 0) {
-            const filtered = selectedDataPlaneIds.filter((id) => {
-                const dataPlane = dataPlaneOptions.find(
-                    (option) => option.id === id
-                );
-                if (!dataPlane) return false;
-                return (
-                    getDataPlaneScope(dataPlane.data_plane_name) === 'private'
-                );
-            });
-            if (filtered.length !== selectedDataPlaneIds.length) {
+        if (!allowPublic && selectedDataPlanes?.length > 0) {
+            const filtered = selectedDataPlanes.filter((dp) => dp.isPrivate);
+            if (filtered.length !== selectedDataPlanes.length) {
                 setValue('data_planes', filtered);
             }
         }
-    }, [allowPublic, dataPlaneOptions, selectedDataPlaneIds, setValue]);
+    }, [allowPublic, dataPlaneOptions, selectedDataPlanes, setValue]);
 
     // Get the primary (first) selected data plane for display
     const selectedDataPlane = useMemo(() => {
-        const primaryId = selectedDataPlaneIds?.[0];
-        if (!primaryId) return null;
-        const dataPlane = dataPlaneOptions.find((dp) => dp.id === primaryId);
+        const primaryDataPlane = selectedDataPlanes?.[0];
+        if (!primaryDataPlane) return null;
+        const dataPlane = dataPlaneOptions.find(
+            (dp) => dp.dataPlaneName === primaryDataPlane.dataPlaneName
+        );
         if (!dataPlane) return null;
 
-        const scope = getDataPlaneScope(dataPlane.data_plane_name);
-        const parsedName = parseDataPlaneName(dataPlane.data_plane_name, scope);
+        const scope = getDataPlaneScope(dataPlane.dataPlaneName);
+        const parsedName = parseDataPlaneName(dataPlane.dataPlaneName, scope);
         return {
             ...dataPlane,
             parsedName,
         };
-    }, [selectedDataPlaneIds, dataPlaneOptions]);
+    }, [selectedDataPlanes, dataPlaneOptions]);
 
     const hasPrivateDataPlanes = useMemo(
         () =>
             dataPlaneOptions.some(
                 (option) =>
-                    getDataPlaneScope(option.data_plane_name) === 'private'
+                    getDataPlaneScope(option.dataPlaneName) === 'private'
             ),
         [dataPlaneOptions]
     );
@@ -191,25 +172,33 @@ export function StorageMappingForm() {
         () =>
             dataPlaneOptions
                 .filter((option) => {
-                    const scope = getDataPlaneScope(option.data_plane_name);
+                    const scope = getDataPlaneScope(option.dataPlaneName);
                     if (!hasPrivateDataPlanes) {
                         return true;
                     }
                     return scope === 'private' || allowPublic;
                 })
                 .map((option) => {
-                    const scope = getDataPlaneScope(option.data_plane_name);
+                    const scope = getDataPlaneScope(option.dataPlaneName);
                     const parsedName = parseDataPlaneName(
-                        option.data_plane_name,
+                        option.dataPlaneName,
                         scope
                     );
                     return {
-                        value: option.id,
+                        value: option.dataPlaneName,
                         label: `${formatDataPlaneName(parsedName)} (${scope})`,
                     };
                 })
                 .sort((a, b) => a.label.localeCompare(b.label)),
         [dataPlaneOptions, hasPrivateDataPlanes, allowPublic]
+    );
+
+    // Convert a data plane name to a DataPlane object
+    const nameToDataPlane = useCallback(
+        (name: string): DataPlaneNode | null =>
+            dataPlaneOptions.find((opt) => opt.dataPlaneName === name) ?? null,
+
+        [dataPlaneOptions]
     );
 
     return (
@@ -241,7 +230,10 @@ export function StorageMappingForm() {
                 <CardWrapper>
                     <Stack spacing={2}>
                         {selectAdditional ? (
-                            <RHFMultiSelectWithDefault
+                            <RHFMultiSelectWithDefault<
+                                StorageMappingFormData,
+                                'data_planes'
+                            >
                                 name="data_planes"
                                 label="Data Planes"
                                 options={dataPlaneSelectOptions}
@@ -252,9 +244,20 @@ export function StorageMappingForm() {
                                             value.length > 0) ||
                                         'At least one data plane is required',
                                 }}
+                                valueTransform={(value) =>
+                                    value?.map((dp) => dp.dataPlaneName) ?? []
+                                }
+                                onChangeTransform={(names) =>
+                                    names
+                                        .map(nameToDataPlane)
+                                        .filter(
+                                            (dp): dp is DataPlaneNode =>
+                                                dp !== null
+                                        )
+                                }
                             />
                         ) : (
-                            <RHFSelect<StorageMappingFormData>
+                            <RHFSelect<StorageMappingFormData, 'data_planes'>
                                 name="data_planes"
                                 label="Data Plane"
                                 options={dataPlaneSelectOptions}
@@ -266,9 +269,12 @@ export function StorageMappingForm() {
                                         'Data plane is required',
                                 }}
                                 valueTransform={(value) =>
-                                    (value as string[])?.[0] ?? ''
+                                    value?.[0]?.dataPlaneName ?? ''
                                 }
-                                onChangeTransform={(value) => [value]}
+                                onChangeTransform={(name) => {
+                                    const dp = nameToDataPlane(name as string);
+                                    return dp ? [dp] : [];
+                                }}
                             />
                         )}
 
@@ -276,7 +282,6 @@ export function StorageMappingForm() {
                             sx={{
                                 display: 'flex',
                                 gap: 2,
-                                // pl: 2,
                                 color: 'text.secondary',
                             }}
                         >

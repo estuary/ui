@@ -1,5 +1,10 @@
 import type { ReactNode } from 'react';
-import type { FieldValues, Path, RegisterOptions } from 'react-hook-form';
+import type {
+    FieldValues,
+    Path,
+    PathValue,
+    RegisterOptions,
+} from 'react-hook-form';
 import type {
     RHFBaseProps,
     SelectOption,
@@ -15,31 +20,37 @@ import {
 
 import { Controller, useFormContext } from 'react-hook-form';
 
-interface RHFSelectProps<TFieldValues extends FieldValues>
-    extends RHFBaseProps<TFieldValues> {
+interface RHFSelectProps<
+    TFieldValues extends FieldValues,
+    TName extends Path<TFieldValues> = Path<TFieldValues>,
+> extends Omit<RHFBaseProps<TFieldValues>, 'name'> {
+    name: TName;
     /** Available options for the select */
     options: SelectOption[];
     /** Validation rules */
-    rules?: RegisterOptions<TFieldValues, Path<TFieldValues>>;
+    rules?: RegisterOptions<TFieldValues, TName>;
     /** Placeholder shown when no value is selected */
     placeholder?: ReactNode;
     /**
      * Transform the form value before displaying in the Select.
      * Useful when form stores arrays but Select expects single value.
      */
-    valueTransform?: (value: unknown) => string;
+    valueTransform?: (value: PathValue<TFieldValues, TName>) => string;
     /**
      * Transform the selected value before calling onChange.
      * Useful when form stores arrays but Select provides single value.
      */
-    onChangeTransform?: (value: string) => unknown;
+    onChangeTransform?: (value: string) => PathValue<TFieldValues, TName>;
 }
 
 /**
  * A controlled Select component integrated with react-hook-form.
  * Uses MUI Select with Controller for form state management.
  */
-export function RHFSelect<TFieldValues extends FieldValues>({
+export function RHFSelect<
+    TFieldValues extends FieldValues,
+    TName extends Path<TFieldValues> = Path<TFieldValues>,
+>({
     name,
     label,
     options,
@@ -50,7 +61,7 @@ export function RHFSelect<TFieldValues extends FieldValues>({
     placeholder,
     valueTransform,
     onChangeTransform,
-}: RHFSelectProps<TFieldValues>) {
+}: RHFSelectProps<TFieldValues, TName>) {
     const {
         control,
         formState: { errors },
@@ -108,7 +119,10 @@ export function RHFSelect<TFieldValues extends FieldValues>({
                                 </MenuItem>
                             ) : null}
                             {options.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
+                                <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                >
                                     {option.label}
                                 </MenuItem>
                             ))}

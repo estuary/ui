@@ -28,17 +28,24 @@ function buildMappingFromFormData(
     Parameters<ReturnType<typeof useStorageMappingService>['create']>[0],
     'dryRun'
 > {
+    const primaryDataPlane = data.data_planes[0];
+    const store = {
+        bucket: data.bucket,
+        prefix: data.storage_prefix,
+        provider:
+            data.use_same_region && primaryDataPlane
+                ? primaryDataPlane.cloudProvider
+                : data.provider,
+        region:
+            data.use_same_region && primaryDataPlane
+                ? primaryDataPlane.region
+                : data.region,
+    };
     return {
         catalogPrefix: data.catalog_prefix,
         storage: {
-            stores: [
-                {
-                    provider: data.provider,
-                    bucket: data.bucket,
-                    prefix: data.storage_prefix,
-                },
-            ],
-            data_planes: data.data_planes,
+            stores: [store],
+            data_planes: data.data_planes.map((dp) => dp.dataPlaneName),
         },
         detail: undefined,
     };
@@ -67,12 +74,12 @@ export function ConfigureStorageWizard({ open, setOpen }: Props) {
     const startConnectionTests = useCallback(() => {
         const formData = methods.getValues();
         const input = buildMappingFromFormData(formData);
-        const dataPlaneIds = formData.data_planes;
+        const dataPlanes = formData.data_planes;
 
         // Initialize all data planes to 'testing' state
         const initialResults: ConnectionTestResults = {};
-        dataPlaneIds.forEach((id) => {
-            initialResults[id] = { status: 'testing' };
+        dataPlanes.forEach((dp) => {
+            initialResults[dp.dataPlaneName] = { status: 'testing' };
         });
 
         flushSync(() => {
@@ -83,12 +90,12 @@ export function ConfigureStorageWizard({ open, setOpen }: Props) {
         testPromisesRef.current = {};
 
         // Run the connection test for all data planes
-        const promise = testConnection(input, dataPlaneIds);
+        const promise = testConnection(input, dataPlanes);
 
         // Track promise for each data plane (all use same promise)
-        dataPlaneIds.forEach((id) => {
-            testPromisesRef.current[id] = promise.then(
-                (results) => results[id]
+        dataPlanes.forEach((dp) => {
+            testPromisesRef.current[dp.dataPlaneName] = promise.then(
+                (results) => results[dp.dataPlaneName]
             );
         });
 
@@ -102,24 +109,30 @@ export function ConfigureStorageWizard({ open, setOpen }: Props) {
     }, [testConnection, methods]);
 
     const handleRetry = useCallback(
-        (dataPlaneId: string) => {
+        (dataPlaneNameToRetry: string) => {
             const formData = methods.getValues();
             const input = buildMappingFromFormData(formData);
+            const dataPlane = formData.data_planes.find(
+                (dp) => dp.dataPlaneName === dataPlaneNameToRetry
+            );
+
+            if (!dataPlane) return;
 
             // Set this specific data plane to testing
             setTestResults((prev) => ({
                 ...prev,
-                [dataPlaneId]: { status: 'testing' },
+                [dataPlane.dataPlaneName]: { status: 'testing' },
             }));
 
-            const promise = testSingleConnection(input, dataPlaneId);
-            testPromisesRef.current[dataPlaneId] = promise;
-
+            const promise = testSingleConnection(input, dataPlane);
+            testPromisesRef.current[dataPlane.dataPlaneName] = promise;
             promise.then((result) => {
-                if (testPromisesRef.current[dataPlaneId] === promise) {
+                if (
+                    testPromisesRef.current[dataPlane.dataPlaneName] === promise
+                ) {
                     setTestResults((prev) => ({
                         ...prev,
-                        [dataPlaneId]: result,
+                        [dataPlane.dataPlaneName]: result,
                     }));
                 }
             });
@@ -129,10 +142,10 @@ export function ConfigureStorageWizard({ open, setOpen }: Props) {
 
     // Check if all data planes have completed testing successfully
     const allTestsPassed = useMemo(() => {
-        const dataPlaneIds = methods.getValues('data_planes');
-        if (dataPlaneIds.length === 0) return false;
-        return dataPlaneIds.every(
-            (id) => testResults[id]?.status === 'success'
+        const dataPlanes = methods.getValues('data_planes');
+        if (dataPlanes.length === 0) return false;
+        return dataPlanes.every(
+            (dp) => testResults[dp.dataPlaneName]?.status === 'success'
         );
     }, [testResults, methods]);
 

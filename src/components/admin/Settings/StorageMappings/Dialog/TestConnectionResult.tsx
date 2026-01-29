@@ -27,9 +27,10 @@ import {
     WarningTriangle,
 } from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
+import useSWR from 'swr';
 
+import { getDataPlaneOptions } from 'src/api/dataPlanes';
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
-import { MOCK_DATA_PLANES } from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
 import {
@@ -350,6 +351,11 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
     const { getValues } = useFormContext<StorageMappingFormData>();
     const formData = getValues();
 
+    const { data: dataPlaneResponse } = useSWR('dataPlanes', () =>
+        getDataPlaneOptions()
+    );
+    const dataPlaneOptions = dataPlaneResponse?.data ?? [];
+
     const [expandedPanel, setExpandedPanel] = useState<string | false>(false);
     const prevResultsRef = useRef<ConnectionTestResults>({});
     const [lastErrorMessages, setLastErrorMessages] = useState<
@@ -382,15 +388,22 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
     // Get all selected data planes
     const allDataPlanes = useMemo(() => {
         return (formData.data_planes ?? [])
-            .map((id: string) => MOCK_DATA_PLANES.find((dp) => dp.id === id))
+            .map((selectedDp) =>
+                dataPlaneOptions.find(
+                    (dp) => dp.data_plane_name === selectedDp.dataPlaneName
+                )
+            )
             .filter(Boolean) as BaseDataPlaneQuery[];
-    }, [formData.data_planes]);
+    }, [formData.data_planes, dataPlaneOptions]);
 
     // Derive provider, region for display (from primary data plane or form)
     const { provider, displayProvider, displayRegion } = useMemo(() => {
-        const dataPlane = MOCK_DATA_PLANES.find(
-            (dp) => dp.id === formData.data_planes?.[0]
-        );
+        const primaryDataPlane = formData.data_planes?.[0];
+        const dataPlane = primaryDataPlane
+            ? dataPlaneOptions.find(
+                  (dp) => dp.data_plane_name === primaryDataPlane.dataPlaneName
+              )
+            : undefined;
 
         if (formData.use_same_region && dataPlane) {
             const scope = getDataPlaneScope(dataPlane.data_plane_name);
@@ -410,6 +423,7 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
             displayRegion: formData.region || '—',
         };
     }, [
+        dataPlaneOptions,
         formData.use_same_region,
         formData.data_planes,
         formData.provider,
@@ -485,15 +499,19 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
 
             <Stack spacing={1}>
                 {allDataPlanes.map((dataPlane) => {
-                    const testResult = results[dataPlane.id] ?? {
+                    const testResult = results[dataPlane.data_plane_name] ?? {
                         status: 'idle',
                     };
 
                     return (
                         <Accordion
-                            key={dataPlane.id}
-                            expanded={expandedPanel === dataPlane.id}
-                            onChange={handleAccordionChange(dataPlane.id)}
+                            key={dataPlane.data_plane_name}
+                            expanded={
+                                expandedPanel === dataPlane.data_plane_name
+                            }
+                            onChange={handleAccordionChange(
+                                dataPlane.data_plane_name
+                            )}
                             disableGutters
                             sx={{
                                 '&:before': { display: 'none' },
@@ -535,14 +553,20 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
                                 <Stack spacing={2}>
                                     {testResult.status === 'error' ||
                                     (testResult.status === 'testing' &&
-                                        lastErrorMessages[dataPlane.id]) ? (
+                                        lastErrorMessages[
+                                            dataPlane.data_plane_name
+                                        ]) ? (
                                         <ConnectionError
                                             result={testResult}
                                             errorMessage={
-                                                lastErrorMessages[dataPlane.id]
+                                                lastErrorMessages[
+                                                    dataPlane.data_plane_name
+                                                ]
                                             }
                                             onRetry={() =>
-                                                onRetry(dataPlane.id)
+                                                onRetry(
+                                                    dataPlane.data_plane_name
+                                                )
                                             }
                                         />
                                     ) : null}
