@@ -40,6 +40,7 @@ export interface BuiltProjection {
     ptr?: string;
 }
 
+// Used in the KeyAutoComplete component that filters BuiltProjections to ensure they are valid keys
 export type BuiltProjection_ValidKey = BuiltProjection & { ptr: string };
 
 export interface CollectionSchemaAnnotations extends Schema {
