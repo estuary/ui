@@ -5,8 +5,18 @@
     "main": "index.js",
     "private": true,
     "engines": {
-        "node": ">=20",
-        "npm": "^10"
+        "node": ">=22.22.0",
+        "npm": "^11.8.0"
+    },
+    "devEngines": {
+        "runtime": {
+            "name": "node",
+            "onFail": "error"
+        },
+        "packageManager": {
+            "name": "npm",
+            "onFail": "error"
+        }
     },
     "type": "module",
     "scripts": {
@@ -64,7 +74,6 @@
         "ansicolor": "^2.0.1",
         "data-plane-gateway": "file:__inline-deps__/data-plane-gateway-0.0.0-20251201-150928.tgz",
         "date-fns": "^2.30.0",
-        "dayjs": "^1.11.19",
         "echarts": "^5.4.3",
         "filter-obj": "^5.1.0",
         "graphql": "^16.11.0",
