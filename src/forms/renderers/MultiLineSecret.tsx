@@ -11,7 +11,7 @@ import {
 } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
-import { DropzoneDialog } from 'react-mui-dropzone';
+// import { DropzoneDialog } from 'react-mui-dropzone';
 
 import { Options } from 'src/types/jsonforms';
 
@@ -27,31 +27,31 @@ const MultiLineSecretRenderer = (props: any) => {
 
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
-    const submitFile = useCallback(
-        (acceptedFiles) => {
-            if (acceptedFiles) {
-                const uploadDone = (inputValue: string | null) => {
-                    handleChange(path, inputValue);
-                    setIsUploadOpen(false);
-                };
+    // const submitFile = useCallback(
+    //     (acceptedFiles) => {
+    //         if (acceptedFiles) {
+    //             const uploadDone = (inputValue: string | null) => {
+    //                 handleChange(path, inputValue);
+    //                 setIsUploadOpen(false);
+    //             };
 
-                acceptedFiles.forEach(async (file: File) => {
-                    const reader = new FileReader();
+    //             acceptedFiles.forEach(async (file: File) => {
+    //                 const reader = new FileReader();
 
-                    reader.onabort = () => uploadDone(null);
-                    reader.onerror = () => uploadDone(null);
-                    reader.onloadend = () => {
-                        const result = reader.result ?? null;
-                        uploadDone(result as string);
-                    };
-                    reader.readAsText(file);
-                });
-            }
+    //                 reader.onabort = () => uploadDone(null);
+    //                 reader.onerror = () => uploadDone(null);
+    //                 reader.onloadend = () => {
+    //                     const result = reader.result ?? null;
+    //                     uploadDone(result as string);
+    //                 };
+    //                 reader.readAsText(file);
+    //             });
+    //         }
 
-            setIsUploadOpen(false);
-        },
-        [handleChange, path]
-    );
+    //         setIsUploadOpen(false);
+    //     },
+    //     [handleChange, path]
+    // );
 
     return (
         <>
@@ -86,36 +86,39 @@ const MultiLineSecretRenderer = (props: any) => {
             </Stack>
 
             {isUploadOpen ? (
-                <DropzoneDialog
-                    open={isUploadOpen}
-                    onSave={submitFile}
-                    filesLimit={1}
-                    clearOnUnmount={true}
-                    showPreviews={false}
-                    showPreviewsInDropzone={true}
-                    useChipsForPreview={true}
-                    maxFileSize={5000000} //bytes
-                    onClose={() => setIsUploadOpen(false)}
-                    alertSnackbarProps={{
-                        anchorOrigin: {
-                            horizontal: 'center',
-                            vertical: 'top',
-                        },
-                        autoHideDuration: 6000,
-                    }}
-                    dialogProps={{
-                        open: isUploadOpen,
-                        sx: {
-                            '& .MuiDropzoneArea-root': {
-                                'minHeight': 150,
-                                'padding': 5,
-                                '& .MuiDropzonePreviewList-root': {
-                                    justifyContent: 'center',
-                                },
-                            },
-                        },
-                    }}
-                />
+                <>
+                    need to replace this here
+                </>
+                // <DropzoneDialog
+                //     open={isUploadOpen}
+                //     onSave={submitFile}
+                //     filesLimit={1}
+                //     clearOnUnmount={true}
+                //     showPreviews={false}
+                //     showPreviewsInDropzone={true}
+                //     useChipsForPreview={true}
+                //     maxFileSize={5000000} //bytes
+                //     onClose={() => setIsUploadOpen(false)}
+                //     alertSnackbarProps={{
+                //         anchorOrigin: {
+                //             horizontal: 'center',
+                //             vertical: 'top',
+                //         },
+                //         autoHideDuration: 6000,
+                //     }}
+                //     dialogProps={{
+                //         open: isUploadOpen,
+                //         sx: {
+                //             '& .MuiDropzoneArea-root': {
+                //                 'minHeight': 150,
+                //                 'padding': 5,
+                //                 '& .MuiDropzonePreviewList-root': {
+                //                     justifyContent: 'center',
+                //                 },
+                //             },
+                //         },
+                //     }}
+                // />
             ) : null}
         </>
     );
