@@ -13,7 +13,9 @@ export const useProjectionsForSkim = () => {
 
     return useMemo(() => {
         if (collection && projections?.[collection]) {
-            const response = {};
+            // TODO (typing) - check typing for value as any probably isn't needed and string
+            //  is good enough.
+            const response: Record<string, any> = {};
             Object.values(projections[collection]).forEach((metadata) => {
                 metadata.forEach((datum) => {
                     response[datum.field] ??= {};

@@ -20,7 +20,7 @@ export interface QueuedTasksStore {
     setPublicationQuery: (params: any) => void;
 
     // Object keyed on the publication id that tracks the response
-    publications: PublicationsState | {};
+    publications: PublicationsState;
 
     addPublication: (params: any) => void;
 

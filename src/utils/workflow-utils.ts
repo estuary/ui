@@ -135,7 +135,12 @@ export const getFullSource = (
     }
 
     if (filterOutRemovable) {
-        response.fullSource = Object.entries(response.fullSource).reduce(
+        response.fullSource = (
+            Object.entries(response.fullSource) as [
+                keyof typeof response.fullSource,
+                any,
+            ][]
+        ).reduce(
             (filtered, [key, val]) => {
                 if (val !== REMOVE_DURING_GENERATION) {
                     filtered[key] = val;
@@ -143,7 +148,7 @@ export const getFullSource = (
 
                 return filtered;
             },
-            {}
+            {} as typeof response.fullSource
         );
     }
 
