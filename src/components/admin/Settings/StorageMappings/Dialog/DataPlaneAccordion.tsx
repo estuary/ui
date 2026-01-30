@@ -1,5 +1,7 @@
 import type { ConnectionTestResult } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
+import { useEffect, useRef, useState } from 'react';
+
 import {
     Accordion,
     AccordionDetails,
@@ -19,6 +21,7 @@ import {
 } from 'iconoir-react';
 
 import { DataPlaneNode } from 'src/api/dataPlanesGql';
+import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
 import { ConnectionInstructions } from './ConnectionInstructions';
@@ -130,29 +133,46 @@ function ConnectionError({
 
 interface DataPlaneAccordionProps {
     dataPlane: DataPlaneNode;
-    testResult: ConnectionTestResult;
-    expanded: boolean;
-    onExpandedChange: (expanded: boolean) => void;
-    lastErrorMessage?: string;
-    onRetry: () => void;
     provider: string;
     bucket: string;
 }
 
 export function DataPlaneAccordion({
     dataPlane,
-    testResult,
-    expanded,
-    onExpandedChange,
-    lastErrorMessage,
-    onRetry,
     provider,
     bucket,
 }: DataPlaneAccordionProps) {
+    const { result: testResult, retry } = useConnectionTest({
+        dataPlaneName: dataPlane.dataPlaneName,
+        bucket,
+    });
+
+    const [expanded, setExpanded] = useState(false);
+    const [lastErrorMessage, setLastErrorMessage] = useState<string>();
+    const prevStatusRef = useRef(testResult.status);
+
+    // Track error messages and auto-collapse on success
+    useEffect(() => {
+        // Capture error message when it occurs
+        if (testResult.status === 'error' && testResult.errorMessage) {
+            setLastErrorMessage(testResult.errorMessage);
+        }
+
+        // Collapse when status changes to success
+        if (
+            prevStatusRef.current !== 'success' &&
+            testResult.status === 'success'
+        ) {
+            setExpanded(false);
+        }
+
+        prevStatusRef.current = testResult.status;
+    }, [testResult.status, testResult.errorMessage]);
+
     return (
         <Accordion
             expanded={expanded}
-            onChange={(_event, isExpanded) => onExpandedChange(isExpanded)}
+            onChange={(_event, isExpanded) => setExpanded(isExpanded)}
             disableGutters
             sx={{
                 '&:before': { display: 'none' },
@@ -194,7 +214,7 @@ export function DataPlaneAccordion({
                         <ConnectionError
                             result={testResult}
                             errorMessage={lastErrorMessage}
-                            onRetry={onRetry}
+                            onRetry={retry}
                         />
                     ) : null}
                     <ConnectionInstructions

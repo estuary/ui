@@ -1,9 +1,6 @@
-import type {
-    ConnectionTestResults,
-    StorageMappingFormData,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 
 import { Box, Link, Stack, Typography, useTheme } from '@mui/material';
 
@@ -18,61 +15,23 @@ import { codeBackground } from 'src/context/Theme';
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
 const anchorMap: Record<string, string> = {
-    aws: 'amazon-s3-buckets',
-    gcp: 'google-cloud-storage-buckets',
-    azure: 'azure-blob-storage',
+    [CloudProviderCodes.AWS]: 'amazon-s3-buckets',
+    [CloudProviderCodes.GCP]: 'google-cloud-storage-buckets',
+    [CloudProviderCodes.AZURE]: 'azure-blob-storage',
 };
 
-interface TestConnectionResultProps {
-    results: ConnectionTestResults;
-    onRetry: (dataPlaneId: string) => void;
-}
-
-const getProviderLabel = (provider: string): string => {
-    if (provider === 'gcp' || provider === CloudProviderCodes.GCP) {
-        return 'Google Cloud Storage';
-    }
-    if (provider === 'aws' || provider === CloudProviderCodes.AWS) {
-        return 'Amazon S3';
-    }
-    return provider || '—';
+const providerLabelmap: Record<string, string> = {
+    [CloudProviderCodes.AWS]: 'Amazon S3',
+    [CloudProviderCodes.GCP]: 'Google Cloud Storage',
+    [CloudProviderCodes.AZURE]: 'Azure Blob Storage',
 };
 
-function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
+export function TestConnectionResult() {
     const theme = useTheme();
     const { getValues } = useFormContext<StorageMappingFormData>();
     const formData = getValues();
 
     const { dataPlanes: dataPlaneOptions } = useDataPlanes();
-
-    const [expandedPanel, setExpandedPanel] = useState<string | false>(false);
-    const prevResultsRef = useRef<ConnectionTestResults>({});
-    const [lastErrorMessages, setLastErrorMessages] = useState<
-        Record<string, string>
-    >({});
-
-    // Track error messages and collapse accordion when connection succeeds
-    useEffect(() => {
-        // Capture error messages when they occur
-        Object.entries(results).forEach(([id, result]) => {
-            if (result.status === 'error' && result.errorMessage) {
-                setLastErrorMessages((prev) => ({
-                    ...prev,
-                    [id]: result.errorMessage!,
-                }));
-            }
-        });
-
-        // Collapse accordion on status change to success
-        if (expandedPanel) {
-            const prevStatus = prevResultsRef.current[expandedPanel]?.status;
-            const currentStatus = results[expandedPanel]?.status;
-            if (prevStatus !== 'success' && currentStatus === 'success') {
-                setExpandedPanel(false);
-            }
-        }
-        prevResultsRef.current = results;
-    }, [results, expandedPanel]);
 
     // Derive provider, region for display (from primary data plane or form)
     const { provider, displayProvider, displayRegion } = useMemo(() => {
@@ -86,13 +45,13 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
         if (formData.use_same_region && dataPlane) {
             return {
                 provider: dataPlane.cloudProvider,
-                displayProvider: getProviderLabel(dataPlane.cloudProvider),
+                displayProvider: providerLabelmap[dataPlane.cloudProvider],
                 displayRegion: dataPlane.region,
             };
         }
         return {
             provider: formData.provider,
-            displayProvider: getProviderLabel(formData.provider),
+            displayProvider: providerLabelmap[formData.provider],
             displayRegion: formData.region,
         };
     }, [
@@ -159,34 +118,15 @@ function TestConnectionResult({ results, onRetry }: TestConnectionResultProps) {
             </Box>
 
             <Stack spacing={1}>
-                {formData.data_planes?.map((dataPlane) => {
-                    const testResult = results[dataPlane.dataPlaneName] ?? {
-                        status: 'idle',
-                    };
-
-                    return (
-                        <DataPlaneAccordion
-                            key={dataPlane.dataPlaneName}
-                            dataPlane={dataPlane}
-                            testResult={testResult}
-                            expanded={expandedPanel === dataPlane.dataPlaneName}
-                            onExpandedChange={(isExpanded) =>
-                                setExpandedPanel(
-                                    isExpanded ? dataPlane.dataPlaneName : false
-                                )
-                            }
-                            lastErrorMessage={
-                                lastErrorMessages[dataPlane.dataPlaneName]
-                            }
-                            onRetry={() => onRetry(dataPlane.dataPlaneName)}
-                            provider={provider}
-                            bucket={formData.bucket}
-                        />
-                    );
-                })}
+                {formData.data_planes?.map((dataPlane) => (
+                    <DataPlaneAccordion
+                        key={dataPlane.dataPlaneName}
+                        dataPlane={dataPlane}
+                        provider={provider}
+                        bucket={formData.bucket}
+                    />
+                ))}
             </Stack>
         </Stack>
     );
 }
-
-export default TestConnectionResult;

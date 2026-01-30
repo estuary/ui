@@ -3,6 +3,7 @@ import { DataPlaneNode } from 'src/api/dataPlanesGql';
 export enum CloudProviderCodes {
     GCP = 'gcp',
     AWS = 'aws',
+    AZURE = 'azure',
 }
 
 export const AWS_REGIONS: string[] = [
@@ -150,5 +151,3 @@ export interface ConnectionTestResult {
     status: 'idle' | 'testing' | 'success' | 'error';
     errorMessage?: string;
 }
-
-export type ConnectionTestResults = Record<string, ConnectionTestResult>;

@@ -1,7 +1,4 @@
-import type {
-    ConnectionTestResult,
-    ConnectionTestResults,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { ConnectionTestResult } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { Client } from 'urql';
 
 import { useCallback } from 'react';
@@ -9,8 +6,16 @@ import { useCallback } from 'react';
 import { DataPlaneNode } from './dataPlanesGql';
 import { gql, useClient } from 'urql';
 
+import { ConnectionTestResults } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
+
 // Toggle for mock mode while GraphQL backend is in development
 const USE_MOCK = false;
+
+export interface FragmentStore {
+    provider: string;
+    bucket: string;
+    prefix?: string;
+}
 
 // GraphQL Types
 interface HealthCheckError {
@@ -31,11 +36,7 @@ interface CreateStorageMappingResponse {
 interface CreateStorageMappingVariables {
     catalogPrefix: string;
     storage: {
-        stores: Array<{
-            provider: string;
-            bucket: string;
-            prefix?: string;
-        }>;
+        stores: FragmentStore[];
         data_planes: string[];
     };
     detail?: string;
@@ -67,28 +68,49 @@ const CREATE_STORAGE_MAPPING = gql<
     }
 `;
 
+function parseBucketUrl(bucketUrl: string): FragmentStore {
+    // {provider}://{bucket}/{optional_prefix}/
+    const match = bucketUrl.match(/^([^:]+):\/\/([^/]+)\/?(.*)$/);
+    if (!match) {
+        throw new Error(`Invalid bucket URL format: ${bucketUrl}`);
+    }
+
+    const [, provider, bucket, prefix] = match;
+    return {
+        provider,
+        bucket,
+        ...(prefix ? { prefix: prefix.replace(/\/$/, '') } : {}),
+    };
+}
+
 // Mock implementation for development
 const mockTestStorageConnection = async (
     _input: CreateStorageMappingInput,
-    dataPlanes: DataPlaneNode[]
+    dataPlanes: DataPlaneNode[],
+    stores: FragmentStore[]
 ): Promise<ConnectionTestResults> => {
     // Simulate network delay
     await new Promise((resolve) =>
         setTimeout(resolve, Math.floor(Math.random() * 1500) + 1000)
     );
 
-    const results: ConnectionTestResults = {};
+    const results: ConnectionTestResults = new Map();
 
     dataPlanes.forEach((dp) => {
-        // 50% success rate for demo purposes
-        const success = Math.random() > 0.5;
-        results[dp.dataPlaneName] = success
-            ? { status: 'success' }
-            : {
-                  status: 'error',
-                  errorMessage:
-                      'Unable to access bucket. Please verify your bucket name and permissions.',
-              };
+        stores.forEach((store) => {
+            // 50% success rate for demo purposes
+            const success = Math.random() > 0.5;
+            results.set(
+                [dp, store],
+                success
+                    ? { status: 'success' }
+                    : {
+                          status: 'error',
+                          errorMessage:
+                              'Unable to access bucket. Please verify your bucket name and permissions.',
+                      }
+            );
+        });
     });
 
     return results;
@@ -97,13 +119,16 @@ const mockTestStorageConnection = async (
 // Parse GraphQL errors to extract health check errors per data plane
 const parseHealthCheckErrors = (
     errors: Array<{ extensions?: { healthCheckErrors?: HealthCheckError[] } }>,
-    dataPlanes: DataPlaneNode[]
+    dataPlanes: DataPlaneNode[],
+    stores: FragmentStore[]
 ): ConnectionTestResults => {
-    const results: ConnectionTestResults = {};
+    const results: ConnectionTestResults = new Map();
 
     // Initialize all as success (will be overwritten if errors found)
     dataPlanes.forEach((dp) => {
-        results[dp.dataPlaneName] = { status: 'success' };
+        stores.forEach((store) => {
+            results.set([dp, store], { status: 'success' });
+        });
     });
 
     // Process errors from extensions
@@ -197,7 +222,8 @@ export function useStorageMappingService() {
     const testConnection = useCallback(
         async (
             input: CreateStorageMappingInput,
-            dataPlanes: DataPlaneNode[]
+            dataPlanes: DataPlaneNode[],
+            stores: FragmentStore[]
         ): Promise<ConnectionTestResults> => {
             if (USE_MOCK) {
                 return mockTestStorageConnection(input, dataPlanes);
@@ -210,11 +236,12 @@ export function useStorageMappingService() {
     const testSingleConnection = useCallback(
         async (
             input: CreateStorageMappingInput,
-            dataPlane: DataPlaneNode
+            dataPlane: DataPlaneNode,
+            store: FragmentStore
         ): Promise<ConnectionTestResult> => {
             const results = await testConnection(input, [dataPlane]);
             return (
-                results[dataPlane.dataPlaneName] ?? {
+                results.get([dataPlane, store]) ?? {
                     status: 'error',
                     errorMessage: 'Unknown error',
                 }
