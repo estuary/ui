@@ -323,14 +323,17 @@ export const getInitialState = (
                             const currentStat = statsData[catalog_name];
 
                             if (currentStat) {
-                                Object.entries(currentStat).forEach(
-                                    ([key, value]) => {
-                                        if (typeof value === 'number') {
-                                            currentStat[key] ||= 0;
-                                            currentStat[key] += datum[key];
-                                        }
+                                (
+                                    Object.entries(currentStat) as [
+                                        keyof typeof currentStat,
+                                        number | any,
+                                    ][]
+                                ).forEach(([key, value]) => {
+                                    if (typeof value === 'number') {
+                                        currentStat[key] ||= 0;
+                                        currentStat[key] += datum[key] ?? 0;
                                     }
-                                );
+                                });
                             } else {
                                 statsData[catalog_name] = datum;
                             }

@@ -72,8 +72,7 @@ const evaluateFieldSelection = async (input: FieldSelectionInput_Skim) => {
         response = evaluate_field_selection(input);
         // We can catch any error here so that any issue causes an empty response and the
         //  component will show an error... though not the most useful one.
-        // eslint-disable-next-line @typescript-eslint/no-implicit-any-catch
-    } catch (error: any) {
+    } catch (error: unknown) {
         logRocketEvent('evaluate_field_selection', {
             failed: true,
             error,

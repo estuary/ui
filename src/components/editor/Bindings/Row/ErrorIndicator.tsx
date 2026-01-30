@@ -35,8 +35,8 @@ function BindingsSelectorErrorIndicator({
     );
 
     const errorExists =
-        bindingErrors?.length > 0 ||
-        configErrors?.length > 0 ||
+        (bindingErrors && bindingErrors.length > 0) ||
+        (configErrors && configErrors.length > 0) ||
         fieldConflictsExist;
 
     if (errorExists || Boolean(sourceBackfillRecommended)) {

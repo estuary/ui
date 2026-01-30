@@ -91,17 +91,18 @@ export const useBinding_resourceConfigErrors = () => {
     return useBindingStore((state) => state.resourceConfigErrors);
 };
 
-export const useBinding_resourceConfigOfBindingProperty = (
-    bindingUUID: any,
-    property: keyof ResourceConfig
-) => {
+export const useBinding_resourceConfigOfBindingProperty = <
+    K extends keyof ResourceConfig,
+>(
+    bindingUUID: string | undefined,
+    property: K
+): ResourceConfig[K] | null => {
     return useBindingStore(
         useShallow((state) => {
             if (!bindingUUID) {
                 return null;
             }
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            return state.resourceConfigs[bindingUUID]?.[property];
+            return state.resourceConfigs[bindingUUID]?.[property] ?? null;
         })
     );
 };
@@ -117,7 +118,6 @@ export const useBinding_resourceConfigOfMetaBindingProperty = <
             if (!bindingUUID) {
                 return null;
             }
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return state.resourceConfigs[bindingUUID]?.meta?.[property];
         })
     );

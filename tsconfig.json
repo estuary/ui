@@ -24,7 +24,6 @@
         },
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
-        "suppressImplicitAnyIndexErrors": true,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "isolatedModules": true,
@@ -34,8 +33,7 @@
         "strictNullChecks": true,
         "skipLibCheck": true,
         "resolveJsonModule": true,
-        "typeRoots": ["src/types", "node_modules/@types"],
-        "types": ["vitest", "vite/client", "vitest/globals"]
+        "typeRoots": ["src/types", "node_modules/@types"]
     },
     "include": ["src", "deps/flow/flow.d.ts", "deps/supabase/types.d.ts"],
     "exclude": [
