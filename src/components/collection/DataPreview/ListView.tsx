@@ -24,8 +24,6 @@ import ListAndDetails from 'src/components/editor/ListAndDetails';
 import Error from 'src/components/shared/Error';
 import {
     defaultOutline,
-    historyCompareBorder,
-    historyCompareColors,
     monacoEditorComponentBackground,
     semiTransparentBackground,
 } from 'src/context/Theme';
@@ -121,11 +119,6 @@ function ListView({
                                 sx={{
                                     ['& li.Mui-selected']: {
                                         cursor: 'unset',
-                                        borderLeft: `${historyCompareBorder} ${
-                                            historyCompareColors[
-                                                theme.palette.mode
-                                            ][1]
-                                        }`,
                                     },
                                     ['& li']: {
                                         borderBottom: () =>
@@ -146,14 +139,7 @@ function ListView({
                                             }}
                                         >
                                             <ListItemText>
-                                                <Typography
-                                                    component="span"
-                                                    variant={
-                                                        selected
-                                                            ? 'subtitle2'
-                                                            : undefined
-                                                    }
-                                                >
+                                                <Typography component="span">
                                                     {row.key}
                                                 </Typography>
                                             </ListItemText>
