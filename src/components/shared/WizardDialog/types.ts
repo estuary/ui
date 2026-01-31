@@ -38,6 +38,10 @@ export interface WizardContextValue {
     goToStep: (index: number) => void;
     /** Whether navigation is currently in progress */
     isNavigating: boolean;
+    /** Error message to display */
+    error: string | null;
+    /** Set an error message (or null to clear) */
+    setError: (error: string | null) => void;
 }
 
 export interface WizardDialogProps {

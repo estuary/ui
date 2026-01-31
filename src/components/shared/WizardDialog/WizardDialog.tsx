@@ -25,10 +25,12 @@ export function WizardDialog({
 }: WizardDialogProps) {
     const [currentStep, setCurrentStep] = useState(initialStep);
     const [isNavigating, setIsNavigating] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    // Reset to initial step after dialog close animation completes
+    // Reset state after dialog close animation completes
     const handleExited = useCallback(() => {
         setCurrentStep(initialStep);
+        setError(null);
     }, [initialStep]);
 
     const totalSteps = steps.length;
@@ -36,33 +38,61 @@ export function WizardDialog({
     const isLastStep = currentStep === totalSteps - 1;
 
     const goToNext = useCallback(async (): Promise<boolean> => {
-        setIsNavigating(true);
+        setError(null);
 
-        try {
-            const currentStepConfig = steps[currentStep];
+        const currentStepConfig = steps[currentStep];
 
-            // Run step-specific onProceed callback if provided
-            if (currentStepConfig?.onProceed) {
-                const shouldProceed = await currentStepConfig.onProceed();
-                if (!shouldProceed) {
-                    return false;
+        // Run step-specific onProceed callback if provided
+        if (currentStepConfig?.onProceed) {
+            const result = currentStepConfig.onProceed();
+
+            // If onProceed returns a promise, add minimum delay to prevent flashing spinner
+            if (result instanceof Promise) {
+                setIsNavigating(true);
+                try {
+                    const minDelay = new Promise((resolve) =>
+                        setTimeout(resolve, 1000)
+                    );
+
+                    const [proceedResult] = await Promise.all([
+                        result.then(
+                            (value) => ({ ok: true as const, value }),
+                            (err) => ({ ok: false as const, err })
+                        ),
+                        minDelay,
+                    ]);
+
+                    if (!proceedResult.ok) {
+                        setError(
+                            proceedResult.err instanceof Error
+                                ? proceedResult.err.message
+                                : 'An error occurred'
+                        );
+                        return false;
+                    }
+
+                    if (!proceedResult.value) {
+                        return false;
+                    }
+                } finally {
+                    setIsNavigating(false);
                 }
+            } else if (!result) {
+                return false;
             }
-
-            if (isLastStep) {
-                // On last step, call onComplete
-                if (onComplete) {
-                    await onComplete();
-                }
-            } else {
-                // Move to next step
-                setCurrentStep((prev) => prev + 1);
-            }
-
-            return true;
-        } finally {
-            setIsNavigating(false);
         }
+
+        if (isLastStep) {
+            // On last step, call onComplete
+            if (onComplete) {
+                await onComplete();
+            }
+        } else {
+            // Move to next step
+            setCurrentStep((prev) => prev + 1);
+        }
+
+        return true;
     }, [currentStep, isLastStep, onComplete, steps]);
 
     const goToPrevious = useCallback(() => {
@@ -91,6 +121,8 @@ export function WizardDialog({
             goToPrevious,
             goToStep,
             isNavigating,
+            error,
+            setError,
         }),
         [
             currentStep,
@@ -102,6 +134,7 @@ export function WizardDialog({
             goToPrevious,
             goToStep,
             isNavigating,
+            error,
         ]
     );
 

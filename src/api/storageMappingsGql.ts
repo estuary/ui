@@ -18,12 +18,6 @@ export interface FragmentStore {
 }
 
 // GraphQL Types
-interface HealthCheckError {
-    dataPlane: string;
-    error: string;
-    fragmentStore: string;
-}
-
 interface CreateStorageMappingResult {
     created: boolean;
     catalogPrefix: string;
@@ -40,12 +34,31 @@ interface CreateStorageMappingVariables {
         data_planes: string[];
     };
     detail?: string;
-    dryRun: boolean;
 }
 
-type CreateStorageMappingInput = Omit<CreateStorageMappingVariables, 'dryRun'>;
+interface TestConnectionHealthResult {
+    fragmentStore: string;
+    dataPlaneName: string;
+    error: string | null;
+}
 
-// GraphQL Mutation
+interface TestConnectionHealthResponse {
+    testConnectionHealth: {
+        results: TestConnectionHealthResult[];
+    } | null;
+}
+
+interface TestConnectionHealthVariables {
+    catalogPrefix: string;
+    storage: {
+        stores: FragmentStore[];
+        data_planes: string[];
+    };
+}
+
+type CreateStorageMappingInput = CreateStorageMappingVariables;
+
+// GraphQL Mutations
 const CREATE_STORAGE_MAPPING = gql<
     CreateStorageMappingResponse,
     CreateStorageMappingVariables
@@ -54,13 +67,11 @@ const CREATE_STORAGE_MAPPING = gql<
         $catalogPrefix: Prefix!
         $storage: JSON!
         $detail: String
-        $dryRun: Boolean!
     ) {
         createStorageMapping(
             catalogPrefix: $catalogPrefix
             storage: $storage
             detail: $detail
-            dryRun: $dryRun
         ) {
             created
             catalogPrefix
@@ -68,24 +79,49 @@ const CREATE_STORAGE_MAPPING = gql<
     }
 `;
 
-function parseBucketUrl(bucketUrl: string): FragmentStore {
-    // {provider}://{bucket}/{optional_prefix}/
-    const match = bucketUrl.match(/^([^:]+):\/\/([^/]+)\/?(.*)$/);
-    if (!match) {
-        throw new Error(`Invalid bucket URL format: ${bucketUrl}`);
+const TEST_CONNECTION_HEALTH = gql<
+    TestConnectionHealthResponse,
+    TestConnectionHealthVariables
+>`
+    mutation TestConnectionHealth($catalogPrefix: Prefix!, $storage: JSON!) {
+        testConnectionHealth(catalogPrefix: $catalogPrefix, storage: $storage) {
+            results {
+                fragmentStore
+                dataPlaneName
+                error
+            }
+        }
     }
+`;
 
-    const [, provider, bucket, prefix] = match;
-    return {
-        provider,
-        bucket,
-        ...(prefix ? { prefix: prefix.replace(/\/$/, '') } : {}),
-    };
+// Maps cloud provider names (from data planes) to storage provider variants (for GraphQL)
+const CLOUD_TO_STORAGE_PROVIDER: Record<string, string> = {
+    gcp: 'GCS',
+    aws: 'S3',
+    azure: 'AZURE',
+};
+
+export function cloudProviderToStorageProvider(cloudProvider: string): string {
+    return CLOUD_TO_STORAGE_PROVIDER[cloudProvider.toLowerCase()] ?? 'CUSTOM';
 }
+
+// function parseBucketUrl(bucketUrl: string): FragmentStore {
+//     // {provider}://{bucket}/{optional_prefix}/
+//     const match = bucketUrl.match(/^([^:]+):\/\/([^/]+)\/?(.*)$/);
+//     if (!match) {
+//         throw new Error(`Invalid bucket URL format: ${bucketUrl}`);
+//     }
+
+//     const [, provider, bucket, prefix] = match;
+//     return {
+//         provider: cloudProviderToStorageProvider(provider),
+//         bucket,
+//         ...(prefix ? { prefix: prefix.replace(/\/$/, '') } : {}),
+//     };
+// }
 
 // Mock implementation for development
 const mockTestStorageConnection = async (
-    _input: CreateStorageMappingInput,
     dataPlanes: DataPlaneNode[],
     stores: FragmentStore[]
 ): Promise<ConnectionTestResults> => {
@@ -116,66 +152,56 @@ const mockTestStorageConnection = async (
     return results;
 };
 
-// Parse GraphQL errors to extract health check errors per data plane
-const parseHealthCheckErrors = (
-    errors: Array<{ extensions?: { healthCheckErrors?: HealthCheckError[] } }>,
-    dataPlanes: DataPlaneNode[],
-    stores: FragmentStore[]
-): ConnectionTestResults => {
-    const results: ConnectionTestResults = new Map();
-
-    // Initialize all as success (will be overwritten if errors found)
-    dataPlanes.forEach((dp) => {
-        stores.forEach((store) => {
-            results.set([dp, store], { status: 'success' });
-        });
-    });
-
-    // Process errors from extensions
-    errors.forEach((error) => {
-        const healthCheckErrors = error.extensions?.healthCheckErrors;
-        if (healthCheckErrors) {
-            healthCheckErrors.forEach((hcError) => {
-                // Match error to data plane by name
-                const matchingDataPlane = dataPlanes.find(
-                    (dp) =>
-                        hcError.dataPlane === dp.dataPlaneName ||
-                        hcError.dataPlane.startsWith(dp.dataPlaneName + ':')
-                );
-
-                if (matchingDataPlane) {
-                    results[matchingDataPlane.dataPlaneName] = {
-                        status: 'error',
-                        errorMessage: hcError.error,
-                    };
-                }
-            });
-        }
-    });
-
-    return results;
-};
-
 // Real GraphQL implementation
 const realTestStorageConnection = async (
     client: Client,
-    input: CreateStorageMappingInput,
-    dataPlanes: DataPlaneNode[]
+    catalogPrefix: string,
+    dataPlanes: DataPlaneNode[],
+    stores: FragmentStore[]
 ): Promise<ConnectionTestResults> => {
-    const result = await client.mutation(CREATE_STORAGE_MAPPING, {
-        ...input,
-        dryRun: true,
-    });
+    const result = await client.mutation(TEST_CONNECTION_HEALTH, {
+        catalogPrefix,
+        storage: {
+            stores,
+            data_planes: dataPlanes.map((dp) => dp.dataPlaneName),
+        },
+    } satisfies TestConnectionHealthVariables);
 
-    if (result.error?.graphQLErrors && result.error.graphQLErrors.length > 0) {
-        return parseHealthCheckErrors(result.error.graphQLErrors, dataPlanes);
+    if (result.error) {
+        throw new Error(
+            result.error.graphQLErrors?.[0]?.message ??
+                result.error.message ??
+                'Failed to test connection health'
+        );
     }
 
-    // No errors means all connections succeeded
-    const results: ConnectionTestResults = {};
-    dataPlanes.forEach((dp) => {
-        results[dp.dataPlaneName] = { status: 'success' };
+    const results: ConnectionTestResults = new Map();
+    const testResults = result.data?.testConnectionHealth?.results ?? [];
+
+    // Map results back to dataPlane/store pairs
+    testResults.forEach((testResult) => {
+        const matchingDataPlane = dataPlanes.find(
+            (dp) =>
+                testResult.dataPlaneName === dp.dataPlaneName ||
+                testResult.dataPlaneName.startsWith(dp.dataPlaneName + ':')
+        );
+
+        const matchingStore = stores.find(
+            (store) =>
+                testResult.fragmentStore ===
+                `${store.provider}://${store.bucket}${store.prefix ? `/${store.prefix}` : ''}`
+        );
+
+        if (matchingDataPlane && matchingStore) {
+            results.set(
+                [matchingDataPlane, matchingStore],
+                testResult.error
+                    ? { status: 'error', errorMessage: testResult.error }
+                    : { status: 'success' }
+            );
+        }
     });
+
     return results;
 };
 
@@ -195,10 +221,7 @@ const realCreateStorageMapping = async (
     client: Client,
     input: CreateStorageMappingInput
 ): Promise<CreateStorageMappingResult> => {
-    const result = await client.mutation(CREATE_STORAGE_MAPPING, {
-        ...input,
-        dryRun: false,
-    });
+    const result = await client.mutation(CREATE_STORAGE_MAPPING, input);
 
     if (result.error) {
         throw new Error(
@@ -221,25 +244,34 @@ export function useStorageMappingService() {
 
     const testConnection = useCallback(
         async (
-            input: CreateStorageMappingInput,
+            catalogPrefix: string,
             dataPlanes: DataPlaneNode[],
             stores: FragmentStore[]
         ): Promise<ConnectionTestResults> => {
             if (USE_MOCK) {
-                return mockTestStorageConnection(input, dataPlanes);
+                return mockTestStorageConnection(dataPlanes, stores);
             }
-            return realTestStorageConnection(client, input, dataPlanes);
+            return realTestStorageConnection(
+                client,
+                catalogPrefix,
+                dataPlanes,
+                stores
+            );
         },
         [client]
     );
 
     const testSingleConnection = useCallback(
         async (
-            input: CreateStorageMappingInput,
+            catalogPrefix: string,
             dataPlane: DataPlaneNode,
             store: FragmentStore
         ): Promise<ConnectionTestResult> => {
-            const results = await testConnection(input, [dataPlane]);
+            const results = await testConnection(
+                catalogPrefix,
+                [dataPlane],
+                [store]
+            );
             return (
                 results.get([dataPlane, store]) ?? {
                     status: 'error',

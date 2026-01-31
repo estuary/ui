@@ -157,12 +157,12 @@ const DATA_PLANES_QUERY = gql<DataPlanesResponse>`
 export function useDataPlanes() {
     const [result] = useQuery({ query: DATA_PLANES_QUERY });
 
-    // const dataPlanes =
-    //     result.data?.dataPlanes.edges.map((edge) =>
-    //         toDataPlaneNode(edge.node)
-    //     ) ?? [];
+    const dataPlanes =
+        result.data?.dataPlanes.edges.map((edge) =>
+            toDataPlaneNode(edge.node)
+        ) ?? [];
 
-    const dataPlanes = MOCK_DATA_PLANES.map((node) => toDataPlaneNode(node));
+    // const dataPlanes = MOCK_DATA_PLANES.map((node) => toDataPlaneNode(node));
 
     return {
         dataPlanes,

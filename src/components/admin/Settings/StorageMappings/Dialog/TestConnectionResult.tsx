@@ -14,7 +14,7 @@ import { codeBackground } from 'src/context/Theme';
 
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
-const anchorMap: Record<string, string> = {
+const docsAnchorMap: Record<string, string> = {
     [CloudProviderCodes.AWS]: 'amazon-s3-buckets',
     [CloudProviderCodes.GCP]: 'google-cloud-storage-buckets',
     [CloudProviderCodes.AZURE]: 'azure-blob-storage',
@@ -69,7 +69,7 @@ export function TestConnectionResult() {
                 instructions,
                 <br /> see the{' '}
                 <Link
-                    href={docsBaseUrl + anchorMap[provider]}
+                    href={docsBaseUrl + docsAnchorMap[provider]}
                     target="_blank"
                     rel="noopener noreferrer"
                 >

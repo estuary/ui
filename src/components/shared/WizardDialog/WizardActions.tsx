@@ -1,4 +1,9 @@
-import { Button, DialogActions } from '@mui/material';
+import {
+    Button,
+    CircularProgress,
+    DialogActions,
+    Typography,
+} from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -13,6 +18,7 @@ function WizardActions() {
         isNavigating,
         steps,
         currentStep,
+        error,
     } = useWizard();
 
     const currentStepConfig = steps[currentStep];
@@ -21,6 +27,12 @@ function WizardActions() {
 
     return (
         <DialogActions sx={{ p: 4, pt: 2 }}>
+            {error ? (
+                <Typography color="error" variant="body2" sx={{ mr: 'auto' }}>
+                    {error}
+                </Typography>
+            ) : null}
+
             {showBack ? (
                 <Button
                     variant="outlined"
@@ -37,13 +49,18 @@ function WizardActions() {
                 size="small"
                 onClick={goToNext}
                 disabled={isNavigating || !canProceed}
+                sx={{ whiteSpace: 'nowrap' }}
             >
-                {currentStepConfig?.nextLabel ??
-                    (isLastStep ? (
-                        <FormattedMessage id="cta.save" />
-                    ) : (
-                        <FormattedMessage id="cta.next" />
-                    ))}
+                {isNavigating ? (
+                    <CircularProgress size={16} color="inherit" />
+                ) : (
+                    (currentStepConfig?.nextLabel ??
+                        (isLastStep ? (
+                            <FormattedMessage id="cta.save" />
+                        ) : (
+                            <FormattedMessage id="cta.next" />
+                        )))
+                )}
             </Button>
         </DialogActions>
     );
