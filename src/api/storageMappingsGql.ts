@@ -108,6 +108,11 @@ const realTestStorageConnection = async (
     dataPlanes: DataPlaneNode[],
     stores: FragmentStore[]
 ): Promise<TestConnectionHealthResult[]> => {
+    console.log('Testing storage connection with:', {
+        catalogPrefix,
+        dataPlanes,
+        stores,
+    });
     const result = await client.mutation(TEST_CONNECTION_HEALTH, {
         catalogPrefix,
         storage: {
@@ -116,22 +121,23 @@ const realTestStorageConnection = async (
         },
     } satisfies TestConnectionHealthVariables);
 
-    // if (result.error) {
-    //     throw new Error(
-    //         result.error.graphQLErrors?.[0]?.message ??
-    //             result.error.message ??
-    //             'Failed to test connection health'
-    //     );
-    // }
+    if (result.error) {
+        console.log('GraphQL Error:', result.error);
+        throw new Error(
+            result.error.graphQLErrors?.[0]?.message ??
+                result.error.message ??
+                'Failed to test connection health'
+        );
+    }
 
-    const return_me = [];
-    // result.data?.testConnectionHealth?.results.map((r) => ({
-    //     fragmentStore: parseFagmentStoreUrl(r.fragmentStore),
-    //     dataPlaneName: r.dataPlaneName,
-    //     error: r.error,
-    // })) ?? [];
+    const return_me =
+        result.data?.testConnectionHealth?.results.map((r) => ({
+            fragmentStore: r.fragmentStore,
+            dataPlaneName: r.dataPlaneName,
+            error: r.error,
+        })) ?? [];
 
-    console.log('GraphQL Test Connection Results:', return_me);
+    // console.log('GraphQL Test Connection Results:', return_me);
     return return_me;
 };
 

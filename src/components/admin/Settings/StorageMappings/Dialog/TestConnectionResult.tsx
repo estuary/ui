@@ -122,8 +122,10 @@ export function TestConnectionResult() {
                     <DataPlaneAccordion
                         key={dataPlane.dataPlaneName}
                         dataPlane={dataPlane}
-                        provider={provider}
-                        bucket={formData.bucket}
+                        store={{
+                            bucket: formData.bucket,
+                            provider,
+                        }}
                     />
                 ))}
             </Stack>

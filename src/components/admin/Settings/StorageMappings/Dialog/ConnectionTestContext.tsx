@@ -55,6 +55,8 @@ export function useConnectionTest() {
         );
     }
 
+    const results = context.results;
+
     const { testConnection, testSingleConnection } = useStorageMappingService();
 
     const testAll = async (
@@ -71,16 +73,25 @@ export function useConnectionTest() {
             stores
         );
 
+        console.log('Connection test results:', results);
         for (const result of results) {
             const dataPlane = dataPlanes.find(
                 (dp) => dp.dataPlaneName === result.dataPlaneName
             );
-            if (!dataPlane) continue;
+            if (!dataPlane) {
+                console.log('No matching data plane found for result', result);
+                continue;
+            }
 
+            console.log('store vs stores', result.fragmentStore, stores);
             const store = stores.find((s) => s.bucket === result.fragmentStore);
-            if (!store) continue;
+            if (!store) {
+                console.log('No matching store found for result', result);
+                continue;
+            }
 
             for (const store of stores) {
+                console.log('Testing store:', store);
                 const key: ConnectionTestKey = [dataPlane, store];
                 context.results.set(key, {
                     status: result.error ? 'error' : 'success',
@@ -107,9 +118,27 @@ export function useConnectionTest() {
             errorMessage: result.error ?? undefined,
         });
     };
+
+    // Helper to find a result in the Map by matching dataPlane and store values
+    function resultFor(
+        dataPlane: DataPlaneNode,
+        store: FragmentStore
+    ): ConnectionTestResult {
+        for (const [key, value] of results) {
+            const [dp, s] = key;
+            if (
+                dp.dataPlaneName === dataPlane.dataPlaneName &&
+                s.bucket === store.bucket
+            ) {
+                return value;
+            }
+        }
+        return defaultResult;
+    }
     return {
         results: context.results,
         retry,
         testAll,
+        resultFor,
     };
 }

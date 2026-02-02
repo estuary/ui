@@ -20,6 +20,7 @@ import {
 } from 'iconoir-react';
 
 import { DataPlaneNode } from 'src/api/dataPlanesGql';
+import { FragmentStore } from 'src/api/storageMappingsGql';
 import {
     ConnectionTestResult,
     useConnectionTest,
@@ -133,19 +134,19 @@ function ConnectionError({
 
 interface DataPlaneAccordionProps {
     dataPlane: DataPlaneNode;
-    provider: string;
-    bucket: string;
+    store: FragmentStore;
 }
 
 export function DataPlaneAccordion({
     dataPlane,
-    provider,
-    bucket,
+    store,
 }: DataPlaneAccordionProps) {
-    const { result: testResult, retry } = useConnectionTest({
-        dataPlaneName: dataPlane.dataPlaneName,
-        bucket,
-    });
+    const { retry, resultFor } = useConnectionTest();
+    const testResult = resultFor(dataPlane, store);
+
+    const handleRetry = () => {
+        retry(dataPlane, store);
+    };
 
     const [expanded, setExpanded] = useState(false);
     const [lastErrorMessage, setLastErrorMessage] = useState<string>();
@@ -201,6 +202,7 @@ export function DataPlaneAccordion({
                         pr: 1,
                     }}
                 >
+                    {JSON.stringify(testResult)}
                     <Typography fontWeight={600}>
                         {toPresentableName(dataPlane)}
                     </Typography>
@@ -214,12 +216,12 @@ export function DataPlaneAccordion({
                         <ConnectionError
                             result={testResult}
                             errorMessage={lastErrorMessage}
-                            onRetry={retry}
+                            onRetry={handleRetry}
                         />
                     ) : null}
                     <ConnectionInstructions
-                        provider={provider}
-                        bucket={bucket}
+                        provider={store.provider}
+                        bucket={store.bucket}
                         iamArn={dataPlane.awsIamUserArn ?? ''}
                         gcpServiceAccountEmail={
                             dataPlane.gcpServiceAccountEmail ?? ''

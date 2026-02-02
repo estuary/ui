@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import { flushSync } from 'react-dom';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -13,9 +13,7 @@ import {
     useStorageMappingService,
 } from 'src/api/storageMappingsGql';
 import {
-    ConnectionTestKey,
     ConnectionTestProvider,
-    ConnectionTestResults,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
 import { StorageMappingForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Form';
@@ -62,18 +60,13 @@ function buildMappingFromFormData(
 
 function _ConfigureStorageWizard({ open, setOpen, methods }: InternalProps) {
     const intl = useIntl();
-    const { testConnection, testSingleConnection, create } =
-        useStorageMappingService();
-
-    const { testAll } = useConnectionTest();
-
-    const [testResults, setTestResults] = useState<ConnectionTestResults>(
-        new Map()
-    );
+    const { create } = useStorageMappingService();
+    const { testAll, results } = useConnectionTest();
+    const { getValues, formState } = methods;
 
     // Check if all data planes have completed testing successfully
     const allTestsPassed = useMemo(() => {
-        const formData = methods.getValues();
+        const formData = getValues();
         const dataPlanes = formData.data_planes;
         const bucket = formData.bucket;
         if (dataPlanes.length === 0) return false;
@@ -85,14 +78,14 @@ function _ConfigureStorageWizard({ open, setOpen, methods }: InternalProps) {
         //     return testResults.get(key)?.status === 'success';
         // });
         return false; // TODO: uncomment above when buildTestKey is implemented
-    }, [testResults, methods]);
+    }, [getValues]);
 
     // Check if any tests are currently running
     const anyTestRunning = useMemo(() => {
-        return Object.values(testResults).some(
+        return Object.values(results).some(
             (result) => result.status === 'testing'
         );
-    }, [testResults]);
+    }, [results]);
 
     const steps: WizardStep[] = useMemo(
         () => [
@@ -107,12 +100,19 @@ function _ConfigureStorageWizard({ open, setOpen, methods }: InternalProps) {
                 nextLabel: intl.formatMessage({
                     id: 'storageMappings.wizard.cta.testConnection',
                 }),
-                canProceed: () => methods.formState.isValid,
+                canProceed: () => formState.isValid,
                 onProceed: async () => {
-                    await testAll(methods.getValues().data_planes, [
+                    const data_planes = getValues().data_planes;
+                    const bucket = getValues().bucket;
+                    const use_same_region = getValues().use_same_region;
+                    const provider = use_same_region
+                        ? data_planes[0]?.cloudProvider
+                        : getValues().provider;
+
+                    await testAll(data_planes, [
                         {
-                            bucket: methods.getValues().bucket,
-                            provider: methods.getValues().provider,
+                            bucket: bucket,
+                            provider: cloudProviderToStorageProvider(provider),
                         },
                     ]);
                     return true;
@@ -131,8 +131,9 @@ function _ConfigureStorageWizard({ open, setOpen, methods }: InternalProps) {
         ],
         [
             intl,
-            testResults,
-            methods.formState.isValid,
+            results,
+            formState.isValid,
+            getValues,
             allTestsPassed,
             anyTestRunning,
             testAll,
@@ -144,8 +145,7 @@ function _ConfigureStorageWizard({ open, setOpen, methods }: InternalProps) {
 
         // reset state in case parent keeps this dialog mounted
         methods.reset();
-        setTestResults(new Map());
-        // testPromisesRef.current = {};
+        results.clear();
     };
 
     const handleComplete = async () => {
