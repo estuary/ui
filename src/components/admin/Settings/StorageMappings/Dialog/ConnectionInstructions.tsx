@@ -169,7 +169,7 @@ export function ConnectionInstructions({
     iamArn,
     gcpServiceAccountEmail,
 }: ConnectionInstructionsProps) {
-    if (provider === 'GCS' || provider === CloudProviderCodes.GCP) {
+    if (provider === 'GCS' || provider === CloudProviderCodes.gcp) {
         return (
             <GcpConnectionInstructions
                 bucket={bucket}
@@ -177,7 +177,7 @@ export function ConnectionInstructions({
             />
         );
     }
-    if (provider === 'S3' || provider === CloudProviderCodes.AWS) {
+    if (provider === 'S3' || provider === CloudProviderCodes.aws) {
         return <AwsConnectionInstructions bucket={bucket} iamArn={iamArn} />;
     }
     return <Typography>Connection instructions go here.</Typography>;

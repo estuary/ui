@@ -93,7 +93,7 @@ const PROVIDER_DISPLAY_NAMES: Record<string, string> = {
 };
 
 const PROVIDER_SHORT_NAMES: Record<string, string> = {
-    aws: 'AWS',
+    aws: 'AWSx',
     gcp: 'GCP',
     azure: 'MS Azure',
 };

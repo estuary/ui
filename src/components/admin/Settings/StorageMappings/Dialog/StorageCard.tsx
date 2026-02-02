@@ -21,14 +21,14 @@ import { toPresentableCloudProvider } from 'src/utils/dataPlane-utils';
 const PROVIDER_OPTIONS = Object.values(CloudProviderCodes).map((code) => ({
     value: code,
     label:
-        code === CloudProviderCodes.AWS ? 'Amazon S3' : 'Google Cloud Storage',
+        code === CloudProviderCodes.aws ? 'Amazon S3' : 'Google Cloud Storage',
 }));
 
 const getRegionOptions = (provider: CloudProviderCodes | '') => {
     const regions =
-        provider === CloudProviderCodes.AWS
+        provider === CloudProviderCodes.aws
             ? AWS_REGIONS
-            : provider === CloudProviderCodes.GCP
+            : provider === CloudProviderCodes.gcp
               ? GCP_REGIONS
               : [];
 

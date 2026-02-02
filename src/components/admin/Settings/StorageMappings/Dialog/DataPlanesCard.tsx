@@ -30,9 +30,11 @@ export function DataPlanesCard() {
     );
     // Auto-select "allow public" if there are no private options
     // (Checkbox will be hidden if there are no public options)
-    useEffect(() => {
-        setValue('allow_public', !hasPrivate);
-    }, [hasPrivate, setValue]);
+
+    // TODO (Greg): troubleshoot this behavior before opening PR
+    // useEffect(() => {
+    //     setValue('allow_public', !hasPrivate);
+    // }, [hasPrivate, setValue]);
 
     // Remove public data planes when allowPublic is unchecked
     useEffect(() => {

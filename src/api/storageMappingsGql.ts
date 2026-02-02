@@ -5,10 +5,24 @@ import { useCallback } from 'react';
 import { DataPlaneNode } from './dataPlanesGql';
 import { gql, useClient } from 'urql';
 
-// Toggle for mock mode while GraphQL backend is in development
+import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
+// Cloud provider values used by consumers of this service
+export type CloudProvider = `${CloudProviderCodes}`;
+
+// Storage provider values used by the GraphQL server
+type StorageProvider = 'GCS' | 'S3' | 'AZURE' | 'CUSTOM';
+
+// External type - used by consumers of this service
 export interface FragmentStore {
-    provider: string;
+    provider: CloudProvider;
+    bucket: string;
+    prefix?: string;
+}
+
+// Internal type - used for server communication
+interface ServerFragmentStore {
+    provider: StorageProvider;
     bucket: string;
     prefix?: string;
 }
@@ -26,33 +40,49 @@ interface CreateStorageMappingResponse {
 interface CreateStorageMappingVariables {
     catalogPrefix: string;
     storage: {
-        stores: FragmentStore[];
+        stores: ServerFragmentStore[];
         data_planes: string[];
     };
     detail?: string;
 }
 
-interface TestConnectionHealthResult {
+// Public result type returned by the service
+export interface TestConnectionHealthResult {
     fragmentStore: FragmentStore;
+    dataPlaneName: string;
+    error: string | null;
+}
+
+// Internal types for GraphQL communication
+interface ServerTestConnectionHealthResult {
+    fragmentStore: ServerFragmentStore;
     dataPlaneName: string;
     error: string | null;
 }
 
 interface TestConnectionHealthResponse {
     testConnectionHealth: {
-        results: TestConnectionHealthResult[];
+        results: ServerTestConnectionHealthResult[];
     } | null;
 }
 
 interface TestConnectionHealthVariables {
     catalogPrefix: string;
     storage: {
-        stores: FragmentStore[];
+        stores: ServerFragmentStore[];
         data_planes: string[];
     };
 }
 
-type CreateStorageMappingInput = CreateStorageMappingVariables;
+// Public input type for consumers of this service
+export interface CreateStorageMappingInput {
+    catalogPrefix: string;
+    storage: {
+        stores: FragmentStore[];
+        data_planes: string[];
+    };
+    detail?: string;
+}
 
 // GraphQL Mutations
 const CREATE_STORAGE_MAPPING = gql<
@@ -90,15 +120,30 @@ const TEST_CONNECTION_HEALTH = gql<
     }
 `;
 
-// Maps cloud provider names (from data planes) to storage provider variants (for GraphQL)
+// Maps cloud provider names to storage provider variants (for GraphQL mutations)
 const CLOUD_TO_STORAGE_PROVIDER: Record<string, string> = {
     gcp: 'GCS',
     aws: 'S3',
     azure: 'AZURE',
 };
 
-export function cloudProviderToStorageProvider(cloudProvider: string): string {
-    return CLOUD_TO_STORAGE_PROVIDER[cloudProvider.toLowerCase()] ?? 'CUSTOM';
+// Maps storage provider variants (from server) back to cloud provider names
+const STORAGE_TO_CLOUD_PROVIDER: Record<string, string> = {
+    GCS: 'gcp',
+    S3: 'aws',
+    AZURE: 'azure',
+};
+
+function cloudProviderToStorageProvider(
+    cloudProvider: CloudProvider
+): StorageProvider {
+    return CLOUD_TO_STORAGE_PROVIDER[cloudProvider] as StorageProvider;
+}
+
+function storageProviderToCloudProvider(
+    storageProvider: StorageProvider
+): CloudProvider {
+    return STORAGE_TO_CLOUD_PROVIDER[storageProvider] as CloudProvider;
 }
 
 // Real GraphQL implementation
@@ -108,15 +153,22 @@ const realTestStorageConnection = async (
     dataPlanes: DataPlaneNode[],
     stores: FragmentStore[]
 ): Promise<TestConnectionHealthResult[]> => {
+    // Convert cloud provider names to storage provider format for the server
+    console.log('Converting stores for server:', stores);
+    const serverStores = stores.map((store) => ({
+        ...store,
+        provider: cloudProviderToStorageProvider(store.provider),
+    }));
+
     console.log('Testing storage connection with:', {
         catalogPrefix,
         dataPlanes,
-        stores,
+        stores: serverStores,
     });
     const result = await client.mutation(TEST_CONNECTION_HEALTH, {
         catalogPrefix,
         storage: {
-            stores,
+            stores: serverStores,
             data_planes: dataPlanes.map((dp) => dp.dataPlaneName),
         },
     } satisfies TestConnectionHealthVariables);
@@ -130,9 +182,15 @@ const realTestStorageConnection = async (
         );
     }
 
+    // Convert storage provider names back to cloud provider format
     const return_me =
         result.data?.testConnectionHealth?.results.map((r) => ({
-            fragmentStore: r.fragmentStore,
+            fragmentStore: {
+                ...r.fragmentStore,
+                provider: storageProviderToCloudProvider(
+                    r.fragmentStore.provider
+                ),
+            },
             dataPlaneName: r.dataPlaneName,
             error: r.error,
         })) ?? [];
@@ -146,7 +204,19 @@ const realCreateStorageMapping = async (
     client: Client,
     input: CreateStorageMappingInput
 ): Promise<CreateStorageMappingResult> => {
-    const result = await client.mutation(CREATE_STORAGE_MAPPING, input);
+    // Convert cloud provider names to storage provider format for the server
+    const serverInput = {
+        ...input,
+        storage: {
+            ...input.storage,
+            stores: input.storage.stores.map((store) => ({
+                ...store,
+                provider: cloudProviderToStorageProvider(store.provider),
+            })),
+        },
+    };
+
+    const result = await client.mutation(CREATE_STORAGE_MAPPING, serverInput);
 
     if (result.error) {
         throw new Error(

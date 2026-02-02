@@ -5,11 +5,10 @@ import { useMemo } from 'react';
 import { Box, Link, Stack, Typography, useTheme } from '@mui/material';
 
 import { useConnectionTest } from './ConnectionTestContext';
-import { data } from '@remix-run/router';
 import { useFormContext } from 'react-hook-form';
 
 import { useDataPlanes } from 'src/api/dataPlanesGql';
-import { cloudProviderToStorageProvider } from 'src/api/storageMappingsGql';
+import { CloudProvider } from 'src/api/storageMappingsGql';
 import { DataPlaneAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlaneAccordion';
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
@@ -18,15 +17,15 @@ import { codeBackground } from 'src/context/Theme';
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
 const docsAnchorMap: Record<string, string> = {
-    [CloudProviderCodes.AWS]: 'amazon-s3-buckets',
-    [CloudProviderCodes.GCP]: 'google-cloud-storage-buckets',
-    [CloudProviderCodes.AZURE]: 'azure-blob-storage',
+    [CloudProviderCodes.aws]: 'amazon-s3-buckets',
+    [CloudProviderCodes.gcp]: 'google-cloud-storage-buckets',
+    [CloudProviderCodes.azure]: 'azure-blob-storage',
 };
 
 const providerLabelmap: Record<string, string> = {
-    [CloudProviderCodes.AWS]: 'Amazon S3',
-    [CloudProviderCodes.GCP]: 'Google Cloud Storage',
-    [CloudProviderCodes.AZURE]: 'Azure Blob Storage',
+    [CloudProviderCodes.aws]: 'Amazon S3',
+    [CloudProviderCodes.gcp]: 'Google Cloud Storage',
+    [CloudProviderCodes.azure]: 'Azure Blob Storage',
 };
 
 export function TestConnectionResult() {
@@ -123,9 +122,11 @@ export function TestConnectionResult() {
 
             <Stack spacing={1}>
                 {Array.from(results).map(([[dataPlane, store]]) => {
-                    const provider = formData.use_same_region
-                        ? dataPlane.cloudProvider
-                        : store.provider;
+                    const provider = (
+                        formData.use_same_region
+                            ? dataPlane.cloudProvider
+                            : store.provider
+                    ) as CloudProvider;
                     return (
                         <DataPlaneAccordion
                             key={dataPlane.dataPlaneName}

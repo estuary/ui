@@ -1,9 +1,9 @@
 import { DataPlaneNode } from 'src/api/dataPlanesGql';
 
 export enum CloudProviderCodes {
-    GCP = 'gcp',
-    AWS = 'aws',
-    AZURE = 'azure',
+    gcp = 'gcp',
+    aws = 'aws',
+    azure = 'azure',
 }
 
 export const AWS_REGIONS: string[] = [

@@ -93,6 +93,14 @@ export function useConnectionTest() {
             throw new Error('Catalog prefix is not defined in context');
         }
 
+        console.log(
+            'Starting connection tests for data planes:',
+            dataPlanes,
+            'and stores:',
+            stores
+        );
+        // Clear previous results
+
         results.clear();
 
         const testResponse = await testConnection(
@@ -111,7 +119,7 @@ export function useConnectionTest() {
                 continue;
             }
 
-            console.log('store vs stores', result.fragmentStore, stores);
+            console.log('store:', result.fragmentStore, 'vs stores:', stores);
             const store = stores.find(
                 ({ bucket, provider }) =>
                     bucket === result.fragmentStore.bucket &&

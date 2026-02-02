@@ -9,7 +9,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
 import {
-    cloudProviderToStorageProvider,
+    CloudProvider,
     useStorageMappingService,
 } from 'src/api/storageMappingsGql';
 import {
@@ -35,14 +35,15 @@ function buildMappingFromFormData(
     'dryRun'
 > {
     const primaryDataPlane = data.data_planes[0];
-    const rawProvider =
+    const provider = (
         data.use_same_region && primaryDataPlane
             ? primaryDataPlane.cloudProvider
-            : data.provider;
+            : data.provider
+    ) as CloudProvider;
     const store = {
         bucket: data.bucket,
         prefix: data.storage_prefix,
-        provider: cloudProviderToStorageProvider(rawProvider ?? ''),
+        provider,
         region:
             data.use_same_region && primaryDataPlane
                 ? primaryDataPlane.region
@@ -105,14 +106,16 @@ function _ConfigureStorageWizard({ open, setOpen, methods }: InternalProps) {
                     const data_planes = getValues().data_planes;
                     const bucket = getValues().bucket;
                     const use_same_region = getValues().use_same_region;
-                    const provider = use_same_region
-                        ? data_planes[0]?.cloudProvider
-                        : getValues().provider;
+                    const provider = (
+                        use_same_region
+                            ? data_planes[0]?.cloudProvider
+                            : getValues().provider
+                    ) as CloudProvider;
 
                     await testAll(data_planes, [
                         {
-                            bucket: bucket,
-                            provider: cloudProviderToStorageProvider(provider),
+                            bucket,
+                            provider,
                         },
                     ]);
                     return true;
