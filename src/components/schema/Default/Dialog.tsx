@@ -58,7 +58,13 @@ export const DefaultFieldDialog = ({
         if (open) {
             // Initialize with the strategy value, converting if needed
             if (inputType === 'boolean' && typeof strategy === 'boolean') {
-                setDefaultSetting(strategy ? 'true' : 'false');
+                setDefaultSetting(
+                    strategy === true
+                        ? 'true'
+                        : strategy === false
+                          ? 'false'
+                          : undefined
+                );
             } else if (
                 inputType === 'integer' &&
                 typeof strategy === 'number'
@@ -92,7 +98,7 @@ export const DefaultFieldDialog = ({
                         options={['true', 'false']}
                         value={defaultSetting ?? ''}
                         onChange={(_, newValue) => {
-                            setDefaultSetting(Boolean(newValue === 'true'));
+                            setDefaultSetting(newValue === 'true');
                         }}
                         renderInput={(params) => (
                             <TextField
