@@ -343,7 +343,7 @@ export const useBinding_collectionsBeingBackfilled = () =>
                 state.backfilledBindings
                     // There is a chance that during rehydration that the resourceConfigs will be
                     //  empty for a little bit. This happens during materialization when a user marks
-                    //  things for backfill, edits the endpoint config, and generates a new catalog.Z
+                    //  things for backfill, edits the endpoint config, and generates a new catalog.
                     .filter((datum) =>
                         Boolean(state.resourceConfigs?.[datum]?.meta)
                     )
