@@ -1,5 +1,3 @@
-import type { ConnectionTestResult } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
-
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -13,6 +11,7 @@ import {
     Typography,
 } from '@mui/material';
 
+import { ConnectionInstructions } from './ConnectionInstructions';
 import {
     CheckCircle,
     NavArrowDown,
@@ -21,10 +20,11 @@ import {
 } from 'iconoir-react';
 
 import { DataPlaneNode } from 'src/api/dataPlanesGql';
-import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
+import {
+    ConnectionTestResult,
+    useConnectionTest,
+} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
-
-import { ConnectionInstructions } from './ConnectionInstructions';
 
 interface ConnectionStatusBadgeProps {
     result: ConnectionTestResult;

@@ -146,8 +146,3 @@ export interface StorageMappingFormData {
     use_same_region: boolean;
     allow_public: boolean;
 }
-
-export interface ConnectionTestResult {
-    status: 'idle' | 'testing' | 'success' | 'error';
-    errorMessage?: string;
-}
