@@ -1,25 +1,35 @@
-import type { GridRowSelectionModel } from '@mui/x-data-grid';
 import type { JournalRecord } from 'src/hooks/journals/types';
 import type { useJournalData } from 'src/hooks/journals/useJournalData';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Box, Grid, useTheme } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import {
+    Grid,
+    List,
+    ListItemButton,
+    ListItemText,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
-import ReactJson from '@microlink/react-json-view';
+import { Editor } from '@monaco-editor/react';
 import { JsonPointer } from 'json-ptr';
 import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 
+import { EditorResizeWrapper } from 'src/components/editor/EditorResizeWrapper';
 import ListAndDetails from 'src/components/editor/ListAndDetails';
 import Error from 'src/components/shared/Error';
 import {
-    dataGridListStyling,
-    jsonViewTheme,
+    defaultOutline,
+    monacoEditorComponentBackground,
     semiTransparentBackground,
 } from 'src/context/Theme';
+import { stringifyJSON } from 'src/services/stringify';
+
+const LIST_VIEW_HEIGHT = 425;
 
 interface PreviewJsonModeProps {
     spec: LiveSpecsQuery_details;
@@ -31,9 +41,6 @@ function ListView({
     journalData: { data, error },
 }: PreviewJsonModeProps) {
     const [selectedKey, setSelectedKey] = useState<string>('');
-    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
-        []
-    );
 
     const theme = useTheme();
     const intl = useIntl();
@@ -48,23 +55,33 @@ function ListView({
     );
 
     const rowsByKey = useMemo(() => {
-        if (error === null && !!data) {
-            return Object.assign(
-                {},
-                ...data.documents.map((record) => ({
-                    [buildRecordKey(record)]: record,
-                }))
-            ) as Record<string, JournalRecord<Record<string, any>>>;
+        if (error === null && data) {
+            return data.documents.reduce(
+                (acc, record) => {
+                    acc[buildRecordKey(record)] = record;
+                    return acc;
+                },
+                {} as Record<string, JournalRecord<Record<string, any>>>
+            );
         } else {
             return {};
         }
     }, [buildRecordKey, data, error]);
 
+    const rows = useMemo(
+        () => Object.keys(rowsByKey).map((k) => ({ key: k, id: k })),
+        [rowsByKey]
+    );
+
+    const selectedRecordJson = useMemo(
+        () => stringifyJSON(rowsByKey[selectedKey]),
+        [rowsByKey, selectedKey]
+    );
+
     useEffect(() => {
         if (!isEmpty(rowsByKey)) {
             const firstKey = Object.keys(rowsByKey)[0];
             setSelectedKey(firstKey);
-            setSelectionModel([firstKey]);
         }
     }, [rowsByKey]);
 
@@ -78,53 +95,80 @@ function ListView({
                         semiTransparentBackground[theme.palette.mode]
                     }
                     displayBorder
+                    height={LIST_VIEW_HEIGHT}
                     list={
-                        <DataGrid
-                            columns={[
-                                {
-                                    field: 'key',
-                                    headerName: intl.formatMessage({
-                                        id: 'detailsPanel.dataPreview.listView.header',
-                                    }),
-                                    flex: 1,
-                                },
-                            ]}
-                            rows={Object.entries(rowsByKey).map(([k]) => ({
-                                key: k,
-                                id: k,
-                            }))}
-                            hideFooter
-                            disableColumnSelector
-                            columnHeaderHeight={40}
-                            rowCount={data?.documents.length}
-                            onRowClick={(params) =>
-                                setSelectedKey(params.row.key)
-                            }
-                            rowSelectionModel={selectionModel}
-                            onRowSelectionModelChange={(newSelectionModel) => {
-                                setSelectionModel(newSelectionModel);
-                            }}
-                            sx={{ ...dataGridListStyling, border: 'none' }}
-                        />
+                        // BASED ON: src/components/shared/Entity/Details/History/PublicationList.tsx
+                        // I thought about making this a `styled()` component however it ended up not
+                        //  sharing much and it felt weird. If we end up having more selectable lists
+                        //  manually generated then we probably want to look into how we can make these
+                        //  reusable more (maybe just a headless hook?)
+                        <Stack>
+                            <Typography
+                                component="div"
+                                sx={{
+                                    p: 1,
+                                    fontWeight: 500,
+                                    textTransform: 'uppercase',
+                                }}
+                            >
+                                {intl.formatMessage({
+                                    id: 'detailsPanel.dataPreview.listView.header',
+                                })}
+                            </Typography>
+                            <List
+                                sx={{
+                                    ['& li.Mui-selected']: {
+                                        cursor: 'unset',
+                                    },
+                                    ['& li']: {
+                                        borderBottom: () =>
+                                            defaultOutline[theme.palette.mode],
+                                    },
+                                }}
+                            >
+                                {rows.map((row) => {
+                                    const selected = selectedKey === row.key;
+
+                                    return (
+                                        <ListItemButton
+                                            component="li"
+                                            key={`data-preview-${row.key}`}
+                                            selected={selected}
+                                            onClick={() => {
+                                                setSelectedKey(row.key);
+                                            }}
+                                        >
+                                            <ListItemText>
+                                                <Typography component="span">
+                                                    {row.key}
+                                                </Typography>
+                                            </ListItemText>
+                                        </ListItemButton>
+                                    );
+                                })}
+                            </List>
+                        </Stack>
                     }
                     details={
-                        <Box
-                            sx={{
-                                'm': 2,
-                                '& .react-json-view': {
-                                    backgroundColor: 'transparent !important',
-                                },
-                            }}
-                        >
-                            <ReactJson
-                                style={{ wordBreak: 'break-all' }}
-                                quotesOnKeys={false}
-                                src={rowsByKey[selectedKey]}
-                                theme={jsonViewTheme[theme.palette.mode]}
-                                displayObjectSize={false}
-                                displayDataTypes={false}
+                        <EditorResizeWrapper editorHeight={LIST_VIEW_HEIGHT}>
+                            <Editor
+                                defaultLanguage="json"
+                                height={`${LIST_VIEW_HEIGHT}px`}
+                                options={{
+                                    automaticLayout: true,
+                                    domReadOnly: true,
+                                    lineNumbers: 'off',
+                                    readOnly: true,
+                                }}
+                                saveViewState={false}
+                                value={selectedRecordJson}
+                                theme={
+                                    monacoEditorComponentBackground[
+                                        theme.palette.mode
+                                    ]
+                                }
                             />
-                        </Box>
+                        </EditorResizeWrapper>
                     }
                 />
             )}
