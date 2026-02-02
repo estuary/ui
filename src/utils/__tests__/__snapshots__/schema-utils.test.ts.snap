@@ -1,0 +1,4449 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": undefined,
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": undefined,
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handles redaction > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": undefined,
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": undefined,
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > handling redact > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": undefined,
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": undefined,
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:default > handles different types 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "default": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:default > handles different types 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "default": "mock value",
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:default > handles different types 3`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "default": 123,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:default > handles different types 4`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "default": true,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": undefined,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > adds a properties object to the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": undefined,
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": {
+                        "strategy": "block",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": {
+        "strategy": "block",
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation defined two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": {
+            "strategy": "block",
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "properties": {
+            "qux": {
+              "properties": {
+                "quux/corge": {
+                  "properties": {
+                    "grault": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains a mix of five, non-escaped and escaped segments 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar/baz": {
+      "properties": {
+        "qux": {
+          "properties": {
+            "quux": {
+              "properties": {
+                "corge": {
+                  "properties": {
+                    "grault/garply": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux/quux/corge": {
+          "properties": {
+            "grault/garply": {
+              "properties": {
+                "waldo/fred/plugh": {
+                  "properties": {
+                    "xyzzy/thud": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed five-degrees deep > when the pointer contains five, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "properties": {
+            "baz": {
+              "properties": {
+                "qux": {
+                  "properties": {
+                    "quux": {
+                      "redact": undefined,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "redact": undefined,
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed one-degree deep > when the pointer contains a single, non-escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "redact": undefined,
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar/baz": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains one, non-escaped segment and one, escaped segment 2`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo/bar": {
+      "properties": {
+        "baz/qux": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;
+
+exports[`setSchemaProperties:redact > updates a properties object on the schema > with a redaction annotation removed two-degrees deep > when the pointer contains two, non-escaped segments 1`] = `
+{
+  "$defs": {},
+  "$ref": "flow://connector-schema",
+  "properties": {
+    "foo": {
+      "properties": {
+        "bar": {
+          "redact": undefined,
+        },
+      },
+    },
+    "random_a": "some_string",
+    "random_b": 1,
+    "random_c": false,
+    "random_d": {
+      "properties": {},
+      "random_d_i": true,
+      "random_d_ii": {
+        "random_d_ii_a": "another_string",
+      },
+    },
+    "random_e": {
+      "random_e_i": 142,
+    },
+  },
+}
+`;

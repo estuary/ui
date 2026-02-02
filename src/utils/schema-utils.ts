@@ -13,6 +13,7 @@ import type {
     SkimProjectionResponse,
     SplitCollectionDef,
 } from 'src/types/wasm';
+import type { SetSchemaPropertiesTarget } from 'src/utils/types';
 
 import { has, isEmpty, isPlainObject, set } from 'lodash';
 
@@ -282,10 +283,7 @@ const templateSchemaProperties = (
 export const setSchemaProperties = (
     schema: any,
     pointer: string | undefined,
-    targetProperty: {
-        id: string;
-        value: object | string | number | boolean | undefined;
-    }
+    targetProperty: SetSchemaPropertiesTarget
 ): void => {
     if (!pointer) {
         return;

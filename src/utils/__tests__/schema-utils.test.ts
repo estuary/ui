@@ -1,587 +1,242 @@
 import type { Schema } from 'src/types';
+import type { SetSchemaPropertiesTarget } from 'src/utils/types';
 
 import { setSchemaProperties } from 'src/utils/schema-utils';
 
-describe('setSchemaProperties', () => {
+const getDefaultSchema = (schemaProperties?: any): Schema => {
+    let response: Schema = {
+        $defs: {},
+        $ref: 'flow://connector-schema',
+    };
+
+    if (schemaProperties) {
+        response = {
+            ...response,
+            properties: { ...schemaProperties },
+        };
+    }
+
+    return response;
+};
+
+describe('setSchemaProperties:redact', () => {
+    const redactBase: SetSchemaPropertiesTarget = {
+        id: 'redact',
+        value: undefined,
+    };
+
     let collectionSchema: Schema;
+
+    let redactRemove: SetSchemaPropertiesTarget;
+
+    let redactBlock: SetSchemaPropertiesTarget;
+
+    beforeEach(() => {
+        redactRemove = {
+            ...redactBase,
+            value: undefined,
+        };
+
+        redactBlock = {
+            ...redactBase,
+            value: { strategy: 'block' },
+        };
+    });
 
     describe('adds a properties object to the schema', () => {
         beforeEach(() => {
-            collectionSchema = {
-                $defs: {},
-                $ref: 'flow://connector-schema',
-            };
+            collectionSchema = getDefaultSchema();
         });
 
         describe('with a redaction annotation defined one-degree deep', () => {
             test('when the pointer contains a single, non-escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(collectionSchema, '/foo', redactBlock);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            redact: {
-                                strategy: 'block',
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains a single, escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo~1bar', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(collectionSchema, '/foo~1bar', redactBlock);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar': {
-                            redact: {
-                                strategy: 'block',
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation removed one-degree deep', () => {
             test('when the pointer contains a single, non-escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(collectionSchema, '/foo', redactRemove);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            redact: undefined,
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains a single, escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo~1bar', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar': {
-                            redact: undefined,
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation defined two-degrees deep', () => {
             test('when the pointer contains two, non-escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(collectionSchema, '/foo/bar', redactBlock);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            properties: {
-                                bar: {
-                                    redact: {
-                                        strategy: 'block',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains one, non-escaped segment and one, escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar~1baz', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar~1baz',
+                    redactBlock
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            properties: {
-                                'bar/baz': {
-                                    redact: {
-                                        strategy: 'block',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
 
-                collectionSchema = {
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                };
+                collectionSchema = getDefaultSchema();
 
-                setSchemaProperties(collectionSchema, '/foo~1bar/baz', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz',
+                    redactBlock
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar': {
-                            properties: {
-                                baz: {
-                                    redact: {
-                                        strategy: 'block',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains two, escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo~1bar/baz~1qux', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz~1qux',
+                    redactBlock
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar': {
-                            properties: {
-                                'baz/qux': {
-                                    redact: {
-                                        strategy: 'block',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation removed two-degrees deep', () => {
             test('when the pointer contains two, non-escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(collectionSchema, '/foo/bar', redactRemove);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            properties: {
-                                bar: {
-                                    redact: undefined,
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains one, non-escaped segment and one, escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar~1baz', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar~1baz',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            properties: {
-                                'bar/baz': {
-                                    redact: undefined,
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
 
-                collectionSchema = {
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                };
+                collectionSchema = getDefaultSchema();
 
-                setSchemaProperties(collectionSchema, '/foo~1bar/baz', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar': {
-                            properties: {
-                                baz: {
-                                    redact: undefined,
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains two, escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo~1bar/baz~1qux', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz~1qux',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar': {
-                            properties: {
-                                'baz/qux': {
-                                    redact: undefined,
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation defined five-degrees deep', () => {
             test('when the pointer contains five, non-escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar/baz/qux/quux', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar/baz/qux/quux',
+                    redactBlock
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            properties: {
-                                bar: {
-                                    properties: {
-                                        baz: {
-                                            properties: {
-                                                qux: {
-                                                    properties: {
-                                                        quux: {
-                                                            redact: {
-                                                                strategy:
-                                                                    'block',
-                                                            },
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains a mix of five, non-escaped and escaped segments', () => {
                 setSchemaProperties(
                     collectionSchema,
                     '/foo/bar~1baz/qux/quux~1corge/grault',
-                    {
-                        id: 'redact',
-                        value: { strategy: 'block' },
-                    }
+                    redactBlock
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            properties: {
-                                'bar/baz': {
-                                    properties: {
-                                        qux: {
-                                            properties: {
-                                                'quux/corge': {
-                                                    properties: {
-                                                        grault: {
-                                                            redact: {
-                                                                strategy:
-                                                                    'block',
-                                                            },
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
 
-                collectionSchema = {
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                };
+                collectionSchema = getDefaultSchema();
 
                 setSchemaProperties(
                     collectionSchema,
                     '/foo~1bar~1baz/qux/quux/corge/grault~1garply',
-                    {
-                        id: 'redact',
-                        value: { strategy: 'block' },
-                    }
+                    redactBlock
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar/baz': {
-                            properties: {
-                                qux: {
-                                    properties: {
-                                        quux: {
-                                            properties: {
-                                                corge: {
-                                                    properties: {
-                                                        'grault/garply': {
-                                                            redact: {
-                                                                strategy:
-                                                                    'block',
-                                                            },
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains five, escaped segments', () => {
                 setSchemaProperties(
                     collectionSchema,
                     '/foo~1bar/baz~1qux~1quux~1corge/grault~1garply/waldo~1fred~1plugh/xyzzy~1thud',
-                    {
-                        id: 'redact',
-                        value: { strategy: 'block' },
-                    }
+                    redactBlock
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar': {
-                            properties: {
-                                'baz/qux/quux/corge': {
-                                    properties: {
-                                        'grault/garply': {
-                                            properties: {
-                                                'waldo/fred/plugh': {
-                                                    properties: {
-                                                        'xyzzy/thud': {
-                                                            redact: {
-                                                                strategy:
-                                                                    'block',
-                                                            },
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation removed five-degrees deep', () => {
             test('when the pointer contains five, non-escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar/baz/qux/quux', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar/baz/qux/quux',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            properties: {
-                                bar: {
-                                    properties: {
-                                        baz: {
-                                            properties: {
-                                                qux: {
-                                                    properties: {
-                                                        quux: {
-                                                            redact: undefined,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains a mix of five, non-escaped and escaped segments', () => {
                 setSchemaProperties(
                     collectionSchema,
                     '/foo/bar~1baz/qux/quux~1corge/grault',
-                    {
-                        id: 'redact',
-                        value: undefined,
-                    }
+                    redactRemove
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        foo: {
-                            properties: {
-                                'bar/baz': {
-                                    properties: {
-                                        qux: {
-                                            properties: {
-                                                'quux/corge': {
-                                                    properties: {
-                                                        grault: {
-                                                            redact: undefined,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
 
-                collectionSchema = {
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                };
+                collectionSchema = getDefaultSchema();
 
                 setSchemaProperties(
                     collectionSchema,
                     '/foo~1bar~1baz/qux/quux/corge/grault~1garply',
-                    {
-                        id: 'redact',
-                        value: undefined,
-                    }
+                    redactRemove
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar/baz': {
-                            properties: {
-                                qux: {
-                                    properties: {
-                                        quux: {
-                                            properties: {
-                                                corge: {
-                                                    properties: {
-                                                        'grault/garply': {
-                                                            redact: undefined,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains five, escaped segments', () => {
                 setSchemaProperties(
                     collectionSchema,
                     '/foo~1bar/baz~1qux~1quux~1corge/grault~1garply/waldo~1fred~1plugh/xyzzy~1thud',
-                    {
-                        id: 'redact',
-                        value: undefined,
-                    }
+                    redactRemove
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        'foo/bar': {
-                            properties: {
-                                'baz/qux/quux/corge': {
-                                    properties: {
-                                        'grault/garply': {
-                                            properties: {
-                                                'waldo/fred/plugh': {
-                                                    properties: {
-                                                        'xyzzy/thud': {
-                                                            redact: undefined,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
     });
@@ -604,607 +259,238 @@ describe('setSchemaProperties', () => {
         };
 
         beforeEach(() => {
-            collectionSchema = {
-                $defs: {},
-                $ref: 'flow://connector-schema',
-                properties: { ...schemaProperties },
-            };
+            collectionSchema = getDefaultSchema(schemaProperties);
         });
 
         describe('with a redaction annotation defined one-degree deep', () => {
             test('when the pointer contains a single, non-escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(collectionSchema, '/foo', redactBlock);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            redact: {
-                                strategy: 'block',
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains a single, escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo~1bar', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(collectionSchema, '/foo~1bar', redactBlock);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar': {
-                            redact: {
-                                strategy: 'block',
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation removed one-degree deep', () => {
             test('when the pointer contains a single, non-escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(collectionSchema, '/foo', redactRemove);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            redact: undefined,
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains a single, escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo~1bar', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar': {
-                            redact: undefined,
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation defined two-degrees deep', () => {
             test('when the pointer contains two, non-escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(collectionSchema, '/foo/bar', redactBlock);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            properties: {
-                                bar: {
-                                    redact: {
-                                        strategy: 'block',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains one, non-escaped segment and one, escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar~1baz', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar~1baz',
+                    redactBlock
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            properties: {
-                                'bar/baz': {
-                                    redact: {
-                                        strategy: 'block',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
 
-                collectionSchema = {
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: { ...schemaProperties },
-                };
+                collectionSchema = getDefaultSchema(schemaProperties);
 
-                setSchemaProperties(collectionSchema, '/foo~1bar/baz', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz',
+                    redactBlock
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar': {
-                            properties: {
-                                baz: {
-                                    redact: {
-                                        strategy: 'block',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains two, escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo~1bar/baz~1qux', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz~1qux',
+                    redactBlock
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar': {
-                            properties: {
-                                'baz/qux': {
-                                    redact: {
-                                        strategy: 'block',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation removed two-degrees deep', () => {
             test('when the pointer contains two, non-escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(collectionSchema, '/foo/bar', redactRemove);
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            properties: {
-                                bar: {
-                                    redact: undefined,
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains one, non-escaped segment and one, escaped segment', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar~1baz', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar~1baz',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            properties: {
-                                'bar/baz': {
-                                    redact: undefined,
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
 
-                collectionSchema = {
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: { ...schemaProperties },
-                };
+                collectionSchema = getDefaultSchema(schemaProperties);
 
-                setSchemaProperties(collectionSchema, '/foo~1bar/baz', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar': {
-                            properties: {
-                                baz: {
-                                    redact: undefined,
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains two, escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo~1bar/baz~1qux', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz~1qux',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar': {
-                            properties: {
-                                'baz/qux': {
-                                    redact: undefined,
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation defined five-degrees deep', () => {
             test('when the pointer contains five, non-escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar/baz/qux/quux', {
-                    id: 'redact',
-                    value: { strategy: 'block' },
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar/baz/qux/quux',
+                    redactBlock
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            properties: {
-                                bar: {
-                                    properties: {
-                                        baz: {
-                                            properties: {
-                                                qux: {
-                                                    properties: {
-                                                        quux: {
-                                                            redact: {
-                                                                strategy:
-                                                                    'block',
-                                                            },
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains a mix of five, non-escaped and escaped segments', () => {
                 setSchemaProperties(
                     collectionSchema,
                     '/foo/bar~1baz/qux/quux~1corge/grault',
-                    {
-                        id: 'redact',
-                        value: { strategy: 'block' },
-                    }
+                    redactBlock
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            properties: {
-                                'bar/baz': {
-                                    properties: {
-                                        qux: {
-                                            properties: {
-                                                'quux/corge': {
-                                                    properties: {
-                                                        grault: {
-                                                            redact: {
-                                                                strategy:
-                                                                    'block',
-                                                            },
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
 
-                collectionSchema = {
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: { ...schemaProperties },
-                };
+                collectionSchema = getDefaultSchema(schemaProperties);
 
                 setSchemaProperties(
                     collectionSchema,
                     '/foo~1bar~1baz/qux/quux/corge/grault~1garply',
-                    {
-                        id: 'redact',
-                        value: { strategy: 'block' },
-                    }
+                    redactBlock
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar/baz': {
-                            properties: {
-                                qux: {
-                                    properties: {
-                                        quux: {
-                                            properties: {
-                                                corge: {
-                                                    properties: {
-                                                        'grault/garply': {
-                                                            redact: {
-                                                                strategy:
-                                                                    'block',
-                                                            },
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains five, escaped segments', () => {
                 setSchemaProperties(
                     collectionSchema,
                     '/foo~1bar/baz~1qux~1quux~1corge/grault~1garply/waldo~1fred~1plugh/xyzzy~1thud',
-                    {
-                        id: 'redact',
-                        value: { strategy: 'block' },
-                    }
+                    redactBlock
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar': {
-                            properties: {
-                                'baz/qux/quux/corge': {
-                                    properties: {
-                                        'grault/garply': {
-                                            properties: {
-                                                'waldo/fred/plugh': {
-                                                    properties: {
-                                                        'xyzzy/thud': {
-                                                            redact: {
-                                                                strategy:
-                                                                    'block',
-                                                            },
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
 
         describe('with a redaction annotation removed five-degrees deep', () => {
             test('when the pointer contains five, non-escaped segments', () => {
-                setSchemaProperties(collectionSchema, '/foo/bar/baz/qux/quux', {
-                    id: 'redact',
-                    value: undefined,
-                });
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar/baz/qux/quux',
+                    redactRemove
+                );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            properties: {
-                                bar: {
-                                    properties: {
-                                        baz: {
-                                            properties: {
-                                                qux: {
-                                                    properties: {
-                                                        quux: {
-                                                            redact: undefined,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains a mix of five, non-escaped and escaped segments', () => {
                 setSchemaProperties(
                     collectionSchema,
                     '/foo/bar~1baz/qux/quux~1corge/grault',
-                    {
-                        id: 'redact',
-                        value: undefined,
-                    }
+                    redactRemove
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        foo: {
-                            properties: {
-                                'bar/baz': {
-                                    properties: {
-                                        qux: {
-                                            properties: {
-                                                'quux/corge': {
-                                                    properties: {
-                                                        grault: {
-                                                            redact: undefined,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
 
-                collectionSchema = {
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: { ...schemaProperties },
-                };
+                collectionSchema = getDefaultSchema(schemaProperties);
 
                 setSchemaProperties(
                     collectionSchema,
                     '/foo~1bar~1baz/qux/quux/corge/grault~1garply',
-                    {
-                        id: 'redact',
-                        value: undefined,
-                    }
+                    redactRemove
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar/baz': {
-                            properties: {
-                                qux: {
-                                    properties: {
-                                        quux: {
-                                            properties: {
-                                                corge: {
-                                                    properties: {
-                                                        'grault/garply': {
-                                                            redact: undefined,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
 
             test('when the pointer contains five, escaped segments', () => {
                 setSchemaProperties(
                     collectionSchema,
                     '/foo~1bar/baz~1qux~1quux~1corge/grault~1garply/waldo~1fred~1plugh/xyzzy~1thud',
-                    {
-                        id: 'redact',
-                        value: undefined,
-                    }
+                    redactRemove
                 );
 
-                expect(collectionSchema).toStrictEqual({
-                    $defs: {},
-                    $ref: 'flow://connector-schema',
-                    properties: {
-                        ...schemaProperties,
-                        'foo/bar': {
-                            properties: {
-                                'baz/qux/quux/corge': {
-                                    properties: {
-                                        'grault/garply': {
-                                            properties: {
-                                                'waldo/fred/plugh': {
-                                                    properties: {
-                                                        'xyzzy/thud': {
-                                                            redact: undefined,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                expect(collectionSchema).toMatchSnapshot();
             });
         });
+    });
+});
+
+describe('setSchemaProperties:default', () => {
+    const defaultBase: SetSchemaPropertiesTarget = {
+        id: 'default',
+        value: undefined,
+    };
+
+    let collectionSchema: Schema;
+    let defaultUndefined: SetSchemaPropertiesTarget;
+    let defaultString: SetSchemaPropertiesTarget;
+    let defaultNumber: SetSchemaPropertiesTarget;
+    let defaultBoolean: SetSchemaPropertiesTarget;
+
+    beforeEach(() => {
+        defaultUndefined = { ...defaultBase, value: undefined };
+        defaultString = { ...defaultBase, value: 'mock value' };
+        defaultNumber = { ...defaultBase, value: 123 };
+        defaultBoolean = { ...defaultBase, value: true };
+
+        collectionSchema = getDefaultSchema();
+    });
+
+    test('handles different types', () => {
+        setSchemaProperties(collectionSchema, '/foo', defaultUndefined);
+        expect(collectionSchema).toMatchSnapshot();
+        collectionSchema = getDefaultSchema();
+
+        setSchemaProperties(collectionSchema, '/foo', defaultString);
+        expect(collectionSchema).toMatchSnapshot();
+        collectionSchema = getDefaultSchema();
+
+        setSchemaProperties(collectionSchema, '/foo', defaultNumber);
+        expect(collectionSchema).toMatchSnapshot();
+        collectionSchema = getDefaultSchema();
+
+        setSchemaProperties(collectionSchema, '/foo', defaultBoolean);
+        expect(collectionSchema).toMatchSnapshot();
     });
 });
