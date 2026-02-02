@@ -47,6 +47,13 @@ const hasReadAndWriteSchema = (spec: any) => {
     return Boolean(hasReadSchema(spec) && hasWriteSchema(spec));
 };
 
+export const getReadSchemaProperty = (collectionSpec: any) =>
+    hasReadSchema(collectionSpec)
+        ? 'readSchema'
+        : hasOwnProperty(collectionSpec, 'schema')
+          ? 'schema'
+          : undefined;
+
 export const getWriteSchemaProperty = (collectionSpec: any) =>
     hasWriteSchema(collectionSpec)
         ? 'writeSchema'

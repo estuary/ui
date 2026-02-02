@@ -450,6 +450,7 @@ export const Workflows: Record<string, string> = {
 
     'schemaEditor.default.dialog.header': `Set field default`,
     'schemaEditor.default.label': `Default Value`,
+    'schemaEditor.error.alert.defaultingDefaultError': `An issue was encountered updating the default value for this location. Please try again.`,
 
     'keyAutoComplete.keys.group.must': `Fields that always exist`,
     'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,

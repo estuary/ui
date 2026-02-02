@@ -1,7 +1,6 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { BaseRedactFieldProps } from 'src/components/projections/types';
 import type { BaseDialogProps } from 'src/types';
-import type { RedactionStrategy_Schema } from 'src/types/schemaModels';
 
 import { useEffect, useState } from 'react';
 
@@ -31,8 +30,9 @@ export const DefaultFieldDialog = ({
     const intl = useIntl();
 
     const [error, setError] = useState<PostgrestError | null>(null);
-    const [redactionStrategy, setRedactionStrategy] =
-        useState<RedactionStrategy_Schema | null>(null);
+    const [redactionStrategy, setRedactionStrategy] = useState<any | null>(
+        null
+    );
 
     useEffect(() => {
         setRedactionStrategy(
@@ -62,6 +62,10 @@ export const DefaultFieldDialog = ({
                     label={intl.formatMessage({
                         id: 'schemaEditor.default.label',
                     })}
+                    onChange={(event) => {
+                        console.log('event.target.value', event.target.value);
+                        setRedactionStrategy(event.target.value);
+                    }}
                     size="small"
                     sx={{ width: 500 }}
                 />

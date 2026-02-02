@@ -9,10 +9,9 @@ import { useIntl } from 'react-intl';
 
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import { useEditorStore_queryResponse_mutate } from 'src/components/editor/Store/hooks';
-import { useRedactionAnnotation } from 'src/hooks/projections/useRedactionAnnotation';
+import { useDefaultField } from 'src/hooks/schema/useDefaultField';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
-import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 // It should be noted that /_meta/flow_truncated and /_meta/uuid are synthetic locations.
@@ -27,7 +26,7 @@ const SaveButton = ({
 }: RedactSaveButtonProps) => {
     const intl = useIntl();
 
-    const { updateRedactionAnnotation } = useRedactionAnnotation();
+    const { updateDefaultField } = useDefaultField();
 
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate({
         localScope: true,
@@ -49,7 +48,7 @@ const SaveButton = ({
             disabled={formActive || saving}
             onClick={() => {
                 if (previousStrategy === strategy) {
-                    logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                    logRocketEvent('Schema_Edit', {
                         operation: 'redact',
                         pointer,
                         previousStrategy,
@@ -62,12 +61,12 @@ const SaveButton = ({
 
                 setSaving(true);
 
-                updateRedactionAnnotation(pointer, strategy)
+                updateDefaultField(pointer, strategy)
                     .then(
                         (response) => {
                             const dataExists = Boolean(response?.data?.[0]);
 
-                            logRocketEvent(CustomEvents.COLLECTION_SCHEMA, {
+                            logRocketEvent('Schema_Edit', {
                                 operation: 'redact',
                                 pointer,
                                 strategy,
@@ -104,7 +103,7 @@ const SaveButton = ({
                                               typeof error === 'string'
                                                   ? error
                                                   : intl.formatMessage({
-                                                        id: 'projection.error.alert.redactDefaultError',
+                                                        id: 'schemaEditor.error.alert.defaultingDefaultError',
                                                     }),
                                       };
 
