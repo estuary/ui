@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import { useEditorStore_queryResponse_mutate } from 'src/components/editor/Store/hooks';
-import { useDefaultField } from 'src/hooks/schema/useDefaultField';
+import { useRedactionAnnotation } from 'src/hooks/projections/useRedactionAnnotation';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -26,7 +26,7 @@ const SaveButton = ({
 }: RedactSaveButtonProps) => {
     const intl = useIntl();
 
-    const { updateDefaultField } = useDefaultField();
+    const { updateRedactionAnnotation } = useRedactionAnnotation();
 
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate({
         localScope: true,
@@ -61,7 +61,7 @@ const SaveButton = ({
 
                 setSaving(true);
 
-                updateDefaultField(pointer, strategy)
+                updateRedactionAnnotation(pointer, strategy)
                     .then(
                         (response) => {
                             const dataExists = Boolean(response?.data?.[0]);
@@ -103,7 +103,7 @@ const SaveButton = ({
                                               typeof error === 'string'
                                                   ? error
                                                   : intl.formatMessage({
-                                                        id: 'schemaEditor.error.alert.defaultingDefaultError',
+                                                        id: 'projection.error.alert.redactDefaultError',
                                                     }),
                                       };
 

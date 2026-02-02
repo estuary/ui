@@ -16,9 +16,8 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import SaveButton from 'src/components/projections/Redact/SaveButton';
+import { SaveButton } from 'src/components/schema/Default/SaveButton';
 import Error from 'src/components/shared/Error';
-import { translateRedactionStrategy } from 'src/utils/schema-utils';
 
 export const DefaultFieldDialog = ({
     field,
@@ -35,9 +34,7 @@ export const DefaultFieldDialog = ({
     );
 
     useEffect(() => {
-        setRedactionStrategy(
-            open ? translateRedactionStrategy(strategy) : null
-        );
+        setRedactionStrategy(open ? strategy : null);
     }, [open, strategy]);
 
     return (
@@ -89,7 +86,7 @@ export const DefaultFieldDialog = ({
                     }}
                     field={field}
                     pointer={pointer}
-                    previousStrategy={translateRedactionStrategy(strategy)}
+                    previousStrategy={strategy}
                     setError={setError}
                     strategy={redactionStrategy}
                 />

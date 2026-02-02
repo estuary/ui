@@ -244,7 +244,10 @@ interface PointerSegment {
 const templateSchemaProperties = (
     schema: CollectionSchemaAnnotations,
     rootPath: string,
-    targetProperty: { id: string; value: object | undefined },
+    targetProperty: {
+        id: string;
+        value: object | string | number | boolean | undefined;
+    },
     pointerSegments: PointerSegment[],
     targetSegment: PointerSegment
 ): void => {
@@ -279,7 +282,10 @@ const templateSchemaProperties = (
 export const setSchemaProperties = (
     schema: any,
     pointer: string | undefined,
-    targetProperty: { id: string; value: object | undefined }
+    targetProperty: {
+        id: string;
+        value: object | string | number | boolean | undefined;
+    }
 ): void => {
     if (!pointer) {
         return;

@@ -1,5 +1,4 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { RedactSaveButtonProps } from 'src/components/projections/types';
 
 import { useState } from 'react';
 
@@ -9,7 +8,7 @@ import { useIntl } from 'react-intl';
 
 import { useBindingsEditorStore } from 'src/components/editor/Bindings/Store/create';
 import { useEditorStore_queryResponse_mutate } from 'src/components/editor/Store/hooks';
-import { useRedactionAnnotation } from 'src/hooks/projections/useRedactionAnnotation';
+import { useDefaultField } from 'src/hooks/schema/useDefaultField';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -20,10 +19,10 @@ export const SaveButton = ({
     previousStrategy,
     setError,
     strategy,
-}: RedactSaveButtonProps) => {
+}: any) => {
     const intl = useIntl();
 
-    const { updateRedactionAnnotation } = useRedactionAnnotation();
+    const { updateDefaultField } = useDefaultField();
 
     const mutateDraftSpecs = useEditorStore_queryResponse_mutate({
         localScope: true,
@@ -55,7 +54,7 @@ export const SaveButton = ({
 
                 setSaving(true);
 
-                updateRedactionAnnotation(pointer, strategy)
+                updateDefaultField(pointer, strategy)
                     .then(
                         (response) => {
                             const dataExists = Boolean(response?.data?.[0]);
@@ -94,7 +93,7 @@ export const SaveButton = ({
                                               typeof error === 'string'
                                                   ? error
                                                   : intl.formatMessage({
-                                                        id: 'projection.error.alert.redactDefaultError',
+                                                        id: 'schemaEditor.error.alert.defaultingDefaultError',
                                                     }),
                                       };
 
