@@ -39,7 +39,10 @@ function CopyToClipboardButton({
             size="small"
             endIcon={icon}
             color={isCopied ? 'success' : undefined}
-            onClick={() => handleCopy(writeValue)}
+            onClick={(event) => {
+                event.stopPropagation();
+                handleCopy(writeValue);
+            }}
         >
             {children}
         </Button>
