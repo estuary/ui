@@ -11,6 +11,8 @@ export const ProjectionActions = ({
     field,
     pointer,
     redactionStrategy,
+    defaultAnnotation,
+    fieldTypes,
 }: ProjectionActionsProps) => {
     const formActive = useFormStateStore_isActive();
 
@@ -37,7 +39,8 @@ export const ProjectionActions = ({
                         disabled={formActive}
                         field={field}
                         pointer={pointer}
-                        strategy={redactionStrategy}
+                        strategy={defaultAnnotation}
+                        fieldTypes={fieldTypes}
                     />
                 ) : null}
             </Stack>

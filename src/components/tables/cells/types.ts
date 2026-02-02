@@ -60,6 +60,8 @@ export interface ProjectionActionsProps {
     field: string;
     pointer: string | undefined;
     redactionStrategy?: RedactionStrategy_Projection;
+    defaultAnnotation?: any;
+    fieldTypes?: any;
 }
 
 export interface EntityNameLinkProps {

@@ -1,5 +1,3 @@
-import type { BaseRedactFieldProps } from 'src/components/projections/types';
-
 import { useState } from 'react';
 
 import { Button } from '@mui/material';
@@ -13,7 +11,8 @@ export const DefaultFieldButton = ({
     field,
     pointer,
     strategy,
-}: BaseRedactFieldProps) => {
+    fieldTypes,
+}: any) => {
     const intl = useIntl();
 
     const [open, setOpen] = useState(false);
@@ -39,6 +38,7 @@ export const DefaultFieldButton = ({
                 pointer={pointer}
                 setOpen={setOpen}
                 strategy={strategy}
+                fieldTypes={fieldTypes}
             />
         </>
     );

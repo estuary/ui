@@ -177,6 +177,12 @@ function Row({ columns, row }: RowProps) {
                     field={row.field}
                     pointer={row.ptr}
                     redactionStrategy={row.inference?.redact}
+                    fieldTypes={row.inference.types}
+                    defaultAnnotation={
+                        row.inference?.default?.[
+                            `$serde_json::private::RawValue`
+                        ]
+                    }
                 />
             ) : isCaptureWorkflow ? (
                 <TableCell />
