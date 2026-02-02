@@ -448,6 +448,9 @@ export const Workflows: Record<string, string> = {
     'schemaEditor.editing.disabled.title': `Editing disabled`,
     'schemaEditor.editing.disabled.message': `To edit collections, disable "${optIntoDiscovery}" under "${autoDiscoverHeader}"`,
 
+    'schemaEditor.default.dialog.header': `Set field default`,
+    'schemaEditor.default.label': `Default Value`,
+
     'keyAutoComplete.keys.group.must': `Fields that always exist`,
     'keyAutoComplete.keys.group.may': `Fields that sometimes exist`,
     'keyAutoComplete.keys.invalid.message': `Field is not a valid key. Please remove or update the schema.`,

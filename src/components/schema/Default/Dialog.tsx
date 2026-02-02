@@ -1,0 +1,95 @@
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { BaseRedactFieldProps } from 'src/components/projections/types';
+import type { BaseDialogProps } from 'src/types';
+import type { RedactionStrategy_Schema } from 'src/types/schemaModels';
+
+import { useEffect, useState } from 'react';
+
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    TextField,
+} from '@mui/material';
+
+import { useIntl } from 'react-intl';
+
+import SaveButton from 'src/components/projections/Redact/SaveButton';
+import Error from 'src/components/shared/Error';
+import { translateRedactionStrategy } from 'src/utils/schema-utils';
+
+export const DefaultFieldDialog = ({
+    field,
+    open,
+    pointer,
+    setOpen,
+    strategy,
+}: BaseDialogProps & BaseRedactFieldProps) => {
+    const intl = useIntl();
+
+    const [error, setError] = useState<PostgrestError | null>(null);
+    const [redactionStrategy, setRedactionStrategy] =
+        useState<RedactionStrategy_Schema | null>(null);
+
+    useEffect(() => {
+        setRedactionStrategy(
+            open ? translateRedactionStrategy(strategy) : null
+        );
+    }, [open, strategy]);
+
+    return (
+        <Dialog maxWidth="sm" open={open} style={{ minWidth: 500 }}>
+            <DialogTitle>
+                {intl.formatMessage({
+                    id: 'schemaEditor.default.dialog.header',
+                })}
+            </DialogTitle>
+
+            <DialogContent>
+                {error ? (
+                    <Box style={{ marginBottom: 16, width: 500 }}>
+                        <Error condensed error={error} severity="error" />
+                    </Box>
+                ) : null}
+
+                <TextField
+                    InputProps={{
+                        sx: { borderRadius: 3 },
+                    }}
+                    label={intl.formatMessage({
+                        id: 'schemaEditor.default.label',
+                    })}
+                    size="small"
+                    sx={{ width: 500 }}
+                />
+            </DialogContent>
+
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        setError(null);
+                        setOpen(false);
+                    }}
+                    variant="text"
+                >
+                    {intl.formatMessage({ id: 'cta.cancel' })}
+                </Button>
+
+                <SaveButton
+                    closeDialog={() => {
+                        setError(null);
+                        setOpen(false);
+                    }}
+                    field={field}
+                    pointer={pointer}
+                    previousStrategy={translateRedactionStrategy(strategy)}
+                    setError={setError}
+                    strategy={redactionStrategy}
+                />
+            </DialogActions>
+        </Dialog>
+    );
+};

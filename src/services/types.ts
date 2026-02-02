@@ -16,7 +16,8 @@ export type KnownEvents =
     | 'WorkflowStore'
     | 'ShardsList'
     | 'evaluate_field_selection'
-    | 'Error_Silent';
+    | 'Error_Silent'
+    | 'Schema_Edit';
 
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
 //  KnownEvents type

@@ -62,4 +62,5 @@ export const CTAs: Record<string, string> = {
     'cta.inviteLink': `Invite Link`,
     'cta.redact': `Redact`,
     'cta.accept': `Accept`,
+    'cta.default': `Default`,
 };

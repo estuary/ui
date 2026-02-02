@@ -4,6 +4,7 @@ import { Stack, TableCell } from '@mui/material';
 
 import EditProjectionButton from 'src/components/projections/Edit/Button';
 import RedactFieldButton from 'src/components/projections/Redact/Button';
+import { DefaultFieldButton } from 'src/components/schema/Default';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 export const ProjectionActions = ({
@@ -24,6 +25,15 @@ export const ProjectionActions = ({
 
                 {pointer ? (
                     <RedactFieldButton
+                        disabled={formActive}
+                        field={field}
+                        pointer={pointer}
+                        strategy={redactionStrategy}
+                    />
+                ) : null}
+
+                {pointer ? (
+                    <DefaultFieldButton
                         disabled={formActive}
                         field={field}
                         pointer={pointer}
