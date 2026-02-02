@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 import { DataPlaneNode } from 'src/api/dataPlanesGql';
 import {
@@ -20,6 +20,7 @@ export type ConnectionTestResults = Map<
 interface ConnectionTestContextValue {
     catalog_prefix?: string;
     results: ConnectionTestResults;
+    setResult: (key: ConnectionTestKey, value: ConnectionTestResult) => void;
 }
 
 const defaultResult: ConnectionTestResult = { status: 'idle' };
@@ -35,13 +36,38 @@ export function ConnectionTestProvider({
     catalog_prefix?: string;
     children: React.ReactNode;
 }) {
-    const value: ConnectionTestContextValue = {
-        catalog_prefix,
-        results: new Map(),
-    };
+    const [results, setResults] = useState<ConnectionTestResults>(
+        () => new Map()
+    );
+
+    const setResult = useCallback(
+        (key: ConnectionTestKey, value: ConnectionTestResult) => {
+            const [dataPlane, store] = key;
+            setResults((prev) => {
+                const next = new Map(prev);
+                // Find existing key by value matching (Maps use reference equality)
+                for (const [existingKey] of next) {
+                    const [dp, s] = existingKey;
+                    if (
+                        dp.dataPlaneName === dataPlane.dataPlaneName &&
+                        s.bucket === store.bucket
+                    ) {
+                        next.set(existingKey, value);
+                        return next;
+                    }
+                }
+                // No existing key found, add new entry
+                next.set(key, value);
+                return next;
+            });
+        },
+        []
+    );
 
     return (
-        <ConnectionTestContext.Provider value={value}>
+        <ConnectionTestContext.Provider
+            value={{ catalog_prefix, results, setResult }}
+        >
             {children}
         </ConnectionTestContext.Provider>
     );
@@ -55,7 +81,7 @@ export function useConnectionTest() {
         );
     }
 
-    const results = context.results;
+    const { results, setResult } = context;
 
     const { testConnection, testSingleConnection } = useStorageMappingService();
 
@@ -67,14 +93,16 @@ export function useConnectionTest() {
             throw new Error('Catalog prefix is not defined in context');
         }
 
-        const results = await testConnection(
+        results.clear();
+
+        const testResponse = await testConnection(
             context.catalog_prefix,
             dataPlanes,
             stores
         );
 
-        console.log('Connection test results:', results);
-        for (const result of results) {
+        console.log('Connection test results:', testResponse);
+        for (const result of testResponse) {
             const dataPlane = dataPlanes.find(
                 (dp) => dp.dataPlaneName === result.dataPlaneName
             );
@@ -84,20 +112,23 @@ export function useConnectionTest() {
             }
 
             console.log('store vs stores', result.fragmentStore, stores);
-            const store = stores.find((s) => s.bucket === result.fragmentStore);
+            const store = stores.find(
+                ({ bucket, provider }) =>
+                    bucket === result.fragmentStore.bucket &&
+                    provider === result.fragmentStore.provider
+            );
             if (!store) {
                 console.log('No matching store found for result', result);
                 continue;
             }
 
-            for (const store of stores) {
-                console.log('Testing store:', store);
-                const key: ConnectionTestKey = [dataPlane, store];
-                context.results.set(key, {
-                    status: result.error ? 'error' : 'success',
-                    errorMessage: result.error ?? undefined,
-                });
-            }
+            const key: ConnectionTestKey = [dataPlane, store];
+            const save_me: ConnectionTestResult = {
+                status: result.error ? 'error' : 'success',
+                errorMessage: result.error ?? undefined,
+            };
+            console.log('Saving result for key', key, 'as', save_me);
+            setResult(key, save_me);
         }
     };
 
@@ -107,13 +138,14 @@ export function useConnectionTest() {
         }
 
         const key: ConnectionTestKey = [dataPlane, store];
-        context.results.set(key, { status: 'testing' });
+        setResult(key, { status: 'testing' });
         const result = await testSingleConnection(
             context.catalog_prefix,
             dataPlane,
             store
         );
-        context.results.set(key, {
+        console.log('Retry connection test result:', result);
+        setResult(key, {
             status: result.error ? 'error' : 'success',
             errorMessage: result.error ?? undefined,
         });

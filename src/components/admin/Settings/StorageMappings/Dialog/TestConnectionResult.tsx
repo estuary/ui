@@ -4,9 +4,12 @@ import { useMemo } from 'react';
 
 import { Box, Link, Stack, Typography, useTheme } from '@mui/material';
 
+import { useConnectionTest } from './ConnectionTestContext';
+import { data } from '@remix-run/router';
 import { useFormContext } from 'react-hook-form';
 
 import { useDataPlanes } from 'src/api/dataPlanesGql';
+import { cloudProviderToStorageProvider } from 'src/api/storageMappingsGql';
 import { DataPlaneAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlaneAccordion';
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
@@ -30,6 +33,7 @@ export function TestConnectionResult() {
     const theme = useTheme();
     const { getValues } = useFormContext<StorageMappingFormData>();
     const formData = getValues();
+    const { results } = useConnectionTest();
 
     const { dataPlanes: dataPlaneOptions } = useDataPlanes();
 
@@ -118,16 +122,21 @@ export function TestConnectionResult() {
             </Box>
 
             <Stack spacing={1}>
-                {formData.data_planes?.map((dataPlane) => (
-                    <DataPlaneAccordion
-                        key={dataPlane.dataPlaneName}
-                        dataPlane={dataPlane}
-                        store={{
-                            bucket: formData.bucket,
-                            provider,
-                        }}
-                    />
-                ))}
+                {Array.from(results).map(([[dataPlane, store]]) => {
+                    const provider = formData.use_same_region
+                        ? dataPlane.cloudProvider
+                        : store.provider;
+                    return (
+                        <DataPlaneAccordion
+                            key={dataPlane.dataPlaneName}
+                            dataPlane={dataPlane}
+                            store={{
+                                bucket: store.bucket,
+                                provider,
+                            }}
+                        />
+                    );
+                })}
             </Stack>
         </Stack>
     );

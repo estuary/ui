@@ -144,8 +144,12 @@ export function DataPlaneAccordion({
     const { retry, resultFor } = useConnectionTest();
     const testResult = resultFor(dataPlane, store);
 
-    const handleRetry = () => {
-        retry(dataPlane, store);
+    const handleRetry = async () => {
+        console.log('Retrying connection for', dataPlane, store);
+        try {
+            await retry(dataPlane, store);
+        } finally {
+        }
     };
 
     const [expanded, setExpanded] = useState(false);
@@ -202,7 +206,6 @@ export function DataPlaneAccordion({
                         pr: 1,
                     }}
                 >
-                    {JSON.stringify(testResult)}
                     <Typography fontWeight={600}>
                         {toPresentableName(dataPlane)}
                     </Typography>

@@ -33,7 +33,7 @@ interface CreateStorageMappingVariables {
 }
 
 interface TestConnectionHealthResult {
-    fragmentStore: string;
+    fragmentStore: FragmentStore;
     dataPlaneName: string;
     error: string | null;
 }
