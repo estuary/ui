@@ -257,11 +257,11 @@ export function toPresentableName(dp: DataPlaneNode): string {
 }
 
 export function toPresentableCloudProvider(dp: DataPlaneNode): string {
-    if (dp.cloudProvider.toLowerCase() === 'aws') {
+    if (dp.cloudProvider === 'aws') {
         return 'Amazon Web Services';
-    } else if (dp.cloudProvider.toLowerCase() === 'gcp') {
+    } else if (dp.cloudProvider === 'gcp') {
         return 'Google Cloud Platform';
-    } else if (dp.cloudProvider.toLowerCase() === 'azure') {
+    } else if (dp.cloudProvider === 'azure') {
         return 'Microsoft Azure';
     } else {
         return dp.cloudProvider;
