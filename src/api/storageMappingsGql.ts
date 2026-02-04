@@ -99,7 +99,6 @@ const CREATE_STORAGE_MAPPING = gql<
             storage: $storage
             detail: $detail
         ) {
-            created
             catalogPrefix
         }
     }

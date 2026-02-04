@@ -139,7 +139,7 @@ export function StorageCard() {
                         name="use_same_region"
                         label="Storage bucket and default data plane are in the same region"
                     />
-                    <Tooltip title="To avoid egress fees, we recommend using the same region as the default data plane.">
+                    <Tooltip title="To avoid egress fees, we recommend using the same cloud provider and region as the default data plane.">
                         <HelpCircle
                             fontSize="small"
                             style={{ cursor: 'pointer' }}

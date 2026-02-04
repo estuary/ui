@@ -2,9 +2,8 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useCallback, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 
-import { flushSync } from 'react-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
@@ -62,31 +61,8 @@ function buildMappingFromFormData(
 function _ConfigureStorageWizard({ open, setOpen, methods }: InternalProps) {
     const intl = useIntl();
     const { create } = useStorageMappingService();
-    const { testAll, results } = useConnectionTest();
+    const { testAll, results, testsPassing } = useConnectionTest();
     const { getValues, formState } = methods;
-
-    // Check if all data planes have completed testing successfully
-    const allTestsPassed = useMemo(() => {
-        const formData = getValues();
-        const dataPlanes = formData.data_planes;
-        const bucket = formData.bucket;
-        if (dataPlanes.length === 0) return false;
-        // return dataPlanes.every((dp) => {
-        //     const key = buildTestKey({
-        //         dataPlaneName: dp.dataPlaneName,
-        //         bucket,
-        //     });
-        //     return testResults.get(key)?.status === 'success';
-        // });
-        return false; // TODO: uncomment above when buildTestKey is implemented
-    }, [getValues]);
-
-    // Check if any tests are currently running
-    const anyTestRunning = useMemo(() => {
-        return Object.values(results).some(
-            (result) => result.status === 'testing'
-        );
-    }, [results]);
 
     const steps: WizardStep[] = useMemo(
         () => [
@@ -129,18 +105,10 @@ function _ConfigureStorageWizard({ open, setOpen, methods }: InternalProps) {
                     id: 'storageMappings.wizard.title.test',
                 }),
                 component: <TestConnectionResult />,
-                canProceed: () => allTestsPassed && !anyTestRunning,
+                canProceed: () => testsPassing,
             },
         ],
-        [
-            intl,
-            results,
-            formState.isValid,
-            getValues,
-            allTestsPassed,
-            anyTestRunning,
-            testAll,
-        ]
+        [intl, results, formState.isValid, getValues, testsPassing, testAll]
     );
 
     const closeDialog = () => {

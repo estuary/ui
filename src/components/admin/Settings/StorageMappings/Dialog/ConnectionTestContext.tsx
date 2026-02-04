@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useState } from 'react';
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useMemo,
+    useState,
+} from 'react';
 
 import { DataPlaneNode } from 'src/api/dataPlanesGql';
 import {
@@ -84,6 +90,13 @@ export function useConnectionTest() {
     const { results, setResult } = context;
 
     const { testConnection, testSingleConnection } = useStorageMappingService();
+
+    const testsPassing = useMemo(() => {
+        return (
+            results.size > 0 &&
+            [...results.values()].every((result) => result.status === 'success')
+        );
+    }, [results]);
 
     const testAll = async (
         dataPlanes: DataPlaneNode[],
@@ -177,6 +190,7 @@ export function useConnectionTest() {
     }
     return {
         results: context.results,
+        testsPassing,
         retry,
         testAll,
         resultFor,

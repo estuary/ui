@@ -85,7 +85,16 @@ export function WizardDialog({
         if (isLastStep) {
             // On last step, call onComplete
             if (onComplete) {
-                await onComplete();
+                try {
+                    await onComplete();
+                } catch (error) {
+                    setError(
+                        error instanceof Error
+                            ? error.message
+                            : 'An error occurred during completion'
+                    );
+                    return false;
+                }
             }
         } else {
             // Move to next step
@@ -97,6 +106,7 @@ export function WizardDialog({
 
     const goToPrevious = useCallback(() => {
         if (!isFirstStep) {
+            setError(null);
             setCurrentStep((prev) => prev - 1);
         }
     }, [isFirstStep]);
