@@ -1,12 +1,13 @@
+import type { AlertSubscriptionKey } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useState } from 'react';
 
 import { union } from 'lodash';
 
-import { deleteNotificationSubscription } from 'src/api/alerts';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useCreateAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useCreateAlertSubscription';
+import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
@@ -14,6 +15,7 @@ import { hasLength } from 'src/utils/misc-utils';
 
 export function useUpdateAlertSubscription(closeDialog: () => void) {
     const { createSubscription } = useCreateAlertSubscription();
+    const { deleteSubscription } = useDeleteAlertSubscription();
 
     const hydrate = useZustandStore<
         SelectableTableStore,
@@ -50,8 +52,8 @@ export function useUpdateAlertSubscription(closeDialog: () => void) {
         setLoading(true);
         setServerError([]);
 
-        const subscriptionsToCancel: { [K: string]: string[] } = {};
-        const subscriptionsToCreate: [string, string][] = [];
+        const subscriptionsToCancel: AlertSubscriptionKey[] = [];
+        const subscriptionsToCreate: AlertSubscriptionKey[] = [];
 
         Object.entries(updatedEmails).forEach(([key, value]) => {
             const emailsExistForPrefix = Object.hasOwn(existingEmails, key);
@@ -59,12 +61,11 @@ export function useUpdateAlertSubscription(closeDialog: () => void) {
             if (emailsExistForPrefix) {
                 existingEmails[key]
                     .filter((email) => !value.includes(email))
-                    .map((email): [string, string] => [key, email])
-                    .forEach((subscriptionMetadata) => {
-                        subscriptionsToCancel[subscriptionMetadata[0]] ??= [];
-                        subscriptionsToCancel[subscriptionMetadata[0]].push(
-                            subscriptionMetadata[1]
-                        );
+                    .forEach((email) => {
+                        subscriptionsToCancel.push({
+                            catalogPrefix: key,
+                            email,
+                        });
                     });
             }
 
@@ -76,40 +77,25 @@ export function useUpdateAlertSubscription(closeDialog: () => void) {
                     : value
             );
 
-            processedValues
-                .map((email): [string, string] => [key, email])
-                .forEach((subscriptionMetadata) => {
-                    subscriptionsToCreate.push(subscriptionMetadata);
+            processedValues.map((email) => {
+                subscriptionsToCreate.push({
+                    catalogPrefix: key,
+                    email,
                 });
+            });
         });
 
-        const subscriptionsDeleted = Object.entries(subscriptionsToCancel).map(
-            ([key, emails]) => {
-                return deleteNotificationSubscription(key, emails);
-            }
-        );
+        const subscriptionsDeleted = deleteSubscription(subscriptionsToCancel);
+        const subscriptionCreated = createSubscription(subscriptionsToCreate);
 
-        const subscriptionCreated = createSubscription(
-            subscriptionsToCreate.map(([key, email]) => ({
-                catalogPrefix: key,
-                email,
-            }))
-        );
-
-        const deleteResponses = await Promise.all(subscriptionsDeleted);
+        const deleteResponse = await subscriptionsDeleted;
         const createResponse = await subscriptionCreated;
 
         // The create could be undefined and this was easier to mark than tweak logic
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const deletionErrors = deleteResponses
+        const errors = [...createResponse, ...deleteResponse]
             .filter((r) => r?.error)
             .map((r) => r?.error);
-
-        const creationErrors = createResponse
-            .filter((r) => r?.error)
-            .map((r) => r?.error);
-
-        const errors = [...creationErrors, ...deletionErrors];
 
         if (!hasLength(errors)) {
             hydrate();

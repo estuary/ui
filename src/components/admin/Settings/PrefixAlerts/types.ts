@@ -1,9 +1,9 @@
-export interface AlertSubscriptionKeys {
+export interface AlertSubscriptionKey {
     catalogPrefix: string;
     email: string;
 }
 
-export interface AlertSubscriptionResponse extends AlertSubscriptionKeys {
+export interface AlertSubscriptionResponse extends AlertSubscriptionKey {
     id: string;
     error?: any;
     invalid?: boolean;

@@ -132,14 +132,18 @@ export interface AlertSubscription extends BaseFields {
     email: string;
 }
 
-export interface AlertSubscriptionCreateMutationInput {
-    email: string;
-    prefix: string;
+export interface AlertSubscriptionCreateMutationInput
+    extends BaseAlertSubscriptionMutationInput {
     alertTypes?: string[];
     detail?: string;
 }
 
 export interface AlertSubscriptionsBy {
+    prefix: string;
+}
+
+export interface BaseAlertSubscriptionMutationInput {
+    email: string;
     prefix: string;
 }
 

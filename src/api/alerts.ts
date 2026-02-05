@@ -9,11 +9,9 @@ import type {
     AlertSubscriptionsBy,
 } from 'src/types/gql';
 
-import pLimit from 'p-limit';
 import { gql } from 'urql';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { stringifyJSON } from 'src/services/stringify';
 import {
     defaultTableFilter,
     deleteSupabase,
@@ -24,7 +22,6 @@ import {
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
-import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
 type ReducedAlertSubscription = Pick<
     AlertSubscription,
@@ -66,38 +63,20 @@ const AlertSubscriptionCreateMutation = gql<
     }
 `;
 
-const deleteNotificationSubscription = async (
-    prefix: string,
-    emails: string[]
-) => {
-    const limiter = pLimit(3);
-    const promises = [];
-    let index = 0;
-
-    // TODO (retry) promise generator
-    const promiseGenerator = (idx: number) => {
-        return supabaseClient
-            .from(TABLES.ALERT_SUBSCRIPTIONS)
-            .delete()
-            .eq('catalog_prefix', prefix)
-            .in(
-                'email',
-                emails
-                    .slice(idx, idx + CHUNK_SIZE)
-                    .flatMap((email) => stringifyJSON(email)) // To handle if quotes were includes in the email names
-            );
-    };
-
-    while (index < emails.length) {
-        const prom = promiseGenerator(index);
-        promises.push(limiter(() => prom));
-        index = index + CHUNK_SIZE;
+const AlertSubscriptionDeleteMutation = gql<
+    { catalogPrefix: string; email: string },
+    AlertSubscriptionCreateMutationInput
+>`
+    mutation DeleteAlertSubscriptionMutation(
+        $prefix: String!
+        $email: String!
+    ) {
+        deleteAlertSubscription(prefix: $prefix, email: $email) {
+            catalogPrefix
+            email
+        }
     }
-
-    const response = await Promise.all(promises);
-    const errors = response.filter((r) => r.error);
-    return errors[0] ?? response[0];
-};
+`;
 
 const createDataProcessingNotification = (
     catalogName: string,
@@ -226,10 +205,10 @@ const getTaskNotification = async (catalogName: string) => {
 
 export {
     AlertSubscriptionCreateMutation,
+    AlertSubscriptionDeleteMutation,
     AlertSubscriptionQuery,
     createDataProcessingNotification,
     deleteDataProcessingNotification,
-    deleteNotificationSubscription,
     getNotificationSubscriptionForUser,
     getNotificationSubscriptions,
     getNotificationSubscriptionsForTable,

@@ -7,17 +7,17 @@ import { useCallback, useEffect } from 'react';
 
 import { useMutation } from 'urql';
 
-import { AlertSubscriptionCreateMutation } from 'src/api/alerts';
+import { AlertSubscriptionDeleteMutation } from 'src/api/alerts';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
-export function useCreateAlertSubscription() {
+export function useDeleteAlertSubscription() {
     const [updateSubscriptionResult, updateSubscription] = useMutation(
-        AlertSubscriptionCreateMutation
+        AlertSubscriptionDeleteMutation
     );
 
-    const createSubscription = useCallback(
+    const deleteSubscription = useCallback(
         async (
             subscriptionKeys: AlertSubscriptionKey[]
         ): Promise<AlertSubscriptionResponse[]> => {
@@ -117,5 +117,5 @@ export function useCreateAlertSubscription() {
         console.log(updateSubscriptionResult);
     }, [updateSubscriptionResult]);
 
-    return { createSubscription, updateSubscriptionResult };
+    return { deleteSubscription, updateSubscriptionResult };
 }
