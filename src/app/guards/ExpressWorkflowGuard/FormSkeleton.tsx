@@ -4,8 +4,7 @@ export const FormSkeleton = () => {
     return (
         <Grid container columns={{ xs: 4, md: 12 }} spacing={{ xs: 2 }}>
             <Grid
-                item
-                xs={12}
+                size={{ xs: 12 }}
                 style={{ display: 'flex', justifyContent: 'space-between' }}
             >
                 <Skeleton
@@ -21,8 +20,7 @@ export const FormSkeleton = () => {
             </Grid>
 
             <Grid
-                item
-                xs={12}
+                size={{ xs: 12 }}
                 style={{
                     alignItems: 'center',
                     display: 'flex',
