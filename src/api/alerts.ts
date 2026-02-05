@@ -1,10 +1,18 @@
 import type { SortingProps } from 'src/services/supabase';
-import type { AlertSubscription, DataProcessingAlert } from 'src/types';
+import type {
+    DataProcessingAlert,
+    AlertSubscription as LegacyAlertSubscription,
+} from 'src/types';
+import type {
+    AlertSubscription,
+    AlertSubscriptionCreateMutationInput,
+    AlertSubscriptionsBy,
+    AlertTypeQueryResponse,
+} from 'src/types/gql';
 
-import pLimit from 'p-limit';
+import { gql } from 'urql';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { stringifyJSON } from 'src/services/stringify';
 import {
     defaultTableFilter,
     deleteSupabase,
@@ -15,70 +23,72 @@ import {
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
-import { CHUNK_SIZE } from 'src/utils/misc-utils';
 
-interface CreateObject {
-    catalog_prefix: string;
-    email: string;
-}
+type ReducedAlertSubscription = Pick<
+    AlertSubscription,
+    'alertTypes' | 'catalogPrefix' | 'email'
+>;
 
-const createNotificationSubscription = async (
-    createObjects: CreateObject[]
-) => {
-    const limiter = pLimit(3);
-    const promises = [];
-    let index = 0;
-
-    const promiseGenerator = (idx: number) => {
-        return insertSupabase(
-            TABLES.ALERT_SUBSCRIPTIONS,
-            createObjects.slice(idx, idx + CHUNK_SIZE)
-        );
-    };
-
-    while (index < createObjects.length) {
-        const prom = promiseGenerator(index);
-        promises.push(limiter(() => prom));
-        index = index + CHUNK_SIZE;
+const AlertSubscriptionQuery = gql<
+    ReducedAlertSubscription,
+    AlertSubscriptionsBy
+>`
+    query AlertSubscriptions($prefix: String!) {
+        alertSubscriptions(by: { prefix: $prefix }) {
+            alertTypes
+            catalogPrefix
+            email
+        }
     }
+`;
 
-    const response = await Promise.all(promises);
-    const errors = response.filter((r) => r.error);
-    return errors[0] ?? response[0];
-};
-
-const deleteNotificationSubscription = async (
-    prefix: string,
-    emails: string[]
-) => {
-    const limiter = pLimit(3);
-    const promises = [];
-    let index = 0;
-
-    // TODO (retry) promise generator
-    const promiseGenerator = (idx: number) => {
-        return supabaseClient
-            .from(TABLES.ALERT_SUBSCRIPTIONS)
-            .delete()
-            .eq('catalog_prefix', prefix)
-            .in(
-                'email',
-                emails
-                    .slice(idx, idx + CHUNK_SIZE)
-                    .flatMap((email) => stringifyJSON(email)) // To handle if quotes were includes in the email names
-            );
-    };
-
-    while (index < emails.length) {
-        const prom = promiseGenerator(index);
-        promises.push(limiter(() => prom));
-        index = index + CHUNK_SIZE;
+const AlertTypeQuery = gql<AlertTypeQueryResponse>`
+    query {
+        __type(name: "AlertType") {
+            enumValues {
+                description
+                name
+            }
+        }
     }
+`;
 
-    const response = await Promise.all(promises);
-    const errors = response.filter((r) => r.error);
-    return errors[0] ?? response[0];
-};
+const AlertSubscriptionCreateMutation = gql<
+    { catalogPrefix: string; email: string },
+    AlertSubscriptionCreateMutationInput
+>`
+    mutation CreateAlertSubscriptionMutation(
+        $prefix: String!
+        $email: String!
+        $alertTypes: [String!]
+        $detail: String
+    ) {
+        createAlertSubscription(
+            prefix: $prefix
+            email: $email
+            alertTypes: $alertTypes
+            detail: $detail
+        ) {
+            catalogPrefix
+            email
+        }
+    }
+`;
+
+const AlertSubscriptionDeleteMutation = gql<
+    { catalogPrefix: string; email: string },
+    AlertSubscriptionCreateMutationInput
+>`
+    mutation DeleteAlertSubscriptionMutation(
+        $prefix: String!
+        $email: String!
+    ) {
+        deleteAlertSubscription(prefix: $prefix, email: $email) {
+            catalogPrefix
+            email
+        }
+    }
+`;
 
 const createDataProcessingNotification = (
     catalogName: string,
@@ -107,19 +117,19 @@ const deleteDataProcessingNotification = (catalogName: string) => {
     });
 };
 
-export type AlertSubscriptionQuery = Pick<
-    AlertSubscription,
+export type LegacyAlertSubscriptionQuery = Pick<
+    LegacyAlertSubscription,
     'id' | 'catalog_prefix' | 'email'
 >;
 
 export type ExistingAlertSubscriptionQuery = Pick<
-    AlertSubscription,
+    LegacyAlertSubscription,
     'catalog_prefix'
 >;
 
 export type AlertSubscriptionsExtendedQuery = Pick<
-    AlertSubscription,
-    'id' | 'updated_at' | 'catalog_prefix' | 'email'
+    LegacyAlertSubscription,
+    'id' | 'updated_at' | 'catalog_prefix' | 'email' | 'include_alert_types'
 >;
 
 export type DataProcessingAlertQuery = Pick<
@@ -138,9 +148,9 @@ const getNotificationSubscriptionForUser = async (
                 .select(`id, catalog_prefix, email`)
                 .eq('catalog_prefix', prefix)
                 .eq('email', email)
-                .returns<AlertSubscriptionQuery[]>(),
+                .returns<LegacyAlertSubscriptionQuery[]>(),
         'getNotificationSubscriptionForUser'
-    ).then(handleSuccess<AlertSubscriptionQuery[]>, handleFailure);
+    ).then(handleSuccess<LegacyAlertSubscriptionQuery[]>, handleFailure);
 
     return data;
 };
@@ -154,7 +164,9 @@ const getNotificationSubscriptionsForTable = (
     return defaultTableFilter<AlertSubscriptionsExtendedQuery>(
         supabaseClient
             .from(TABLES.ALERT_SUBSCRIPTIONS)
-            .select(`id, updated_at, catalog_prefix, email`)
+            .select(
+                `id, updated_at, catalog_prefix, email, include_alert_types`
+            )
             .like('catalog_prefix', `${catalogPrefix}%`),
         ['catalog_prefix', 'email'],
         searchQuery,
@@ -204,10 +216,12 @@ const getTaskNotification = async (catalogName: string) => {
 };
 
 export {
+    AlertSubscriptionCreateMutation,
+    AlertSubscriptionDeleteMutation,
+    AlertSubscriptionQuery,
+    AlertTypeQuery,
     createDataProcessingNotification,
-    createNotificationSubscription,
     deleteDataProcessingNotification,
-    deleteNotificationSubscription,
     getNotificationSubscriptionForUser,
     getNotificationSubscriptions,
     getNotificationSubscriptionsForTable,
