@@ -65,8 +65,8 @@ export type UserClaims =
 export interface DirectiveSettings<T> {
     token: string;
     queryFilter: (
-        queryBuilder: PostgrestFilterBuilder<any, any, any, any, any, any, any>
-    ) => PostgrestFilterBuilder<any, any, any, any, any, any, any>;
+        queryBuilder: PostgrestFilterBuilder<any, any, any, any, any>
+    ) => PostgrestFilterBuilder<any, any, any, any, any>;
     generateUserClaim: (args: any[]) => T;
     calculateStatus: (
         appliedDirective?: AppliedDirective<T> | null

@@ -1,10 +1,5 @@
 import type { CONNECTOR_NAME } from 'src/api/shared';
-import type {
-    Entity,
-    EntityWithCreateWorkflow,
-    ManualTypedPostgrestResponse,
-    Schema,
-} from 'src/types';
+import type { Entity, EntityWithCreateWorkflow, Schema } from 'src/types';
 
 export interface BaseConnectorTag {
     id: string;
@@ -28,7 +23,7 @@ export interface ConnectorTagResourceData {
     resource_spec_schema: Schema;
 }
 
-export interface ConnectorWithTag extends ManualTypedPostgrestResponse {
+export interface ConnectorWithTag {
     connector_tags: ConnectorTag[];
     id: string;
     detail: string;
@@ -82,7 +77,7 @@ export interface EvolvedCollections {
     updated_materializations: string[];
 }
 
-export interface DraftSpecsExtQuery_BySpecTypeReduced extends ManualTypedPostgrestResponse {
+export interface DraftSpecsExtQuery_BySpecTypeReduced {
     draft_id: string;
     catalog_name: string;
     spec_type: string;

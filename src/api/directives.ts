@@ -176,7 +176,7 @@ const getDirectivesByType = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    return defaultTableFilter<GrantDirective_AccessLinks>(
+    return defaultTableFilter<GrantDirective_AccessLinks[]>(
         supabaseClient
             .from(TABLES.DIRECTIVES)
             .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {

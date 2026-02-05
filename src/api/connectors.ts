@@ -27,7 +27,7 @@ const getConnectors = (
     protocol: string | null
 ) => {
     // TODO (V2 typing) - need a way to handle single vs multiple responses
-    return requiredConnectorColumnsExist<ConnectorWithTagQuery>(
+    return requiredConnectorColumnsExist<ConnectorWithTagQuery[]>(
         defaultTableFilter<ConnectorWithTagQuery>(
             supabaseClient
                 .from(TABLES.CONNECTORS)
@@ -82,7 +82,7 @@ const getConnectors_detailsFormTestPage = async (connectorId: string) => {
 const getSingleConnectorWithTag = async (connectorId: string) => {
     const data = await supabaseRetry(
         () =>
-            requiredConnectorColumnsExist<ConnectorWithTagQuery>(
+            requiredConnectorColumnsExist<ConnectorWithTagQuery[]>(
                 supabaseClient
                     .from(TABLES.CONNECTORS)
                     .select(CONNECTOR_WITH_TAG_QUERY)

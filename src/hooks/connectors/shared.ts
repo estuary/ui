@@ -1,5 +1,4 @@
 import type { CONNECTOR_NAME, CONNECTOR_RECOMMENDED } from 'src/api/shared';
-import type { ManualTypedPostgrestResponse } from 'src/types';
 
 //////////////////////////
 // useConnectors
@@ -17,7 +16,7 @@ export const CONNECTOR_QUERY = `
 /////////////////////////////////
 // useConnectorsExist
 /////////////////////////////////
-export interface ConnectorsExist extends ManualTypedPostgrestResponse {
+export interface ConnectorsExist {
     id: string;
     // FILTERING TYPES HACK
     ['connector_tags.protocol']: undefined;

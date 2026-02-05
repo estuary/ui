@@ -20,7 +20,7 @@ export interface AwsLinkEndpoint {
     service_name: string;
 }
 
-export interface BaseDataPlaneQuery extends ManualTypedPostgrestResponse {
+export interface BaseDataPlaneQuery {
     data_plane_name: string;
     id: string;
     reactor_address: string;

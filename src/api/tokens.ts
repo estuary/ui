@@ -1,6 +1,6 @@
 import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import type { SortingProps } from 'src/services/supabase';
-import type { ManualTypedPostgrestResponse, RefreshTokenData } from 'src/types';
+import type { RefreshTokenData } from 'src/types';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
@@ -34,7 +34,7 @@ const createRefreshToken = async (
 // to invalidate the token while preserving the row in the database table.
 export const INVALID_TOKEN_INTERVAL = '0 seconds';
 
-export interface RefreshTokenQuery extends ManualTypedPostgrestResponse {
+export interface RefreshTokenQuery {
     created_at: string;
     detail: string;
     id: string;

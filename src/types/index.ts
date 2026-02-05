@@ -15,13 +15,6 @@ export enum MessagePrefixes {
     MATERIALIZATION_EDIT = 'materializationEdit',
 }
 
-// TODO (typing) - as SB has updated their automagic typing we now have to
-//  handled Record<string, unknown> support. We have manually typed a bunch
-//  of stuff and this is the easiest way to handle that
-export interface ManualTypedPostgrestResponse {
-    [k: string]: unknown;
-}
-
 // TODO (typing): Consider adding a type annotation for the promise returned by
 //   the invokeSupabase() function (i.e., src/services/supabase.ts).
 export type SupabaseInvokeResponse<T> =
@@ -131,7 +124,7 @@ export interface GrantDirective {
     token: string;
 }
 
-export interface GrantDirective_AccessLinks extends ManualTypedPostgrestResponse {
+export interface GrantDirective_AccessLinks {
     id: string;
     updated_at: string;
     catalog_prefix: string;
@@ -161,7 +154,7 @@ export interface StorageMappingStore {
     prefix: string;
 }
 
-export interface StorageMappingsQuery extends ManualTypedPostgrestResponse {
+export interface StorageMappingsQuery {
     id: string;
     // detail: string;
     catalog_prefix: string;
@@ -200,7 +193,7 @@ export interface TenantHidesDataPreview {
 }
 
 export type Capability = 'admin' | 'read' | 'write';
-export interface AuthRoles extends ManualTypedPostgrestResponse {
+export interface AuthRoles {
     capability: Capability;
     role_prefix: string;
 }
@@ -295,8 +288,7 @@ export interface LiveSpecsExtBareMinimum {
     spec_type: Entity;
 }
 
-export interface LiveSpecsExtBaseQuery
-    extends LiveSpecsExtBareMinimum, ManualTypedPostgrestResponse {
+export interface LiveSpecsExtBaseQuery extends LiveSpecsExtBareMinimum {
     connector_id: string;
     connector_image_name: string | null;
     connector_image_tag: string | null;
@@ -404,7 +396,7 @@ export interface AutoDiscoverySettings {
     evolveIncompatibleCollections: boolean;
 }
 
-export interface AlertSubscription extends ManualTypedPostgrestResponse {
+export interface AlertSubscription {
     id: string;
     detail: string;
     created_at: Date;

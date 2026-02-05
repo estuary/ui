@@ -32,8 +32,8 @@ export function useQueryPoller(
     const queryPoller = useCallback(
         (
             query:
-                | PostgrestFilterBuilder<any, any, any, any, any, any, any>
-                | PostgrestTransformBuilder<any, any, any, any, any, any, any>
+                | PostgrestFilterBuilder<any, any, any, any, any>
+                | PostgrestTransformBuilder<any, any, any, any, any>
                 | Function,
             success: Function,
             failure: Function,

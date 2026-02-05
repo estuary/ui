@@ -241,12 +241,12 @@ export const isReactElement = (value: ReactNode): value is ReactElement =>
 
 export const isPostgrestFetcher = (
     value:
-        | PostgrestFilterBuilder<any, any, any, any, any, any, any>
-        | PostgrestTransformBuilder<any, any, any, any, any, any, any>
+        | PostgrestFilterBuilder<any, any, any, any, any>
+        | PostgrestTransformBuilder<any, any, any, any, any>
         | Function
 ): value is
-    | PostgrestFilterBuilder<any, any, any, any, any, any, any>
-    | PostgrestTransformBuilder<any, any, any, any, any, any, any> =>
+    | PostgrestFilterBuilder<any, any, any, any, any>
+    | PostgrestTransformBuilder<any, any, any, any, any> =>
     isObject(value) && 'throwOnError' in value;
 
 export const isGrant_UserExt = (
