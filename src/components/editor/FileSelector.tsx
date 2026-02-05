@@ -78,7 +78,7 @@ function EditorFileSelector({ localZustandScope }: Props) {
     const specs = useEditorStore_specs({ localScope: localZustandScope });
 
     const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
-        []
+        [] as GridRowSelectionModel
     );
 
     useEffect(() => {
