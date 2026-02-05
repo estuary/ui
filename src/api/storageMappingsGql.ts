@@ -3,9 +3,10 @@ import type { Client } from 'urql';
 import { useCallback } from 'react';
 
 import { DataPlaneNode } from './dataPlanesGql';
-import { gql, useClient } from 'urql';
+import { gql, useClient, useQuery } from 'urql';
 
 import { CloudProviderCodes } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
 // Cloud provider values used by consumers of this service
 export type CloudProvider = `${CloudProviderCodes}`;
@@ -114,6 +115,32 @@ const TEST_CONNECTION_HEALTH = gql<
                 fragmentStore
                 dataPlaneName
                 error
+            }
+        }
+    }
+`;
+
+interface StorageMappingsQueryResponse {
+    storageMappings: {
+        edges: {
+            cursor: string;
+            node: {
+                catalogPrefix: string;
+                storage: unknown;
+            };
+        }[];
+    };
+}
+
+const QUERY = gql<StorageMappingsQueryResponse, { underPrefix: string }>`
+    query StorageMappingQuery($underPrefix: Prefix!) {
+        storageMappings(by: { underPrefix: $underPrefix }) {
+            edges {
+                cursor
+                node {
+                    catalogPrefix
+                    storage
+                }
             }
         }
     }
@@ -283,5 +310,24 @@ export function useStorageMappingService() {
         testConnection,
         testSingleConnection,
         create,
+    };
+}
+
+export function useStorageMappings() {
+    const tenant = useTenantStore((state) => state.selectedTenant);
+
+    const [{ data, fetching, error }] = useQuery({
+        query: QUERY,
+        variables: { underPrefix: tenant },
+        pause: !tenant,
+    });
+
+    const storageMappings =
+        data?.storageMappings.edges.map((edge) => edge.node) ?? [];
+
+    return {
+        storageMappings,
+        loading: fetching,
+        error,
     };
 }

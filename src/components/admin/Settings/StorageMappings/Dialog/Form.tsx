@@ -1,22 +1,14 @@
-import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { Link, Stack, Typography } from '@mui/material';
 
-import { Link, Stack, TextField, Typography } from '@mui/material';
-
-import { useFormContext } from 'react-hook-form';
+import { PrefixCard } from './PrefixCard';
 
 import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard';
 import { StorageCard } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageCard';
-import CardWrapper from 'src/components/shared/CardWrapper';
 
 const docsUrl =
     'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';
 
 export function StorageMappingForm() {
-    const {
-        register,
-        formState: { errors },
-    } = useFormContext<StorageMappingFormData>();
-
     return (
         <>
             <Typography sx={{ mb: 4 }}>
@@ -28,19 +20,7 @@ export function StorageMappingForm() {
                 .
             </Typography>
             <Stack spacing={2}>
-                <CardWrapper>
-                    <TextField
-                        {...register('catalog_prefix', {
-                            required: 'Estuary prefix is required',
-                        })}
-                        label="Estuary Prefix"
-                        required
-                        error={!!errors.catalog_prefix}
-                        helperText={errors.catalog_prefix?.message}
-                        fullWidth
-                        size="small"
-                    />
-                </CardWrapper>
+                <PrefixCard />
                 <DataPlanesCard />
                 <StorageCard />
             </Stack>
