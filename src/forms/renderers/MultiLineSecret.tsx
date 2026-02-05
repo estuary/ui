@@ -1,6 +1,6 @@
 import type { RankedTester } from '@jsonforms/core';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import { Box, Button, Stack } from '@mui/material';
 
@@ -86,40 +86,38 @@ const MultiLineSecretRenderer = (props: any) => {
             </Stack>
 
             {isUploadOpen ? (
-                <>
-                    need to replace this here
-                </>
-                // <DropzoneDialog
-                //     open={isUploadOpen}
-                //     onSave={submitFile}
-                //     filesLimit={1}
-                //     clearOnUnmount={true}
-                //     showPreviews={false}
-                //     showPreviewsInDropzone={true}
-                //     useChipsForPreview={true}
-                //     maxFileSize={5000000} //bytes
-                //     onClose={() => setIsUploadOpen(false)}
-                //     alertSnackbarProps={{
-                //         anchorOrigin: {
-                //             horizontal: 'center',
-                //             vertical: 'top',
-                //         },
-                //         autoHideDuration: 6000,
-                //     }}
-                //     dialogProps={{
-                //         open: isUploadOpen,
-                //         sx: {
-                //             '& .MuiDropzoneArea-root': {
-                //                 'minHeight': 150,
-                //                 'padding': 5,
-                //                 '& .MuiDropzonePreviewList-root': {
-                //                     justifyContent: 'center',
-                //                 },
-                //             },
-                //         },
-                //     }}
-                // />
-            ) : null}
+                <>need to replace this here</>
+            ) : // <DropzoneDialog
+            //     open={isUploadOpen}
+            //     onSave={submitFile}
+            //     filesLimit={1}
+            //     clearOnUnmount={true}
+            //     showPreviews={false}
+            //     showPreviewsInDropzone={true}
+            //     useChipsForPreview={true}
+            //     maxFileSize={5000000} //bytes
+            //     onClose={() => setIsUploadOpen(false)}
+            //     alertSnackbarProps={{
+            //         anchorOrigin: {
+            //             horizontal: 'center',
+            //             vertical: 'top',
+            //         },
+            //         autoHideDuration: 6000,
+            //     }}
+            //     dialogProps={{
+            //         open: isUploadOpen,
+            //         sx: {
+            //             '& .MuiDropzoneArea-root': {
+            //                 'minHeight': 150,
+            //                 'padding': 5,
+            //                 '& .MuiDropzonePreviewList-root': {
+            //                     justifyContent: 'center',
+            //                 },
+            //             },
+            //         },
+            //     }}
+            // />
+            null}
         </>
     );
 };
