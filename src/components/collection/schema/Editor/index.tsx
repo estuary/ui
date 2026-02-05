@@ -1,4 +1,7 @@
-import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
+import type {
+    AllowedScopes,
+    MonacoEditorProps,
+} from 'src/components/editor/MonacoEditor/types';
 import type { Schema } from 'src/types';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -112,7 +115,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     }, [mutate, collectionInitializationDone]);
 
     const onKeyChange = useCallback(
-        async (_event, keys) => {
+        async (_event: unknown, keys: any) => {
             if (entityName) {
                 await onChange(keys, entityName, 'collection', 'key');
             }
@@ -120,7 +123,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         [onChange, entityName]
     );
 
-    const onPropertiesViewerChange = useCallback(
+    const onPropertiesViewerChange = useCallback<MonacoEditorProps['onChange']>(
         async (value: Schema, path, type, scope) => {
             await onChange(value, path, type, scope ?? 'schema');
         },
