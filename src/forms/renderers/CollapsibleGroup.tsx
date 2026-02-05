@@ -7,7 +7,6 @@ import {
     AccordionSummary,
     Box,
     Button,
-    Hidden,
     Tooltip,
     Typography,
     useTheme,
@@ -64,83 +63,85 @@ const CollapsibleGroupRenderer = ({
         uiSchemaOptions[ADVANCED] !== true ||
         false;
 
+    if (!visible) {
+        return null;
+    }
+
     return (
-        <Hidden xsUp={!visible}>
-            <Accordion
-                defaultExpanded={expand}
+        <Accordion
+            defaultExpanded={expand}
+            sx={{
+                borderBottom: expand
+                    ? 'none'
+                    : defaultOutline[theme.palette.mode],
+            }}
+        >
+            <AccordionSummary
+                expandIcon={
+                    <NavArrowDown
+                        style={{ color: theme.palette.text.primary }}
+                    />
+                }
                 sx={{
-                    borderBottom: expand
-                        ? 'none'
-                        : defaultOutline[theme.palette.mode],
+                    backgroundColor:
+                        jsonFormsGroupHeaders[theme.palette.mode],
                 }}
             >
-                <AccordionSummary
-                    expandIcon={
-                        <NavArrowDown
-                            style={{ color: theme.palette.text.primary }}
-                        />
-                    }
-                    sx={{
-                        backgroundColor:
-                            jsonFormsGroupHeaders[theme.palette.mode],
-                    }}
-                >
-                    <Typography sx={{ fontWeight: 500 }}>
-                        {uischema.label}
-                    </Typography>
-                </AccordionSummary>
+                <Typography sx={{ fontWeight: 500 }}>
+                    {uischema.label}
+                </Typography>
+            </AccordionSummary>
 
-                <AccordionDetails>
-                    {uiSchemaOptions[SHOW_INFO_SSH_ENDPOINT] === true ? (
-                        <SshEndpointInfo />
-                    ) : null}
+            <AccordionDetails>
+                {uiSchemaOptions[SHOW_INFO_SSH_ENDPOINT] === true ? (
+                    <SshEndpointInfo />
+                ) : null}
 
-                    {clearSettings ? (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'end',
-                                my: 1,
-                            }}
+                {clearSettings ? (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'end',
+                            my: 1,
+                        }}
+                    >
+                        <Tooltip
+                            title={intl.formatMessage({
+                                id: 'jsonForms.clearGroup.message',
+                            })}
                         >
-                            <Tooltip
-                                title={intl.formatMessage({
-                                    id: 'jsonForms.clearGroup.message',
-                                })}
+                            <Button
+                                disabled={
+                                    !Boolean(
+                                        uiSchemaOptions[CHILDREN_HAVE_VALUE]
+                                    )
+                                }
+                                variant="text"
+                                size="small"
+                                onClick={clearSettings}
+                                startIcon={
+                                    <Xmark style={{ fontSize: 13 }} />
+                                }
+                                sx={{
+                                    maxWidth: '75%',
+                                }}
                             >
-                                <Button
-                                    disabled={
-                                        !Boolean(
-                                            uiSchemaOptions[CHILDREN_HAVE_VALUE]
-                                        )
+                                {intl.formatMessage(
+                                    {
+                                        id: 'jsonForms.clearGroup',
+                                    },
+                                    {
+                                        label: uischema.label,
                                     }
-                                    variant="text"
-                                    size="small"
-                                    onClick={clearSettings}
-                                    startIcon={
-                                        <Xmark style={{ fontSize: 13 }} />
-                                    }
-                                    sx={{
-                                        maxWidth: '75%',
-                                    }}
-                                >
-                                    {intl.formatMessage(
-                                        {
-                                            id: 'jsonForms.clearGroup',
-                                        },
-                                        {
-                                            label: uischema.label,
-                                        }
-                                    )}
-                                </Button>
-                            </Tooltip>
-                        </Box>
-                    ) : null}
+                                )}
+                            </Button>
+                        </Tooltip>
+                    </Box>
+                ) : null}
 
-                    <MaterialLayoutRenderer {...layoutProps} />
-                </AccordionDetails>
-            </Accordion>
-        </Hidden>
+                <MaterialLayoutRenderer {...layoutProps} />
+            </AccordionDetails>
+        </Accordion>
     );
 };
 

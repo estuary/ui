@@ -25,7 +25,7 @@
 */
 import type { ControlProps } from '@jsonforms/core';
 
-import { FormControl, FormHelperText, Hidden, InputLabel } from '@mui/material';
+import { FormControl, FormHelperText, InputLabel } from '@mui/material';
 
 import { isDescriptionHidden, showAsRequired } from '@jsonforms/core';
 import { useFocus } from '@jsonforms/material-renderers';
@@ -86,65 +86,67 @@ export const CustomMaterialInputControl = (
     const secondFormHelperText = showDescription && !isValid ? errors : null;
     const InnerComponent = input;
 
-    return (
-        <Hidden xsUp={!visible}>
-            <FormControl
-                disabled={!enabled}
-                fullWidth={!appliedUiSchemaOptions.trim}
-                id={id}
-                variant="standard"
-                onBlur={onBlur}
-                onFocus={
-                    inputEvents
-                        ? (event) => {
-                              if (
-                                  endsWith(
-                                      event.target.id,
-                                      CLEAR_BUTTON_ID_SUFFIX
-                                  )
-                              ) {
-                                  // Clear button was clicked so we do not want to fire the focus event
-                                  // Return here so we do not fire the focus events. This way when a user
-                                  //  clicks on the reset button the date picker is not opened right up
-                                  return;
-                              }
+    if (!visible) {
+        return null;
+    }
 
-                              inputEvents.focus();
-                              onFocus();
+    return (
+        <FormControl
+            disabled={!enabled}
+            fullWidth={!appliedUiSchemaOptions.trim}
+            id={id}
+            variant="standard"
+            onBlur={onBlur}
+            onFocus={
+                inputEvents
+                    ? (event) => {
+                          if (
+                              endsWith(
+                                  event.target.id,
+                                  CLEAR_BUTTON_ID_SUFFIX
+                              )
+                          ) {
+                              // Clear button was clicked so we do not want to fire the focus event
+                              // Return here so we do not fire the focus events. This way when a user
+                              //  clicks on the reset button the date picker is not opened right up
+                              return;
                           }
-                        : undefined
-                }
-                onKeyDown={
-                    inputEvents
-                        ? () => {
-                              inputEvents.keyDown();
-                          }
-                        : undefined
-                }
+
+                          inputEvents.focus();
+                          onFocus();
+                      }
+                    : undefined
+            }
+            onKeyDown={
+                inputEvents
+                    ? () => {
+                          inputEvents.keyDown();
+                      }
+                    : undefined
+            }
+        >
+            <InputLabel
+                htmlFor={`${id}-input`}
+                error={!isValid}
+                required={showAsRequired(
+                    required ?? false,
+                    appliedUiSchemaOptions.hideRequiredAsterisk
+                )}
             >
-                <InputLabel
-                    htmlFor={`${id}-input`}
-                    error={!isValid}
-                    required={showAsRequired(
-                        required ?? false,
-                        appliedUiSchemaOptions.hideRequiredAsterisk
-                    )}
-                >
-                    {label}
-                </InputLabel>
-                <InnerComponent
-                    {...props}
-                    id={`${id}-input`}
-                    isValid={isValid}
-                    visible={visible}
-                />
-                <FormHelperText error={!isValid && !showDescription}>
-                    {firstFormHelperText}
-                </FormHelperText>
-                <FormHelperText error={!isValid}>
-                    {secondFormHelperText}
-                </FormHelperText>
-            </FormControl>
-        </Hidden>
+                {label}
+            </InputLabel>
+            <InnerComponent
+                {...props}
+                id={`${id}-input`}
+                isValid={isValid}
+                visible={visible}
+            />
+            <FormHelperText error={!isValid && !showDescription}>
+                {firstFormHelperText}
+            </FormHelperText>
+            <FormHelperText error={!isValid}>
+                {secondFormHelperText}
+            </FormHelperText>
+        </FormControl>
     );
 };
