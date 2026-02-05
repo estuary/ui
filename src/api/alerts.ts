@@ -7,6 +7,7 @@ import type {
     AlertSubscription,
     AlertSubscriptionCreateMutationInput,
     AlertSubscriptionsBy,
+    AlertTypeQueryResponse,
 } from 'src/types/gql';
 
 import { gql } from 'urql';
@@ -37,6 +38,17 @@ const AlertSubscriptionQuery = gql<
             alertTypes
             catalogPrefix
             email
+        }
+    }
+`;
+
+const AlertTypeQuery = gql<AlertTypeQueryResponse>`
+    query {
+        __type(name: "AlertType") {
+            enumValues {
+                description
+                name
+            }
         }
     }
 `;
@@ -207,6 +219,7 @@ export {
     AlertSubscriptionCreateMutation,
     AlertSubscriptionDeleteMutation,
     AlertSubscriptionQuery,
+    AlertTypeQuery,
     createDataProcessingNotification,
     deleteDataProcessingNotification,
     getNotificationSubscriptionForUser,

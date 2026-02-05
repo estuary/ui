@@ -1,4 +1,5 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
+import type { AlertTypeSelectorProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import {
     Autocomplete,
@@ -16,7 +17,7 @@ import { diminishedTextColor } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { UNDERSCORE_RE } from 'src/validation';
 
-const AlertTypeSelector = () => {
+const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -24,26 +25,12 @@ const AlertTypeSelector = () => {
         <FormControl fullWidth>
             <Autocomplete
                 disableCloseOnSelect
-                getOptionLabel={({ id }) => id}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={({ name }) => name}
+                isOptionEqualToValue={(option, value) =>
+                    option.name === value.name
+                }
                 multiple
-                options={[
-                    {
-                        id: 'free_trial',
-                        description:
-                            'This is a placeholder that is absolutely ridiculously long for no reason other than to wrap.',
-                    },
-                    {
-                        id: 'free_trial_ending',
-                        description: 'This is a placeholder',
-                    },
-                    { id: 'free_trial_stalled' },
-                    {
-                        id: 'missing_payment_method',
-                        description: 'This is a placeholder',
-                    },
-                    { id: 'data_movement_stalled' },
-                ]}
+                options={options}
                 renderInput={({
                     InputProps,
                     ...params
@@ -63,7 +50,7 @@ const AlertTypeSelector = () => {
                     />
                 )}
                 renderOption={(renderOptionProps, option, state) => {
-                    const { description, id } = option;
+                    const { description, name } = option;
                     return (
                         <SelectableAutocompleteOption
                             Content={
@@ -74,7 +61,7 @@ const AlertTypeSelector = () => {
                                             marginBottom: 4,
                                         }}
                                     >
-                                        {id.replace(UNDERSCORE_RE, ' ')}
+                                        {name.replace(UNDERSCORE_RE, ' ')}
                                     </Typography>
 
                                     {description ? (
@@ -96,14 +83,14 @@ const AlertTypeSelector = () => {
                     );
                 }}
                 renderTags={(values, getTagProps) => {
-                    return values.map(({ id }, index) => {
+                    return values.map(({ name }, index) => {
                         const tagProps = getTagProps({ index });
 
                         return (
                             <OutlinedChip
                                 {...tagProps}
-                                key={`alert_type-tag-${id}-${index}`}
-                                label={id.replace(UNDERSCORE_RE, ' ')}
+                                key={`alert_type-tag-${name}-${index}`}
+                                label={name.replace(UNDERSCORE_RE, ' ')}
                                 size="small"
                                 variant="outlined"
                             />

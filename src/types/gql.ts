@@ -142,6 +142,17 @@ export interface AlertSubscriptionsBy {
     prefix: string;
 }
 
+export interface AlertTypeExpanded {
+    description: string;
+    name: string;
+}
+
+export interface AlertTypeQueryResponse {
+    __type: {
+        enumValues: AlertTypeExpanded[];
+    };
+}
+
 export interface BaseAlertSubscriptionMutationInput {
     email: string;
     prefix: string;

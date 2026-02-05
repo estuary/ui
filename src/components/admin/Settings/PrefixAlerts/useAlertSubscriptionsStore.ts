@@ -1,6 +1,7 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { PrefixSubscriptionDictionary } from 'src/utils/notification-utils';
+import type { CombinedError } from 'urql';
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
@@ -11,7 +12,7 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface AlertSubscriptionState {
     existingEmails: EmailDictionary;
-    initializationError: PostgrestError | null | undefined;
+    initializationError: CombinedError | PostgrestError | null | undefined;
     initializeState: (
         prefix: string | undefined,
         subscriptions: AlertSubscriptionState['subscriptions'],
@@ -20,7 +21,7 @@ interface AlertSubscriptionState {
     inputUncommitted: boolean;
     prefix: string;
     prefixErrorsExist: boolean;
-    saveErrors: (PostgrestError | null | undefined)[];
+    saveErrors: (CombinedError | PostgrestError | null | undefined)[];
     subscriptions: PrefixSubscriptionDictionary | null | undefined;
     resetState: () => void;
     setInputUncommitted: (
