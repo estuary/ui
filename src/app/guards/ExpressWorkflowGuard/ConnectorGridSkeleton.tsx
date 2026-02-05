@@ -14,12 +14,12 @@ export const ConnectorGridSkeleton = () => {
             columns={CONNECTOR_GRID_COLUMNS}
             margin="auto"
         >
-            <Grid size={12}>
+            <Grid size={{ xs: 12 }}>
                 <Skeleton />
                 <Skeleton style={{ width: 350 }} />
             </Grid>
 
-            <Grid size={12}>
+            <Grid size={{ xs: 12 }}>
                 <Skeleton style={{ height: 37 }} />
             </Grid>
 
