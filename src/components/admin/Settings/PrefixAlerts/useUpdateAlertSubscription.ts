@@ -1,5 +1,8 @@
-import type { AlertSubscriptionKey } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type {
+    AlertSubscriptionCreateMutationInput,
+    BaseAlertSubscriptionMutationInput,
+} from 'src/types/gql';
 
 import { useState } from 'react';
 
@@ -52,8 +55,9 @@ export function useUpdateAlertSubscription(closeDialog: () => void) {
         setLoading(true);
         setServerError([]);
 
-        const subscriptionsToCancel: AlertSubscriptionKey[] = [];
-        const subscriptionsToCreate: AlertSubscriptionKey[] = [];
+        const subscriptionsToCancel: BaseAlertSubscriptionMutationInput[] = [];
+        const subscriptionsToCreate: AlertSubscriptionCreateMutationInput[] =
+            [];
 
         Object.entries(updatedEmails).forEach(([key, value]) => {
             const emailsExistForPrefix = Object.hasOwn(existingEmails, key);
@@ -63,7 +67,7 @@ export function useUpdateAlertSubscription(closeDialog: () => void) {
                     .filter((email) => !value.includes(email))
                     .forEach((email) => {
                         subscriptionsToCancel.push({
-                            catalogPrefix: key,
+                            prefix: key,
                             email,
                         });
                     });
@@ -79,7 +83,7 @@ export function useUpdateAlertSubscription(closeDialog: () => void) {
 
             processedValues.map((email) => {
                 subscriptionsToCreate.push({
-                    catalogPrefix: key,
+                    prefix: key,
                     email,
                 });
             });

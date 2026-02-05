@@ -1,9 +1,7 @@
-export interface AlertSubscriptionKey {
-    catalogPrefix: string;
-    email: string;
-}
+import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
 
-export interface AlertSubscriptionResponse extends AlertSubscriptionKey {
+export interface AlertSubscriptionResponse
+    extends BaseAlertSubscriptionMutationInput {
     id: string;
     error?: any;
     invalid?: boolean;

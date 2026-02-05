@@ -1,7 +1,5 @@
-import type {
-    AlertSubscriptionKey,
-    AlertSubscriptionResponse,
-} from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { AlertSubscriptionCreateMutationInput } from 'src/types/gql';
 
 import { useCallback, useEffect } from 'react';
 
@@ -19,10 +17,10 @@ export function useCreateAlertSubscription() {
 
     const createSubscription = useCallback(
         async (
-            subscriptionKeys: AlertSubscriptionKey[]
+            subscriptionKeys: AlertSubscriptionCreateMutationInput[]
         ): Promise<AlertSubscriptionResponse[]> => {
-            const promises = subscriptionKeys.map(({ catalogPrefix, email }) =>
-                updateSubscription({ prefix: catalogPrefix, email })
+            const promises = subscriptionKeys.map(({ prefix, email }) =>
+                updateSubscription({ prefix, email })
             );
 
             const evaluatedResponses: AlertSubscriptionResponse[] = [];
@@ -53,7 +51,7 @@ export function useCreateAlertSubscription() {
                                     response.value.operation.variables;
 
                                 evaluatedResponses.push({
-                                    catalogPrefix: prefix,
+                                    prefix,
                                     email,
                                     id: uuid,
                                     invalid: true,
@@ -76,7 +74,7 @@ export function useCreateAlertSubscription() {
                                     response.value.operation.variables;
 
                                 evaluatedResponses.push({
-                                    catalogPrefix: prefix,
+                                    prefix,
                                     email,
                                     id: uuid,
                                     invalid: true,
@@ -89,7 +87,7 @@ export function useCreateAlertSubscription() {
                                 response.value.data;
 
                             evaluatedResponses.push({
-                                catalogPrefix,
+                                prefix: catalogPrefix,
                                 email,
                                 id: uuid,
                             });
