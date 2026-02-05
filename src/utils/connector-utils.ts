@@ -18,7 +18,7 @@ import type {
     Details,
     StandardConnectorMetadata,
 } from 'src/stores/DetailsForm/types';
-import type { DekafConfig } from 'src/types';
+import type { DekafConfig, ManualTypedPostgrestResponse } from 'src/types';
 
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -102,7 +102,7 @@ export const getEndpointConfig = (
 
 // TODO (V2 typing) - query should take in filter builder better
 export const requiredConnectorColumnsExist = <
-    Response extends Record<string, unknown>,
+    Response extends ManualTypedPostgrestResponse,
 >(
     query: PostgrestFilterBuilder<any, any, any, any, any, any, any>,
     columnPrefix?: string

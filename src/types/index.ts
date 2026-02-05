@@ -19,7 +19,7 @@ export enum MessagePrefixes {
 //  handled Record<string, unknown> support. We have manually typed a bunch
 //  of stuff and this is the easiest way to handle that
 export interface ManualTypedPostgrestResponse {
-    [k: string]: undefined;
+    [k: string]: unknown;
 }
 
 // TODO (typing): Consider adding a type annotation for the promise returned by
@@ -403,7 +403,7 @@ export interface AutoDiscoverySettings {
     evolveIncompatibleCollections: boolean;
 }
 
-export interface AlertSubscription {
+export interface AlertSubscription extends ManualTypedPostgrestResponse {
     id: string;
     detail: string;
     created_at: Date;
