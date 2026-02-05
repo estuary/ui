@@ -50,7 +50,7 @@ function useInitializeTaskNotification(catalogName: string) {
 
         const response = await createSubscription([
             {
-                catalogPrefix: prefix,
+                prefix,
                 email: user.email,
             },
         ]);
