@@ -7,7 +7,7 @@ function RefreshTokenError() {
     const serverError = useRefreshTokenStore((state) => state.serverError);
 
     return serverError ? (
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
             <Error severity="error" error={serverError} condensed />
         </Grid>
     ) : null;

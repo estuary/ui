@@ -80,7 +80,7 @@ export default function ConnectorCards({
 
     if (!hasLength(selectData)) {
         return (
-            <Grid item sx={{ width: '100%' }}>
+            <Grid sx={{ width: '100%' }}>
                 <Paper
                     elevation={0}
                     sx={{

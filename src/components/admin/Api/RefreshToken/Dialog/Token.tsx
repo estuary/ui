@@ -10,7 +10,7 @@ function CopyRefreshToken() {
     const token = useRefreshTokenStore((state) => state.token);
 
     return token ? (
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
             <AlertBox severity="info" short>
                 <Typography sx={{ mb: 1 }}>
                     <FormattedMessage id="admin.cli_api.refreshToken.dialog.alert.copyToken" />

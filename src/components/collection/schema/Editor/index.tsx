@@ -134,7 +134,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         return (
             <Grid container rowGap={2}>
                 {entityType === 'collection' ? null : (
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <Stack
                             sx={{
                                 alignItems: 'start',

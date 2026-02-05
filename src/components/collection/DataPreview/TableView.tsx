@@ -101,7 +101,7 @@ function TableView({
     }
 
     return (
-        <Grid item xs={12} data-private>
+        <Grid size={{ xs: 12 }} data-private>
             <Paper
                 variant="outlined"
                 sx={{

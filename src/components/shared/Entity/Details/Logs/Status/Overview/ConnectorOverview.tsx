@@ -12,7 +12,7 @@ export default function ConnectorOverview() {
     const intl = useIntl();
 
     return (
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <CardWrapper>
                 <Stack
                     direction="row"

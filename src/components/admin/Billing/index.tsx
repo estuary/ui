@@ -134,7 +134,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             <AdminTabs />
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
-                <Grid item xs={12} md={9}>
+                <Grid size={{ xs: 12, md: 9 }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
                         {intl.formatMessage({ id: 'admin.billing.header' })}
                     </Typography>
@@ -143,9 +143,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 </Grid>
 
                 <Grid
-                    item
-                    xs={12}
-                    md={3}
+                    size={{ xs: 12, md: 3 }}
                     sx={{ display: 'flex', alignItems: 'end' }}
                 >
                     <TenantOptions />
@@ -155,7 +153,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <BillingLoadError />
 
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={intl.formatMessage({
@@ -166,7 +164,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     </CardWrapper>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={intl.formatMessage({
@@ -179,7 +177,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     </CardWrapper>
                 </Grid>
 
-                <Grid item xs={12} md={12}>
+                <Grid size={{ xs: 12, md: 12 }}>
                     <CardWrapper
                         height={invoiceCardHeight}
                         message={
@@ -219,11 +217,11 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     </CardWrapper>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <Divider sx={{ mt: 3 }} />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <ErrorBoundary
                         fallback={
                             <>

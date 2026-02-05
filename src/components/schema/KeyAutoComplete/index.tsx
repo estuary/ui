@@ -101,7 +101,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
     }
 
     return (
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={skimProjectionResponseEmpty}
