@@ -1,22 +1,25 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type {
-    AlertSubscriptionQuery,
     DataProcessingAlertQuery,
+    LegacyAlertSubscriptionQuery,
 } from 'src/api/alerts';
+import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import { useCallback, useMemo } from 'react';
 
 import {
-    createNotificationSubscription,
     getNotificationSubscriptionForUser,
     getTaskNotification,
 } from 'src/api/alerts';
+import { useCreateAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useCreateAlertSubscription';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
 function useInitializeTaskNotification(catalogName: string) {
+    const { createSubscription } = useCreateAlertSubscription();
+
     const user = useUserStore((state) => state.user);
 
     const objectRoles = useEntitiesStore_capabilities_adminable();
@@ -33,30 +36,30 @@ function useInitializeTaskNotification(catalogName: string) {
                   .sort((a, b) => b.length - a.length)[0];
     }, [catalogName, objectRoles]);
 
-    const createSubscription = useCallback(async (): Promise<{
-        data: AlertSubscriptionQuery[] | null;
+    const createAlertSubscription = useCallback(async (): Promise<{
+        data: AlertSubscriptionResponse[];
         error?: PostgrestError;
     }> => {
         if (!user?.email || !prefix) {
             // Error if the system cannot determine the user email or object roles cannot be found for the user.
             return {
-                data: null,
+                data: [],
                 error: { ...BASE_ERROR },
             };
         }
 
-        const response = await createNotificationSubscription([
+        const response = await createSubscription([
             {
-                catalog_prefix: prefix,
+                catalogPrefix: prefix,
                 email: user.email,
             },
         ]);
 
-        return response;
-    }, [prefix, user?.email]);
+        return { data: response };
+    }, [createSubscription, prefix, user?.email]);
 
     const getNotificationSubscription = useCallback(async (): Promise<{
-        data: AlertSubscriptionQuery[] | null;
+        data: LegacyAlertSubscriptionQuery[] | null;
         error?: PostgrestError;
     }> => {
         if (!user?.email || !prefix) {
@@ -103,7 +106,7 @@ function useInitializeTaskNotification(catalogName: string) {
     }, [catalogName]);
 
     return {
-        createSubscription,
+        createAlertSubscription,
         getNotifications,
         getNotificationSubscription,
     };
