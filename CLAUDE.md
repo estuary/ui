@@ -44,7 +44,6 @@ npm run test:debug      # Debug tests with inspector
 ### Type Generation
 
 ```bash
-npm run generate-supabase-types     # Generate types from Supabase schema
 npm run generate-flow-types         # Generate types from estuary/flow (requires Flow installed)
 ```
 

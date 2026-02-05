@@ -35,7 +35,6 @@
         "test:ui": "vitest --ui",
         "typecheck": "tsc --extendedDiagnostics",
         "generate-flow-types": "cd deps/flow && ./fetch-flow.sh && ./flow-bin/flowctl json-schema | ./flow-bin/flowctl schemalate typescript --name Catalog --hoist-definitions > flow.d.ts",
-        "generate-supabase-types": "node ./scripts/generateSupabaseTypes",
         "hack-in-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh",
         "hack-in-web-flow": "./deps/flow-web/hack-in-prod.sh",
         "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh"
