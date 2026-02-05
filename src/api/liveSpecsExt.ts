@@ -7,6 +7,7 @@ import type {
     Entity,
     EntityWithCreateWorkflow,
     LiveSpecsExtBaseQuery,
+    ManualTypedPostgrestResponse,
     Schema,
 } from 'src/types';
 
@@ -86,7 +87,7 @@ const getLiveSpecs_captures = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    return defaultTableFilter<CaptureQuery[]>(
+    return defaultTableFilter<CaptureQuery>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(captureColumns, {
@@ -106,7 +107,7 @@ const getLiveSpecs_materializations = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    return defaultTableFilter<MaterializationQuery[]>(
+    return defaultTableFilter<MaterializationQuery>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(materializationsColumns, {
@@ -126,7 +127,7 @@ const getLiveSpecs_collections = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    return defaultTableFilter<CollectionQuery[]>(
+    return defaultTableFilter<CollectionQuery>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(collectionColumns, {
@@ -150,7 +151,7 @@ const collectionsSelectors: Record<Entity, string> = {
     materialization: `${collectionsSelectorColumns}, reads_from`,
 };
 
-interface CollectionSelectorQuery {
+interface CollectionSelectorQuery extends ManualTypedPostgrestResponse {
     catalog_name: string;
     id: string;
     spec_type: Entity;
@@ -165,7 +166,7 @@ const getLiveSpecs_entitySelector = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    return defaultTableFilter<CollectionSelectorQuery[]>(
+    return defaultTableFilter<CollectionSelectorQuery>(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)
             .select(collectionsSelectors[specType], {
@@ -193,7 +194,7 @@ const getLiveSpecs_existingTasks = (
     const columns = taskColumns.concat(',connector_id');
 
     return defaultTableFilter<
-        CaptureQueryWithSpec[] | MaterializationQueryWithSpec[]
+        CaptureQueryWithSpec | MaterializationQueryWithSpec
     >(
         supabaseClient
             .from(TABLES.LIVE_SPECS_EXT)

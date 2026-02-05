@@ -131,7 +131,7 @@ export interface GrantDirective {
     token: string;
 }
 
-export interface GrantDirective_AccessLinks {
+export interface GrantDirective_AccessLinks extends ManualTypedPostgrestResponse {
     id: string;
     updated_at: string;
     catalog_prefix: string;
@@ -161,7 +161,7 @@ export interface StorageMappingStore {
     prefix: string;
 }
 
-export interface StorageMappingsQuery {
+export interface StorageMappingsQuery extends ManualTypedPostgrestResponse {
     id: string;
     // detail: string;
     catalog_prefix: string;
@@ -295,7 +295,8 @@ export interface LiveSpecsExtBareMinimum {
     spec_type: Entity;
 }
 
-export interface LiveSpecsExtBaseQuery extends LiveSpecsExtBareMinimum {
+export interface LiveSpecsExtBaseQuery
+    extends LiveSpecsExtBareMinimum, ManualTypedPostgrestResponse {
     connector_id: string;
     connector_image_name: string | null;
     connector_image_tag: string | null;

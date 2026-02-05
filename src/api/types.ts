@@ -82,7 +82,7 @@ export interface EvolvedCollections {
     updated_materializations: string[];
 }
 
-export interface DraftSpecsExtQuery_BySpecTypeReduced {
+export interface DraftSpecsExtQuery_BySpecTypeReduced extends ManualTypedPostgrestResponse {
     draft_id: string;
     catalog_name: string;
     spec_type: string;

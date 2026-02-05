@@ -1,4 +1,5 @@
 import type { SortingProps } from 'src/services/supabase';
+import type { ManualTypedPostgrestResponse } from 'src/types';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
@@ -19,7 +20,7 @@ export interface AwsLinkEndpoint {
     service_name: string;
 }
 
-export interface BaseDataPlaneQuery {
+export interface BaseDataPlaneQuery extends ManualTypedPostgrestResponse {
     data_plane_name: string;
     id: string;
     reactor_address: string;

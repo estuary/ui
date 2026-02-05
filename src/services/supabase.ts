@@ -376,10 +376,12 @@ export const parsePagedFetchAllResponse = <T>(
     };
 };
 
-export const pagedFetchAll = async <T extends Record<string, unknown>>(
+export const pagedFetchAll = async <T extends ManualTypedPostgrestResponse>(
     pageSize: number,
     retryKey: string,
-    fetcher: (start: number) => PostgrestFilterBuilder<any, any, T, any, any, any, any>
+    fetcher: (
+        start: number
+    ) => PostgrestFilterBuilder<any, any, T, any, any, any, any>
 ) => {
     const promises: Promise<PostgrestResponse<T>>[] = [];
     let hasMore = true;

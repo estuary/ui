@@ -20,7 +20,7 @@ const getStorageMappings = (
 ) => {
     // TODO (storage mappings) including count will make pagination work but
     //  it makes this table take around 3.3 SECONDS in production.
-    return defaultTableFilter<StorageMappingsQuery[]>(
+    return defaultTableFilter<StorageMappingsQuery>(
         supabaseClient
             .from(TABLES.STORAGE_MAPPINGS)
             .select(
