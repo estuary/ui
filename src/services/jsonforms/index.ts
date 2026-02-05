@@ -188,14 +188,14 @@ const getNullableType = (schema: JsonSchema): null | string => {
 const allOneOfOptionsContainDescription = (schema: JsonSchema): boolean => {
     return Boolean(
         schema &&
-            schema.oneOf &&
-            schema.oneOf.length > 0 &&
-            (schema.oneOf as JsonSchema[]).every(
-                (datum) =>
-                    hasOwnProperty(datum, 'const') &&
-                    hasOwnProperty(datum, 'title') &&
-                    hasOwnProperty(datum, 'description')
-            )
+        schema.oneOf &&
+        schema.oneOf.length > 0 &&
+        (schema.oneOf as JsonSchema[]).every(
+            (datum) =>
+                hasOwnProperty(datum, 'const') &&
+                hasOwnProperty(datum, 'title') &&
+                hasOwnProperty(datum, 'description')
+        )
     );
 };
 
@@ -483,7 +483,7 @@ const generateUISchema = (
                 rootSchema as JsonSchema,
                 jsonSchema.$ref,
                 rootSchema as JsonSchema
-            ),
+            ) as JsonSchema,
             schemaElements,
             currentRef,
             schemaName,
@@ -684,7 +684,7 @@ const generateUISchema = (
                         rootSchema as JsonSchema,
                         value.$ref,
                         rootSchema as JsonSchema
-                    );
+                    ) as JsonSchema;
                 }
 
                 return generateUISchema(
