@@ -12,7 +12,7 @@ import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 // Hydrator
 interface TableHydratorProps extends BaseComponentProps {
-    query: PostgrestFilterBuilder<any, any, any, any, any> | null;
+    query: PostgrestFilterBuilder<any, any, any> | null;
     selectableTableStoreName: SelectTableStoreNames;
     disableMultiSelect?: boolean;
     disableQueryParamHack?: boolean;

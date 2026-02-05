@@ -1,5 +1,4 @@
 import type { SortingProps } from 'src/services/supabase';
-import type { ManualTypedPostgrestResponse } from 'src/types';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {

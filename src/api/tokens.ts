@@ -48,7 +48,7 @@ const getRefreshTokensForTable = (
     searchQuery: any,
     sorting: SortingProps<any>[]
 ) => {
-    return defaultTableFilter<RefreshTokenQuery>(
+    return defaultTableFilter<RefreshTokenQuery[]>(
         supabaseClient
             .from(TABLES.REFRESH_TOKENS)
             .select('created_at,detail,id,multi_use,uses,valid_for', {
