@@ -72,7 +72,14 @@ export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
     false,
     'div'
 > = {
-    ...autoCompleteDefaults_Virtual,
+    // TODO TEST BEFORE MERGE
+    ...(autoCompleteDefaults_Virtual as AutocompleteProps<
+        any,
+        true,
+        false,
+        false,
+        'div'
+    >),
     multiple: true,
     blurOnSelect: false,
 };
