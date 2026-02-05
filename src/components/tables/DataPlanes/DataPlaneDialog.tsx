@@ -16,9 +16,9 @@ import {
 } from 'src/utils/cloudRegions';
 import {
     formatDataPlaneName,
+    formatIamOidc,
     generateDataPlaneOption,
 } from 'src/utils/dataPlane-utils';
-import { OPENID_HOST } from 'src/utils/misc-utils';
 
 const TITLE_ID = 'data-plane-dialog-title';
 
@@ -153,7 +153,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             label={intl.formatMessage({
                                 id: 'data.idProvider',
                             })}
-                            value={`${OPENID_HOST}/${dataPlane.data_plane_fqdn}`}
+                            value={formatIamOidc(dataPlane.data_plane_fqdn)}
                         />
                     ) : null}
                 </Stack>
