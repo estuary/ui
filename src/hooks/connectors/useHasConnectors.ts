@@ -20,7 +20,7 @@ import { requiredConnectorColumnsExist } from 'src/utils/connector-utils';
 function useValidConnectorsExist(protocol: string | null) {
     const { data } = useQuery(
         protocol
-            ? requiredConnectorColumnsExist<ConnectorsExist[]>(
+            ? requiredConnectorColumnsExist<ConnectorsExist>(
                   supabaseClient
                       .from(TABLES.CONNECTORS)
                       .select(CONNECTORS_EXIST_QUERY)

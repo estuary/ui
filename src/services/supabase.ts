@@ -5,6 +5,7 @@ import type {
 } from '@supabase/postgrest-js';
 import type {
     JobStatus,
+    ManualTypedPostgrestResponse,
     SortDirection,
     SupabaseInvokeResponse,
 } from 'src/types';
@@ -148,15 +149,25 @@ export type Pagination = { from: number; to: number };
 export type Protocol<Data> = { column: keyof Data; value: string | null };
 
 // TODO (V2 typing) - query should take in filter builder better
-export const defaultTableFilter = <Response>(
-    query: PostgrestFilterBuilder<any, any, any, any, any>,
+export const defaultTableFilter = <
+    Response extends ManualTypedPostgrestResponse,
+>(
+    query: PostgrestFilterBuilder<any, any, any, any, any, any, any>,
     searchParam: Array<keyof Response | any>, // TODO (typing) added any because of how Supabase handles keys. Hoping Supabase 2.0 fixes https://github.com/supabase/supabase-js/issues/170
     searchQuery: string | null,
     sorting: SortingProps<Response>[],
     pagination?: Pagination,
     protocol?: Protocol<Response>
-): PostgrestFilterBuilder<any, any, Response, any, any> => {
-    let queryBuilder = query as PostgrestFilterBuilder<any, any, Response>;
+): PostgrestFilterBuilder<any, any, Response, any, any, any, any> => {
+    let queryBuilder = query as PostgrestFilterBuilder<
+        any,
+        any,
+        Response,
+        any,
+        any,
+        any,
+        any
+    >;
 
     if (searchQuery) {
         queryBuilder = queryBuilder.or(
@@ -365,10 +376,10 @@ export const parsePagedFetchAllResponse = <T>(
     };
 };
 
-export const pagedFetchAll = async <T>(
+export const pagedFetchAll = async <T extends Record<string, unknown>>(
     pageSize: number,
     retryKey: string,
-    fetcher: (start: number) => any //PostgrestFilterBuilder<any, any, T, any, any>
+    fetcher: (start: number) => PostgrestFilterBuilder<any, any, T, any, any, any, any>
 ) => {
     const promises: Promise<PostgrestResponse<T>>[] = [];
     let hasMore = true;

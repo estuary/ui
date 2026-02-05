@@ -21,9 +21,9 @@ import {
 } from 'src/utils/misc-utils';
 import { checkIfPublishIsDone } from 'src/utils/publication-utils';
 
-export function useQueryPoller<T = any>(
+export function useQueryPoller(
     key: string,
-    checkIfDone: (response: T, attempts: number) => [boolean | null, T]
+    checkIfDone: (response: any, attempts: number) => [boolean | null, any]
 ) {
     const interval = useRef(DEFAULT_POLLING_INTERVAL);
     const [pollerTimeout, setPollerTimeout] =
@@ -32,8 +32,8 @@ export function useQueryPoller<T = any>(
     const queryPoller = useCallback(
         (
             query:
-                | PostgrestFilterBuilder<any, any, T, any, any>
-                | PostgrestTransformBuilder<any, any, T, any, any>
+                | PostgrestFilterBuilder<any, any, any, any, any, any, any>
+                | PostgrestTransformBuilder<any, any, any, any, any, any, any>
                 | Function,
             success: Function,
             failure: Function,
@@ -44,9 +44,7 @@ export function useQueryPoller<T = any>(
                 logRocketConsole(`Poller : ${key} : start `, { pollerTimeout });
 
                 return (
-                    isPostgrestFetcher<T>(query)
-                        ? query.throwOnError()
-                        : query()
+                    isPostgrestFetcher(query) ? query.throwOnError() : query()
                 ).then(
                     (payload: any) => {
                         timeoutCleanUp(pollerTimeout);
@@ -122,11 +120,8 @@ export function useQueryPoller<T = any>(
     return queryPoller;
 }
 
-function useJobStatusPoller<T = any>() {
-    const jobStatusPoller = useQueryPoller<T>(
-        'JobStatus',
-        checkIfPublishIsDone
-    );
+function useJobStatusPoller() {
+    const jobStatusPoller = useQueryPoller('JobStatus', checkIfPublishIsDone);
     return useMemo(() => ({ jobStatusPoller }), [jobStatusPoller]);
 }
 
