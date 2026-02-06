@@ -101,7 +101,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
     }
 
     return (
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
                 disabled={skimProjectionResponseEmpty}
@@ -144,7 +144,12 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                                 : 'keyAutoComplete.keys.group.may',
                     });
 
-                    return { key, group: readableGroup, children } as ReactNode;
+                    // TODO TESTING BEFORE MERGING
+                    return {
+                        key,
+                        group: readableGroup,
+                        children,
+                    } as unknown as ReactNode;
                 }}
                 renderInput={(params) => {
                     return (

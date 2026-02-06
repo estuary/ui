@@ -42,7 +42,9 @@ function TimePickerCTA(props: PickerProps) {
                         }
                     }
                 }}
-                onAccept={state.close}
+                onAccept={(_value) => {
+                    state.close();
+                }}
             />
         </DateOrTimePickerWrapper>
     );

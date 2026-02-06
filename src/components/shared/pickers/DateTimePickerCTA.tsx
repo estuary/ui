@@ -41,9 +41,10 @@ const formatDate = (formatValue: Date) => {
     }
 };
 
-export function CustomLayout(props: PickersLayoutProps<any, any, any>) {
+export function CustomLayout(props: PickersLayoutProps<any>) {
     const intl = useIntl();
-    const { shortcuts, toolbar, tabs, content } = usePickerLayout(props);
+    const { shortcuts, toolbar, tabs, content, ownerState } =
+        usePickerLayout(props);
 
     let currentStep = '';
     if (isReactElement(content)) {
@@ -53,39 +54,42 @@ export function CustomLayout(props: PickersLayoutProps<any, any, any>) {
     return (
         <PickersLayoutRoot
             ownerState={{
-                isLandscape: false,
+                ...ownerState,
+                pickerOrientation: 'portrait',
             }}
         >
             {toolbar}
             {shortcuts}
-            <PickersLayoutContentWrapper>
-                {tabs}
-                {content}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        marginBottom: 2,
-                        marginX: 1,
-                        textTransform: 'capitalize',
-                    }}
-                >
-                    <Typography variant="caption">
-                        {intl.formatMessage(
-                            {
-                                id: 'dateTimePicker.picker.currentStep',
-                            },
-                            { currentStep }
-                        )}
-                    </Typography>
+            <PickersLayoutContentWrapper ownerState={ownerState}>
+                <>
+                    {tabs}
+                    {content}
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: 2,
+                            marginX: 1,
+                            textTransform: 'capitalize',
+                        }}
+                    >
+                        <Typography variant="caption">
+                            {intl.formatMessage(
+                                {
+                                    id: 'dateTimePicker.picker.currentStep',
+                                },
+                                { currentStep }
+                            )}
+                        </Typography>
 
-                    <Typography variant="caption">
-                        {intl.formatMessage({
-                            id: 'dateTimePicker.picker.footer',
-                        })}
-                    </Typography>
-                </Box>
+                        <Typography variant="caption">
+                            {intl.formatMessage({
+                                id: 'dateTimePicker.picker.footer',
+                            })}
+                        </Typography>
+                    </Box>
+                </>
             </PickersLayoutContentWrapper>
         </PickersLayoutRoot>
     );

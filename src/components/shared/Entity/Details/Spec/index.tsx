@@ -100,7 +100,7 @@ function Spec() {
             }
         >
             <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <Stack spacing={2}>
                         {entityType === 'collection' ? (
                             <CollectionSpecViews presentation={presentation} />

@@ -150,7 +150,7 @@ function DiffViewer() {
                     ...editorToolBarSx,
                 }}
             >
-                <Grid item xs={6}>
+                <Grid size={{ xs: 6 }}>
                     <Box
                         sx={{
                             borderLeft: `${historyCompareBorder} ${
@@ -166,7 +166,7 @@ function DiffViewer() {
                         </Typography>
                     </Box>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={{ xs: 6 }}>
                     <Box
                         sx={{
                             borderLeft: `${historyCompareBorder} ${

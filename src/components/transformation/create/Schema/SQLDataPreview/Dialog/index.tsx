@@ -13,7 +13,6 @@ import {
 
 import { FormattedMessage } from 'react-intl';
 
-import DataPreview from 'src/components/transformation/create/Schema/SQLDataPreview/Dialog/DataPreview';
 import { defaultOutline } from 'src/context/Theme';
 import { useTransformationCreate_name } from 'src/stores/TransformationCreate/hooks';
 
@@ -62,7 +61,7 @@ function SQLDataPreviewDialog({ open, setOpen }: Props) {
                             defaultOutline[theme.palette.mode],
                     }}
                 >
-                    <DataPreview />
+                    Data Preview needs Rebuilt
                 </Box>
             </DialogContent>
 
