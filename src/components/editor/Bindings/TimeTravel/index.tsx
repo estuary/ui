@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import TimeTravelForm from 'src/components/editor/Bindings/TimeTravel/Form';
 
@@ -10,18 +10,23 @@ interface Props {
 }
 
 function TimeTravel({ bindingUUID, collectionName }: Props) {
+    const intl = useIntl();
     return (
         <Box sx={{ mt: 3, mb: 5 }}>
             <Stack>
                 <Stack spacing={1} sx={{ mb: 2 }}>
                     <Stack direction="row">
                         <Typography style={{ fontWeight: 500 }}>
-                            <FormattedMessage id="notBeforeNotAfter.header" />
+                            {intl.formatMessage({
+                                id: 'notBeforeNotAfter.header',
+                            })}
                         </Typography>
                     </Stack>
 
                     <Typography>
-                        <FormattedMessage id="notBeforeNotAfter.message" />
+                        {intl.formatMessage({
+                            id: 'notBeforeNotAfter.message',
+                        })}
                     </Typography>
                 </Stack>
 
