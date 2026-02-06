@@ -21,7 +21,7 @@ interface Props {
 
 // TODO (time travel)
 // So I started making this able to be done outside of JSON Forms in case we wanted super custom styling
-//      however, we are not currently (Q4 2023) going after that. Also, this became a huge page when it came time to
+//      however, we are not currently (Q4 2023) going after that. Also, this became a huge pain when it came time to
 //      validate the inputs as that is basically just duplicating what JSONForms helps us with already.
 //  In the future this might be used again so leaving it here. Also, I never fully made the validation work. To make this all
 //      nice we should probably create a reusable input that is based on the PrefixedName one... but that seems like a lot of work
