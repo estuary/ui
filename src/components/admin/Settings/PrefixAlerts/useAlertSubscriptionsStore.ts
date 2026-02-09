@@ -1,5 +1,6 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { AlertTypeExpanded } from 'src/types/gql';
 import type { PrefixSubscriptionDictionary } from 'src/utils/notification-utils';
 import type { CombinedError } from 'urql';
 
@@ -8,6 +9,7 @@ import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface AlertSubscriptionState {
@@ -24,6 +26,7 @@ interface AlertSubscriptionState {
     saveErrors: (CombinedError | PostgrestError | null | undefined)[];
     subscriptions: PrefixSubscriptionDictionary | null | undefined;
     resetState: () => void;
+    setAlertTypes: (values: AlertTypeExpanded[]) => void;
     setInputUncommitted: (
         value: AlertSubscriptionState['inputUncommitted']
     ) => void;
@@ -92,6 +95,24 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                 ),
 
             resetState: () => set(getInitialState(), false, 'state reset'),
+
+            setAlertTypes: (values) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (
+                            state.prefix.length === 0 ||
+                            !state.subscriptions ||
+                            !hasOwnProperty(state.subscriptions, state.prefix)
+                        ) {
+                            return;
+                        }
+
+                        state.subscriptions[state.prefix].alertTypes =
+                            values.map(({ name }) => name);
+                    }),
+                    false,
+                    'input uncommitted set'
+                ),
 
             setInputUncommitted: (value) =>
                 set(

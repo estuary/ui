@@ -12,14 +12,30 @@ import {
 
 import { useIntl } from 'react-intl';
 
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
 import { diminishedTextColor } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import { UNDERSCORE_RE } from 'src/validation';
 
 const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
     const intl = useIntl();
     const theme = useTheme();
+
+    const alertTypes = useAlertSubscriptionsStore((state) => {
+        const alertNames =
+            state.prefix.length > 0 &&
+            state.subscriptions &&
+            hasOwnProperty(state.subscriptions, state.prefix)
+                ? state.subscriptions[state.prefix].alertTypes
+                : [];
+
+        return options.filter(({ name }) => alertNames.includes(name));
+    });
+    const setAlertTypes = useAlertSubscriptionsStore(
+        (state) => state.setAlertTypes
+    );
 
     return (
         <FormControl fullWidth>
@@ -30,6 +46,9 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                     option.name === value.name
                 }
                 multiple
+                onChange={(_event, values) => {
+                    setAlertTypes(values);
+                }}
                 options={options}
                 renderInput={({
                     InputProps,
@@ -97,6 +116,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                         );
                     });
                 }}
+                value={alertTypes}
             />
         </FormControl>
     );
