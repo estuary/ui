@@ -1,6 +1,6 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
-import type { AlertTypeExpanded } from 'src/types/gql';
+import type { AlertTypeDef } from 'src/types/gql';
 import type { PrefixSubscriptionDictionary } from 'src/utils/notification-utils';
 import type { CombinedError } from 'urql';
 
@@ -26,7 +26,7 @@ interface AlertSubscriptionState {
     saveErrors: (CombinedError | PostgrestError | null | undefined)[];
     subscriptions: PrefixSubscriptionDictionary | null | undefined;
     resetState: () => void;
-    setAlertTypes: (values: AlertTypeExpanded[]) => void;
+    setAlertTypes: (values: AlertTypeDef[]) => void;
     setInputUncommitted: (
         value: AlertSubscriptionState['inputUncommitted']
     ) => void;

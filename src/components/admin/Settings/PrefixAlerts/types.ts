@@ -1,5 +1,5 @@
 import type {
-    AlertTypeExpanded,
+    AlertTypeDef,
     BaseAlertSubscriptionMutationInput,
 } from 'src/types/gql';
 
@@ -11,7 +11,7 @@ export interface AlertSubscriptionResponse
 }
 
 export interface AlertTypeSelectorProps {
-    options: AlertTypeExpanded[];
+    options: AlertTypeDef[];
 }
 
 export interface EmailDictionary {

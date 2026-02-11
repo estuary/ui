@@ -142,14 +142,14 @@ export interface AlertSubscriptionsBy {
     prefix: string;
 }
 
-export interface AlertTypeExpanded {
+export interface AlertTypeDef {
     description: string;
     name: string;
 }
 
 export interface AlertTypeQueryResponse {
     __type: {
-        enumValues: AlertTypeExpanded[];
+        enumValues: AlertTypeDef[];
     };
 }
 
