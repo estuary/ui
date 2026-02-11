@@ -1,6 +1,9 @@
 import type { Schema } from 'src/types';
 
-import { setSchemaProperties } from 'src/utils/schema-utils';
+import {
+    checkRedactionPointer,
+    setSchemaProperties,
+} from 'src/utils/schema-utils';
 
 describe('setSchemaProperties', () => {
     let collectionSchema: Schema;
@@ -1204,6 +1207,179 @@ describe('setSchemaProperties', () => {
                         },
                     },
                 });
+            });
+        });
+    });
+});
+
+describe('checkRedactionPointer', () => {
+    let expectedToBe = '';
+
+    describe('returns "prevent"', () => {
+        beforeEach(() => {
+            expectedToBe = 'prevent';
+        });
+
+        test('when pointer is null', () => {
+            expect(checkRedactionPointer(null)).toBe(expectedToBe);
+        });
+
+        test('when pointer is undefined', () => {
+            expect(checkRedactionPointer(undefined)).toBe(expectedToBe);
+        });
+
+        test('when pointer is an empty string', () => {
+            expect(checkRedactionPointer('')).toBe(expectedToBe);
+        });
+
+        test('when pointer is exactly "/_meta"', () => {
+            expect(checkRedactionPointer('/_meta')).toBe(expectedToBe);
+        });
+
+        test('when pointer is exactly "/_meta/uuid"', () => {
+            expect(checkRedactionPointer('/_meta/uuid')).toBe(expectedToBe);
+        });
+    });
+
+    describe('returns "allowed"', () => {
+        beforeEach(() => {
+            expectedToBe = 'allowed';
+        });
+
+        describe('when pointer is within "/_meta/before"', () => {
+            test('when pointer is exactly "/_meta/before"', () => {
+                expect(checkRedactionPointer('/_meta/before')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('when pointer starts with "/_meta/before" and has additional segments', () => {
+                expect(checkRedactionPointer('/_meta/before/foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('when pointer starts with "/_meta/before" with deeply nested path', () => {
+                expect(checkRedactionPointer('/_meta/before/foo/bar/baz')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('when pointer starts with "/_meta/before" with escaped characters', () => {
+                expect(checkRedactionPointer('/_meta/before/foo~1bar')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+
+        describe('when pointer is a normal field path', () => {
+            test('when pointer is a simple top-level field', () => {
+                expect(checkRedactionPointer('/foo')).toBe(expectedToBe);
+            });
+
+            test('when pointer is a nested field', () => {
+                expect(checkRedactionPointer('/foo/bar')).toBe(expectedToBe);
+            });
+
+            test('when pointer is deeply nested', () => {
+                expect(checkRedactionPointer('/foo/bar/baz/qux/quux')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('when pointer contains escaped characters', () => {
+                expect(checkRedactionPointer('/foo~1bar')).toBe(expectedToBe);
+            });
+
+            test('when pointer contains multiple escaped segments', () => {
+                expect(checkRedactionPointer('/foo~1bar/baz~1qux')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+
+        describe('edge cases', () => {
+            test('when pointer has no leading slash', () => {
+                expect(checkRedactionPointer('foo')).toBe(expectedToBe);
+            });
+
+            test('when pointer is just a slash', () => {
+                expect(checkRedactionPointer('/')).toBe(expectedToBe);
+            });
+
+            test('when pointer has trailing slash', () => {
+                expect(checkRedactionPointer('/foo/')).toBe(expectedToBe);
+            });
+
+            test('when pointer starts with multiple slashes', () => {
+                expect(checkRedactionPointer('//foo')).toBe(expectedToBe);
+            });
+
+            test('when pointer is case-sensitive for "_meta"', () => {
+                // The function uses startsWith and includes which are case-sensitive
+                expect(checkRedactionPointer('/_Meta')).toBe(expectedToBe);
+                expect(checkRedactionPointer('/_META')).toBe(expectedToBe);
+            });
+
+            test('when pointer is "/_meta/beforee" (extra char, still starts with allowed prefix)', () => {
+                // This starts with "/_meta/before" so it's allowed
+                expect(checkRedactionPointer('/_meta/beforee')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('when pointer contains spaces', () => {
+                expect(checkRedactionPointer('/foo bar')).toBe(expectedToBe);
+            });
+
+            test('when pointer contains special characters', () => {
+                expect(checkRedactionPointer('/foo-bar_baz.qux')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+    });
+
+    describe('returns "warning"', () => {
+        beforeEach(() => {
+            expectedToBe = 'warning';
+        });
+
+        describe('when pointer starts with warning prefixes but is not prevented or allowed', () => {
+            test('when pointer starts with "/_meta" but is not an exact prevent match', () => {
+                expect(checkRedactionPointer('/_meta/foo')).toBe(expectedToBe);
+            });
+
+            test('when pointer starts with "/_meta" and has multiple segments', () => {
+                expect(checkRedactionPointer('/_meta/foo/bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('when pointer starts with "/_meta/uuid" but has additional segments', () => {
+                expect(checkRedactionPointer('/_meta/uuid/foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('when pointer is close to but not exactly a prevent match', () => {
+                expect(checkRedactionPointer('/_meta/other')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('when pointer starts with "/_meta" with escaped characters', () => {
+                expect(checkRedactionPointer('/_meta/foo~1bar')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+
+        describe('edge cases', () => {
+            test('when pointer starts with "/_meta/befor" (missing last char)', () => {
+                expect(checkRedactionPointer('/_meta/befor')).toBe(
+                    expectedToBe
+                );
             });
         });
     });

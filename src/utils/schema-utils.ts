@@ -19,6 +19,39 @@ import { has, isEmpty, isPlainObject, set } from 'lodash';
 import { logRocketConsole } from 'src/services/shared';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
+const allowRedactPrefixes = ['/_meta/before'];
+const preventRedactPointers = ['/_meta', '/_meta/uuid'];
+const warnRedactPrefixes = ['/_meta'];
+
+export const checkRedactionPointer = (
+    pointer: string | null | undefined
+): 'prevent' | 'warning' | 'allowed' => {
+    // Should almost never happen... but if there isn't a pointer then there is nothing we can redact
+    if (!pointer) {
+        return 'prevent';
+    }
+
+    // Must be CHECKED FIRST otherwise the "warning"s down below would also catch these
+    // Check for allowed first as we never want to accidently stop the user from doing this
+    if (allowRedactPrefixes.some((prefix) => pointer.startsWith(prefix))) {
+        return 'allowed';
+    }
+
+    // See if the pointer is one of these exact matches that we must prevent
+    if (preventRedactPointers.includes(pointer)) {
+        return 'prevent';
+    }
+
+    // TODO (redact) - we do not consume this to show a warning (Q1 2026)
+    // See if the user is doing something within these sections which are prone to causing issues
+    if (warnRedactPrefixes.some((prefix) => pointer.startsWith(prefix))) {
+        return 'warning';
+    }
+
+    // Everything else is allowed
+    return 'allowed';
+};
+
 // These are inserted by the server and never would make sense as keys
 //  Make sure you lowercase these
 const invalidKeyPointers = [
