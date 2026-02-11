@@ -168,7 +168,7 @@ export default function useValidateFieldSelection() {
                 result = await evaluateFieldSelection({
                     collection: {
                         name: builtBinding.collection.name,
-                        model: collections[builtBinding.collection.name].spec,
+                        model: {},
                     },
                     binding: {
                         live: liveBuiltBinding,
@@ -226,7 +226,7 @@ export default function useValidateFieldSelection() {
             return;
         }
 
-        let rejectedRequests: {
+        const rejectedRequests: {
             collection: string;
             uuid: string;
             validationEligible: boolean;
@@ -243,12 +243,6 @@ export default function useValidateFieldSelection() {
 
                 if (bindingsExists) {
                     advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
-
-                    rejectedRequests.push({
-                        collection: meta.collectionName,
-                        uuid,
-                        validationEligible: bindingsExists,
-                    });
 
                     return validateFieldSelection(
                         uuid,
@@ -321,10 +315,8 @@ export default function useValidateFieldSelection() {
                                 selections: updatedSelections,
                                 uuid: bindingUUID,
                             });
-
-                            rejectedRequests = rejectedRequests.filter(
-                                ({ uuid }) => uuid !== bindingUUID
-                            );
+                        } else {
+                            console.log('>>> reject response', response);
                         }
                     });
                 },
