@@ -1,5 +1,5 @@
 import type { OptionsObject } from 'notistack';
-import type { AlertSubscriptionsExtendedQuery } from 'src/api/alerts';
+import type { ReducedAlertSubscription } from 'src/api/types';
 
 import { isEmpty } from 'lodash';
 
@@ -38,32 +38,30 @@ interface SubscriptionDictionary {
 }
 
 export const formatNotificationSubscriptionsByPrefix = (
-    data: AlertSubscriptionsExtendedQuery[]
+    data: ReducedAlertSubscription[]
 ) => {
     const processedQuery: SubscriptionDictionary = {};
 
-    data.forEach(
-        ({ catalog_prefix, email, id, include_alert_types, updated_at }) => {
-            if (Object.hasOwn(processedQuery, catalog_prefix)) {
-                processedQuery[catalog_prefix].meta.push({
-                    email,
-                    id,
-                    lastUpdated: updated_at,
-                });
-            } else {
-                processedQuery[catalog_prefix] = {
-                    alertTypes: include_alert_types?.sort() ?? [],
-                    meta: [
-                        {
-                            email,
-                            id,
-                            lastUpdated: updated_at,
-                        },
-                    ],
-                };
-            }
+    data.forEach(({ alertTypes, catalogPrefix, email, updatedAt }) => {
+        if (Object.hasOwn(processedQuery, catalogPrefix)) {
+            processedQuery[catalogPrefix].meta.push({
+                email,
+                id: crypto.randomUUID(),
+                lastUpdated: updatedAt,
+            });
+        } else {
+            processedQuery[catalogPrefix] = {
+                alertTypes: alertTypes?.sort() ?? [],
+                meta: [
+                    {
+                        email,
+                        id: crypto.randomUUID(),
+                        lastUpdated: updatedAt,
+                    },
+                ],
+            };
         }
-    );
+    });
 
     const subscriptions: { [prefix: string]: PrefixSubscription } = {};
 

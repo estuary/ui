@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react';
 
-import { getNotificationSubscriptions } from 'src/api/alerts';
+import { useQuery } from 'urql';
+
+import { AlertSubscriptionQuery } from 'src/api/alerts';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { formatNotificationSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
-const initializeNotificationSubscriptions = async (prefix?: string) => {
-    const { data, error } = await getNotificationSubscriptions(prefix);
+function useAlertSubscriptionDialog(prefix: string) {
+    const [{ fetching, data, error }] = useQuery({
+        query: AlertSubscriptionQuery,
+        variables: { prefix },
+    });
 
-    if (data) {
-        return { data: formatNotificationSubscriptionsByPrefix(data), error };
-    }
-
-    return { data: null, error };
-};
-
-function useAlertSubscriptionDialog(prefix?: string) {
     const [open, setOpen] = useState(false);
 
     const initializeSubscriptionState = useAlertSubscriptionsStore(
@@ -23,10 +20,13 @@ function useAlertSubscriptionDialog(prefix?: string) {
 
     useEffect(() => {
         void (async () => {
-            if (open) {
-                const { data: existingSubscriptions, error } =
-                    await initializeNotificationSubscriptions(prefix);
+            const existingSubscriptions = data
+                ? formatNotificationSubscriptionsByPrefix(
+                      data.alertSubscriptions
+                  )
+                : {};
 
+            if (open && !fetching) {
                 initializeSubscriptionState(
                     prefix,
                     existingSubscriptions,
@@ -34,7 +34,7 @@ function useAlertSubscriptionDialog(prefix?: string) {
                 );
             }
         })();
-    }, [initializeSubscriptionState, open, prefix]);
+    }, [data, error, fetching, initializeSubscriptionState, open, prefix]);
 
     return {
         open,

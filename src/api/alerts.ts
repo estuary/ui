@@ -1,10 +1,10 @@
+import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
 import type { SortingProps } from 'src/services/supabase';
 import type {
     DataProcessingAlert,
     AlertSubscription as LegacyAlertSubscription,
 } from 'src/types';
 import type {
-    AlertSubscription,
     AlertSubscriptionCreateMutationInput,
     AlertSubscriptionsBy,
     AlertTypeQueryResponse,
@@ -24,13 +24,8 @@ import {
     updateSupabase,
 } from 'src/services/supabase';
 
-type ReducedAlertSubscription = Pick<
-    AlertSubscription,
-    'alertTypes' | 'catalogPrefix' | 'email'
->;
-
 const AlertSubscriptionQuery = gql<
-    ReducedAlertSubscription,
+    ReducedAlertSubscriptionQueryResponse,
     AlertSubscriptionsBy
 >`
     query AlertSubscriptions($prefix: String!) {
@@ -38,6 +33,7 @@ const AlertSubscriptionQuery = gql<
             alertTypes
             catalogPrefix
             email
+            updatedAt
         }
     }
 `;
@@ -122,11 +118,6 @@ export type LegacyAlertSubscriptionQuery = Pick<
     'id' | 'catalog_prefix' | 'email'
 >;
 
-export type ExistingAlertSubscriptionQuery = Pick<
-    LegacyAlertSubscription,
-    'catalog_prefix'
->;
-
 export type AlertSubscriptionsExtendedQuery = Pick<
     LegacyAlertSubscription,
     'id' | 'updated_at' | 'catalog_prefix' | 'email' | 'include_alert_types'
@@ -175,32 +166,6 @@ const getNotificationSubscriptionsForTable = (
     );
 };
 
-const getNotificationSubscriptions = async (prefix?: string) => {
-    const data = await supabaseRetry(() => {
-        let queryBuilder = supabaseClient
-            .from(TABLES.ALERT_SUBSCRIPTIONS)
-            .select(
-                `    
-            id,
-            updated_at,
-            catalog_prefix,
-            email
-        `
-            );
-
-        if (prefix) {
-            queryBuilder = queryBuilder.eq('catalog_prefix', prefix);
-        }
-
-        return queryBuilder.returns<AlertSubscriptionsExtendedQuery[]>();
-    }, 'getNotificationSubscriptions').then(
-        handleSuccess<AlertSubscriptionsExtendedQuery[]>,
-        handleFailure
-    );
-
-    return data;
-};
-
 const getTaskNotification = async (catalogName: string) => {
     const data = await supabaseRetry(
         () =>
@@ -223,7 +188,6 @@ export {
     createDataProcessingNotification,
     deleteDataProcessingNotification,
     getNotificationSubscriptionForUser,
-    getNotificationSubscriptions,
     getNotificationSubscriptionsForTable,
     getTaskNotification,
     updateDataProcessingNotificationInterval,

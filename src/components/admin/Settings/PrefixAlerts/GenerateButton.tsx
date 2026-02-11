@@ -4,10 +4,13 @@ import { useIntl } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
 import useAlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
 function AlertGenerateButton() {
     const intl = useIntl();
-    const { open, setOpen } = useAlertSubscriptionDialog();
+
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const { open, setOpen } = useAlertSubscriptionDialog(selectedTenant);
 
     return (
         <>
