@@ -2,6 +2,12 @@ import type {
     AlertTypeDef,
     BaseAlertSubscriptionMutationInput,
 } from 'src/types/gql';
+import type { UseQueryExecute } from 'urql';
+
+export interface AlertGenerateButtonProps {
+    executeQuery: UseQueryExecute;
+    fetching: boolean;
+}
 
 export interface AlertSubscriptionResponse
     extends BaseAlertSubscriptionMutationInput {

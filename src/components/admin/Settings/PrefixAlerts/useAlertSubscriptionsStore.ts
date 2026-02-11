@@ -111,7 +111,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             values.map(({ name }) => name);
                     }),
                     false,
-                    'input uncommitted set'
+                    'alert types set'
                 ),
 
             setInputUncommitted: (value) =>

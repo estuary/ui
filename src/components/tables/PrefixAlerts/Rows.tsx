@@ -10,28 +10,21 @@ import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton
 import { UNDERSCORE_RE } from 'src/validation';
 
 function Row({ row }: RowProps) {
-    const prefix = row[0];
-    const data = row[1];
-
     return (
         <TableRow>
-            <TableCell>{prefix}</TableCell>
+            <TableCell>{row.catalogPrefix}</TableCell>
 
             <ChipListCell
-                values={data.alertTypes.map((value) =>
+                values={row.alertTypes.map((value) =>
                     value.replace(UNDERSCORE_RE, ' ')
                 )}
                 stripPath={false}
                 maxChips={1}
             />
 
-            <ChipListCell
-                values={data.userSubscriptions.map(({ email }) => email)}
-                stripPath={false}
-                maxChips={3}
-            />
+            <TableCell>{row.email}</TableCell>
 
-            <AlertEditButton prefix={prefix} />
+            <AlertEditButton prefix={row.catalogPrefix} />
         </TableRow>
     );
 }
@@ -40,7 +33,7 @@ function Rows({ data }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <Row key={row[0]} row={row} />
+                <Row key={`${row.catalogPrefix}-${row.email}`} row={row} />
             ))}
         </>
     );

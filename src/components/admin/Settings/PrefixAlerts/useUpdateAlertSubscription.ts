@@ -1,4 +1,3 @@
-import type { SelectableTableStore } from 'src/stores/Tables/Store';
 import type {
     AlertSubscriptionCreateMutationInput,
     BaseAlertSubscriptionMutationInput,
@@ -11,22 +10,11 @@ import { union } from 'lodash';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useCreateAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useCreateAlertSubscription';
 import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
-import { useZustandStore } from 'src/context/Zustand/provider';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
 export function useUpdateAlertSubscription(closeDialog: () => void) {
     const { createSubscription } = useCreateAlertSubscription();
     const { deleteSubscription } = useDeleteAlertSubscription();
-
-    const hydrate = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['hydrate']
-    >(
-        SelectTableStoreNames.PREFIX_ALERTS,
-        selectableTableStoreSelectors.query.hydrate
-    );
 
     // const prefix = useAlertSubscriptionsStore((state) => state.prefix);
     // const prefixErrorsExist = useAlertSubscriptionsStore(
@@ -102,7 +90,6 @@ export function useUpdateAlertSubscription(closeDialog: () => void) {
             .map((r) => r?.error);
 
         if (!hasLength(errors)) {
-            hydrate();
             closeDialog();
         }
 

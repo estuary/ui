@@ -1,5 +1,4 @@
 import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
-import type { SortingProps } from 'src/services/supabase';
 import type {
     DataProcessingAlert,
     AlertSubscription as LegacyAlertSubscription,
@@ -14,7 +13,6 @@ import { gql } from 'urql';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
-    defaultTableFilter,
     deleteSupabase,
     handleFailure,
     handleSuccess,
@@ -118,11 +116,6 @@ export type LegacyAlertSubscriptionQuery = Pick<
     'id' | 'catalog_prefix' | 'email'
 >;
 
-export type AlertSubscriptionsExtendedQuery = Pick<
-    LegacyAlertSubscription,
-    'id' | 'updated_at' | 'catalog_prefix' | 'email' | 'include_alert_types'
->;
-
 export type DataProcessingAlertQuery = Pick<
     DataProcessingAlert,
     'catalog_name' | 'evaluation_interval'
@@ -144,26 +137,6 @@ const getNotificationSubscriptionForUser = async (
     ).then(handleSuccess<LegacyAlertSubscriptionQuery[]>, handleFailure);
 
     return data;
-};
-
-const getNotificationSubscriptionsForTable = (
-    catalogPrefix: string,
-    pagination: any,
-    searchQuery: any,
-    sorting: SortingProps<any>[]
-) => {
-    return defaultTableFilter<AlertSubscriptionsExtendedQuery>(
-        supabaseClient
-            .from(TABLES.ALERT_SUBSCRIPTIONS)
-            .select(
-                `id, updated_at, catalog_prefix, email, include_alert_types`
-            )
-            .like('catalog_prefix', `${catalogPrefix}%`),
-        ['catalog_prefix', 'email'],
-        searchQuery,
-        sorting,
-        pagination
-    );
 };
 
 const getTaskNotification = async (catalogName: string) => {
@@ -188,7 +161,6 @@ export {
     createDataProcessingNotification,
     deleteDataProcessingNotification,
     getNotificationSubscriptionForUser,
-    getNotificationSubscriptionsForTable,
     getTaskNotification,
     updateDataProcessingNotificationInterval,
 };

@@ -1,9 +1,9 @@
-import type { PrefixSubscription } from 'src/utils/notification-utils';
+import type { ReducedAlertSubscription } from 'src/api/types';
 
 export interface RowProps {
-    row: [string, PrefixSubscription];
+    row: ReducedAlertSubscription;
 }
 
 export interface RowsProps {
-    data: [string, PrefixSubscription][];
+    data: ReducedAlertSubscription[];
 }

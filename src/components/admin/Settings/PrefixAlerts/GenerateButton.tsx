@@ -1,3 +1,7 @@
+import type { AlertGenerateButtonProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+
+import { useEffect } from 'react';
+
 import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -6,11 +10,20 @@ import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/
 import useAlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
-function AlertGenerateButton() {
+function AlertGenerateButton({
+    fetching,
+    executeQuery,
+}: AlertGenerateButtonProps) {
     const intl = useIntl();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const { open, setOpen } = useAlertSubscriptionDialog(selectedTenant);
+
+    useEffect(() => {
+        if (fetching) return;
+
+        executeQuery({ requestPolicy: 'network-only' });
+    }, [executeQuery, fetching, open]);
 
     return (
         <>

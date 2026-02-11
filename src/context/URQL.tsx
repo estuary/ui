@@ -53,6 +53,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     keys: {
                         // TODO (gql caching)  - see GRAPHQL.md
                         Alert: (_data) => null,
+                        AlertSubscriptions: (_data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
                     },
