@@ -496,11 +496,8 @@ export const Workflows: Record<string, string> = {
     'projection.tooltip.cannotExist': `The location cannot exist. It may be outside of permitted array bounds, is a disallowed property, or has an impossible type.`,
     'projection.tooltip.locationRedacted': `This location is redacted using strategy: {strategy}.`,
 
-    // The cta messages are dynamically built in ui/src/components/projections/Redact/Button.tsx
-    //  however the only
     'projection.dialog.redact.header': `Redact Field`,
     'projection.cta.redact.prevent': `The runtime requires access to this metadata field`,
-    'projection.cta.redact.warning': `The runtime may have issues if this metadata field is redacted`,
 
     'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
     'schemaManagement.options.manual.label': `Manually manage schemas`,
