@@ -73,6 +73,7 @@ function ServerError(props: ServerErrorProps) {
             }}
         >
             <Box
+                // TODO (monaco resize)
                 // This box is here so the editor showing details resizes correctly
                 sx={{
                     flex: 1,

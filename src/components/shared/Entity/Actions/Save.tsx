@@ -16,6 +16,7 @@ import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
 import { useBinding_collectionsBeingBackfilled } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
@@ -36,6 +37,7 @@ function EntityCreateSave({
 
     const confirmationModalContext = useConfirmationModalContext();
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
+    const backfillMode = useBindingStore((state) => state.backfillMode);
 
     const isSaving = useEditorStore_isSaving();
     const draftId = useEditorStore_id();
@@ -52,6 +54,7 @@ function EntityCreateSave({
                 if (
                     !dryRun &&
                     entityWorkFlow === 'capture_edit' &&
+                    backfillMode === 'reset' &&
                     collectionsBeingBackfilled.length > 0
                 ) {
                     confirmationModalContext

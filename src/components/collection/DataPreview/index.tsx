@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 
 import { Refresh } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import HydrationError from 'src/components/collection/DataPreview/HydrationError';
 import ListView from 'src/components/collection/DataPreview/ListView';
@@ -38,6 +38,7 @@ interface Props {
 // }
 
 export function DataPreview({ collectionName }: Props) {
+    const intl = useIntl();
     // const [previewMode, setPreviewMode] = useState<Views>(Views.list);
     // const toggleMode = (_event: any, newValue: Views) => {
     //     setPreviewMode(newValue);
@@ -96,7 +97,9 @@ export function DataPreview({ collectionName }: Props) {
                     sx={{ alignItems: 'center' }}
                 >
                     <Typography component="span">
-                        <FormattedMessage id="detailsPanel.dataPreview.header" />
+                        {intl.formatMessage({
+                            id: 'detailsPanel.dataPreview.header',
+                        })}
                     </Typography>
 
                     <Button
@@ -112,7 +115,9 @@ export function DataPreview({ collectionName }: Props) {
                             height: 'auto',
                         }}
                     >
-                        <FormattedMessage id="cta.refresh" />
+                        {intl.formatMessage({
+                            id: 'cta.refresh',
+                        })}
                     </Button>
 
                     {/*
@@ -152,7 +157,9 @@ export function DataPreview({ collectionName }: Props) {
 
                 {tenantHidesError || hide ? (
                     <AlertBox short severity="info">
-                        <FormattedMessage id="detailsPanel.dataPreview.hidden" />
+                        {intl.formatMessage({
+                            id: 'detailsPanel.dataPreview.hidden',
+                        })}
                     </AlertBox>
                 ) : readError ? (
                     <HydrationError readError={readError} />
