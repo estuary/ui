@@ -1267,7 +1267,7 @@ describe('checkRedactionPointer', () => {
         });
 
         describe('when pointer is a normal field path', () => {
-            test('a simple top-level field', () => {
+            test('top-level field', () => {
                 expect(checkRedactionPointer('/foo')).toBe(expectedToBe);
             });
 
