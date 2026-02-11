@@ -1215,20 +1215,14 @@ describe('setSchemaProperties', () => {
 describe('checkRedactionPointer', () => {
     let expectedToBe = '';
 
-    describe('returns "prevent" when the pointer is', () => {
+    describe('returns "prevent"', () => {
         beforeEach(() => {
             expectedToBe = 'prevent';
         });
 
-        test('null', () => {
+        test('when "empty"', () => {
             expect(checkRedactionPointer(null)).toBe(expectedToBe);
-        });
-
-        test('undefined', () => {
             expect(checkRedactionPointer(undefined)).toBe(expectedToBe);
-        });
-
-        test('an empty string', () => {
             expect(checkRedactionPointer('')).toBe(expectedToBe);
         });
 
