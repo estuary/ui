@@ -108,9 +108,7 @@ function DateTimePickerCTA(props: PickerProps) {
     const cleanedValue = useMemo(() => {
         // If we can format then we're good to use that value
         if (removeOffset) {
-            return value
-                ? value.replace(TIMEZONE_OFFSET_REPLACEMENT, '')
-                : null;
+            return value ? value.replace(TIMEZONE_OFFSET_REPLACEMENT, '') : '';
         }
         return value;
     }, [removeOffset, value]);
