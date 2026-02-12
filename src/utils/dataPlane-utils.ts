@@ -25,7 +25,7 @@ import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,
 } from 'src/utils/env-utils';
-import { hasLength } from 'src/utils/misc-utils';
+import { hasLength, OPENID_HOST } from 'src/utils/misc-utils';
 
 export enum SHARD_LABELS {
     EXPOSE_PORT = 'estuary.dev/expose-port',
@@ -290,6 +290,10 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
         : whole;
 
     return formattedName.trim();
+};
+
+export const formatIamOidc = (dataPlaneFqdn: string) => {
+    return `${OPENID_HOST}/${dataPlaneFqdn}/`;
 };
 
 // TODO (data-planes): Determine whether this function should always be called

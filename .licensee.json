@@ -42,7 +42,7 @@
         "flow-web": "0.5.12",
 
         "// Apache": "0.0.0",
-        "posthog-js": "1.336.4",
+        "posthog-js": "1.345.5",
 
         "// LGPL - only used for image processing and easy to remove": "0.0.0",
         "@img/sharp-libvips-linux-x64": "1.2.4",
