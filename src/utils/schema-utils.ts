@@ -27,7 +27,7 @@ const syntheticLocations = ['/_meta', '/_meta/uuid'];
 export const evaluateRedactionEligibility = (
     pointer: string | null | undefined
 ): 'prevent' | 'warning' | 'allowed' => {
-    // Should almost never happen... but if there isn't a pointer then there is nothing we can redact
+    // `flow_document` is the main case for when a pointer is missing
     if (!pointer) {
         return 'prevent';
     }
