@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Box, StyledEngineProvider } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { JsonForms } from '@jsonforms/react';
 
@@ -51,40 +51,38 @@ function EndpointConfigForm({ readOnly }: Props) {
     }
 
     return (
-        <StyledEngineProvider injectFirst>
-            <Box
-                id={CONFIG_EDITOR_ID}
-                sx={{
-                    ...jsonFormsPadding,
-                    // TODO (horizontal forms) : potential styling for making form horizontal
-                    // '& .MuiAccordionDetails-root .MuiGrid-root.MuiGrid-item > .MuiFormControl-root':
-                    //     {
-                    //         background: 'red',
-                    //         minWidth: 300,
-                    //     },
-                }}
-            >
-                <JsonForms
-                    {...jsonFormsDefaults}
-                    schema={endpointSchema}
-                    uischema={categoryLikeSchema}
-                    data={endpointConfig}
-                    readonly={readOnly || isActive}
-                    validationMode="ValidateAndShow"
-                    onChange={setEndpointConfig}
-                />
-                {endpointCanBeEmpty ? (
-                    <AlertBox short severity="info">
-                        <FormattedMessage
-                            id="entityCreate.endpointConfig.configCanBeBlank.message"
-                            values={{
-                                entityType,
-                            }}
-                        />
-                    </AlertBox>
-                ) : null}
-            </Box>
-        </StyledEngineProvider>
+        <Box
+            id={CONFIG_EDITOR_ID}
+            sx={
+                jsonFormsPadding
+                // TODO (horizontal forms) : potential styling for making form horizontal
+                // '& .MuiAccordionDetails-root .MuiGrid-root.MuiGrid-item > .MuiFormControl-root':
+                //     {
+                //         background: 'red',
+                //         minWidth: 300,
+                //     },
+            }
+        >
+            <JsonForms
+                {...jsonFormsDefaults}
+                schema={endpointSchema}
+                uischema={categoryLikeSchema}
+                data={endpointConfig}
+                readonly={readOnly || isActive}
+                validationMode="ValidateAndShow"
+                onChange={setEndpointConfig}
+            />
+            {endpointCanBeEmpty ? (
+                <AlertBox short severity="info">
+                    <FormattedMessage
+                        id="entityCreate.endpointConfig.configCanBeBlank.message"
+                        values={{
+                            entityType,
+                        }}
+                    />
+                </AlertBox>
+            ) : null}
+        </Box>
     );
 }
 

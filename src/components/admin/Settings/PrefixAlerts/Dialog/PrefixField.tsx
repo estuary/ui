@@ -20,7 +20,7 @@ export default function PrefixField({ staticPrefix }: Props) {
     );
 
     return (
-        <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
+        <Grid size={{ xs: 12, md: 5 }} sx={{ display: 'flex' }}>
             {subscriptions === undefined ? (
                 <Skeleton height={38} width={345} />
             ) : staticPrefix ? (
