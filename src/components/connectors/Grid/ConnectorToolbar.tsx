@@ -84,6 +84,7 @@ function ConnectorToolbar({
             data-public
         >
             <Grid
+                size="grow"
                 container
                 spacing={gridSpacing}
                 wrap="wrap"
