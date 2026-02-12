@@ -20,10 +20,11 @@ import { logRocketConsole } from 'src/services/shared';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
 const allowRedactPrefixes = ['/_meta/before'];
-const preventRedactPointers = ['/_meta', '/_meta/uuid'];
-const warnRedactPrefixes = ['/_meta'];
+const syntheticPrefixes = ['/_meta'];
 
-export const checkRedactionPointer = (
+const syntheticLocations = ['/_meta', '/_meta/uuid'];
+
+export const evaluateRedactionEligibility = (
     pointer: string | null | undefined
 ): 'prevent' | 'warning' | 'allowed' => {
     // Should almost never happen... but if there isn't a pointer then there is nothing we can redact
@@ -38,13 +39,13 @@ export const checkRedactionPointer = (
     }
 
     // See if the pointer is one of these exact matches that we must prevent
-    if (preventRedactPointers.includes(pointer)) {
+    if (syntheticLocations.includes(pointer)) {
         return 'prevent';
     }
 
     // TODO (redact) - we do not consume this to show a warning (Q1 2026)
     // See if the user is doing something within these sections which are prone to causing issues
-    if (warnRedactPrefixes.some((prefix) => pointer.startsWith(prefix))) {
+    if (syntheticPrefixes.some((prefix) => pointer.startsWith(prefix))) {
         return 'warning';
     }
 

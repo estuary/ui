@@ -7,7 +7,7 @@ import { Button, Tooltip } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import RedactFieldDialog from 'src/components/projections/Redact/Dialog';
-import { checkRedactionPointer } from 'src/utils/schema-utils';
+import { evaluateRedactionEligibility } from 'src/utils/schema-utils';
 
 const RedactFieldButton = ({
     disabled,
@@ -19,11 +19,11 @@ const RedactFieldButton = ({
 
     const [open, setOpen] = useState(false);
 
-    const redactionStatus = checkRedactionPointer(pointer);
+    const redactionEligibility = evaluateRedactionEligibility(pointer);
 
     // Determine tooltip message based on redaction status
     let tooltipMessage = '';
-    if (redactionStatus === 'prevent') {
+    if (redactionEligibility === 'prevent') {
         tooltipMessage = intl.formatMessage({
             id: 'projection.cta.redact.prevent',
         });
@@ -35,7 +35,7 @@ const RedactFieldButton = ({
                 <span>
                     <Button
                         disabled={Boolean(
-                            disabled || redactionStatus === 'prevent'
+                            disabled || redactionEligibility === 'prevent'
                         )}
                         onClick={(event: React.MouseEvent<HTMLElement>) => {
                             event.preventDefault();
