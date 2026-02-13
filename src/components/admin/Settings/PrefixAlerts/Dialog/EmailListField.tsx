@@ -45,7 +45,6 @@ export default function EmailListField({ open }: Props) {
         <Grid
             item
             xs={12}
-            md={7}
             sx={{
                 maxHeight: 250,
                 overflow: 'auto',

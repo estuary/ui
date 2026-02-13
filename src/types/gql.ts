@@ -2,12 +2,12 @@ import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
 export type AlertType =
     | 'auto_discover_failed'
-    | 'shard_failed'
     | 'data_movement_stalled'
     | 'free_trial'
     | 'free_trial_ending'
     | 'free_trial_stalled'
-    | 'missing_payment_method';
+    | 'missing_payment_method'
+    | 'shard_failed';
 
 export interface AlertDetailsRecipients {
     email: string;
@@ -123,4 +123,43 @@ export interface AuthRolesQueryResponse {
         }[];
         pageInfo?: Pick<PageInfo, 'hasNextPage' | 'endCursor'>;
     };
+}
+
+export interface AlertSubscription extends BaseFields {
+    alertTypes: string[];
+    catalogPrefix: string;
+    destination: string;
+    email: string;
+}
+
+export interface AlertSubscriptionCreateMutationInput
+    extends BaseAlertSubscriptionMutationInput {
+    alertTypes?: string[];
+    detail?: string;
+}
+
+export interface AlertSubscriptionsBy {
+    prefix: string;
+}
+
+export interface AlertTypeDef {
+    description: string;
+    name: string;
+}
+
+export interface AlertTypeQueryResponse {
+    __type: {
+        enumValues: AlertTypeDef[];
+    };
+}
+
+export interface BaseAlertSubscriptionMutationInput {
+    email: string;
+    prefix: string;
+}
+
+interface BaseFields {
+    createdAt: Date;
+    detail: string | null;
+    updatedAt: Date;
 }
