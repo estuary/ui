@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
-import ConfigureStorageDialog from 'src/components/admin/Settings/StorageMappings/Dialog';
+import { ConfigureStorageWizard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -25,7 +25,7 @@ function StorageMappingsGenerateButton() {
                 <FormattedMessage id="storageMappings.configureStorage.label" />
             </Button>
 
-            <ConfigureStorageDialog open={open} setOpen={setOpen} />
+            <ConfigureStorageWizard open={open} setOpen={setOpen} />
         </>
     );
 }
