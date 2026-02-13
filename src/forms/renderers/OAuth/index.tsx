@@ -166,7 +166,8 @@ const OAuthproviderRenderer = ({
     // OAuth Stuff
     const { errorMessage, openPopUp, loading } = useOauthHandler(
         provider,
-        successHandler
+        successHandler,
+        path
     );
 
     // When loading we need to handle Create and Edit differently

@@ -90,3 +90,31 @@ export const isInsideArray = (path: string): boolean => {
         path.split('.').some((segment: string) => /^\d+$/.test(segment))
     );
 };
+
+/**
+ * Extracts array context from a JSONForms path.
+ * Given a path like "stores.2.credentials", returns:
+ *   { arrayField: "stores", index: 2, rest: "credentials" }
+ * Returns null if the path is not inside an array.
+ */
+export const getArrayContext = (
+    path: string
+): { arrayField: string; index: number; rest: string } | null => {
+    if (!path || typeof path !== 'string') {
+        return null;
+    }
+
+    const segments = path.split('.');
+
+    for (let i = 0; i < segments.length; i++) {
+        if (/^\d+$/.test(segments[i])) {
+            return {
+                arrayField: segments.slice(0, i).join('.'),
+                index: parseInt(segments[i], 10),
+                rest: segments.slice(i + 1).join('.'),
+            };
+        }
+    }
+
+    return null;
+};
