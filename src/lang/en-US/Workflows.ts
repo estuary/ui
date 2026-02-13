@@ -497,7 +497,6 @@ export const Workflows: Record<string, string> = {
     'projection.tooltip.locationRedacted': `This location is redacted using strategy: {strategy}.`,
 
     'projection.dialog.redact.header': `Redact Field`,
-    'projection.cta.redact.prevent': `The runtime requires access to this metadata field`,
 
     'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
     'schemaManagement.options.manual.label': `Manually manage schemas`,
