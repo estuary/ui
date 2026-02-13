@@ -66,6 +66,10 @@ function Row({ columns, row }: RowProps) {
     return (
         <TableRow
             sx={{
+                // Giving some more space since we show a tooltip on hover on redact for some fields
+                '& td': {
+                    py: 1.5,
+                },
                 '&:hover td': {
                     background:
                         doubleElevationHoverBackground[theme.palette.mode],
