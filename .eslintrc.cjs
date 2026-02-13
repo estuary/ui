@@ -3,6 +3,7 @@ module.exports = {
         'eslint-config-kentcdodds/import',
         'eslint-config-kentcdodds/jsx-a11y',
         'eslint-config-kentcdodds/react',
+        'plugin:storybook/recommended',
     ],
     ignorePatterns: ['vite.config.ts', '__mocks__', 'playwright-tests/'],
     plugins: ['formatjs', 'unused-imports', 'no-relative-import-paths'],

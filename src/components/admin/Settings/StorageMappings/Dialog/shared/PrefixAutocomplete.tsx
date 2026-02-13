@@ -1,6 +1,6 @@
 import type { FieldValues, Path } from 'react-hook-form';
 
-import { useCallback, useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
@@ -9,8 +9,6 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { gql, useQuery } from 'urql';
 
 import { AnimatedHelperText } from 'src/components/shared/AnimatedHelperText';
-import { useStorageMappings } from 'src/api/storageMappingsGql';
-import { validateCatalogName } from 'src/validation';
 
 interface BasePrefixesQueryResponse {
     prefixes: {
@@ -99,54 +97,80 @@ export function useLiveSpecs() {
     }, [liveSpecData]);
 }
 
-type ValidateFn = (value: string) => true | string;
-type ValidateRecord = Record<string, ValidateFn>;
+// ── Root prefix validation ──────────────────────────────────────────
 
-interface PrefixAutocompleteProps<
-    TFieldValues extends FieldValues,
-    TName extends Path<TFieldValues> = Path<TFieldValues>,
-> {
-    name: TName;
-    label: string;
-    required?: boolean;
-    helperText?: string;
-    onChangeValidate?: ValidateRecord;
-    onBlurValidate?: ValidateRecord;
+export function validatePrefix(roots: string[]) {
+    return (value: string): string | undefined => {
+        if (!value || roots.length === 0) return undefined;
+
+        const valid = roots.some((prefix) => value.startsWith(prefix));
+        return valid
+            ? undefined
+            : `Must start with one of: ${roots.join(', ')}`;
+    };
 }
 
-export function PrefixAutocomplete<
-    TFieldValues extends FieldValues,
-    TName extends Path<TFieldValues> = Path<TFieldValues>,
->({
-    name,
+function validatePrefixWhileTyping(value: string, roots: string[]) {
+    if (!value || roots.length === 0) return undefined;
+
+    const matchesRoot = roots.some(
+        (prefix) => prefix.startsWith(value) || value.startsWith(prefix)
+    );
+
+    return matchesRoot
+        ? undefined
+        : `Must start with one of: ${roots.join(', ')}`;
+}
+
+// ── PrefixAutocomplete (standalone controlled component) ────────────
+
+interface PrefixAutocompleteProps {
+    roots: string[];
+    leaves: string[];
+    value: string;
+    onChange: (value: string) => void;
+    onBlur?: () => void;
+    label: string;
+    required?: boolean;
+    error?: boolean;
+    errorMessage?: string;
+    helperText?: string;
+}
+
+export function PrefixAutocomplete({
+    roots,
+    leaves,
+    value,
+    onChange,
+    onBlur,
     label,
     required = false,
+    error = false,
+    errorMessage,
     helperText,
-    onChangeValidate,
-    onBlurValidate,
-}: PrefixAutocompleteProps<TFieldValues, TName>) {
+}: PrefixAutocompleteProps) {
     const filteredOptionsRef = useRef<string[]>([]);
-    const isOpenRef = useRef(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [hasBlurred, setHasBlurred] = useState(false);
 
-    const basePrefixes = useBasePrefixes();
-    const validatePrefix = (value: string) =>
-        validateCatalogName(value, false, true) != null;
+    const rootError = useMemo(() => {
+        const typingError = validatePrefixWhileTyping(value, roots);
+        if (typingError) return typingError;
 
-    // TODO (greg): might be worth combining these into an "avialble prefixes" hook
-    // so this component doesn't need to know the specifics about how those are determined
-    const liveSpecNames = useLiveSpecs();
-    const { storageMappings } = useStorageMappings();
-
-    const branches = useMemo(() => {
-        const leaves = [...liveSpecNames];
-
-        for (const mapping of storageMappings) {
-            leaves.push(mapping.catalogPrefix);
+        if (hasBlurred) {
+            return validatePrefix(roots)(value);
         }
 
+        return undefined;
+    }, [value, roots, hasBlurred]);
+
+    const hasError = error || !!rootError;
+    const displayMessage = rootError ?? errorMessage ?? helperText;
+
+    const branches = useMemo(() => {
         const allBranches = new Set<string>();
 
-        for (const leaf of leaves) {
+        for (const leaf of [...roots, ...leaves]) {
             const parts = leaf.split('/').filter(Boolean);
             let path = '';
             for (const part of parts) {
@@ -155,228 +179,208 @@ export function PrefixAutocomplete<
             }
         }
 
-        return Array.from(allBranches).sort();
-    }, [liveSpecNames, storageMappings]);
+        return Array.from(allBranches).sort((a, b) => {
+            const depthA = a.split('/').length;
+            const depthB = b.split('/').length;
+            return depthA - depthB || a.localeCompare(b);
+        });
+    }, [roots, leaves]);
 
-    const {
-        control,
-        setError,
-        clearErrors,
-        formState: { errors },
-    } = useFormContext<TFieldValues>();
-
-    const internalOnChangeValidate: ValidateRecord = useMemo(
-        () => ({
-            startsWithTenant: (value: string) => {
-                if (
-                    value &&
-                    basePrefixes.length > 0 &&
-                    !basePrefixes.some(
-                        (prefix) =>
-                            prefix.startsWith(value) || value.startsWith(prefix)
-                    )
-                ) {
-                    return `Must start with one of: ${basePrefixes.join(', ')}`;
+    return (
+        <Autocomplete
+            sx={{ mb: 0, pb: 0 }}
+            freeSolo
+            autoHighlight
+            value={null}
+            options={branches}
+            open={isOpen}
+            onOpen={() => {
+                setIsOpen(true);
+            }}
+            onClose={(_event, reason) => {
+                if (reason === 'selectOption' && filteredOptionsRef.current.length > 1) {
+                    return;
                 }
-                return true;
-            },
-        }),
-        [validatePrefix, label]
+                setIsOpen(false);
+            }}
+            filterOptions={(options) => {
+                const input = value ?? '';
+                const filtered = options.filter(
+                    (option: string) =>
+                        option.startsWith(input) && option !== input
+                );
+                filteredOptionsRef.current = filtered;
+                return filtered;
+            }}
+            renderOption={(props, option, { index }) => (
+                <li {...props}>
+                    {index === 0 ? (
+                        <span
+                            style={{
+                                marginRight: 4,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <ArrowRightTag fontSize={12} />
+                        </span>
+                    ) : (
+                        <span style={{ marginLeft: 22 }} />
+                    )}
+                    {option}
+                </li>
+            )}
+            inputValue={value ?? ''}
+            onInputChange={(_event, newInputValue, _reason) => {
+                onChange(newInputValue);
+            }}
+            onChange={(_event, newValue) => {
+                onChange(newValue ?? '');
+            }}
+            onBlur={() => {
+                if (value && !value.endsWith('/')) {
+                    onChange(`${value}/`);
+                }
+                if (!hasBlurred) {
+                    setHasBlurred(true);
+                }
+                onBlur?.();
+            }}
+            renderInput={(params) => (
+                <>
+                    <TextField
+                        {...params}
+                        label={label}
+                        required={required}
+                        error={hasError}
+                        size="small"
+                        inputProps={{
+                            ...params.inputProps,
+                            onKeyDown: (
+                                event: React.KeyboardEvent<HTMLInputElement>
+                            ) => {
+                                if (
+                                    event.key === 'Tab' &&
+                                    event.shiftKey &&
+                                    value
+                                ) {
+                                    event.preventDefault();
+                                    // Remove trailing slash, then everything after the last slash
+                                    const trimmed = value.endsWith('/')
+                                        ? value.slice(0, -1)
+                                        : value;
+                                    const lastSlash = trimmed.lastIndexOf('/');
+                                    onChange(
+                                        lastSlash >= 0
+                                            ? trimmed.slice(0, lastSlash + 1)
+                                            : ''
+                                    );
+                                }
+                                (
+                                    params.inputProps as Record<
+                                        string,
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                        any
+                                    >
+                                )?.onKeyDown?.(event);
+                            },
+                        }}
+                    />
+                    <AnimatedHelperText
+                        error={hasError}
+                        message={displayMessage}
+                    />
+                </>
+            )}
+        />
     );
+}
 
-    const internalOnBlurValidate: ValidateRecord = useMemo(
-        () => ({
-            validBasePrefix: (value: string) => {
-                if (!value && required) return `${label} is required`;
+// ── RHFPrefixAutocomplete (react-hook-form wrapper) ─────────────────
 
-                if (basePrefixes.length === 0) return true;
+type ValidateFn = (value: string) => true | string;
+type ValidateRecord = Record<string, ValidateFn>;
 
-                const hasValidPrefix = basePrefixes.some((prefix) =>
-                    value.startsWith(prefix)
-                );
-                return (
-                    hasValidPrefix ||
-                    `Must start with one of: ${basePrefixes.join(', ')}`
-                );
-            },
-        }),
+interface RHFPrefixAutocompleteProps<
+    TFieldValues extends FieldValues,
+    TName extends Path<TFieldValues> = Path<TFieldValues>,
+> {
+    name: TName;
+    leaves: string[];
+    label: string;
+    required?: boolean;
+    helperText?: string;
+    onChangeValidate?: ValidateRecord;
+    onBlurValidate?: ValidateRecord;
+}
+
+export function RHFPrefixAutocomplete<
+    TFieldValues extends FieldValues,
+    TName extends Path<TFieldValues> = Path<TFieldValues>,
+>({
+    name,
+    leaves,
+    label,
+    required = false,
+    helperText,
+    onChangeValidate,
+    onBlurValidate,
+}: RHFPrefixAutocompleteProps<TFieldValues, TName>) {
+    const { control } = useFormContext<TFieldValues>();
+    const basePrefixes = useBasePrefixes();
+    const hasBlurredRef = useRef(false);
+
+    const validate = useMemo(
+        () => validatePrefix(basePrefixes),
         [basePrefixes]
     );
 
-    const runValidators = (
-        value: string,
-        validators: ValidateRecord | undefined
-    ): string | null => {
-        if (!validators) return null;
-        for (const validate of Object.values(validators)) {
-            const result = validate(value);
-            if (result !== true) {
-                return result;
-            }
-        }
-        return null;
-    };
+    const allValidators = useMemo(() => {
+        const blurValidators: ValidateRecord = {
+            ...onBlurValidate,
+            validBasePrefix: (v: string) => validate(v) ?? true,
+        };
 
-    const allBlurValidate = useMemo(
-        () => ({ ...internalOnBlurValidate, ...onBlurValidate }),
-        [internalOnBlurValidate, onBlurValidate]
-    );
+        const gatedBlurValidators = Object.fromEntries(
+            Object.entries(blurValidators).map(([key, fn]) => [
+                key,
+                (v: string) => (hasBlurredRef.current ? fn(v) : true),
+            ])
+        );
 
-    const allOnChangeValidate = useMemo(
-        () => ({ ...internalOnChangeValidate, ...onChangeValidate }),
-        [internalOnChangeValidate, onChangeValidate]
-    );
-
-    // Get nested error by path
-    const error = name.split('.').reduce<unknown>((obj, key) => {
-        if (obj && typeof obj === 'object' && key in obj) {
-            return (obj as Record<string, unknown>)[key];
-        }
-        return undefined;
-    }, errors) as { message?: string } | undefined;
-
-    const hasError = !!error;
-
-    const handleValidation = useCallback(
-        (value: string, validators: ValidateRecord) => {
-            const errorMessage = runValidators(value, validators);
-            if (errorMessage) {
-                setError(name, { type: 'validate', message: errorMessage });
-            } else {
-                clearErrors(name);
-            }
-        },
-        [name, setError, clearErrors]
-    );
+        return {
+            startsWithRoot: (v: string) =>
+                validatePrefixWhileTyping(v, basePrefixes) ?? true,
+            ...onChangeValidate,
+            ...gatedBlurValidators,
+        };
+    }, [basePrefixes, validate, onChangeValidate, onBlurValidate]);
 
     return (
         <Controller
             name={name}
             control={control}
             rules={{
-                validate: allOnChangeValidate,
+                required: required ? `${label} is required` : false,
+                validate: allValidators,
             }}
-            render={({ field: { onChange, onBlur, value } }) => {
-                return (
-                    <Autocomplete
-                        sx={{ mb: 0, pb: 0 }}
-                        freeSolo
-                        value={null}
-                        options={branches}
-                        onOpen={() => {
-                            isOpenRef.current = true;
-                        }}
-                        onClose={() => {
-                            isOpenRef.current = false;
-                        }}
-                        filterOptions={(options) => {
-                            const input = value ?? '';
-                            const filtered = options.filter(
-                                (option: string) =>
-                                    option.startsWith(input) && option !== input
-                            );
-                            filteredOptionsRef.current = filtered;
-                            return filtered;
-                        }}
-                        renderOption={(props, option, { index }) => (
-                            <li {...props}>
-                                {index === 0 ? (
-                                    <span
-                                        style={{
-                                            marginRight: 4,
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                        }}
-                                    >
-                                        <ArrowRightTag fontSize={12} />
-                                    </span>
-                                ) : (
-                                    <span style={{ marginLeft: 22 }} />
-                                )}
-                                {option}
-                            </li>
-                        )}
-                        inputValue={value ?? ''}
-                        onInputChange={(_event, newInputValue, reason) => {
-                            onChange(newInputValue);
-                        }}
-                        onChange={(_event, newValue) => {
-                            onChange(newValue ?? '');
-                        }}
-                        onBlur={() => {
-                            if (value && !value.endsWith('/')) {
-                                onChange(`${value}/`);
-                            }
-                            onBlur();
-                            handleValidation(value ?? '', allBlurValidate);
-                        }}
-                        renderInput={(params) => (
-                            <>
-                                <TextField
-                                    {...params}
-                                    label={label}
-                                    required={required}
-                                    error={hasError}
-                                    size="small"
-                                    inputProps={{
-                                        ...params.inputProps,
-                                        onKeyDown: (
-                                            event: React.KeyboardEvent<HTMLInputElement>
-                                        ) => {
-                                            if (
-                                                event.key === 'Tab' &&
-                                                event.shiftKey &&
-                                                value
-                                            ) {
-                                                event.preventDefault();
-                                                // Remove trailing slash, then everything after the last slash
-                                                const trimmed = value.endsWith(
-                                                    '/'
-                                                )
-                                                    ? value.slice(0, -1)
-                                                    : value;
-                                                const lastSlash =
-                                                    trimmed.lastIndexOf('/');
-                                                onChange(
-                                                    lastSlash >= 0
-                                                        ? trimmed.slice(
-                                                              0,
-                                                              lastSlash + 1
-                                                          )
-                                                        : ''
-                                                );
-                                            } else if (
-                                                event.key === 'Tab' &&
-                                                !event.shiftKey &&
-                                                isOpenRef.current &&
-                                                filteredOptionsRef.current
-                                                    .length > 0
-                                            ) {
-                                                event.preventDefault();
-                                                onChange(
-                                                    filteredOptionsRef
-                                                        .current[0]
-                                                );
-                                            }
-                                            (
-                                                params.inputProps as Record<
-                                                    string,
-                                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                                    any
-                                                >
-                                            )?.onKeyDown?.(event);
-                                        },
-                                    }}
-                                />
-                                <AnimatedHelperText
-                                    error={hasError}
-                                    message={error?.message ?? helperText}
-                                />
-                            </>
-                        )}
-                    />
-                );
-            }}
+            render={({ field, fieldState }) => (
+                <PrefixAutocomplete
+                    roots={basePrefixes}
+                    leaves={leaves}
+                    value={field.value ?? ''}
+                    onChange={field.onChange}
+                    onBlur={() => {
+                        hasBlurredRef.current = true;
+                        field.onBlur();
+                    }}
+                    label={label}
+                    required={required}
+                    error={!!fieldState.error}
+                    errorMessage={fieldState.error?.message}
+                    helperText={helperText}
+                />
+            )}
         />
     );
 }

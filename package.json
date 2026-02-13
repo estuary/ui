@@ -28,7 +28,9 @@
         "generate-supabase-types": "node ./scripts/generateSupabaseTypes",
         "hack-in-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh",
         "hack-in-web-flow": "./deps/flow-web/hack-in-prod.sh",
-        "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh"
+        "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -152,7 +154,12 @@
         "vite-plugin-wasm": "^3.4.1",
         "vite-tsconfig-paths": "^5.1.4",
         "vitest": "^3.1.2",
-        "vitest-mock-extended": "^3.0.1"
+        "vitest-mock-extended": "^3.0.1",
+        "storybook": "^10.2.8",
+        "@storybook/react-vite": "^10.2.8",
+        "@storybook/addon-a11y": "^10.2.8",
+        "@storybook/addon-docs": "^10.2.8",
+        "eslint-plugin-storybook": "^10.2.8"
     },
     "overrides": {
         "msw": {

@@ -2,9 +2,8 @@ import type { StorageMappingFormData } from 'src/components/admin/Settings/Stora
 
 import { useMemo } from 'react';
 
-import { PrefixAutocomplete, useLiveSpecs } from '../shared/PrefixAutocomplete';
-
 import { useStorageMappings } from 'src/api/storageMappingsGql';
+import { RHFPrefixAutocomplete, useLiveSpecs } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/PrefixAutocomplete';
 import CardWrapper from 'src/components/shared/CardWrapper';
 
 export function PrefixCard() {
@@ -14,6 +13,11 @@ export function PrefixCard() {
     const storageMappingPrefixes = useMemo(() => {
         return storageMappings.map((sm) => sm.catalogPrefix);
     }, [storageMappings]);
+
+    const leaves = useMemo(
+        () => [...liveSpecNames, ...storageMappingPrefixes],
+        [liveSpecNames, storageMappingPrefixes]
+    );
 
     const onBlurValidate = useMemo(
         () => ({
@@ -51,8 +55,9 @@ export function PrefixCard() {
 
     return (
         <CardWrapper>
-            <PrefixAutocomplete<StorageMappingFormData, 'catalog_prefix'>
+            <RHFPrefixAutocomplete<StorageMappingFormData, 'catalog_prefix'>
                 name="catalog_prefix"
+                leaves={leaves}
                 label="Estuary Prefix"
                 required
                 onBlurValidate={onBlurValidate}
