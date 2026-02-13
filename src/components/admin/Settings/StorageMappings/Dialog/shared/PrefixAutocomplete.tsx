@@ -1,11 +1,8 @@
-import type { FieldValues, Path } from 'react-hook-form';
-
 import { useMemo, useRef, useState } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
 import { ArrowRightTag } from 'iconoir-react';
-import { Controller, useFormContext } from 'react-hook-form';
 import { gql, useQuery } from 'urql';
 
 import { AnimatedHelperText } from 'src/components/shared/AnimatedHelperText';
@@ -110,7 +107,7 @@ export function validatePrefix(roots: string[]) {
     };
 }
 
-function validatePrefixWhileTyping(value: string, roots: string[]) {
+function isChildOfRoot(value: string, roots: string[]) {
     if (!value || roots.length === 0) return undefined;
 
     const matchesRoot = roots.some(
@@ -154,7 +151,7 @@ export function PrefixAutocomplete({
     const [hasBlurred, setHasBlurred] = useState(false);
 
     const rootError = useMemo(() => {
-        const typingError = validatePrefixWhileTyping(value, roots);
+        const typingError = isChildOfRoot(value, roots);
         if (typingError) return typingError;
 
         if (hasBlurred) {
@@ -198,7 +195,10 @@ export function PrefixAutocomplete({
                 setIsOpen(true);
             }}
             onClose={(_event, reason) => {
-                if (reason === 'selectOption' && filteredOptionsRef.current.length > 1) {
+                if (
+                    reason === 'selectOption' &&
+                    filteredOptionsRef.current.length > 1
+                ) {
                     return;
                 }
                 setIsOpen(false);
@@ -291,95 +291,6 @@ export function PrefixAutocomplete({
                         message={displayMessage}
                     />
                 </>
-            )}
-        />
-    );
-}
-
-// ── RHFPrefixAutocomplete (react-hook-form wrapper) ─────────────────
-
-type ValidateFn = (value: string) => true | string;
-type ValidateRecord = Record<string, ValidateFn>;
-
-interface RHFPrefixAutocompleteProps<
-    TFieldValues extends FieldValues,
-    TName extends Path<TFieldValues> = Path<TFieldValues>,
-> {
-    name: TName;
-    leaves: string[];
-    label: string;
-    required?: boolean;
-    helperText?: string;
-    onChangeValidate?: ValidateRecord;
-    onBlurValidate?: ValidateRecord;
-}
-
-export function RHFPrefixAutocomplete<
-    TFieldValues extends FieldValues,
-    TName extends Path<TFieldValues> = Path<TFieldValues>,
->({
-    name,
-    leaves,
-    label,
-    required = false,
-    helperText,
-    onChangeValidate,
-    onBlurValidate,
-}: RHFPrefixAutocompleteProps<TFieldValues, TName>) {
-    const { control } = useFormContext<TFieldValues>();
-    const basePrefixes = useBasePrefixes();
-    const hasBlurredRef = useRef(false);
-
-    const validate = useMemo(
-        () => validatePrefix(basePrefixes),
-        [basePrefixes]
-    );
-
-    const allValidators = useMemo(() => {
-        const blurValidators: ValidateRecord = {
-            ...onBlurValidate,
-            validBasePrefix: (v: string) => validate(v) ?? true,
-        };
-
-        const gatedBlurValidators = Object.fromEntries(
-            Object.entries(blurValidators).map(([key, fn]) => [
-                key,
-                (v: string) => (hasBlurredRef.current ? fn(v) : true),
-            ])
-        );
-
-        return {
-            startsWithRoot: (v: string) =>
-                validatePrefixWhileTyping(v, basePrefixes) ?? true,
-            ...onChangeValidate,
-            ...gatedBlurValidators,
-        };
-    }, [basePrefixes, validate, onChangeValidate, onBlurValidate]);
-
-    return (
-        <Controller
-            name={name}
-            control={control}
-            rules={{
-                required: required ? `${label} is required` : false,
-                validate: allValidators,
-            }}
-            render={({ field, fieldState }) => (
-                <PrefixAutocomplete
-                    roots={basePrefixes}
-                    leaves={leaves}
-                    value={field.value ?? ''}
-                    onChange={field.onChange}
-                    onBlur={() => {
-                        hasBlurredRef.current = true;
-                        field.onBlur();
-                    }}
-                    label={label}
-                    required={required}
-                    error={!!fieldState.error}
-                    errorMessage={fieldState.error?.message}
-                    helperText={helperText}
-                />
             )}
         />
     );
