@@ -2,13 +2,8 @@
 
 import { useMemo, useRef } from 'react';
 
-import {
-    PrefixAutocomplete,
-    useBasePrefixes,
-    validatePrefix,
-} from './PrefixAutocomplete';
-import { Controller, FieldValues, useFormContext } from 'react-hook-form';
-import { Path } from 'react-router';
+import { PrefixAutocomplete } from './PrefixAutocomplete';
+import { Controller, FieldValues, Path, useFormContext } from 'react-hook-form';
 
 type ValidateFn = (value: string) => true | string;
 type ValidateRecord = Record<string, ValidateFn>;
@@ -35,38 +30,25 @@ export function RHFPrefixAutocomplete<
     label,
     required = false,
     helperText,
-    onChangeValidate,
-    onBlurValidate,
+    onChangeValidate = {},
+    onBlurValidate = {},
 }: RHFPrefixAutocompleteProps<TFieldValues, TName>) {
-    const { control } = useFormContext<TFieldValues>();
-    const basePrefixes = useBasePrefixes();
+    const { control, trigger } = useFormContext<TFieldValues>();
     const hasBlurredRef = useRef(false);
 
-    const validate = useMemo(
-        () => validatePrefix(basePrefixes),
-        [basePrefixes]
-    );
-
     const allValidators = useMemo(() => {
-        const blurValidators: ValidateRecord = {
-            ...onBlurValidate,
-            validBasePrefix: (v: string) => validate(v) ?? true,
-        };
-
         const gatedBlurValidators = Object.fromEntries(
-            Object.entries(blurValidators).map(([key, fn]) => [
+            Object.entries(onBlurValidate).map(([key, fn]) => [
                 key,
                 (v: string) => (hasBlurredRef.current ? fn(v) : true),
             ])
         );
 
         return {
-            startsWithRoot: (v: string) =>
-                validatePrefixWhileTyping(v, basePrefixes) ?? true,
             ...onChangeValidate,
             ...gatedBlurValidators,
         };
-    }, [basePrefixes, validate, onChangeValidate, onBlurValidate]);
+    }, [onChangeValidate, onBlurValidate]);
 
     return (
         <Controller
@@ -78,13 +60,16 @@ export function RHFPrefixAutocomplete<
             }}
             render={({ field, fieldState }) => (
                 <PrefixAutocomplete
-                    roots={basePrefixes}
                     leaves={leaves}
                     value={field.value ?? ''}
-                    onChange={field.onChange}
+                    onChange={(event) => {
+                        hasBlurredRef.current = false;
+                        field.onChange(event);
+                    }}
                     onBlur={() => {
                         hasBlurredRef.current = true;
                         field.onBlur();
+                        trigger(name);
                     }}
                     label={label}
                     required={required}

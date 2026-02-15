@@ -3,12 +3,19 @@ import type { StorageMappingFormData } from 'src/components/admin/Settings/Stora
 import { useMemo } from 'react';
 
 import { useStorageMappings } from 'src/api/storageMappingsGql';
-import { RHFPrefixAutocomplete, useLiveSpecs } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/PrefixAutocomplete';
+import {
+    isChildOfRoot,
+    RHFPrefixAutocomplete,
+    useBasePrefixes,
+    useLiveSpecs,
+} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/PrefixAutocomplete';
 import CardWrapper from 'src/components/shared/CardWrapper';
+import { validateCatalogName } from 'src/validation';
 
 export function PrefixCard() {
     const { storageMappings } = useStorageMappings();
     const liveSpecNames = useLiveSpecs();
+    const basePrefixes = useBasePrefixes();
 
     const storageMappingPrefixes = useMemo(() => {
         return storageMappings.map((sm) => sm.catalogPrefix);
@@ -19,11 +26,26 @@ export function PrefixCard() {
         [liveSpecNames, storageMappingPrefixes]
     );
 
+    const onChangeValidate = useMemo(
+        () => ({
+            validCharacters: (value: string) =>
+                validateCatalogName(value, false, true) == null ||
+                'Invalid prefix - only letters, numbers, dashes, underscores, and periods are allowed.',
+            isChildOfRoot: (value: string) =>
+                isChildOfRoot(value, basePrefixes),
+        }),
+        [basePrefixes]
+    );
+
     const onBlurValidate = useMemo(
         () => ({
-            notDuplicate: (value: string) =>
-                !storageMappingPrefixes.includes(value) ||
-                'A storage mapping already exists at this prefix. Click here to see it.',
+            notDuplicateMapping: (value: string) => {
+                console.log('Validating duplicate mapping for value:', value);
+                return (
+                    !storageMappingPrefixes.includes(value) ||
+                    'A storage mapping already exists at this prefix. Click here to see it.'
+                );
+            },
 
             noUncoveredSpecs: (value: string) => {
                 // A: child storage mappings under this prefix
@@ -61,6 +83,7 @@ export function PrefixCard() {
                 label="Estuary Prefix"
                 required
                 onBlurValidate={onBlurValidate}
+                onChangeValidate={onChangeValidate}
             />
         </CardWrapper>
     );
