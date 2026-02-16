@@ -3,7 +3,7 @@ import { Divider, Grid, Stack } from '@mui/material';
 import { authenticatedRoutes } from 'src/app/routes';
 import DataPlanes from 'src/components/admin/Settings/DataPlanes';
 import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
-import StorageMappings from 'src/components/admin/Settings/StorageMappings';
+import { StorageMappings } from 'src/components/admin/Settings/StorageMappings';
 import AdminTabs from 'src/components/admin/Tabs';
 import TenantSelector from 'src/components/shared/TenantSelector';
 import usePageTitle from 'src/hooks/usePageTitle';
