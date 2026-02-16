@@ -1,32 +1,31 @@
-import { useState } from 'react';
-
 import { Button } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
+import { useSearchParams } from 'react-router-dom';
 
-import { ConfigureStorageWizard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
 function StorageMappingsGenerateButton() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const [open, setOpen] = useState(false);
+    const [, setSearchParams] = useSearchParams();
 
     return (
-        <>
-            <Button
-                variant="outlined"
-                disabled={!hasLength(selectedTenant)}
-                onClick={() => {
-                    setOpen(true);
-                }}
-            >
-                <FormattedMessage id="storageMappings.configureStorage.label" />
-            </Button>
-
-            <ConfigureStorageWizard open={open} setOpen={setOpen} />
-        </>
+        <Button
+            variant="outlined"
+            disabled={!hasLength(selectedTenant)}
+            onClick={() => {
+                setSearchParams((prev) => {
+                    prev.set(GlobalSearchParams.SM_DIALOG, 'create');
+                    prev.delete(GlobalSearchParams.SM_PREFIX);
+                    return prev;
+                });
+            }}
+        >
+            <FormattedMessage id="storageMappings.configureStorage.label" />
+        </Button>
     );
 }
 

@@ -3,19 +3,16 @@ import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/StorageMappings/types';
-import type { StorageMappingsQuery } from 'src/types';
-
-import { useState } from 'react';
 
 import { TableCell, TableRow, useTheme } from '@mui/material';
 
-import { storageProviderToCloudProvider } from 'src/api/storageMappingsGql';
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
-import StorageMappingDialog from 'src/components/admin/Settings/StorageMappings/Dialog/Update';
+import { useSearchParams } from 'react-router-dom';
+
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import ChipStatus from 'src/components/tables/cells/ChipStatus';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
 function DataPlaneCells({ dataPlanes, store }: DataPlaneCellsProps) {
     const { provider, bucket, prefix } = store;
@@ -91,16 +88,14 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
 function Rows({ data }: RowsProps) {
     const theme = useTheme();
 
-    const [selectedRow, setSelectedRow] = useState<StorageMappingsQuery | null>(
-        null
-    );
+    const [, setSearchParams] = useSearchParams();
 
-    const handleRowClick = (row: StorageMappingsQuery) => {
-        setSelectedRow(row);
-    };
-
-    const handleCloseDialog = () => {
-        setSelectedRow(null);
+    const handleRowClick = (row: (typeof data)[0]) => {
+        setSearchParams((prev) => {
+            prev.set(GlobalSearchParams.SM_DIALOG, 'edit');
+            prev.set(GlobalSearchParams.SM_PREFIX, row.catalog_prefix);
+            return prev;
+        });
     };
 
     return (
@@ -113,25 +108,6 @@ function Rows({ data }: RowsProps) {
                     onRowClick={handleRowClick}
                 />
             ))}
-            {selectedRow ? (
-                <StorageMappingDialog
-                    // TODO (GREG): fix typing here... or fetch storage mappings from gql api and rebuild the tables...
-                    mapping={{
-                        catalog_prefix: selectedRow.catalog_prefix,
-                        spec: {
-                            data_planes: selectedRow.spec.data_planes,
-                            stores: selectedRow.spec.stores.map((store) => ({
-                                bucket: store.bucket,
-                                provider: storageProviderToCloudProvider(
-                                    store.provider as CloudProvider
-                                ),
-                                storage_prefix: store.prefix,
-                            })),
-                        },
-                    }}
-                    onClose={handleCloseDialog}
-                />
-            ) : null}
         </>
     );
 }

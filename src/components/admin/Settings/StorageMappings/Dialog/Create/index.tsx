@@ -1,4 +1,3 @@
-import type { Dispatch, SetStateAction } from 'react';
 import type {
     CloudProvider,
     StorageMappingFormData,
@@ -22,7 +21,7 @@ import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings
 
 interface Props {
     open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
+    onClose: () => void;
 }
 
 function buildMappingPayload(
@@ -51,7 +50,7 @@ function buildMappingPayload(
 
 function _ConfigureStorageWizard({
     open,
-    setOpen,
+    onClose,
     methods,
 }: Props & { methods: ReturnType<typeof useForm<StorageMappingFormData>> }) {
     const intl = useIntl();
@@ -98,7 +97,7 @@ function _ConfigureStorageWizard({
     );
 
     const closeDialog = () => {
-        setOpen(false);
+        onClose();
         methods.reset();
         results.clear();
     };
@@ -119,7 +118,7 @@ function _ConfigureStorageWizard({
     );
 }
 
-export function ConfigureStorageWizard(props: Props) {
+export function CreateMappingWizard(props: Props) {
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {

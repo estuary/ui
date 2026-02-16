@@ -2,6 +2,11 @@ import type { StorageMappingFormData } from 'src/components/admin/Settings/Stora
 
 import { useMemo } from 'react';
 
+import { Button } from '@mui/material';
+
+import { useFormContext } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
+
 import { useStorageMappings } from 'src/api/storageMappingsGql';
 import {
     isChildOfRoot,
@@ -10,12 +15,17 @@ import {
     useLiveSpecs,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/PrefixAutocomplete';
 import CardWrapper from 'src/components/shared/CardWrapper';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { validateCatalogName } from 'src/validation';
 
 export function PrefixCard() {
     const { storageMappings } = useStorageMappings();
     const liveSpecNames = useLiveSpecs();
     const basePrefixes = useBasePrefixes();
+    const { watch } = useFormContext<StorageMappingFormData>();
+    const [, setSearchParams] = useSearchParams();
+
+    const currentPrefix = watch('catalog_prefix');
 
     const storageMappingPrefixes = useMemo(() => {
         return storageMappings.map((sm) => sm.catalogPrefix);
@@ -75,6 +85,8 @@ export function PrefixCard() {
         [storageMappingPrefixes, liveSpecNames]
     );
 
+    const isDuplicate = storageMappingPrefixes.includes(currentPrefix);
+
     return (
         <CardWrapper>
             <RHFPrefixAutocomplete<StorageMappingFormData, 'catalog_prefix'>
@@ -85,6 +97,25 @@ export function PrefixCard() {
                 onBlurValidate={onBlurValidate}
                 onChangeValidate={onChangeValidate}
             />
+            {isDuplicate ? (
+                <Button
+                    onClick={() => {
+                        setSearchParams((prev) => {
+                            prev.set(
+                                GlobalSearchParams.SM_DIALOG,
+                                'edit'
+                            );
+                            prev.set(
+                                GlobalSearchParams.SM_PREFIX,
+                                currentPrefix
+                            );
+                            return prev;
+                        });
+                    }}
+                >
+                    Go to existing storage mapping
+                </Button>
+            ) : null}
         </CardWrapper>
     );
 }

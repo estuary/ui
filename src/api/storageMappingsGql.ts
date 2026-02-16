@@ -152,7 +152,14 @@ interface StorageMappingsQueryResponse {
             cursor: string;
             node: {
                 catalogPrefix: string;
-                storage: unknown;
+                storage: {
+                    data_planes: string[];
+                    stores: {
+                        provider: StorageProvider;
+                        bucket: string;
+                        prefix?: string;
+                    }[];
+                };
             };
         }[];
     };

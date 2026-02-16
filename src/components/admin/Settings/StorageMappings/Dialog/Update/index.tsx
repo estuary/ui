@@ -27,7 +27,7 @@ interface StorageMappingDialogProps {
     // TODO (GREG): do we have a better type for this somewhere? maybe we should define one in the gql layer
     mapping: {
         catalog_prefix: string;
-        spec: {
+        storage: {
             data_planes: string[];
             stores: {
                 bucket: string;
@@ -52,7 +52,7 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
             catalog_prefix: mapping.catalog_prefix,
             data_planes: [],
             default_data_plane: null,
-            fragment_stores: mapping.spec.stores,
+            fragment_stores: mapping.storage.stores,
             allow_public: true,
             select_additional: true,
         },
@@ -73,25 +73,25 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
     useEffect(() => {
         if (!dataPlanesHydrated.current && allDataPlanes.length > 0) {
             dataPlanesHydrated.current = true;
-            const resolved = mapping.spec.data_planes
+            const resolved = mapping.storage.data_planes
                 .map((name) =>
                     allDataPlanes.find((dp) => dp.dataPlaneName === name)
                 )
                 .filter((dp): dp is FormDataPlane => dp !== undefined);
             methods.setValue('data_planes', resolved, { shouldDirty: false });
         }
-    }, [allDataPlanes, mapping.spec.data_planes, methods]);
+    }, [allDataPlanes, mapping.storage.data_planes, methods]);
 
     const hasChanges = useMemo(() => {
         const dpChanged =
-            dataPlanes.length !== mapping.spec.data_planes.length ||
+            dataPlanes.length !== mapping.storage.data_planes.length ||
             dataPlanes.some(
-                (dp) => !mapping.spec.data_planes.includes(dp.dataPlaneName)
+                (dp) => !mapping.storage.data_planes.includes(dp.dataPlaneName)
             );
         const storesChanged =
-            fragmentStores.length !== mapping.spec.stores.length;
+            fragmentStores.length !== mapping.storage.stores.length;
         return dpChanged || storesChanged;
-    }, [dataPlanes, fragmentStores.length, mapping.spec]);
+    }, [dataPlanes, fragmentStores.length, mapping.storage]);
 
     const newConnectionsPassing = useMemo(() => {
         const newDataPlanes = dataPlanes.filter((dp) => dp._isNew);
@@ -192,12 +192,13 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
     );
 }
 
-function StorageMappingDialog({ mapping, onClose }: StorageMappingDialogProps) {
+export function UpdateMappingDialog({
+    mapping,
+    onClose,
+}: StorageMappingDialogProps) {
     return (
         <ConnectionTestProvider catalog_prefix={mapping.catalog_prefix}>
             <DialogInner mapping={mapping} onClose={onClose} />
         </ConnectionTestProvider>
     );
 }
-
-export default StorageMappingDialog;
