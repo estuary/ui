@@ -30,6 +30,8 @@ export function StorageMappings() {
         });
     }, [setSearchParams]);
 
+    const createMapping = smDialog === 'create';
+
     // TODO: fix typing when storage mapping types are cleaned up
     const editMapping = useMemo(() => {
         if (smDialog !== 'edit' || !smPrefix) return null;
@@ -61,7 +63,7 @@ export function StorageMappings() {
             />
             <StorageMappingsTable />
 
-            {smDialog === 'create' ? (
+            {createMapping ? (
                 <CreateMappingWizard open onClose={closeDialog} />
             ) : null}
 

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { useMemo, useRef, useState } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
@@ -10,7 +12,7 @@ interface PrefixAutocompleteProps {
     label: string;
     required?: boolean;
     error?: boolean;
-    errorMessage?: string;
+    errorMessage?: ReactNode;
     helperText?: string;
 }
 
