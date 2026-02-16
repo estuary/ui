@@ -15,7 +15,7 @@ export function StorageMappingForm() {
         <>
             <Typography sx={{ mb: 4 }}>
                 Configure a new storage mapping for your collection data. For
-                more information and access requirements, see the{' '}
+                information and access requirements, see the{' '}
                 <Link href={docsUrl} target="_blank" rel="noopener noreferrer">
                     documentation
                 </Link>

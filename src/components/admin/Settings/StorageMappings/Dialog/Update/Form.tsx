@@ -7,8 +7,15 @@ export function UpdateForm() {
     return (
         <>
             <Typography sx={{ mb: 4 }}>
-                Configure a new storage mapping for your collection data. For
-                more information and access requirements, see the documentation.
+                For information and access requirements, see the{' '}
+                <Link
+                    href="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    documentation
+                </Link>
+                .
             </Typography>
             <Stack spacing={2}>
                 <DataPlanesCard />

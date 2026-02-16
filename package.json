@@ -80,6 +80,7 @@
         "logrocket": "^10.1.1",
         "logrocket-react": "^5.0.1",
         "luxon": "^3.7.1",
+        "markdown-to-jsx": "^9.7.4",
         "material-ui-popup-state": "^5.0.10",
         "mnemonist": "^0.39.8",
         "monaco-editor": "^0.53.0",
@@ -118,6 +119,9 @@
     },
     "devDependencies": {
         "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+        "@storybook/addon-a11y": "^10.2.8",
+        "@storybook/addon-docs": "^10.2.8",
+        "@storybook/react-vite": "^10.2.8",
         "@testing-library/react": "^12.1.5",
         "@testing-library/user-event": "^14.5.2",
         "@types/highlight-words-core": "^1.2.3",
@@ -136,6 +140,7 @@
         "eslint-config-kentcdodds": "^21.0.0",
         "eslint-plugin-formatjs": "^4.11.3",
         "eslint-plugin-no-relative-import-paths": "^1.6.1",
+        "eslint-plugin-storybook": "^10.2.8",
         "eslint-plugin-unused-imports": "^2.0.0",
         "jsdom": "^24.0.0",
         "licensee": "^11.1.1",
@@ -143,6 +148,7 @@
         "prettier": "^3.5.3",
         "rollup-plugin-license": "^3.6.0",
         "sharp": "^0.34.1",
+        "storybook": "^10.2.8",
         "typescript": "^5.9.3",
         "vite": "^6.4.1",
         "vite-plugin-checker": "^0.9.1",
@@ -154,12 +160,7 @@
         "vite-plugin-wasm": "^3.4.1",
         "vite-tsconfig-paths": "^5.1.4",
         "vitest": "^3.1.2",
-        "vitest-mock-extended": "^3.0.1",
-        "storybook": "^10.2.8",
-        "@storybook/react-vite": "^10.2.8",
-        "@storybook/addon-a11y": "^10.2.8",
-        "@storybook/addon-docs": "^10.2.8",
-        "eslint-plugin-storybook": "^10.2.8"
+        "vitest-mock-extended": "^3.0.1"
     },
     "overrides": {
         "msw": {

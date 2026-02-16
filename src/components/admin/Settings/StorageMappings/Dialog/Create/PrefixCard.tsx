@@ -2,8 +2,6 @@ import type { StorageMappingFormData } from 'src/components/admin/Settings/Stora
 
 import { useMemo } from 'react';
 
-import { Button } from '@mui/material';
-
 import { useFormContext } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 
@@ -23,7 +21,7 @@ export function PrefixCard() {
     const liveSpecNames = useLiveSpecs();
     const basePrefixes = useBasePrefixes();
     const { watch } = useFormContext<StorageMappingFormData>();
-    const [, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
 
     const currentPrefix = watch('catalog_prefix');
 
@@ -47,13 +45,19 @@ export function PrefixCard() {
         [basePrefixes]
     );
 
+    const editLinkParams = useMemo(() => {
+        const params = new URLSearchParams(searchParams);
+        params.set(GlobalSearchParams.SM_DIALOG, 'edit');
+        params.set(GlobalSearchParams.SM_PREFIX, currentPrefix);
+        return `?${params}`;
+    }, [searchParams, currentPrefix]);
+
     const onBlurValidate = useMemo(
         () => ({
             notDuplicateMapping: (value: string) => {
-                console.log('Validating duplicate mapping for value:', value);
                 return (
                     !storageMappingPrefixes.includes(value) ||
-                    'A storage mapping already exists at this prefix. Click here to see it.'
+                    `A storage mapping already exists at this prefix. [Click here to see it.](${editLinkParams})`
                 );
             },
 
@@ -82,10 +86,8 @@ export function PrefixCard() {
                 );
             },
         }),
-        [storageMappingPrefixes, liveSpecNames]
+        [storageMappingPrefixes, liveSpecNames, editLinkParams]
     );
-
-    const isDuplicate = storageMappingPrefixes.includes(currentPrefix);
 
     return (
         <CardWrapper>
@@ -97,25 +99,6 @@ export function PrefixCard() {
                 onBlurValidate={onBlurValidate}
                 onChangeValidate={onChangeValidate}
             />
-            {isDuplicate ? (
-                <Button
-                    onClick={() => {
-                        setSearchParams((prev) => {
-                            prev.set(
-                                GlobalSearchParams.SM_DIALOG,
-                                'edit'
-                            );
-                            prev.set(
-                                GlobalSearchParams.SM_PREFIX,
-                                currentPrefix
-                            );
-                            return prev;
-                        });
-                    }}
-                >
-                    Go to existing storage mapping
-                </Button>
-            ) : null}
         </CardWrapper>
     );
 }

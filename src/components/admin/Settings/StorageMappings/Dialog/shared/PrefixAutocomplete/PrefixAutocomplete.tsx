@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
-
 import { useMemo, useRef, useState } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
+
+import Markdown from 'markdown-to-jsx';
+import { Link } from 'react-router-dom';
 
 interface PrefixAutocompleteProps {
     leaves: string[];
@@ -12,9 +13,23 @@ interface PrefixAutocompleteProps {
     label: string;
     required?: boolean;
     error?: boolean;
-    errorMessage?: ReactNode;
+    errorMessage?: string;
     helperText?: string;
 }
+
+const markdownOptions = {
+    forceInline: true,
+    overrides: {
+        a: {
+            component: ({
+                href,
+                ...props
+            }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+                <Link to={href ?? ''} {...props} />
+            ),
+        },
+    },
+};
 
 export function PrefixAutocomplete({
     leaves,
@@ -32,7 +47,12 @@ export function PrefixAutocomplete({
     const filteredOptionsRef = useRef<string[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
-    const displayMessage = errorMessage ?? helperText;
+    const displayMessage = useMemo(() => {
+        const msg = errorMessage ?? helperText;
+        if (!msg) return undefined;
+
+        return <Markdown options={markdownOptions}>{msg}</Markdown>;
+    }, [errorMessage, helperText]);
 
     const branches = useMemo(() => {
         const allBranches = new Set<string>();
