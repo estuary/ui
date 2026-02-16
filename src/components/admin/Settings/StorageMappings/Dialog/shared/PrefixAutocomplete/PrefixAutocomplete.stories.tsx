@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react/dist/index';
 
 import { useState } from 'react';
 
@@ -6,9 +6,9 @@ import { PrefixAutocomplete } from './PrefixAutocomplete';
 
 // ── Mock data ───────────────────────────────────────────────────────
 
-const MOCK_ROOTS = ['acmeCo/', 'globex/'];
-
 const MOCK_LEAVES = [
+    'globex/engineering',
+    'globex/marketing',
     'acmeCo/capture-one',
     'acmeCo/anvils/materialize-one',
     'acmeCo/anvils/metrics/collection-one',
@@ -44,7 +44,6 @@ type Story = StoryObj<typeof PrefixAutocomplete>;
 export const Default: Story = {
     render: () => (
         <PrefixAutocompleteControlled
-            roots={MOCK_ROOTS}
             leaves={MOCK_LEAVES}
             label="Catalog Prefix"
         />
@@ -54,7 +53,6 @@ export const Default: Story = {
 export const Required: Story = {
     render: () => (
         <PrefixAutocompleteControlled
-            roots={MOCK_ROOTS}
             leaves={MOCK_LEAVES}
             label="Catalog Prefix"
             required
@@ -65,7 +63,6 @@ export const Required: Story = {
 export const WithHelperText: Story = {
     render: () => (
         <PrefixAutocompleteControlled
-            roots={MOCK_ROOTS}
             leaves={MOCK_LEAVES}
             label="Catalog Prefix"
             helperText="Choose a prefix for your storage mapping"
@@ -76,7 +73,6 @@ export const WithHelperText: Story = {
 export const WithError: Story = {
     render: () => (
         <PrefixAutocompleteControlled
-            roots={MOCK_ROOTS}
             leaves={MOCK_LEAVES}
             label="Catalog Prefix"
             error
@@ -90,7 +86,6 @@ export const PreFilled: Story = {
         const [value, setValue] = useState('acmeCo/anvils/');
         return (
             <PrefixAutocomplete
-                roots={MOCK_ROOTS}
                 leaves={MOCK_LEAVES}
                 label="Catalog Prefix"
                 value={value}

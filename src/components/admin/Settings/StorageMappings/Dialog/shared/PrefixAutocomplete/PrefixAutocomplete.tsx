@@ -79,7 +79,7 @@ export function PrefixAutocomplete({
             sx={{ mb: 0, pb: 0 }}
             freeSolo
             autoHighlight
-            value={null}
+            value={value}
             options={branches}
             open={isOpen}
             onOpen={() => {
@@ -87,7 +87,7 @@ export function PrefixAutocomplete({
             }}
             onClose={(_event, reason) => {
                 if (
-                    // Leave the dropdown open if there are are still options available
+                    // Leave the dropdown open to progressively narrow options as the user types or makes a selection,
                     // (e.g. the user selects acmeCo/ to narrow the options to acmeCo/finance/ and acmeCo/engineering/)
                     reason === 'selectOption' &&
                     filteredOptionsRef.current.length > 1
