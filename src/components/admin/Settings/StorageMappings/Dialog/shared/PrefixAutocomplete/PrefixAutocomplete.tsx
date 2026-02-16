@@ -2,8 +2,6 @@ import { useMemo, useRef, useState } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
-import { AnimatedHelperText } from 'src/components/shared/AnimatedHelperText';
-
 interface PrefixAutocompleteProps {
     leaves: string[];
     value: string;
@@ -27,6 +25,8 @@ export function PrefixAutocomplete({
     errorMessage,
     helperText,
 }: PrefixAutocompleteProps) {
+    // MUI Autocomplete doesn't expose the filtered options list to onClose,
+    // so we stash it here to decide whether to keep the dropdown open after a selection.
     const filteredOptionsRef = useRef<string[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
@@ -44,6 +44,7 @@ export function PrefixAutocomplete({
             }
         }
 
+        // sort shallow first, then alphabetically
         return Array.from(allBranches).sort((a, b) => {
             const depthA = a.split('/').length;
             const depthB = b.split('/').length;
@@ -64,6 +65,8 @@ export function PrefixAutocomplete({
             }}
             onClose={(_event, reason) => {
                 if (
+                    // Leave the dropdown open if there are are still options available
+                    // (e.g. the user selects acmeCo/ to narrow the options to acmeCo/finance/ and acmeCo/engineering/)
                     reason === 'selectOption' &&
                     filteredOptionsRef.current.length > 1
                 ) {
@@ -80,9 +83,6 @@ export function PrefixAutocomplete({
                 filteredOptionsRef.current = filtered;
                 return filtered;
             }}
-            renderOption={(props, option, { index }) => (
-                <li {...props}>{option}</li>
-            )}
             inputValue={value ?? ''}
             onInputChange={(_event, newInputValue, _reason) => {
                 onChange(newInputValue);
@@ -97,50 +97,17 @@ export function PrefixAutocomplete({
                 onBlur?.();
             }}
             renderInput={(params) => (
-                <>
-                    <TextField
-                        {...params}
-                        label={label}
-                        required={required}
-                        error={error}
-                        size="small"
-                        inputProps={{
-                            ...params.inputProps,
-                            onKeyDown: (
-                                event: React.KeyboardEvent<HTMLInputElement>
-                            ) => {
-                                if (
-                                    event.key === 'Tab' &&
-                                    event.shiftKey &&
-                                    value
-                                ) {
-                                    event.preventDefault();
-                                    // Remove trailing slash, then everything after the last slash
-                                    const trimmed = value.endsWith('/')
-                                        ? value.slice(0, -1)
-                                        : value;
-                                    const lastSlash = trimmed.lastIndexOf('/');
-                                    onChange(
-                                        lastSlash >= 0
-                                            ? trimmed.slice(0, lastSlash + 1)
-                                            : ''
-                                    );
-                                }
-                                (
-                                    params.inputProps as Record<
-                                        string,
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        any
-                                    >
-                                )?.onKeyDown?.(event);
-                            },
-                        }}
-                    />
-                    <AnimatedHelperText
-                        error={error}
-                        message={displayMessage}
-                    />
-                </>
+                <TextField
+                    {...params}
+                    label={label}
+                    required={required}
+                    error={error}
+                    helperText={displayMessage ?? ' '}
+                    FormHelperTextProps={{
+                        sx: { minHeight: '3.4em' },
+                    }}
+                    size="small"
+                />
             )}
         />
     );
