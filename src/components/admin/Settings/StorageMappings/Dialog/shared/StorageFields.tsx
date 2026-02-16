@@ -100,7 +100,7 @@ export function StorageFields({ index }: StorageFieldsProps) {
                 fullWidth
                 size="small"
             />
-            <Stack spacing={2} sx={{ color: 'text.secondary' }}>
+            <Stack spacing={1} sx={{ color: 'text.secondary' }}>
                 <Box sx={{ display: 'flex', gap: 2 }}>
                     <RHFSelect<
                         StorageMappingFormData,

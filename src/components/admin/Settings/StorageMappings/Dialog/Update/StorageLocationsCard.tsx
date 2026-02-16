@@ -219,8 +219,7 @@ export function StorageLocationsCard() {
                                 <Collapse
                                     key={key}
                                     in={
-                                        key !== removingKey &&
-                                        key !== addingKey
+                                        key !== removingKey && key !== addingKey
                                     }
                                     onExited={handleStoreRemoveExited}
                                     unmountOnExit
@@ -286,7 +285,7 @@ export function StorageLocationsCard() {
                         sx={{ mt: 1 }}
                     >
                         Inactive stores are kept for historical data. New data
-                        will be routed to the primary store.
+                        will be directed to the primary store.
                     </Typography>
                 ) : null}
             </Stack>

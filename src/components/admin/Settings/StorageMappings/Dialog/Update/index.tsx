@@ -84,6 +84,7 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
 
     const hasChanges = useMemo(() => {
         const dpChanged =
+            dataPlanes[0]?.dataPlaneName !== mapping.storage.data_planes[0] ||
             dataPlanes.length !== mapping.storage.data_planes.length ||
             dataPlanes.some(
                 (dp) => !mapping.storage.data_planes.includes(dp.dataPlaneName)

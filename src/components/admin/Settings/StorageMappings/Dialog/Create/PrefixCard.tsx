@@ -30,7 +30,10 @@ export function PrefixCard() {
     }, [storageMappings]);
 
     const leaves = useMemo(
-        () => [...liveSpecNames, ...storageMappingPrefixes],
+        () => [
+            ...liveSpecNames.map((name) => name.slice(0, name.lastIndexOf('/') + 1)),
+            ...storageMappingPrefixes,
+        ],
         [liveSpecNames, storageMappingPrefixes]
     );
 
