@@ -7,8 +7,8 @@ export function isChildOfRoot(value: string, roots: string[]) {
 
     const errorMessage =
         roots.length === 1
-            ? `Must start with ${roots[0]}`
-            : `Must start with one of: ${roots.join(', ')}`;
+            ? `Must start with \`${roots[0]}\``
+            : `Must start with one of: ${roots.map((root) => `\`${root}\``).join(', ')}`;
 
     return matchesRoot || errorMessage;
 }

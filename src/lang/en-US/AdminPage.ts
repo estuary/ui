@@ -162,10 +162,10 @@ export const AdminPage: Record<string, string> = {
 
     'storageMappings.configureStorage.label': `Configure Storage`,
     'storageMappings.wizard.step.configure': `Configuration`,
-    'storageMappings.wizard.step.test': `Test Connection`,
+    'storageMappings.wizard.step.test': `Continue to connection test`,
     'storageMappings.wizard.title.configure': `Configure New Storage`,
     'storageMappings.wizard.title.test': `Authorize Storage Access`,
-    'storageMappings.wizard.cta.testConnection': `Test Connection`,
+    'storageMappings.wizard.cta.testConnection': `Continue to connection test`,
     'storageMappings.dialog.generate.description': `Configure a new collection storage for your data.`,
     'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage location.`,
     'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,

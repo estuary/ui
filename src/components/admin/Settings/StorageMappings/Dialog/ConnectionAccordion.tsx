@@ -231,7 +231,6 @@ export function ConnectionAccordion({
                         <Typography
                             component="span"
                             variant="body2"
-                            color="text.secondary"
                         >
                             ({store.provider})
                         </Typography>

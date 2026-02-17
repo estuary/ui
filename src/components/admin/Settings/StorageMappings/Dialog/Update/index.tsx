@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Typography } from '@mui/material';
 
 import { FormProvider, useForm } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 
 import { useDataPlanes } from 'src/api/dataPlanesGql';
 import { useStorageMappingService } from 'src/api/storageMappingsGql';
@@ -45,6 +46,7 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
 
     const { testAll, resultFor } = useConnectionTest();
     const refresh = useStorageMappingsRefresh();
+    const intl = useIntl();
 
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
@@ -159,9 +161,8 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
                 label: 'Configure',
                 title,
                 component: <UpdateForm />,
-                nextLabel: 'Test Connections',
-                canProceed: () =>
-                    hasChanges && dataPlanes.length > 0 && !hasPendingStore,
+                nextLabel: 'Test connections',
+                canProceed: () => dataPlanes.length > 0 && !hasPendingStore,
                 onProceed: handleTestConnections,
             },
             {

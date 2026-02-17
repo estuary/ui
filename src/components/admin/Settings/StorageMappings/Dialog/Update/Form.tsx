@@ -7,7 +7,8 @@ export function UpdateForm() {
     return (
         <>
             <Typography sx={{ mb: 4 }}>
-                For information and access requirements, see the{' '}
+                Update your data plane or cloud storage configuration below. For
+                information and access requirements, see the{' '}
                 <Link
                     href="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow"
                     target="_blank"

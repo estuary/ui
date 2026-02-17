@@ -144,7 +144,7 @@ export function StorageFields({ index }: StorageFieldsProps) {
                                 syncWithDataPlane(defaultDataPlane!);
                             }}
                         >
-                            Match data plane
+                            Match default data plane
                         </Link>
                     </Alert>
                 </Collapse>
