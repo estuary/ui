@@ -81,6 +81,7 @@ export function WizardDialog({
         if (isLastStep) {
             // On last step, call onComplete
             if (onComplete) {
+                setIsNavigating(true);
                 try {
                     await onComplete();
                 } catch (error) {
@@ -90,6 +91,8 @@ export function WizardDialog({
                             : 'An error occurred during completion'
                     );
                     return false;
+                } finally {
+                    setIsNavigating(false);
                 }
             }
         } else {
