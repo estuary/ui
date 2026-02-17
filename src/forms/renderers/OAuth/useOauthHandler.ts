@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { useBeforeUnload } from 'react-use';
 
 import { accessToken, authURL } from 'src/api/oauth';
+import { buildVirtualConfig } from 'src/forms/renderers/OAuth/buildVirtualConfig';
 import { CREDENTIALS, INJECTED_VALUES } from 'src/forms/renderers/OAuth/shared';
 import { useOAuth2 } from 'src/hooks/forks/react-use-oauth2/components';
 import { logRocketEvent } from 'src/services/shared';
@@ -15,7 +16,8 @@ import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointC
 // Hook for OAuth popup opening, error handling, error message setting, etc.
 export const useOauthHandler = (
     provider: string | undefined,
-    successHandler: (tokenResponse: any) => void
+    successHandler: (tokenResponse: any) => void,
+    credentialsPath: string
 ) => {
     const intl = useIntl();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -46,9 +48,13 @@ export const useOauthHandler = (
     // handler for the useOauth stuff
     const onSuccess = useCallback(
         async (payload: any, codeVerifier: string) => {
-            const preparedData = endpointConfigData;
+            const virtualConfig = buildVirtualConfig(
+                endpointConfigData,
+                credentialsPath
+            );
+            const preparedData = { ...virtualConfig };
             preparedData[CREDENTIALS] = {
-                ...endpointConfigData[CREDENTIALS],
+                ...virtualConfig[CREDENTIALS],
                 ...INJECTED_VALUES,
             };
 
@@ -82,7 +88,7 @@ export const useOauthHandler = (
                 successHandler(tokenResponse);
             }
         },
-        [endpointConfigData, intl, provider, successHandler]
+        [credentialsPath, endpointConfigData, intl, provider, successHandler]
     );
 
     // This does not make the call - just wiring stuff up and getting
@@ -96,7 +102,11 @@ export const useOauthHandler = (
         setErrorMessage(null);
 
         // Make the call to know what pop url to open
-        const fetchAuthURL = await authURL(connectorId, endpointConfigData);
+        const virtualConfig = buildVirtualConfig(
+            endpointConfigData,
+            credentialsPath
+        );
+        const fetchAuthURL = await authURL(connectorId, virtualConfig);
 
         if (fetchAuthURL.error) {
             setErrorMessage(
@@ -110,7 +120,7 @@ export const useOauthHandler = (
                 fetchAuthURL.data.code_verifier
             );
         }
-    }, [connectorId, endpointConfigData, getAuth, intl]);
+    }, [connectorId, credentialsPath, endpointConfigData, getAuth, intl]);
 
     // Loading usually means there is an OAuth in progress so make sure
     //  they want to close the window.

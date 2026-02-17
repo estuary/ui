@@ -79,14 +79,46 @@ export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
     return indexOfFittingSchema;
 };
 
-// Just for when OAuth (as of 2026 Q1)
+const ARRAY_REGEX = /^\d+$/;
+
+const splitPath = (path: string) => path.split('.');
+
+const isArrayIndex = (segment: any) =>
+    segment && typeof segment === 'string' && ARRAY_REGEX.test(segment);
+
+// Just for OAuth (as of 2026 Q1)
 export const isInsideArray = (path: string): boolean => {
     if (!path || typeof path !== 'string') {
         return false;
     }
 
-    return (
-        hasLength(path) &&
-        path.split('.').some((segment: string) => /^\d+$/.test(segment))
-    );
+    return hasLength(path) && splitPath(path).some(isArrayIndex);
+};
+
+/**
+ * Extracts array context from a JSONForms path.
+ * Given a path like "stores.2.credentials", returns:
+ *   { arrayField: "stores", index: 2, rest: "credentials" }
+ * Returns null if the path is not inside an array.
+ */
+export const getArrayContext = (
+    path: string
+): { arrayField: string; index: number; rest: string } | null => {
+    if (!path || typeof path !== 'string') {
+        return null;
+    }
+
+    const segments = splitPath(path);
+
+    for (let i = 0; i < segments.length; i++) {
+        if (isArrayIndex(segments[i])) {
+            return {
+                arrayField: segments.slice(0, i).join('.'),
+                index: parseInt(segments[i], 10),
+                rest: segments.slice(i + 1).join('.'),
+            };
+        }
+    }
+
+    return null;
 };
