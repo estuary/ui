@@ -2,15 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { useState } from 'react';
 
-import {
-    Box,
-    FormControl,
-    FormControlLabel,
-    Radio,
-    RadioGroup,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 
 import { WizardDialog } from './WizardDialog';
 import { IntlProvider } from 'react-intl';
@@ -27,7 +19,7 @@ const messages: Record<string, string> = {
 
 // Wrapper that manages the dialog open state and renders a trigger button
 function DialogStory(
-    props: Omit<React.ComponentProps<typeof WizardDialog>, 'open' | 'onClose'>
+    props: Omit<React.ComponentProps<typeof WizardDialog>, 'open'>
 ) {
     const [open, setOpen] = useState(true);
 
@@ -37,54 +29,12 @@ function DialogStory(
             <WizardDialog
                 {...props}
                 open={open}
-                onClose={() => setOpen(false)}
+                onClose={() => {
+                    props.onClose();
+                    setOpen(false);
+                }}
             />
         </>
-    );
-}
-
-// ── Mock step components ────────────────────────────────────────────
-
-function StepOne() {
-    return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography>
-                Configure the basic settings for your new resource.
-            </Typography>
-            <TextField label="Name" placeholder="my-resource" fullWidth />
-            <TextField
-                label="Description"
-                placeholder="Optional description"
-                fullWidth
-            />
-        </Box>
-    );
-}
-
-function StepTwo() {
-    return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography>Choose a provider for this resource.</Typography>
-            <FormControl>
-                <RadioGroup defaultValue="s3">
-                    <FormControlLabel
-                        value="s3"
-                        control={<Radio />}
-                        label="Amazon S3"
-                    />
-                    <FormControlLabel
-                        value="gcs"
-                        control={<Radio />}
-                        label="Google Cloud Storage"
-                    />
-                    <FormControlLabel
-                        value="azure"
-                        control={<Radio />}
-                        label="Azure Blob Storage"
-                    />
-                </RadioGroup>
-            </FormControl>
-        </Box>
     );
 }
 
@@ -111,116 +61,131 @@ type Story = StoryObj<typeof WizardDialog>;
 
 // ── Stories ──────────────────────────────────────────────────────────
 
-/** Each step overrides the dialog title */
-export const PerStepTitlesAndButtonLabels: Story = {
-    render: () => (
-        <DialogStory
-            title="Wizard"
-            steps={[
-                {
-                    component: <StepOne />,
-                    title: 'Step 1: Basic Settings',
-                    nextLabel: 'Continue',
-                },
-                {
-                    component: <StepTwo />,
-                    title: 'Step 2: Choose Provider',
-                    nextLabel: 'Save and Close',
-                },
-            ]}
-        />
-    ),
-};
-
-/** A single-step dialog — no Back button, Next acts as Save */
-export const SingleStep: Story = {
-    render: () => (
-        <DialogStory
-            title="Quick Setup"
-            steps={[{ component: <StepOne />, nextLabel: 'Save' }]}
-        />
-    ),
-};
-
-/** Demonstrates canAdvance — the Next button is disabled until the input has a value */
-export const WithValidation: Story = {
+/** Three-step wizard demonstrating validation, async onProceed, and per-step titles */
+export const Default: Story = {
     render: () => {
         const [name, setName] = useState('');
+        const [attempted, setAttempted] = useState(false);
 
         return (
             <DialogStory
-                title="Validated Wizard"
+                title="Setup Wizard"
+                onClose={() => {
+                    setAttempted(false);
+                    setName('');
+                }}
                 steps={[
                     {
+                        title: 'Introduction',
                         component: (
-                            <TextField
-                                label="Name (required)"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                fullWidth
-                            />
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    pb: 12,
+                                }}
+                            >
+                                <Typography>
+                                    This wizard demo demonstrates{' '}
+                                    <ol>
+                                        <li>
+                                            per-step titles and next button
+                                            labels
+                                        </li>
+                                        <li>
+                                            field validation that blocks
+                                            advancement
+                                        </li>
+                                        <li>
+                                            async onAdvance callback that shows
+                                            loading spinner and fails the first
+                                            time but succeeds on retry
+                                        </li>
+                                        <li>
+                                            error message if onAdvance is
+                                            rejected
+                                        </li>
+                                        <li>
+                                            smooth transition between steps that
+                                            have different content heights
+                                        </li>
+                                    </ol>
+                                </Typography>
+                            </Box>
+                        ),
+                    },
+                    {
+                        title: 'Configuration',
+                        component: (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2,
+                                }}
+                            >
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Step 2 requires a non-empty name before you
+                                    can proceed, and clicking "Fail first"
+                                    simulates an async save that fails the first
+                                    time but succeeds on retry
+                                </Typography>
+                                <TextField
+                                    label="Resource Name (required)"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    fullWidth
+                                />
+                            </Box>
                         ),
                         canAdvance: () => name.trim().length > 0,
+                        onAdvance: () =>
+                            new Promise((resolve, reject) =>
+                                setTimeout(() => {
+                                    if (attempted) {
+                                        resolve(true);
+                                    } else {
+                                        setAttempted(true);
+                                        reject(
+                                            new Error(
+                                                'Connection test failed: unable to reach endpoint. Try again.'
+                                            )
+                                        );
+                                    }
+                                }, 500)
+                            ),
+                        nextLabel: attempted ? 'Try again' : 'Fail first',
                     },
-                    { component: <StepTwo /> },
+                    {
+                        title: 'Summary',
+                        component: (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2,
+                                }}
+                            >
+                                <Typography>
+                                    Your resource has been validated
+                                    successfully.
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    Click Save to finish setup, or go Back to
+                                    make changes.
+                                </Typography>
+                            </Box>
+                        ),
+                        nextLabel: 'Save & exit',
+                    },
                 ]}
             />
         );
     },
-};
-
-/** Demonstrates onProceed with an async operation — shows the loading spinner */
-export const AsyncStepValidation: Story = {
-    render: () => (
-        <DialogStory
-            title="Async Wizard"
-            steps={[
-                {
-                    component: (
-                        <Typography>
-                            Clicking Next will simulate a 2-second async
-                            validation.
-                        </Typography>
-                    ),
-                    onProceed: () =>
-                        new Promise((resolve) =>
-                            setTimeout(() => resolve(true), 2000)
-                        ),
-                },
-                { component: <StepTwo /> },
-            ]}
-        />
-    ),
-};
-
-/** Demonstrates an onProceed that rejects — the error is shown inline */
-export const AsyncStepError: Story = {
-    render: () => (
-        <DialogStory
-            title="Error Handling"
-            steps={[
-                {
-                    component: (
-                        <Typography>
-                            Clicking Next will simulate a failed async
-                            operation.
-                        </Typography>
-                    ),
-                    onProceed: () =>
-                        new Promise((_resolve, reject) =>
-                            setTimeout(
-                                () =>
-                                    reject(
-                                        new Error(
-                                            'Connection test failed: unable to reach endpoint'
-                                        )
-                                    ),
-                                500
-                            )
-                        ),
-                },
-                { component: <StepTwo /> },
-            ]}
-        />
-    ),
 };
