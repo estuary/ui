@@ -22,7 +22,6 @@ import {
 } from 'src/components/shared/pickers/shared';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { isReactElement } from 'src/utils/misc-utils';
 
 const TIMEZONE_OFFSET = new RegExp('([+-][0-9]{2}:[0-9]{2})$');
 
@@ -43,13 +42,7 @@ const formatDate = (formatValue: Date) => {
 
 export function CustomLayout(props: PickersLayoutProps<any>) {
     const intl = useIntl();
-    const { shortcuts, toolbar, tabs, content, ownerState } =
-        usePickerLayout(props);
-
-    let currentStep = '';
-    if (isReactElement(content)) {
-        currentStep = content.props.focusedView ?? content.props.view ?? '';
-    }
+    const { tabs, content, ownerState } = usePickerLayout(props);
 
     return (
         <PickersLayoutRoot
@@ -58,8 +51,6 @@ export function CustomLayout(props: PickersLayoutProps<any>) {
                 pickerOrientation: 'portrait',
             }}
         >
-            {toolbar}
-            {shortcuts}
             <PickersLayoutContentWrapper ownerState={ownerState}>
                 <>
                     {tabs}
@@ -68,21 +59,12 @@ export function CustomLayout(props: PickersLayoutProps<any>) {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            marginBottom: 2,
+                            justifyContent: 'end',
+                            marginY: 1,
                             marginX: 1,
                             textTransform: 'capitalize',
                         }}
                     >
-                        <Typography variant="caption">
-                            {intl.formatMessage(
-                                {
-                                    id: 'dateTimePicker.picker.currentStep',
-                                },
-                                { currentStep }
-                            )}
-                        </Typography>
-
                         <Typography variant="caption">
                             {intl.formatMessage({
                                 id: 'dateTimePicker.picker.footer',
@@ -120,7 +102,7 @@ function DateTimePickerCTA(props: PickerProps) {
             {...props}
         >
             <StaticDateTimePicker
-                ampm={false}
+                ampm={true}
                 disabled={!enabled}
                 displayStaticWrapperAs="desktop"
                 openTo="day"
@@ -129,9 +111,16 @@ function DateTimePickerCTA(props: PickerProps) {
                 slots={{
                     layout: CustomLayout,
                 }}
-                onAccept={(_value) => {
-                    state.close();
+                slotProps={{
+                    tabs: { hidden: false },
                 }}
+                timeSteps={{
+                    hours: 1,
+                    minutes: 1,
+                    seconds: 1,
+                }}
+                onAccept={() => state.close()}
+                onClose={() => state.close()}
                 onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
