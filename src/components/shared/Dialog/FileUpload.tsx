@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
     Box,
@@ -33,7 +33,6 @@ export const FileUploadDialog = ({
     const [isDragOver, setIsDragOver] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileError, setFileError] = useState<string | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const validateAndSetFile = useCallback(
         (file: File) => {
@@ -50,19 +49,6 @@ export const FileUploadDialog = ({
             }
         },
         [intl]
-    );
-
-    const handleFileDrop = useCallback(
-        (event: React.DragEvent<HTMLDivElement>) => {
-            event.preventDefault();
-            setIsDragOver(false);
-
-            const files = Array.from(event.dataTransfer.files);
-            if (files.length > 0) {
-                validateAndSetFile(files[0]);
-            }
-        },
-        [validateAndSetFile]
     );
 
     const handleFileSelect = useCallback(
@@ -115,14 +101,8 @@ export const FileUploadDialog = ({
 
             <DialogContent>
                 <Box
-                    onDragOver={(e) => {
-                        e.preventDefault();
-                        setIsDragOver(true);
-                    }}
-                    onDragLeave={() => setIsDragOver(false)}
-                    onDrop={handleFileDrop}
-                    onClick={() => fileInputRef.current?.click()}
                     sx={{
+                        'position': 'relative',
                         'border': '2px dashed',
                         'borderColor': isDragOver
                             ? 'primary.main'
@@ -145,12 +125,29 @@ export const FileUploadDialog = ({
                                 : 'primary.main',
                             bgcolor: 'action.hover',
                         },
+                        '&:has(input:focus-visible)': {
+                            outline: '2px solid',
+                            outlineColor: 'primary.main',
+                            outlineOffset: '2px',
+                        },
                     }}
                 >
                     <input
-                        ref={fileInputRef}
                         type="file"
-                        style={{ display: 'none' }}
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            width: '100%',
+                            height: '100%',
+                            opacity: 0,
+                            cursor: 'pointer',
+                        }}
+                        onDragOver={(e) => {
+                            e.preventDefault();
+                            setIsDragOver(true);
+                        }}
+                        onDragLeave={() => setIsDragOver(false)}
+                        onDrop={() => setIsDragOver(false)}
                         onChange={handleFileSelect}
                     />
 
