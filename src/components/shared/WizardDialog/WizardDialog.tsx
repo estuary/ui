@@ -102,7 +102,7 @@ export function WizardDialog({
         }
 
         return true;
-    }, [currentStep, isLastStep, onComplete, steps]);
+    }, [currentStep, isLastStep, onClose, onComplete, steps]);
 
     const retreat = useCallback(() => {
         if (!isFirstStep) {

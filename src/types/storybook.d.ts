@@ -3,6 +3,7 @@ declare module 'storybook/internal/types' {
 }
 
 declare module '@storybook/react' {
+    // eslint-disable-next-line import/no-extraneous-dependencies -- transitive dep of @storybook/react-vite; shimmed for moduleResolution:"node"
     export * from '@storybook/react/dist/index';
 }
 

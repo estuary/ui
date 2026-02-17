@@ -1,11 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { useState } from 'react';
 
 import { Box, TextField, Typography } from '@mui/material';
 
-import { WizardDialog } from './WizardDialog';
 import { IntlProvider } from 'react-intl';
+
+import { WizardDialog } from 'src/components/shared/WizardDialog';
 
 // Only the messages WizardDialog's internals need
 const messages: Record<string, string> = {
@@ -18,9 +19,10 @@ const messages: Record<string, string> = {
 // ── Helpers ─────────────────────────────────────────────────────────
 
 // Wrapper that manages the dialog open state and renders a trigger button
-function DialogStory(
-    props: Omit<React.ComponentProps<typeof WizardDialog>, 'open'>
-) {
+function DialogStory({
+    onClose,
+    ...props
+}: Omit<React.ComponentProps<typeof WizardDialog>, 'open'>) {
     const [open, setOpen] = useState(true);
 
     return (
@@ -30,7 +32,7 @@ function DialogStory(
                 {...props}
                 open={open}
                 onClose={() => {
-                    props.onClose();
+                    onClose();
                     setOpen(false);
                 }}
             />
@@ -85,7 +87,7 @@ export const Default: Story = {
                                     pb: 12,
                                 }}
                             >
-                                <Typography component={'div'}>
+                                <Typography component="div">
                                     This wizard demo demonstrates{' '}
                                     <ol>
                                         <li>
@@ -129,7 +131,7 @@ export const Default: Story = {
                                     color="text.secondary"
                                 >
                                     Step 2 requires a non-empty name before you
-                                    can proceed, and clicking "Fail first"
+                                    can proceed, and clicking FAIL FIRST
                                     simulates an async save that fails the first
                                     time but succeeds on retry
                                 </Typography>
