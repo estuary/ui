@@ -44,11 +44,11 @@ export function WizardDialog({
 
         const currentStepConfig = steps[currentStep];
 
-        // Run step-specific onProceed callback if provided
-        if (currentStepConfig?.onProceed) {
-            const result = currentStepConfig.onProceed();
+        // Run step-specific onAdvance callback if provided
+        if (currentStepConfig?.onAdvance) {
+            const result = currentStepConfig.onAdvance();
 
-            // If onProceed returns a promise, wait for it and show loading state.
+            // If onAdvance returns a promise, wait for it and show loading state.
             // If the promise errors or resolves false, prevent navigation.
             if (result instanceof Promise) {
                 setIsNavigating(true);

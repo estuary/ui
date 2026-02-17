@@ -10,7 +10,7 @@ export interface WizardStep {
     /** Function to check if the next/save button should be enabled for this step */
     canAdvance?: () => boolean;
     /** Callback when user attempts to proceed from this step. Return true to proceed, false to block. */
-    onProceed?: () => Promise<boolean> | boolean;
+    onAdvance?: () => Promise<boolean> | boolean;
 }
 
 export interface WizardContextType {
