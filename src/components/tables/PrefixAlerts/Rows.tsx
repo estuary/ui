@@ -1,33 +1,30 @@
-import type { PrefixSubscription } from 'src/utils/notification-utils';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/PrefixAlerts/types';
 
 import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
-
-interface RowsProps {
-    data: [string, PrefixSubscription][];
-}
-
-interface RowProps {
-    row: [string, PrefixSubscription];
-}
+import { UNDERSCORE_RE } from 'src/validation';
 
 function Row({ row }: RowProps) {
-    const prefix = row[0];
-    const data = row[1];
-
     return (
         <TableRow>
-            <TableCell>{prefix}</TableCell>
+            <TableCell>{row.catalogPrefix}</TableCell>
 
             <ChipListCell
-                values={data.userSubscriptions.map(({ email }) => email)}
+                values={row.alertTypes.map((value) =>
+                    value.replace(UNDERSCORE_RE, ' ')
+                )}
                 stripPath={false}
-                maxChips={3}
+                maxChips={1}
             />
 
-            <AlertEditButton prefix={prefix} />
+            <TableCell>{row.email}</TableCell>
+
+            <AlertEditButton prefix={row.catalogPrefix} />
         </TableRow>
     );
 }
@@ -36,7 +33,7 @@ function Rows({ data }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <Row key={row[0]} row={row} />
+                <Row key={`${row.catalogPrefix}-${row.email}`} row={row} />
             ))}
         </>
     );
