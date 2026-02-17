@@ -16,7 +16,7 @@ const TITLE_ID = 'wizard-dialog-title';
 
 export function WizardDialog({
     open,
-    onCancel,
+    onClose,
     steps,
     onComplete,
     title,
@@ -95,6 +95,7 @@ export function WizardDialog({
                     setIsNavigating(false);
                 }
             }
+            onClose();
         } else {
             // Move to next step
             setCurrentStep((prev) => prev + 1);
@@ -147,7 +148,7 @@ export function WizardDialog({
                 aria-labelledby={TITLE_ID}
                 TransitionProps={{ onExited }}
             >
-                <DialogTitleWithClose id={TITLE_ID} onClose={onCancel}>
+                <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>
                     {displayTitle}
                 </DialogTitleWithClose>
                 <WizardContent />

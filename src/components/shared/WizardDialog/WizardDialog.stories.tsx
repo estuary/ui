@@ -27,7 +27,7 @@ const messages: Record<string, string> = {
 
 // Wrapper that manages the dialog open state and renders a trigger button
 function DialogStory(
-    props: Omit<React.ComponentProps<typeof WizardDialog>, 'open' | 'onCancel'>
+    props: Omit<React.ComponentProps<typeof WizardDialog>, 'open' | 'onClose'>
 ) {
     const [open, setOpen] = useState(true);
 
@@ -37,7 +37,7 @@ function DialogStory(
             <WizardDialog
                 {...props}
                 open={open}
-                onCancel={() => setOpen(false)}
+                onClose={() => setOpen(false)}
             />
         </>
     );
