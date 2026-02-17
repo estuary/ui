@@ -1,9 +1,8 @@
 import type { PickersLayoutProps } from '@mui/x-date-pickers';
 import type { PickerProps } from 'src/components/shared/pickers/types';
 
-import { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 
-import { Box, Typography } from '@mui/material';
 import {
     PickersLayoutContentWrapper,
     PickersLayoutRoot,
@@ -13,11 +12,12 @@ import {
 
 import { formatRFC3339, parseISO } from 'date-fns';
 import { Calendar } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
+import { CustomLayoutWrapper } from 'src/components/shared/pickers/CustomLayoutWrapper';
 import DateOrTimePickerWrapper from 'src/components/shared/pickers/DateOrTimePickerWrapper';
 import {
     INVALID_DATE,
+    MINUTES_STEP,
     TIMEZONE_OFFSET_REPLACEMENT,
 } from 'src/components/shared/pickers/shared';
 import { logRocketEvent } from 'src/services/shared';
@@ -40,48 +40,22 @@ const formatDate = (formatValue: Date) => {
     }
 };
 
-export function CustomLayout(props: PickersLayoutProps<any>) {
-    const intl = useIntl();
-    const { tabs, content, ownerState } = usePickerLayout(props);
+export const CustomLayout = forwardRef<HTMLDivElement, PickersLayoutProps<any>>(
+    function CustomLayout(props, ref) {
+        const { tabs, content, ownerState } = usePickerLayout(props);
 
-    return (
-        <PickersLayoutRoot ownerState={ownerState}>
-            <PickersLayoutContentWrapper ownerState={ownerState}>
-                <Box
-                    sx={{
-                        bg: 'red',
-                        minWidth: 250,
-                        [`& .MuiList-root`]: {
-                            flexGrow: 1,
-                            [`& .MuiButtonBase-root`]: {
-                                width: '100%',
-                            },
-                        },
-                    }}
-                >
-                    {tabs}
-                    {content}
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'end',
-                            marginY: 1,
-                            marginX: 1,
-                            textTransform: 'capitalize',
-                        }}
-                    >
-                        <Typography variant="caption">
-                            {intl.formatMessage({
-                                id: 'dateTimePicker.picker.footer',
-                            })}
-                        </Typography>
-                    </Box>
-                </Box>
-            </PickersLayoutContentWrapper>
-        </PickersLayoutRoot>
-    );
-}
+        return (
+            <PickersLayoutRoot ref={ref} ownerState={ownerState}>
+                <PickersLayoutContentWrapper ownerState={ownerState}>
+                    <CustomLayoutWrapper>
+                        {tabs}
+                        {content}
+                    </CustomLayoutWrapper>
+                </PickersLayoutContentWrapper>
+            </PickersLayoutRoot>
+        );
+    }
+);
 
 // TODO (date time picker) weird date formatting issue
 // If the user types in a short value (that can be parsed as a date. ex: "1", "12", etc.) If they open the date picker
@@ -109,22 +83,15 @@ function DateTimePickerCTA(props: PickerProps) {
         >
             <StaticDateTimePicker
                 ampm={true}
+                defaultValue={parseISO(cleanedValue)}
                 disabled={!enabled}
                 displayStaticWrapperAs="desktop"
-                orientation="landscape"
                 openTo="day"
+                orientation="landscape"
+                slotProps={{ tabs: { hidden: false } }}
+                slots={{ layout: CustomLayout }}
+                timeSteps={{ minutes: MINUTES_STEP }}
                 views={['year', 'month', 'day', 'hours', 'minutes']}
-                defaultValue={parseISO(cleanedValue)}
-                slots={{
-                    layout: CustomLayout,
-                }}
-                slotProps={{
-                    tabs: { hidden: false },
-                }}
-                timeSteps={{
-                    hours: 1,
-                    minutes: 5,
-                }}
                 onAccept={() => state.close()}
                 onClose={() => state.close()}
                 onChange={(onChangeValue: any) => {

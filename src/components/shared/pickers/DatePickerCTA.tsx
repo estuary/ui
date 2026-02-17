@@ -30,7 +30,7 @@ function DatePickerCTA(props: PickerProps) {
                 displayStaticWrapperAs="desktop"
                 openTo="day"
                 disabled={!enabled}
-                defaultValue={parseISO(value)}
+                defaultValue={parseISO(value ?? '')}
                 onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
@@ -39,9 +39,8 @@ function DatePickerCTA(props: PickerProps) {
                         }
                     }
                 }}
-                onAccept={(_value) => {
-                    state.close();
-                }}
+                onAccept={() => state.close()}
+                onClose={() => state.close()}
             />
         </DateOrTimePickerWrapper>
     );
