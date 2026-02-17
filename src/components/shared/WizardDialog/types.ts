@@ -5,8 +5,6 @@ export interface WizardStep {
     component: ReactNode;
     /** Title for the dialog when on this step */
     title?: ReactNode;
-    /** Whether the back button should be shown (default: true for steps > 0) */
-    canRetreat?: boolean;
     /** Custom label for the next/submit button */
     nextLabel?: ReactNode;
     /** Function to check if the next/save button should be enabled for this step */

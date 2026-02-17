@@ -24,8 +24,7 @@ export function WizardActions() {
     } = useWizard();
 
     const currentStepConfig = steps[currentStep];
-    const showBackButton =
-        !isFirstStep && currentStepConfig?.canRetreat !== false;
+    const showBackButton = !isFirstStep;
     const canAdvance = currentStepConfig?.canAdvance?.() ?? true;
 
     return (
