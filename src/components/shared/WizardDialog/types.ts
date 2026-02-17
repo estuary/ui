@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react';
 
 export interface WizardStep {
-    /** Display label for the step (shown in stepper) */
-    label: ReactNode;
     /** The component to render for this step */
     component: ReactNode;
     /** Title for the dialog when on this step */
@@ -11,8 +9,6 @@ export interface WizardStep {
     canRetreat?: boolean;
     /** Custom label for the next/submit button */
     nextLabel?: ReactNode;
-    /** Whether this step can be skipped */
-    optional?: boolean;
     /** Function to check if the next/save button should be enabled for this step */
     canProceed?: () => boolean;
     /** Callback when user attempts to proceed from this step. Return true to proceed, false to block. */
@@ -22,8 +18,6 @@ export interface WizardStep {
 export interface WizardContextValue {
     /** Current step index (0-based) */
     currentStep: number;
-    /** Total number of steps */
-    totalSteps: number;
     /** Array of step configurations */
     steps: WizardStep[];
     /** Whether we're on the first step */
@@ -34,23 +28,21 @@ export interface WizardContextValue {
     goToNext: () => Promise<boolean>;
     /** Navigate to the previous step */
     goToPrevious: () => void;
-    /** Navigate to a specific step by index */
-    goToStep: (index: number) => void;
-    /** Whether navigation is currently in progress */
+    /** Whether navigation is currently in progress - disables next button, shows spinner */
     isNavigating: boolean;
     /** Error message to display */
     error: string | null;
-    /** Set an error message (or null to clear) */
-    setError: (error: string | null) => void;
 }
 
 export interface WizardDialogProps {
     /** Whether the dialog is open */
     open: boolean;
-    /** Callback when dialog should close */
-    onClose: () => void;
+    /** Whether to show action buttons (Back/Next/Save) */
+    showActions?: boolean;
     /** Array of step configurations */
     steps: WizardStep[];
+    /** Callback when dialog should close */
+    onCancel: () => void;
     /** Callback when wizard is completed (last step next button clicked) */
     onComplete?: () => void | Promise<void>;
     /** Default dialog title (used when step doesn't define its own title) */

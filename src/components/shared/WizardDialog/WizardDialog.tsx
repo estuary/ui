@@ -5,24 +5,26 @@ import type {
 
 import { useCallback, useMemo, useState } from 'react';
 
-import { Dialog } from '@mui/material';
+import { Collapse, Dialog } from '@mui/material';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { WizardContext } from 'src/components/shared/WizardDialog/context';
-import WizardActions from 'src/components/shared/WizardDialog/WizardActions';
+import { WizardActions } from 'src/components/shared/WizardDialog/WizardActions';
 import { WizardContent } from 'src/components/shared/WizardDialog/WizardContent';
 
 const TITLE_ID = 'wizard-dialog-title';
 
 export function WizardDialog({
     open,
-    onClose,
+    onCancel,
     steps,
     onComplete,
     title,
     maxWidth = 'sm',
-    initialStep = 0,
+    showActions = true,
 }: WizardDialogProps) {
+    const initialStep = 0;
+
     const [currentStep, setCurrentStep] = useState(initialStep);
     const [isNavigating, setIsNavigating] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -149,9 +151,9 @@ export function WizardDialog({
     );
 
     const handleClose = useCallback(() => {
-        onClose();
+        onCancel();
         // Step reset is handled by TransitionProps.onExited
-    }, [onClose]);
+    }, [onCancel]);
 
     // Use step-specific title if defined, otherwise fall back to default title
     const currentStepConfig = steps[currentStep];
@@ -170,7 +172,9 @@ export function WizardDialog({
                     {displayTitle}
                 </DialogTitleWithClose>
                 <WizardContent />
-                <WizardActions />
+                <Collapse in={showActions}>
+                    <WizardActions />
+                </Collapse>
             </Dialog>
         </WizardContext.Provider>
     );

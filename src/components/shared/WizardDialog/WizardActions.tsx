@@ -9,7 +9,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { useWizard } from 'src/components/shared/WizardDialog/context';
 
-function WizardActions() {
+export function WizardActions() {
     const {
         isFirstStep,
         isLastStep,
@@ -66,5 +66,3 @@ function WizardActions() {
         </DialogActions>
     );
 }
-
-export default WizardActions;

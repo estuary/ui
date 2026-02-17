@@ -111,7 +111,7 @@ function _ConfigureStorageWizard({
     return (
         <WizardDialog
             open={open}
-            onClose={closeDialog}
+            onCancel={closeDialog}
             steps={steps}
             onComplete={handleComplete}
         />
