@@ -8,6 +8,7 @@ import { useState } from 'react';
 
 import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
+import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
@@ -46,7 +47,7 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
             <TableCell>{formatDataPlaneName(dataPlaneName)}</TableCell>
             <TableCell>
                 {getRegionDisplayName(
-                    dataPlaneName.provider,
+                    dataPlaneName.provider as CloudProvider,
                     dataPlaneName.region
                 )}
             </TableCell>

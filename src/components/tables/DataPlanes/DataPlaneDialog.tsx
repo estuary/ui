@@ -4,20 +4,18 @@ import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';
 import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
-import {
-    getProviderDisplayName,
-    getProviderShortName,
-    getRegionDisplayName,
-} from 'src/utils/cloudRegions';
+import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
     formatDataPlaneName,
     formatIamOidc,
     generateDataPlaneOption,
+    toPresentableCloudProvider,
 } from 'src/utils/dataPlane-utils';
 
 const TITLE_ID = 'data-plane-dialog-title';
@@ -81,7 +79,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             label={intl.formatMessage({
                                 id: 'admin.dataPlanes.dialog.cloudProvider',
                             })}
-                            value={getProviderDisplayName(
+                            value={toPresentableCloudProvider(
                                 dataPlaneName.provider
                             )}
                             showCopyButton={false}
@@ -109,26 +107,32 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         label={intl.formatMessage({
                             id: 'admin.dataPlanes.dialog.serviceAccountIdentity',
                         })}
-                        options={[
-                            {
-                                key: 'aws',
-                                label: getProviderShortName('aws'),
-                                value:
-                                    dataPlane.aws_iam_user_arn ??
-                                    intl.formatMessage({
-                                        id: 'admin.dataPlanes.dialog.notAvailable',
-                                    }),
-                            },
-                            {
-                                key: 'gcp',
-                                label: getProviderShortName('gcp'),
-                                value:
-                                    dataPlane.gcp_service_account_email ??
-                                    intl.formatMessage({
-                                        id: 'admin.dataPlanes.dialog.notAvailable',
-                                    }),
-                            },
-                        ]}
+                        options={
+                            [
+                                {
+                                    key: 'aws',
+                                    label: 'AWS',
+                                    value:
+                                        dataPlane.aws_iam_user_arn ??
+                                        intl.formatMessage({
+                                            id: 'admin.dataPlanes.dialog.notAvailable',
+                                        }),
+                                },
+                                {
+                                    key: 'gcp',
+                                    label: 'GCP',
+                                    value:
+                                        dataPlane.gcp_service_account_email ??
+                                        intl.formatMessage({
+                                            id: 'admin.dataPlanes.dialog.notAvailable',
+                                        }),
+                                },
+                            ] satisfies {
+                                key: string;
+                                label: CloudProvider;
+                                value: string;
+                            }[]
+                        }
                     />
                     <ToggleField
                         lowercaseButton
