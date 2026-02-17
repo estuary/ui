@@ -17,6 +17,14 @@ export const JsonForms: Record<string, string> = {
     'informational.sshEndpoint.ipv6': `does not support IPv6`,
     'timePicker.button.ariaLabel': `Open time picker for {label}`,
 
+    // Multi-line Secret
+    'multiLineSecret.openDialog.cta': `Use secret from file`,
+
+    // File Upload Dialog
+    'fileUpload.dropzone.instruction': `Drag and drop a file here, or click to browse`,
+    'fileUpload.dropzone.maxSize': `Max file size: 5 MB`,
+    'fileUpload.dropzone.error.tooLarge': `File exceeds the 5 MB size limit.`,
+
     // OAuth
     'oauth.error.credentialsMissing': `need to complete OAuth`,
     'oauth.instructions': `Authenticate your {provider} account by clicking below. A pop up will open where you can authorize access. No data will be accessed during authorization.`,
