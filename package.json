@@ -28,7 +28,9 @@
         "generate-supabase-types": "node ./scripts/generateSupabaseTypes",
         "hack-in-local-web-flow": "./deps/flow-web/hack-in-local-copy.sh",
         "hack-in-web-flow": "./deps/flow-web/hack-in-prod.sh",
-        "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh"
+        "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -114,6 +116,9 @@
     },
     "devDependencies": {
         "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+        "@storybook/addon-a11y": "^10.2.8",
+        "@storybook/addon-docs": "^10.2.8",
+        "@storybook/react-vite": "^10.2.8",
         "@testing-library/react": "^12.1.5",
         "@testing-library/user-event": "^14.5.2",
         "@types/highlight-words-core": "^1.2.3",
@@ -132,6 +137,7 @@
         "eslint-config-kentcdodds": "^21.0.0",
         "eslint-plugin-formatjs": "^4.11.3",
         "eslint-plugin-no-relative-import-paths": "^1.6.1",
+        "eslint-plugin-storybook": "^10.2.8",
         "eslint-plugin-unused-imports": "^2.0.0",
         "jsdom": "^24.0.0",
         "licensee": "^11.1.1",
@@ -139,6 +145,7 @@
         "prettier": "^3.5.3",
         "rollup-plugin-license": "^3.6.0",
         "sharp": "^0.34.1",
+        "storybook": "^10.2.8",
         "typescript": "^5.9.3",
         "vite": "^6.4.1",
         "vite-plugin-checker": "^0.9.1",
