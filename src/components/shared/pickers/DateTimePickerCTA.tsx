@@ -45,14 +45,20 @@ export function CustomLayout(props: PickersLayoutProps<any>) {
     const { tabs, content, ownerState } = usePickerLayout(props);
 
     return (
-        <PickersLayoutRoot
-            ownerState={{
-                ...ownerState,
-                pickerOrientation: 'portrait',
-            }}
-        >
+        <PickersLayoutRoot ownerState={ownerState}>
             <PickersLayoutContentWrapper ownerState={ownerState}>
-                <>
+                <Box
+                    sx={{
+                        bg: 'red',
+                        minWidth: 250,
+                        [`& .MuiList-root`]: {
+                            flexGrow: 1,
+                            [`& .MuiButtonBase-root`]: {
+                                width: '100%',
+                            },
+                        },
+                    }}
+                >
                     {tabs}
                     {content}
                     <Box
@@ -71,7 +77,7 @@ export function CustomLayout(props: PickersLayoutProps<any>) {
                             })}
                         </Typography>
                     </Box>
-                </>
+                </Box>
             </PickersLayoutContentWrapper>
         </PickersLayoutRoot>
     );
@@ -105,8 +111,9 @@ function DateTimePickerCTA(props: PickerProps) {
                 ampm={true}
                 disabled={!enabled}
                 displayStaticWrapperAs="desktop"
+                orientation="landscape"
                 openTo="day"
-                views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
+                views={['year', 'month', 'day', 'hours', 'minutes']}
                 defaultValue={parseISO(cleanedValue)}
                 slots={{
                     layout: CustomLayout,
@@ -116,8 +123,7 @@ function DateTimePickerCTA(props: PickerProps) {
                 }}
                 timeSteps={{
                     hours: 1,
-                    minutes: 1,
-                    seconds: 1,
+                    minutes: 5,
                 }}
                 onAccept={() => state.close()}
                 onClose={() => state.close()}
