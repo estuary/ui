@@ -85,7 +85,7 @@ export const Default: Story = {
                                     pb: 12,
                                 }}
                             >
-                                <Typography>
+                                <Typography component={'div'}>
                                     This wizard demo demonstrates{' '}
                                     <ol>
                                         <li>
