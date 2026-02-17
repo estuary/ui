@@ -27,7 +27,11 @@ export const buildVirtualConfig = (
     const virtualConfig = { ...endpointConfigData };
 
     for (const [key, value] of Object.entries(currentItem)) {
-        if (typeof value !== 'object' || value === null) {
+        if (
+            value === null ||
+            value === undefined ||
+            typeof value !== 'object'
+        ) {
             virtualConfig[key] = value;
         }
     }

@@ -79,16 +79,20 @@ export const getDiscriminatorIndex = (schema: any, data: any, keyword: any) => {
     return indexOfFittingSchema;
 };
 
-// Just for when OAuth (as of 2026 Q1)
+const ARRAY_REGEX = /^\d+$/;
+
+const splitPath = (path: string) => path.split('.');
+
+const isArrayIndex = (segment: any) =>
+    segment && typeof segment === 'string' && ARRAY_REGEX.test(segment);
+
+// Just for OAuth (as of 2026 Q1)
 export const isInsideArray = (path: string): boolean => {
     if (!path || typeof path !== 'string') {
         return false;
     }
 
-    return (
-        hasLength(path) &&
-        path.split('.').some((segment: string) => /^\d+$/.test(segment))
-    );
+    return hasLength(path) && splitPath(path).some(isArrayIndex);
 };
 
 /**
@@ -104,10 +108,10 @@ export const getArrayContext = (
         return null;
     }
 
-    const segments = path.split('.');
+    const segments = splitPath(path);
 
     for (let i = 0; i < segments.length; i++) {
-        if (/^\d+$/.test(segments[i])) {
+        if (isArrayIndex(segments[i])) {
             return {
                 arrayField: segments.slice(0, i).join('.'),
                 index: parseInt(segments[i], 10),
