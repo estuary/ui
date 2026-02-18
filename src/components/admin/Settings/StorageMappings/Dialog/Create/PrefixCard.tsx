@@ -87,7 +87,7 @@ export function PrefixCard() {
 
                 return (
                     uncoveredSpecs.length === 0 ||
-                    `${uncoveredSpecs.length} live spec(s) would be impacted by creating this storage mapping. Remove them or choose an empty prefix.`
+                    `${uncoveredSpecs.length} live spec(s) would be impacted by creating this storage mapping. Choose an empty prefix or contact support for help.`
                 );
             },
         }),
