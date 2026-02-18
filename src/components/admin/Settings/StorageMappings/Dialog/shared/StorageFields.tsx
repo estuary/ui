@@ -1,4 +1,5 @@
 import type {
+    CloudProvider,
     FormDataPlane,
     StorageMappingFormData,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
@@ -10,12 +11,11 @@ import { Alert, Box, Collapse, Link, Stack, TextField } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 
 import {
-    CloudProvider,
     fragmentStoreValidation,
     PROVIDER_LABELS,
     RegionMap,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
-import { RHFSelect } from 'src/components/shared/RHForms/RHFSelect';
+import { RHFSelect } from 'src/components/shared/RHFFields/';
 
 export const PROVIDER_OPTIONS = (
     Object.keys(PROVIDER_LABELS) as CloudProvider[]

@@ -1,9 +1,8 @@
 import { Link, Stack, Typography } from '@mui/material';
 
-import { StorageFields } from '../shared/StorageFields';
-
 import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
 import DataPlanesCard from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
+import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { cardHeaderSx } from 'src/context/Theme';
 

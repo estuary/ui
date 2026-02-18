@@ -1,3 +1,6 @@
+import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { FragmentStore } from 'src/api/storageMappingsGql';
+
 import {
     createContext,
     useCallback,
@@ -6,11 +9,7 @@ import {
     useState,
 } from 'react';
 
-import { DataPlaneNode } from 'src/api/dataPlanesGql';
-import {
-    FragmentStore,
-    useStorageMappingService,
-} from 'src/api/storageMappingsGql';
+import { useStorageMappingService } from 'src/api/storageMappingsGql';
 
 export interface ConnectionTestResult {
     status: 'idle' | 'testing' | 'success' | 'error';

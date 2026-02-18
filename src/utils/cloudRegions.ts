@@ -2,7 +2,7 @@
 // - AWS: https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
 // - GCP: https://status.cloud.google.com/regional/americas
 
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
 const AWS_REGIONS: Record<string, string> = {
     'af-south-1': 'Africa (Cape Town)',

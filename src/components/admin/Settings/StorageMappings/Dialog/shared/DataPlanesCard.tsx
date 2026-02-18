@@ -124,7 +124,7 @@ export default function DataPlanesCard() {
         if (selectedDataPlanes.length > 0 && !defaultDataPlane) {
             setValue('default_data_plane', selectedDataPlanes[0]);
         }
-    }, [selectedDataPlanes, defaultDataPlane]);
+    }, [selectedDataPlanes, defaultDataPlane, setValue]);
 
     const [adding, setAdding] = useState(selectedDataPlanes.length === 0);
 
@@ -314,7 +314,7 @@ export default function DataPlanesCard() {
                 >
                     <Stack
                         spacing={1}
-                        direction={'row'}
+                        direction="row"
                         alignItems="end"
                         sx={{ px: 1 }}
                     >

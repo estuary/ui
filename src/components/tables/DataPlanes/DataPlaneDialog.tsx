@@ -1,10 +1,10 @@
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
 
 import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';

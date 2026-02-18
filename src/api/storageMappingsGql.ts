@@ -1,11 +1,11 @@
+import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { Client } from 'urql';
 
 import { useCallback } from 'react';
 
-import { DataPlaneNode } from './dataPlanesGql';
 import { gql, useClient, useQuery } from 'urql';
 
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
 // Storage provider values used by the GraphQL server

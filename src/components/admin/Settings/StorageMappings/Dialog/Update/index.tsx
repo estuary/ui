@@ -5,7 +5,7 @@ import type {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Typography } from '@mui/material';
 
@@ -16,7 +16,7 @@ import { useStorageMappingService } from 'src/api/storageMappingsGql';
 import {
     ConnectionTestProvider,
     useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
+} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import { UpdateForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/Form';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
@@ -118,7 +118,7 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
         );
     }, [dataPlanes, fragmentStores, resultFor]);
 
-    const handleTestConnections = async (): Promise<boolean> => {
+    const handleTestConnections = useCallback(async (): Promise<boolean> => {
         const stores = fragmentStores.map((store) => ({
             bucket: store.bucket,
             provider: store.provider,
@@ -126,7 +126,7 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
         }));
         await testAll(dataPlanes, stores);
         return true;
-    };
+    }, [fragmentStores, testAll, dataPlanes]);
 
     const handleSave = async () => {
         const data = getValues();
@@ -146,11 +146,14 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
         onClose();
     };
 
-    const title = (
-        <Typography variant="h6" component="span" fontWeight={600}>
-            Storage for{' '}
-            <TechnicalEmphasis>{mapping.catalog_prefix}</TechnicalEmphasis>
-        </Typography>
+    const title = useMemo(
+        () => (
+            <Typography variant="h6" component="span" fontWeight={600}>
+                Storage for{' '}
+                <TechnicalEmphasis>{mapping.catalog_prefix}</TechnicalEmphasis>
+            </Typography>
+        ),
+        [mapping.catalog_prefix]
     );
 
     const steps: WizardStep[] = useMemo(
@@ -172,11 +175,11 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
             },
         ],
         [
-            hasChanges,
             dataPlanes,
+            handleTestConnections,
             newConnectionsPassing,
             hasPendingStore,
-            testAll,
+            title,
         ]
     );
 
@@ -184,7 +187,7 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
         <FormProvider {...methods}>
             <WizardDialog
                 open
-                onCancel={onClose}
+                onClose={onClose}
                 steps={steps}
                 onComplete={handleSave}
                 showActions={hasChanges}

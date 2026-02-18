@@ -1,10 +1,11 @@
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+
 import { useState } from 'react';
 
 import { Link, Stack, Typography } from '@mui/material';
 
-import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionAccordion';
-import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionAccordion';
+import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 

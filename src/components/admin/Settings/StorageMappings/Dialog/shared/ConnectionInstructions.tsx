@@ -1,6 +1,7 @@
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
 

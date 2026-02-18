@@ -1,6 +1,6 @@
-import { gql, useQuery } from 'urql';
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { gql, useQuery } from 'urql';
 
 // GraphQL response type (camelCase from API)
 interface DataPlaneGqlNode {

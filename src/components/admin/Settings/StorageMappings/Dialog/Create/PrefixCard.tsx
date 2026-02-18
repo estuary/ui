@@ -6,13 +6,13 @@ import { useFormContext } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
 
 import { useStorageMappings } from 'src/api/storageMappingsGql';
+import CardWrapper from 'src/components/shared/CardWrapper';
 import {
-    isChildOfRoot,
-    RHFPrefixAutocomplete,
+    matchingRoot,
     useBasePrefixes,
     useLiveSpecs,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/PrefixAutocomplete';
-import CardWrapper from 'src/components/shared/CardWrapper';
+} from 'src/components/shared/PrefixAutocomplete';
+import { RHFPrefixAutocomplete } from 'src/components/shared/RHFFields';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { validateCatalogName } from 'src/validation';
 
@@ -44,8 +44,7 @@ export function PrefixCard() {
             validCharacters: (value: string) =>
                 validateCatalogName(value, false, true) == null ||
                 'Invalid prefix - only letters, numbers, dashes, underscores, and periods are allowed.',
-            isChildOfRoot: (value: string) =>
-                isChildOfRoot(value, basePrefixes),
+            isChildOfRoot: (value: string) => matchingRoot(value, basePrefixes),
         }),
         [basePrefixes]
     );

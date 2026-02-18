@@ -6,6 +6,8 @@ import type {
 import type { Shard } from 'data-plane-gateway/types/shard_client';
 import type { ResponseError } from 'data-plane-gateway/types/util';
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type {
     DataPlaneName,
     DataPlaneOption,
@@ -15,8 +17,6 @@ import type { StorageMappingDictionary } from 'src/types';
 
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 
-import { DataPlaneNode } from 'src/api/dataPlanesGql';
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import { client } from 'src/services/client';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import {

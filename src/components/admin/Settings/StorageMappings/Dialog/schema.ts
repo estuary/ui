@@ -1,4 +1,4 @@
-import { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { DataPlaneNode } from 'src/api/dataPlanesGql';
 
 export type CloudProvider = 'AWS' | 'GCP' | 'AZURE';
 

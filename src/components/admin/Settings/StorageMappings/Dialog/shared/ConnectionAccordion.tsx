@@ -1,3 +1,7 @@
+import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { FragmentStore } from 'src/api/storageMappingsGql';
+import type { ConnectionTestResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -11,7 +15,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { ConnectionInstructions } from './ConnectionInstructions';
 import {
     CheckCircle,
     NavArrowDown,
@@ -19,12 +22,8 @@ import {
     WarningTriangle,
 } from 'iconoir-react';
 
-import { DataPlaneNode } from 'src/api/dataPlanesGql';
-import { FragmentStore } from 'src/api/storageMappingsGql';
-import {
-    ConnectionTestResult,
-    useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
+import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared//ConnectionInstructions';
+import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
 interface ConnectionStatusBadgeProps {
@@ -228,10 +227,7 @@ export function ConnectionAccordion({
                     <Typography fontWeight={600} noWrap sx={{ minWidth: 0 }}>
                         {toPresentableName(dataPlane)} &rarr; {store.bucket}
                         {store.prefix ? `/${store.prefix}` : ''}{' '}
-                        <Typography
-                            component="span"
-                            variant="body2"
-                        >
+                        <Typography component="span" variant="body2">
                             ({store.provider})
                         </Typography>
                     </Typography>

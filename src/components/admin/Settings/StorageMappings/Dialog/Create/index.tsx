@@ -10,11 +10,11 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
 import { useStorageMappingService } from 'src/api/storageMappingsGql';
+import { StorageMappingForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/Form';
 import {
     ConnectionTestProvider,
     useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTestContext';
-import { StorageMappingForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/Form';
+} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
@@ -48,7 +48,7 @@ function buildMappingPayload(
     };
 }
 
-function _ConfigureStorageWizard({
+function CreateMappingWizardInner({
     open,
     onClose,
     methods,
@@ -93,7 +93,7 @@ function _ConfigureStorageWizard({
                 canProceed: () => testsPassing,
             },
         ],
-        [intl, results, formState.isValid, getValues, testsPassing, testAll]
+        [intl, formState.isValid, getValues, testsPassing, testAll]
     );
 
     const closeDialog = () => {
@@ -111,7 +111,7 @@ function _ConfigureStorageWizard({
     return (
         <WizardDialog
             open={open}
-            onCancel={closeDialog}
+            onClose={closeDialog}
             steps={steps}
             onComplete={handleComplete}
         />
@@ -144,7 +144,7 @@ export function CreateMappingWizard(props: Props) {
     return (
         <FormProvider {...methods}>
             <ConnectionTestProvider catalog_prefix={catalogPrefix}>
-                <_ConfigureStorageWizard methods={methods} {...props} />
+                <CreateMappingWizardInner methods={methods} {...props} />
             </ConnectionTestProvider>
         </FormProvider>
     );

@@ -1,4 +1,5 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type {
     RowProps,
     RowsProps,
@@ -8,7 +9,6 @@ import { useState } from 'react';
 
 import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
-import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
