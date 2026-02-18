@@ -1,6 +1,6 @@
 {
     "name": "estuary-ui",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "A web based UI to assist in working with Estuary",
     "main": "index.js",
     "private": true,
