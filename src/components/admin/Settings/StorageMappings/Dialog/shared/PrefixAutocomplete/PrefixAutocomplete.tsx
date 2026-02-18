@@ -17,6 +17,14 @@ interface PrefixAutocompleteProps {
     helperText?: string;
 }
 
+// Insert <wbr> after each "/" so the browser only wraps at path boundaries
+function breakAtSlashes(text: string) {
+    const segments = text.split('/');
+    return segments.flatMap((seg, i) =>
+        i < segments.length - 1 ? [seg, '/', <wbr key={i} />] : [seg]
+    );
+}
+
 const markdownOptions = {
     forceInline: true,
     overrides: {
@@ -134,11 +142,16 @@ export function PrefixAutocomplete({
             renderOption={(props, option, state) => {
                 return (
                     <Box component="li" {...props} key={option}>
-                        <Typography sx={{ color: 'text.disabled' }}>
-                            {state.inputValue}
-                        </Typography>
-                        <Typography>
-                            {option.replace(state.inputValue, '')}
+                        <Typography component="span">
+                            <Typography
+                                component="span"
+                                sx={{ color: 'text.disabled' }}
+                            >
+                                {breakAtSlashes(state.inputValue)}
+                            </Typography>
+                            {breakAtSlashes(
+                                option.replace(state.inputValue, '')
+                            )}
                         </Typography>
                     </Box>
                 );
