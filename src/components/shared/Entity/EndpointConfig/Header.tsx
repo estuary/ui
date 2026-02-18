@@ -1,5 +1,7 @@
 import { Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { WarningCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
@@ -13,10 +15,9 @@ function EndpointConfigHeader() {
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
     const [endpointConfigErrorsExist, hydrationErrorsExist] =
-        useEndpointConfigStore((state) => [
-            state.errorsExist,
-            state.hydrationErrorsExist,
-        ]);
+        useEndpointConfigStore(
+            useShallow((state) => [state.errorsExist, state.hydrationErrorsExist])
+        );
     const docsURL = useSidePanelDocsStore((state) => state.url);
 
     return (

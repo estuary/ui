@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
@@ -39,7 +41,7 @@ function AppLayout() {
     const [rightPaneFlex, setRightPaneFlex] = useState<any>(0.0);
 
     const [animateOpening, setAnimateOpening, docsURL] = useSidePanelDocsStore(
-        (state) => [state.animateOpening, state.setAnimateOpening, state.url]
+        useShallow((state) => [state.animateOpening, state.setAnimateOpening, state.url])
     );
 
     const { showDocs } = useShowSidePanelDocs();

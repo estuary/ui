@@ -14,6 +14,8 @@ import {
     useElements,
     useStripe,
 } from '@stripe/react-stripe-js';
+import { useShallow } from 'zustand/react/shallow';
+
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -32,10 +34,9 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     const stripe = useStripe();
     const elements = useElements();
 
-    const [user, userDetails] = useUserStore((state) => [
-        state.user,
-        state.userDetails,
-    ]);
+    const [user, userDetails] = useUserStore(
+        useShallow((state) => [state.user, state.userDetails])
+    );
 
     const setupEvents = useRef(false);
     const [error, setError] = useState('');

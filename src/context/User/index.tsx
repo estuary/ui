@@ -2,6 +2,8 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useEffect } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { usePostHog } from '@posthog/react';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -16,12 +18,12 @@ import { CustomEvents } from 'src/services/types';
 const UserStoreProvider = ({ children }: BaseComponentProps) => {
     const postHog = usePostHog();
     const [setInitialized, setSession, setUser, setUserDetails] = useUserStore(
-        (state) => [
+        useShallow((state) => [
             state.setInitialized,
             state.setSession,
             state.setUser,
             state.setUserDetails,
-        ]
+        ])
     );
 
     useEffect(() => {

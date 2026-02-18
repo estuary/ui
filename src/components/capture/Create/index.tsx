@@ -77,7 +77,9 @@ function CaptureCreate() {
 
     return (
         <WorkflowHydrator>
+            qqqqqqq
             <MutateDraftSpecProvider value={updateDraftSpecs}>
+                lkajsdf
                 <EntityCreate
                     entityType={entityType}
                     draftSpecMetadata={draftSpecsMetadata}

@@ -5,6 +5,8 @@ import useConstant from 'use-constant';
 
 import { Divider, Grid, Typography } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useIntl } from 'react-intl';
@@ -54,14 +56,12 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     // TODO (billing store)
     // The `active` stuff could probably be removed now that other stuff is
     //  cleaned up - but leaving to make it easier
-    const [active, setActive] = useBillingStore((state) => [
-        state.active,
-        state.setActive,
-    ]);
-    const [hydrated, setHydrated] = useBillingStore((state) => [
-        state.hydrated,
-        state.setHydrated,
-    ]);
+    const [active, setActive] = useBillingStore(
+        useShallow((state) => [state.active, state.setActive])
+    );
+    const [hydrated, setHydrated] = useBillingStore(
+        useShallow((state) => [state.hydrated, state.setHydrated])
+    );
     const setHydrationErrorsExist = useBillingStore(
         (state) => state.setHydrationErrorsExist
     );

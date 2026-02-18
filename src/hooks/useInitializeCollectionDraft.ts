@@ -2,6 +2,8 @@ import type { LiveSpecsExtQuery_ByCatalogName } from 'src/api/liveSpecsExt';
 
 import { useCallback } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
@@ -71,7 +73,7 @@ function useInitializeCollectionDraft() {
 
     // Workflow Store
     const [initializeProjections, upsertCollection] = useWorkflowStore(
-        (state) => [state.initializeProjections, state.upsertCollection]
+        useShallow((state) => [state.initializeProjections, state.upsertCollection])
     );
 
     const createCollectionDraftSpec = useCallback(

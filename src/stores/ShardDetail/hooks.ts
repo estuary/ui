@@ -5,6 +5,10 @@ import type {
 } from 'src/stores/ShardDetail/types';
 import type { Entity } from 'src/types';
 
+import { useMemo } from 'react';
+
+import { useShallow } from 'zustand/react/shallow';
+
 import { isEmpty } from 'lodash';
 
 import { useEntityType } from 'src/context/EntityContext';
@@ -80,7 +84,10 @@ export const useShardDetail_dictionaryHydrated = () => {
     return useZustandStore<
         ShardDetailStore,
         ShardDetailStore['shardDictionaryHydrated']
-    >(storeName(entityType), (state) => state.shardDictionaryHydrated);
+    >(
+        storeName(entityType),
+        useShallow((state) => state.shardDictionaryHydrated)
+    );
 };
 
 export const useShardDetail_setDictionaryHydrated = () => {
@@ -97,53 +104,66 @@ export const useShardDetail_readDictionary = (
     taskTypes?: ShardEntityTypes[]
 ) => {
     const entityType = useEntityType();
+    const name = storeName(entityType);
 
-    return useZustandStore<ShardDetailStore, ShardReadDictionaryResponse>(
-        storeName(entityType),
-        (state) => {
-            const filteredValues = (
-                state.shardDictionary[taskName] ?? []
-            ).filter((value) =>
-                taskTypes && value.entityType
-                    ? taskTypes.includes(value.entityType)
-                    : true
-            );
+    const shards = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['shardDictionary'][string]
+    >(name, (state) => state.shardDictionary[taskName]);
 
-            let disabled = false;
-            let shardsHaveErrors = false;
-            let shardsHaveWarnings = false;
-
-            filteredValues.forEach((filteredValue) => {
-                disabled = Boolean(!disabled && filteredValue.disabled);
-
-                shardsHaveErrors =
-                    !shardsHaveErrors && !isEmpty(filteredValue.errors);
-
-                shardsHaveWarnings =
-                    !shardsHaveWarnings && !isEmpty(filteredValue.warnings);
-            });
-
-            const isCollection = Boolean(
-                taskTypes?.includes('collection') && !hasLength(filteredValues)
-            );
-
-            return {
-                allShards: filteredValues,
-                compositeColor: isCollection
-                    ? successMain
-                    : state.error
-                      ? state.defaultStatusColor
-                      : getCompositeColor(
-                            filteredValues,
-                            state.defaultStatusColor
-                        ),
-                disabled,
-                defaultMessageId: isCollection
-                    ? ShardStatusMessageIds.COLLECTION
-                    : state.defaultMessageId,
-                shardsHaveErrors,
-                shardsHaveWarnings,
-            };
-        }
+    const error = useZustandStore<ShardDetailStore, ShardDetailStore['error']>(
+        name,
+        (state) => state.error
     );
+
+    const defaultStatusColor = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['defaultStatusColor']
+    >(name, (state) => state.defaultStatusColor);
+
+    const defaultMessageId = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['defaultMessageId']
+    >(name, (state) => state.defaultMessageId);
+
+    return useMemo((): ShardReadDictionaryResponse => {
+        const filteredValues = (shards ?? []).filter((value) =>
+            taskTypes && value.entityType
+                ? taskTypes.includes(value.entityType)
+                : true
+        );
+
+        let disabled = false;
+        let shardsHaveErrors = false;
+        let shardsHaveWarnings = false;
+
+        filteredValues.forEach((filteredValue) => {
+            disabled = Boolean(!disabled && filteredValue.disabled);
+
+            shardsHaveErrors =
+                !shardsHaveErrors && !isEmpty(filteredValue.errors);
+
+            shardsHaveWarnings =
+                !shardsHaveWarnings && !isEmpty(filteredValue.warnings);
+        });
+
+        const isCollection = Boolean(
+            taskTypes?.includes('collection') && !hasLength(filteredValues)
+        );
+
+        return {
+            allShards: filteredValues,
+            compositeColor: isCollection
+                ? successMain
+                : error
+                  ? defaultStatusColor
+                  : getCompositeColor(filteredValues, defaultStatusColor),
+            disabled,
+            defaultMessageId: isCollection
+                ? ShardStatusMessageIds.COLLECTION
+                : defaultMessageId,
+            shardsHaveErrors,
+            shardsHaveWarnings,
+        };
+    }, [shards, taskTypes, error, defaultStatusColor, defaultMessageId]);
 };

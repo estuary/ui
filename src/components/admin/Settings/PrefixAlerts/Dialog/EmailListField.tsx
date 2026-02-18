@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { Grid, Skeleton } from '@mui/material';
 
 import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/EmailSelector';
@@ -24,7 +26,7 @@ export default function EmailListField({ open }: Props) {
         (state) => state.existingEmails
     );
     const [updatedEmails, setUpdatedEmails] = useAlertSubscriptionsStore(
-        (state) => [state.updatedEmails, state.setUpdatedEmails]
+        useShallow((state) => [state.updatedEmails, state.setUpdatedEmails])
     );
 
     useEffect(() => {
