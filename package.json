@@ -92,6 +92,7 @@
         "react-csv-downloader": "^3.1.0",
         "react-dom": "^17.0.2",
         "react-error-boundary": "^4.0.10",
+        "react-flip-toolkit": "^7.2.4",
         "react-google-button": "^0.8.0",
         "react-helmet-async": "^2.0.5",
         "react-hook-form": "^7.71.0",

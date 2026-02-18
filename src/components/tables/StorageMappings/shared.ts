@@ -1,4 +1,19 @@
+import type { SelectableTableStore } from 'src/stores/Tables/Store';
 import type { TableColumns } from 'src/types';
+
+import { useZustandStore } from 'src/context/Zustand/provider';
+import { SelectTableStoreNames } from 'src/stores/names';
+import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+
+export function useStorageMappingsRefresh() {
+    return useZustandStore<
+        SelectableTableStore,
+        SelectableTableStore['incrementSuccessfulTransformations']
+    >(
+        SelectTableStoreNames.STORAGE_MAPPINGS,
+        selectableTableStoreSelectors.successfulTransformations.increment
+    );
+}
 
 export const tableColumns: TableColumns[] = [
     {

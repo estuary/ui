@@ -2,6 +2,8 @@
 // - AWS: https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
 // - GCP: https://status.cloud.google.com/regional/americas
 
+import { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+
 const AWS_REGIONS: Record<string, string> = {
     'af-south-1': 'Africa (Cape Town)',
     'ap-east-1': 'Asia Pacific (Hong Kong)',
@@ -86,39 +88,16 @@ const GCP_REGIONS: Record<string, string> = {
     'us-west4': 'US West (Las Vegas)',
 };
 
-const PROVIDER_DISPLAY_NAMES: Record<string, string> = {
-    aws: 'Amazon Web Services',
-    gcp: 'Google Cloud Platform',
-    azure: 'Microsoft Azure',
-};
-
-const PROVIDER_SHORT_NAMES: Record<string, string> = {
-    aws: 'AWS',
-    gcp: 'GCP',
-    azure: 'MS Azure',
-};
-
-const REGION_MAPS: Record<string, Record<string, string>> = {
-    aws: AWS_REGIONS,
-    gcp: GCP_REGIONS,
-};
-
-export const getProviderDisplayName = (provider: string): string => {
-    return (
-        PROVIDER_DISPLAY_NAMES[provider.toLowerCase()] ?? provider.toUpperCase()
-    );
-};
-
-export const getProviderShortName = (provider: string): string => {
-    return (
-        PROVIDER_SHORT_NAMES[provider.toLowerCase()] ?? provider.toUpperCase()
-    );
+const REGION_MAPS: Record<CloudProvider, Record<string, string>> = {
+    AWS: AWS_REGIONS,
+    GCP: GCP_REGIONS,
+    AZURE: {}, // TODO: fill these in
 };
 
 export const getRegionDisplayName = (
-    provider: string,
+    provider: CloudProvider,
     region: string
 ): string => {
-    const regionMap = REGION_MAPS[provider.toLowerCase()];
+    const regionMap = REGION_MAPS[provider];
     return regionMap?.[region] ?? region + provider;
 };
