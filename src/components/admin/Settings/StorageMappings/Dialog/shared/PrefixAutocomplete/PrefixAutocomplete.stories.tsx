@@ -7,14 +7,9 @@ import { PrefixAutocomplete } from './PrefixAutocomplete';
 // ── Mock data ───────────────────────────────────────────────────────
 
 const MOCK_LEAVES = [
-    'globex/engineering',
-    'globex/marketing',
-    'acmeCo/capture-one',
-    'acmeCo/anvils/materialize-one',
     'acmeCo/anvils/metrics/collection-one',
-    'acmeCo/widgets/capture-two',
-    'deel/prod/materialization/snowflake/landing/wikijs/real-time-sync/materialize-snowflake',
-    'deel/prod/materialization/snowflake/landing/deel/9/real-time-sync/materialize-snowflake',
+    'acmeCo/prod/materialization/snowflake/landing/wikijs/real-time-sync/materialize-snowflake',
+    'acmeCo/prod/materialization/snowflake/landing/acmeCo/9/real-time-sync/materialize-snowflake',
 ];
 
 // ── Stateful wrapper ────────────────────────────────────────────────
@@ -48,51 +43,7 @@ export const Default: Story = {
         <PrefixAutocompleteControlled
             leaves={MOCK_LEAVES}
             label="Catalog Prefix"
+            helperText='Use arrow keys and press "Enter" to select'
         />
     ),
-};
-
-export const Required: Story = {
-    render: () => (
-        <PrefixAutocompleteControlled
-            leaves={MOCK_LEAVES}
-            label="Catalog Prefix"
-            required
-        />
-    ),
-};
-
-export const WithHelperText: Story = {
-    render: () => (
-        <PrefixAutocompleteControlled
-            leaves={MOCK_LEAVES}
-            label="Catalog Prefix"
-            helperText="Choose a prefix for your storage mapping"
-        />
-    ),
-};
-
-export const WithError: Story = {
-    render: () => (
-        <PrefixAutocompleteControlled
-            leaves={MOCK_LEAVES}
-            label="Catalog Prefix"
-            error
-            errorMessage="Must start with one of: acmeCo/"
-        />
-    ),
-};
-
-export const PreFilled: Story = {
-    render: () => {
-        const [value, setValue] = useState('acmeCo/anvils/');
-        return (
-            <PrefixAutocomplete
-                leaves={MOCK_LEAVES}
-                label="Catalog Prefix"
-                value={value}
-                onChange={setValue}
-            />
-        );
-    },
 };
