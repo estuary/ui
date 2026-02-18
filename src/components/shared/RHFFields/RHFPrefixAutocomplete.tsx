@@ -1,9 +1,12 @@
 // ── RHFPrefixAutocomplete (react-hook-form wrapper) ─────────────────
 
+import type { FieldValues, Path } from 'react-hook-form';
+
 import { useMemo, useRef } from 'react';
 
-import { PrefixAutocomplete } from '../PrefixAutocomplete/PrefixAutocomplete';
-import { Controller, FieldValues, Path, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
+
+import { PrefixAutocomplete } from 'src/components/shared/PrefixAutocomplete';
 
 type ValidateFn = (value: string) => true | string;
 type ValidateRecord = Record<string, ValidateFn>;

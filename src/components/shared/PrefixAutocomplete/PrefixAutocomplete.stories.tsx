@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { useState } from 'react';
 
-import { PrefixAutocomplete } from './PrefixAutocomplete';
+import { PrefixAutocomplete } from 'src/components/shared/PrefixAutocomplete';
 
 // ── Mock data ───────────────────────────────────────────────────────
 
