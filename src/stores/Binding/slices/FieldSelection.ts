@@ -7,6 +7,9 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
+import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/stores/Binding/shared';
+import { hasOwnProperty } from 'src/utils/misc-utils';
+
 export type HydrationStatus =
     | 'HYDRATED'
     | 'SERVER_UPDATE_REQUESTED'
@@ -46,6 +49,7 @@ export interface BindingFieldSelection {
     hasConflicts: boolean;
     hydrating: boolean;
     status: HydrationStatus;
+    validationAttempts: number;
     validationFailed: boolean;
     value: FieldSelectionDictionary;
 }
@@ -83,6 +87,7 @@ export interface StoreWithFieldSelection {
         serverUpdateFailed?: boolean
     ) => void;
     setExplicitGroupBy: (bindingUUID: string, targetKeys: string[]) => void;
+    trackValidationAttempt: (bindingUUID: string) => void;
 
     searchQuery: string | null;
     setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
@@ -219,6 +224,8 @@ export const getStoreWithFieldSelectionSettings = (
                             hasConflicts,
                             hydrating: isHydrating(evaluatedStatus),
                             status: evaluatedStatus,
+                            validationAttempts:
+                                MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS,
                             validationFailed: false,
                             value: selections,
                         };
@@ -326,6 +333,8 @@ export const getStoreWithFieldSelectionSettings = (
                     const { status } = state.selections[uuid];
 
                     state.selections[uuid].validationFailed = true;
+                    state.selections[uuid].validationAttempts =
+                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS;
 
                     setBindingHydrationStatus(
                         state,
@@ -338,6 +347,22 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Validation Failures Tracked'
+        );
+    },
+
+    trackValidationAttempt: (bindingUUID) => {
+        set(
+            produce((state: StoreWithFieldSelection) => {
+                if (
+                    hasOwnProperty(state.selections, bindingUUID) &&
+                    state.selections[bindingUUID].validationAttempts > 0
+                ) {
+                    state.selections[bindingUUID].validationAttempts =
+                        state.selections[bindingUUID].validationAttempts - 1;
+                }
+            }),
+            false,
+            'Track Validation Attempt'
         );
     },
 });

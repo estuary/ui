@@ -280,6 +280,8 @@ export const updateBackfilledBindingState = (
     }
 };
 
+export const MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS = 1;
+
 export const stubBindingFieldSelection = (
     existingSelections: BindingFieldSelectionDictionary,
     bindingUUIDs: string[],
@@ -316,6 +318,7 @@ export const stubBindingFieldSelection = (
                 hasConflicts: false,
                 hydrating: defaultStatus ? isHydrating(defaultStatus) : false,
                 status: defaultStatus ?? 'HYDRATED',
+                validationAttempts: MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS,
                 validationFailed: false,
                 value: {},
             };

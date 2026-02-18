@@ -95,17 +95,23 @@ export default function useValidateFieldSelection() {
         (state) => state.initializeSelections
     );
     const resourceConfigs = useBindingStore((state) => state.resourceConfigs);
-    const targetBindingUUIDs = useBindingStore(
+    const targetBindingContext = useBindingStore(
         useShallow((state) =>
             Object.entries(state.selections)
                 .filter(
                     ([_uuid, { status }]) => status === 'VALIDATION_REQUESTED'
                 )
-                .map(([uuid, _bindingFieldSelection]) => uuid)
+                .map(([uuid, { validationAttempts }]) => ({
+                    uuid,
+                    validationAttempts,
+                }))
         )
     );
     const setValidationFailure = useBindingStore(
         (state) => state.setValidationFailure
+    );
+    const trackValidationAttempt = useBindingStore(
+        (state) => state.trackValidationAttempt
     );
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
@@ -119,6 +125,10 @@ export default function useValidateFieldSelection() {
         (state) => state.fieldsRecommended
     );
 
+    // const [retryCount, setRetryCount] = useState(
+    //     MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
+    // );
+
     const validateFieldSelection = useCallback(
         async (
             bindingUUID: string,
@@ -128,6 +138,8 @@ export default function useValidateFieldSelection() {
             validatedBindingIndex: number,
             liveBuiltBindingIndex: number
         ): Promise<FieldSelectionValidationResponse> => {
+            trackValidationAttempt(bindingUUID);
+
             const builtBinding: MaterializationBuiltBinding | undefined =
                 builtBindingIndex > -1
                     ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
@@ -168,7 +180,7 @@ export default function useValidateFieldSelection() {
                 result = await evaluateFieldSelection({
                     collection: {
                         name: builtBinding.collection.name,
-                        model: {},
+                        model: collections[builtBinding.collection.name].spec,
                     },
                     binding: {
                         live: liveBuiltBinding,
@@ -190,7 +202,7 @@ export default function useValidateFieldSelection() {
                 result,
             };
         },
-        [collections, liveBuiltSpec?.bindings]
+        [collections, liveBuiltSpec?.bindings, trackValidationAttempt]
     );
 
     const failureDetected = useMemo(
@@ -201,10 +213,12 @@ export default function useValidateFieldSelection() {
     useEffect(() => {
         if (
             entityType !== 'materialization' ||
-            targetBindingUUIDs.length === 0
+            targetBindingContext.length === 0
         ) {
             return;
         }
+
+        const targetBindingUUIDs = targetBindingContext.map(({ uuid }) => uuid);
 
         const draftSpecsRow =
             draftSpecsRows.length !== 0 ? draftSpecsRows[0] : undefined;
@@ -226,13 +240,13 @@ export default function useValidateFieldSelection() {
             return;
         }
 
-        const rejectedRequests: {
+        let pendingRequests: {
             collection: string;
             uuid: string;
             validationEligible: boolean;
         }[] = [];
 
-        let validatedRequests: ValidationRequestMetadata[] = [];
+        const validatedRequests: ValidationRequestMetadata[] = [];
 
         const validationRequests = Object.entries(resourceConfigs)
             .filter(([uuid, _config]) => targetBindingUUIDs.includes(uuid))
@@ -243,6 +257,12 @@ export default function useValidateFieldSelection() {
 
                 if (bindingsExists) {
                     advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
+
+                    pendingRequests.push({
+                        collection: meta.collectionName,
+                        uuid,
+                        validationEligible: bindingsExists,
+                    });
 
                     return validateFieldSelection(
                         uuid,
@@ -315,6 +335,10 @@ export default function useValidateFieldSelection() {
                                 selections: updatedSelections,
                                 uuid: bindingUUID,
                             });
+
+                            pendingRequests = pendingRequests.filter(
+                                ({ uuid }) => uuid !== bindingUUID
+                            );
                         } else {
                             console.log('>>> reject response', response);
                         }
@@ -327,6 +351,14 @@ export default function useValidateFieldSelection() {
                 }
             )
             .finally(() => {
+                const rejectedRequests = pendingRequests.filter(({ uuid }) =>
+                    targetBindingContext.find(
+                        (context) =>
+                            context.uuid === uuid &&
+                            context.validationAttempts === 0
+                    )
+                );
+
                 if (validatedRequests.length > 0) {
                     initializeSelections(validatedRequests);
                 }
@@ -354,6 +386,26 @@ export default function useValidateFieldSelection() {
                         }
                     );
                 }
+
+                if (pendingRequests.length > 0) {
+                    const retryEligibleRequests = pendingRequests.filter(
+                        ({ uuid }) =>
+                            targetBindingContext.find(
+                                (context) =>
+                                    context.uuid === uuid &&
+                                    context.validationAttempts > 0
+                            )
+                    );
+
+                    retryEligibleRequests.forEach(({ uuid }) => {
+                        advanceHydrationStatus(
+                            'VALIDATING',
+                            uuid,
+                            undefined,
+                            true
+                        );
+                    });
+                }
             });
     }, [
         advanceHydrationStatus,
@@ -366,8 +418,10 @@ export default function useValidateFieldSelection() {
         initializeSelections,
         intl,
         resourceConfigs,
+        // retryCount,
+        // setRetryCount,
         setValidationFailure,
-        targetBindingUUIDs,
+        targetBindingContext,
         validateFieldSelection,
     ]);
 }
