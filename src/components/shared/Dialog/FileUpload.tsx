@@ -7,6 +7,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Stack,
     Typography,
 } from '@mui/material';
 
@@ -31,22 +32,32 @@ export const FileUploadDialog = ({
     const intl = useIntl();
 
     const [isDragOver, setIsDragOver] = useState(false);
+    const [isReading, setIsReading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileError, setFileError] = useState<string | null>(null);
 
     const validateAndSetFile = useCallback(
         (file: File) => {
-            if (file.size > MAX_FILE_SIZE_BYTES) {
-                setFileError(
-                    intl.formatMessage({
-                        id: 'fileUpload.dropzone.error.tooLarge',
-                    })
-                );
-                setSelectedFile(null);
-            } else {
-                setFileError(null);
-                setSelectedFile(file);
+            let fileError: string | null = null;
+            let fileContent: File | null = file;
+
+            if (file.size === 0) {
+                // Happens on empty files AND when a directory is selected
+                //  Directories usually had an empty `type` prop so if we want to
+                //      manually check for that we could but feels unneeded (Q1 2026).
+                fileError = intl.formatMessage({
+                    id: 'fileUpload.dropzone.error.tooSmall',
+                });
+                fileContent = null;
+            } else if (file.size > MAX_FILE_SIZE_BYTES) {
+                fileError = intl.formatMessage({
+                    id: 'fileUpload.dropzone.error.tooLarge',
+                });
+                fileContent = null;
             }
+
+            setFileError(fileError);
+            setSelectedFile(fileContent);
         },
         [intl]
     );
@@ -54,6 +65,7 @@ export const FileUploadDialog = ({
     const handleFileSelect = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
             const files = event.target.files;
+
             if (files && files.length > 0) {
                 validateAndSetFile(files[0]);
             }
@@ -70,19 +82,24 @@ export const FileUploadDialog = ({
 
         const reader = new FileReader();
 
+        setIsReading(true);
+
         reader.onabort = () => {
             onFileRead(null);
             setSelectedFile(null);
+            setIsReading(false);
         };
         reader.onerror = () => {
             onFileRead(null);
             setSelectedFile(null);
+            setIsReading(false);
         };
         reader.onloadend = () => {
             const result = reader.result ?? null;
             onFileRead(result as string);
             setSelectedFile(null);
             setFileError(null);
+            setIsReading(false);
         };
 
         reader.readAsText(selectedFile);
@@ -92,6 +109,7 @@ export const FileUploadDialog = ({
         setSelectedFile(null);
         setFileError(null);
         setIsDragOver(false);
+        setIsReading(false);
         onClose();
     }, [onClose]);
 
@@ -102,7 +120,9 @@ export const FileUploadDialog = ({
             <DialogContent>
                 <Box
                     sx={{
-                        'position': 'relative',
+                        'bgcolor': isDragOver
+                            ? 'action.hover'
+                            : 'background.default',
                         'border': '2px dashed',
                         'borderColor': isDragOver
                             ? 'primary.main'
@@ -110,15 +130,11 @@ export const FileUploadDialog = ({
                               ? 'error.main'
                               : 'divider',
                         'borderRadius': 1,
-                        'p': 4,
-                        'mt': 1,
-                        'textAlign': 'center',
                         'cursor': 'pointer',
-                        'bgcolor': isDragOver
-                            ? 'action.hover'
-                            : 'background.default',
-                        'transition':
-                            'border-color 0.2s ease, background-color 0.2s ease',
+                        'mt': 1,
+                        'p': 4,
+                        'position': 'relative',
+                        'textAlign': 'center',
                         '&:hover': {
                             borderColor: fileError
                                 ? 'error.main'
@@ -134,21 +150,24 @@ export const FileUploadDialog = ({
                 >
                     <input
                         type="file"
+                        title={intl.formatMessage({
+                            id: 'fileUpload.input.title',
+                        })}
                         style={{
-                            position: 'absolute',
-                            inset: 0,
-                            width: '100%',
-                            height: '100%',
-                            opacity: 0,
                             cursor: 'pointer',
+                            height: '100%',
+                            inset: 0,
+                            opacity: 0,
+                            position: 'absolute',
+                            width: '100%',
                         }}
+                        onChange={handleFileSelect}
                         onDragOver={(e) => {
                             e.preventDefault();
                             setIsDragOver(true);
                         }}
                         onDragLeave={() => setIsDragOver(false)}
                         onDrop={() => setIsDragOver(false)}
-                        onChange={handleFileSelect}
                     />
 
                     <CloudUpload
@@ -165,22 +184,18 @@ export const FileUploadDialog = ({
                             {selectedFile.name}
                         </Typography>
                     ) : (
-                        <>
-                            <Typography variant="body1">
+                        <Stack spacing={1}>
+                            <Typography>
                                 {intl.formatMessage({
                                     id: 'fileUpload.dropzone.instruction',
                                 })}
                             </Typography>
-                            <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                sx={{ mt: 0.5 }}
-                            >
+                            <Typography>
                                 {intl.formatMessage({
                                     id: 'fileUpload.dropzone.maxSize',
                                 })}
                             </Typography>
-                        </>
+                        </Stack>
                     )}
                 </Box>
 
@@ -192,11 +207,16 @@ export const FileUploadDialog = ({
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={handleClose} variant="outlined" size="small">
+                <Button
+                    disabled={isReading}
+                    onClick={handleClose}
+                    variant="outlined"
+                    size="small"
+                >
                     {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
                 <Button
-                    disabled={!selectedFile}
+                    disabled={!selectedFile || isReading}
                     onClick={handleConfirm}
                     variant="contained"
                     size="small"

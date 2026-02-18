@@ -21,10 +21,12 @@ export const JsonForms: Record<string, string> = {
     'multiLineSecret.openDialog.cta': `Use secret from file`,
 
     // File Upload Dialog
+    'fileUpload.input.title': `Upload file`,
     'fileUpload.dropzone.ariaLabel': `Upload file: drag and drop, or press Enter to browse`,
     'fileUpload.dropzone.instruction': `Drag and drop a file here, or click to browse`,
     'fileUpload.dropzone.maxSize': `Max file size: 5 MB`,
     'fileUpload.dropzone.error.tooLarge': `File exceeds the 5 MB size limit.`,
+    'fileUpload.dropzone.error.tooSmall': `File appears to be empty.`,
 
     // OAuth
     'oauth.error.credentialsMissing': `need to complete OAuth`,
