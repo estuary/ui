@@ -1,4 +1,7 @@
-export function isChildOfRoot(value: string, roots: string[]) {
+// This checks that user input is a child of one of the provided root strings,
+// or could be if the user continues typing.
+// for example, for root "acmeCo/", then "acme" is valid, as is "acmeCo/abc", but "otherCo/" is not valid.
+export function matchingRoot(value: string, roots: string[]) {
     if (roots.length === 0) return true;
 
     const matchesRoot = roots.some(
