@@ -125,10 +125,6 @@ export default function useValidateFieldSelection() {
         (state) => state.fieldsRecommended
     );
 
-    // const [retryCount, setRetryCount] = useState(
-    //     MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
-    // );
-
     const validateFieldSelection = useCallback(
         async (
             bindingUUID: string,
@@ -418,8 +414,6 @@ export default function useValidateFieldSelection() {
         initializeSelections,
         intl,
         resourceConfigs,
-        // retryCount,
-        // setRetryCount,
         setValidationFailure,
         targetBindingContext,
         validateFieldSelection,
