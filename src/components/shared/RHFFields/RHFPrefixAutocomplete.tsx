@@ -2,7 +2,7 @@
 
 import { useMemo, useRef } from 'react';
 
-import { PrefixAutocomplete } from './PrefixAutocomplete';
+import { PrefixAutocomplete } from '../PrefixAutocomplete/PrefixAutocomplete';
 import { Controller, FieldValues, Path, useFormContext } from 'react-hook-form';
 
 type ValidateFn = (value: string) => true | string;

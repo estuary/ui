@@ -4,7 +4,7 @@ import { Box, Button, Typography } from '@mui/material';
 
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { RHFPrefixAutocomplete } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/PrefixAutocomplete';
+import { RHFPrefixAutocomplete } from 'src/components/shared/RHFFields/RHFPrefixAutocomplete';
 import { RHFSelect } from 'src/components/shared/RHFFields/RHFSelect';
 
 interface DemoFormValues {
