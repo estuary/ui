@@ -12,7 +12,7 @@ import ChipListCell from 'src/components/tables/cells/ChipList';
 import ChipStatus from 'src/components/tables/cells/ChipStatus';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { openDialogParams } from 'src/hooks/searchParams/useDialogParam';
 
 function DataPlaneCells({ dataPlanes, store }: DataPlaneCellsProps) {
     const { provider, bucket, prefix } = store;
@@ -91,11 +91,11 @@ function Rows({ data }: RowsProps) {
     const [, setSearchParams] = useSearchParams();
 
     const handleRowClick = (row: (typeof data)[0]) => {
-        setSearchParams((prev) => {
-            prev.set(GlobalSearchParams.SM_DIALOG, 'edit');
-            prev.set(GlobalSearchParams.SM_PREFIX, row.catalog_prefix);
-            return prev;
-        });
+        setSearchParams(
+            openDialogParams('edit-storage-mapping', {
+                prefix: row.catalog_prefix,
+            })
+        );
     };
 
     return (

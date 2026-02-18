@@ -10,7 +10,6 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Typography } from '@mui/material';
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
 
 import { useDataPlanes } from 'src/api/dataPlanesGql';
 import {
@@ -27,7 +26,7 @@ import { UpdateForm } from 'src/components/admin/Settings/StorageMappings/Dialog
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useDialogParam } from 'src/hooks/searchParams/useDialogParam';
 
 interface MappingData {
     catalog_prefix: string;
@@ -205,20 +204,22 @@ function DialogInner({
     );
 }
 
+const CONTEXT_PARAMS = ['prefix'];
+
 export function UpdateMappingWizard() {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const { open, onClose, searchParams } = useDialogParam(
+        'edit-storage-mapping',
+        CONTEXT_PARAMS
+    );
     const { storageMappings } = useStorageMappings();
 
-    const smDialog = searchParams.get(GlobalSearchParams.SM_DIALOG);
-    const smPrefix = searchParams.get(GlobalSearchParams.SM_PREFIX);
-
-    const open = smDialog === 'edit';
+    const prefix = searchParams.get('prefix');
 
     const mapping = useMemo((): MappingData | null => {
-        if (!smPrefix) return null;
+        if (!prefix) return null;
 
         const match = storageMappings.find(
-            (sm) => sm.catalogPrefix === smPrefix
+            (sm) => sm.catalogPrefix === prefix
         );
         if (!match) return null;
 
@@ -233,19 +234,11 @@ export function UpdateMappingWizard() {
                 })),
             },
         };
-    }, [smPrefix, storageMappings]);
+    }, [prefix, storageMappings]);
 
     // Preserve mapping during exit animation so dialog content doesn't disappear
     const lastMapping = useRef(mapping);
     if (mapping) lastMapping.current = mapping;
-
-    const closeDialog = useCallback(() => {
-        setSearchParams((prev) => {
-            prev.delete(GlobalSearchParams.SM_DIALOG);
-            prev.delete(GlobalSearchParams.SM_PREFIX);
-            return prev;
-        });
-    }, [setSearchParams]);
 
     const displayMapping = mapping ?? lastMapping.current;
 
@@ -257,7 +250,7 @@ export function UpdateMappingWizard() {
                 key={displayMapping.catalog_prefix}
                 mapping={displayMapping}
                 open={open}
-                onClose={closeDialog}
+                onClose={onClose}
             />
         </ConnectionTestProvider>
     );

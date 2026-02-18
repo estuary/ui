@@ -4,11 +4,10 @@ import type {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { FormProvider, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
-import { useSearchParams } from 'react-router-dom';
 
 import { useStorageMappingService } from 'src/api/storageMappingsGql';
 import { StorageMappingForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/Form';
@@ -19,7 +18,7 @@ import {
 import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useDialogParam } from 'src/hooks/searchParams/useDialogParam';
 
 function buildMappingPayload(
     mapping: StorageMappingFormData
@@ -115,17 +114,7 @@ function CreateMappingWizardInner({
 }
 
 export function CreateMappingWizard() {
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const open = searchParams.get(GlobalSearchParams.SM_DIALOG) === 'create';
-
-    const closeDialog = useCallback(() => {
-        setSearchParams((prev) => {
-            prev.delete(GlobalSearchParams.SM_DIALOG);
-            prev.delete(GlobalSearchParams.SM_PREFIX);
-            return prev;
-        });
-    }, [setSearchParams]);
+    const { open, onClose } = useDialogParam('create-storage-mapping');
 
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
@@ -154,7 +143,7 @@ export function CreateMappingWizard() {
             <ConnectionTestProvider catalog_prefix={catalogPrefix}>
                 <CreateMappingWizardInner
                     open={open}
-                    onClose={closeDialog}
+                    onClose={onClose}
                     methods={methods}
                 />
             </ConnectionTestProvider>
