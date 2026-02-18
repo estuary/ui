@@ -156,24 +156,23 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
         [mapping.catalog_prefix]
     );
 
-    const steps: WizardStep[] = useMemo(
-        () => [
-            {
-                label: 'Configure',
-                title,
-                component: <UpdateForm />,
-                nextLabel: 'Test connections',
-                canProceed: () => dataPlanes.length > 0 && !hasPendingStore,
-                onProceed: handleTestConnections,
-            },
-            {
-                label: 'Test',
-                title,
-                component: <TestConnectionResult />,
-                nextLabel: 'Save Changes',
-                canProceed: () => newConnectionsPassing,
-            },
-        ],
+    const steps = useMemo(
+        () =>
+            [
+                {
+                    title,
+                    component: <UpdateForm />,
+                    nextLabel: 'Test connections',
+                    canAdvance: () => dataPlanes.length > 0 && !hasPendingStore,
+                    onAdvance: handleTestConnections,
+                },
+                {
+                    title,
+                    component: <TestConnectionResult />,
+                    nextLabel: 'Save Changes',
+                    canAdvance: () => newConnectionsPassing,
+                },
+            ] satisfies WizardStep[],
         [
             dataPlanes,
             handleTestConnections,

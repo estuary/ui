@@ -59,40 +59,35 @@ function CreateMappingWizardInner({
     const { getValues, formState } = methods;
     const refresh = useStorageMappingsRefresh();
 
-    const steps: WizardStep[] = useMemo(
-        () => [
-            {
-                label: intl.formatMessage({
-                    id: 'storageMappings.wizard.step.configure',
-                }),
-                title: intl.formatMessage({
-                    id: 'storageMappings.wizard.title.configure',
-                }),
-                component: <StorageMappingForm />,
-                nextLabel: intl.formatMessage({
-                    id: 'storageMappings.wizard.cta.testConnection',
-                }),
-                canProceed: () =>
-                    formState.isValid &&
-                    getValues().catalog_prefix.length > 0 &&
-                    getValues().data_planes.length > 0,
-                onProceed: async () => {
-                    const { data_planes, fragment_stores } = getValues();
-                    await testAll(data_planes, fragment_stores);
-                    return true;
+    const steps = useMemo(
+        () =>
+            [
+                {
+                    title: intl.formatMessage({
+                        id: 'storageMappings.wizard.title.configure',
+                    }),
+                    component: <StorageMappingForm />,
+                    nextLabel: intl.formatMessage({
+                        id: 'storageMappings.wizard.cta.testConnection',
+                    }),
+                    canAdvance: () =>
+                        formState.isValid &&
+                        getValues().catalog_prefix.length > 0 &&
+                        getValues().data_planes.length > 0,
+                    onAdvance: async () => {
+                        const { data_planes, fragment_stores } = getValues();
+                        await testAll(data_planes, fragment_stores);
+                        return true;
+                    },
                 },
-            },
-            {
-                label: intl.formatMessage({
-                    id: 'storageMappings.wizard.step.test',
-                }),
-                title: intl.formatMessage({
-                    id: 'storageMappings.wizard.title.test',
-                }),
-                component: <TestConnectionResult />,
-                canProceed: () => testsPassing,
-            },
-        ],
+                {
+                    title: intl.formatMessage({
+                        id: 'storageMappings.wizard.title.test',
+                    }),
+                    component: <TestConnectionResult />,
+                    canAdvance: () => testsPassing,
+                },
+            ] satisfies WizardStep[],
         [intl, formState.isValid, getValues, testsPassing, testAll]
     );
 
