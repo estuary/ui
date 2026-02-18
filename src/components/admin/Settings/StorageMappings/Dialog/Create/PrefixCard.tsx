@@ -13,7 +13,10 @@ import {
     useLiveSpecs,
 } from 'src/components/shared/PrefixAutocomplete';
 import { RHFPrefixAutocomplete } from 'src/components/shared/RHFFields';
-import { openDialogParams } from 'src/hooks/searchParams/useDialogParam';
+import {
+    DialogId,
+    openDialogParams,
+} from 'src/hooks/searchParams/useDialogParam';
 import { validateCatalogName } from 'src/validation';
 
 export function PrefixCard() {
@@ -51,7 +54,7 @@ export function PrefixCard() {
 
     const editLinkParams = useMemo(() => {
         const params = new URLSearchParams(searchParams);
-        openDialogParams('edit-storage-mapping', {
+        openDialogParams(DialogId.EDIT_STORAGE_MAPPING, {
             prefix: currentPrefix,
         })(params);
         return `?${params}`;

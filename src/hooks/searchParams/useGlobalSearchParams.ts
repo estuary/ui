@@ -20,6 +20,7 @@ export enum GlobalSearchParams {
     PREFILL_LIVE_SPEC_ID = 'prefillLiveSpecId',
     PREFIX = 'prefix',
     PROVIDER = 'provider', // Login Provider but having a url like login/?loginProvider looked weird
+    DIALOG = 'dialog',
 }
 
 function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;

@@ -3,11 +3,14 @@ import { Button } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { useSearchParams } from 'react-router-dom';
 
-import { openDialogParams } from 'src/hooks/searchParams/useDialogParam';
+import {
+    DialogId,
+    openDialogParams,
+} from 'src/hooks/searchParams/useDialogParam';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
-function StorageMappingsGenerateButton() {
+export function AddStorageButton() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const [, setSearchParams] = useSearchParams();
@@ -18,7 +21,7 @@ function StorageMappingsGenerateButton() {
             disabled={!hasLength(selectedTenant)}
             onClick={() => {
                 setSearchParams(
-                    openDialogParams('create-storage-mapping')
+                    openDialogParams(DialogId.CREATE_STORAGE_MAPPING)
                 );
             }}
         >
@@ -26,5 +29,3 @@ function StorageMappingsGenerateButton() {
         </Button>
     );
 }
-
-export default StorageMappingsGenerateButton;

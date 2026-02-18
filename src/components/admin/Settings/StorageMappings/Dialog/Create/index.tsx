@@ -18,7 +18,10 @@ import {
 import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
-import { useDialogParam } from 'src/hooks/searchParams/useDialogParam';
+import {
+    DialogId,
+    useDialogParam,
+} from 'src/hooks/searchParams/useDialogParam';
 
 function buildMappingPayload(
     mapping: StorageMappingFormData
@@ -114,7 +117,7 @@ function CreateMappingWizardInner({
 }
 
 export function CreateMappingWizard() {
-    const { open, onClose } = useDialogParam('create-storage-mapping');
+    const { open, onClose } = useDialogParam(DialogId.CREATE_STORAGE_MAPPING);
 
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
