@@ -3,6 +3,8 @@ import { cleanup, configure } from '@testing-library/react';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import { server } from 'src/test/server/test-server';
 
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+
 vi.mock('zustand');
 
 // https://github.com/testing-library/dom-testing-library/issues/552
