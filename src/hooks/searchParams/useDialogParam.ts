@@ -1,50 +1,86 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
-export const DialogId = {
-    CREATE_STORAGE_MAPPING: 'create-storage-mapping',
-    EDIT_STORAGE_MAPPING: 'edit-storage-mapping',
+const Dialogs = {
+    CREATE_STORAGE_MAPPING: {
+        id: 'create-storage-mapping',
+        contextParams: [],
+    },
+    EDIT_STORAGE_MAPPING: {
+        id: 'edit-storage-mapping',
+        contextParams: ['prefix'],
+    },
 } as const;
 
-type DialogId = (typeof DialogId)[keyof typeof DialogId];
+type DialogKey = keyof typeof Dialogs;
+
+type ContextParams<K extends DialogKey> =
+    (typeof Dialogs)[K]['contextParams'][number];
+
+// When a dialog has context params, require them. Otherwise, no args.
+type OpenArgs<K extends DialogKey> = ContextParams<K> extends never
+    ? []
+    : [context: Record<ContextParams<K>, string>];
 
 /**
- * Hook for controlling dialog visibility via URL search params.
+ * Hook for managing dialog visibility via URL search params.
  *
- * @param dialogId - Unique identifier for this dialog
- * @param contextParams - Additional param keys this dialog uses, cleaned up on close
+ * @param key - Key from the Dialogs config
  */
-export function useDialogParam(dialogId: DialogId, contextParams?: string[]) {
+export function useDialog<K extends DialogKey>(key: K) {
+    const { id, contextParams } = Dialogs[key];
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const open = searchParams.get(GlobalSearchParams.DIALOG) === dialogId;
+    const open = searchParams.get(GlobalSearchParams.DIALOG) === id;
+
+    const context = useMemo(() => {
+        const obj = {} as Record<ContextParams<K>, string | null>;
+        contextParams.forEach((param) => {
+            (obj as Record<string, string | null>)[param] =
+                searchParams.get(param);
+        });
+        return obj;
+    }, [searchParams, contextParams]);
+
+    const onOpen = useCallback(
+        (...args: OpenArgs<K>) => {
+            setSearchParams(openDialogParams(key, ...args));
+        },
+        [setSearchParams, key]
+    );
 
     const onClose = useCallback(() => {
         setSearchParams((prev) => {
             prev.delete(GlobalSearchParams.DIALOG);
-            contextParams?.forEach((key) => prev.delete(key));
+            contextParams.forEach((param) => prev.delete(param));
             return prev;
         });
     }, [setSearchParams, contextParams]);
 
-    return { open, onClose, searchParams };
+    return { open, onOpen, onClose, context };
 }
 
 /**
  * Helper to build search param setter for opening a dialog.
+ * Useful when you need to build a URL string rather than navigate imperatively.
  */
-export function openDialogParams(
-    dialogId: DialogId,
-    context?: Record<string, string>
+export function openDialogParams<K extends DialogKey>(
+    key: K,
+    ...args: OpenArgs<K>
 ) {
+    const { id } = Dialogs[key];
+    const [context] = args;
+
     return (prev: URLSearchParams) => {
-        prev.set(GlobalSearchParams.DIALOG, dialogId);
+        prev.set(GlobalSearchParams.DIALOG, id);
         if (context) {
-            for (const [key, value] of Object.entries(context)) {
-                prev.set(key, value);
+            for (const [k, value] of Object.entries(
+                context as Record<string, string>
+            )) {
+                prev.set(k, value);
             }
         }
         return prev;

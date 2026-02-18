@@ -4,7 +4,7 @@ import type {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { FormProvider, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
@@ -18,10 +18,7 @@ import {
 import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
-import {
-    DialogId,
-    useDialogParam,
-} from 'src/hooks/searchParams/useDialogParam';
+import { useDialog } from 'src/hooks/searchParams/useDialogParam';
 
 function buildMappingPayload(
     mapping: StorageMappingFormData
@@ -117,7 +114,7 @@ function CreateMappingWizardInner({
 }
 
 export function CreateMappingWizard() {
-    const { open, onClose } = useDialogParam(DialogId.CREATE_STORAGE_MAPPING);
+    const { open, onClose } = useDialog('CREATE_STORAGE_MAPPING');
 
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
@@ -138,6 +135,12 @@ export function CreateMappingWizard() {
             allow_public: false,
         },
     });
+
+    useEffect(() => {
+        if (!open) {
+            methods.reset();
+        }
+    }, [open, methods]);
 
     const catalogPrefix = methods.watch('catalog_prefix');
 

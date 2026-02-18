@@ -26,10 +26,7 @@ import { UpdateForm } from 'src/components/admin/Settings/StorageMappings/Dialog
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
-import {
-    DialogId,
-    useDialogParam,
-} from 'src/hooks/searchParams/useDialogParam';
+import { useDialog } from 'src/hooks/searchParams/useDialogParam';
 
 interface MappingData {
     catalog_prefix: string;
@@ -207,16 +204,11 @@ function DialogInner({
     );
 }
 
-const CONTEXT_PARAMS = ['prefix'];
-
 export function UpdateMappingWizard() {
-    const { open, onClose, searchParams } = useDialogParam(
-        DialogId.EDIT_STORAGE_MAPPING,
-        CONTEXT_PARAMS
-    );
+    const { open, onClose, context } = useDialog('EDIT_STORAGE_MAPPING');
     const { storageMappings } = useStorageMappings();
 
-    const prefix = searchParams.get('prefix');
+    const prefix = context.prefix;
 
     const mapping = useMemo((): MappingData | null => {
         if (!prefix) return null;

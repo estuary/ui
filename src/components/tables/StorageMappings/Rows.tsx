@@ -6,16 +6,11 @@ import type {
 
 import { TableCell, TableRow, useTheme } from '@mui/material';
 
-import { useSearchParams } from 'react-router-dom';
-
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import ChipStatus from 'src/components/tables/cells/ChipStatus';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
-import {
-    DialogId,
-    openDialogParams,
-} from 'src/hooks/searchParams/useDialogParam';
+import { useDialog } from 'src/hooks/searchParams/useDialogParam';
 
 function DataPlaneCells({ dataPlanes, store }: DataPlaneCellsProps) {
     const { provider, bucket, prefix } = store;
@@ -91,14 +86,10 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
 function Rows({ data }: RowsProps) {
     const theme = useTheme();
 
-    const [, setSearchParams] = useSearchParams();
+    const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
 
     const handleRowClick = (row: (typeof data)[0]) => {
-        setSearchParams(
-            openDialogParams(DialogId.EDIT_STORAGE_MAPPING, {
-                prefix: row.catalog_prefix,
-            })
-        );
+        onOpen({ prefix: row.catalog_prefix });
     };
 
     return (
