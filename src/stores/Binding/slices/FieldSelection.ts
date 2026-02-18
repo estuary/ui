@@ -80,7 +80,8 @@ export interface StoreWithFieldSelection {
         targetStatus: HydrationStatus,
         bindingUUID?: string,
         resetRequested?: boolean,
-        validationRequested?: boolean
+        validationRequested?: boolean,
+        terminateHydrationCycle?: boolean
     ) => void;
     setValidationFailure: (
         bindingUUIDs: string[],
@@ -162,7 +163,8 @@ export const getStoreWithFieldSelectionSettings = (
         targetStatus,
         bindingUUID,
         resetRequested,
-        validationRequested
+        validationRequested,
+        terminateHydrationCycle
     ) => {
         set(
             produce((state: StoreWithFieldSelection) => {
@@ -172,7 +174,11 @@ export const getStoreWithFieldSelectionSettings = (
                         bindingUUID,
                         state.selections[bindingUUID].status,
                         resetRequested,
-                        validationRequested ? 'VALIDATION_REQUESTED' : undefined
+                        terminateHydrationCycle
+                            ? 'HYDRATED'
+                            : validationRequested
+                              ? 'VALIDATION_REQUESTED'
+                              : undefined
                     );
                 } else if (!bindingUUID) {
                     Object.entries(state.selections)

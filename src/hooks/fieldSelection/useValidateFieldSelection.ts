@@ -251,7 +251,15 @@ export default function useValidateFieldSelection() {
                     meta.builtBindingIndex > -1 &&
                     meta.validatedBindingIndex > -1;
 
-                if (bindingsExists) {
+                if (meta.disable) {
+                    advanceHydrationStatus(
+                        'VALIDATION_REQUESTED',
+                        uuid,
+                        undefined,
+                        undefined,
+                        true
+                    );
+                } else if (bindingsExists) {
                     advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
 
                     pendingRequests.push({
