@@ -7,7 +7,7 @@ import type {
 import type {
     RHFBaseProps,
     SelectOption,
-} from 'src/components/shared/RHForms/types';
+} from 'src/components/shared/RHFFields/types';
 
 import {
     FormControl,

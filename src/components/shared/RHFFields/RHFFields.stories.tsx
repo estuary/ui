@@ -5,7 +5,7 @@ import { Box, Button, Typography } from '@mui/material';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { RHFPrefixAutocomplete } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/PrefixAutocomplete';
-import { RHFSelect } from 'src/components/shared/RHForms/RHFSelect';
+import { RHFSelect } from 'src/components/shared/RHFFields/RHFSelect';
 
 interface DemoFormValues {
     region: string;
@@ -81,7 +81,7 @@ function DemoForm() {
 }
 
 const meta: Meta = {
-    title: 'Shared/RHForms',
+    title: 'Shared/RHFFields',
     parameters: {
         layout: 'centered',
     },
