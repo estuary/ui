@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 
 import Markdown from 'markdown-to-jsx';
 import { Link } from 'react-router-dom';
@@ -131,6 +131,18 @@ export function PrefixAutocomplete({
                     size="small"
                 />
             )}
+            renderOption={(props, option, state) => {
+                return (
+                    <Box component="li" {...props} key={option}>
+                        <Typography sx={{ color: 'text.disabled' }}>
+                            {state.inputValue}
+                        </Typography>
+                        <Typography>
+                            {option.replace(state.inputValue, '')}
+                        </Typography>
+                    </Box>
+                );
+            }}
         />
     );
 }
