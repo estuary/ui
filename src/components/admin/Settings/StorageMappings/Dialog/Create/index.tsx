@@ -18,7 +18,7 @@ import {
 import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
-import { useDialog } from 'src/hooks/searchParams/useDialogParam';
+import { useDialog } from 'src/hooks/useDialog';
 
 function buildMappingPayload(
     mapping: StorageMappingFormData

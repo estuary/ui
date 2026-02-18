@@ -40,7 +40,6 @@ export function StorageFields({ index }: StorageFieldsProps) {
     } = useFormContext<StorageMappingFormData>();
 
     const defaultDataPlane = watch('default_data_plane');
-    // const fragmentStores = watch('fragment_stores');
     const provider = watch(`fragment_stores.${index}.provider`);
     const region = watch(`fragment_stores.${index}.region`);
 
@@ -84,7 +83,7 @@ export function StorageFields({ index }: StorageFieldsProps) {
     }, [defaultDataPlane, provider, region]);
 
     return (
-        <Stack spacing={2} sx={{}}>
+        <Stack spacing={2}>
             <TextField
                 {...register(
                     `fragment_stores.${index}.bucket`,

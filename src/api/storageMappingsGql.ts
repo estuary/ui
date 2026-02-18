@@ -213,17 +213,11 @@ const testStorageConnection = async (
     stores: FragmentStore[]
 ): Promise<TestConnectionHealthResult[]> => {
     // Convert cloud provider names to storage provider format for the server
-    console.log('Converting stores for server:', stores);
     const serverStores = stores.map((store) => ({
         ...store,
         provider: cloudProviderToStorageProvider(store.provider),
     }));
 
-    console.log('Testing storage connection with:', {
-        catalogPrefix,
-        dataPlanes,
-        stores: serverStores,
-    });
     const result = await client.mutation(TEST_CONNECTION_HEALTH, {
         catalogPrefix,
         storage: {
@@ -233,7 +227,6 @@ const testStorageConnection = async (
     } satisfies TestConnectionHealthVariables);
 
     if (result.error) {
-        console.log('GraphQL Error:', result.error);
         throw new Error(
             result.error.graphQLErrors?.[0]?.message ??
                 result.error.message ??
@@ -242,7 +235,7 @@ const testStorageConnection = async (
     }
 
     // Convert storage provider names back to cloud provider format
-    const return_me =
+    return (
         result.data?.testConnectionHealth?.results.map((r) => ({
             fragmentStore: {
                 ...r.fragmentStore,
@@ -252,10 +245,8 @@ const testStorageConnection = async (
             },
             dataPlaneName: r.dataPlaneName,
             error: r.error,
-        })) ?? [];
-
-    // console.log('GraphQL Test Connection Results:', return_me);
-    return return_me;
+        })) ?? []
+    );
 };
 
 // Real GraphQL implementation for creating storage mapping
@@ -319,7 +310,6 @@ const realUpdateStorageMapping = async (
     }
 
     if (!result.data?.updateStorageMapping) {
-        console.log('GraphQL Response:', result);
         throw new Error('No response from updateStorageMapping mutation');
     }
 
@@ -356,7 +346,7 @@ export function useStorageMappingService() {
                 [dataPlane],
                 [store]
             );
-            console.log('Single connection test results:', results);
+            // TODO: Handle case where results array is empty (shouldn't happen if server is working correctly)
             return results[0];
         },
         [testConnection]

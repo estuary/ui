@@ -105,12 +105,6 @@ export function useConnectionTest() {
             throw new Error('Catalog prefix is not defined in context');
         }
 
-        console.log(
-            'Starting connection tests for data planes:',
-            dataPlanes,
-            'and stores:',
-            stores
-        );
         // Set all pairs to testing
         for (const dataPlane of dataPlanes) {
             for (const store of stores) {
@@ -124,34 +118,29 @@ export function useConnectionTest() {
             stores
         );
 
-        console.log('Connection test results:', testResponse);
         for (const result of testResponse) {
             const dataPlane = dataPlanes.find(
                 (dp) => dp.dataPlaneName === result.dataPlaneName
             );
             if (!dataPlane) {
-                console.log('No matching data plane found for result', result);
                 continue;
             }
 
-            console.log('store:', result.fragmentStore, 'vs stores:', stores);
             const store = stores.find(
                 ({ bucket, provider }) =>
                     bucket === result.fragmentStore.bucket &&
                     provider === result.fragmentStore.provider
             );
             if (!store) {
-                console.log('No matching store found for result', result);
                 continue;
             }
 
             const key: ConnectionTestKey = [dataPlane, store];
-            const save_me: ConnectionTestResult = {
+            const saveResult: ConnectionTestResult = {
                 status: result.error ? 'error' : 'success',
                 errorMessage: result.error ?? undefined,
             };
-            console.log('Saving result for key', key, 'as', save_me);
-            setResult(key, save_me);
+            setResult(key, saveResult);
         }
     };
 
@@ -167,7 +156,6 @@ export function useConnectionTest() {
             dataPlane,
             store
         );
-        console.log('Retry connection test result:', result);
         setResult(key, {
             status: result.error ? 'error' : 'success',
             errorMessage: result.error ?? undefined,

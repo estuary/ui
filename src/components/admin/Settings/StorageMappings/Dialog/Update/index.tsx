@@ -26,7 +26,7 @@ import { UpdateForm } from 'src/components/admin/Settings/StorageMappings/Dialog
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
-import { useDialog } from 'src/hooks/searchParams/useDialogParam';
+import { useDialog } from 'src/hooks/useDialog';
 
 interface MappingData {
     catalog_prefix: string;
@@ -98,6 +98,7 @@ function DialogInner({
             dataPlanes.some(
                 (dp) => !mapping.storage.data_planes.includes(dp.dataPlaneName)
             );
+        // Length check is sufficient — the UI only supports adding stores, not editing existing ones
         const storesChanged =
             fragmentStores.length !== mapping.storage.stores.length;
         return dpChanged || storesChanged;

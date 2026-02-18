@@ -22,7 +22,7 @@ import {
     WarningTriangle,
 } from 'iconoir-react';
 
-import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared//ConnectionInstructions';
+import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionInstructions';
 import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
@@ -149,14 +149,6 @@ export function ConnectionAccordion({
     const { retry, resultFor } = useConnectionTest();
     const testResult = resultFor(dataPlane, store);
 
-    const handleRetry = async () => {
-        console.log('Retrying connection for', dataPlane, store);
-        try {
-            await retry(dataPlane, store);
-        } finally {
-        }
-    };
-
     const [lastErrorMessage, setLastErrorMessage] = useState<string>();
     const prevStatusRef = useRef(testResult.status);
     const onToggleRef = useRef(onToggle);
@@ -241,7 +233,7 @@ export function ConnectionAccordion({
                         <ConnectionError
                             result={testResult}
                             errorMessage={lastErrorMessage}
-                            onRetry={handleRetry}
+                            onRetry={() => retry(dataPlane, store)}
                         />
                     ) : null}
                     <ConnectionInstructions

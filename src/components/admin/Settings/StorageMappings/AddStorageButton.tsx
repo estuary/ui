@@ -2,7 +2,7 @@ import { Button } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
-import { useDialog } from 'src/hooks/searchParams/useDialogParam';
+import { useDialog } from 'src/hooks/useDialog';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { hasLength } from 'src/utils/misc-utils';
 

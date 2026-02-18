@@ -13,7 +13,7 @@ import {
     useLiveSpecs,
 } from 'src/components/shared/PrefixAutocomplete';
 import { RHFPrefixAutocomplete } from 'src/components/shared/RHFFields';
-import { openDialogParams } from 'src/hooks/searchParams/useDialogParam';
+import { openDialogParams } from 'src/hooks/useDialog';
 import { validateCatalogName } from 'src/validation';
 
 export function PrefixCard() {

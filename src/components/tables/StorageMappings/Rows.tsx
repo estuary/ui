@@ -10,7 +10,7 @@ import ChipListCell from 'src/components/tables/cells/ChipList';
 import ChipStatus from 'src/components/tables/cells/ChipStatus';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
-import { useDialog } from 'src/hooks/searchParams/useDialogParam';
+import { useDialog } from 'src/hooks/useDialog';
 
 function DataPlaneCells({ dataPlanes, store }: DataPlaneCellsProps) {
     const { provider, bucket, prefix } = store;

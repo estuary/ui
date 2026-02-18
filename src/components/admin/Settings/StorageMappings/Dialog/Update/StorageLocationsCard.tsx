@@ -72,13 +72,7 @@ const getStoreKey = (store: FragmentStore) =>
 export function StorageLocationsCard() {
     const { control, watch, trigger, formState } =
         useFormContext<StorageMappingFormData>();
-    const {
-        // fields: fragmentStores,
-        prepend,
-        // append,
-        remove,
-        update,
-    } = useFieldArray({
+    const { prepend, remove, update } = useFieldArray({
         control,
         name: 'fragment_stores',
     });
@@ -158,7 +152,7 @@ export function StorageLocationsCard() {
         !newStoreErrors?.region;
 
     return (
-        <CardWrapper sx={{}}>
+        <CardWrapper>
             <Box
                 sx={{
                     display: 'flex',
