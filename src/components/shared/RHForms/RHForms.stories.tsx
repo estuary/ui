@@ -4,14 +4,22 @@ import { Box, Button, Typography } from '@mui/material';
 
 import { FormProvider, useForm } from 'react-hook-form';
 
+import { RHFPrefixAutocomplete } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/PrefixAutocomplete';
 import { RHFSelect } from 'src/components/shared/RHForms/RHFSelect';
 
 interface DemoFormValues {
     region: string;
+    prefix: string;
     dataplanes: string[];
     enableBackfill: boolean;
     enableNotifications: boolean;
 }
+
+const prefixLeaves = [
+    'acmeCo/anvils/metrics/collection-one',
+    'acmeCo/prod/materialization/snowflake/landing/wikijs/real-time-sync/materialize-snowflake',
+    'acmeCo/prod/materialization/snowflake/landing/acmeCo/9/real-time-sync/materialize-snowflake',
+];
 
 const regionOptions = [
     { value: 'us-east-1', label: 'US East (N. Virginia)' },
@@ -24,6 +32,7 @@ function DemoForm() {
     const methods = useForm<DemoFormValues>({
         defaultValues: {
             region: '',
+            prefix: '',
             dataplanes: [],
             enableBackfill: false,
             enableNotifications: true,
@@ -53,6 +62,14 @@ function DemoForm() {
                     required
                     rules={{ required: 'Region is required' }}
                     helperText="Where your data will be stored"
+                />
+
+                <RHFPrefixAutocomplete<DemoFormValues>
+                    name="prefix"
+                    leaves={prefixLeaves}
+                    label="Catalog Prefix"
+                    required
+                    helperText="Select a catalog prefix"
                 />
 
                 <Button type="submit" variant="contained" size="small">
