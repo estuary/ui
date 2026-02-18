@@ -85,8 +85,8 @@ export const mapCustomStateToCombinatorRendererProps = (
 // based on : packages/react/src/JsonFormsContext.tsx @ withContextToOneOfProps
 const withCustomContextToOneOfProps =
     (
-        Component: ComponentType<CombinatorRendererProps>
-    ): ComponentType<OwnPropsOfControl> =>
+        Component: ComponentType<React.PropsWithChildren<CombinatorRendererProps>>
+    ): ComponentType<React.PropsWithChildren<OwnPropsOfControl>> =>
     // eslint-disable-next-line react/display-name
     ({ ctx, props }: any) => {
         const oneOfProps = mapCustomStateToCombinatorRendererProps(
@@ -100,9 +100,9 @@ const withCustomContextToOneOfProps =
 
 // based on : packages/react/src/JsonFormsContext.tsx @ withJsonFormsOneOfProps
 export const withCustomJsonFormsOneOfDiscriminatorProps = (
-    Component: ComponentType<CombinatorRendererProps>,
+    Component: ComponentType<React.PropsWithChildren<CombinatorRendererProps>>,
     memoize = true
-): ComponentType<OwnPropsOfControl> =>
+): ComponentType<React.PropsWithChildren<OwnPropsOfControl>> =>
     withJsonFormsContext(
         withCustomContextToOneOfProps(
             memoize ? React.memo(Component) : Component
@@ -152,9 +152,9 @@ const withCustomContextToLayoutProps =
 
 // based on : packages/react/src/JsonFormsContext.tsx
 export const withCustomJsonFormsLayoutProps = <T extends LayoutProps>(
-    Component: ComponentType<T>,
+    Component: ComponentType<React.PropsWithChildren<T>>,
     memoize = true
-): ComponentType<T & OwnPropsOfLayout> =>
+): ComponentType<React.PropsWithChildren<T & OwnPropsOfLayout>> =>
     withJsonFormsContext(
         withCustomContextToLayoutProps(
             memoize ? React.memo(Component) : Component
