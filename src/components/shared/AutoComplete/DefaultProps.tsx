@@ -1,8 +1,7 @@
 import type { AutocompleteProps } from '@mui/material';
 import type React from 'react';
 
-import { autocompleteClasses, Popper } from '@mui/material';
-import { styled } from '@mui/material';
+import { autocompleteClasses, Popper, styled } from '@mui/material';
 
 import ListboxComponent from 'src/components/shared/AutoComplete/VirtualizedList';
 
@@ -34,7 +33,11 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     'div'
 > = {
     ...autoCompleteDefaults,
-    slots: { popper: PopperComponent, listbox: ListboxComponent },
+    slots: {
+        ...autoCompleteDefaults.slots,
+        popper: PopperComponent,
+        listbox: ListboxComponent,
+    },
     disableCloseOnSelect: true,
     renderGroup: (params) => params as unknown as React.ReactNode,
     renderOption: (props, option, state) => {
