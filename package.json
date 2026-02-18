@@ -93,7 +93,7 @@
         "p-limit": "^5.0.0",
         "posthog-js": "1.345.5",
         "pretty-bytes": "^6.1.0",
-        "react": "^18.3.1",
+        "react": "18.3.1",
         "react-csv-downloader": "^3.1.0",
         "react-dom": "^18.3.1",
         "react-error-boundary": "^4.0.10",
@@ -101,6 +101,7 @@
         "react-helmet-async": "^2.0.5",
         "react-inspector": "^6.0.2",
         "react-intl": "^6.4.4",
+        "react-is": "^18.3.1",
         "react-reflex": "^4.1.0",
         "react-router": "^6.18.0",
         "react-router-dom": "^6.18.0",
@@ -162,7 +163,8 @@
     "overrides": {
         "msw": {
             "path-to-regexp": "^8.0.0"
-        }
+        },
+        "react-is": "^18.3.1"
     },
     "browserslist": {
         "production": [
