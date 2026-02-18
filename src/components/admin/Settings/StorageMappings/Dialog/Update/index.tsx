@@ -10,9 +10,14 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Typography } from '@mui/material';
 
 import { FormProvider, useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
 
 import { useDataPlanes } from 'src/api/dataPlanesGql';
-import { useStorageMappingService } from 'src/api/storageMappingsGql';
+import {
+    storageProviderToCloudProvider,
+    useStorageMappings,
+    useStorageMappingService,
+} from 'src/api/storageMappingsGql';
 import {
     ConnectionTestProvider,
     useConnectionTest,
@@ -22,24 +27,29 @@ import { UpdateForm } from 'src/components/admin/Settings/StorageMappings/Dialog
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
-interface StorageMappingDialogProps {
-    // TODO (GREG): do we have a better type for this somewhere? maybe we should define one in the gql layer
-    mapping: {
-        catalog_prefix: string;
-        storage: {
-            data_planes: string[];
-            stores: {
-                bucket: string;
-                provider: CloudProvider;
-                storage_prefix?: string;
-            }[];
-        };
+interface MappingData {
+    catalog_prefix: string;
+    storage: {
+        data_planes: string[];
+        stores: {
+            bucket: string;
+            provider: CloudProvider;
+            storage_prefix?: string;
+        }[];
     };
-    onClose: () => void;
 }
 
-function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
+function DialogInner({
+    mapping,
+    open,
+    onClose,
+}: {
+    mapping: MappingData;
+    open: boolean;
+    onClose: () => void;
+}) {
     const { dataPlanes: allDataPlanes } = useDataPlanes();
     const { update } = useStorageMappingService();
 
@@ -185,7 +195,7 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
     return (
         <FormProvider {...methods}>
             <WizardDialog
-                open
+                open={open}
                 onClose={onClose}
                 steps={steps}
                 onComplete={handleSave}
@@ -195,13 +205,60 @@ function DialogInner({ mapping, onClose }: StorageMappingDialogProps) {
     );
 }
 
-export function UpdateMappingDialog({
-    mapping,
-    onClose,
-}: StorageMappingDialogProps) {
+export function UpdateMappingWizard() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { storageMappings } = useStorageMappings();
+
+    const smDialog = searchParams.get(GlobalSearchParams.SM_DIALOG);
+    const smPrefix = searchParams.get(GlobalSearchParams.SM_PREFIX);
+
+    const open = smDialog === 'edit';
+
+    const mapping = useMemo((): MappingData | null => {
+        if (!smPrefix) return null;
+
+        const match = storageMappings.find(
+            (sm) => sm.catalogPrefix === smPrefix
+        );
+        if (!match) return null;
+
+        return {
+            catalog_prefix: match.catalogPrefix,
+            storage: {
+                data_planes: match.storage.data_planes,
+                stores: match.storage.stores.map((store) => ({
+                    bucket: store.bucket,
+                    provider: storageProviderToCloudProvider(store.provider),
+                    storage_prefix: store.prefix,
+                })),
+            },
+        };
+    }, [smPrefix, storageMappings]);
+
+    // Preserve mapping during exit animation so dialog content doesn't disappear
+    const lastMapping = useRef(mapping);
+    if (mapping) lastMapping.current = mapping;
+
+    const closeDialog = useCallback(() => {
+        setSearchParams((prev) => {
+            prev.delete(GlobalSearchParams.SM_DIALOG);
+            prev.delete(GlobalSearchParams.SM_PREFIX);
+            return prev;
+        });
+    }, [setSearchParams]);
+
+    const displayMapping = mapping ?? lastMapping.current;
+
+    if (!displayMapping) return null;
+
     return (
-        <ConnectionTestProvider catalog_prefix={mapping.catalog_prefix}>
-            <DialogInner mapping={mapping} onClose={onClose} />
+        <ConnectionTestProvider catalog_prefix={displayMapping.catalog_prefix}>
+            <DialogInner
+                key={displayMapping.catalog_prefix}
+                mapping={displayMapping}
+                open={open}
+                onClose={closeDialog}
+            />
         </ConnectionTestProvider>
     );
 }

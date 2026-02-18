@@ -4,10 +4,11 @@ import type {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { FormProvider, useForm } from 'react-hook-form';
 import { useIntl } from 'react-intl';
+import { useSearchParams } from 'react-router-dom';
 
 import { useStorageMappingService } from 'src/api/storageMappingsGql';
 import { StorageMappingForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/Form';
@@ -18,11 +19,7 @@ import {
 import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
-
-interface Props {
-    open: boolean;
-    onClose: () => void;
-}
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
 function buildMappingPayload(
     mapping: StorageMappingFormData
@@ -52,7 +49,11 @@ function CreateMappingWizardInner({
     open,
     onClose,
     methods,
-}: Props & { methods: ReturnType<typeof useForm<StorageMappingFormData>> }) {
+}: {
+    open: boolean;
+    onClose: () => void;
+    methods: ReturnType<typeof useForm<StorageMappingFormData>>;
+}) {
     const intl = useIntl();
     const { create } = useStorageMappingService();
     const { testAll, results, testsPassing } = useConnectionTest();
@@ -113,7 +114,19 @@ function CreateMappingWizardInner({
     );
 }
 
-export function CreateMappingWizard(props: Props) {
+export function CreateMappingWizard() {
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const open = searchParams.get(GlobalSearchParams.SM_DIALOG) === 'create';
+
+    const closeDialog = useCallback(() => {
+        setSearchParams((prev) => {
+            prev.delete(GlobalSearchParams.SM_DIALOG);
+            prev.delete(GlobalSearchParams.SM_PREFIX);
+            return prev;
+        });
+    }, [setSearchParams]);
+
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {
@@ -139,7 +152,11 @@ export function CreateMappingWizard(props: Props) {
     return (
         <FormProvider {...methods}>
             <ConnectionTestProvider catalog_prefix={catalogPrefix}>
-                <CreateMappingWizardInner methods={methods} {...props} />
+                <CreateMappingWizardInner
+                    open={open}
+                    onClose={closeDialog}
+                    methods={methods}
+                />
             </ConnectionTestProvider>
         </FormProvider>
     );
