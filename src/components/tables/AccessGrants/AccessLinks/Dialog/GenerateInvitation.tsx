@@ -52,7 +52,7 @@ const RadioOption = ({
             value={value}
             control={<Radio size="small" />}
             label={label}
-            componentsProps={{
+            slotProps={{
                 typography: {
                     fontSize: 13,
                     width: '100%',
@@ -332,7 +332,7 @@ function GenerateInvitation({
                     label={intl.formatMessage({
                         id: 'admin.users.prefixInvitation.label.reusable',
                     })}
-                    componentsProps={{
+                    slotProps={{
                         typography: { fontSize: 12 },
                     }}
                 />

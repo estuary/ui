@@ -54,6 +54,7 @@
         "@microlink/react-json-view": "^1.23.0",
         "@monaco-editor/react": "^4.7.0",
         "@mui/icons-material": "^7.3.7",
+        "@mui/lab": "^7.0.1-beta.22",
         "@mui/material": "^7.3.7",
         "@mui/utils": "^7.3.7",
         "@mui/x-data-grid": "^8.26.0",

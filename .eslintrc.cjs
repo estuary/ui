@@ -52,7 +52,7 @@ module.exports = {
         'no-restricted-imports': [
             'error',
             {
-                name: '@mui/material',
+                name: '@mui/lab',
                 importNames: ['LoadingButton'],
                 message: 'Please use SafeLoadingButton instead.',
             },
