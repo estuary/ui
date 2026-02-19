@@ -160,7 +160,7 @@ function DetailsRange() {
                 <MenuItem
                     onClick={() =>
                         handlers.setFilter({
-                            amount: 13, // Ensure we include the previous year of current month
+                            amount: 13, // Ensure we include the previous year's current month
                             grain: DataGrains.monthly,
                         })
                     }
