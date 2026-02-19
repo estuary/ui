@@ -19,7 +19,6 @@ interface Props {
 const indicatorSize = 16;
 
 function EntityStatus({ name, taskTypes }: Props) {
-    console.log('EntityStatus');
     const dictionaryHydrated = useShardDetail_dictionaryHydrated();
     const dictionaryVals = useShardDetail_readDictionary(name, taskTypes);
 

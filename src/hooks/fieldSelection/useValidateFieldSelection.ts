@@ -110,9 +110,7 @@ export default function useValidateFieldSelection() {
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
     const liveBuiltSpec = useEditorStore_liveBuiltSpec();
-    const collections = useWorkflowStore((state) => {
-        return state.collections;
-    });
+    const collections = useWorkflowStore((state) => state.collections);
     const formStatus = useFormStateStore_status();
 
     const fieldsRecommended = useSourceCaptureStore(
