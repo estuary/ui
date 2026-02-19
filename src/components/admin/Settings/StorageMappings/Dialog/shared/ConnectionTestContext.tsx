@@ -112,54 +112,80 @@ export function useConnectionTest() {
             }
         }
 
-        const testResponse = await testConnection(
-            context.catalog_prefix,
-            dataPlanes,
-            stores
-        );
-
-        for (const result of testResponse) {
-            const dataPlane = dataPlanes.find(
-                (dp) => dp.dataPlaneName === result.dataPlaneName
+        try {
+            const testResponse = await testConnection(
+                context.catalog_prefix,
+                dataPlanes,
+                stores
             );
-            if (!dataPlane) {
-                continue;
-            }
 
-            const store = stores.find(
-                ({ bucket, provider }) =>
-                    bucket === result.fragmentStore.bucket &&
-                    provider === result.fragmentStore.provider
-            );
-            if (!store) {
-                continue;
-            }
+            for (const result of testResponse) {
+                const dataPlane = dataPlanes.find(
+                    (dp) => dp.dataPlaneName === result.dataPlaneName
+                );
+                if (!dataPlane) {
+                    continue;
+                }
 
-            const key: ConnectionTestKey = [dataPlane, store];
-            const saveResult: ConnectionTestResult = {
-                status: result.error ? 'error' : 'success',
-                errorMessage: result.error ?? undefined,
-            };
-            setResult(key, saveResult);
+                const store = stores.find(
+                    ({ bucket, provider }) =>
+                        bucket === result.fragmentStore.bucket &&
+                        provider === result.fragmentStore.provider
+                );
+                if (!store) {
+                    continue;
+                }
+
+                const key: ConnectionTestKey = [dataPlane, store];
+                const saveResult: ConnectionTestResult = {
+                    status: result.error ? 'error' : 'success',
+                    errorMessage: result.error ?? undefined,
+                };
+                setResult(key, saveResult);
+            }
+        } catch (e) {
+            const message =
+                e instanceof Error ? e.message : 'Connection test failed';
+
+            // clean up any "testing" states left by a failed test run
+            for (const dataPlane of dataPlanes) {
+                for (const store of stores) {
+                    setResult([dataPlane, store], {
+                        status: 'error',
+                        errorMessage: message,
+                    });
+                }
+            }
+            // Re-throw error so calling code can handle it if needed
+            throw e;
         }
     };
 
-    const retry = async (dataPlane: DataPlaneNode, store: FragmentStore) => {
+    const testOne = async (dataPlane: DataPlaneNode, store: FragmentStore) => {
         if (!context.catalog_prefix) {
             throw new Error('Catalog prefix is not defined in context');
         }
 
         const key: ConnectionTestKey = [dataPlane, store];
         setResult(key, { status: 'testing' });
-        const result = await testSingleConnection(
-            context.catalog_prefix,
-            dataPlane,
-            store
-        );
-        setResult(key, {
-            status: result.error ? 'error' : 'success',
-            errorMessage: result.error ?? undefined,
-        });
+        try {
+            const result = await testSingleConnection(
+                context.catalog_prefix,
+                dataPlane,
+                store
+            );
+            setResult(key, {
+                status: result.error ? 'error' : 'success',
+                errorMessage: result.error ?? undefined,
+            });
+        } catch (e) {
+            // intentionally swallowing this error since it's already reflected in the UI state and we don't want to force calling code to handle it
+            setResult(key, {
+                status: 'error',
+                errorMessage:
+                    e instanceof Error ? e.message : 'Connection test failed',
+            });
+        }
     };
 
     // Helper to find a result in the Map by matching dataPlane and store values
@@ -181,7 +207,7 @@ export function useConnectionTest() {
     return {
         results: context.results,
         testsPassing,
-        retry,
+        testOne,
         testAll,
         resultFor,
     };

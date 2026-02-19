@@ -146,7 +146,7 @@ export function ConnectionAccordion({
     expanded,
     onToggle,
 }: ConnectionAccordionProps) {
-    const { retry, resultFor } = useConnectionTest();
+    const { testOne, resultFor } = useConnectionTest();
     const testResult = resultFor(dataPlane, store);
 
     const [lastErrorMessage, setLastErrorMessage] = useState<string>();
@@ -233,7 +233,7 @@ export function ConnectionAccordion({
                         <ConnectionError
                             result={testResult}
                             errorMessage={lastErrorMessage}
-                            onRetry={() => retry(dataPlane, store)}
+                            onRetry={() => testOne(dataPlane, store)}
                         />
                     ) : null}
                     <ConnectionInstructions

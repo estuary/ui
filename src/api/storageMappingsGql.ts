@@ -346,7 +346,9 @@ export function useStorageMappingService() {
                 [dataPlane],
                 [store]
             );
-            // TODO: Handle case where results array is empty (shouldn't happen if server is working correctly)
+            if (!results[0]) {
+                throw new Error('Server returned no test results');
+            }
             return results[0];
         },
         [testConnection]
