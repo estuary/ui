@@ -21,7 +21,7 @@ import {
     ConnectionTestProvider,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
-import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
+// import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import { UpdateForm } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/Form';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
@@ -72,6 +72,15 @@ function DialogInner({
     const dataPlanes = watch('data_planes');
     const fragmentStores = watch('fragment_stores');
 
+    const newDataPlanes = useMemo(
+        () => dataPlanes.filter((dp) => dp._isNew),
+        [dataPlanes]
+    );
+    const newStores = useMemo(
+        () => fragmentStores.filter((s) => s._isNew),
+        [fragmentStores]
+    );
+
     const hasPendingStore = useMemo(
         () => fragmentStores.some((s) => s._isPending),
         [fragmentStores]
@@ -93,10 +102,15 @@ function DialogInner({
 
     const hasChanges = useMemo(() => {
         const dpChanged =
+            // default dp has changed
             dataPlanes[0]?.dataPlaneName !== mapping.storage.data_planes[0] ||
-            dataPlanes.length !== mapping.storage.data_planes.length ||
+            // or any dp has been added
             dataPlanes.some(
                 (dp) => !mapping.storage.data_planes.includes(dp.dataPlaneName)
+            ) ||
+            // or any dp has been removed
+            mapping.storage.data_planes.some(
+                (dp) => !dataPlanes.some((d) => d.dataPlaneName === dp)
             );
         // Length check is sufficient — the UI only supports adding stores, not editing existing ones
         const storesChanged =
@@ -105,9 +119,6 @@ function DialogInner({
     }, [dataPlanes, fragmentStores.length, mapping.storage]);
 
     const newConnectionsPassing = useMemo(() => {
-        const newDataPlanes = dataPlanes.filter((dp) => dp._isNew);
-        const newStores = fragmentStores.filter((s) => s._isNew);
-
         // Collect all pairs that involve at least one new element
         const newPairs: [FormDataPlane, (typeof fragmentStores)[number]][] = [];
         for (const dp of newDataPlanes) {
@@ -128,17 +139,34 @@ function DialogInner({
         );
     }, [dataPlanes, fragmentStores, resultFor]);
 
-    const handleTestConnections = useCallback(async (): Promise<boolean> => {
-        const stores = fragmentStores.map((store) => ({
+    const testNewConnections = useCallback(async (): Promise<boolean> => {
+        const mapStore = (store: (typeof fragmentStores)[number]) => ({
             bucket: store.bucket,
             provider: store.provider,
             prefix: store.storage_prefix || undefined,
-        }));
-        await testAll(dataPlanes, stores);
+        });
+
+        const newDataPlanes = dataPlanes.filter((dp) => dp._isNew);
+        const newStores = fragmentStores.filter((s) => s._isNew);
+        const existingDataPlanes = dataPlanes.filter((dp) => !dp._isNew);
+
+        const promises: Promise<void>[] = [];
+
+        // Test new data planes against all stores
+        if (newDataPlanes.length > 0) {
+            promises.push(testAll(newDataPlanes, fragmentStores.map(mapStore)));
+        }
+
+        // Test existing data planes against new stores only
+        if (existingDataPlanes.length > 0 && newStores.length > 0) {
+            promises.push(testAll(existingDataPlanes, newStores.map(mapStore)));
+        }
+
+        await Promise.all(promises);
         return true;
     }, [fragmentStores, testAll, dataPlanes]);
 
-    const handleSave = async () => {
+    const save = async () => {
         const data = getValues();
         const stores = data.fragment_stores.map((store) => ({
             bucket: store.bucket,
@@ -172,20 +200,23 @@ function DialogInner({
                 {
                     title,
                     component: <UpdateForm />,
-                    nextLabel: 'Test connections',
-                    canAdvance: () => dataPlanes.length > 0 && !hasPendingStore,
-                    onAdvance: handleTestConnections,
-                },
-                {
-                    title,
-                    component: <TestConnectionResult />,
                     nextLabel: 'Save Changes',
-                    canAdvance: () => newConnectionsPassing,
+                    canAdvance: () =>
+                        dataPlanes.length > 0 &&
+                        !hasPendingStore &&
+                        newConnectionsPassing,
+                    // onAdvance: testNewConnections,
                 },
+                // {
+                //     title,
+                //     component: <TestConnectionResult />,
+                //     nextLabel: 'Save Changes',
+                //     canAdvance: () => newConnectionsPassing,
+                // },
             ] satisfies WizardStep[],
         [
             dataPlanes,
-            handleTestConnections,
+            // testNewConnections,
             newConnectionsPassing,
             hasPendingStore,
             title,
@@ -198,7 +229,7 @@ function DialogInner({
                 open={open}
                 onClose={onClose}
                 steps={steps}
-                onComplete={handleSave}
+                onComplete={save}
                 showActions={hasChanges}
             />
         </FormProvider>
@@ -239,7 +270,11 @@ export function UpdateMappingWizard() {
     if (!displayMapping) return null;
 
     return (
-        <ConnectionTestProvider catalog_prefix={displayMapping.catalog_prefix}>
+        <ConnectionTestProvider
+            key={displayMapping.catalog_prefix}
+            catalog_prefix={displayMapping.catalog_prefix}
+        >
+            <pre>{JSON.stringify(mapping, null, 2)}</pre>
             <DialogInner
                 key={displayMapping.catalog_prefix}
                 mapping={displayMapping}
