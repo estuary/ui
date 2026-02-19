@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { Calendar } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -17,10 +19,9 @@ import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageSto
 function DetailsRange() {
     const intl = useIntl();
 
-    const [range, setRange] = useDetailsUsageStore((store) => [
-        store.range,
-        store.setRange,
-    ]);
+    const [range, setRange] = useDetailsUsageStore(
+        useShallow((state) => [state.range, state.setRange])
+    );
     const { relativeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

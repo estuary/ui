@@ -97,10 +97,10 @@ Initially we premade hooks for everything in stores following the pattern of `us
 Currently we are replacing these with directly accessing stores:
 
 ```
-    const [active, setActive] = useBillingStore((state) => [
+    const [active, setActive] = useBillingStore(useShallow((state) => [
         state.active,
         state.setActive,
-    ]);
+    ]));
 ```
 
 If it is fetching a complex piece of state we still premake the hooks (ex: `useBinding_sourceCaptureFlags`)
