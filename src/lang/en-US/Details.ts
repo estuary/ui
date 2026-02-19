@@ -86,6 +86,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.recentUsage.filter.label.hours': `{range} hours`,
     'detailsPanel.recentUsage.filter.label.days': `{range} days`,
     'detailsPanel.recentUsage.filter.label.months': `{range} months`,
+    'detailsPanel.recentUsage.filter.label.year': `Year`,
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
     'detailsPanel.details.relatedEntity.link': `View details for {catalogName}`,
     'detailsPanel.details.relatedEntity.failed': `failed to find`,

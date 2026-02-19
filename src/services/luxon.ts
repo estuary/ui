@@ -11,6 +11,7 @@ export interface LuxonGrainSettings {
     labelKey: string;
     relativeUnit: ToRelativeUnit;
     timeUnit: DateTimeUnit;
+    selectedLabelKey: string | null; // Mainly for "Yearly" selection where "13 months" felt weird displaying
 }
 
 // Reference for formatting
@@ -27,6 +28,7 @@ const DAILY_GRAIN_SETTINGS: LuxonGrainSettings = {
     getTimeZone: (val) => val.toUTC().toFormat(timeZoneFormat),
     longFormat: (val) => val.toUTC().toLocaleString(DateTime.DATE_HUGE),
     shortFormat: (val) => val.toUTC().toFormat(dayAndMonthFormat),
+    selectedLabelKey: null,
 };
 
 export const LUXON_GRAIN_SETTINGS: {
@@ -37,6 +39,7 @@ export const LUXON_GRAIN_SETTINGS: {
         relativeUnit: 'hours',
         timeUnit: 'hour',
         labelKey: 'detailsPanel.recentUsage.filter.label.hours',
+        selectedLabelKey: null,
         getTimeZone: (val) => val.toFormat(timeZoneFormat),
         longFormat: (val) =>
             val
@@ -52,6 +55,7 @@ export const LUXON_GRAIN_SETTINGS: {
         relativeUnit: 'months',
         timeUnit: 'month',
         labelKey: 'detailsPanel.recentUsage.filter.label.months',
+        selectedLabelKey: 'detailsPanel.recentUsage.filter.label.year',
     },
 };
 
