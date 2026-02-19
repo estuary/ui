@@ -154,6 +154,23 @@ function DetailsRange() {
                         }
                     )}
                 </MenuItem>
+                <MenuItem
+                    onClick={() =>
+                        handlers.setFilter({
+                            amount: 12,
+                            grain: DataGrains.monthly,
+                        })
+                    }
+                >
+                    {intl.formatMessage(
+                        {
+                            id: 'detailsPanel.recentUsage.filter.label.months',
+                        },
+                        {
+                            range: 12,
+                        }
+                    )}
+                </MenuItem>
             </Menu>
         </Stack>
     );
