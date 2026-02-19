@@ -138,6 +138,7 @@ interface ConnectionAccordionProps {
     store: FragmentStore;
     expanded: boolean;
     onToggle: (expanded: boolean) => void;
+    disabled?: boolean;
 }
 
 export function ConnectionAccordion({
@@ -145,6 +146,7 @@ export function ConnectionAccordion({
     store,
     expanded,
     onToggle,
+    disabled = false,
 }: ConnectionAccordionProps) {
     const { testOne, resultFor } = useConnectionTest();
     const testResult = resultFor(dataPlane, store);
@@ -174,21 +176,29 @@ export function ConnectionAccordion({
 
     return (
         <Accordion
-            expanded={expanded}
-            onChange={(_event, isExpanded) => onToggle(isExpanded)}
+            expanded={disabled ? false : expanded}
+            onChange={(_event, isExpanded) => {
+                if (!disabled) onToggle(isExpanded);
+            }}
+            disabled={disabled}
             disableGutters
             sx={{
                 '&:before': { display: 'none' },
                 'border': 1,
-                'borderColor':
-                    testResult.status === 'success'
-                        ? 'success.main'
-                        : testResult.status === 'error'
-                          ? 'warning.main'
-                          : 'divider',
+                'borderColor': disabled
+                    ? 'divider'
+                    : testResult.status === 'success'
+                      ? 'success.main'
+                      : testResult.status === 'error'
+                        ? 'warning.main'
+                        : 'divider',
                 'borderRadius': 2,
+                'opacity': disabled ? 0.5 : 1,
                 '&:first-of-type': { borderRadius: 2 },
                 '&:last-of-type': { borderRadius: 2 },
+                '&.Mui-disabled': {
+                    bgcolor: 'background.paper',
+                },
             }}
         >
             <AccordionSummary

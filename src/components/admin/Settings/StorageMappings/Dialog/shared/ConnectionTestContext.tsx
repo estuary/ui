@@ -71,7 +71,11 @@ export function ConnectionTestProvider({
 
     return (
         <ConnectionTestContext.Provider
-            value={{ catalog_prefix, results, setResult }}
+            value={{
+                catalog_prefix,
+                results,
+                setResult,
+            }}
         >
             {children}
         </ConnectionTestContext.Provider>

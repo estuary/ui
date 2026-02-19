@@ -3,9 +3,10 @@ import type {
     StorageMappingFormData,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
+    Box,
     CircularProgress,
     Collapse,
     Link,
@@ -13,6 +14,7 @@ import {
     Typography,
 } from '@mui/material';
 
+import { CheckCircle } from 'iconoir-react';
 import { useFormContext } from 'react-hook-form';
 
 import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionAccordion';
@@ -29,8 +31,44 @@ function RunTests() {
     const dataPlanes = watch('data_planes');
     const fragmentStores = watch('fragment_stores');
 
-    const [showFailing, setShowFailing] = useState(false);
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
+    const [initiallyFailedKeys] = useState<Set<string>>(() => new Set());
+
+    // Capture the original data plane names once hydrated (first non-empty set)
+    const originalDataPlaneNamesRef = useRef<Set<string> | null>(null);
+    if (originalDataPlaneNamesRef.current === null && dataPlanes.length > 0) {
+        originalDataPlaneNamesRef.current = new Set(
+            dataPlanes.map((dp) => dp.dataPlaneName)
+        );
+    }
+
+    // Data planes that were in the original mapping but have been removed
+    const deletedDataPlaneNames = useMemo(() => {
+        if (!originalDataPlaneNamesRef.current) return new Set<string>();
+
+        const currentNames = new Set(
+            dataPlanes.map((dp) => dp.dataPlaneName)
+        );
+
+        const deleted = new Set<string>();
+        for (const name of originalDataPlaneNamesRef.current) {
+            if (!currentNames.has(name)) {
+                deleted.add(name);
+            }
+        }
+        return deleted;
+    }, [dataPlanes]);
+
+    // When a data plane is deleted, clean up its failed keys
+    // useEffect(() => {
+    //     for (const name of deletedDataPlaneNames) {
+    //         for (const key of initiallyFailedKeys) {
+    //             if (key.startsWith(`${name}-`)) {
+    //                 initiallyFailedKeys.delete(key);
+    //             }
+    //         }
+    //     }
+    // }, [deletedDataPlaneNames, initiallyFailedKeys]);
 
     useEffect(() => {
         if (
@@ -52,60 +90,79 @@ function RunTests() {
         });
     }, [dataPlanes, fragmentStores, testAll, results.size]);
 
-    const isTesting = useMemo(() => {
-        if (results.size === 0) return dataPlanes.length > 0;
-        return [...results.values()].some((r) => r.status === 'testing');
-    }, [results, dataPlanes.length]);
+    // Only true during the initial batch test, not individual retries
+    const initialTestInProgress = useMemo(() => {
+        return (
+            initiallyFailedKeys.size === 0 &&
+            [...results.values()].some((result) => result.status === 'testing')
+        );
+    }, [initiallyFailedKeys, results]);
 
-    const failingEntries = useMemo(
+    // Track keys that fail so they stay visible after retries pass
+    useEffect(() => {
+        for (const [[dataPlane, store], result] of results) {
+            if (result.status === 'error') {
+                initiallyFailedKeys.add(
+                    `${dataPlane.dataPlaneName}-${store.bucket}`
+                );
+            }
+        }
+    }, [results, initiallyFailedKeys]);
+
+    // Show entries that are currently failing OR were initially failing
+    const visibleEntries = useMemo(
         () =>
-            Array.from(results).filter(
-                ([, result]) => result.status === 'error'
-            ),
-        [results]
+            Array.from(results).filter(([[dataPlane, store], result]) => {
+                const key = `${dataPlane.dataPlaneName}-${store.bucket}`;
+                return (
+                    result.status === 'error' || initiallyFailedKeys.has(key)
+                );
+            }),
+        [results, initiallyFailedKeys]
     );
 
-    if (isTesting) {
-        return (
-            <Stack direction="row" alignItems="center" spacing={1}>
-                <CircularProgress size={16} />
-                <Typography variant="body2" color="text.secondary">
-                    Testing connections…
-                </Typography>
-            </Stack>
-        );
-    }
-
-    if (results.size === 0) return null;
-
-    if (testsPassing) {
-        return (
-            <Typography variant="body2" color="success.main">
-                All connections passing
-            </Typography>
-        );
-    }
-
     return (
-        <Stack spacing={1}>
-            <Collapse in={!showFailing}>
+        <Stack>
+            <Collapse
+                in={initialTestInProgress}
+                // unmountOnExit
+            >
                 <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography variant="body2" color="error.main">
-                        Some connection tests are failing
+                    <CircularProgress size={16} />
+                    <Typography variant="body2" color="text.secondary">
+                        Testing connections…
                     </Typography>
-                    <Link
-                        component="button"
-                        variant="body2"
-                        onClick={() => setShowFailing((prev) => !prev)}
-                    >
-                        Show details
-                    </Link>
                 </Stack>
             </Collapse>
-
-            <Collapse in={showFailing}>
+            <Collapse
+                in={testsPassing && initiallyFailedKeys.size === 0}
+                // unmountOnExit
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        border: 1,
+                        borderColor: 'success.main',
+                        borderRadius: 2,
+                        px: 1,
+                        py: 0.75,
+                        color: 'success.main',
+                    }}
+                >
+                    <CheckCircle width={20} height={20} />
+                    <Typography variant="body2" fontWeight={600}>
+                        All connections passing
+                    </Typography>
+                </Box>
+            </Collapse>
+            <Collapse
+                in={visibleEntries.length > 0 && !initialTestInProgress}
+                // unmountOnExit
+            >
                 <Stack spacing={1}>
-                    {failingEntries.map(([[dataPlane, store]]) => {
+                    {visibleEntries.map(([[dataPlane, store]]) => {
                         const provider = store.provider as CloudProvider;
                         const key = `${dataPlane.dataPlaneName}-${store.bucket}`;
                         return (
@@ -120,6 +177,9 @@ function RunTests() {
                                 onToggle={(isExpanded) =>
                                     setExpandedKey(isExpanded ? key : null)
                                 }
+                                disabled={deletedDataPlaneNames.has(
+                                    dataPlane.dataPlaneName
+                                )}
                             />
                         );
                     })}
