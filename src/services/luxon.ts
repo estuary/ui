@@ -56,6 +56,14 @@ export const LUXON_GRAIN_SETTINGS: {
         timeUnit: 'month',
         labelKey: 'detailsPanel.recentUsage.filter.label.months',
         selectedLabelKey: 'detailsPanel.recentUsage.filter.label.year',
+        longFormat: (val) =>
+            val
+                .setLocale(navigator.language ?? 'en-US')
+                .toLocaleString({ month: 'long', year: 'numeric' }),
+        shortFormat: (val) =>
+            val
+                .setLocale(navigator.language ?? 'en-US')
+                .toLocaleString({ month: 'short' }),
     },
 };
 
