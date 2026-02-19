@@ -31,6 +31,7 @@ interface StorageFieldsProps {
     index: number;
 }
 
+// TODO (Greg): i don't love index as a prop here...
 export function StorageFields({ index }: StorageFieldsProps) {
     const {
         register,

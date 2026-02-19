@@ -205,7 +205,6 @@ export default function DataPlanesCard() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    mb: 1,
                 }}
             >
                 <Typography sx={cardHeaderSx}>Data Planes</Typography>

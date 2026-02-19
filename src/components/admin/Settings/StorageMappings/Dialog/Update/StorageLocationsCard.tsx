@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
     Box,
     Collapse,
+    Divider,
     IconButton,
     Link,
     Stack,
@@ -22,6 +23,13 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { cardHeaderSx } from 'src/context/Theme';
+
+export const primaryStoreSx = {
+    px: 1.5,
+    py: 1,
+    borderRadius: 1,
+    bgcolor: 'background.default',
+};
 
 function CompactStoreRow({
     store,
@@ -40,10 +48,7 @@ function CompactStoreRow({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                px: 1.5,
-                py: 1,
-                borderRadius: 1,
-                bgcolor: 'background.default',
+                ...primaryStoreSx,
                 opacity: inactive ? 0.6 : 1,
             }}
         >
@@ -79,7 +84,6 @@ export function StorageLocationsCard() {
 
     const defaultDataPlane = watch('default_data_plane');
     const fragmentStores = watch('fragment_stores');
-    // const newIndex = fragmentStores.length - 1;
     const hasNewStore = fragmentStores.some((f) => f._isNew);
     const hasPendingStore = fragmentStores.some((f) => f._isPending);
 
@@ -151,6 +155,8 @@ export function StorageLocationsCard() {
         !newStoreErrors?.provider &&
         !newStoreErrors?.region;
 
+    const showNestedStorageForm = hasPendingStore && !closing;
+
     return (
         <CardWrapper>
             <Box
@@ -158,25 +164,11 @@ export function StorageLocationsCard() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    mb: 1,
+                    mb: showNestedStorageForm ? -4 : 0,
                 }}
             >
                 <Typography sx={cardHeaderSx}>Storage Locations</Typography>
-                {hasPendingStore && !closing ? (
-                    <Stack direction="row" spacing={0.5}>
-                        <IconButton
-                            size="small"
-                            color="success"
-                            disabled={!newStoreIsValid}
-                            onClick={handleAccept}
-                        >
-                            <Check width={20} height={20} />
-                        </IconButton>
-                        <IconButton size="small" onClick={handleCancel}>
-                            <Xmark width={20} height={20} />
-                        </IconButton>
-                    </Stack>
-                ) : (
+                {!showNestedStorageForm ? (
                     <Link
                         component="button"
                         variant="body2"
@@ -189,15 +181,64 @@ export function StorageLocationsCard() {
                     >
                         Change primary store
                     </Link>
-                )}
+                ) : null}
             </Box>
             <Stack spacing={1}>
                 <Collapse
-                    in={hasPendingStore && !closing}
+                    in={showNestedStorageForm}
                     onExited={handleExited}
                     unmountOnExit
                 >
-                    <StorageFields index={0} />
+                    <Stack alignItems={'flex-end'}>
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            sx={{
+                                ...primaryStoreSx,
+                                borderBottomLeftRadius: 0,
+                                borderBottomRightRadius: 0,
+                            }}
+                        >
+                            <Link
+                                component="button"
+                                variant="body2"
+                                underline="hover"
+                                onClick={handleAccept}
+                                sx={{
+                                    display: 'flex',
+                                    gap: 0.5,
+                                    opacity: newStoreIsValid ? 1 : 0.5,
+                                    pointerEvents: newStoreIsValid
+                                        ? 'auto'
+                                        : 'none',
+                                }}
+                            >
+                                Accept <Check width={20} height={20} />
+                            </Link>
+                            <Divider orientation="vertical" flexItem />
+                            <Link
+                                component="button"
+                                variant="body2"
+                                underline="hover"
+                                onClick={handleCancel}
+                                sx={{
+                                    display: 'flex',
+                                    gap: 0.5,
+                                }}
+                            >
+                                Cancel <Xmark width={20} height={20} />
+                            </Link>
+                        </Stack>
+                        <Box
+                            sx={{
+                                ...primaryStoreSx,
+                                borderTopLeftRadius: 0,
+                                borderTopRightRadius: 0,
+                            }}
+                        >
+                            <StorageFields index={0} />
+                        </Box>
+                    </Stack>
                 </Collapse>
                 <Flipper
                     flipKey={fragmentStores
