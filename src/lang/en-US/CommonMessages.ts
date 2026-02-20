@@ -144,4 +144,8 @@ export const CommonMessages: Record<string, string> = {
     'status.error.high': `High`,
     'status.error.low': `Low`,
     'status.error.medium': `Medium`,
+
+    // Prefix autocomplete validation
+    'prefixAutocomplete.mustStartWith.single': `Must start with \`{root}\``,
+    'prefixAutocomplete.mustStartWith.multiple': `Must start with one of: {roots}`,
 };
