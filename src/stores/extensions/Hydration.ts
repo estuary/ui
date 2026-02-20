@@ -62,7 +62,6 @@ export const getStoreWithHydrationSettings = (
         setHydrated: (value) => {
             set(
                 produce((state: StoreWithHydration) => {
-                    console.log('setHydrated', [state.active, value]);
                     state.hydrated = value && state.active ? value : false;
                 }),
                 false,
