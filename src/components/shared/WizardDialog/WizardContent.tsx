@@ -12,14 +12,12 @@ export function WizardContent() {
 
     // Ref to the inner wrapper whose scrollHeight drives the animated outer container height
     const contentRef = useRef<HTMLDivElement>(null);
-    const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
     const [height, setHeight] = useState<number | undefined>(undefined);
     const [transitioning, setTransitioning] = useState(false);
     const prevStepRef = useRef(currentStep);
 
     useEffect(() => {
         if (prevStepRef.current !== currentStep) {
-            clearTimeout(transitionTimeoutRef.current);
             setTransitioning(true);
             prevStepRef.current = currentStep;
         }
@@ -37,10 +35,6 @@ export function WizardContent() {
         return () => observer.disconnect();
     }, [currentStep]);
 
-    useEffect(() => {
-        return () => clearTimeout(transitionTimeoutRef.current);
-    }, []);
-
     const currentStepConfig = steps[currentStep];
 
     if (!currentStepConfig) {
@@ -56,10 +50,7 @@ export function WizardContent() {
             </Collapse>
             <Box
                 onTransitionEnd={() => {
-                    clearTimeout(transitionTimeoutRef.current);
-                    transitionTimeoutRef.current = setTimeout(() => {
-                        setTransitioning(false);
-                    }, 500);
+                    setTransitioning(false);
                 }}
                 sx={{
                     height: height ?? 'auto',
