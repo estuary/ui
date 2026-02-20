@@ -129,14 +129,14 @@ export function WizardDialog({
     const displayTitle = currentStepConfig?.title ?? title;
 
     return (
-        <WizardContext.Provider value={contextValue}>
-            <Dialog
-                open={open}
-                maxWidth={maxWidth}
-                fullWidth
-                aria-labelledby={TITLE_ID}
-                TransitionProps={{ onExited }}
-            >
+        <Dialog
+            open={open}
+            maxWidth={maxWidth}
+            fullWidth
+            aria-labelledby={TITLE_ID}
+            TransitionProps={{ onExited }}
+        >
+            <WizardContext.Provider value={contextValue}>
                 <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>
                     {displayTitle}
                 </DialogTitleWithClose>
@@ -144,7 +144,7 @@ export function WizardDialog({
                 <Collapse in={showActions}>
                     <WizardActions />
                 </Collapse>
-            </Dialog>
-        </WizardContext.Provider>
+            </WizardContext.Provider>
+        </Dialog>
     );
 }
