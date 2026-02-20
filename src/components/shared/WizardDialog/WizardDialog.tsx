@@ -46,35 +46,21 @@ export function WizardDialog({
 
         // Run step-specific onAdvance callback if provided
         if (currentStepConfig?.onAdvance) {
-            const result = currentStepConfig.onAdvance();
-
-            // If onAdvance returns a promise, wait for it and show loading state.
-            // If the promise errors or resolves false, prevent navigation.
-            if (result instanceof Promise) {
-                setIsNavigating(true);
-                // minDelay to prevent spinner flash
-                const minDelay = new Promise((resolve) =>
-                    setTimeout(resolve, 1000)
-                );
-                try {
-                    const [proceed] = await Promise.all([result, minDelay]);
-                    if (!proceed) {
-                        return false;
-                    }
-                } catch (error) {
-                    // Finish waiting for minDelay to ensure spinner is shown for at least 1 second, preventing flash on fast operations
-                    await minDelay;
-                    setError(
-                        error instanceof Error
-                            ? error.message
-                            : 'An error occurred during this step'
-                    );
+            setIsNavigating(true);
+            try {
+                const proceed = await currentStepConfig.onAdvance();
+                if (!proceed) {
                     return false;
-                } finally {
-                    setIsNavigating(false);
                 }
-            } else if (result === false) {
+            } catch (error) {
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : 'An error occurred during this step'
+                );
                 return false;
+            } finally {
+                setIsNavigating(false);
             }
         }
 
