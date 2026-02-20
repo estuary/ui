@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 import { Box, Collapse, DialogContent } from '@mui/material';
 
@@ -16,7 +16,7 @@ export function WizardContent() {
     const [transitioning, setTransitioning] = useState(false);
     const prevStepRef = useRef(currentStep);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (prevStepRef.current !== currentStep) {
             setTransitioning(true);
             prevStepRef.current = currentStep;
