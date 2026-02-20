@@ -1,6 +1,5 @@
+import type { DialogProps } from '@mui/material';
 import type { ReactNode } from 'react';
-
-import { DialogProps } from '@mui/material';
 
 export interface WizardStep {
     /** The component to render for this step */
