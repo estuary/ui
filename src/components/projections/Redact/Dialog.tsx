@@ -53,7 +53,7 @@ const RedactFieldDialog = ({
         <Dialog maxWidth="sm" open={open} style={{ minWidth: 500 }}>
             <DialogTitle>
                 {intl.formatMessage({
-                    id: 'projection.dialog.rename.header',
+                    id: 'projection.dialog.redact.header',
                 })}
             </DialogTitle>
 

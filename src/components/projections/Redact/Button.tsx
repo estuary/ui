@@ -7,6 +7,7 @@ import { Button } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import RedactFieldDialog from 'src/components/projections/Redact/Dialog';
+import { evaluateRedactionEligibility } from 'src/utils/schema-utils';
 
 const RedactFieldButton = ({
     disabled,
@@ -18,10 +19,16 @@ const RedactFieldButton = ({
 
     const [open, setOpen] = useState(false);
 
+    const redactionEligibility = evaluateRedactionEligibility(pointer);
+
+    if (redactionEligibility === 'prevent') {
+        return null;
+    }
+
     return (
         <>
             <Button
-                disabled={disabled}
+                disabled={Boolean(disabled)}
                 onClick={(event: React.MouseEvent<HTMLElement>) => {
                     event.preventDefault();
 
