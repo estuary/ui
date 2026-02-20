@@ -28,6 +28,7 @@ import {
     getTooltipItem,
     getTooltipTitle,
 } from 'src/components/graphs/tooltips';
+import { DataGrains } from 'src/components/graphs/types';
 import useLegendConfig from 'src/components/graphs/useLegendConfig';
 import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 import { useEntityType } from 'src/context/EntityContext';
@@ -36,7 +37,7 @@ import useDataByHourGraphMessages from 'src/hooks/useDataByHourGraphMessages';
 import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
-interface Props {
+interface DataByHourGraphProps {
     id: string;
     stats: CatalogStats_Details[] | undefined;
     createdAt?: string;
@@ -61,7 +62,8 @@ const defaultDataFormat = (value: any, options: Options) => {
 // TODO (data graph) - need to rename this as it can handle multiple grains
 //  not renaming as this is not 100% supporting of all the grains
 //  just hourly and daily as it required for details not (Q4 2024)
-function DataByHourGraph({ id, stats = [] }: Props) {
+// This handled monthly grain fine after updating "renderingTimezone" (Q1 2026)
+function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
     const intl = useIntl();
     const theme = useTheme();
     const legendConfig = useLegendConfig();
@@ -136,14 +138,17 @@ function DataByHourGraph({ id, stats = [] }: Props) {
                     id: 'detailsPanel.graph.timezone',
                 },
                 {
-                    relativeUnit: intl.formatMessage(
-                        { id: labelKey },
-                        { range: '' }
-                    ),
+                    relativeUnit:
+                        range.grain === DataGrains.monthly
+                            ? ''
+                            : intl.formatMessage(
+                                  { id: labelKey },
+                                  { range: '' }
+                              ),
                 }
             )} ${getTimeZone(DateTime.now())}`
         );
-    }, [getTimeZone, intl, labelKey]);
+    }, [getTimeZone, intl, labelKey, range.grain]);
 
     getTimeZone;
 
