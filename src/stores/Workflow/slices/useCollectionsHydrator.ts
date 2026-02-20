@@ -18,6 +18,7 @@ function useCollectionsHydrator() {
         setCollectionsError,
         setCollectionsHydrating,
         collectionsInited,
+        terminateCollectionHydration,
     ] = useWorkflowStore((state) => {
         return [
             state.collections,
@@ -26,6 +27,7 @@ function useCollectionsHydrator() {
             state.setCollectionsError,
             state.setCollectionsHydrating,
             state.collectionsInited,
+            state.terminateCollectionHydration,
         ];
     });
 
@@ -58,16 +60,22 @@ function useCollectionsHydrator() {
                 ),
             ];
 
-            // Since this hook runs as the draft changes we need to see if
-            //  there are any new collections for us to fetch. So if we are
-            //  already `inited` only continue on if there are collections missing.
-            if (collectionsInited && collectionsNeedingFetched.length === 0) {
+            // Since this hook runs each time the draft changes, we need to check
+            // whether there are new collection live specifications to fetch.
+            if (collectionsNeedingFetched.length === 0) {
+                if (!collectionsInited) {
+                    // If the collection state is not initialized and no new collections
+                    // are detected, ensure the active hydration cycle is properly terminated.
+                    terminateCollectionHydration();
+                }
+
                 logRocketEvent('WorkflowStore', {
                     collections: true,
                     hydrating: 'skipped',
                     collectionsInited,
                     collectionsNeedingFetched: collectionsNeedingFetched.length,
                 });
+
                 return Promise.resolve();
             }
 
@@ -155,6 +163,7 @@ function useCollectionsHydrator() {
             initializeCollections,
             setCollectionsError,
             setCollectionsHydrating,
+            terminateCollectionHydration,
         ]
     );
 }

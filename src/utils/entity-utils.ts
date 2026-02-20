@@ -9,6 +9,8 @@ import {
     specContainsDerivation,
 } from 'src/utils/misc-utils';
 
+export const MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS = 1;
+
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
     draftSpec.shards ??= {};
     draftSpec.shards.disable = !enabling;

@@ -20,6 +20,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { evaluate_field_selection } from '@estuary/flow-web';
+import { differenceBy } from 'lodash';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -36,6 +37,7 @@ import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/utils/entity-utils';
 import {
     DEFAULT_RECOMMENDED_FLAG,
     getFieldSelection,
@@ -95,17 +97,23 @@ export default function useValidateFieldSelection() {
         (state) => state.initializeSelections
     );
     const resourceConfigs = useBindingStore((state) => state.resourceConfigs);
-    const targetBindingUUIDs = useBindingStore(
+    const targetBindingContext = useBindingStore(
         useShallow((state) =>
             Object.entries(state.selections)
                 .filter(
                     ([_uuid, { status }]) => status === 'VALIDATION_REQUESTED'
                 )
-                .map(([uuid, _bindingFieldSelection]) => uuid)
+                .map(([uuid, { validationAttempts }]) => ({
+                    uuid,
+                    validationAttempts,
+                }))
         )
     );
     const setValidationFailure = useBindingStore(
         (state) => state.setValidationFailure
+    );
+    const trackValidationAttempt = useBindingStore(
+        (state) => state.trackValidationAttempt
     );
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
@@ -128,6 +136,8 @@ export default function useValidateFieldSelection() {
             validatedBindingIndex: number,
             liveBuiltBindingIndex: number
         ): Promise<FieldSelectionValidationResponse> => {
+            trackValidationAttempt(bindingUUID);
+
             const builtBinding: MaterializationBuiltBinding | undefined =
                 builtBindingIndex > -1
                     ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
@@ -157,6 +167,16 @@ export default function useValidateFieldSelection() {
                 !collections[builtBinding.collection.name] ||
                 !collections[builtBinding.collection.name].spec
             ) {
+                logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                    validationError: true,
+                    missingBuiltBinding: !builtBinding,
+                    missingDraftedBinding: !draftedBinding,
+                    missingValidatedBinding: !validatedBinding,
+                    missingCollectionLiveSpec: Boolean(
+                        builtBinding && draftedBinding && validatedBinding
+                    ),
+                });
+
                 return Promise.reject(
                     'data not found: collection spec, built spec binding, drafted binding, or validation binding'
                 );
@@ -190,7 +210,7 @@ export default function useValidateFieldSelection() {
                 result,
             };
         },
-        [collections, liveBuiltSpec?.bindings]
+        [collections, liveBuiltSpec?.bindings, trackValidationAttempt]
     );
 
     const failureDetected = useMemo(
@@ -201,10 +221,12 @@ export default function useValidateFieldSelection() {
     useEffect(() => {
         if (
             entityType !== 'materialization' ||
-            targetBindingUUIDs.length === 0
+            targetBindingContext.length === 0
         ) {
             return;
         }
+
+        const targetBindingUUIDs = targetBindingContext.map(({ uuid }) => uuid);
 
         const draftSpecsRow =
             draftSpecsRows.length !== 0 ? draftSpecsRows[0] : undefined;
@@ -226,13 +248,13 @@ export default function useValidateFieldSelection() {
             return;
         }
 
-        let rejectedRequests: {
+        let pendingRequests: {
             collection: string;
             uuid: string;
             validationEligible: boolean;
         }[] = [];
 
-        let validatedRequests: ValidationRequestMetadata[] = [];
+        const validatedRequests: ValidationRequestMetadata[] = [];
 
         const validationRequests = Object.entries(resourceConfigs)
             .filter(([uuid, _config]) => targetBindingUUIDs.includes(uuid))
@@ -241,10 +263,18 @@ export default function useValidateFieldSelection() {
                     meta.builtBindingIndex > -1 &&
                     meta.validatedBindingIndex > -1;
 
-                if (bindingsExists) {
+                if (meta.disable) {
+                    advanceHydrationStatus(
+                        'VALIDATION_REQUESTED',
+                        uuid,
+                        undefined,
+                        undefined,
+                        true
+                    );
+                } else if (bindingsExists) {
                     advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
 
-                    rejectedRequests.push({
+                    pendingRequests.push({
                         collection: meta.collectionName,
                         uuid,
                         validationEligible: bindingsExists,
@@ -322,9 +352,13 @@ export default function useValidateFieldSelection() {
                                 uuid: bindingUUID,
                             });
 
-                            rejectedRequests = rejectedRequests.filter(
+                            pendingRequests = pendingRequests.filter(
                                 ({ uuid }) => uuid !== bindingUUID
                             );
+                        } else {
+                            logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                                validationError: response,
+                            });
                         }
                     });
                 },
@@ -335,6 +369,27 @@ export default function useValidateFieldSelection() {
                 }
             )
             .finally(() => {
+                const rejectedRequests = pendingRequests.filter(({ uuid }) =>
+                    targetBindingContext.find(
+                        (context) =>
+                            context.uuid === uuid &&
+                            context.validationAttempts ===
+                                MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
+                    )
+                );
+
+                pendingRequests = differenceBy(
+                    pendingRequests,
+                    rejectedRequests,
+                    'uuid'
+                );
+
+                logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                    pendingRequestCount: pendingRequests.length,
+                    rejectedRequestCount: rejectedRequests.length,
+                    validatedRequestCount: validatedRequests.length,
+                });
+
                 if (validatedRequests.length > 0) {
                     initializeSelections(validatedRequests);
                 }
@@ -362,6 +417,19 @@ export default function useValidateFieldSelection() {
                         }
                     );
                 }
+
+                if (pendingRequests.length > 0) {
+                    // Update the field selection hydration status from VALIDATING to VALIDATION_REQUESTED
+                    // to prompt a field selection validation attempt for a binding.
+                    pendingRequests.forEach(({ uuid }) => {
+                        advanceHydrationStatus(
+                            'VALIDATING',
+                            uuid,
+                            undefined,
+                            true
+                        );
+                    });
+                }
             });
     }, [
         advanceHydrationStatus,
@@ -375,7 +443,7 @@ export default function useValidateFieldSelection() {
         intl,
         resourceConfigs,
         setValidationFailure,
-        targetBindingUUIDs,
+        targetBindingContext,
         validateFieldSelection,
     ]);
 }

@@ -7,6 +7,9 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
+import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/utils/entity-utils';
+import { hasOwnProperty } from 'src/utils/misc-utils';
+
 export type HydrationStatus =
     | 'HYDRATED'
     | 'SERVER_UPDATE_REQUESTED'
@@ -46,6 +49,7 @@ export interface BindingFieldSelection {
     hasConflicts: boolean;
     hydrating: boolean;
     status: HydrationStatus;
+    validationAttempts: number;
     validationFailed: boolean;
     value: FieldSelectionDictionary;
 }
@@ -76,13 +80,15 @@ export interface StoreWithFieldSelection {
         targetStatus: HydrationStatus,
         bindingUUID?: string,
         resetRequested?: boolean,
-        validationRequested?: boolean
+        validationRequested?: boolean,
+        terminateHydrationCycle?: boolean
     ) => void;
     setValidationFailure: (
         bindingUUIDs: string[],
         serverUpdateFailed?: boolean
     ) => void;
     setExplicitGroupBy: (bindingUUID: string, targetKeys: string[]) => void;
+    trackValidationAttempt: (bindingUUID: string) => void;
 
     searchQuery: string | null;
     setSearchQuery: (value: StoreWithFieldSelection['searchQuery']) => void;
@@ -157,7 +163,8 @@ export const getStoreWithFieldSelectionSettings = (
         targetStatus,
         bindingUUID,
         resetRequested,
-        validationRequested
+        validationRequested,
+        terminateHydrationCycle
     ) => {
         set(
             produce((state: StoreWithFieldSelection) => {
@@ -167,7 +174,11 @@ export const getStoreWithFieldSelectionSettings = (
                         bindingUUID,
                         state.selections[bindingUUID].status,
                         resetRequested,
-                        validationRequested ? 'VALIDATION_REQUESTED' : undefined
+                        terminateHydrationCycle
+                            ? 'HYDRATED'
+                            : validationRequested
+                              ? 'VALIDATION_REQUESTED'
+                              : undefined
                     );
                 } else if (!bindingUUID) {
                     Object.entries(state.selections)
@@ -219,6 +230,7 @@ export const getStoreWithFieldSelectionSettings = (
                             hasConflicts,
                             hydrating: isHydrating(evaluatedStatus),
                             status: evaluatedStatus,
+                            validationAttempts: 0,
                             validationFailed: false,
                             value: selections,
                         };
@@ -326,6 +338,7 @@ export const getStoreWithFieldSelectionSettings = (
                     const { status } = state.selections[uuid];
 
                     state.selections[uuid].validationFailed = true;
+                    state.selections[uuid].validationAttempts = 0;
 
                     setBindingHydrationStatus(
                         state,
@@ -338,6 +351,23 @@ export const getStoreWithFieldSelectionSettings = (
             }),
             false,
             'Validation Failures Tracked'
+        );
+    },
+
+    trackValidationAttempt: (bindingUUID) => {
+        set(
+            produce((state: StoreWithFieldSelection) => {
+                if (
+                    hasOwnProperty(state.selections, bindingUUID) &&
+                    state.selections[bindingUUID].validationAttempts <
+                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
+                ) {
+                    state.selections[bindingUUID].validationAttempts =
+                        state.selections[bindingUUID].validationAttempts + 1;
+                }
+            }),
+            false,
+            'Track Validation Attempt'
         );
     },
 });

@@ -56,6 +56,7 @@ export interface StoreWithCollections {
     // Temporary before we implement a proper state machine pattern
     collectionsHydrating: boolean;
     setCollectionsHydrating: (newVal: boolean) => void;
+    terminateCollectionHydration: () => void;
 
     collectionsError: boolean;
     setCollectionsError: (newVal: boolean) => void;
@@ -158,4 +159,16 @@ export const getStoreWithCollectionSettings = (
     //         };
     //     });
     // },
+
+    terminateCollectionHydration: () => {
+        set(
+            (state) => ({
+                ...state,
+                collectionsInited: true,
+                collectionsHydrating: false,
+            }),
+            false,
+            'terminateCollectionHydration'
+        );
+    },
 });
