@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { useState } from 'react';
 
-import { Box, TextField, Typography } from '@mui/material';
+import { Stack, TextField, Typography } from '@mui/material';
 
 import { IntlProvider } from 'react-intl';
 
@@ -14,6 +14,9 @@ const messages: Record<string, string> = {
     'cta.next': 'Next',
     'cta.save': 'Save',
     'cta.close': 'Close',
+    'alert.error': 'Error',
+    'wizardDialog.error.step': 'An error occurred during this step',
+    'wizardDialog.error.completion': 'An error occurred during completion',
 };
 
 // ── Helpers ─────────────────────────────────────────────────────────
@@ -80,13 +83,7 @@ export const Default: Story = {
                     {
                         title: 'Introduction',
                         component: (
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    pb: 12,
-                                }}
-                            >
+                            <Stack sx={{ pb: 12 }}>
                                 <Typography component="div">
                                     This wizard demo demonstrates{' '}
                                     <ol>
@@ -113,19 +110,13 @@ export const Default: Story = {
                                         </li>
                                     </ol>
                                 </Typography>
-                            </Box>
+                            </Stack>
                         ),
                     },
                     {
                         title: 'Configuration',
                         component: (
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 2,
-                                }}
-                            >
+                            <Stack spacing={2}>
                                 <Typography
                                     variant="body2"
                                     color="text.secondary"
@@ -141,7 +132,7 @@ export const Default: Story = {
                                     onChange={(e) => setName(e.target.value)}
                                     fullWidth
                                 />
-                            </Box>
+                            </Stack>
                         ),
                         canAdvance: () => name.trim().length > 0,
                         onAdvance: () =>
@@ -164,13 +155,7 @@ export const Default: Story = {
                     {
                         title: 'Summary',
                         component: (
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 2,
-                                }}
-                            >
+                            <Stack spacing={2}>
                                 <Typography>
                                     Your resource has been validated
                                     successfully.
@@ -182,7 +167,7 @@ export const Default: Story = {
                                     Click Save to finish setup, or go Back to
                                     make changes.
                                 </Typography>
-                            </Box>
+                            </Stack>
                         ),
                         nextLabel: 'Save & exit',
                     },
