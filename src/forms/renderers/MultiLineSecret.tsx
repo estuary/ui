@@ -31,7 +31,6 @@ const MultiLineSecretRenderer = (props: any) => {
     const handleFileRead = useCallback(
         (content: string | null) => {
             handleChange(path, content);
-            setIsUploadOpen(false);
         },
         [handleChange, path]
     );

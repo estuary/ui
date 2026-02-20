@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import {
     Box,
@@ -34,10 +34,28 @@ export const FileUploadDialog = ({
 }: FileUploadDialogProps) => {
     const intl = useIntl();
 
+    const fileReaderRef = useRef<FileReader | null>(null);
+
     const [isDragOver, setIsDragOver] = useState(false);
     const [isReading, setIsReading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileError, setFileError] = useState<string | null>(null);
+
+    const handleClose = useCallback(() => {
+        if (isReading) {
+            return;
+        }
+
+        if (fileReaderRef.current) {
+            fileReaderRef.current.abort();
+        }
+
+        setSelectedFile(null);
+        setFileError(null);
+        setIsDragOver(false);
+
+        onClose();
+    }, [onClose, isReading]);
 
     const validateAndSetFile = useCallback(
         (file: File) => {
@@ -45,20 +63,16 @@ export const FileUploadDialog = ({
             let fileContent: File | null = file;
 
             if (file.size === 0) {
-                // Happens on empty files AND when a directory is selected
-                //  Directories usually had an empty `type` prop so if we want to
-                //      manually check for that we could but feels unneeded (Q1 2026).
+                fileContent = null;
                 fileError = intl.formatMessage({
                     id: 'fileUpload.dropzone.error.tooSmall',
                 });
+            } else if (file.size > MAX_FILE_SIZE_BYTES) {
                 fileContent = null;
+                fileError = intl.formatMessage({
+                    id: 'fileUpload.dropzone.error.tooLarge',
+                });
             }
-            // else if (file.size > MAX_FILE_SIZE_BYTES) {
-            //     fileError = intl.formatMessage({
-            //         id: 'fileUpload.dropzone.error.tooLarge',
-            //     });
-            //     fileContent = null;
-            // }
 
             setFileError(fileError);
             setSelectedFile(fileContent);
@@ -73,6 +87,7 @@ export const FileUploadDialog = ({
             if (files && files.length > 0) {
                 validateAndSetFile(files[0]);
             }
+
             // Reset input so the same file can be re-selected after clearing
             event.target.value = '';
         },
@@ -84,47 +99,39 @@ export const FileUploadDialog = ({
             return;
         }
 
-        const reader = new FileReader();
-
         setIsReading(true);
 
-        reader.onabort = () => {
-            setFileError(
-                intl.formatMessage({
-                    id: 'fileUpload.dropzone.error.readAborted',
-                })
-            );
-        };
-        reader.onerror = () => {
-            setFileError(
-                intl.formatMessage({
-                    id: 'fileUpload.dropzone.error.readFailed',
-                })
-            );
-        };
-        reader.onload = (event) => {
-            const result = event.target?.result ?? null;
-            onFileRead(result as string);
-            setFileError(null);
-            setSelectedFile(null);
-        };
-        reader.onloadend = () => {
-            setIsReading(false);
-        };
+        if (fileReaderRef.current) {
+            fileReaderRef.current.abort();
+        } else {
+            fileReaderRef.current = new FileReader();
 
-        reader.readAsText(selectedFile);
-    }, [intl, onFileRead, selectedFile]);
+            // Put all event handling into a single function so we know
+            //  it is complete (abort, fail, success) and then can handle
+            //  any outcome instead of multiple event handlers
+            fileReaderRef.current.onloadend = (event) => {
+                console.log('event.target', event.target);
 
-    const handleClose = useCallback(() => {
-        if (isReading) {
-            return;
+                const result = event.target?.result ?? null;
+
+                if (result !== null) {
+                    onFileRead(result as string);
+                    setFileError(null);
+                    setSelectedFile(null);
+                    handleClose();
+                } else {
+                    setFileError(
+                        intl.formatMessage({
+                            id: 'fileUpload.dropzone.error.readFailed',
+                        })
+                    );
+                }
+                setIsReading(false);
+            };
         }
-        setSelectedFile(null);
-        setFileError(null);
-        setIsDragOver(false);
-        setIsReading(false);
-        onClose();
-    }, [onClose, isReading]);
+
+        fileReaderRef.current.readAsText(selectedFile);
+    }, [handleClose, intl, onFileRead, selectedFile]);
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
