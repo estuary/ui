@@ -1,8 +1,6 @@
 import 'src/index.css';
 import 'src/polyfills/transformStream';
 
-import { StrictMode } from 'react';
-
 import { loader } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
@@ -26,9 +24,9 @@ loader.config({ monaco });
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-    <StrictMode>
-        <AppProviders>
-            <ApplicationRouter />
-        </AppProviders>
-    </StrictMode>
+    // <StrictMode>
+    <AppProviders>
+        <ApplicationRouter />
+    </AppProviders>
+    // </StrictMode>
 );
