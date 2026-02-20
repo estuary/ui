@@ -50,6 +50,10 @@ export const Errors: Record<string, string> = {
     'fullPage.instructions.docPath': `${CommonMessages['support.email']}`,
     'fullPage.userInfoSummary.error': `We had an issue while checking if your account has access.`,
 
+    // Wizard Dialog
+    'wizardDialog.error.step': `An error occurred during this step`,
+    'wizardDialog.error.completion': `An error occurred during completion`,
+
     // Supabase
     'supabase.poller.failed.title': `${CommonMessages['common.failedFetch']}`,
     'supabase.poller.failed.message': `We encountered a problem retrieving the status of this action. Please check your network connection and try again.`,
