@@ -20,6 +20,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { evaluate_field_selection } from '@estuary/flow-web';
+import { differenceBy } from 'lodash';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -31,6 +32,7 @@ import { useEntityType } from 'src/context/EntityContext';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
+import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/stores/Binding/shared';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -359,8 +361,15 @@ export default function useValidateFieldSelection() {
                     targetBindingContext.find(
                         (context) =>
                             context.uuid === uuid &&
-                            context.validationAttempts === 0
+                            context.validationAttempts ===
+                                MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
                     )
+                );
+
+                pendingRequests = differenceBy(
+                    pendingRequests,
+                    rejectedRequests,
+                    'uuid'
                 );
 
                 if (validatedRequests.length > 0) {
@@ -397,7 +406,8 @@ export default function useValidateFieldSelection() {
                             targetBindingContext.find(
                                 (context) =>
                                     context.uuid === uuid &&
-                                    context.validationAttempts > 0
+                                    context.validationAttempts <
+                                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
                             )
                     );
 

@@ -230,8 +230,7 @@ export const getStoreWithFieldSelectionSettings = (
                             hasConflicts,
                             hydrating: isHydrating(evaluatedStatus),
                             status: evaluatedStatus,
-                            validationAttempts:
-                                MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS,
+                            validationAttempts: 0,
                             validationFailed: false,
                             value: selections,
                         };
@@ -339,8 +338,7 @@ export const getStoreWithFieldSelectionSettings = (
                     const { status } = state.selections[uuid];
 
                     state.selections[uuid].validationFailed = true;
-                    state.selections[uuid].validationAttempts =
-                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS;
+                    state.selections[uuid].validationAttempts = 0;
 
                     setBindingHydrationStatus(
                         state,
@@ -361,10 +359,11 @@ export const getStoreWithFieldSelectionSettings = (
             produce((state: StoreWithFieldSelection) => {
                 if (
                     hasOwnProperty(state.selections, bindingUUID) &&
-                    state.selections[bindingUUID].validationAttempts > 0
+                    state.selections[bindingUUID].validationAttempts <
+                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
                 ) {
                     state.selections[bindingUUID].validationAttempts =
-                        state.selections[bindingUUID].validationAttempts - 1;
+                        state.selections[bindingUUID].validationAttempts + 1;
                 }
             }),
             false,
