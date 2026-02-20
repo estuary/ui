@@ -4,6 +4,8 @@ import type { DekafConfig } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
@@ -73,7 +75,7 @@ function useGenerateCatalog() {
         (state) => state.details.data.connectorImage.connectorId
     );
     const endpointConfig: ConnectorConfig | DekafConfig = useDetailsFormStore(
-        (state) =>
+        useShallow((state) =>
             isDekafConnector(state.details.data.connectorImage)
                 ? {
                       config: {},
@@ -83,6 +85,7 @@ function useGenerateCatalog() {
                       config: {},
                       image: state.details.data.connectorImage.imagePath,
                   }
+        )
     );
     const setDraftedEntityName = useDetailsFormStore(
         (state) => state.setDraftedEntityName
