@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Box, DialogContent } from '@mui/material';
+import { Box, Collapse, DialogContent } from '@mui/material';
+
+import AlertBox from 'src/components/shared/AlertBox';
 
 import { useWizard } from 'src/components/shared/WizardDialog/context';
 
 // Renders the active step's component with an animated height transition between steps.
 // Uses a ResizeObserver to track content size changes within a step.
 export function WizardContent() {
-    const { steps, currentStep } = useWizard();
+    const { steps, currentStep, error } = useWizard();
 
     // Ref to the inner wrapper whose scrollHeight drives the animated outer container height
     const contentRef = useRef<HTMLDivElement>(null);
@@ -48,6 +50,11 @@ export function WizardContent() {
 
     return (
         <DialogContent>
+            <Collapse in={Boolean(error)}>
+                <AlertBox short severity="error" sx={{ mb: 2 }}>
+                    {error}
+                </AlertBox>
+            </Collapse>
             <Box
                 onTransitionEnd={() => {
                     clearTimeout(transitionTimeoutRef.current);

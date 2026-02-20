@@ -1,17 +1,15 @@
-import {
-    Button,
-    CircularProgress,
-    DialogActions,
-    Typography,
-} from '@mui/material';
+import { Button, DialogActions } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useWizard } from 'src/components/shared/WizardDialog/context';
 
 // Renders Back/Next/Save buttons and error text for the current wizard step.
 // Button visibility and labels adapt based on step position and per-step config.
 export function WizardActions() {
+    const intl = useIntl();
+
     const {
         isFirstStep,
         isLastStep,
@@ -20,7 +18,6 @@ export function WizardActions() {
         isNavigating,
         steps,
         currentStep,
-        error,
     } = useWizard();
 
     const currentStepConfig = steps[currentStep];
@@ -29,12 +26,6 @@ export function WizardActions() {
 
     return (
         <DialogActions sx={{ p: 3, pt: 1 }}>
-            {error ? (
-                <Typography color="error" variant="body2" sx={{ mr: 'auto' }}>
-                    {error}
-                </Typography>
-            ) : null}
-
             {showBackButton ? (
                 <Button
                     variant="outlined"
@@ -42,33 +33,23 @@ export function WizardActions() {
                     onClick={retreat}
                     disabled={isNavigating}
                 >
-                    <FormattedMessage id="cta.back" />
+                    {intl.formatMessage({ id: 'cta.back' })}
                 </Button>
             ) : null}
 
-            <Button
+            <SafeLoadingButton
                 variant="contained"
                 size="small"
                 onClick={advance}
-                disabled={isNavigating || !canAdvance}
+                disabled={!canAdvance}
+                loading={isNavigating}
                 sx={{ whiteSpace: 'nowrap' }}
             >
-                {isNavigating ? (
-                    <CircularProgress
-                        size={16}
-                        color="inherit"
-                        // Adding vertical margin to prevent layout shift when spinner appears
-                        sx={{ my: 0.5 }}
-                    />
-                ) : (
-                    (currentStepConfig?.nextLabel ??
-                    (isLastStep ? (
-                        <FormattedMessage id="cta.save" />
-                    ) : (
-                        <FormattedMessage id="cta.next" />
-                    )))
-                )}
-            </Button>
+                {currentStepConfig?.nextLabel ??
+                    (isLastStep
+                        ? intl.formatMessage({ id: 'cta.save' })
+                        : intl.formatMessage({ id: 'cta.next' }))}
+            </SafeLoadingButton>
         </DialogActions>
     );
 }
