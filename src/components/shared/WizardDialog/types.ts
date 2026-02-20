@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { DialogProps } from '@mui/material';
+
 export interface WizardStep {
     /** The component to render for this step */
     component: ReactNode;
@@ -34,7 +36,7 @@ export interface WizardContextType {
 
 export interface WizardDialogProps {
     /** Whether the dialog is open */
-    open: boolean;
+    open: DialogProps['open'];
     /** Whether to show action buttons (Back/Next/Save) */
     showActions?: boolean;
     /** Array of step configurations */
@@ -46,5 +48,5 @@ export interface WizardDialogProps {
     /** Default dialog title (used when step doesn't define its own title) */
     title?: ReactNode;
     /** Max width of the dialog */
-    maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    maxWidth?: DialogProps['maxWidth'];
 }
