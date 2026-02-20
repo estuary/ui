@@ -24,12 +24,6 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 */
-
-// Customizations:
-//  1. Clear Button ID
-//    Added an id to this so that the date/time/datetime inputs can check that id during
-//      the focus event and not trigger focus.
-//
 import type { CellProps, WithClassname } from '@jsonforms/core';
 import type { InputBaseComponentProps, InputProps } from '@mui/material';
 
@@ -49,9 +43,20 @@ interface MuiTextInputProps {
     inputComponent?: InputProps['inputComponent'];
 }
 
-const eventToValue = (ev: any) =>
-    ev.target.value === '' ? undefined : ev.target.value;
+const eventToValue = (ev: any) => {
+    if (typeof ev.target.value === 'string' && ev.target.value.length > 0) {
+        return ev.target.value.trim();
+    }
 
+    return undefined;
+};
+
+// Customizations:
+//  1. Clear Button ID
+//    Added an id to this so that the date/time/datetime inputs can check that id during
+//      the focus event and not trigger focus.
+//  2. Handling change values
+//      We send undefined if the string is empty AND we trim the string.
 export const CustomMuiInputText = React.memo(
     (props: CellProps & WithClassname & MuiTextInputProps) => {
         const [showAdornment, setShowAdornment] = useState(false);
