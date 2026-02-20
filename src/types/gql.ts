@@ -2,6 +2,7 @@ import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
 export type AlertType =
     | 'auto_discover_failed'
+    | 'background_publication_failed'
     | 'shard_failed'
     | 'data_movement_stalled'
     | 'free_trial'
