@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Box, Collapse, DialogContent } from '@mui/material';
 
 import AlertBox from 'src/components/shared/AlertBox';
-
 import { useWizard } from 'src/components/shared/WizardDialog/context';
 
 // Renders the active step's component with an animated height transition between steps.
@@ -66,7 +65,9 @@ export function WizardContent() {
                     height: height ?? 'auto',
                     // content height is only animated during step transitions, not during internal resizes
                     // (to avoid jankiness while user interacts with the content)
-                    transition: transitioning ? 'height 300ms ease' : 'none',
+                    transition: transitioning
+                        ? 'height 300ms ease-in-out'
+                        : 'none',
                 }}
             >
                 <Box ref={contentRef}>{currentStepConfig.component}</Box>
