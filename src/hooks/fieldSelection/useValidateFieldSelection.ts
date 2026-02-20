@@ -167,6 +167,16 @@ export default function useValidateFieldSelection() {
                 !collections[builtBinding.collection.name] ||
                 !collections[builtBinding.collection.name].spec
             ) {
+                logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                    validationError: true,
+                    missingBuiltBinding: !builtBinding,
+                    missingDraftedBinding: !draftedBinding,
+                    missingValidatedBinding: !validatedBinding,
+                    missingCollectionLiveSpec: Boolean(
+                        builtBinding && draftedBinding && validatedBinding
+                    ),
+                });
+
                 return Promise.reject(
                     'data not found: collection spec, built spec binding, drafted binding, or validation binding'
                 );
@@ -346,7 +356,9 @@ export default function useValidateFieldSelection() {
                                 ({ uuid }) => uuid !== bindingUUID
                             );
                         } else {
-                            console.log('>>> reject response', response);
+                            logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                                validationError: response,
+                            });
                         }
                     });
                 },
@@ -371,6 +383,12 @@ export default function useValidateFieldSelection() {
                     rejectedRequests,
                     'uuid'
                 );
+
+                logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                    pendingRequestCount: pendingRequests.length,
+                    rejectedRequestCount: rejectedRequests.length,
+                    validatedRequestCount: validatedRequests.length,
+                });
 
                 if (validatedRequests.length > 0) {
                     initializeSelections(validatedRequests);
@@ -401,17 +419,9 @@ export default function useValidateFieldSelection() {
                 }
 
                 if (pendingRequests.length > 0) {
-                    const retryEligibleRequests = pendingRequests.filter(
-                        ({ uuid }) =>
-                            targetBindingContext.find(
-                                (context) =>
-                                    context.uuid === uuid &&
-                                    context.validationAttempts <
-                                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
-                            )
-                    );
-
-                    retryEligibleRequests.forEach(({ uuid }) => {
+                    // Update the field selection hydration status from VALIDATING to VALIDATION_REQUESTED
+                    // to prompt a field selection validation attempt for a binding.
+                    pendingRequests.forEach(({ uuid }) => {
                         advanceHydrationStatus(
                             'VALIDATING',
                             uuid,
