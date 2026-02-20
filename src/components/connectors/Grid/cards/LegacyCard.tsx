@@ -24,7 +24,7 @@ export default function LegacyCard({
     recommended,
 }: CardProps) {
     return (
-        <Grid item xs={2} md={4} lg={2} xl={2}>
+        <Grid size={{ xs: 2, md: 4, lg: 2, xl: 2 }}>
             <Tile
                 clickHandler={clickHandler}
                 externalLink={externalLink}

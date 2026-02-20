@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Box, LinearProgress } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
@@ -31,7 +33,7 @@ interface Props {
 function SidePanelIframe({ show }: Props) {
     const intl = useIntl();
     const [disabled, setAnimateOpening, docsURL] = useSidePanelDocsStore(
-        (state) => [state.disabled, state.setAnimateOpening, state.url]
+        useShallow((state) => [state.disabled, state.setAnimateOpening, state.url])
     );
 
     const colorMode = useColorMode();

@@ -4,6 +4,8 @@ import { useLayoutEffect, useRef } from 'react';
 
 import { Box, Stack, Table, TableContainer } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useIntl } from 'react-intl';
 
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
@@ -21,11 +23,13 @@ function LogsTable() {
     const columns = useLogColumns();
 
     const [hydrated, setAllowFetchingMore, [scrollToIndex, scrollToPosition]] =
-        useJournalDataLogsStore((state) => [
-            state.hydrated,
-            state.setAllowFetchingMore,
-            state.scrollToWhenDone,
-        ]);
+        useJournalDataLogsStore(
+            useShallow((state) => [
+                state.hydrated,
+                state.setAllowFetchingMore,
+                state.scrollToWhenDone,
+            ])
+        );
 
     const tableScroller = useRef<VariableSizeList | undefined>(undefined);
     const outerRef = useRef<HTMLDivElement | undefined>(undefined);

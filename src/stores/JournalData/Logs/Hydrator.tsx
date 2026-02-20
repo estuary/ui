@@ -2,12 +2,14 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useEffect } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import useOpsLogs from 'src/hooks/journals/useOpsLogs';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
 export const JournalDataLogsHydrator = ({ children }: BaseComponentProps) => {
     const [resetState, setActive, hydrate] = useJournalDataLogsStore(
-        (state) => [state.resetState, state.setActive, state.hydrate]
+        useShallow((state) => [state.resetState, state.setActive, state.hydrate])
     );
 
     const { docs, error, loading, readStatus, refresh } = useOpsLogs();

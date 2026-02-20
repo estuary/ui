@@ -14,9 +14,7 @@ function BackfillModeSelector({ disabled }: BackfillModeSelectorProps) {
     const backfillCount = useBinding_backfilledBindings_count();
     const formActive = useFormStateStore_isActive();
 
-    const [setBackfillMode] = useBindingStore((state) => [
-        state.setBackfillMode,
-    ]);
+    const setBackfillMode = useBindingStore((state) => state.setBackfillMode);
 
     const { currentOption, isOptionEqualToValue, options } =
         useBackfillModeOptions();

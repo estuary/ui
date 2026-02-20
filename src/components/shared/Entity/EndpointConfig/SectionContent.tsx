@@ -4,6 +4,8 @@ import { useEffect, useMemo } from 'react';
 
 import { Box, useTheme } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { isEqual } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useMount, useUnmount } from 'react-use';
@@ -31,14 +33,16 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
     const theme = useTheme();
 
     // Detail Form Store
-    const [connectorId, connectorTagId] = useDetailsFormStore((state) => [
-        state.details.data.connectorImage.connectorId,
-        state.details.data.connectorImage.id,
-    ]);
+    const [connectorId, connectorTagId] = useDetailsFormStore(
+        useShallow((state) => [
+            state.details.data.connectorImage.connectorId,
+            state.details.data.connectorImage.id,
+        ])
+    );
 
     // Endpoint Config Store
     const [endpointCanBeEmpty, hydrationErrorsExist] = useEndpointConfigStore(
-        (state) => [state.endpointCanBeEmpty, state.hydrationErrorsExist]
+        useShallow((state) => [state.endpointCanBeEmpty, state.hydrationErrorsExist])
     );
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const previousEndpointConfig =
@@ -79,10 +83,9 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
     }, [setServerUpdateRequired, endpointConfigUpdated]);
 
     // Populating/handling the side panel docs url
-    const [setDocsURL, sidePanelResetState] = useSidePanelDocsStore((state) => [
-        state.setUrl,
-        state.resetState,
-    ]);
+    const [setDocsURL, sidePanelResetState] = useSidePanelDocsStore(
+        useShallow((state) => [state.setUrl, state.resetState])
+    );
     useUnmount(() => {
         sidePanelResetState();
     });

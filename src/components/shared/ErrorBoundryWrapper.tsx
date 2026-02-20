@@ -2,11 +2,18 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useState } from 'react';
 
-import { Collapse, Divider, IconButton, Paper, useTheme } from '@mui/material';
+import {
+    Collapse,
+    Divider,
+    IconButton,
+    Paper,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { logRocketEvent } from 'src/services/shared';
@@ -35,10 +42,15 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
         <AlertBox
             short
             severity="error"
-            title={<FormattedMessage id="errorBoundry.title" />}
+            title={intl.formatMessage({ id: 'errorBoundry.title' })}
         >
-            <FormattedMessage id="errorBoundry.message1" />
-            <FormattedMessage id="errorBoundry.message2" />
+            <Typography>
+                {intl.formatMessage({ id: 'errorBoundry.message1' })}
+            </Typography>
+            <Typography>
+                {intl.formatMessage({ id: 'errorBoundry.message2' })}
+            </Typography>
+
             <Divider />
 
             <IconButton

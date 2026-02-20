@@ -21,6 +21,8 @@ import {
     WAITING_ROW_HEIGHT,
 } from 'src/components/tables/Logs/shared';
 import useLogColumns from 'src/components/tables/Logs/useLogColumns';
+import { useShallow } from 'zustand/react/shallow';
+
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
@@ -39,12 +41,14 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
     const expandedHeights = useRef<Map<string, number>>(new Map());
 
     const [hydrated, documents, networkFailed, noData] =
-        useJournalDataLogsStore((state) => [
-            state.hydrate,
-            state.documents,
-            state.networkFailed,
-            state.noData,
-        ]);
+        useJournalDataLogsStore(
+            useShallow((state) => [
+                state.hydrate,
+                state.documents,
+                state.networkFailed,
+                state.noData,
+            ])
+        );
 
     // Keeping this outside the store so we don't have to filter them out everytime
     //  we need to add new docs to the list

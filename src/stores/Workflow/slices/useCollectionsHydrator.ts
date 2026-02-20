@@ -2,6 +2,8 @@ import type { CollectionMetadata } from 'src/stores/Workflow/slices/Collections'
 
 import { useCallback } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { getDraftSpecsBySpecTypeReduced } from 'src/api/draftSpecs';
 import { getLiveSpecsByCatalogNames } from 'src/api/liveSpecsExt';
 import { logRocketEvent } from 'src/services/shared';
@@ -18,16 +20,16 @@ function useCollectionsHydrator() {
         setCollectionsError,
         setCollectionsHydrating,
         collectionsInited,
-    ] = useWorkflowStore((state) => {
-        return [
+    ] = useWorkflowStore(
+        useShallow((state) => [
             state.collections,
             state.collectionsHydrating,
             state.initializeCollections,
             state.setCollectionsError,
             state.setCollectionsHydrating,
             state.collectionsInited,
-        ];
-    });
+        ])
+    );
 
     return useCallback(
         async (id: string, specToUse: any) => {

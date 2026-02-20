@@ -23,9 +23,7 @@ function Settings() {
                 sx={{ p: 2, justifyContent: 'flex-end' }}
             >
                 <Grid
-                    item
-                    xs={12}
-                    md={3}
+                    size={{ xs: 12, md: 3 }}
                     sx={{ mt: 2.5, display: 'flex', alignItems: 'end' }}
                 >
                     <TenantSelector />

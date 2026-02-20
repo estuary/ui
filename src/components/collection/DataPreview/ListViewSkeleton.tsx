@@ -11,7 +11,7 @@ function ListViewSkeleton() {
     const theme = useTheme();
 
     return (
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
             <ListAndDetails
                 backgroundColor={semiTransparentBackground[theme.palette.mode]}
                 details={<JsonSchemaSkeleton padding={2} opacity={0.75} />}

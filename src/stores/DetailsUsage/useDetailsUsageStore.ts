@@ -41,3 +41,10 @@ export const useDetailsUsageStore = create<DetailsUsageState>()(
         persistOptions
     )
 );
+useDetailsUsageStore.setState({
+    range: {
+        amount: 6,
+        grain: DataGrains.hourly,
+    },
+    statType: 'bytes',
+});

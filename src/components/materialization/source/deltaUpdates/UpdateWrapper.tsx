@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -17,7 +19,7 @@ export default function DeltaUpdatesUpdateWrapper() {
     const setFormState = useFormStateStore_setFormState();
 
     const [deltaUpdates, setDeltaUpdates, setSaving] = useSourceCaptureStore(
-        (state) => [state.deltaUpdates, state.setDeltaUpdates, state.setSaving]
+        useShallow((state) => [state.deltaUpdates, state.setDeltaUpdates, state.setSaving])
     );
 
     const { currentSetting, updateSourceSetting } =

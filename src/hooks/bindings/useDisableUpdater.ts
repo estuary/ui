@@ -2,6 +2,8 @@ import type { BindingDisableUpdate } from 'src/stores/Binding/types';
 
 import { useCallback, useMemo } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -45,7 +47,7 @@ function useDisableUpdater(bindingUUID?: string) {
     );
 
     const [generateToggleDisableUpdates, toggleDisable] = useBindingStore(
-        (state) => [state.generateToggleDisableUpdates, state.toggleDisable]
+        useShallow((state) => [state.generateToggleDisableUpdates, state.toggleDisable])
     );
     const setFormState = useFormStateStore_setFormState();
 

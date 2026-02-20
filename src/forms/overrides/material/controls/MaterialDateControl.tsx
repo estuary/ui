@@ -25,7 +25,7 @@
 */
 import type { ControlProps, RankedTester } from '@jsonforms/core';
 
-import { Hidden, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 
 import { isDateControl, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
@@ -49,29 +49,31 @@ export const CustomMaterialDateControl = (props: ControlProps) => {
         return handleChange(path, formattedValue);
     };
 
+    if (!visible) {
+        return null;
+    }
+
     return (
-        <Hidden xsUp={!visible}>
-            <Stack
-                sx={{
-                    alignItems: 'top',
-                }}
-                direction="row"
-            >
-                <CustomMaterialInputControl
-                    inputEvents={events}
-                    input={CustomMuiInputText}
-                    {...props}
-                />
-                <DatePickerCTA
-                    enabled={enabled}
-                    label={label}
-                    buttonRef={buttonRef}
-                    state={state}
-                    value={data}
-                    onChange={onChange}
-                />
-            </Stack>
-        </Hidden>
+        <Stack
+            sx={{
+                alignItems: 'top',
+            }}
+            direction="row"
+        >
+            <CustomMaterialInputControl
+                inputEvents={events}
+                input={CustomMuiInputText}
+                {...props}
+            />
+            <DatePickerCTA
+                enabled={enabled}
+                label={label}
+                buttonRef={buttonRef}
+                state={state}
+                value={data}
+                onChange={onChange}
+            />
+        </Stack>
     );
 };
 

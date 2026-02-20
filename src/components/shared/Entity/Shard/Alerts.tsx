@@ -37,7 +37,7 @@ function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
     }
 
     return (
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
             <Alert
                 severity={showWarnings ? 'warning' : 'error'}
                 sx={{

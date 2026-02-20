@@ -1,4 +1,4 @@
-import { Stack, StyledEngineProvider } from '@mui/material';
+import { Stack } from '@mui/material';
 
 import { JsonForms } from '@jsonforms/react';
 
@@ -16,19 +16,17 @@ function StorageMappingForm() {
     const { schema, uischema } = useConfigurationSchema();
 
     return (
-        <StyledEngineProvider injectFirst>
-            <Stack sx={{ ...jsonFormsPadding }}>
-                <JsonForms
-                    {...jsonFormsDefaults}
-                    schema={schema}
-                    uischema={uischema}
-                    data={formValue.data}
-                    onChange={(value) => {
-                        updateFormValue(value);
-                    }}
-                />
-            </Stack>
-        </StyledEngineProvider>
+        <Stack sx={{ ...jsonFormsPadding }}>
+            <JsonForms
+                {...jsonFormsDefaults}
+                schema={schema}
+                uischema={uischema}
+                data={formValue.data}
+                onChange={(value) => {
+                    updateFormValue(value);
+                }}
+            />
+        </Stack>
     );
 }
 

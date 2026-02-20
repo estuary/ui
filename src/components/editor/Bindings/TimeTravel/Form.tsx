@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { StyledEngineProvider } from '@mui/material';
-
 import { JsonForms } from '@jsonforms/react';
 
 import { useSnackbar } from 'notistack';
@@ -75,36 +73,34 @@ function TimeTravelForm({ bindingUUID, collectionName }: Props) {
     }, [intl]);
 
     return (
-        <StyledEngineProvider injectFirst>
-            <JsonForms
-                {...jsonFormsDefaults}
-                readonly={formActive}
-                schema={schema}
-                uischema={uiSchema}
-                data={localCopy}
-                validationMode={showValidation()}
-                onChange={async (state) => {
-                    updateTimeTravel(state, skipServer.current)
-                        .then(() => {})
-                        .catch((err) => {
-                            enqueueSnackbar(
-                                intl.formatMessage({
-                                    id:
-                                        err === 'no binding'
-                                            ? 'updateBinding.error.noBinding'
-                                            : 'notBeforeNotAfter.update.error',
-                                }),
-                                { ...snackbarSettings, variant: 'error' }
-                            );
-                        })
-                        .finally(() => {
-                            if (skipServer.current) {
-                                skipServer.current = false;
-                            }
-                        });
-                }}
-            />
-        </StyledEngineProvider>
+        <JsonForms
+            {...jsonFormsDefaults}
+            readonly={formActive}
+            schema={schema}
+            uischema={uiSchema}
+            data={localCopy}
+            validationMode={showValidation()}
+            onChange={async (state) => {
+                updateTimeTravel(state, skipServer.current)
+                    .then(() => {})
+                    .catch((err) => {
+                        enqueueSnackbar(
+                            intl.formatMessage({
+                                id:
+                                    err === 'no binding'
+                                        ? 'updateBinding.error.noBinding'
+                                        : 'notBeforeNotAfter.update.error',
+                            }),
+                            { ...snackbarSettings, variant: 'error' }
+                        );
+                    })
+                    .finally(() => {
+                        if (skipServer.current) {
+                            skipServer.current = false;
+                        }
+                    });
+            }}
+        />
     );
 }
 

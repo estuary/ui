@@ -28,7 +28,7 @@ function ConnectorGrid({ condensed, protocolPreset }: ConnectorGridProps) {
             paddingRight={2}
             margin="auto"
         >
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
                 <ConnectorToolbar
                     belowMd={belowMd}
                     gridSpacing={2}

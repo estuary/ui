@@ -43,8 +43,7 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
 
     return (
         <Grid
-            item
-            xs={12}
+            size={{ xs: 12 }}
             sx={{
                 mt: 2,
             }}

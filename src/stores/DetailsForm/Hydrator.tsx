@@ -2,6 +2,8 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useEffectOnce } from 'react-use';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { logRocketConsole } from 'src/services/shared';
@@ -17,7 +19,7 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const setHydrated = useDetailsFormStore((state) => state.setHydrated);
     const setActive = useDetailsFormStore((state) => state.setActive);
     const [setHydrationErrorsExist, dataPlaneOptions] = useDetailsFormStore(
-        (state) => [state.setHydrationErrorsExist, state.dataPlaneOptions]
+        useShallow((state) => [state.setHydrationErrorsExist, state.dataPlaneOptions])
     );
 
     const hydrateState = useDetailsFormStore((state) => state.hydrateState);

@@ -13,8 +13,7 @@ function HeroDetail() {
             <DetailStep step={1} title="terms.capture" />
 
             <Grid
-                item
-                xs={4}
+                size={{ xs: 4 }}
                 sx={{
                     display: 'flex',
                     alignItems: 'center',

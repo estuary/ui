@@ -46,9 +46,7 @@ function BackfillButton({
     const workflow = useEntityWorkflow();
     const evaluateTrialCollections = useTrialCollections();
 
-    const [evolvedCollections] = useBindingStore((state) => [
-        state.evolvedCollections,
-    ]);
+    const evolvedCollections = useBindingStore((state) => state.evolvedCollections);
 
     // Binding Store
     const currentCollection = useBinding_currentCollection();

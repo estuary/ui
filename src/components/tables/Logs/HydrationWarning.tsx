@@ -7,9 +7,7 @@ import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 function HydrationWarning() {
     const intl = useIntl();
 
-    const [hydrationWarning] = useJournalDataLogsStore((state) => [
-        state.hydrationWarning,
-    ]);
+    const hydrationWarning = useJournalDataLogsStore((state) => state.hydrationWarning);
 
     if (hydrationWarning === 'OFFSET_NOT_YET_AVAILABLE') {
         return (

@@ -1,6 +1,12 @@
 import type { ReactNode } from 'react';
 
-import { List, ListItem, ListItemText, Typography } from '@mui/material';
+import {
+    List,
+    ListItem,
+    ListItemText,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { diminishedTextColor } from 'src/context/Theme';
 
@@ -16,6 +22,7 @@ interface Props {
 }
 
 function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
+    const theme = useTheme();
     if (data.length > 0) {
         return (
             <>
@@ -38,18 +45,16 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                 primary={title}
                                 secondary={val}
                                 primaryTypographyProps={{
-                                    color: (theme) =>
-                                        val
-                                            ? diminishedTextColor[
-                                                  theme.palette.mode
-                                              ]
-                                            : theme.palette.text.primary,
+                                    color: val
+                                        ? diminishedTextColor[
+                                              theme.palette.mode
+                                          ]
+                                        : theme.palette.text.primary,
                                     component: 'div',
                                     marginBottom: val ? '2px' : undefined,
                                 }}
                                 secondaryTypographyProps={{
-                                    color: (theme) =>
-                                        theme.palette.text.primary,
+                                    color: theme.palette.text.primary,
                                     component: 'div',
                                 }}
                             />

@@ -1,14 +1,43 @@
+import type { PickersLayoutProps } from '@mui/x-date-pickers';
+import type { PickerViewRenderer } from '@mui/x-date-pickers/internals';
 import type { PickerProps } from 'src/components/shared/pickers/types';
 
-import { StaticTimePicker } from '@mui/x-date-pickers';
+import { forwardRef } from 'react';
+
+import {
+    PickersLayoutContentWrapper,
+    PickersLayoutRoot,
+    renderMultiSectionDigitalClockTimeView,
+    StaticTimePicker,
+    usePickerLayout,
+} from '@mui/x-date-pickers';
 
 import { format } from 'date-fns';
 import { Clock } from 'iconoir-react';
 
+import { CustomLayoutWrapper } from 'src/components/shared/pickers/CustomLayoutWrapper';
 import DateOrTimePickerWrapper from 'src/components/shared/pickers/DateOrTimePickerWrapper';
+import { MINUTES_STEP } from 'src/components/shared/pickers/shared';
 import { Patterns } from 'src/types/jsonforms';
 
 const INVALID_TIME = 'Invalid Time';
+
+export const CustomLayout = forwardRef<HTMLDivElement, PickersLayoutProps<any>>(
+    function CustomLayout(props, ref) {
+        const { actionBar, content, ownerState } = usePickerLayout(props);
+
+        return (
+            <PickersLayoutRoot ref={ref} ownerState={ownerState}>
+                <PickersLayoutContentWrapper ownerState={ownerState}>
+                    <CustomLayoutWrapper>
+                        {content}
+                        {actionBar}
+                    </CustomLayoutWrapper>
+                </PickersLayoutContentWrapper>
+            </PickersLayoutRoot>
+        );
+    }
+);
 
 function TimePickerCTA(props: PickerProps) {
     const { enabled, state, value, onChange } = props;
@@ -28,12 +57,14 @@ function TimePickerCTA(props: PickerProps) {
             {...props}
         >
             <StaticTimePicker
-                displayStaticWrapperAs="desktop"
                 ampm={false}
+                defaultValue={value} // The value does not need parseISO like the dates
                 disabled={!enabled}
-                // The value does not need parseISO like the dates
-                defaultValue={value}
-                openTo="hours"
+                displayStaticWrapperAs="desktop"
+                minutesStep={MINUTES_STEP}
+                slots={{ layout: CustomLayout }}
+                onAccept={() => state.close()}
+                onClose={() => state.close()}
                 onChange={(onChangeValue: any) => {
                     if (onChangeValue) {
                         const formattedValue = formatDate(onChangeValue);
@@ -42,7 +73,17 @@ function TimePickerCTA(props: PickerProps) {
                         }
                     }
                 }}
-                onAccept={state.close}
+                viewRenderers={{
+                    hours: renderMultiSectionDigitalClockTimeView as PickerViewRenderer<
+                        any,
+                        any
+                    >,
+                    minutes:
+                        renderMultiSectionDigitalClockTimeView as PickerViewRenderer<
+                            any,
+                            any
+                        >,
+                }}
             />
         </DateOrTimePickerWrapper>
     );

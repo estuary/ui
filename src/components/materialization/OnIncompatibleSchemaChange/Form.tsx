@@ -2,6 +2,8 @@ import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/componen
 
 import { useCallback } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -17,10 +19,12 @@ export default function Form() {
     const { enqueueSnackbar } = useSnackbar();
 
     const [onIncompatibleSchemaChange, setIncompatibleSchemaChange] =
-        useBindingStore((state) => [
-            state.onIncompatibleSchemaChange,
-            state.setSpecOnIncompatibleSchemaChange,
-        ]);
+        useBindingStore(
+            useShallow((state) => [
+                state.onIncompatibleSchemaChange,
+                state.setSpecOnIncompatibleSchemaChange,
+            ])
+        );
 
     const setFormState = useFormStateStore_setFormState();
 

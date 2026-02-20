@@ -27,12 +27,12 @@ function EntityAlerts() {
                 sx={{ flexDirection: 'row-reverse' }}
             >
                 {!isCollection && catalogName ? (
-                    <Grid item xs={12} md={12} lg={4}>
+                    <Grid size={{ xs: 12, md: 12, lg: 4 }}>
                         <NotificationSettings taskName={catalogName} />
                     </Grid>
                 ) : null}
 
-                <Grid item xs={12} md={12} lg={!isCollection ? 8 : 12}>
+                <Grid size={{ xs: 12, md: 12, lg: !isCollection ? 8 : 12 }}>
                     <CardWrapper
                         message={intl.formatMessage({
                             id: 'alerts.history.title.active',
@@ -46,7 +46,7 @@ function EntityAlerts() {
                     </CardWrapper>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <CardWrapper
                         message={intl.formatMessage({
                             id: 'alerts.history.title.resolved',

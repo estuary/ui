@@ -70,7 +70,7 @@ function ShardInformation({ taskName, taskTypes }: Props) {
                         taskTypes={taskTypes}
                     />
 
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <TableContainer>
                             <Table size="small">
                                 <InformationTableHeader columns={columns} />

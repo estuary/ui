@@ -22,6 +22,7 @@ function WorkflowHydrator({
 
     // TODO: Replace with useEffect and alter the logic in a fashion where
     //   `hydrateState` is called once. Simply using a ref is not sufficient.
+    // (Q1 2026 Update) - With React 18 StrictMode we just need to rethink hydration overall
     useEffectOnce(() => {
         if (!hydrated) {
             setActive(true);

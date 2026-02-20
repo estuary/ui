@@ -3,6 +3,8 @@ import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
 import { useEffect, useRef } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { InfoCircle } from 'iconoir-react';
@@ -27,7 +29,7 @@ export default function TargetSchemaForm({
     const workflow = useEntityWorkflow();
 
     const [setTargetSchemaHasError, setTargetSchema] = useSourceCaptureStore(
-        (state) => [state.setTargetSchemaHasError, state.setTargetSchema]
+        useShallow((state) => [state.setTargetSchemaHasError, state.setTargetSchema])
     );
 
     const options = useTargetSchemaOptions();

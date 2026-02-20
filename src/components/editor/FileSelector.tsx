@@ -77,9 +77,10 @@ function EditorFileSelector({ localZustandScope }: Props) {
 
     const specs = useEditorStore_specs({ localScope: localZustandScope });
 
-    const [selectionModel, setSelectionModel] = useState<GridRowSelectionModel>(
-        []
-    );
+    // TODO TEST BEFORE MERGING
+    const [selectionModel, setSelectionModel] = useState<
+        GridRowSelectionModel | undefined
+    >(undefined);
 
     useEffect(() => {
         if (!initDone.current && specs) {

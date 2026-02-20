@@ -22,7 +22,7 @@
         "rechoir": "0.6.2",
 
         "// CC by 3.0 License": "0.0.0",
-        "spdx-exceptions": "2.3.0",
+        "spdx-exceptions": "2.5.0",
         "spdx-expression-validate": "2.0.0",
 
         "// CC by 4.0 License": "0.0.0",
@@ -45,8 +45,8 @@
         "posthog-js": "1.345.5",
 
         "// LGPL - only used for image processing and easy to remove": "0.0.0",
-        "@img/sharp-libvips-linux-x64": "1.1.0",
-        "@img/sharp-libvips-linuxmusl-x64": "1.1.0",
+        "@img/sharp-libvips-linux-x64": "1.2.4",
+        "@img/sharp-libvips-linuxmusl-x64": "1.2.4",
         "@img/sharp-libvips-darwin-arm64": "1.1.0"
     },
     "ignore": [{ "prefix": "@estuary" }]

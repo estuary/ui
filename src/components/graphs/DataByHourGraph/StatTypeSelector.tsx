@@ -1,3 +1,5 @@
+import { useShallow } from 'zustand/react/shallow';
+
 import { useIntl } from 'react-intl';
 
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
@@ -7,10 +9,9 @@ import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageSto
 function StatTypeSelector() {
     const intl = useIntl();
 
-    const [statType, setStatType] = useDetailsUsageStore((store) => [
-        store.statType,
-        store.setStatType,
-    ]);
+    const [statType, setStatType] = useDetailsUsageStore(
+        useShallow((state) => [state.statType, state.setStatType])
+    );
 
     return (
         <OutlinedToggleButtonGroup size="small" exclusive>

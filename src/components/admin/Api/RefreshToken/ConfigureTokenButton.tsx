@@ -44,11 +44,11 @@ function ConfigureRefreshTokenButton() {
 
                         <CopyRefreshToken />
 
-                        <Grid item xs={9} sx={{ mt: 1, display: 'flex' }}>
+                        <Grid size={{ xs: 9 }} sx={{ mt: 1, display: 'flex' }}>
                             <RefreshTokenDescription />
                         </Grid>
 
-                        <Grid item xs={3} sx={{ mt: 1, display: 'flex' }}>
+                        <Grid size={{ xs: 3 }} sx={{ mt: 1, display: 'flex' }}>
                             <GenerateButton />
                         </Grid>
                     </Grid>

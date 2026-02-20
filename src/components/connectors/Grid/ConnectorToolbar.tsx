@@ -84,12 +84,13 @@ function ConnectorToolbar({
             data-public
         >
             <Grid
+                size="grow"
                 container
                 spacing={gridSpacing}
                 wrap="wrap"
                 sx={{ justifyContent: 'flex-end' }}
             >
-                <Grid item xs={12} md={hideProtocol ? 12 : 6}>
+                <Grid size={{ xs: 12, md: hideProtocol ? 12 : 6 }}>
                     <SearchField
                         label={intl.formatMessage({
                             id: 'connectorTable.filterLabel',
@@ -100,7 +101,7 @@ function ConnectorToolbar({
                 </Grid>
 
                 {hideProtocol ? null : (
-                    <Grid item xs={4} md={2}>
+                    <Grid size={{ xs: 4, md: 2 }}>
                         <AutocompletedField
                             label={intl.formatMessage({
                                 id: 'connectorTable.data.protocol',

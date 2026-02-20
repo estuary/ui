@@ -43,7 +43,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Hidden,
     Tab,
     Tabs,
     Typography,
@@ -257,8 +256,12 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
 
     const singleOption = oneOfRenderInfos.length === 1;
 
+    if (!visible) {
+        return null;
+    }
+
     return (
-        <Hidden xsUp={!visible}>
+        <>
             <CombinatorProperties
                 schema={schema}
                 combinatorKeyword="oneOf"
@@ -328,7 +331,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                     </Button>
                 </DialogActions>
             </Dialog>
-        </Hidden>
+        </>
     );
 };
 

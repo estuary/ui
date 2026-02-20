@@ -27,7 +27,7 @@ function PrefixSelector({
             id={labelId}
             onChange={(_event, newValue) => onChange(newValue)}
             options={options}
-            componentsProps={{
+            slotProps={{
                 paper: {
                     sx: {
                         minWidth: 'fit-content',

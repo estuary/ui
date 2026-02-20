@@ -2,6 +2,8 @@ import type { BaseFormProps } from 'src/components/shared/specPropEditor/types';
 
 import { useEffect, useRef } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import SpecPropBoolean from 'src/components/shared/specPropEditor/SpecPropBoolean';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
@@ -14,7 +16,7 @@ export default function DeltaUpdatesForm({
     const workflow = useEntityWorkflow();
 
     const [setDeltaUpdatesHasError, setDeltaUpdates] = useSourceCaptureStore(
-        (state) => [state.setDeltaUpdatesHasError, state.setDeltaUpdates]
+        useShallow((state) => [state.setDeltaUpdatesHasError, state.setDeltaUpdates])
     );
 
     // If we are editing make sure we store the current value into the store "on load"

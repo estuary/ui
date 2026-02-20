@@ -51,11 +51,12 @@ function ConnectorSkeleton({ condensed }: ConnectorSkeletonProps) {
                 .map((skeleton, index) => (
                     <Grid
                         key={`connector-skeleton-${index}`}
-                        item
-                        xs={2}
-                        md={4}
-                        lg={2}
-                        xl={2}
+                        size={{
+                            xs: 2,
+                            md: 4,
+                            lg: 2,
+                            xl: 2,
+                        }}
                         sx={{ maxWidth: 275 }}
                     >
                         {skeleton}

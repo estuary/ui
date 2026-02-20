@@ -15,9 +15,7 @@ function useSourceCapture() {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [setSourceCapture] = useSourceCaptureStore((state) => [
-        state.setSourceCapture,
-    ]);
+    const setSourceCapture = useSourceCaptureStore((state) => state.setSourceCapture);
 
     const { currentSetting, updateSourceSetting } =
         useSourceSetting<string>('capture');

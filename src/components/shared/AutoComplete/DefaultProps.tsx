@@ -1,8 +1,7 @@
 import type { AutocompleteProps } from '@mui/material';
 import type React from 'react';
 
-import { autocompleteClasses, Popper } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { autocompleteClasses, Popper, styled } from '@mui/material';
 
 import ListboxComponent from 'src/components/shared/AutoComplete/VirtualizedList';
 
@@ -22,7 +21,7 @@ const autoCompleteDefaults: AutocompleteProps<any, any, false, false, 'div'> = {
     renderInput: () => null,
 
     // Can alter if you want
-    PopperComponent,
+    slots: { popper: PopperComponent },
     size: 'small',
 };
 
@@ -34,7 +33,11 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     'div'
 > = {
     ...autoCompleteDefaults,
-    ListboxComponent,
+    slots: {
+        ...autoCompleteDefaults.slots,
+        popper: PopperComponent,
+        listbox: ListboxComponent,
+    },
     disableCloseOnSelect: true,
     renderGroup: (params) => params as unknown as React.ReactNode,
     renderOption: (props, option, state) => {
@@ -72,7 +75,14 @@ export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
     false,
     'div'
 > = {
-    ...autoCompleteDefaults_Virtual,
+    // TODO TEST BEFORE MERGE
+    ...(autoCompleteDefaults_Virtual as AutocompleteProps<
+        any,
+        true,
+        false,
+        false,
+        'div'
+    >),
     multiple: true,
     blurOnSelect: false,
 };

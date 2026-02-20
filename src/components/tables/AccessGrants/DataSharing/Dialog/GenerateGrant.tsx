@@ -140,7 +140,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
             spacing={2}
             sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
         >
-            <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
+            <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex' }}>
                 <PrefixedName
                     allowBlankName
                     allowEndSlash
@@ -154,7 +154,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                 />
             </Grid>
 
-            <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
+            <Grid size={{ xs: 4, md: 3 }} sx={{ display: 'flex' }}>
                 <TextField
                     variant="outlined"
                     size="small"
@@ -172,7 +172,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                 />
             </Grid>
 
-            <Grid item xs={4} md={2}>
+            <Grid size={{ xs: 4, md: 2 }}>
                 <AutocompletedField
                     label={intl.formatMessage({
                         id: 'admin.users.prefixInvitation.label.capability',
@@ -184,7 +184,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                 />
             </Grid>
 
-            <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
+            <Grid size={{ xs: 4, md: 3 }} sx={{ display: 'flex' }}>
                 <Button
                     disabled={formInvalid}
                     onClick={handlers.generateRoleGrant}

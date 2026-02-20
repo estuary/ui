@@ -19,9 +19,9 @@ export default function SectionAlertIndicator() {
     const theme = useTheme();
 
     // Binding Store
-    const [collectionsError] = useWorkflowStore((state) => {
-        return [state.collectionsError];
-    });
+    const collectionsError = useWorkflowStore(
+        (state) => state.collectionsError
+    );
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const bindingErrorsExist = useBinding_bindingErrorsExist();
