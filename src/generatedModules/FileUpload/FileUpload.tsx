@@ -14,6 +14,9 @@ import {
 import { CloudUpload } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import AlertBox from 'src/components/shared/AlertBox';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
+
 const MAX_FILE_SIZE_BYTES = 5_000_000;
 
 interface FileUploadDialogProps {
@@ -49,12 +52,13 @@ export const FileUploadDialog = ({
                     id: 'fileUpload.dropzone.error.tooSmall',
                 });
                 fileContent = null;
-            } else if (file.size > MAX_FILE_SIZE_BYTES) {
-                fileError = intl.formatMessage({
-                    id: 'fileUpload.dropzone.error.tooLarge',
-                });
-                fileContent = null;
             }
+            // else if (file.size > MAX_FILE_SIZE_BYTES) {
+            //     fileError = intl.formatMessage({
+            //         id: 'fileUpload.dropzone.error.tooLarge',
+            //     });
+            //     fileContent = null;
+            // }
 
             setFileError(fileError);
             setSelectedFile(fileContent);
@@ -85,125 +89,147 @@ export const FileUploadDialog = ({
         setIsReading(true);
 
         reader.onabort = () => {
-            onFileRead(null);
-            setSelectedFile(null);
-            setIsReading(false);
+            setFileError(
+                intl.formatMessage({
+                    id: 'fileUpload.dropzone.error.readAborted',
+                })
+            );
         };
         reader.onerror = () => {
-            onFileRead(null);
+            setFileError(
+                intl.formatMessage({
+                    id: 'fileUpload.dropzone.error.readFailed',
+                })
+            );
+        };
+        reader.onload = (event) => {
+            const result = event.target?.result ?? null;
+            onFileRead(result as string);
+            setFileError(null);
             setSelectedFile(null);
-            setIsReading(false);
         };
         reader.onloadend = () => {
-            const result = reader.result ?? null;
-            onFileRead(result as string);
-            setSelectedFile(null);
-            setFileError(null);
             setIsReading(false);
         };
 
         reader.readAsText(selectedFile);
-    }, [onFileRead, selectedFile]);
+    }, [intl, onFileRead, selectedFile]);
 
     const handleClose = useCallback(() => {
+        if (isReading) {
+            return;
+        }
         setSelectedFile(null);
         setFileError(null);
         setIsDragOver(false);
         setIsReading(false);
         onClose();
-    }, [onClose]);
+    }, [onClose, isReading]);
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
             <DialogTitle>{title}</DialogTitle>
 
             <DialogContent>
-                <Box
-                    sx={{
-                        'bgcolor': isDragOver
-                            ? 'action.hover'
-                            : 'background.default',
-                        'border': '2px dashed',
-                        'borderColor': isDragOver
-                            ? 'primary.main'
-                            : fileError
-                              ? 'error.main'
-                              : 'divider',
-                        'borderRadius': 1,
-                        'cursor': 'pointer',
-                        'mt': 1,
-                        'p': 4,
-                        'position': 'relative',
-                        'textAlign': 'center',
-                        '&:hover': {
-                            borderColor: fileError
-                                ? 'error.main'
-                                : 'primary.main',
-                            bgcolor: 'action.hover',
-                        },
-                        '&:has(input:focus-visible)': {
-                            outline: '2px solid',
-                            outlineColor: 'primary.main',
-                            outlineOffset: '2px',
-                        },
-                    }}
-                >
-                    <input
-                        type="file"
-                        title={intl.formatMessage({
-                            id: 'fileUpload.input.title',
-                        })}
-                        style={{
-                            cursor: 'pointer',
-                            height: '100%',
-                            inset: 0,
-                            opacity: 0,
-                            position: 'absolute',
-                            width: '100%',
+                <Stack spacing={2}>
+                    {fileError ? (
+                        <AlertBox severity="error" short>
+                            {fileError}
+                        </AlertBox>
+                    ) : null}
+                    <Box
+                        sx={{
+                            'bgcolor': isDragOver
+                                ? 'action.hover'
+                                : 'background.default',
+                            'border': '2px dashed',
+                            'borderColor': isDragOver
+                                ? 'primary.main'
+                                : fileError
+                                  ? 'error.main'
+                                  : 'divider',
+                            'borderRadius': 1,
+                            'cursor': 'pointer',
+                            'mt': 1,
+                            'p': 4,
+                            'position': 'relative',
+                            'textAlign': 'center',
+                            '&:hover': {
+                                borderColor: fileError
+                                    ? 'error.main'
+                                    : 'primary.main',
+                                bgcolor: 'action.hover',
+                            },
+                            '&:has(input:focus-visible)': {
+                                outline: '2px solid',
+                                outlineColor: 'primary.main',
+                                outlineOffset: '2px',
+                            },
                         }}
-                        onChange={handleFileSelect}
-                        onDragOver={(e) => {
-                            e.preventDefault();
-                            setIsDragOver(true);
-                        }}
-                        onDragLeave={() => setIsDragOver(false)}
-                        onDrop={() => setIsDragOver(false)}
-                    />
+                    >
+                        <input
+                            type="file"
+                            title={intl.formatMessage({
+                                id: 'fileUpload.input.title',
+                            })}
+                            style={{
+                                cursor: 'pointer',
+                                height: '100%',
+                                inset: 0,
+                                opacity: 0,
+                                position: 'absolute',
+                                width: '100%',
+                            }}
+                            onChange={handleFileSelect}
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                                setIsDragOver(true);
+                            }}
+                            onDragLeave={() => setIsDragOver(false)}
+                            onDrop={() => setIsDragOver(false)}
+                        />
 
-                    <CloudUpload
-                        style={{
-                            width: 40,
-                            height: 40,
-                            marginBottom: 8,
-                            opacity: isDragOver ? 1 : 0.5,
-                        }}
-                    />
+                        <Stack
+                            spacing={2}
+                            sx={{
+                                alignItems: 'center',
+                            }}
+                        >
+                            <CloudUpload
+                                style={{
+                                    width: 40,
+                                    height: 40,
+                                    marginBottom: 8,
+                                    opacity: isDragOver ? 1 : 0.5,
+                                }}
+                            />
 
-                    {selectedFile ? (
-                        <Typography variant="body1">
-                            {selectedFile.name}
-                        </Typography>
-                    ) : (
-                        <Stack spacing={1}>
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'fileUpload.dropzone.instruction',
-                                })}
-                            </Typography>
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'fileUpload.dropzone.maxSize',
-                                })}
-                            </Typography>
+                            {selectedFile ? (
+                                <OutlinedChip
+                                    variant="outlined"
+                                    label={selectedFile.name}
+                                    onDelete={() => {
+                                        setFileError(null);
+                                        setSelectedFile(null);
+                                    }}
+                                />
+                            ) : (
+                                <Stack spacing={1}>
+                                    <Typography>
+                                        {intl.formatMessage({
+                                            id: 'fileUpload.dropzone.instruction',
+                                        })}
+                                    </Typography>
+                                    <Typography>
+                                        {intl.formatMessage({
+                                            id: 'fileUpload.dropzone.maxSize',
+                                        })}
+                                    </Typography>
+                                </Stack>
+                            )}
                         </Stack>
-                    )}
-                </Box>
-
-                {fileError ? (
-                    <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                        {fileError}
-                    </Typography>
-                ) : null}
+                    </Box>
+                </Stack>
             </DialogContent>
 
             <DialogActions>

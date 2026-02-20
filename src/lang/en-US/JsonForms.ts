@@ -27,6 +27,8 @@ export const JsonForms: Record<string, string> = {
     'fileUpload.dropzone.maxSize': `Max file size: 5 MB`,
     'fileUpload.dropzone.error.tooLarge': `File exceeds the 5 MB size limit.`,
     'fileUpload.dropzone.error.tooSmall': `File appears to be empty.`,
+    'fileUpload.dropzone.error.readFailed': `File read failed. Please try again.`,
+    'fileUpload.dropzone.error.readAborted': `File read aborted. Please try again.`,
 
     // OAuth
     'oauth.error.credentialsMissing': `need to complete OAuth`,
