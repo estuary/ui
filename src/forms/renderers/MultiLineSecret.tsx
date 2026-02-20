@@ -13,7 +13,7 @@ import { withJsonFormsControlProps } from '@jsonforms/react';
 
 import { useIntl } from 'react-intl';
 
-import { FileUploadDialog } from 'src/generatedModules/FileUpload/FileUpload';
+import { FileUploadDialog } from 'src/generatedModules/FileUpload/FileUploadDialog';
 import { Options } from 'src/types/jsonforms';
 
 export const multiLineSecretTester: RankedTester = rankWith(

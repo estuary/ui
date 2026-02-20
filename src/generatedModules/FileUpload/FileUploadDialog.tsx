@@ -15,33 +15,39 @@ import { CloudUpload } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import { logRocketEvent } from 'src/services/shared';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 const MAX_FILE_SIZE_BYTES = 5_000_000;
 
 interface FileUploadDialogProps {
-    open: boolean;
-    title: string;
     onClose: () => void;
     onFileRead: (content: string | null) => void;
+    open: boolean;
+    title: string;
 }
 
 export const FileUploadDialog = ({
-    open,
-    title,
     onClose,
     onFileRead,
+    open,
+    title,
 }: FileUploadDialogProps) => {
     const intl = useIntl();
 
     const fileReaderRef = useRef<FileReader | null>(null);
 
+    const [fileError, setFileError] = useState<string | null>(null);
     const [isDragOver, setIsDragOver] = useState(false);
     const [isReading, setIsReading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [fileError, setFileError] = useState<string | null>(null);
 
     const handleClose = useCallback(() => {
+        logRocketEvent('FileUpload', {
+            status: 'closing',
+            isReading,
+        });
+
         if (isReading) {
             return;
         }
@@ -110,14 +116,20 @@ export const FileUploadDialog = ({
             //  it is complete (abort, fail, success) and then can handle
             //  any outcome instead of multiple event handlers
             fileReaderRef.current.onloadend = (event) => {
-                console.log('event.target', event.target);
-
+                const state = event.target?.readyState ?? null;
                 const result = event.target?.result ?? null;
 
-                if (result !== null) {
+                if (result !== null && state === FileReader.DONE) {
                     onFileRead(result as string);
                     setFileError(null);
                     setSelectedFile(null);
+                    setIsReading(false);
+
+                    logRocketEvent('FileUpload', {
+                        status: 'success',
+                        state,
+                    });
+
                     handleClose();
                 } else {
                     setFileError(
@@ -125,8 +137,15 @@ export const FileUploadDialog = ({
                             id: 'fileUpload.dropzone.error.readFailed',
                         })
                     );
+
+                    setIsReading(false);
+
+                    logRocketEvent('FileUpload', {
+                        status: 'failed',
+                        noResult: Boolean(result === null),
+                        state,
+                    });
                 }
-                setIsReading(false);
             };
         }
 
@@ -134,7 +153,13 @@ export const FileUploadDialog = ({
     }, [handleClose, intl, onFileRead, selectedFile]);
 
     return (
-        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <Dialog
+            open={open}
+            onClose={handleClose}
+            maxWidth="sm"
+            fullWidth
+            disableEscapeKeyDown
+        >
             <DialogTitle>{title}</DialogTitle>
 
             <DialogContent>
