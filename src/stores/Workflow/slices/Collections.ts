@@ -168,7 +168,7 @@ export const getStoreWithCollectionSettings = (
                 collectionsHydrating: false,
             }),
             false,
-            'initializeCollections'
+            'terminateCollectionHydration'
         );
     },
 });
