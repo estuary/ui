@@ -52,7 +52,6 @@ export const Errors: Record<string, string> = {
 
     // Wizard Dialog
     'wizardDialog.error.step': `An error occurred during this step`,
-    'wizardDialog.error.completion': `An error occurred during completion`,
 
     // Supabase
     'supabase.poller.failed.title': `${CommonMessages['common.failedFetch']}`,

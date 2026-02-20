@@ -16,7 +16,6 @@ const messages: Record<string, string> = {
     'cta.close': 'Close',
     'alert.error': 'Error',
     'wizardDialog.error.step': 'An error occurred during this step',
-    'wizardDialog.error.completion': 'An error occurred during completion',
 };
 
 // ── Helpers ─────────────────────────────────────────────────────────

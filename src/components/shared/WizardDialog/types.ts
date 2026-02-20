@@ -43,8 +43,6 @@ export interface WizardDialogProps {
     steps: WizardStep[];
     /** Callback when dialog should close */
     onClose: () => void;
-    /** Callback when wizard is completed (last step next button clicked) */
-    onComplete?: () => void | Promise<void>;
     /** Default dialog title (used when step doesn't define its own title) */
     title?: ReactNode;
     /** Max width of the dialog */

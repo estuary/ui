@@ -20,7 +20,6 @@ export function WizardDialog({
     open,
     onClose,
     steps,
-    onComplete,
     title,
     maxWidth = 'sm',
     showActions = true,
@@ -68,22 +67,6 @@ export function WizardDialog({
         }
 
         if (isLastStep) {
-            // On last step, call onComplete
-            if (onComplete) {
-                setIsNavigating(true);
-                try {
-                    await onComplete();
-                } catch (error) {
-                    setError(
-                        error instanceof Error
-                            ? error.message
-                            : intl.formatMessage({ id: 'wizardDialog.error.completion' })
-                    );
-                    return false;
-                } finally {
-                    setIsNavigating(false);
-                }
-            }
             onClose();
         } else {
             // Move to next step
@@ -91,7 +74,7 @@ export function WizardDialog({
         }
 
         return true;
-    }, [currentStep, intl, isLastStep, onClose, onComplete, steps]);
+    }, [currentStep, intl, isLastStep, onClose, steps]);
 
     const retreat = useCallback(() => {
         if (!isFirstStep) {
