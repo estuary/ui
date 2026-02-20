@@ -8,6 +8,13 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
         humanReadableIntlKey:
             'alerts.alertType.humanReadable.auto_discover_failed',
     },
+    background_publication_failed: {
+        detailKey: 'error',
+        docLink:
+            'https://docs.estuary.dev/reference/notifications/#background-publication-failed-alerts',
+        humanReadableIntlKey:
+            'alerts.alertType.humanReadable.auto_discover_failed',
+    },
     shard_failed: {
         detailKey: 'error',
         docLink: 'https://docs.estuary.dev/reference/notifications',

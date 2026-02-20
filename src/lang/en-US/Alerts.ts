@@ -58,6 +58,7 @@ export const Alerts: Record<string, string> = {
 
     // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
     'alerts.alertType.humanReadable.auto_discover_failed': `Auto Discover Failed`,
+    'alerts.alertType.humanReadable.background_publication_failed': `Background Publication Failed`,
     'alerts.alertType.humanReadable.shard_failed': `Task Failure`,
     'alerts.alertType.humanReadable.data_movement_stalled': `Data Movement Stalled`,
     'alerts.alertType.humanReadable.free_trial': ``,
