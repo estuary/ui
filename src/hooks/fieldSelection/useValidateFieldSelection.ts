@@ -32,12 +32,12 @@ import { useEntityType } from 'src/context/EntityContext';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
-import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/stores/Binding/shared';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/utils/entity-utils';
 import {
     DEFAULT_RECOMMENDED_FLAG,
     getFieldSelection,

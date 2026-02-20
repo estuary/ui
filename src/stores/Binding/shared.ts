@@ -280,8 +280,6 @@ export const updateBackfilledBindingState = (
     }
 };
 
-export const MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS = 1;
-
 export const stubBindingFieldSelection = (
     existingSelections: BindingFieldSelectionDictionary,
     bindingUUIDs: string[],

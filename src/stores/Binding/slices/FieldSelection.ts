@@ -7,7 +7,7 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
-import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/stores/Binding/shared';
+import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/utils/entity-utils';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
 export type HydrationStatus =
