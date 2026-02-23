@@ -82,7 +82,9 @@ export const autoCompleteDefaults_Virtual_Multiple: AutocompleteProps<
     false,
     'div'
 > = {
-    // TODO TEST BEFORE MERGE
+    // Typing this way seems fine. AutoComplete now has a `key` change in their types
+    //  that cause some friction and this is an easy work around.
+    //  I _think_ this was the change: https://github.com/mui/material-ui/pull/47619
     ...(autoCompleteDefaults_Virtual as AutocompleteProps<
         any,
         true,
