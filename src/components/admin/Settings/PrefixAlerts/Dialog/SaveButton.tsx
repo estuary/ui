@@ -2,15 +2,16 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useMemo, useState } from 'react';
 
+import { Button } from '@mui/material';
+
 import { union } from 'lodash';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import {
     createNotificationSubscription,
     deleteNotificationSubscription,
 } from 'src/api/alerts';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
@@ -21,6 +22,8 @@ interface Props {
 }
 
 function SaveButton({ closeDialog }: Props) {
+    const intl = useIntl();
+
     const hydrate = useZustandStore<
         SelectableTableStore,
         SelectableTableStore['hydrate']
@@ -59,9 +62,9 @@ function SaveButton({ closeDialog }: Props) {
         () =>
             Boolean(
                 !hasLength(prefix) ||
-                    prefixErrorsExist ||
-                    !subscriptions ||
-                    inputUncommitted
+                prefixErrorsExist ||
+                !subscriptions ||
+                inputUncommitted
             ),
         [inputUncommitted, prefix, prefixErrorsExist, subscriptions]
     );
@@ -136,15 +139,15 @@ function SaveButton({ closeDialog }: Props) {
     };
 
     return (
-        <SafeLoadingButton
+        <Button
             variant="contained"
             size="small"
             disabled={disabled}
             loading={loading}
             onClick={onClick}
         >
-            <FormattedMessage id="cta.save" />
-        </SafeLoadingButton>
+            {intl.formatMessage({ id: 'cta.save' })}
+        </Button>
     );
 }
 
