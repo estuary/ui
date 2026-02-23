@@ -13,16 +13,15 @@ import React from 'react';
 
 import {
     accordionDetailsClasses,
-    accordionSummaryClasses,
     chipClasses,
     createTheme,
     gridClasses,
     iconButtonClasses,
+    ThemeProvider as MUIThemeProvider,
     radioClasses,
     tableCellClasses,
     tableHeadClasses,
     tableRowClasses,
-    ThemeProvider as MUIThemeProvider,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -452,6 +451,9 @@ export const opaqueLightModeBackground = {
 
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
 //      this is one way to handle the light/dark mode:
+// We should look into something like - https://mui.com/material-ui/migration/upgrade-to-v6/#color-mode-theme-utility
+//      OR
+// We just look into waiting for css variable support - https://mui.com/material-ui/customization/css-theme-variables/overview/
 
 export const paperBackground = {
     light: 'white',
@@ -674,9 +676,10 @@ export const jsonFormsPadding: SxProps<Theme> = {
         marginBottom: 1,
     },
     // Handles inputs that are nested
-    [`& .${accordionDetailsClasses.root} > .${gridClasses.root} > .${gridClasses.root}`]: {
-        marginBottom: 1,
-    },
+    [`& .${accordionDetailsClasses.root} > .${gridClasses.root} > .${gridClasses.root}`]:
+        {
+            marginBottom: 1,
+        },
 };
 
 export const underlineTextSx: SxProps<Theme> = {
@@ -739,8 +742,8 @@ export const dataGridEntireCellButtonStyling: SxProps<Theme> = {
 };
 
 export const dataGridListStyling: SxProps<Theme> = {
-    'borderRadius': 0,
-    'borderBottom': 'none',
+    borderRadius: 0,
+    borderBottom: 'none',
     [`& .${dataGridClasses.row}`]: {
         cursor: 'pointer',
     },
