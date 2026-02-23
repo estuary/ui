@@ -3,6 +3,7 @@ import { invoiceId } from 'src/utils/billing-utils';
 
 // Selector Hooks
 export const useBilling_selectedInvoice = () => {
+    // TODO TEST BEFORE MERGE - MIGHT NEED useShallow
     return useBillingStore((state) =>
         state.selectedInvoiceId
             ? (state.invoices.find(
