@@ -8,6 +8,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Stack, Table, TableContainer, Tooltip } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
@@ -44,8 +46,10 @@ export default function FieldSelectionTable({
 }: FieldSelectionTableProps) {
     const intl = useIntl();
 
-    const selections: ExpandedFieldSelection[] = useBindingStore((state) =>
-        getExpandedFieldSelection(state.selections?.[bindingUUID])
+    const selections: ExpandedFieldSelection[] = useBindingStore(
+        useShallow((state) =>
+            getExpandedFieldSelection(state.selections?.[bindingUUID])
+        )
     );
     const selectionsHydrating = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.hydrating
