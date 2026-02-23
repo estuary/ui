@@ -174,10 +174,6 @@ function EmailSelector({
                 }: AutocompleteRenderInputParams) => (
                     <TextField
                         {...params}
-                        InputProps={{
-                            ...InputProps,
-                            sx: { borderRadius: 3 },
-                        }}
                         error={inputErrorExists}
                         label={intl.formatMessage({
                             id: 'data.email',
@@ -185,6 +181,12 @@ function EmailSelector({
                         required
                         size="small"
                         variant="outlined"
+                        slotProps={{
+                            input: {
+                                ...InputProps,
+                                sx: { borderRadius: 3 },
+                            }
+                        }}
                     />
                 )}
                 renderOption={(renderOptionProps, option) => {
@@ -201,20 +203,22 @@ function EmailSelector({
                             <ListItemText
                                 primary={option.user_full_name}
                                 secondary={option.user_email}
-                                primaryTypographyProps={{
-                                    sx: {
-                                        fontWeight: 500,
-                                        fontSize: 16,
-                                    },
-                                }}
-                                secondaryTypographyProps={{
-                                    sx: {
-                                        color: (theme) =>
-                                            theme.palette.text.primary,
-                                    },
-                                }}
                                 sx={{ ml: 2 }}
-                            />
+                                slotProps={{
+                                    primary: {
+                                        sx: {
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                        },
+                                    },
+
+                                    secondary: {
+                                        sx: {
+                                            color: (theme) =>
+                                                theme.palette.text.primary,
+                                        },
+                                    }
+                                }} />
                         </ListItem>
                     );
                 }}
@@ -245,7 +249,6 @@ function EmailSelector({
                 sx={{ flexGrow: 1 }}
                 value={emails}
             />
-
             {inputErrorExists ? (
                 <FormHelperText error={inputErrorExists}>
                     {intl.formatMessage({

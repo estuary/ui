@@ -59,7 +59,7 @@ export const OutlinedChip = styled(Chip, {
                 color: theme.palette.error.main,
             },
         },
-        [`& .${chipClasses.deleteIconSmall}`]: {
+        [`&.${chipClasses.sizeSmall} > .${chipClasses.deleteIcon}`]: {
             marginRight: '1px',
         },
         [`& .${chipClasses.label}`]: {

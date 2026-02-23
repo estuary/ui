@@ -77,11 +77,9 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                     <HelpCircle style={{ fontSize: 11 }} />
                 </Tooltip>
             </Stack>
-
             <Typography>
                 <FormattedMessage id="captureInterval.message" />
             </Typography>
-
             <Autocomplete
                 disabled={readOnly ?? loading}
                 freeSolo
@@ -112,19 +110,20 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                 }: AutocompleteRenderInputParams) => (
                     <TextField
                         {...params}
-                        InputProps={{
-                            ...InputProps,
-                            sx: { borderRadius: 3 },
-                        }}
                         error={errorsExist}
                         label={label}
                         size="small"
+                        slotProps={{
+                            input: {
+                                ...InputProps,
+                                sx: { borderRadius: 3 },
+                            }
+                        }}
                     />
                 )}
                 sx={{ width: 400 }}
                 value={input}
             />
-
             <FormHelperText style={{ marginLeft: 0 }}>
                 {intl.formatMessage(
                     { id: 'captureInterval.input.description' },
@@ -136,7 +135,6 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                     }
                 )}
             </FormHelperText>
-
             {errorsExist ? (
                 <FormHelperText error={errorsExist} style={{ marginLeft: 0 }}>
                     {intl.formatMessage({

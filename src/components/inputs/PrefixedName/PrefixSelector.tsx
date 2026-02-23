@@ -41,11 +41,6 @@ function PrefixSelector({
             }: AutocompleteRenderInputParams) => (
                 <TextField
                     {...params}
-                    InputProps={{
-                        ...InputProps,
-                        disableUnderline: variantString === 'standard',
-                        sx: { borderRadius: 3 },
-                    }}
                     label={label}
                     error={Boolean(error)}
                     required
@@ -54,6 +49,13 @@ function PrefixSelector({
                         minWidth: 100,
                     }}
                     variant={variantString}
+                    slotProps={{
+                        input: {
+                            ...InputProps,
+                            disableUnderline: variantString === 'standard',
+                            sx: { borderRadius: 3 },
+                        }
+                    }}
                 />
             )}
         />

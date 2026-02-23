@@ -38,19 +38,23 @@ function EntityTableFooter({
             <TableFooter>
                 <TableRow>
                     <TablePagination
-                        ActionsComponent={TablePaginationActions}
                         rowsPerPageOptions={rowsPerPageOptions}
                         count={selectDataCount}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={onPageChange}
                         onRowsPerPageChange={onRowsPerPageChange}
-                        SelectProps={{
-                            // TODO (table filtering)
-                            // Same as the other one
-                            inputProps: {
-                                id: `table_pagination__${filterLabel}`,
-                            },
+                        slots={{
+                            actions: TablePaginationActions
+                        }}
+                        slotProps={{
+                            select: {
+                                // TODO (table filtering)
+                                // Same as the other one
+                                inputProps: {
+                                    id: `table_pagination__${filterLabel}`,
+                                },
+                            }
                         }}
                     />
                 </TableRow>

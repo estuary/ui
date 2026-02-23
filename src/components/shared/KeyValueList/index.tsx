@@ -29,7 +29,6 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                 {sectionTitle ? (
                     <Typography variant="subtitle1">{sectionTitle}</Typography>
                 ) : null}
-
                 <List dense sx={{ pt: 0, overflowY: 'auto' }}>
                     {data.map(({ title, val }, index) => (
                         <ListItem
@@ -44,20 +43,22 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                 disableTypography={disableTypography}
                                 primary={title}
                                 secondary={val}
-                                primaryTypographyProps={{
-                                    color: val
-                                        ? diminishedTextColor[
-                                              theme.palette.mode
-                                          ]
-                                        : theme.palette.text.primary,
-                                    component: 'div',
-                                    marginBottom: val ? '2px' : undefined,
-                                }}
-                                secondaryTypographyProps={{
-                                    color: theme.palette.text.primary,
-                                    component: 'div',
-                                }}
-                            />
+                                slotProps={{
+                                    primary: {
+                                        color: val
+                                            ? diminishedTextColor[
+                                                  theme.palette.mode
+                                              ]
+                                            : theme.palette.text.primary,
+                                        component: 'div',
+                                        marginBottom: val ? '2px' : undefined,
+                                    },
+
+                                    secondary: {
+                                        color: theme.palette.text.primary,
+                                        component: 'div',
+                                    }
+                                }} />
                         </ListItem>
                     ))}
                 </List>

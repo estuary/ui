@@ -25,9 +25,6 @@ export default function PrefixField({ staticPrefix }: Props) {
                 <Skeleton height={38} width={345} />
             ) : staticPrefix ? (
                 <TextField
-                    InputProps={{
-                        sx: { borderRadius: 3 },
-                    }}
                     fullWidth
                     label={intl.formatMessage({
                         id: 'common.tenant',
@@ -36,6 +33,11 @@ export default function PrefixField({ staticPrefix }: Props) {
                     size="small"
                     value={staticPrefix}
                     variant="outlined"
+                    slotProps={{
+                        input: {
+                            sx: { borderRadius: 3 },
+                        }
+                    }}
                 />
             ) : (
                 <PrefixedName

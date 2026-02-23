@@ -153,7 +153,6 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     validateOnLoad
                 />
             </Grid>
-
             <Grid size={{ xs: 4, md: 3 }} sx={{ display: 'flex' }}>
                 <TextField
                     variant="outlined"
@@ -161,17 +160,18 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     label={intl.formatMessage({
                         id: 'admin.prefix.issueGrant.label.sharedWith',
                     })}
-                    InputProps={{
-                        sx: { borderRadius: 3 },
-                    }}
                     error={subjectMissing || subjectInvalid}
                     onChange={handlers.evaluateSubjectRole}
                     sx={{ flexGrow: 1 }}
                     required
                     value={subjectRole}
+                    slotProps={{
+                        input: {
+                            sx: { borderRadius: 3 },
+                        }
+                    }}
                 />
             </Grid>
-
             <Grid size={{ xs: 4, md: 2 }}>
                 <AutocompletedField
                     label={intl.formatMessage({
@@ -183,7 +183,6 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     required
                 />
             </Grid>
-
             <Grid size={{ xs: 4, md: 3 }} sx={{ display: 'flex' }}>
                 <Button
                     disabled={formInvalid}
