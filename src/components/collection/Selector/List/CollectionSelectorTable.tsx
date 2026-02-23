@@ -1,4 +1,13 @@
-import { Box, Table, useTheme } from '@mui/material';
+import {
+    Box,
+    Table,
+    tableBodyClasses,
+    tableCellClasses,
+    tableFooterClasses,
+    tableHeadClasses,
+    tableRowClasses,
+    useTheme,
+} from '@mui/material';
 
 import { useScrollbarWidth } from 'react-use';
 
@@ -27,61 +36,62 @@ function CollectionSelectorTable({ children, selectionEnabled }: any) {
             sx={{
                 height: '100%',
                 overflow: 'hidden',
-                [`& .MuiTableBody-root .MuiTableCell-root,
-                        & .MuiTableHead-root .MuiTableCell-root`]: {
-                    display: 'flex',
-                    height: DEFAULT_ROW_HEIGHT,
-                    padding: 0,
-                },
-                [`& .MuiTableRow-root`]: {
+                [`& .${tableBodyClasses.root} .${tableCellClasses.root},
+                        & .${tableHeadClasses.root} .${tableCellClasses.root}`]:
+                    {
+                        display: 'flex',
+                        height: DEFAULT_ROW_HEIGHT,
+                        padding: 0,
+                    },
+                [`& .${tableBodyClasses.root}`]: {
                     display: 'flex',
                 },
                 // TODO (theme - kinda) Probably just move this chunk into the theme file. Also, we probably want to
                 //  look into doing more styling based on the parent.
                 // We do a lot of rendering down below - need to keep styling as fast as possible
                 //  so just putting this on the wrapper
-                [`.${ENABLE_SELECTION} & .MuiTableCell-body`]: {
+                [`.${ENABLE_SELECTION} & .${tableCellClasses.body}`]: {
                     cursor: 'pointer',
                 },
-                [`.${ENABLE_SCROLL_GAP} & .MuiTableHead-root .MuiTableRow-root:last-of-type,
-                 .${ENABLE_SCROLL_GAP} & .MuiTableFooter-root .MuiTableRow-root:last-of-type`]:
+                [`.${ENABLE_SCROLL_GAP} & .${tableHeadClasses.root} .${tableRowClasses.root}:last-of-type,
+                 .${ENABLE_SCROLL_GAP} & .${tableFooterClasses.root} .${tableRowClasses.root}:last-of-type`]:
                     {
                         pr: `${scrollGap}px`,
                     },
 
                 // This allows us to add the scroll gap in and still have a border over/under the scrollbar
-                [`& .MuiTableHead-root .MuiTableRow-root`]: {
+                [`& .${tableHeadClasses.root} .${tableRowClasses.root}`]: {
                     borderBottom: defaultOutline[theme.palette.mode],
-                    [`& .MuiTableCell-root`]: {
+                    [`& .${tableCellClasses.root}`]: {
                         borderBottom: 'none',
                     },
                 },
-                [`& .MuiTableFooter-root .MuiTableRow-root`]: {
+                [`& .${tableFooterClasses.root} .${tableRowClasses.root}`]: {
                     borderTop: defaultOutline[theme.palette.mode],
-                    [`& .MuiTableCell-root`]: {
+                    [`& .${tableCellClasses.root}`]: {
                         borderTop: 'none',
                     },
                 },
 
                 // Control column width without having to hardcode on each row
-                [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL},
-                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL}`]:
+                [`& .${tableHeadClasses.root} .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL},
+                            & .${tableBodyClasses.root} .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_TOGGLE_COL}`]:
                     {
                         minWidth: 90,
                         width: 90,
                     },
-                [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL},
-                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
+                [`& .${tableHeadClasses.root} .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL},
+                            & .${tableBodyClasses.root} .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
                     {
                         ...(truncateTextSx as any),
                         flexGrow: 1,
                     },
-                [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
+                [`& .${tableHeadClasses.root} .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_NAME_COL}`]:
                     {
                         px: 1,
                     },
-                [`& .MuiTableHead-root .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE},
-                            & .MuiTableBody-root .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE}`]:
+                [`& .${tableHeadClasses.root} .${TABLE_HEADER_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE},
+                            & .${tableBodyClasses.root} .${TABLE_BODY_CELL_CLASS_PREFIX}${COLLECTION_SELECTOR_REMOVE}`]:
                     {
                         minWidth: 52,
                         width: 52,

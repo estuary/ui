@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { TextField } from '@mui/material';
+import { inputClasses, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -54,9 +54,9 @@ function CollectionSelectorHeaderName({
             }}
             onChange={(event) => updateParent(event.target.value)}
             sx={{
-                'width': '100%',
-                'my': 1,
-                '& .MuiInputBase-root': { borderRadius: 3, my: 0 },
+                width: '100%',
+                my: 1,
+                [`& .${inputClasses.root}`]: { borderRadius: 3, my: 0 },
             }}
         />
     );

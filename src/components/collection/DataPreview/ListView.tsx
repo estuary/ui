@@ -13,6 +13,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import { globalStateClasses } from '@mui/utils';
 
 import { Editor } from '@monaco-editor/react';
 import { JsonPointer } from 'json-ptr';
@@ -117,7 +118,7 @@ function ListView({
                             </Typography>
                             <List
                                 sx={{
-                                    ['& li.Mui-selected']: {
+                                    [`& li.${globalStateClasses.selected}`]: {
                                         cursor: 'unset',
                                     },
                                     ['& li']: {
