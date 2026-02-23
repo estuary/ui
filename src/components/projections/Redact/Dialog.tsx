@@ -65,7 +65,6 @@ const RedactFieldDialog = ({
                 ) : null}
 
                 <Autocomplete
-                    open={true}
                     onChange={(_event, value) => {
                         if (error) {
                             setError(null);

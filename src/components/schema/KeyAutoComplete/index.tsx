@@ -104,7 +104,6 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
         <Grid size={{ xs: 12 }}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
-                open={true}
                 disabled={skimProjectionResponseEmpty}
                 getOptionLabel={getValue}
                 groupBy={(option) => option.inference?.exists ?? ''}
@@ -145,7 +144,6 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                                 : 'keyAutoComplete.keys.group.may',
                     });
 
-                    // TODO TESTING BEFORE MERGING
                     return {
                         key,
                         group: readableGroup,
