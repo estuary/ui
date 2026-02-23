@@ -43,7 +43,7 @@ function CollectionSelectorTable({ children, selectionEnabled }: any) {
                         height: DEFAULT_ROW_HEIGHT,
                         padding: 0,
                     },
-                [`& .${tableBodyClasses.root}`]: {
+                [`& .${tableRowClasses.root}`]: {
                     display: 'flex',
                 },
                 // TODO (theme - kinda) Probably just move this chunk into the theme file. Also, we probably want to
