@@ -36,7 +36,14 @@ export const autoCompleteDefaults_Virtual: AutocompleteProps<
     slots: {
         ...autoCompleteDefaults.slots,
         popper: PopperComponent,
-        listbox: ListboxComponent,
+    },
+    // Do not override the entire `listBox` slot like above. Override the prop since it is
+    //  a special case and this is needed to get the proper styling and interactivity working
+    //  See: https://mui.com/material-ui/migration/migrating-from-deprecated-apis#component-props
+    slotProps: {
+        listbox: {
+            component: ListboxComponent,
+        },
     },
     disableCloseOnSelect: true,
     renderGroup: (params) => params as unknown as React.ReactNode,
