@@ -10,6 +10,7 @@ import {
     useBinding_hasFieldConflicts,
     useBinding_resourceConfigOfBindingProperty,
 } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 
 function BindingsSelectorErrorIndicator({
     bindingUUID,
@@ -28,6 +29,9 @@ function BindingsSelectorErrorIndicator({
     );
 
     const fieldConflictsExist = useBinding_hasFieldConflicts(bindingUUID);
+    const fieldValidationFailed = useBindingStore((state) =>
+        bindingUUID ? state.selections[bindingUUID].validationFailed : false
+    );
 
     const sourceBackfillRecommended = useBinding_collectionMetadataProperty(
         collection,
@@ -37,7 +41,8 @@ function BindingsSelectorErrorIndicator({
     const errorExists =
         (bindingErrors && bindingErrors.length > 0) ||
         (configErrors && configErrors.length > 0) ||
-        fieldConflictsExist;
+        fieldConflictsExist ||
+        fieldValidationFailed;
 
     if (errorExists || Boolean(sourceBackfillRecommended)) {
         return (

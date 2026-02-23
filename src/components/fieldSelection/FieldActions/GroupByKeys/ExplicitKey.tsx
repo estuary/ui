@@ -1,4 +1,4 @@
-import type { DefinedKeyProps } from 'src/components/fieldSelection/types';
+import type { BindingUUIDProp } from 'src/components/fieldSelection/types';
 
 import { useMemo } from 'react';
 
@@ -6,7 +6,7 @@ import ExistingKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/
 import useLiveGroupByKey from 'src/hooks/fieldSelection/useLiveGroupByKey';
 import { useBindingStore } from 'src/stores/Binding/Store';
 
-const ExplicitKey = ({ bindingUUID }: DefinedKeyProps) => {
+const ExplicitKey = ({ bindingUUID }: BindingUUIDProp) => {
     const { existingGroupByKey } = useLiveGroupByKey(bindingUUID);
 
     const groupBy = useBindingStore(

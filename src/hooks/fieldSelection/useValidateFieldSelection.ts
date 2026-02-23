@@ -21,7 +21,6 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { evaluate_field_selection } from '@estuary/flow-web';
 import { differenceBy } from 'lodash';
-import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
 import {
@@ -43,7 +42,6 @@ import {
     getFieldSelection,
 } from 'src/utils/fieldSelection-utils';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
-import { snackbarSettings } from 'src/utils/notification-utils';
 
 interface FieldSelectionValidationResponse {
     bindingUUID: string;
@@ -86,7 +84,6 @@ const evaluateFieldSelection = async (input: FieldSelectionInput_Skim) => {
 
 export default function useValidateFieldSelection() {
     const intl = useIntl();
-    const { enqueueSnackbar } = useSnackbar();
     const entityType = useEntityType();
 
     const currentBindingUUID = useBinding_currentBindingUUID();
@@ -136,8 +133,6 @@ export default function useValidateFieldSelection() {
             validatedBindingIndex: number,
             liveBuiltBindingIndex: number
         ): Promise<FieldSelectionValidationResponse> => {
-            trackValidationAttempt(bindingUUID);
-
             const builtBinding: MaterializationBuiltBinding | undefined =
                 builtBindingIndex > -1
                     ? draftSpecsRow.built_spec?.bindings.at(builtBindingIndex)
@@ -210,7 +205,7 @@ export default function useValidateFieldSelection() {
                 result,
             };
         },
-        [collections, liveBuiltSpec?.bindings, trackValidationAttempt]
+        [collections, liveBuiltSpec?.bindings]
     );
 
     const failureDetected = useMemo(
@@ -263,15 +258,9 @@ export default function useValidateFieldSelection() {
                     meta.builtBindingIndex > -1 &&
                     meta.validatedBindingIndex > -1;
 
-                if (meta.disable) {
-                    advanceHydrationStatus(
-                        'VALIDATION_REQUESTED',
-                        uuid,
-                        undefined,
-                        undefined,
-                        true
-                    );
-                } else if (bindingsExists) {
+                trackValidationAttempt(uuid);
+
+                if (bindingsExists && !meta.disable) {
                     advanceHydrationStatus('VALIDATION_REQUESTED', uuid);
 
                     pendingRequests.push({
@@ -288,15 +277,34 @@ export default function useValidateFieldSelection() {
                         meta.validatedBindingIndex,
                         meta.liveBuiltBindingIndex
                     );
-                } else if (failureDetected) {
-                    setValidationFailure([uuid], true);
-
-                    logRocketEvent(CustomEvents.FIELD_SELECTION, {
-                        formFailureDetected: failureDetected,
-                        missingServerData: true,
-                        targetCollection: meta.collectionName,
-                    });
                 }
+
+                if (failureDetected) {
+                    setValidationFailure([uuid], true);
+                }
+
+                if (
+                    meta.disable ||
+                    targetBindingContext.find(
+                        (context) => context.uuid === uuid
+                    )?.validationAttempts ===
+                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
+                ) {
+                    advanceHydrationStatus(
+                        'VALIDATION_REQUESTED',
+                        uuid,
+                        undefined,
+                        undefined,
+                        true
+                    );
+                }
+
+                logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                    formFailureDetected: failureDetected,
+                    missingServerData: failureDetected,
+                    targetCollection: meta.collectionName,
+                    validationSkipped: true,
+                });
 
                 return null;
             })
@@ -395,27 +403,15 @@ export default function useValidateFieldSelection() {
                 }
 
                 if (rejectedRequests.length > 0) {
-                    rejectedRequests.forEach(
-                        ({ collection, uuid, validationEligible }) => {
-                            if (validationEligible) {
-                                enqueueSnackbar(
-                                    intl.formatMessage(
-                                        {
-                                            id: 'fieldSelection.error.validationFailed',
-                                        },
-                                        { collection }
-                                    ),
-                                    { ...snackbarSettings, variant: 'error' }
-                                );
+                    rejectedRequests.forEach(({ uuid, validationEligible }) => {
+                        if (validationEligible) {
+                            setValidationFailure([uuid]);
 
-                                setValidationFailure([uuid]);
-
-                                return;
-                            }
-
-                            advanceHydrationStatus('VALIDATING', uuid);
+                            return;
                         }
-                    );
+
+                        advanceHydrationStatus('VALIDATING', uuid);
+                    });
                 }
 
                 if (pendingRequests.length > 0) {
@@ -435,7 +431,6 @@ export default function useValidateFieldSelection() {
         advanceHydrationStatus,
         currentBindingUUID,
         draftSpecsRows,
-        enqueueSnackbar,
         entityType,
         failureDetected,
         fieldsRecommended,
@@ -444,6 +439,7 @@ export default function useValidateFieldSelection() {
         resourceConfigs,
         setValidationFailure,
         targetBindingContext,
+        trackValidationAttempt,
         validateFieldSelection,
     ]);
 }
