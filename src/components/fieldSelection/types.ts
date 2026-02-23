@@ -11,10 +11,6 @@ export interface AlgorithmMenuProps extends BaseMenuProps {
     targetFieldsRecommended?: boolean;
 }
 
-export interface BindingUUIDProp {
-    bindingUUID: string;
-}
-
 export interface BaseButtonProps extends BindingUUIDProp {
     loading: boolean;
     selections: FieldSelection[] | null | undefined;
@@ -23,6 +19,10 @@ export interface BaseButtonProps extends BindingUUIDProp {
 export interface BaseMenuProps {
     handleClick: (recommended: boolean | number) => void;
     disabled: boolean;
+}
+
+export interface BindingUUIDProp {
+    bindingUUID: string;
 }
 
 export interface ExistingKeyProps {
