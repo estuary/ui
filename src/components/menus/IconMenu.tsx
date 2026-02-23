@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 
 import React from 'react';
 
-import { Box, IconButton, Menu, Tooltip } from '@mui/material';
+import { avatarClasses, Box, IconButton, Menu, Tooltip } from '@mui/material';
 
 import {
     defaultOutline,
@@ -141,7 +141,7 @@ const IconMenu = ({
                 PaperProps={{
                     sx: {
                         ...arrowSx,
-                        '& .MuiAvatar-root': {
+                        [`& .${avatarClasses.root}`]: {
                             height: 32,
                             ml: -0.5,
                             mr: 1,

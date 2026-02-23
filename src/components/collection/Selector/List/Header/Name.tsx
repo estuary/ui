@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { inputClasses, TextField } from '@mui/material';
+import { inputBaseClasses, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -56,7 +56,7 @@ function CollectionSelectorHeaderName({
             sx={{
                 width: '100%',
                 my: 1,
-                [`& .${inputClasses.root}`]: { borderRadius: 3, my: 0 },
+                [`& .${inputBaseClasses.root}`]: { borderRadius: 3, my: 0 },
             }}
         />
     );

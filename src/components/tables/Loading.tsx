@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Skeleton, TableCell, TableRow } from '@mui/material';
+import { Skeleton, TableCell, tableCellClasses, TableRow } from '@mui/material';
 
 import { getTableComponents } from 'src/utils/table-utils';
 
@@ -63,7 +63,7 @@ function TableLoadingRows({
                     sx={{
                         ...styling,
                         'opacity': '25%',
-                        '& .MuiTableCell-root': {
+                        [`& .${tableCellClasses.root}`]: {
                             borderBottom: 'transparent',
                         },
                     }}

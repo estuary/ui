@@ -3,7 +3,7 @@ import type { TableColumns } from 'src/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
+import { Box, Button, Skeleton, Table, TableContainer, tableRowClasses } from '@mui/material';
 
 import { CreditCard, Download } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -91,7 +91,7 @@ function BillingLineItemsTable() {
                     sx={{
                         ...getTableHeaderWithoutHeaderColor(),
                         'minWidth': 350,
-                        '& .MuiTableRow-root': {
+                        [`& .${tableRowClasses.root}`]: {
                             height: INVOICE_ROW_HEIGHT,
                         },
                     }}

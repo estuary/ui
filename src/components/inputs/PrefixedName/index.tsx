@@ -3,12 +3,16 @@ import type { PrefixedNameProps } from 'src/components/inputs/PrefixedName/types
 import { useMemo } from 'react';
 
 import {
+    autocompleteClasses,
     FormControl,
     FormHelperText,
+    formHelperTextClasses,
     Input,
     InputAdornment,
+    inputAdornmentClasses,
     InputLabel,
     OutlinedInput,
+    outlinedInputClasses,
     TextField,
 } from '@mui/material';
 
@@ -159,7 +163,7 @@ function PrefixedName({
                 fullWidth
                 variant={variantString}
                 sx={{
-                    '& .MuiFormHelperText-root.Mui-error': {
+                    [`& .${formHelperTextClasses.root}.${formHelperTextClasses.error}`]: {
                         whiteSpace: 'break-spaces',
                     },
                 }}
@@ -191,7 +195,7 @@ function PrefixedName({
             fullWidth
             variant={variantString}
             sx={{
-                '& .MuiFormHelperText-root.Mui-error': {
+                [`& .${formHelperTextClasses.root}.${formHelperTextClasses.error}`]: {
                     whiteSpace: 'break-spaces',
                 },
             }}
@@ -221,12 +225,11 @@ function PrefixedName({
                     'borderRadius': 3,
                     // If we allow a blankName we can give the `prefix` portion more room as the
                     //  name input is of less importance. Mainly for GenerateInvitation
-                    [`& .MuiInputAdornment-root,
-                      & .MuiInputAdornment-root .MuiAutocomplete-root `]: {
+                    [`& .${inputAdornmentClasses.root}, & .${inputAdornmentClasses.root} .${autocompleteClasses.root}`]: {
                         width: allowBlankName ? '100%' : undefined,
                     },
                     // Gross - but prevents the name input from showing a border while inside another border
-                    '& div > div > fieldset.MuiOutlinedInput-notchedOutline': {
+                    [`& div > div > fieldset.${outlinedInputClasses.notchedOutline}`]: {
                         border: 'none',
                     },
                 }}

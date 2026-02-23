@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { alertTitleClasses, Box } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -20,7 +20,7 @@ function ShardsDisableWarning() {
             <Box
                 sx={{
                     'mb': 2,
-                    '& .MuiAlertTitle-root': {
+                    [`& .${alertTitleClasses.root}`]: {
                         textTransform: 'capitalize',
                     },
                 }}

@@ -5,6 +5,7 @@ import {
     AccordionDetails,
     AccordionSummary,
     Alert,
+    alertClasses,
     AlertTitle,
     Box,
     Grid,
@@ -42,7 +43,7 @@ function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
                 severity={showWarnings ? 'warning' : 'error'}
                 sx={{
                     'mb': 1,
-                    '& .MuiAlert-message': {
+                    [`& .${alertClasses.message}`]: {
                         width: '100%',
                     },
                 }}

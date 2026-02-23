@@ -34,7 +34,7 @@ import type { ReactNode } from 'react';
 
 import React, { useMemo } from 'react';
 
-import { Autocomplete, Box, MenuList, Stack, Typography } from '@mui/material';
+import { Autocomplete, autocompleteClasses, Box, MenuList, Stack, Typography } from '@mui/material';
 
 import { isArray } from 'lodash';
 import { useIntl } from 'react-intl';
@@ -194,7 +194,7 @@ export const DataPlaneAutoComplete = ({
             slotProps={{
                 popper: {
                     sx: {
-                        '& .MuiAutocomplete-listbox': {
+                        [`& .${autocompleteClasses.listbox}`]: {
                             p: 0,
                         },
                     },

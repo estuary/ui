@@ -2,7 +2,7 @@ import type { VariableSizeList } from 'react-window';
 
 import { useLayoutEffect, useRef } from 'react';
 
-import { Box, Stack, Table, TableContainer } from '@mui/material';
+import { Box, Stack, Table, tableCellClasses, TableContainer, tableHeadClasses, tableRowClasses } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -77,13 +77,13 @@ function LogsTable() {
                         // Keeps the header showing the border row on the header and not the cells
                         //  becaues they do not take the entire width
                         'borderCollapse': 'collapse',
-                        '& > .MuiTableHead-root .MuiTableRow-root': {
+                        [`& > .${tableHeadClasses.root} .${tableRowClasses.root}`]: {
                             borderBottomColor: (theme) =>
                                 defaultOutlineColor[theme.palette.mode],
                             borderBottomWidth: 1,
                             borderBottomStyle: 'solid',
                         },
-                        '& > .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root':
+                        [`& > .${tableHeadClasses.root} .${tableRowClasses.root} .${tableCellClasses.root}`]:
                             {
                                 borderBottom: 'none',
                             },

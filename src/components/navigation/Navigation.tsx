@@ -10,7 +10,7 @@ import {
     Tooltip,
     useTheme,
 } from '@mui/material';
-import MuiDrawer from '@mui/material/Drawer';
+import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 
 import {
     CloudDownload,
@@ -53,7 +53,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
             ModalProps={{ keepMounted: true }}
             onClose={closeNavigation}
             sx={{
-                '& .MuiDrawer-paper': {
+                [`& .${drawerClasses.paper}`]: {
                     boxSizing: 'border-box',
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,

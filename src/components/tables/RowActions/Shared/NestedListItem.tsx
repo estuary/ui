@@ -7,6 +7,7 @@ import {
     FormControlLabel,
     List,
     ListItem,
+    listItemTextClasses,
     ListItemText,
 } from '@mui/material';
 
@@ -45,7 +46,7 @@ function NestedListItem({
                     primary={catalogName}
                     sx={{
                         'ml': 0.5,
-                        '& .MuiListItemText-primary': {
+                        [`& .${listItemTextClasses.primary}`]: {
                             fontWeight: 500,
                             whiteSpace: 'nowrap',
                         },

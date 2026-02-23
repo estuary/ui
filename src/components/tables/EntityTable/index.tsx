@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
     Box,
+    inputBaseClasses,
     Stack,
     Table,
     TableContainer,
@@ -285,7 +286,7 @@ function EntityTable({
                                     onChange={handlers.filterTable}
                                     sx={{
                                         'width': '100%',
-                                        '& .MuiInputBase-root': {
+                                        [`& .${inputBaseClasses.root}`]: {
                                             borderRadius: 3,
                                         },
                                     }}

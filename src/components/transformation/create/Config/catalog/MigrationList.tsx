@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import {
     Accordion,
     AccordionDetails,
+    accordionSummaryClasses,
     AccordionSummary,
     Typography,
     useTheme,
@@ -94,7 +95,7 @@ function MigrationList() {
                 }
                 sx={{
                     'px': 1,
-                    '& .MuiAccordionSummary-content': {
+                    [`& .${accordionSummaryClasses.content}`]: {
                         'my': 0,
                         'color': migrationSelected
                             ? theme.palette.primary.main
