@@ -1009,6 +1009,15 @@ const themeSettings = createTheme({
                 variant: 'standard',
             },
         },
+        // TODO - maybe?
+        // MuiAutocomplete: {
+        //     styleOverrides: {
+        //         option: {
+        //             display: 'flex',
+        //             alignItems: 'flex-start',
+        //         },
+        //     },
+        // },
         MuiTabs: {
             ...baseBackground,
             defaultProps: {

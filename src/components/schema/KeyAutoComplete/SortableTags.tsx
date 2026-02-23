@@ -1,5 +1,5 @@
 import type { UniqueIdentifier } from '@dnd-kit/core';
-import type { AutocompleteGetTagProps } from '@mui/material';
+import type { AutocompleteRenderValueGetItemProps } from '@mui/material';
 
 import { useMemo, useState } from 'react';
 
@@ -27,7 +27,7 @@ import SortableTag from 'src/components/schema/KeyAutoComplete/SortableTag';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 interface Props {
-    getTagProps: AutocompleteGetTagProps;
+    getTagProps: AutocompleteRenderValueGetItemProps<any>;
     onOrderChange: (activeId: string, overId: string) => PromiseLike<any>;
     ownerState: any;
     values: any;

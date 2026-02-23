@@ -126,7 +126,8 @@ const GroupByKeysForm = ({
                     />
                 );
             }}
-            renderTags={(tagValues, getTagProps, ownerState) => {
+            renderValue={(tagValues, getTagProps, ownerState) => {
+                console.log('ownerState', ownerState);
                 return (
                     <SortableTags
                         getTagProps={getTagProps}

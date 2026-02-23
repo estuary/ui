@@ -218,7 +218,7 @@ function EmailSelector({
                         </ListItem>
                     );
                 }}
-                renderTags={(values, getTagProps) => {
+                renderValue={(values, getTagProps) => {
                     return values.map((value, index) => {
                         const tagProps = getTagProps({ index });
 

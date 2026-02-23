@@ -2,6 +2,8 @@ import type { PostgrestError, PostgrestResponse } from '@supabase/postgrest-js';
 import type { Entity, Schema } from 'src/types';
 import type { KeyedMutator } from 'swr';
 
+import { useMemo } from 'react';
+
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -52,12 +54,12 @@ function useDraftSpecs(
                   .returns<DraftSpecQuery[]>()
     );
 
-    return {
-        draftSpecs: data ?? defaultResponse,
-        error,
-        mutate,
-        isValidating,
-    };
+    const draftSpecs = data ?? defaultResponse;
+
+    return useMemo(
+        () => ({ draftSpecs, error, mutate, isValidating }),
+        [draftSpecs, error, mutate, isValidating]
+    );
 }
 
 export function useDraftSpecs_editWorkflow(
@@ -75,12 +77,12 @@ export function useDraftSpecs_editWorkflow(
                   .returns<DraftSpecQuery[]>()
     );
 
-    return {
-        draftSpecs: data ?? defaultResponse,
-        error,
-        mutate,
-        isValidating,
-    };
+    const draftSpecs = data ?? defaultResponse;
+
+    return useMemo(
+        () => ({ draftSpecs, error, mutate, isValidating }),
+        [draftSpecs, error, mutate, isValidating]
+    );
 }
 
 export function useDraftSpecs_forEditor(
@@ -100,12 +102,12 @@ export function useDraftSpecs_forEditor(
                   .returns<DraftSpecQuery[]>()
     );
 
-    return {
-        draftSpecs: data ?? defaultResponse,
-        error,
-        mutate,
-        isValidating,
-    };
+    const draftSpecs = data ?? defaultResponse;
+
+    return useMemo(
+        () => ({ draftSpecs, error, mutate, isValidating }),
+        [draftSpecs, error, mutate, isValidating]
+    );
 }
 
 export default useDraftSpecs;

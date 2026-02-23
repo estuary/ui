@@ -3,7 +3,8 @@ import React from 'react';
 export const OuterElementContext = React.createContext({});
 
 function OuterElementComponent(props: any, ref: any) {
-    const outerProps = React.useContext(OuterElementContext);
+    const { ownerState: _ownerState, ...outerProps } =
+        React.useContext(OuterElementContext) as any;
     return <div ref={ref} {...props} {...outerProps} />;
 }
 

@@ -104,6 +104,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
         <Grid size={{ xs: 12 }}>
             <Autocomplete
                 {...autoCompleteDefaults_Virtual_Multiple}
+                open={true}
                 disabled={skimProjectionResponseEmpty}
                 getOptionLabel={getValue}
                 groupBy={(option) => option.inference?.exists ?? ''}
@@ -174,6 +175,13 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                     );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
+                    console.log(
+                        'renderOptionProps, option, state >>>>>>>>> ',
+                        renderOptionProps,
+                        option,
+                        state
+                    );
+
                     const { ptr, inference } = option;
 
                     // We do this logic here to pass the specific component (Stack with custom prop)
@@ -217,7 +225,7 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                         state.selected,
                     ] as ReactNode;
                 }}
-                renderTags={(tagValues, getTagProps, ownerState) => {
+                renderValue={(tagValues, getTagProps, ownerState) => {
                     return (
                         <SortableTags
                             validateOptions={!skimProjectionResponseEmpty}
