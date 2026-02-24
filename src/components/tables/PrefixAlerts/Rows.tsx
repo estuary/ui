@@ -9,7 +9,7 @@ import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
 import { UNDERSCORE_RE } from 'src/validation';
 
-function Row({ row }: RowProps) {
+function Row({ executeQuery, row }: RowProps) {
     return (
         <TableRow>
             <TableCell>{row.catalogPrefix}</TableCell>
@@ -24,16 +24,23 @@ function Row({ row }: RowProps) {
 
             <TableCell>{row.email}</TableCell>
 
-            <AlertEditButton prefix={row.catalogPrefix} />
+            <AlertEditButton
+                executeQuery={executeQuery}
+                prefix={row.catalogPrefix}
+            />
         </TableRow>
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ data, executeQuery }: RowsProps) {
     return (
         <>
             {data.map((row) => (
-                <Row key={`${row.catalogPrefix}-${row.email}`} row={row} />
+                <Row
+                    executeQuery={executeQuery}
+                    key={`${row.catalogPrefix}-${row.email}`}
+                    row={row}
+                />
             ))}
         </>
     );

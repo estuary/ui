@@ -1,29 +1,17 @@
-import type { AlertGenerateButtonProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { BaseButtonProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
-import { useEffect } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
-import useAlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
-import { useTenantStore } from 'src/stores/Tenant/Store';
 
-function AlertGenerateButton({
-    fetching,
-    executeQuery,
-}: AlertGenerateButtonProps) {
+function AlertGenerateButton({ executeQuery }: BaseButtonProps) {
     const intl = useIntl();
 
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const { open, setOpen } = useAlertSubscriptionDialog(selectedTenant);
-
-    useEffect(() => {
-        if (fetching) return;
-
-        executeQuery({ requestPolicy: 'network-only' });
-    }, [executeQuery, fetching, open]);
+    const [open, setOpen] = useState(false);
 
     return (
         <>
@@ -32,6 +20,7 @@ function AlertGenerateButton({
                 onClick={(event) => {
                     event.preventDefault();
 
+                    executeQuery({ requestPolicy: 'network-only' });
                     setOpen(true);
                 }}
             >
@@ -39,6 +28,7 @@ function AlertGenerateButton({
             </Button>
 
             <AlertSubscriptionDialog
+                executeQuery={executeQuery}
                 headerId="alerts.config.dialog.generate.header"
                 open={open}
                 setOpen={setOpen}

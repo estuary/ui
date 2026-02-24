@@ -1,16 +1,15 @@
+import type { EditButtonProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+
+import { useState } from 'react';
+
 import { Button, TableCell } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
-import useAlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
 
-interface Props {
-    prefix: string;
-}
-
-function AlertEditButton({ prefix }: Props) {
-    const { open, setOpen } = useAlertSubscriptionDialog(prefix);
+function AlertEditButton({ executeQuery, prefix }: EditButtonProps) {
+    const [open, setOpen] = useState(false);
 
     return (
         <TableCell>
@@ -26,6 +25,7 @@ function AlertEditButton({ prefix }: Props) {
             </Button>
 
             <AlertSubscriptionDialog
+                executeQuery={executeQuery}
                 headerId="alerts.config.dialog.update.header"
                 open={open}
                 setOpen={setOpen}

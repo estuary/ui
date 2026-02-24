@@ -10,21 +10,27 @@ import { useQuery } from 'urql';
 
 import { AlertSubscriptionQuery } from 'src/api/alerts';
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/PrefixAlerts/Rows';
 import { columns } from 'src/components/tables/PrefixAlerts/shared';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { TableStatuses } from 'src/types';
+import { formatNotificationSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
 function PrefixAlertTable() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const [{ fetching, data }, executeQuery] = useQuery({
+    const [{ data, error, fetching }, executeQuery] = useQuery({
         query: AlertSubscriptionQuery,
         variables: { prefix: selectedTenant },
         pause: !selectedTenant,
     });
+
+    const initializeSubscriptionState = useAlertSubscriptionsStore(
+        (state) => state.initializeState
+    );
 
     const [searchQuery, _setSearchQuery] = useState<string>('');
     const [tableState, setTableState] = useState<TableState>({
@@ -38,6 +44,24 @@ function PrefixAlertTable() {
     useUnmount(() => {
         displayLoadingState.current?.cancel();
     });
+
+    useEffect(() => {
+        void (async () => {
+            const existingSubscriptions = data
+                ? formatNotificationSubscriptionsByPrefix(
+                      data.alertSubscriptions
+                  )
+                : {};
+
+            if (!fetching) {
+                initializeSubscriptionState(
+                    selectedTenant,
+                    existingSubscriptions,
+                    error
+                );
+            }
+        })();
+    }, [data, error, fetching, initializeSubscriptionState, selectedTenant]);
 
     useEffect(() => {
         if (fetching) {
@@ -71,10 +95,7 @@ function PrefixAlertTable() {
                     my: 2,
                 }}
             >
-                <AlertGenerateButton
-                    executeQuery={executeQuery}
-                    fetching={fetching}
-                />
+                <AlertGenerateButton executeQuery={executeQuery} />
             </Stack>
 
             <TableContainer component={Box}>
@@ -95,7 +116,10 @@ function PrefixAlertTable() {
                         loading={loading}
                         rows={
                             data && data.alertSubscriptions.length > 0 ? (
-                                <Rows data={data.alertSubscriptions} />
+                                <Rows
+                                    data={data.alertSubscriptions}
+                                    executeQuery={executeQuery}
+                                />
                             ) : null
                         }
                     />

@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { AlertSubscriptionDialogProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import {
     Button,
@@ -22,21 +22,15 @@ import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveBu
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
-interface Props {
-    headerId: string;
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-    staticPrefix?: string;
-}
-
 const TITLE_ID = 'alert-subscription-dialog-title';
 
 function AlertSubscriptionDialog({
+    executeQuery,
     headerId,
     open,
     setOpen,
     staticPrefix,
-}: Props) {
+}: AlertSubscriptionDialogProps) {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -44,7 +38,11 @@ function AlertSubscriptionDialog({
         (state) => state.resetState
     );
 
-    const closeDialog = () => {
+    const closeDialog = (queryTrigger?: boolean) => {
+        if (queryTrigger) {
+            executeQuery({ requestPolicy: 'network-only' });
+        }
+
         setOpen(false);
         resetSubscriptionState();
     };
@@ -118,7 +116,7 @@ function AlertSubscriptionDialog({
                     {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
 
-                <SaveButton closeDialog={closeDialog} />
+                <SaveButton closeDialog={() => closeDialog(true)} />
             </DialogActions>
         </Dialog>
     );
