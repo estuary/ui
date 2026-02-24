@@ -258,6 +258,12 @@ export default function useValidateFieldSelection() {
                     meta.builtBindingIndex > -1 &&
                     meta.validatedBindingIndex > -1;
 
+                const validationAttempts =
+                    targetBindingContext.find(
+                        (context) => context.uuid === uuid
+                    )?.validationAttempts ??
+                    MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS;
+
                 trackValidationAttempt(uuid);
 
                 if (bindingsExists && !meta.disable) {
@@ -285,9 +291,7 @@ export default function useValidateFieldSelection() {
 
                 if (
                     meta.disable ||
-                    targetBindingContext.find(
-                        (context) => context.uuid === uuid
-                    )?.validationAttempts ===
+                    validationAttempts >=
                         MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
                 ) {
                     advanceHydrationStatus(
@@ -381,7 +385,7 @@ export default function useValidateFieldSelection() {
                     targetBindingContext.find(
                         (context) =>
                             context.uuid === uuid &&
-                            context.validationAttempts ===
+                            context.validationAttempts >=
                                 MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
                     )
                 );
