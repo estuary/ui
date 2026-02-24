@@ -9,6 +9,8 @@ import {
     specContainsDerivation,
 } from 'src/utils/misc-utils';
 
+// Allowing field selection validation to be retried a single time
+// in the event additional resources are not available initially.
 export const MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS = 1;
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
