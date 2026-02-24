@@ -5,6 +5,11 @@ import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 import Markdown from 'markdown-to-jsx';
 import { Link } from 'react-router-dom';
 
+import {
+    appendWithForwardSlash,
+    replaceWhitespacesWithUnderscores,
+} from 'src/utils/misc-utils';
+
 interface PrefixAutocompleteProps {
     leaves: string[];
     value: string;
@@ -97,14 +102,15 @@ export function PrefixAutocomplete({
             }
             inputValue={value}
             onInputChange={(_event, newInputValue, _reason) =>
-                onChange(newInputValue.replaceAll(' ', '_'))
+                onChange(replaceWhitespacesWithUnderscores(newInputValue))
             }
             onChange={(_event, newValue) => onChange(newValue ?? '')}
             onBlur={() => {
                 // append trailing slash if not present to adhere to prefix convention.
                 // might make sense as a configurable option if we want to use this for catalog_names in the future
-                if (value && !value.endsWith('/')) {
-                    onChange(`${value}/`);
+                const appendedVal = appendWithForwardSlash(value);
+                if (appendedVal && appendedVal !== value) {
+                    onChange(appendedVal);
                 }
                 onBlur?.();
             }}
