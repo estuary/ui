@@ -22,8 +22,8 @@ const prefixRoots = ['acmeCo/', 'globex/'];
 
 const prefixLeaves = [
     'acmeCo/anvils/metrics/collection-one',
-    'acmeCo/prod/materialization/snowflake/landing/wikijs/real-time-sync/materialize-snowflake',
-    'acmeCo/prod/materialization/snowflake/landing/acmeCo/9/real-time-sync/materialize-snowflake',
+    'acmeCo/prod/materialization/snowflake/landing/wikijs/real-time-sync',
+    'acmeCo/prod/materialization/snowflake/landing/acmeCo/9/real-time-sync',
 ];
 
 function DemoForm() {

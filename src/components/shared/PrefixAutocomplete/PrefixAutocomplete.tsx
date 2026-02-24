@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 
@@ -50,9 +50,6 @@ export function PrefixAutocomplete({
     errorMessage,
     helperText,
 }: PrefixAutocompleteProps) {
-    // MUI Autocomplete doesn't expose the filtered options list to onClose,
-    // so we stash it here to decide whether to keep the dropdown open after a selection.
-    const filteredOptionsRef = useRef<string[]>([]);
     const [isOpen, setIsOpen] = useState(false);
 
     const msg = errorMessage ?? helperText;
@@ -91,28 +88,16 @@ export function PrefixAutocomplete({
             onOpen={() => {
                 setIsOpen(true);
             }}
-            onClose={(_event, reason) => {
-                if (
-                    // Leave the dropdown open to progressively narrow options as the user types or makes a selection,
-                    // (e.g. the user selects acmeCo/ to narrow the options to acmeCo/finance/ and acmeCo/engineering/)
-                    reason === 'selectOption' &&
-                    filteredOptionsRef.current.length > 1
-                ) {
-                    return;
-                }
-                setIsOpen(false);
-            }}
-            filterOptions={(options) => {
-                const filtered = options.filter(
+            disableCloseOnSelect={true}
+            filterOptions={(options) =>
+                options.filter(
                     (option: string) =>
                         option.startsWith(value) && option !== value
-                );
-                filteredOptionsRef.current = filtered;
-                return filtered;
-            }}
+                )
+            }
             inputValue={value}
             onInputChange={(_event, newInputValue, _reason) =>
-                onChange(newInputValue)
+                onChange(newInputValue.replaceAll(' ', '_'))
             }
             onChange={(_event, newValue) => onChange(newValue ?? '')}
             onBlur={() => {
@@ -129,6 +114,7 @@ export function PrefixAutocomplete({
                     label={label}
                     required={required}
                     error={error}
+                    // single space string to make sure helper text is present and taking up minHeight defined below
                     helperText={displayMessage ?? ' '}
                     FormHelperTextProps={{
                         // reserved space for two lines of helper text

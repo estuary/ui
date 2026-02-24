@@ -1,10 +1,9 @@
-// ── RHFPrefixAutocomplete (react-hook-form wrapper) ─────────────────
-
 import type { FieldValues, Path, Validate } from 'react-hook-form';
 
 import { useMemo, useRef } from 'react';
 
 import { Controller, useFormContext } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 
 import { PrefixAutocomplete } from 'src/components/shared/PrefixAutocomplete';
 
@@ -33,6 +32,7 @@ export function RHFPrefixAutocomplete<
     onChangeValidate = {},
     onBlurValidate = {},
 }: RHFPrefixAutocompleteProps<TFieldValues, TName>) {
+    const intl = useIntl();
     const { control, trigger } = useFormContext<TFieldValues>();
     const hasBlurredRef = useRef(false);
 
@@ -58,7 +58,12 @@ export function RHFPrefixAutocomplete<
             name={name}
             control={control}
             rules={{
-                required: required ? `${label} is required` : false,
+                required: required
+                    ? intl.formatMessage(
+                          { id: 'prefixAutocomplete.required' },
+                          { label }
+                      )
+                    : false,
                 validate: allValidators,
             }}
             render={({ field, fieldState }) => (
