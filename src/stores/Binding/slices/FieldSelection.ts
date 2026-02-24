@@ -7,6 +7,8 @@ import type { NamedSet } from 'zustand/middleware';
 
 import produce from 'immer';
 
+import { logRocketEvent } from 'src/services/shared';
+import { CustomEvents } from 'src/services/types';
 import { MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS } from 'src/utils/entity-utils';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
@@ -197,7 +199,9 @@ export const getStoreWithFieldSelectionSettings = (
                             );
                         });
                 } else {
-                    // TODO: Track this error scenario.
+                    logRocketEvent(CustomEvents.FIELD_SELECTION, {
+                        hydrationAdvancementSkipped: true,
+                    });
                 }
             }),
             false,
