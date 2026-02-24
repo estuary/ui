@@ -479,7 +479,6 @@ export const Workflows: Record<string, string> = {
 
     // Projections
     'projection.dialog.add.header': `Alternate Name`,
-    'projection.dialog.rename.header': `Redact Field`,
     'projection.dialog.add.message': `Add a projection to rename a field in all associated materializations.  After adding a projection, backfill the materialization to ensure it is populated with historical data.`,
     'projection.error.input.invalidFieldName': `Field names cannot begin with a forward slash (/).`,
     'projection.error.alert.removalFailure': `Failed to update the server when removing field alias. Please try again.`,
@@ -496,6 +495,8 @@ export const Workflows: Record<string, string> = {
     'projection.tooltip.systemDefinedField': `The system-defined alias for this location.`,
     'projection.tooltip.cannotExist': `The location cannot exist. It may be outside of permitted array bounds, is a disallowed property, or has an impossible type.`,
     'projection.tooltip.locationRedacted': `This location is redacted using strategy: {strategy}.`,
+
+    'projection.dialog.redact.header': `Redact Field`,
 
     'schemaManagement.options.manual.description': `You fully control the schema. You're responsible for changes.`,
     'schemaManagement.options.manual.label': `Manually manage schemas`,

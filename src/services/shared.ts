@@ -68,8 +68,6 @@ export const logRocketEvent = (
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     LogRocket.track(event, eventProperties);
-
-    logRocketConsole(`Event Logging : ${event}`, eventProperties);
 };
 
 const GRAPHQL_NETWORK_ERRORS = {

@@ -1,6 +1,9 @@
 import type { Schema } from 'src/types';
 
-import { setSchemaProperties } from 'src/utils/schema-utils';
+import {
+    evaluateRedactionEligibility,
+    setSchemaProperties,
+} from 'src/utils/schema-utils';
 
 describe('setSchemaProperties', () => {
     let collectionSchema: Schema;
@@ -1204,6 +1207,191 @@ describe('setSchemaProperties', () => {
                         },
                     },
                 });
+            });
+        });
+    });
+});
+
+describe('evaluateRedactionEligibility', () => {
+    let expectedToBe = '';
+
+    describe('returns "prevent"', () => {
+        beforeEach(() => {
+            expectedToBe = 'prevent';
+        });
+
+        test('when "empty"', () => {
+            expect(evaluateRedactionEligibility(null)).toBe(expectedToBe);
+            expect(evaluateRedactionEligibility(undefined)).toBe(expectedToBe);
+            expect(evaluateRedactionEligibility('')).toBe(expectedToBe);
+        });
+
+        test('exactly "/_meta"', () => {
+            expect(evaluateRedactionEligibility('/_meta')).toBe(expectedToBe);
+        });
+
+        test('exactly "/_meta/uuid"', () => {
+            expect(evaluateRedactionEligibility('/_meta/uuid')).toBe(
+                expectedToBe
+            );
+        });
+    });
+
+    describe('returns "allowed"', () => {
+        beforeEach(() => {
+            expectedToBe = 'allowed';
+        });
+
+        describe('when pointer is within "/_meta/before"', () => {
+            test('is exactly "/_meta/before"', () => {
+                expect(evaluateRedactionEligibility('/_meta/before')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta/before" and has additional segments', () => {
+                expect(evaluateRedactionEligibility('/_meta/before/foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta/before" with deeply nested path', () => {
+                expect(
+                    evaluateRedactionEligibility('/_meta/before/foo/bar/baz')
+                ).toBe(expectedToBe);
+            });
+
+            test('starts with "/_meta/before" with escaped characters', () => {
+                expect(
+                    evaluateRedactionEligibility('/_meta/before/foo~1bar')
+                ).toBe(expectedToBe);
+            });
+        });
+
+        describe('when pointer is a normal field path', () => {
+            test('top-level field', () => {
+                expect(evaluateRedactionEligibility('/foo')).toBe(expectedToBe);
+            });
+
+            test('nested field', () => {
+                expect(evaluateRedactionEligibility('/foo/bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('deeply nested', () => {
+                expect(
+                    evaluateRedactionEligibility('/foo/bar/baz/qux/quux')
+                ).toBe(expectedToBe);
+            });
+
+            test('contains escaped characters', () => {
+                expect(evaluateRedactionEligibility('/foo~1bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('contains multiple escaped segments', () => {
+                expect(evaluateRedactionEligibility('/foo~1bar/baz~1qux')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+
+        describe('edge case pointers', () => {
+            test('no leading slash', () => {
+                expect(evaluateRedactionEligibility('foo')).toBe(expectedToBe);
+            });
+
+            test('just a slash', () => {
+                expect(evaluateRedactionEligibility('/')).toBe(expectedToBe);
+            });
+
+            test('has trailing slash', () => {
+                expect(evaluateRedactionEligibility('/foo/')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with multiple slashes', () => {
+                expect(evaluateRedactionEligibility('//foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('wrong case on "_meta"', () => {
+                // The function uses startsWith and includes which are case-sensitive
+                expect(evaluateRedactionEligibility('/_Meta')).toBe(
+                    expectedToBe
+                );
+                expect(evaluateRedactionEligibility('/_META')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('is "/_meta/beforee" (extra char, still starts with allowed prefix)', () => {
+                // This starts with "/_meta/before" so it's allowed
+                expect(evaluateRedactionEligibility('/_meta/beforee')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('contains spaces', () => {
+                expect(evaluateRedactionEligibility('/foo bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('contains special characters', () => {
+                expect(evaluateRedactionEligibility('/foo-bar_baz.qux')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+    });
+
+    describe('returns "warning"', () => {
+        beforeEach(() => {
+            expectedToBe = 'warning';
+        });
+
+        describe('when pointer starts with warning prefixes but is not prevented or allowed', () => {
+            test('starts with "/_meta" but is not an exact prevent match', () => {
+                expect(evaluateRedactionEligibility('/_meta/foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta" and has multiple segments', () => {
+                expect(evaluateRedactionEligibility('/_meta/foo/bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta/uuid" but has additional segments', () => {
+                expect(evaluateRedactionEligibility('/_meta/uuid/foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('is close to but not exactly a prevent match', () => {
+                expect(evaluateRedactionEligibility('/_meta/other')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta" with escaped characters', () => {
+                expect(evaluateRedactionEligibility('/_meta/foo~1bar')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+
+        describe('edge cases', () => {
+            test('starts with "/_meta/befor" (missing last char)', () => {
+                expect(evaluateRedactionEligibility('/_meta/befor')).toBe(
+                    expectedToBe
+                );
             });
         });
     });

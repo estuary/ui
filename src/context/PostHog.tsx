@@ -15,7 +15,6 @@ import { getPostHogSettings } from 'src/utils/env-utils';
     posthog.init(postHogSettings.publicToken, {
         api_host: postHogSettings.apiHost,
         defaults: '2025-11-30',
-        cookieless_mode: 'always', // we do not have a cookie banner
         capture_performance: false, // we can monitor performance with LR
         disable_conversations: true, // do not use
         disable_product_tours: true, // do not use
