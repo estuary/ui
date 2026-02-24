@@ -17,8 +17,6 @@ import type {
 
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import { evaluate_field_selection } from '@estuary/flow-web';
 import { differenceBy } from 'lodash';
 import { useIntl } from 'react-intl';
@@ -30,7 +28,10 @@ import {
 import { useEntityType } from 'src/context/EntityContext';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useBinding_currentBindingUUID } from 'src/stores/Binding/hooks';
+import {
+    useBinding_currentBindingUUID,
+    useBinding_fieldSelectionValidationContext,
+} from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_status } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -94,18 +95,7 @@ export default function useValidateFieldSelection() {
         (state) => state.initializeSelections
     );
     const resourceConfigs = useBindingStore((state) => state.resourceConfigs);
-    const targetBindingContext = useBindingStore(
-        useShallow((state) =>
-            Object.entries(state.selections)
-                .filter(
-                    ([_uuid, { status }]) => status === 'VALIDATION_REQUESTED'
-                )
-                .map(([uuid, { validationAttempts }]) => ({
-                    uuid,
-                    validationAttempts,
-                }))
-        )
-    );
+    const targetBindingContext = useBinding_fieldSelectionValidationContext();
     const setValidationFailure = useBindingStore(
         (state) => state.setValidationFailure
     );
