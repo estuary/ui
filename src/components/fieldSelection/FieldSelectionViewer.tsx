@@ -105,12 +105,9 @@ function FieldSelectionViewer({
                     });
 
                     enqueueSnackbar(
-                        intl.formatMessage(
-                            {
-                                id: 'fieldSelection.error.validationFailed',
-                            },
-                            { collection: collectionName }
-                        ),
+                        intl.formatMessage({
+                            id: 'fieldSelection.error.validationFailed',
+                        }),
                         { ...snackbarSettings, variant: 'error' }
                     );
 
