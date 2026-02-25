@@ -1,31 +1,29 @@
 import type { FieldValues, Path } from 'react-hook-form';
 import type { RHFBaseProps } from 'src/components/shared/RHFFields/types';
 
+import { TextField } from '@mui/material';
+
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete';
 import { useProgressiveValidation } from 'src/components/shared/RHFFields/useProgressiveValidation';
 
-interface RHFLeavesAutocompleteProps<
+interface RHFTextFieldProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
-> extends Omit<RHFBaseProps<TFieldValues, TName>, 'helperText'> {
-    leaves: string[];
-    helperText?: string;
-}
+> extends RHFBaseProps<TFieldValues, TName> {}
 
-export function RHFLeavesAutocomplete<
+export function RHFTextField<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
 >({
     name,
-    leaves,
     label,
     required = false,
+    disabled = false,
     helperText,
     partialRules = {},
     finalRules = {},
-}: RHFLeavesAutocompleteProps<TFieldValues, TName>) {
+}: RHFTextFieldProps<TFieldValues, TName>) {
     const { control, trigger } = useFormContext<TFieldValues>();
     const { rules, blurValidation, focusValidation } = useProgressiveValidation(
         {
@@ -39,24 +37,27 @@ export function RHFLeavesAutocomplete<
             name={name}
             control={control}
             rules={rules}
-            render={({ field, fieldState }) => (
-                <LeavesAutocomplete
-                    leaves={leaves}
+            render={({ field, fieldState: { error } }) => (
+                <TextField
                     value={field.value ?? ''}
-                    onChange={(value) => {
+                    onChange={(e) => {
                         focusValidation();
-                        field.onChange(value);
-                        trigger(name);
+                        field.onChange(e.target.value);
+                        void trigger(name);
                     }}
                     onBlur={() => {
                         field.onBlur();
                         blurValidation(() => trigger(name));
                     }}
+                    name={field.name}
+                    inputRef={field.ref}
                     label={label}
                     required={required}
-                    error={!!fieldState.error}
-                    errorMessage={fieldState.error?.message}
-                    helperText={helperText}
+                    disabled={disabled}
+                    fullWidth
+                    size="small"
+                    error={!!error}
+                    helperText={error?.message ?? helperText}
                 />
             )}
         />

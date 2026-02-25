@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { useState } from 'react';
 
-import { PrefixAutocomplete } from 'src/components/shared/PrefixAutocomplete';
+import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete';
 
 // ── Mock data ───────────────────────────────────────────────────────
 
@@ -14,21 +14,21 @@ const MOCK_LEAVES = [
 
 // ── Stateful wrapper ────────────────────────────────────────────────
 
-function PrefixAutocompleteControlled(
+function LeavesAutocompleteControlled(
     props: Omit<
-        React.ComponentProps<typeof PrefixAutocomplete>,
+        React.ComponentProps<typeof LeavesAutocomplete>,
         'value' | 'onChange'
     >
 ) {
     const [value, setValue] = useState('');
-    return <PrefixAutocomplete {...props} value={value} onChange={setValue} />;
+    return <LeavesAutocomplete {...props} value={value} onChange={setValue} />;
 }
 
 // ── Stories ──────────────────────────────────────────────────────────
 
-const meta: Meta<typeof PrefixAutocomplete> = {
-    title: 'Admin/StorageMappings/PrefixAutocomplete',
-    component: PrefixAutocomplete,
+const meta: Meta<typeof LeavesAutocomplete> = {
+    title: 'Admin/StorageMappings/LeavesAutocomplete',
+    component: LeavesAutocomplete,
     parameters: {
         layout: 'padded',
     },
@@ -36,11 +36,11 @@ const meta: Meta<typeof PrefixAutocomplete> = {
 
 export default meta;
 
-type Story = StoryObj<typeof PrefixAutocomplete>;
+type Story = StoryObj<typeof LeavesAutocomplete>;
 
 export const Default: Story = {
     render: () => (
-        <PrefixAutocompleteControlled
+        <LeavesAutocompleteControlled
             leaves={MOCK_LEAVES}
             label="Catalog Prefix"
             helperText='Use arrow keys and press "Enter" to select'

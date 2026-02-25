@@ -20,11 +20,11 @@ export function useCouldMatchRoot(roots: string[]) {
 
             return roots.length === 1
                 ? intl.formatMessage(
-                      { id: 'prefixAutocomplete.mustStartWith.single' },
+                      { id: 'leavesAutocomplete.mustStartWith.single' },
                       { root: roots[0] }
                   )
                 : intl.formatMessage(
-                      { id: 'prefixAutocomplete.mustStartWith.multiple' },
+                      { id: 'leavesAutocomplete.mustStartWith.multiple' },
                       {
                           roots: roots.map((root) => `\`${root}\``).join(', '),
                       }
