@@ -1,4 +1,4 @@
-import type { FieldValues, Path } from 'react-hook-form';
+import type { FieldValues, Path, PathValue } from 'react-hook-form';
 import type { RHFProgressiveValidationFieldProps } from 'src/components/shared/RHFFields/types';
 
 import { Controller, useFormContext } from 'react-hook-form';
@@ -27,10 +27,10 @@ export function RHFLeavesAutocomplete<
     finalRules,
 }: RHFLeavesAutocompleteProps<TFieldValues, TName>) {
     const { control } = useFormContext<TFieldValues>();
-    const { rules, restoreFinal, suppressFinal } = useProgressiveValidation(
-        name,
-        { partialRules, finalRules }
-    );
+    const { rules, onBlur, onChange } = useProgressiveValidation(name, {
+        partialRules,
+        finalRules,
+    });
 
     return (
         <Controller
@@ -42,12 +42,11 @@ export function RHFLeavesAutocomplete<
                     leaves={leaves}
                     value={field.value ?? ''}
                     onChange={(value) => {
-                        field.onChange(value);
-                        suppressFinal();
+                        onChange(value as PathValue<TFieldValues, TName>);
                     }}
                     onBlur={() => {
                         field.onBlur();
-                        restoreFinal();
+                        onBlur();
                     }}
                     label={label}
                     required={required}

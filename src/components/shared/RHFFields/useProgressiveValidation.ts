@@ -1,6 +1,7 @@
 import type {
     FieldPath,
     FieldValues,
+    PathValue,
     RegisterOptions,
     Validate,
 } from 'react-hook-form';
@@ -19,9 +20,13 @@ interface ProgressiveValidationReturn<
         'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
     >;
     /** Call on blur to enable final rules and trigger validation. */
-    restoreFinal: () => void;
-    /** Call on change to disable final rules and trigger validation. */
-    suppressFinal: () => void;
+    onBlur: () => void;
+    /**
+     * Call INSTEAD of field.onChange. Sets the value via setValue with
+     * shouldValidate: false so RHF never evaluates final declarative rules
+     * during change. Validation is then triggered with the correct rule set.
+     */
+    onChange: (value: PathValue<TFieldValues, TName>) => void;
 }
 
 export function useProgressiveValidation<
@@ -34,8 +39,8 @@ export function useProgressiveValidation<
         finalRules = {},
     }: ValidationRules<TFieldValues, TName> = {}
 ): ProgressiveValidationReturn<TFieldValues, TName> {
-    const { trigger } = useFormContext<TFieldValues>();
-    const [hasBlurred, setHasBlurred] = useState(false);
+    const { trigger, setValue } = useFormContext<TFieldValues>();
+    const [finalEnabled, setFinalEnabled] = useState(false);
     const shouldTriggerRef = useRef(false);
 
     const rules = useMemo(() => {
@@ -61,22 +66,25 @@ export function useProgressiveValidation<
         );
         const finalValidators = normalizeValidate(finalValidate, '_final');
 
-        const gatedFinalValidators = Object.fromEntries(
-            Object.entries(finalValidators).map(([key, fn]) => [
-                key,
-                (v: any, fv: TFieldValues) => (hasBlurred ? fn(v, fv) : true),
-            ])
+        // RHF's register() merges new options on top of existing _f via
+        // spread, so omitting a rule doesn't remove it — the old value
+        // persists from the previous registration. We must explicitly set
+        // each final-only key to undefined to overwrite stale values.
+        const nullifiedFinal = Object.fromEntries(
+            Object.keys(finalDeclarative)
+                .filter((key) => !(key in partialDeclarative))
+                .map((key) => [key, undefined])
         );
 
         return {
             ...partialDeclarative,
-            ...(hasBlurred ? finalDeclarative : {}),
+            ...(finalEnabled ? finalDeclarative : nullifiedFinal),
             validate: {
                 ...partialValidators,
-                ...gatedFinalValidators,
+                ...(finalEnabled ? finalValidators : {}),
             },
         };
-    }, [partialRules, finalRules, hasBlurred]);
+    }, [partialRules, finalRules, finalEnabled]);
 
     // Trigger validation after the rules memo has recomputed following
     // a hasBlurred change. This ensures RHF sees the correct rule set.
@@ -85,26 +93,44 @@ export function useProgressiveValidation<
             shouldTriggerRef.current = false;
             void trigger(name);
         }
-    }, [hasBlurred, trigger, name]);
+    }, [finalEnabled, trigger, name]);
 
-    const restoreFinal = useCallback(() => {
+    const onBlur = useCallback(() => {
         shouldTriggerRef.current = true;
-        setHasBlurred(true);
+        // setting finalEnabled here will trigger the useEffect above, which will
+        // check shouldTriggerRef and trigger validation with both partial and full rules
+        setFinalEnabled(true);
     }, []);
 
-    const suppressFinal = useCallback(() => {
-        if (!hasBlurred) {
-            // Already in partial-only mode — rules are correct, trigger immediately.
-            void trigger(name);
-            return;
-        }
-        shouldTriggerRef.current = true;
-        setHasBlurred(false);
-    }, [hasBlurred, trigger, name]);
+    const onChange = useCallback(
+        (value: PathValue<TFieldValues, TName>) => {
+            // Set the value WITHOUT triggering RHF's internal validation,
+            // as field.onChange would validate immediately using the currently
+            // registered rules, which include final declarative rules
+            // (required, minLength, etc.) after a blur. By using setValue
+            // with shouldValidate: false, we ensure those rules never fire on change.
+            setValue(name, value, {
+                shouldValidate: false,
+                shouldDirty: true,
+            });
+
+            if (!finalEnabled) {
+                // Already in partial-only mode — rules are correct, trigger immediately.
+                void trigger(name);
+                return;
+            }
+            // Switch to partial-only mode and defer trigger until rules recompute.
+            shouldTriggerRef.current = true;
+            // setting finalEnabled here will trigger the useEffect above, which will
+            // check shouldTriggerRef and trigger validation with only the partial rules
+            setFinalEnabled(false);
+        },
+        [name, setValue, trigger, finalEnabled]
+    );
 
     return {
         rules,
-        restoreFinal,
-        suppressFinal,
+        onBlur,
+        onChange,
     };
 }

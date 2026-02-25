@@ -1,4 +1,4 @@
-import type { FieldValues, Path } from 'react-hook-form';
+import type { FieldValues, Path, PathValue } from 'react-hook-form';
 import type { RHFProgressiveValidationFieldProps } from 'src/components/shared/RHFFields/types';
 
 import { TextField } from '@mui/material';
@@ -25,11 +25,10 @@ export function RHFTextField<
     finalRules,
 }: RHFTextFieldProps<TFieldValues, TName>) {
     const { control } = useFormContext<TFieldValues>();
-    const {
-        rules,
-        restoreFinal,
-        suppressFinal,
-    } = useProgressiveValidation(name, { partialRules, finalRules });
+    const { rules, onBlur, onChange } = useProgressiveValidation(name, {
+        partialRules,
+        finalRules,
+    });
 
     return (
         <Controller
@@ -40,12 +39,13 @@ export function RHFTextField<
                 <TextField
                     value={field.value ?? ''}
                     onChange={(e) => {
-                        field.onChange(e.target.value);
-                        suppressFinal();
+                        onChange(
+                            e.target.value as PathValue<TFieldValues, TName>
+                        );
                     }}
                     onBlur={() => {
                         field.onBlur();
-                        restoreFinal();
+                        onBlur();
                     }}
                     name={field.name}
                     inputRef={field.ref}
