@@ -1,9 +1,8 @@
+import type { FieldValues, Path, RegisterOptions } from 'react-hook-form';
 import type {
-    FieldValues,
-    Path,
-    RegisterOptions,
-} from 'react-hook-form';
-import type { SelectOption } from 'src/components/shared/RHFFields/types';
+    RHFFieldProps,
+    SelectOption,
+} from 'src/components/shared/RHFFields/types';
 
 import {
     FormControl,
@@ -18,13 +17,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 interface RHFSelectProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
-> {
-    name: TName;
-    label: string;
+> extends RHFFieldProps<TFieldValues, TName> {
     options: SelectOption[];
-    required?: boolean;
-    disabled?: boolean;
-    helperText?: React.ReactNode;
     rules?: Omit<
         RegisterOptions<TFieldValues, TName>,
         'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'

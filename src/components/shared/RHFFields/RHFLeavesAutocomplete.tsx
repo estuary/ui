@@ -1,5 +1,5 @@
 import type { FieldValues, Path } from 'react-hook-form';
-import type { RHFBaseProps } from 'src/components/shared/RHFFields/types';
+import type { RHFProgressiveValidationFieldProps } from 'src/components/shared/RHFFields/types';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -9,7 +9,7 @@ import { useProgressiveValidation } from 'src/components/shared/RHFFields/usePro
 interface RHFLeavesAutocompleteProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
-> extends RHFBaseProps<TFieldValues, TName> {
+> extends RHFProgressiveValidationFieldProps<TFieldValues, TName> {
     leaves: string[];
     helperText?: string;
 }

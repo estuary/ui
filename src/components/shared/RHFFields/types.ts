@@ -12,8 +12,8 @@ export interface SelectOption<T extends string = string> {
     label: string;
 }
 
-/** Base props shared by RHF form components */
-export interface RHFBaseProps<
+/** Base props shared by all RHF form components */
+export interface RHFFieldProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
 > {
@@ -27,6 +27,13 @@ export interface RHFBaseProps<
     disabled?: boolean;
     /** Helper text shown below the input */
     helperText?: ReactNode;
+}
+
+/** Props for fields that support progressive validation (partial on change, final on blur) */
+export interface RHFProgressiveValidationFieldProps<
+    TFieldValues extends FieldValues,
+    TName extends Path<TFieldValues> = Path<TFieldValues>,
+> extends RHFFieldProps<TFieldValues, TName> {
     /** Validation rules applied immediately on change. Must be a stable/memoized reference. */
     partialRules?: PartialRules<TFieldValues, TName>;
     /** Validation rules applied after the field has been blurred. Must be a stable/memoized reference. */

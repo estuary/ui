@@ -1,5 +1,5 @@
 import type { FieldValues, Path } from 'react-hook-form';
-import type { RHFBaseProps } from 'src/components/shared/RHFFields/types';
+import type { RHFProgressiveValidationFieldProps } from 'src/components/shared/RHFFields/types';
 
 import { TextField } from '@mui/material';
 
@@ -10,7 +10,7 @@ import { useProgressiveValidation } from 'src/components/shared/RHFFields/usePro
 interface RHFTextFieldProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
-> extends RHFBaseProps<TFieldValues, TName> {}
+> extends RHFProgressiveValidationFieldProps<TFieldValues, TName> {}
 
 export function RHFTextField<
     TFieldValues extends FieldValues,

@@ -27,7 +27,7 @@ function LeavesAutocompleteControlled(
 // ── Stories ──────────────────────────────────────────────────────────
 
 const meta: Meta<typeof LeavesAutocomplete> = {
-    title: 'Admin/StorageMappings/LeavesAutocomplete',
+    title: 'Shared/LeavesAutocomplete',
     component: LeavesAutocomplete,
     parameters: {
         layout: 'padded',

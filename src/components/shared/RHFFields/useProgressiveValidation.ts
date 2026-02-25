@@ -66,7 +66,10 @@ export function useProgressiveValidation<
             return v;
         };
 
-        const partialValidators = normalizeValidate(partialValidate, '_partial');
+        const partialValidators = normalizeValidate(
+            partialValidate,
+            '_partial'
+        );
         const finalValidators = normalizeValidate(finalValidate, '_final');
 
         const gatedFinalValidators = Object.fromEntries(
