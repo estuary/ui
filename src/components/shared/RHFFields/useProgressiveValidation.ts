@@ -4,12 +4,11 @@ import type {
     RegisterOptions,
     Validate,
 } from 'react-hook-form';
-import type {
-    FinalRules,
-    PartialRules,
-} from 'src/components/shared/RHFFields/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { ValidationRules } from './types';
+import { useFormContext } from 'react-hook-form';
 
 interface ProgressiveValidationReturn<
     TFieldValues extends FieldValues,
@@ -19,35 +18,25 @@ interface ProgressiveValidationReturn<
         RegisterOptions<TFieldValues, TName>,
         'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
     >;
-    /**
-     * Marks the field as blurred, enabling final declarative rules.
-     *
-     * @param onRulesResolved Called after the re-render that includes
-     * final declarative rules in the rules object. Pass `() => trigger(name)`
-     * so RHF validates against the complete rule set, not the stale one.
-     */
-    blurValidation: (onRulesResolved?: () => void) => void;
-    focusValidation: () => void;
+    /** Call on blur to enable final rules and trigger validation. */
+    restoreFinal: () => void;
+    /** Call on change to disable final rules and trigger validation. */
+    suppressFinal: () => void;
 }
-/**
- * Splits validation into change-time and blur-time phases.
- * Blur validators are gated so they only run after the field
- * has been blurred, then suppressed again on field change.
- */
+
 export function useProgressiveValidation<
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({
-    partialRules = {},
-    finalRules = {},
-}: {
-    /** Must be a stable/memoized reference — inline objects will break memoization. */
-    partialRules?: PartialRules<TFieldValues, TName>;
-    /** Must be a stable/memoized reference — inline objects will break memoization. */
-    finalRules?: FinalRules<TFieldValues, TName>;
-}): ProgressiveValidationReturn<TFieldValues, TName> {
+>(
+    name: TName,
+    {
+        partialRules = {},
+        finalRules = {},
+    }: ValidationRules<TFieldValues, TName> = {}
+): ProgressiveValidationReturn<TFieldValues, TName> {
+    const { trigger } = useFormContext<TFieldValues>();
     const [hasBlurred, setHasBlurred] = useState(false);
-    const onRulesResolvedRef = useRef<(() => void) | null>(null);
+    const shouldTriggerRef = useRef(false);
 
     const rules = useMemo(() => {
         const { validate: partialValidate, ...partialDeclarative } =
@@ -89,27 +78,33 @@ export function useProgressiveValidation<
         };
     }, [partialRules, finalRules, hasBlurred]);
 
-    // Declarative rules (minLength, required, etc.) are spread into the
-    // rules object during useMemo, so they need a full re-render before
-    // RHF sees them. This effect fires the onRulesResolved callback once
-    // hasBlurred flips and the memo has recomputed with final rules included.
+    // Trigger validation after the rules memo has recomputed following
+    // a hasBlurred change. This ensures RHF sees the correct rule set.
     useEffect(() => {
-        if (onRulesResolvedRef.current) {
-            const cb = onRulesResolvedRef.current;
-            // ensure we don't call this again until the next blur triggers it
-            onRulesResolvedRef.current = null;
-            cb();
+        if (shouldTriggerRef.current) {
+            shouldTriggerRef.current = false;
+            void trigger(name);
         }
-    }, [hasBlurred]);
+    }, [hasBlurred, trigger, name]);
 
-    const blurValidation = useCallback((onRulesResolved?: () => void) => {
-        onRulesResolvedRef.current = onRulesResolved ?? null;
+    const restoreFinal = useCallback(() => {
+        shouldTriggerRef.current = true;
         setHasBlurred(true);
     }, []);
 
-    const focusValidation = useCallback(() => {
+    const suppressFinal = useCallback(() => {
+        if (!hasBlurred) {
+            // Already in partial-only mode — rules are correct, trigger immediately.
+            void trigger(name);
+            return;
+        }
+        shouldTriggerRef.current = true;
         setHasBlurred(false);
-    }, []);
+    }, [hasBlurred, trigger, name]);
 
-    return { rules, blurValidation, focusValidation };
+    return {
+        rules,
+        restoreFinal,
+        suppressFinal,
+    };
 }

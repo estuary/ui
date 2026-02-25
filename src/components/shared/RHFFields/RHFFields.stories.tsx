@@ -46,8 +46,8 @@ function DemoForm() {
 
     const prefixRules = useMemo(
         () => ({
-            partial: { validate: couldMatchRoot },
-            final: {
+            partialRules: { validate: couldMatchRoot },
+            finalRules: {
                 validate: {
                     disallowedValue: (value: any) =>
                         value === 'acmeCo/'
@@ -61,7 +61,7 @@ function DemoForm() {
 
     const displayNameRules = useMemo(
         () => ({
-            partial: {
+            partialRules: {
                 pattern: {
                     value: /^[a-zA-Z]*$/,
                     message: 'only letters are allowed',
@@ -73,7 +73,7 @@ function DemoForm() {
                 validate: (value: any) =>
                     value === 'admin' ? 'This value is reserved' : true,
             },
-            final: {
+            finalRules: {
                 required: 'Display Name is required' as const,
                 minLength: {
                     value: 3,
@@ -104,8 +104,7 @@ function DemoForm() {
                     label="Catalog Prefix"
                     required
                     helperText="Select a catalog prefix"
-                    partialRules={prefixRules.partial}
-                    finalRules={prefixRules.final}
+                    {...prefixRules}
                 />
 
                 <RHFTextField<DemoFormValues>
@@ -113,8 +112,7 @@ function DemoForm() {
                     label="Display Name"
                     required
                     helperText="Enter a display name"
-                    partialRules={displayNameRules.partial}
-                    finalRules={displayNameRules.final}
+                    {...displayNameRules}
                 />
 
                 <RHFSelect<DemoFormValues>

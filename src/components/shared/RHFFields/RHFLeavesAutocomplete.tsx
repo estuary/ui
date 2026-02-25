@@ -23,15 +23,13 @@ export function RHFLeavesAutocomplete<
     label,
     required = false,
     helperText,
-    partialRules = {},
-    finalRules = {},
+    partialRules,
+    finalRules,
 }: RHFLeavesAutocompleteProps<TFieldValues, TName>) {
-    const { control, trigger } = useFormContext<TFieldValues>();
-    const { rules, blurValidation, focusValidation } = useProgressiveValidation(
-        {
-            partialRules,
-            finalRules,
-        }
+    const { control } = useFormContext<TFieldValues>();
+    const { rules, restoreFinal, suppressFinal } = useProgressiveValidation(
+        name,
+        { partialRules, finalRules }
     );
 
     return (
@@ -44,13 +42,12 @@ export function RHFLeavesAutocomplete<
                     leaves={leaves}
                     value={field.value ?? ''}
                     onChange={(value) => {
-                        focusValidation();
                         field.onChange(value);
-                        void trigger(name);
+                        suppressFinal();
                     }}
                     onBlur={() => {
                         field.onBlur();
-                        blurValidation(() => trigger(name));
+                        restoreFinal();
                     }}
                     label={label}
                     required={required}

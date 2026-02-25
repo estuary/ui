@@ -28,17 +28,30 @@ export interface RHFFieldProps<
     /** Helper text shown below the input */
     helperText?: ReactNode;
 }
+/**
+ * Splits validation into change-time and blur-time phases.
+ * Blur validators are gated so they only run after the field
+ * has been blurred, then suppressed again on field change.
+ *
+ * Triggers validation internally after the rules have updated,
+ * so consumers don't need to call `trigger` themselves.
+ */
+export interface ValidationRules<
+    TFieldValues extends FieldValues,
+    TName extends FieldPath<TFieldValues>,
+> {
+    /** Rules applied immediately on change. Must be a stable/memoized reference. */
+    partialRules?: PartialRules<TFieldValues, TName>;
+    /** Rules applied after the field has been blurred. Must be a stable/memoized reference. */
+    finalRules?: FinalRules<TFieldValues, TName>;
+}
 
 /** Props for fields that support progressive validation (partial on change, final on blur) */
 export interface RHFProgressiveValidationFieldProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
-> extends RHFFieldProps<TFieldValues, TName> {
-    /** Validation rules applied immediately on change. Must be a stable/memoized reference. */
-    partialRules?: PartialRules<TFieldValues, TName>;
-    /** Validation rules applied after the field has been blurred. Must be a stable/memoized reference. */
-    finalRules?: FinalRules<TFieldValues, TName>;
-}
+> extends RHFFieldProps<TFieldValues, TName>,
+        ValidationRules<TFieldValues, TName> {}
 
 type BaseRules<
     TFieldValues extends FieldValues,

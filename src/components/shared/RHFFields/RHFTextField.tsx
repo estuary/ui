@@ -21,16 +21,15 @@ export function RHFTextField<
     required = false,
     disabled = false,
     helperText,
-    partialRules = {},
-    finalRules = {},
+    partialRules,
+    finalRules,
 }: RHFTextFieldProps<TFieldValues, TName>) {
-    const { control, trigger } = useFormContext<TFieldValues>();
-    const { rules, blurValidation, focusValidation } = useProgressiveValidation(
-        {
-            partialRules,
-            finalRules,
-        }
-    );
+    const { control } = useFormContext<TFieldValues>();
+    const {
+        rules,
+        restoreFinal,
+        suppressFinal,
+    } = useProgressiveValidation(name, { partialRules, finalRules });
 
     return (
         <Controller
@@ -41,13 +40,12 @@ export function RHFTextField<
                 <TextField
                     value={field.value ?? ''}
                     onChange={(e) => {
-                        focusValidation();
                         field.onChange(e.target.value);
-                        void trigger(name);
+                        suppressFinal();
                     }}
                     onBlur={() => {
                         field.onBlur();
-                        blurValidation(() => trigger(name));
+                        restoreFinal();
                     }}
                     name={field.name}
                     inputRef={field.ref}
