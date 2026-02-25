@@ -46,7 +46,7 @@ export function RHFLeavesAutocomplete<
                     onChange={(value) => {
                         focusValidation();
                         field.onChange(value);
-                        trigger(name);
+                        void trigger(name);
                     }}
                     onBlur={() => {
                         field.onBlur();

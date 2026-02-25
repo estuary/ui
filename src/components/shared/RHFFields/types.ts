@@ -27,9 +27,9 @@ export interface RHFBaseProps<
     disabled?: boolean;
     /** Helper text shown below the input */
     helperText?: ReactNode;
-    /** Validation rules applied immediately on change */
+    /** Validation rules applied immediately on change. Must be a stable/memoized reference. */
     partialRules?: PartialRules<TFieldValues, TName>;
-    /** Validation rules applied after the field has been blurred */
+    /** Validation rules applied after the field has been blurred. Must be a stable/memoized reference. */
     finalRules?: FinalRules<TFieldValues, TName>;
 }
 

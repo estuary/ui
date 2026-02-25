@@ -41,7 +41,9 @@ export function useProgressiveValidation<
     partialRules = {},
     finalRules = {},
 }: {
+    /** Must be a stable/memoized reference — inline objects will break memoization. */
     partialRules?: PartialRules<TFieldValues, TName>;
+    /** Must be a stable/memoized reference — inline objects will break memoization. */
     finalRules?: FinalRules<TFieldValues, TName>;
 }): ProgressiveValidationReturn<TFieldValues, TName> {
     const [hasBlurred, setHasBlurred] = useState(false);

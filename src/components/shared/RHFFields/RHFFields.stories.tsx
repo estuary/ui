@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { useMemo } from 'react';
+
 import { Button, Stack, Typography } from '@mui/material';
 
 import { FormProvider, useForm } from 'react-hook-form';
@@ -42,6 +44,46 @@ function DemoForm() {
 
     const couldMatchRoot = useCouldMatchRoot(prefixRoots);
 
+    const prefixRules = useMemo(
+        () => ({
+            partial: { validate: couldMatchRoot },
+            final: {
+                validate: {
+                    disallowedValue: (value: any) =>
+                        value === 'acmeCo/'
+                            ? 'Choose another prefix (this is validated only on blur, in case the user is still typing a more specific prefix)'
+                            : true,
+                },
+            },
+        }),
+        [couldMatchRoot]
+    );
+
+    const displayNameRules = useMemo(
+        () => ({
+            partial: {
+                pattern: {
+                    value: /^[a-zA-Z]*$/,
+                    message: 'only letters are allowed',
+                },
+                maxLength: {
+                    value: 6,
+                    message: 'must be no more than 6 chars',
+                },
+                validate: (value: any) =>
+                    value === 'admin' ? 'This value is reserved' : true,
+            },
+            final: {
+                required: 'Display Name is required' as const,
+                minLength: {
+                    value: 3,
+                    message: 'Must be at least 3 characters',
+                },
+            },
+        }),
+        []
+    );
+
     return (
         <FormProvider {...methods}>
             <Stack
@@ -62,15 +104,8 @@ function DemoForm() {
                     label="Catalog Prefix"
                     required
                     helperText="Select a catalog prefix"
-                    partialRules={{ validate: couldMatchRoot }}
-                    finalRules={{
-                        validate: {
-                            disallowedValue: (value) =>
-                                value === 'acmeCo/'
-                                    ? 'Choose another prefix (this is validated only on blur, in case the user is still typing a more specific prefix)'
-                                    : true,
-                        },
-                    }}
+                    partialRules={prefixRules.partial}
+                    finalRules={prefixRules.final}
                 />
 
                 <RHFTextField<DemoFormValues>
@@ -78,25 +113,8 @@ function DemoForm() {
                     label="Display Name"
                     required
                     helperText="Enter a display name"
-                    partialRules={{
-                        pattern: {
-                            value: /^[a-zA-Z]*$/,
-                            message: 'only letters are allowed',
-                        },
-                        maxLength: {
-                            value: 6,
-                            message: 'must be no more than 6 chars',
-                        },
-                        validate: (value) =>
-                            value === 'admin' ? 'This value is reserved' : true,
-                    }}
-                    finalRules={{
-                        required: 'Display Name is required',
-                        minLength: {
-                            value: 3,
-                            message: 'Must be at least 3 characters',
-                        },
-                    }}
+                    partialRules={displayNameRules.partial}
+                    finalRules={displayNameRules.final}
                 />
 
                 <RHFSelect<DemoFormValues>
