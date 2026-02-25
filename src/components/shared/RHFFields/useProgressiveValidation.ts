@@ -88,6 +88,7 @@ export function useProgressiveValidation<
     useEffect(() => {
         if (onRulesResolvedRef.current) {
             const cb = onRulesResolvedRef.current;
+            // ensure we don't call this again until the next blur triggers it
             onRulesResolvedRef.current = null;
             cb();
         }

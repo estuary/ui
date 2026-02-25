@@ -20,9 +20,7 @@ interface RHFSelectProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
 > extends RHFBaseProps<TFieldValues, TName> {
-    /** Available options for the select */
     options: SelectOption[];
-    /** Called when the user selects a value (not on programmatic changes) */
     onUserSelect?: (value: string) => void;
 }
 
