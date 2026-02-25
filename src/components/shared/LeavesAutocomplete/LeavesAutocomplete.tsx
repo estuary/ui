@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react';
 
-import { Autocomplete, Box, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Link, TextField, Typography } from '@mui/material';
 
 import Markdown from 'markdown-to-jsx';
-import { Link } from 'react-router-dom';
 
 import {
     appendWithForwardSlash,
@@ -38,7 +37,7 @@ const markdownOptions = {
                 href,
                 ...props
             }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-                <Link to={href ?? ''} {...props} />
+                <Link href={href ?? ''} {...props} />
             ),
         },
     },
