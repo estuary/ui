@@ -9,7 +9,7 @@ import { useProgressiveValidation } from 'src/components/shared/RHFFields/usePro
 interface RHFLeavesAutocompleteProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
-> extends Omit<RHFBaseProps<TFieldValues, TName>, 'helperText'> {
+> extends RHFBaseProps<TFieldValues, TName> {
     leaves: string[];
     helperText?: string;
 }

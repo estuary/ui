@@ -54,17 +54,20 @@ export function useProgressiveValidation<
             partialRules;
         const { validate: finalValidate, ...finalDeclarative } = finalRules;
 
-        // RHF validate can be a single fn or a record — normalize to record so we can merge
+        // RHF validate can be a single fn or a record — normalize to record so we can merge.
+        // Use distinct prefixes so a single-function partial and single-function final
+        // don't collide on the same key.
         const normalizeValidate = (
-            v: typeof partialValidate
+            v: typeof partialValidate,
+            prefix: string
         ): Record<string, Validate<any, TFieldValues>> => {
             if (!v) return {};
-            if (typeof v === 'function') return { _: v };
+            if (typeof v === 'function') return { [prefix]: v };
             return v;
         };
 
-        const partialValidators = normalizeValidate(partialValidate);
-        const finalValidators = normalizeValidate(finalValidate);
+        const partialValidators = normalizeValidate(partialValidate, '_partial');
+        const finalValidators = normalizeValidate(finalValidate, '_final');
 
         const gatedFinalValidators = Object.fromEntries(
             Object.entries(finalValidators).map(([key, fn]) => [
