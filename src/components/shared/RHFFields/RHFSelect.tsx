@@ -1,4 +1,4 @@
-import type { FieldValues, Path, PathValue } from 'react-hook-form';
+import type { FieldValues, Path } from 'react-hook-form';
 import type {
     RHFBaseProps,
     SelectOption,
@@ -22,16 +22,6 @@ interface RHFSelectProps<
 > extends RHFBaseProps<TFieldValues, TName> {
     /** Available options for the select */
     options: SelectOption[];
-    /**
-     * Transform the form value before displaying in the Select.
-     * Useful when form stores arrays but Select expects single value.
-     */
-    valueTransform?: (value: PathValue<TFieldValues, TName>) => string;
-    /**
-     * Transform the selected value before calling onChange.
-     * Useful when form stores arrays but Select provides single value.
-     */
-    onChangeTransform?: (value: string) => PathValue<TFieldValues, TName>;
     /** Called when the user selects a value (not on programmatic changes) */
     onUserSelect?: (value: string) => void;
 }
@@ -52,8 +42,6 @@ export function RHFSelect<
     helperText,
     partialRules = {},
     finalRules = {},
-    valueTransform,
-    onChangeTransform,
     onUserSelect,
 }: RHFSelectProps<TFieldValues, TName>) {
     const { control, trigger } = useFormContext<TFieldValues>();
@@ -69,59 +57,43 @@ export function RHFSelect<
             name={name}
             control={control}
             rules={rules}
-            render={({ field, fieldState: { error } }) => {
-                const displayValue = valueTransform
-                    ? valueTransform(field.value)
-                    : (field.value ?? '');
-
-                const handleChange = (value: string) => {
-                    const newValue = onChangeTransform
-                        ? onChangeTransform(value)
-                        : value;
-                    field.onChange(newValue);
-                    onUserSelect?.(value);
-                };
-
-                return (
-                    <FormControl
-                        fullWidth
-                        size="small"
-                        required={required}
-                        disabled={disabled}
-                        error={!!error}
+            render={({ field, fieldState: { error } }) => (
+                <FormControl
+                    fullWidth
+                    size="small"
+                    required={required}
+                    disabled={disabled}
+                    error={!!error}
+                >
+                    <InputLabel>{label}</InputLabel>
+                    <Select
+                        value={field.value ?? ''}
+                        onChange={(e) => {
+                            focusValidation();
+                            field.onChange(e.target.value);
+                            onUserSelect?.(e.target.value);
+                        }}
+                        onBlur={() => {
+                            field.onBlur();
+                            blurValidation(() => trigger(name));
+                        }}
+                        name={field.name}
+                        ref={field.ref}
+                        label={label}
                     >
-                        <InputLabel>{label}</InputLabel>
-                        <Select
-                            value={displayValue}
-                            onChange={(e) => {
-                                focusValidation();
-                                handleChange(e.target.value);
-                            }}
-                            onBlur={() => {
-                                field.onBlur();
-                                blurValidation(() => trigger(name));
-                            }}
-                            name={field.name}
-                            ref={field.ref}
-                            label={label}
-                        >
-                            {options.map((option) => (
-                                <MenuItem
-                                    key={option.value}
-                                    value={option.value}
-                                >
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {error || helperText ? (
-                            <FormHelperText>
-                                {error?.message ?? helperText}
-                            </FormHelperText>
-                        ) : null}
-                    </FormControl>
-                );
-            }}
+                        {options.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    {error || helperText ? (
+                        <FormHelperText>
+                            {error?.message ?? helperText}
+                        </FormHelperText>
+                    ) : null}
+                </FormControl>
+            )}
         />
     );
 }
