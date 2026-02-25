@@ -32,6 +32,7 @@ const prefixLeaves = [
 
 function DemoForm() {
     const methods = useForm<DemoFormValues>({
+        mode: 'onChange',
         defaultValues: {
             prefix: '',
             displayName: '',
@@ -54,6 +55,23 @@ function DemoForm() {
                 }}
             >
                 <Typography variant="h6">RHF Fields Demo</Typography>
+
+                <RHFLeavesAutocomplete<DemoFormValues>
+                    name="prefix"
+                    leaves={prefixLeaves}
+                    label="Catalog Prefix"
+                    required
+                    helperText="Select a catalog prefix"
+                    partialRules={{ validate: couldMatchRoot }}
+                    finalRules={{
+                        validate: {
+                            disallowedValue: (value) =>
+                                value === 'acmeCo/'
+                                    ? 'Choose another prefix (this is validated only on blur, in case the user is still typing a more specific prefix)'
+                                    : true,
+                        },
+                    }}
+                />
 
                 <RHFTextField<DemoFormValues>
                     name="displayName"
@@ -86,28 +104,22 @@ function DemoForm() {
                     label="Region"
                     required
                     helperText="Select a deployment region"
+                    rules={{
+                        required: 'region is required',
+                        validate: (value) => {
+                            if (value == 'us-east-1')
+                                return 'Pick a different one';
+                            return true;
+                        },
+                    }}
                     options={[
-                        { label: 'US East', value: 'us-east-1' },
+                        {
+                            label: 'US East (not this one)',
+                            value: 'us-east-1',
+                        },
                         { label: 'US West', value: 'us-west-2' },
                         { label: 'EU West', value: 'eu-west-1' },
                     ]}
-                />
-
-                <RHFLeavesAutocomplete<DemoFormValues>
-                    name="prefix"
-                    leaves={prefixLeaves}
-                    label="Catalog Prefix"
-                    required
-                    helperText="Select a catalog prefix"
-                    partialRules={{ validate: couldMatchRoot }}
-                    finalRules={{
-                        validate: {
-                            disallowedValue: (value) =>
-                                value === 'acmeCo/'
-                                    ? 'Choose another prefix (this is validated only on blur, in case the user is still typing a more specific prefix)'
-                                    : true,
-                        },
-                    }}
                 />
 
                 <Button type="submit" variant="contained" size="small">

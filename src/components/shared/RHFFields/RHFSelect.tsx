@@ -1,8 +1,9 @@
-import type { FieldValues, Path } from 'react-hook-form';
 import type {
-    RHFBaseProps,
-    SelectOption,
-} from 'src/components/shared/RHFFields/types';
+    FieldValues,
+    Path,
+    RegisterOptions,
+} from 'react-hook-form';
+import type { SelectOption } from 'src/components/shared/RHFFields/types';
 
 import {
     FormControl,
@@ -14,13 +15,20 @@ import {
 
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { useProgressiveValidation } from 'src/components/shared/RHFFields/useProgressiveValidation';
-
 interface RHFSelectProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
-> extends RHFBaseProps<TFieldValues, TName> {
+> {
+    name: TName;
+    label: string;
     options: SelectOption[];
+    required?: boolean;
+    disabled?: boolean;
+    helperText?: React.ReactNode;
+    rules?: Omit<
+        RegisterOptions<TFieldValues, TName>,
+        'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
+    >;
     onUserSelect?: (value: string) => void;
 }
 
@@ -38,17 +46,10 @@ export function RHFSelect<
     required = false,
     disabled = false,
     helperText,
-    partialRules = {},
-    finalRules = {},
+    rules,
     onUserSelect,
 }: RHFSelectProps<TFieldValues, TName>) {
-    const { control, trigger } = useFormContext<TFieldValues>();
-    const { rules, blurValidation, focusValidation } = useProgressiveValidation(
-        {
-            partialRules,
-            finalRules,
-        }
-    );
+    const { control } = useFormContext<TFieldValues>();
 
     return (
         <Controller
@@ -67,14 +68,10 @@ export function RHFSelect<
                     <Select
                         value={field.value ?? ''}
                         onChange={(e) => {
-                            focusValidation();
                             field.onChange(e.target.value);
                             onUserSelect?.(e.target.value);
                         }}
-                        onBlur={() => {
-                            field.onBlur();
-                            blurValidation(() => trigger(name));
-                        }}
+                        onBlur={field.onBlur}
                         name={field.name}
                         ref={field.ref}
                         label={label}
