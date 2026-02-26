@@ -37,8 +37,8 @@ export interface RHFFieldProps<
  * so consumers don't need to call `trigger` themselves.
  */
 export interface ValidationRules<
-    TFieldValues extends FieldValues,
-    TName extends FieldPath<TFieldValues>,
+    TFieldValues extends FieldValues = FieldValues,
+    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {
     /** Rules applied immediately on change. Must be a stable/memoized reference. */
     partialRules?: PartialRules<TFieldValues, TName>;
@@ -62,13 +62,13 @@ type BaseRules<
 >;
 
 export type PartialRules<
-    TFieldValues extends FieldValues,
-    TName extends FieldPath<TFieldValues>,
+    TFieldValues extends FieldValues = FieldValues,
+    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = Pick<BaseRules<TFieldValues, TName>, 'maxLength' | 'pattern' | 'validate'>;
 
 export type FinalRules<
-    TFieldValues extends FieldValues,
-    TName extends FieldPath<TFieldValues>,
+    TFieldValues extends FieldValues = FieldValues,
+    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = Pick<
     BaseRules<TFieldValues, TName>,
     'required' | 'minLength' | 'pattern' | 'validate'
