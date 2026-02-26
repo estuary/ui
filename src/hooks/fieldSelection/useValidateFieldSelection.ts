@@ -19,7 +19,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import { evaluate_field_selection } from '@estuary/flow-web';
 import { differenceBy } from 'lodash';
-import { useIntl } from 'react-intl';
 
 import {
     useEditorStore_liveBuiltSpec,
@@ -84,7 +83,6 @@ const evaluateFieldSelection = async (input: FieldSelectionInput_Skim) => {
 };
 
 export default function useValidateFieldSelection() {
-    const intl = useIntl();
     const entityType = useEntityType();
 
     const currentBindingUUID = useBinding_currentBindingUUID();
@@ -429,7 +427,6 @@ export default function useValidateFieldSelection() {
         failureDetected,
         fieldsRecommended,
         initializeSelections,
-        intl,
         resourceConfigs,
         setValidationFailure,
         targetBindingContext,
