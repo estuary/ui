@@ -40,7 +40,10 @@ export function useProgressiveValidation<
     }: ValidationRules<TFieldValues, TName> = {}
 ): ProgressiveValidationReturn<TFieldValues, TName> {
     const { trigger, setValue } = useFormContext<TFieldValues>();
-    const [finalEnabled, setFinalEnabled] = useState(false);
+    // init finalEnabled to true to ensure all validation rules (partial+final)
+    // are registered when the form renders and formState.isValid is correct
+    // (i.e. not valid, so the submit button is disabled, etc)
+    const [finalEnabled, setFinalEnabled] = useState(true);
     const shouldTriggerRef = useRef(false);
 
     const rules = useMemo(() => {

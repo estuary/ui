@@ -110,7 +110,7 @@ function DemoForm() {
                     {...prefixRules}
                 />
 
-                {/* <RHFTextField<DemoFormValues>
+                <RHFTextField<DemoFormValues>
                     name="displayName"
                     label="Display Name"
                     required
@@ -139,7 +139,7 @@ function DemoForm() {
                         { label: 'US West', value: 'us-west-2' },
                         { label: 'EU West', value: 'eu-west-1' },
                     ]}
-                /> */}
+                />
 
                 <Button
                     type="submit"
