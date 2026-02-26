@@ -10,7 +10,9 @@ import { useProgressiveValidation } from 'src/components/shared/RHFFields/usePro
 interface RHFTextFieldProps<
     TFieldValues extends FieldValues,
     TName extends Path<TFieldValues> = Path<TFieldValues>,
-> extends RHFProgressiveValidationFieldProps<TFieldValues, TName> {}
+> extends RHFProgressiveValidationFieldProps<TFieldValues, TName> {
+    onBlurTransform?: (value: string) => string;
+}
 
 export function RHFTextField<
     TFieldValues extends FieldValues,
@@ -22,6 +24,7 @@ export function RHFTextField<
     disabled = false,
     helperText,
     progressiveRules,
+    onBlurTransform,
 }: RHFTextFieldProps<TFieldValues, TName>) {
     const { control } = useFormContext<TFieldValues>();
     const { rules, onBlur, onChange } = useProgressiveValidation(
@@ -43,6 +46,12 @@ export function RHFTextField<
                         );
                     }}
                     onBlur={() => {
+                        if (onBlurTransform) {
+                            const transformed = onBlurTransform(
+                                field.value ?? ''
+                            );
+                            field.onChange(transformed);
+                        }
                         field.onBlur();
                         onBlur();
                     }}

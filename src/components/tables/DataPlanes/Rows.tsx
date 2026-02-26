@@ -1,4 +1,5 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type {
     RowProps,
     RowsProps,
@@ -46,7 +47,7 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
             <TableCell>{formatDataPlaneName(dataPlaneName)}</TableCell>
             <TableCell>
                 {getRegionDisplayName(
-                    dataPlaneName.provider,
+                    dataPlaneName.provider as CloudProvider,
                     dataPlaneName.region
                 )}
             </TableCell>
