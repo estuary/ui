@@ -110,10 +110,13 @@ function useDraftSpecEditor(
                     return Promise.reject();
                 }
 
-                upsertCollection(catalogName, {
-                    spec: updatedSpec,
-                    belongsToDraft: true,
-                });
+                // Make sure the latest is in the collections dictionary
+                if (specType === 'collection') {
+                    upsertCollection(catalogName, {
+                        spec: updatedSpec,
+                        belongsToDraft: true,
+                    });
+                }
 
                 // Fire off mutate so other uses know to update
                 return mutate().then((args) => {
