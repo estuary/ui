@@ -18,8 +18,8 @@ export const Workflows: Record<string, string> = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
-    'workflows.error.bindings': `There was an issue fetching data related to your bindings.`,
-    'workflows.error.collections': `There was an issue fetching data related to your collections.`,
+    'workflows.error.bindings': `There was an issue fetching data related to your bindings. Please try again.`,
+    'workflows.error.collections': `There was an issue fetching data related to your collections. Please try again.`,
 
     'workflows.error.oldBoundCollection.added': `Your account uses Estuary's Trial bucket which includes ${trialDuration} days of storage and this collection is older than that. To ensure you have all data, please also backfill this collection from the source after adding it to the materialization.`,
     'workflows.error.oldBoundCollection.backfillAll': `Your account uses Estuary's Trial bucket which includes ${trialDuration} days of storage. There are collections bound to this materialization that are older than that.`,
