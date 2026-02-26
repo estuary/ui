@@ -23,14 +23,13 @@ export function RHFLeavesAutocomplete<
     label,
     required = false,
     helperText,
-    partialRules,
-    finalRules,
+    progressiveRules,
 }: RHFLeavesAutocompleteProps<TFieldValues, TName>) {
     const { control } = useFormContext<TFieldValues>();
-    const { rules, onBlur, onChange } = useProgressiveValidation(name, {
-        partialRules,
-        finalRules,
-    });
+    const { rules, onBlur, onChange } = useProgressiveValidation(
+        name,
+        progressiveRules
+    );
 
     return (
         <Controller

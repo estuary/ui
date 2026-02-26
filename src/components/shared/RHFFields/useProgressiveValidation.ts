@@ -8,7 +8,7 @@ import type {
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ValidationRules } from './types';
+import { ProgressiveRules } from './types';
 import { useFormContext } from 'react-hook-form';
 
 interface ProgressiveValidationReturn<
@@ -34,10 +34,7 @@ export function useProgressiveValidation<
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(
     name: TName,
-    {
-        partialRules = {},
-        finalRules = {},
-    }: ValidationRules<TFieldValues, TName> = {}
+    { partial = {}, final = {} }: ProgressiveRules<TFieldValues, TName> = {}
 ): ProgressiveValidationReturn<TFieldValues, TName> {
     const { trigger, setValue } = useFormContext<TFieldValues>();
     // init finalEnabled to true to ensure all validation rules (partial+final)
@@ -47,9 +44,8 @@ export function useProgressiveValidation<
     const shouldTriggerRef = useRef(false);
 
     const rules = useMemo(() => {
-        const { validate: partialValidate, ...partialDeclarative } =
-            partialRules;
-        const { validate: finalValidate, ...finalDeclarative } = finalRules;
+        const { validate: partialValidate, ...partialDeclarative } = partial;
+        const { validate: finalValidate, ...finalDeclarative } = final;
 
         // RHF validate can be a single fn or a record — normalize to record so we can merge.
         // Use distinct prefixes so a single-function partial and single-function final
@@ -87,7 +83,7 @@ export function useProgressiveValidation<
                 ...(finalEnabled ? finalValidators : {}),
             },
         };
-    }, [partialRules, finalRules, finalEnabled]);
+    }, [partial, final, finalEnabled]);
 
     // Trigger validation after the rules memo has recomputed following
     // a hasBlurred change. This ensures RHF sees the correct rule set.

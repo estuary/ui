@@ -21,14 +21,13 @@ export function RHFTextField<
     required = false,
     disabled = false,
     helperText,
-    partialRules,
-    finalRules,
+    progressiveRules,
 }: RHFTextFieldProps<TFieldValues, TName>) {
     const { control } = useFormContext<TFieldValues>();
-    const { rules, onBlur, onChange } = useProgressiveValidation(name, {
-        partialRules,
-        finalRules,
-    });
+    const { rules, onBlur, onChange } = useProgressiveValidation(
+        name,
+        progressiveRules
+    );
 
     return (
         <Controller
