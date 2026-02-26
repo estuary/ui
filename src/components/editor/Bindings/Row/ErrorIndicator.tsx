@@ -11,6 +11,7 @@ import {
     useBinding_resourceConfigOfBindingProperty,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
 function BindingsSelectorErrorIndicator({
     bindingUUID,
@@ -30,7 +31,9 @@ function BindingsSelectorErrorIndicator({
 
     const fieldConflictsExist = useBinding_hasFieldConflicts(bindingUUID);
     const fieldValidationFailed = useBindingStore((state) =>
-        bindingUUID ? state.selections[bindingUUID].validationFailed : false
+        bindingUUID && hasOwnProperty(state.selections, bindingUUID)
+            ? state.selections[bindingUUID].validationFailed
+            : false
     );
 
     const sourceBackfillRecommended = useBinding_collectionMetadataProperty(
