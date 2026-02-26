@@ -5,10 +5,10 @@ import type {
     RegisterOptions,
     Validate,
 } from 'react-hook-form';
+import type { ProgressiveRules } from 'src/components/shared/RHFFields/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ProgressiveRules } from './types';
 import { useFormContext } from 'react-hook-form';
 
 interface ProgressiveValidationReturn<
