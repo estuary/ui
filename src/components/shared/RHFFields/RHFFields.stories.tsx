@@ -48,6 +48,7 @@ function DemoForm() {
         () => ({
             partialRules: { validate: couldMatchRoot },
             finalRules: {
+                required: 'Catalog prefix is required',
                 validate: {
                     disallowedValue: (value: any) =>
                         value === 'acmeCo/'
@@ -84,6 +85,8 @@ function DemoForm() {
         []
     );
 
+    const { isValid } = methods.formState;
+
     return (
         <FormProvider {...methods}>
             <Stack
@@ -107,7 +110,7 @@ function DemoForm() {
                     {...prefixRules}
                 />
 
-                <RHFTextField<DemoFormValues>
+                {/* <RHFTextField<DemoFormValues>
                     name="displayName"
                     label="Display Name"
                     required
@@ -136,9 +139,14 @@ function DemoForm() {
                         { label: 'US West', value: 'us-west-2' },
                         { label: 'EU West', value: 'eu-west-1' },
                     ]}
-                />
+                /> */}
 
-                <Button type="submit" variant="contained" size="small">
+                <Button
+                    type="submit"
+                    variant="contained"
+                    size="small"
+                    disabled={!isValid}
+                >
                     Submit
                 </Button>
             </Stack>
