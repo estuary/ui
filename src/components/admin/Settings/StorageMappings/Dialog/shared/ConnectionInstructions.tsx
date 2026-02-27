@@ -4,6 +4,7 @@ import { Box, Button, Link, Stack, Typography, useTheme } from '@mui/material';
 
 import { OpenNewWindow } from 'iconoir-react';
 
+import SingleLineCode from 'src/components/content/SingleLineCode';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
 
@@ -16,7 +17,6 @@ function GcpConnectionInstructions({
     bucket,
     gcpServiceAccountEmail,
 }: GcpConnectionInstructionsProps) {
-    const theme = useTheme();
     const serviceAccount =
         gcpServiceAccountEmail || 'flow@estuary-data.iam.gserviceaccount.com';
 
@@ -28,19 +28,7 @@ function GcpConnectionInstructions({
             <Typography variant="body2">
                 Grant this service account access to your GCS bucket:
             </Typography>
-            <Box
-                component="pre"
-                sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: codeBackground[theme.palette.mode],
-                    overflow: 'auto',
-                    fontSize: 13,
-                    fontFamily: 'monospace',
-                }}
-            >
-                {serviceAccount}
-            </Box>
+            <SingleLineCode value={serviceAccount} />
 
             <Typography variant="subtitle2" fontWeight={700}>
                 Step 2: Grant bucket permissions
@@ -50,19 +38,9 @@ function GcpConnectionInstructions({
                 admin role to the the service account using the following
                 command:
             </Typography>
-            <Box
-                component="pre"
-                sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: codeBackground[theme.palette.mode],
-                    overflow: 'auto',
-                    fontSize: 13,
-                    fontFamily: 'monospace',
-                }}
-            >
-                {`gsutil iam ch serviceAccount:${serviceAccount}:admin gs://${bucket || 'your-bucket'}`}
-            </Box>
+            <SingleLineCode
+                value={`gsutil iam ch serviceAccount:${serviceAccount}:admin gs://${bucket || 'your-bucket'}`}
+            />
 
             <Typography variant="body2">
                 Or in the Cloud Console, navigate to your bucket, click

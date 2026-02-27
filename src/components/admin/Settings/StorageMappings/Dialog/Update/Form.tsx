@@ -50,7 +50,9 @@ export function UpdateForm() {
                 <CardWrapper>
                     <StorageLocationsCard />
                 </CardWrapper>
-                <ConnectionTests />
+                <CardWrapper>
+                    <ConnectionTests />
+                </CardWrapper>
             </Stack>
         </>
     );
