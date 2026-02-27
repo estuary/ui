@@ -1,5 +1,3 @@
-import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type { FragmentStore } from 'src/api/storageMappingsGql';
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 
 import { useEffect, useRef } from 'react';
@@ -77,24 +75,21 @@ function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
 }
 
 interface ConnectionAccordionProps {
-    dataPlane: DataPlaneNode;
-    store: FragmentStore;
+    connection: Connection;
     expanded: boolean;
     onToggle: (expanded: boolean) => void;
     disabled?: boolean;
 }
 
 export function ConnectionAccordion({
-    dataPlane,
-    store,
+    connection,
     expanded,
     onToggle,
     disabled = false,
 }: ConnectionAccordionProps) {
-    const { testOne, connectionFor } = useConnectionTest();
-    const testResult = connectionFor(dataPlane, store);
+    const { testOne } = useConnectionTest();
 
-    const prevStatusRef = useRef(testResult.status);
+    const prevStatusRef = useRef(connection.status);
     const onToggleRef = useRef(onToggle);
     onToggleRef.current = onToggle;
 
@@ -102,13 +97,13 @@ export function ConnectionAccordion({
         // Collapse only when transitioning from testing to success
         if (
             prevStatusRef.current === 'testing' &&
-            testResult.status === 'success'
+            connection.status === 'success'
         ) {
             onToggleRef.current(false);
         }
 
-        prevStatusRef.current = testResult.status;
-    }, [testResult.status, testResult.errorMessage]);
+        prevStatusRef.current = connection.status;
+    }, [connection.status, connection.errorMessage]);
 
     return (
         <Accordion
@@ -124,9 +119,9 @@ export function ConnectionAccordion({
                 '&:last-of-type': { borderRadius: 2 },
                 'borderColor': disabled
                     ? 'divider'
-                    : testResult.status === 'success'
+                    : connection.status === 'success'
                       ? 'success.main'
-                      : testResult.status === 'error'
+                      : connection.status === 'error'
                         ? 'warning.main'
                         : 'divider',
                 'opacity': disabled ? 0.6 : 1,
@@ -161,10 +156,10 @@ export function ConnectionAccordion({
                     }}
                 >
                     <Typography fontWeight={600} noWrap sx={{ minWidth: 0 }}>
-                        {toPresentableName(dataPlane)} &rarr;{' '}
-                        {getStoreId(store)}
+                        {toPresentableName(connection.dataPlane)} &rarr;{' '}
+                        {getStoreId(connection.store)}
                     </Typography>
-                    <ConnectionStatusBadge result={testResult} />
+                    <ConnectionStatusBadge result={connection} />
                 </Box>
             </AccordionSummary>
             <AccordionDetails sx={{ pt: 0.5 }}>
@@ -177,40 +172,26 @@ export function ConnectionAccordion({
                         }}
                     >
                         <Box>
-                            {testResult.errorMessage ? (
+                            {connection.errorMessage ? (
                                 <Typography
                                     variant="body2"
                                     sx={{ color: 'warning.main' }}
                                 >
-                                    {testResult.errorMessage}
+                                    {connection.errorMessage}
                                 </Typography>
                             ) : null}
                         </Box>
                         <Button
                             variant="text"
                             size="small"
-                            disabled={testResult.status === 'testing'}
-                            onClick={() => testOne(dataPlane, store)}
+                            disabled={connection.status === 'testing'}
+                            onClick={() => testOne(connection)}
                             startIcon={<Refresh width={16} height={16} />}
                         >
                             Retry
                         </Button>
                     </Box>
-                    <ConnectionInstructions
-                        provider={store.provider}
-                        bucket={getStoreId(store)}
-                        iamArn={dataPlane.awsIamUserArn ?? ''}
-                        gcpServiceAccountEmail={
-                            dataPlane.gcpServiceAccountEmail ?? ''
-                        }
-                        storageAccountName={store.storage_account_name ?? ''}
-                        azureApplicationClientId={
-                            dataPlane.azureApplicationClientId ?? ''
-                        }
-                        azureApplicationName={
-                            dataPlane.azureApplicationName ?? ''
-                        }
-                    />
+                    <ConnectionInstructions connection={connection} />
                 </Stack>
             </AccordionDetails>
         </Accordion>
