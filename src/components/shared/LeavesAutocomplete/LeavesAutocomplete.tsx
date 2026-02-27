@@ -1,16 +1,15 @@
 import { useMemo, useState } from 'react';
 
-import { Autocomplete, Box, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Link, TextField, Typography } from '@mui/material';
 
 import Markdown from 'markdown-to-jsx';
-import { Link } from 'react-router-dom';
 
 import {
     appendWithForwardSlash,
     replaceWhitespacesWithUnderscores,
 } from 'src/utils/misc-utils';
 
-interface PrefixAutocompleteProps {
+interface LeavesAutocompleteProps {
     leaves: string[];
     value: string;
     onChange: (value: string) => void;
@@ -38,13 +37,13 @@ const markdownOptions = {
                 href,
                 ...props
             }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-                <Link to={href ?? ''} {...props} />
+                <Link href={href ?? ''} {...props} />
             ),
         },
     },
 };
 
-export function PrefixAutocomplete({
+export function LeavesAutocomplete({
     leaves,
     value,
     onChange,
@@ -54,7 +53,7 @@ export function PrefixAutocomplete({
     error = false,
     errorMessage,
     helperText,
-}: PrefixAutocompleteProps) {
+}: LeavesAutocompleteProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     const msg = errorMessage ?? helperText;
@@ -105,7 +104,9 @@ export function PrefixAutocomplete({
                 onChange(replaceWhitespacesWithUnderscores(newInputValue))
             }
             onChange={(_event, newValue) => onChange(newValue ?? '')}
+            onClose={() => setIsOpen(false)}
             onBlur={() => {
+                setIsOpen(false);
                 // append trailing slash if not present to adhere to prefix convention.
                 // might make sense as a configurable option if we want to use this for catalog_names in the future
                 const appendedVal = appendWithForwardSlash(value);
