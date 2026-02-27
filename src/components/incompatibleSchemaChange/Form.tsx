@@ -25,9 +25,9 @@ export default function IncompatibleSchemaChangeForm({
             inputLabelId="incompatibleSchemaChange.input.label"
             options={options}
             scope={scope}
-            renderOption={(renderOptionProps, option) => {
+            renderOption={({ key, ...renderOptionProps }, option) => {
                 return (
-                    <li {...renderOptionProps}>
+                    <li key={key} {...renderOptionProps}>
                         <SelectorOption option={option} />
                     </li>
                 );

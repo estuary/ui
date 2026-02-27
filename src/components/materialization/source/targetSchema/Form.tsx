@@ -84,11 +84,11 @@ export default function TargetSchemaForm({
                 scope={scope}
                 isOptionEqualToValue={compareOptionsIncludingAliases}
                 renderOption={(
-                    renderOptionProps,
+                    { key, ...renderOptionProps },
                     option: AutoCompleteOptionForTargetSchema
                 ) => {
                     return (
-                        <li {...renderOptionProps}>
+                        <li key={key} {...renderOptionProps}>
                             <SelectorOption option={option} />
                         </li>
                     );

@@ -37,9 +37,9 @@ function BackfillModeSelector({ disabled }: BackfillModeSelectorProps) {
             AutoCompleteOptions={{
                 disabled: formActive,
                 isOptionEqualToValue,
-                renderOption: (renderOptionProps, option: any) => {
+                renderOption: ({ key, ...renderOptionProps }, option: any) => {
                     return (
-                        <li {...renderOptionProps}>
+                        <li key={key} {...renderOptionProps}>
                             <SelectorOption option={option} />
                         </li>
                     );
