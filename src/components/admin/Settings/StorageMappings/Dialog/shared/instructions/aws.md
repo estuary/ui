@@ -3,7 +3,7 @@
 Add this ARN to your S3 bucket policy or IAM role trust relationship:
 
 ```
-{{iamArn}}
+{{awsIamUserArn}}
 ```
 
 ## Step 2: Apply this bucket policy

@@ -3,7 +3,7 @@
 Grant this service account access to your GCS bucket:
 
 ```
-{{serviceAccount}}
+{{gcpServiceAccountEmail}}
 ```
 
 ## Step 2: Grant bucket permissions
