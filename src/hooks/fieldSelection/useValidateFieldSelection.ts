@@ -293,7 +293,7 @@ export default function useValidateFieldSelection() {
 
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
                     formFailureDetected: failureDetected,
-                    missingServerData: failureDetected,
+                    missingServerData: bindingsExists,
                     targetCollection: meta.collectionName,
                     validationSkipped: true,
                 });
