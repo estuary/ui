@@ -256,7 +256,7 @@ export function ConnectionTests() {
                 location. New connections must pass before saving changes.
             </Typography>
             <Flipper flipKey={flipKey}>
-                <Stack spacing={1}>
+                <Stack spacing={1} sx={{ contain: 'inline-size' }}>
                     {allRenderItems.map((item) => {
                         const animatedVisible = item.isNew
                             ? !outgoingKeys.has(item.key) &&
