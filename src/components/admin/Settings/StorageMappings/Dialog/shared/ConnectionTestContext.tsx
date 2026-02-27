@@ -5,7 +5,9 @@ import {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useMemo,
+    useRef,
     useState,
 } from 'react';
 
@@ -16,10 +18,6 @@ export interface Connection {
     storeId: string;
     status: 'idle' | 'testing' | 'success' | 'error';
     errorMessage?: string;
-}
-
-export interface AddEndpointsOptions {
-    original?: boolean;
 }
 
 interface OriginalEndpoints {
@@ -36,18 +34,22 @@ interface ConnectionTestContextValue {
     addEndpoints: (
         dataPlanes: DataPlaneNode[],
         stores: FragmentStore[],
-        group?: string,
-        options?: AddEndpointsOptions
+        group: string
     ) => void;
-    removeDataPlane: (dataPlaneName: string, group?: string) => void;
-    removeStore: (storeId: string, group?: string) => void;
+    setOriginals: (
+        dataPlanes: DataPlaneNode[],
+        stores: FragmentStore[],
+        group: string
+    ) => void;
+    removeDataPlane: (dataPlaneName: string, group: string) => void;
+    removeStore: (storeId: string, group: string) => void;
     updateConnection: (
         dataPlaneName: string,
         storeId: string,
         update: Partial<Omit<Connection, 'dataPlaneName' | 'storeId'>>,
-        group?: string
+        group: string
     ) => void;
-    clearGroup: (group?: string) => void;
+    clearGroup: (group: string) => void;
 }
 
 const defaultConnection: Connection = {
@@ -93,38 +95,40 @@ export function ConnectionTestProvider({
         () => new Map()
     );
 
+    // Original endpoints are tracked separately because the update flow
+    // needs to remember which endpoints were there when the user opened
+    // the dialog in order to indicate which connections will be broken
+    // when the user deletes an endpoint
     const [originalEndpoints, setOriginalEndpoints] = useState<
         Map<string, OriginalEndpoints>
     >(() => new Map());
+
+    const setOriginals = useCallback(
+        (
+            dataPlanes: DataPlaneNode[],
+            stores: FragmentStore[],
+            group: string
+        ) => {
+            setOriginalEndpoints((prev) => {
+                const next = new Map(prev);
+                next.set(group, {
+                    dpNames: new Set(
+                        dataPlanes.map((dp) => dp.dataPlaneName)
+                    ),
+                    storeIds: new Set(stores.map((s) => getStoreId(s))),
+                });
+                return next;
+            });
+        },
+        []
+    );
 
     const addEndpoints = useCallback(
         (
             newDataPlanes: DataPlaneNode[],
             newStores: FragmentStore[],
-            group = 'default',
-            options?: AddEndpointsOptions
+            group: string
         ) => {
-            if (options?.original) {
-                setOriginalEndpoints((prev) => {
-                    const next = new Map(prev);
-                    const existing = prev.get(group) ?? {
-                        dpNames: new Set<string>(),
-                        storeIds: new Set<string>(),
-                    };
-                    next.set(group, {
-                        dpNames: new Set([
-                            ...existing.dpNames,
-                            ...newDataPlanes.map((dp) => dp.dataPlaneName),
-                        ]),
-                        storeIds: new Set([
-                            ...existing.storeIds,
-                            ...newStores.map((s) => getStoreId(s)),
-                        ]),
-                    });
-                    return next;
-                });
-            }
-
             if (newDataPlanes.length > 0) {
                 setDataPlanes((prev) => {
                     const next = new Map(prev);
@@ -197,7 +201,7 @@ export function ConnectionTestProvider({
     );
 
     const removeDataPlane = useCallback(
-        (dataPlaneName: string, group = 'default') => {
+        (dataPlaneName: string, group: string) => {
             setDataPlanes((prev) => {
                 const existing = prev.get(group);
                 if (!existing) return prev;
@@ -216,7 +220,7 @@ export function ConnectionTestProvider({
         []
     );
 
-    const removeStore = useCallback((storeId: string, group = 'default') => {
+    const removeStore = useCallback((storeId: string, group: string) => {
         setStores((prev) => {
             const existing = prev.get(group);
             if (!existing) return prev;
@@ -235,7 +239,7 @@ export function ConnectionTestProvider({
             dataPlaneName: string,
             storeId: string,
             update: Partial<Omit<Connection, 'dataPlaneName' | 'storeId'>>,
-            group = 'default'
+            group: string
         ) => {
             setConnections((prev) => {
                 const existing = prev.get(group) ?? [];
@@ -266,7 +270,7 @@ export function ConnectionTestProvider({
         []
     );
 
-    const clearGroup = useCallback((group = 'default') => {
+    const clearGroup = useCallback((group: string) => {
         setConnections((prev) => {
             const next = new Map(prev);
             next.delete(group);
@@ -298,6 +302,7 @@ export function ConnectionTestProvider({
                 stores,
                 originalEndpoints,
                 addEndpoints,
+                setOriginals,
                 removeDataPlane,
                 removeStore,
                 updateConnection,
@@ -309,7 +314,15 @@ export function ConnectionTestProvider({
     );
 }
 
-export function useConnectionTest(group?: string) {
+interface UseConnectionTestOriginals {
+    dataPlanes: DataPlaneNode[];
+    stores: FragmentStore[];
+}
+
+export function useConnectionTest(
+    group?: string,
+    initialOriginals?: UseConnectionTestOriginals
+) {
     const context = useContext(ConnectionTestContext);
     if (!context) {
         throw new Error(
@@ -322,11 +335,40 @@ export function useConnectionTest(group?: string) {
     const {
         catalog_prefix: catalogPrefix,
         addEndpoints: ctxAddEndpoints,
+        setOriginals: ctxSetOriginals,
         updateConnection: ctxUpdateConnection,
         removeDataPlane: ctxRemoveDataPlane,
         removeStore: ctxRemoveStore,
         clearGroup: ctxClearGroup,
     } = context;
+
+    // Register original endpoints once when provided. Anything added
+    // via addEndpoints after this point is considered "new".
+    const originalsRegistered = useRef(false);
+    useEffect(() => {
+        if (
+            originalsRegistered.current ||
+            !initialOriginals?.dataPlanes.length
+        )
+            return;
+
+        originalsRegistered.current = true;
+        ctxSetOriginals(
+            initialOriginals.dataPlanes,
+            initialOriginals.stores,
+            resolvedGroup
+        );
+        ctxAddEndpoints(
+            initialOriginals.dataPlanes,
+            initialOriginals.stores,
+            resolvedGroup
+        );
+    }, [
+        initialOriginals,
+        resolvedGroup,
+        ctxSetOriginals,
+        ctxAddEndpoints,
+    ]);
 
     const dataPlanes = useMemo(
         () => context.dataPlanes.get(resolvedGroup) ?? emptyDataPlanes,
@@ -392,12 +434,8 @@ export function useConnectionTest(group?: string) {
     );
 
     const addEndpoints = useCallback(
-        (
-            dp: DataPlaneNode[],
-            s: FragmentStore[],
-            options?: AddEndpointsOptions
-        ) => {
-            ctxAddEndpoints(dp, s, resolvedGroup, options);
+        (dp: DataPlaneNode[], s: FragmentStore[]) => {
+            ctxAddEndpoints(dp, s, resolvedGroup);
         },
         [ctxAddEndpoints, resolvedGroup]
     );
@@ -408,12 +446,7 @@ export function useConnectionTest(group?: string) {
             storeId: string,
             update: Partial<Omit<Connection, 'dataPlaneName' | 'storeId'>>
         ) => {
-            ctxUpdateConnection(
-                dataPlaneName,
-                storeId,
-                update,
-                resolvedGroup
-            );
+            ctxUpdateConnection(dataPlaneName, storeId, update, resolvedGroup);
         },
         [ctxUpdateConnection, resolvedGroup]
     );
@@ -440,9 +473,7 @@ export function useConnectionTest(group?: string) {
             if (targets.length === 0) return;
 
             // Extract unique DPs and stores from targets
-            const targetDPNames = new Set(
-                targets.map((c) => c.dataPlaneName)
-            );
+            const targetDPNames = new Set(targets.map((c) => c.dataPlaneName));
             const targetStoreIds = new Set(targets.map((c) => c.storeId));
             const targetDPs = dataPlanes.filter((dp) =>
                 targetDPNames.has(dp.dataPlaneName)
@@ -564,22 +595,14 @@ export function useConnectionTest(group?: string) {
             );
             const removedDPs = dataPlanes.filter(
                 (p) =>
-                    !nextDPs.some(
-                        (dp) => dp.dataPlaneName === p.dataPlaneName
-                    )
+                    !nextDPs.some((dp) => dp.dataPlaneName === p.dataPlaneName)
             );
 
             const addedStores = nextStores.filter(
-                (s) =>
-                    !stores.some(
-                        (p) => getStoreId(p) === getStoreId(s)
-                    )
+                (s) => !stores.some((p) => getStoreId(p) === getStoreId(s))
             );
             const removedStores = stores.filter(
-                (p) =>
-                    !nextStores.some(
-                        (s) => getStoreId(s) === getStoreId(p)
-                    )
+                (p) => !nextStores.some((s) => getStoreId(s) === getStoreId(p))
             );
 
             if (addedDPs.length > 0 || addedStores.length > 0) {
@@ -604,6 +627,7 @@ export function useConnectionTest(group?: string) {
 
     const clear = useCallback(() => {
         ctxClearGroup(resolvedGroup);
+        originalsRegistered.current = false;
     }, [ctxClearGroup, resolvedGroup]);
 
     return {

@@ -5,7 +5,7 @@ import type {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Typography } from '@mui/material';
 
@@ -101,13 +101,37 @@ function DialogInner({
     const { dataPlanes: allDataPlanes } = useDataPlanes();
     const { update } = useStorageMappingService();
 
+    const originalStores = useMemo(
+        () => mapping.spec.stores.map(toFragmentStore),
+        [mapping.spec.stores]
+    );
+
+    // Resolve original data plane names to full nodes once allDataPlanes loads
+    const [resolvedOriginalDPs, setResolvedOriginalDPs] = useState<
+        FormDataPlane[] | undefined
+    >();
+    const originalsResolved = useRef(false);
+    useEffect(() => {
+        if (originalsResolved.current || allDataPlanes.length === 0) return;
+        originalsResolved.current = true;
+
+        const resolved = mapping.spec.data_planes
+            .map((name) =>
+                allDataPlanes.find((dp) => dp.dataPlaneName === name)
+            )
+            .filter((dp): dp is FormDataPlane => dp !== undefined);
+        setResolvedOriginalDPs(resolved);
+    }, [allDataPlanes, mapping.spec.data_planes]);
+
     const {
-        addEndpoints,
         syncEndpoints,
         activeConnections,
         isOriginalConnection,
         clear: clearConnectionTests,
-    } = useConnectionTest();
+    } = useConnectionTest('default', {
+        dataPlanes: resolvedOriginalDPs ?? [],
+        stores: originalStores,
+    });
     const refresh = useStorageMappingsRefresh();
 
     const methods = useForm<StorageMappingFormData>({
@@ -115,7 +139,7 @@ function DialogInner({
         defaultValues: {
             catalog_prefix: mapping.catalog_prefix,
             data_planes: [],
-            fragment_stores: mapping.spec.stores.map(toFragmentStore),
+            fragment_stores: originalStores,
             allow_public: true,
         },
     });
@@ -130,7 +154,8 @@ function DialogInner({
             methods.setValue('fragment_stores', withoutPending);
         }
         clearConnectionTests();
-        originalsRegistered.current = false;
+        originalsResolved.current = false;
+        setResolvedOriginalDPs(undefined);
         onClose();
     }, [methods, onClose, clearConnectionTests]);
 
@@ -142,30 +167,20 @@ function DialogInner({
         [fragmentStores]
     );
 
-    // Resolve data plane names to nodes once allDataPlanes loads,
-    // then register them as original endpoints in the connection test context
-    const originalsRegistered = useRef(false);
+    // Set form data planes once originals are resolved
     useEffect(() => {
-        if (originalsRegistered.current || allDataPlanes.length === 0) return;
-
-        originalsRegistered.current = true;
-        const resolved = mapping.spec.data_planes
-            .map((name) =>
-                allDataPlanes.find((dp) => dp.dataPlaneName === name)
-            )
-            .filter((dp): dp is FormDataPlane => dp !== undefined);
-        methods.setValue('data_planes', resolved, { shouldDirty: false });
-
-        const originalStores = methods.getValues('fragment_stores');
-        addEndpoints(resolved, originalStores, { original: true });
-    }, [allDataPlanes, mapping.spec.data_planes, methods, addEndpoints]);
+        if (!resolvedOriginalDPs) return;
+        methods.setValue('data_planes', resolvedOriginalDPs, {
+            shouldDirty: false,
+        });
+    }, [resolvedOriginalDPs, methods]);
 
     // Sync form state into the connection test context on changes
     useEffect(() => {
-        if (!originalsRegistered.current) return;
+        if (!resolvedOriginalDPs) return;
         const confirmedStores = fragmentStores.filter((s) => !s._isPending);
         syncEndpoints(dataPlanes, confirmedStores);
-    }, [dataPlanes, fragmentStores, syncEndpoints]);
+    }, [resolvedOriginalDPs, dataPlanes, fragmentStores, syncEndpoints]);
 
     const hasChanges = useMemo(() => {
         const dpChanged =
