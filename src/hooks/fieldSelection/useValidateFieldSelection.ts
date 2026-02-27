@@ -246,6 +246,8 @@ export default function useValidateFieldSelection() {
                     meta.builtBindingIndex > -1 &&
                     meta.validatedBindingIndex > -1;
 
+                // This is counting how attempts have _happened_ so starts
+                //  at 0 and not 1
                 const validationAttempts =
                     targetBindingContext.find(
                         (context) => context.uuid === uuid

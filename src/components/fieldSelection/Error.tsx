@@ -6,12 +6,15 @@ import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
 const FieldValidationError = ({ bindingUUID }: BindingUUIDProp) => {
     const intl = useIntl();
 
     const validationFailed = useBindingStore((state) =>
-        bindingUUID ? state.selections[bindingUUID].validationFailed : false
+        bindingUUID && hasOwnProperty(state.selections, bindingUUID)
+            ? state.selections[bindingUUID].validationFailed
+            : false
     );
 
     if (!validationFailed) {
