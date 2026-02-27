@@ -59,6 +59,7 @@ export function ConnectionTests() {
         orphanedOriginalConnections,
         isOriginalConnection,
         testOne,
+        testAll,
         testConnections,
         isTesting,
         dataPlanes: contextDataPlanes,
@@ -239,9 +240,7 @@ export function ConnectionTests() {
                     variant="body2"
                     underline="hover"
                     disabled={isTesting}
-                    onClick={() =>
-                        void testConnections(activeConnections).catch(() => {})
-                    }
+                    onClick={() => void testAll().catch(() => {})}
                     sx={{
                         opacity: isTesting ? 0.5 : 1,
                         pointerEvents: isTesting ? 'none' : 'auto',
