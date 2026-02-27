@@ -128,7 +128,7 @@ function DialogInner({
         activeConnections,
         isOriginalConnection,
         clear: clearConnectionTests,
-    } = useConnectionTest('default', {
+    } = useConnectionTest({
         dataPlanes: resolvedOriginalDPs ?? [],
         stores: originalStores,
     });
