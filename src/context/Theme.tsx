@@ -911,7 +911,7 @@ export const chipOutlinedStyling: SxProps<Theme> = {
     },
 };
 
-const standardTransitionDuration = 1000;
+const standardTransitionDuration = 300;
 const standardTransitionEasing = 'ease-in-out';
 
 const themeSettings = createTheme({
