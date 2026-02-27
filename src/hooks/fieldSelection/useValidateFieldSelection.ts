@@ -273,8 +273,6 @@ export default function useValidateFieldSelection() {
                         meta.validatedBindingIndex,
                         meta.liveBuiltBindingIndex
                     );
-                } else if (failureDetected) {
-                    setValidationFailure([uuid], true);
                 }
 
                 if (
@@ -289,6 +287,8 @@ export default function useValidateFieldSelection() {
                         undefined,
                         true
                     );
+                } else if (failureDetected) {
+                    setValidationFailure([uuid], true);
                 }
 
                 logRocketEvent(CustomEvents.FIELD_SELECTION, {
