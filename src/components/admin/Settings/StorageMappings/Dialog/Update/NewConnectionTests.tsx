@@ -225,7 +225,7 @@ export function ConnectionTests() {
     if (!hasAnyConnections) return null;
 
     return (
-        <CardWrapper disableMinWidth sx={{ overflow: 'hidden' }}>
+        <>
             <Box
                 sx={{
                     ...cardHeaderSx,
@@ -303,6 +303,6 @@ export function ConnectionTests() {
                     })}
                 </Stack>
             </Flipper>
-        </CardWrapper>
+        </>
     );
 }
