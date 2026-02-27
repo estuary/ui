@@ -92,34 +92,32 @@ export function NewConnectionTests() {
                     >
                         (Nothing here)
                     </Typography>
-                ) : (
-                    <Stack spacing={1}>
-                        {newActiveConnections.map((connection) => {
-                            const dataPlane = contextDataPlanes.find(
-                                (dp) =>
-                                    dp.dataPlaneName ===
-                                    connection.dataPlaneName
-                            );
-                            const store = contextStores.find(
-                                (s) => getStoreId(s) === connection.storeId
-                            );
-                            if (!dataPlane || !store) return null;
+                ) : null}
+                <Stack spacing={1}>
+                    {newActiveConnections.map((connection) => {
+                        const dataPlane = contextDataPlanes.find(
+                            (dp) =>
+                                dp.dataPlaneName === connection.dataPlaneName
+                        );
+                        const store = contextStores.find(
+                            (s) => getStoreId(s) === connection.storeId
+                        );
+                        if (!dataPlane || !store) return null;
 
-                            const key = `${connection.dataPlaneName}-${connection.storeId}`;
-                            return (
-                                <ConnectionAccordion
-                                    key={key}
-                                    dataPlane={dataPlane}
-                                    store={store}
-                                    expanded={expandedKey === key}
-                                    onToggle={(isExpanded) =>
-                                        setExpandedKey(isExpanded ? key : null)
-                                    }
-                                />
-                            );
-                        })}
-                    </Stack>
-                )}
+                        const key = `${connection.dataPlaneName}-${connection.storeId}`;
+                        return (
+                            <ConnectionAccordion
+                                key={key}
+                                dataPlane={dataPlane}
+                                store={store}
+                                expanded={expandedKey === key}
+                                onToggle={(isExpanded) =>
+                                    setExpandedKey(isExpanded ? key : null)
+                                }
+                            />
+                        );
+                    })}
+                </Stack>
             </CardWrapper>
         </Collapse>
     );
