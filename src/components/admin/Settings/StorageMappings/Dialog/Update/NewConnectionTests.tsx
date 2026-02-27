@@ -49,7 +49,6 @@ export function NewConnectionTests() {
     return (
         <Collapse
             in={newActiveConnections.length > 0 || hasAppeared.current}
-            timeout="auto"
             unmountOnExit
         >
             <CardWrapper disableMinWidth sx={{ overflow: 'hidden' }}>
@@ -94,57 +93,31 @@ export function NewConnectionTests() {
                         (Nothing here)
                     </Typography>
                 ) : (
-                    <Stack spacing={1} sx={{ mt: 1 }}>
-                        <Collapse in={allPassing}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1,
-                                    border: 1,
-                                    borderColor: 'success.main',
-                                    borderRadius: 2,
-                                    px: 1,
-                                    py: 0.75,
-                                    color: 'success.main',
-                                }}
-                            >
-                                <CheckCircle width={20} height={20} />
-                                <Typography variant="body2" fontWeight={600}>
-                                    All new connections passing
-                                </Typography>
-                            </Box>
-                        </Collapse>
-                        {newActiveConnections
-                            .filter(
-                                (c) => !allPassing || c.status !== 'success'
-                            )
-                            .map((connection) => {
-                                const dataPlane = contextDataPlanes.find(
-                                    (dp) =>
-                                        dp.dataPlaneName ===
-                                        connection.dataPlaneName
-                                );
-                                const store = contextStores.find(
-                                    (s) => getStoreId(s) === connection.storeId
-                                );
-                                if (!dataPlane || !store) return null;
+                    <Stack spacing={1}>
+                        {newActiveConnections.map((connection) => {
+                            const dataPlane = contextDataPlanes.find(
+                                (dp) =>
+                                    dp.dataPlaneName ===
+                                    connection.dataPlaneName
+                            );
+                            const store = contextStores.find(
+                                (s) => getStoreId(s) === connection.storeId
+                            );
+                            if (!dataPlane || !store) return null;
 
-                                const key = `${connection.dataPlaneName}-${connection.storeId}`;
-                                return (
-                                    <ConnectionAccordion
-                                        key={key}
-                                        dataPlane={dataPlane}
-                                        store={store}
-                                        expanded={expandedKey === key}
-                                        onToggle={(isExpanded) =>
-                                            setExpandedKey(
-                                                isExpanded ? key : null
-                                            )
-                                        }
-                                    />
-                                );
-                            })}
+                            const key = `${connection.dataPlaneName}-${connection.storeId}`;
+                            return (
+                                <ConnectionAccordion
+                                    key={key}
+                                    dataPlane={dataPlane}
+                                    store={store}
+                                    expanded={expandedKey === key}
+                                    onToggle={(isExpanded) =>
+                                        setExpandedKey(isExpanded ? key : null)
+                                    }
+                                />
+                            );
+                        })}
                     </Stack>
                 )}
             </CardWrapper>
