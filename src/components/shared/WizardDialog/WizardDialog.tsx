@@ -124,7 +124,15 @@ export function WizardDialog({
                     {displayTitle}
                 </DialogTitleWithClose>
                 <WizardContent />
-                <Collapse in={showActions}>
+                <Collapse
+                    in={showActions}
+                    sx={{
+                        // flexShrink: 0 prevents the actions from being compressed when
+                        // DialogContent's animated height box inflates the flex overflow
+                        // This fixes a bug that was causing nested vertical scroll bars inside the dialog
+                        flexShrink: 0,
+                    }}
+                >
                     <WizardActions />
                 </Collapse>
             </WizardContext.Provider>
