@@ -5,9 +5,7 @@ import {
     createContext,
     useCallback,
     useContext,
-    useEffect,
     useMemo,
-    useRef,
     useState,
 } from 'react';
 
@@ -47,21 +45,6 @@ interface ConnectionTestContextValue {
     >;
 }
 
-// const defaultConnection: Connection = {
-//     dataPlane: '',
-//     store: '',
-//     initial: false,
-//     active: false,
-//     status: 'idle',
-//     details: {
-//         cidrBlocks: [],
-//         awsIamUserArn: null,
-//         gcpServiceAccountEmail: null,
-//         azureApplicationClientId: null,
-//         azureApplicationName: null,
-//     },
-//     test: async () => {},
-// };
 const emptyOriginals: InitialEndpoints = {
     dpNames: new Set(),
     storeIds: new Set(),
@@ -191,7 +174,10 @@ export function useConnectionTest(initialEndpoints?: {
     );
 
     const initializeEndpoints = useCallback(
-        (newDataPlanes: DataPlaneNode[], newStores: FragmentStore[]) => {
+        (
+            newDataPlanes: DataPlaneNode[],
+            newStores: FragmentStore[]
+        ): Connection[] => {
             setOriginalEndpoints({
                 dpNames: new Set(newDataPlanes.map((dp) => dp.dataPlaneName)),
                 storeIds: new Set(newStores.map((s) => getStoreId(s))),
@@ -199,18 +185,25 @@ export function useConnectionTest(initialEndpoints?: {
 
             setDataPlanes(newDataPlanes);
             setStores(newStores);
-            setConnections(
-                newDataPlanes.flatMap((dp) =>
-                    newStores.map((store) => ({
-                        dataPlane: dp,
-                        store: store,
-                        initial: true,
-                        active: true,
-                        orphaned: false,
-                        status: 'idle' as const,
-                    }))
-                )
+
+            const newConnections = newDataPlanes.flatMap((dp) =>
+                newStores.map((store) => ({
+                    dataPlane: dp,
+                    store: store,
+                    initial: true,
+                    active: true,
+                    status: 'idle' as const,
+                }))
             );
+
+            setConnections(newConnections);
+
+            return newConnections.map((c) => ({
+                dataPlane: c.dataPlane,
+                store: c.store,
+                status: c.status,
+                orphaned: false,
+            }));
         },
         []
     );
@@ -304,22 +297,7 @@ export function useConnectionTest(initialEndpoints?: {
 
     const clear = useCallback(() => {
         initializeEndpoints([], []);
-        // initialized.current = false;
     }, [initializeEndpoints]);
-
-    // run once when the hook is invoked with initial endpoints to set up the context state
-    // const initialized = useRef(false);
-    // useEffect(() => {
-    //     if (initialized.current || !initialEndpoints?.dataPlanes.length) return;
-
-    //     initialized.current = true;
-    //     initializeEndpoints(
-    //         initialEndpoints.dataPlanes,
-    //         initialEndpoints.stores
-    //     );
-    // }, [initialEndpoints, initializeEndpoints]);
-
-    // --- Derived state ---
 
     const derivedConnections = useMemo(
         () =>
@@ -354,8 +332,6 @@ export function useConnectionTest(initialEndpoints?: {
         return activeConnections.some((c) => c.status === 'testing');
     }, [activeConnections]);
 
-    // --- Testing ---
-
     const testConnections = useCallback(
         async (connections: Connection[]) => {
             if (!catalogPrefix) {
@@ -364,7 +340,6 @@ export function useConnectionTest(initialEndpoints?: {
             const prefix = catalogPrefix;
             if (connections.length === 0) return;
 
-            // Mark all targets as testing
             for (const c of connections) {
                 updateConnection(c, {
                     status: 'testing',
@@ -409,10 +384,6 @@ export function useConnectionTest(initialEndpoints?: {
         [catalogPrefix, dataPlanes, stores, updateConnection, testConnection]
     );
 
-    const testAll = useCallback(async () => {
-        await testConnections(activeConnections);
-    }, [testConnections, activeConnections]);
-
     return {
         connections: derivedConnections,
         isTesting,
@@ -421,7 +392,7 @@ export function useConnectionTest(initialEndpoints?: {
         addStore,
         removeDataPlane,
         removeStore,
-        testAll,
+        testConnections,
         testOne,
         initializeEndpoints,
         clear,
