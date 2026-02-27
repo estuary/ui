@@ -1102,6 +1102,9 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                 ...themeSettings.components,
                 MuiAccordion: {
                     defaultProps: {
+                        TransitionProps: {
+                            timeout: standardTransitionDuration,
+                        },
                         sx: {
                             '& .MuiIconButton-root': {
                                 zIndex: accordionButton,

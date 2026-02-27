@@ -11,6 +11,7 @@ import {
     Box,
     Button,
     CircularProgress,
+    Collapse,
     Stack,
     Typography,
 } from '@mui/material';
@@ -244,14 +245,19 @@ export function ConnectionAccordion({
             </AccordionSummary>
             <AccordionDetails>
                 <Stack spacing={2}>
-                    {testResult.status === 'error' ||
-                    (testResult.status === 'testing' && lastErrorMessage) ? (
+                    <Collapse
+                        in={
+                            testResult.status === 'error' ||
+                            (testResult.status === 'testing' &&
+                                !!lastErrorMessage)
+                        }
+                    >
                         <ConnectionError
                             result={testResult}
                             errorMessage={lastErrorMessage}
                             onRetry={() => testOne(dataPlane, store)}
                         />
-                    ) : null}
+                    </Collapse>
                     <ConnectionInstructions
                         provider={store.provider}
                         bucket={getStoreId(store)}
@@ -259,7 +265,9 @@ export function ConnectionAccordion({
                         gcpServiceAccountEmail={
                             dataPlane.gcpServiceAccountEmail ?? ''
                         }
-                        storageAccountName={store.storage_account_name}
+                        storageAccountName={
+                            store.storage_account_name ?? undefined
+                        }
                         azureApplicationClientId={
                             dataPlane.azureApplicationClientId ?? ''
                         }
