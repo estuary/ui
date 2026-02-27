@@ -101,40 +101,35 @@ function DialogInner({
     const { dataPlanes: allDataPlanes } = useDataPlanes();
     const { update } = useStorageMappingService();
 
-    const originalStores = useMemo(
-        () => mapping.spec.stores.map(toFragmentStore),
-        [mapping.spec.stores]
-    );
+    // const originalStores = useMemo(
+    //     () => mapping.spec.stores.map(toFragmentStore),
+    //     [mapping.spec.stores]
+    // );
 
-    // Resolve original data plane names to full nodes once allDataPlanes loads
-    const [resolvedOriginalDPs, setResolvedOriginalDPs] = useState<
-        FormDataPlane[] | undefined
-    >();
-    const originalsResolved = useRef(false);
-    useEffect(() => {
-        if (originalsResolved.current || allDataPlanes.length === 0) return;
-        originalsResolved.current = true;
+    // // Resolve original data plane names to full nodes once allDataPlanes loads
+    // const [resolvedOriginalDPs, setResolvedOriginalDPs] = useState<
+    //     FormDataPlane[] | undefined
+    // >();
+    // const originalsResolved = useRef(false);
+    // useEffect(() => {
+    //     if (originalsResolved.current || allDataPlanes.length === 0) return;
+    //     originalsResolved.current = true;
 
-        const resolved = mapping.spec.data_planes
-            .map((name) =>
-                allDataPlanes.find((dp) => dp.dataPlaneName === name)
-            )
-            .filter((dp): dp is FormDataPlane => dp !== undefined);
-        setResolvedOriginalDPs(resolved);
-    }, [allDataPlanes, mapping.spec.data_planes]);
+    //     const resolved = mapping.spec.data_planes
+    //         .map((name) =>
+    //             allDataPlanes.find((dp) => dp.dataPlaneName === name)
+    //         )
+    //         .filter((dp): dp is FormDataPlane => dp !== undefined);
+    //     setResolvedOriginalDPs(resolved);
+    // }, [allDataPlanes, mapping.spec.data_planes]);
 
-    const {
-        syncEndpoints,
-        activeConnections,
-        isOriginalConnection,
-        clear: clearConnectionTests,
-    } = useConnectionTest({
+    const { clear: clearConnectionTests } = useConnectionTest({
         dataPlanes: resolvedOriginalDPs ?? [],
         stores: originalStores,
     });
     const refresh = useStorageMappingsRefresh();
 
-    const methods = useForm<StorageMappingFormData>({
+    const { getValues, watch } = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {
             catalog_prefix: mapping.catalog_prefix,
@@ -144,14 +139,10 @@ function DialogInner({
         },
     });
 
-    const { getValues, watch } = methods;
-
     const handleClose = useCallback(() => {
         // Remove any unsaved stores (pending or newly added) before closing
         const stores = methods.getValues('fragment_stores');
-        const withoutUnsaved = stores.filter(
-            (s) => !s._isPending && !s._isNew
-        );
+        const withoutUnsaved = stores.filter((s) => !s._isPending && !s._isNew);
         if (withoutUnsaved.length !== stores.length) {
             methods.setValue('fragment_stores', withoutUnsaved);
         }
@@ -323,7 +314,7 @@ export function UpdateMappingWizard() {
     return (
         <ConnectionTestProvider
             key={displayMapping.catalog_prefix}
-            catalog_prefix={displayMapping.catalog_prefix}
+            catalogPrefix={displayMapping.catalog_prefix}
         >
             {/* <pre>{JSON.stringify(mapping, null, 2)}</pre> */}
             <DialogInner

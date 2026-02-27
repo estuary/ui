@@ -11,7 +11,7 @@ import {
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
 export function TestConnectionResult() {
-    const { activeConnections, dataPlanes, stores } = useConnectionTest();
+    const { connections } = useConnectionTest();
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
     return (
@@ -29,22 +29,12 @@ export function TestConnectionResult() {
             </Typography>
 
             <Stack spacing={1}>
-                {activeConnections.map((connection) => {
-                    const dataPlane = dataPlanes.find(
-                        (dp) =>
-                            dp.dataPlaneName === connection.dataPlaneName
-                    );
-                    const store = stores.find(
-                        (s) => getStoreId(s) === connection.storeId
-                    );
-                    if (!dataPlane || !store) return null;
-
-                    const key = `${connection.dataPlaneName}-${connection.storeId}`;
+                {connections.map((connection) => {
+                    const key = `${connection.dataPlane.dataPlaneName}-${getStoreId(connection.store)}`;
                     return (
                         <ConnectionAccordion
                             key={key}
-                            dataPlane={dataPlane}
-                            store={store}
+                            connection={connection}
                             expanded={expandedKey === key}
                             onToggle={(isExpanded) =>
                                 setExpandedKey(isExpanded ? key : null)

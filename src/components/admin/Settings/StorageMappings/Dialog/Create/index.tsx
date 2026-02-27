@@ -57,7 +57,7 @@ function CreateMappingWizardInner({
     const intl = useIntl();
     const { create } = useStorageMappingService();
     const {
-        testAll,
+        testConnections,
         allTestsPassing,
         clear: clearConnectionTests,
         initializeEndpoints,
@@ -70,8 +70,6 @@ function CreateMappingWizardInner({
             required: 'At least one data plane is required',
         },
     });
-
-    // const removeDataPlane = (index: number) => {
 
     const dataPlanes = watch('data_planes');
     const allowPublic = watch('allow_public');
@@ -152,9 +150,12 @@ function CreateMappingWizardInner({
                     }),
                     canAdvance: () => formState.isValid,
                     onAdvance: async () => {
-                        initializeEndpoints(dataPlanes, stores);
+                        const connections = initializeEndpoints(
+                            dataPlanes,
+                            stores
+                        );
 
-                        await testAll();
+                        await testConnections(connections);
                         return true;
                     },
                 },
@@ -172,16 +173,12 @@ function CreateMappingWizardInner({
             formState.isValid,
             getValues,
             allTestsPassing,
-            testAll,
+            testConnections,
             dataPlanes,
             allowPublic,
             stores,
         ]
     );
-
-    // useEffect(() => {
-    //     syncEndpoints(dataPlanes, stores);
-    // }, [dataPlanes, stores, syncEndpoints]);
 
     return <WizardDialog open={open} onClose={closeDialog} steps={steps} />;
 }
