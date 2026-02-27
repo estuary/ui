@@ -140,8 +140,7 @@ function TestConnections() {
         }
 
         for (const connection of orphanedOriginalConnections) {
-            const dataPlane =
-                dpCacheRef.current.get(connection.dataPlaneName);
+            const dataPlane = dpCacheRef.current.get(connection.dataPlaneName);
             const store = storeCacheRef.current.get(connection.storeId);
             if (!dataPlane || !store) continue;
 
@@ -161,8 +160,7 @@ function TestConnections() {
         contextStores,
     ]);
 
-    const hasVisibleRows =
-        unifiedEntries.length > 0 && !initialTestInProgress;
+    const hasVisibleRows = unifiedEntries.length > 0 && !initialTestInProgress;
 
     return (
         <Stack>
@@ -172,6 +170,7 @@ function TestConnections() {
                     alignItems="center"
                     justifyContent={'end'}
                     spacing={1}
+                    sx={{ mr: 2 }}
                 >
                     <Typography variant="body2" color="text.secondary">
                         Testing connections
@@ -217,9 +216,7 @@ function TestConnections() {
                                         ? () => {}
                                         : (isExpanded) =>
                                               setExpandedKey(
-                                                  isExpanded
-                                                      ? entry.key
-                                                      : null
+                                                  isExpanded ? entry.key : null
                                               )
                                 }
                                 disabled={entry.orphaned}

@@ -143,7 +143,6 @@ interface ConnectionAccordionProps {
     expanded: boolean;
     onToggle: (expanded: boolean) => void;
     disabled?: boolean;
-    group?: string;
 }
 
 export function ConnectionAccordion({
@@ -152,9 +151,8 @@ export function ConnectionAccordion({
     expanded,
     onToggle,
     disabled = false,
-    group,
 }: ConnectionAccordionProps) {
-    const { testOne, connectionFor } = useConnectionTest(group);
+    const { testOne, connectionFor } = useConnectionTest();
     const testResult = connectionFor(dataPlane, store);
 
     const [lastErrorMessage, setLastErrorMessage] = useState<string>();

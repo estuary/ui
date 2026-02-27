@@ -10,8 +10,8 @@ import {
 
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
-export function TestConnectionResult({ group }: { group?: string }) {
-    const { activeConnections, dataPlanes, stores } = useConnectionTest(group);
+export function TestConnectionResult() {
+    const { activeConnections, dataPlanes, stores } = useConnectionTest();
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
     return (
@@ -49,7 +49,6 @@ export function TestConnectionResult({ group }: { group?: string }) {
                             onToggle={(isExpanded) =>
                                 setExpandedKey(isExpanded ? key : null)
                             }
-                            group={group}
                         />
                     );
                 })}
