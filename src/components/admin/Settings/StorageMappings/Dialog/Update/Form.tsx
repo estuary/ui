@@ -113,14 +113,70 @@ function TestConnections() {
         [existingActiveConnections, initiallyFailedKeys]
     );
 
+    // Unified list: visible active entries + orphaned entries, each with resolved endpoints
+    const unifiedEntries = useMemo(() => {
+        const entries: {
+            key: string;
+            dataPlane: DataPlaneNode;
+            store: FragmentStore;
+            orphaned: boolean;
+        }[] = [];
+
+        for (const connection of visibleEntries) {
+            const dataPlane = contextDataPlanes.find(
+                (dp) => dp.dataPlaneName === connection.dataPlaneName
+            );
+            const store = contextStores.find(
+                (s) => getStoreId(s) === connection.storeId
+            );
+            if (!dataPlane || !store) continue;
+
+            entries.push({
+                key: `${connection.dataPlaneName}-${connection.storeId}`,
+                dataPlane,
+                store,
+                orphaned: false,
+            });
+        }
+
+        for (const connection of orphanedOriginalConnections) {
+            const dataPlane =
+                dpCacheRef.current.get(connection.dataPlaneName);
+            const store = storeCacheRef.current.get(connection.storeId);
+            if (!dataPlane || !store) continue;
+
+            entries.push({
+                key: `${connection.dataPlaneName}-${connection.storeId}`,
+                dataPlane,
+                store,
+                orphaned: true,
+            });
+        }
+
+        return entries;
+    }, [
+        visibleEntries,
+        orphanedOriginalConnections,
+        contextDataPlanes,
+        contextStores,
+    ]);
+
+    const hasVisibleRows =
+        unifiedEntries.length > 0 && !initialTestInProgress;
+
     return (
         <Stack>
             <Collapse in={initialTestInProgress}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <CircularProgress size={16} />
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent={'end'}
+                    spacing={1}
+                >
                     <Typography variant="body2" color="text.secondary">
-                        Testing connections…
+                        Testing connections
                     </Typography>
+                    <CircularProgress size={16} />
                 </Stack>
             </Collapse>
             <Collapse in={existingAllPassing && initiallyFailedKeys.size === 0}>
@@ -143,53 +199,30 @@ function TestConnections() {
                     </Typography>
                 </Box>
             </Collapse>
-            <Collapse in={visibleEntries.length > 0 && !initialTestInProgress}>
+            <Collapse in={hasVisibleRows}>
                 <Stack spacing={1}>
-                    {visibleEntries.map((connection) => {
-                        const dataPlane = contextDataPlanes.find(
-                            (dp) =>
-                                dp.dataPlaneName === connection.dataPlaneName
-                        );
-                        const store = contextStores.find(
-                            (s) => getStoreId(s) === connection.storeId
-                        );
-                        if (!dataPlane || !store) return null;
-
-                        const key = `${connection.dataPlaneName}-${connection.storeId}`;
+                    {unifiedEntries.map((entry) => {
                         return (
                             <ConnectionAccordion
-                                key={key}
-                                dataPlane={dataPlane}
-                                store={store}
-                                expanded={expandedKey === key}
-                                onToggle={(isExpanded) =>
-                                    setExpandedKey(isExpanded ? key : null)
+                                key={entry.key}
+                                dataPlane={entry.dataPlane}
+                                store={entry.store}
+                                expanded={
+                                    entry.orphaned
+                                        ? false
+                                        : expandedKey === entry.key
                                 }
-                            />
-                        );
-                    })}
-                </Stack>
-            </Collapse>
-            <Collapse in={orphanedOriginalConnections.length > 0}>
-                <Stack spacing={1} sx={{ mt: 1 }}>
-                    {orphanedOriginalConnections.map((connection) => {
-                        const dataPlane = dpCacheRef.current.get(
-                            connection.dataPlaneName
-                        );
-                        const store = storeCacheRef.current.get(
-                            connection.storeId
-                        );
-                        if (!dataPlane || !store) return null;
-
-                        const key = `orphaned-${connection.dataPlaneName}-${connection.storeId}`;
-                        return (
-                            <ConnectionAccordion
-                                key={key}
-                                dataPlane={dataPlane}
-                                store={store}
-                                expanded={false}
-                                onToggle={() => {}}
-                                disabled
+                                onToggle={
+                                    entry.orphaned
+                                        ? () => {}
+                                        : (isExpanded) =>
+                                              setExpandedKey(
+                                                  isExpanded
+                                                      ? entry.key
+                                                      : null
+                                              )
+                                }
+                                disabled={entry.orphaned}
                             />
                         );
                     })}
