@@ -92,6 +92,9 @@ export const hasLength = (val: string | any[] | null | undefined): boolean => {
 export const appendWithForwardSlash = (value: string): string =>
     hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
 
+export const replaceWhitespacesWithUnderscores = (value: string): string =>
+    value.replaceAll(/\s/g, '_');
+
 export const encodeParamVal = (val: any) => {
     if (typeof val === 'boolean') {
         return val ? 1 : 0;

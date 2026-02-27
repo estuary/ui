@@ -32,7 +32,7 @@ const trackEvent = (payload: any) => {
         id: payload.id ?? DEFAULT_FILTER,
         draft_id: payload.draft_id ?? DEFAULT_FILTER,
         logs_token: payload.logs_token ?? DEFAULT_FILTER,
-        status: payload.job_status?.type ?? DEFAULT_FILTER,
+        status: payload.job_status?.type ?? payload.error ?? DEFAULT_FILTER,
     });
 };
 
@@ -124,6 +124,7 @@ function useDiscoverStartSubscription(entityType: Entity) {
                     trackEvent(payload);
                 },
                 (payload: any) => {
+                    trackEvent(payload);
                     if (payload.error === JOB_STATUS_POLLER_ERROR) {
                         jobFailed(DEFAULT_POLLER_ERROR);
                     } else {

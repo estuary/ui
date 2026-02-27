@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import { Calendar } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -19,10 +17,12 @@ import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageSto
 function DetailsRange() {
     const intl = useIntl();
 
-    const [range, setRange] = useDetailsUsageStore(
-        useShallow((state) => [state.range, state.setRange])
-    );
-    const { relativeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
+    const [range, setRange] = useDetailsUsageStore(usShallow((store) => [
+        store.range,
+        store.setRange,
+    ]));
+    const { relativeUnit, selectedLabelKey } =
+        LUXON_GRAIN_SETTINGS[range.grain];
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -62,7 +62,9 @@ function DetailsRange() {
             >
                 {intl.formatMessage(
                     {
-                        id: `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
+                        id:
+                            selectedLabelKey ??
+                            `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
                     },
                     { range: range.amount }
                 )}
@@ -155,9 +157,25 @@ function DetailsRange() {
                         }
                     )}
                 </MenuItem>
+                <MenuItem
+                    onClick={() =>
+                        handlers.setFilter({
+                            amount: 13, // Ensure we include the previous year's current month
+                            grain: DataGrains.monthly,
+                        })
+                    }
+                >
+                    {intl.formatMessage({
+                        id: 'detailsPanel.recentUsage.filter.label.year',
+                    })}
+                </MenuItem>
             </Menu>
         </Stack>
     );
 }
 
 export default DetailsRange;
+function usShallow(arg0: (store: any) => any[]): (state: import("../../stores/DetailsUsage/types").DetailsUsageState) => unknown {
+    throw new Error('Function not implemented.');
+}
+
