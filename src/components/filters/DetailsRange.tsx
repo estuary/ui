@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 
 import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { Calendar } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -17,10 +19,9 @@ import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageSto
 function DetailsRange() {
     const intl = useIntl();
 
-    const [range, setRange] = useDetailsUsageStore(usShallow((store) => [
-        store.range,
-        store.setRange,
-    ]));
+    const [range, setRange] = useDetailsUsageStore(
+        useShallow((store) => [store.range, store.setRange])
+    );
     const { relativeUnit, selectedLabelKey } =
         LUXON_GRAIN_SETTINGS[range.grain];
 
@@ -175,7 +176,3 @@ function DetailsRange() {
 }
 
 export default DetailsRange;
-function usShallow(arg0: (store: any) => any[]): (state: import("../../stores/DetailsUsage/types").DetailsUsageState) => unknown {
-    throw new Error('Function not implemented.');
-}
-
