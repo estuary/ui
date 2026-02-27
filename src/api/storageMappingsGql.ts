@@ -16,7 +16,7 @@ export interface FragmentStore {
     provider: CloudProvider;
     region?: string | null;
     bucket?: string | null;
-    prefix?: string | null;
+    storage_prefix?: string | null;
 
     // Azure-specific fields
     container_name?: string | null;
