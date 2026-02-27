@@ -27,16 +27,16 @@ interface OriginalEndpoints {
 
 interface ConnectionTestContextValue {
     catalog_prefix?: string;
-    connections: Map<string, Connection[]>;
-    dataPlanes: Map<string, DataPlaneNode[]>;
-    stores: Map<string, FragmentStore[]>;
-    originalEndpoints: Map<string, OriginalEndpoints>;
+    connections: Record<string, Connection[]>;
+    dataPlanes: Record<string, DataPlaneNode[]>;
+    stores: Record<string, FragmentStore[]>;
+    originalEndpoints: Record<string, OriginalEndpoints>;
     addEndpoints: (
         dataPlanes: DataPlaneNode[],
         stores: FragmentStore[],
         group: string
     ) => void;
-    setOriginals: (
+    initializeEndpoints: (
         dataPlanes: DataPlaneNode[],
         stores: FragmentStore[],
         group: string
@@ -83,41 +83,39 @@ export function ConnectionTestProvider({
     catalog_prefix?: string;
     children: React.ReactNode;
 }) {
-    const [dataPlanes, setDataPlanes] = useState<Map<string, DataPlaneNode[]>>(
-        () => new Map()
-    );
+    const [dataPlanes, setDataPlanes] = useState<
+        Record<string, DataPlaneNode[]>
+    >({});
 
-    const [stores, setStores] = useState<Map<string, FragmentStore[]>>(
-        () => new Map()
-    );
+    const [stores, setStores] = useState<Record<string, FragmentStore[]>>({});
 
-    const [connections, setConnections] = useState<Map<string, Connection[]>>(
-        () => new Map()
-    );
+    const [connections, setConnections] = useState<
+        Record<string, Connection[]>
+    >({});
 
     // Original endpoints are tracked separately because the update flow
     // needs to remember which endpoints were there when the user opened
     // the dialog in order to indicate which connections will be broken
     // when the user deletes an endpoint
     const [originalEndpoints, setOriginalEndpoints] = useState<
-        Map<string, OriginalEndpoints>
-    >(() => new Map());
+        Record<string, OriginalEndpoints>
+    >({});
 
-    const setOriginals = useCallback(
+    const initializeEndpoints = useCallback(
         (
             dataPlanes: DataPlaneNode[],
             stores: FragmentStore[],
             group: string
         ) => {
-            setOriginalEndpoints((prev) => {
-                const next = new Map(prev);
-                next.set(group, {
+            setOriginalEndpoints({
+                [group]: {
                     dpNames: new Set(
                         dataPlanes.map((dp) => dp.dataPlaneName)
                     ),
-                    storeIds: new Set(stores.map((s) => getStoreId(s))),
-                });
-                return next;
+                    storeIds: new Set(
+                        stores.map((s) => getStoreId(s))
+                    ),
+                },
             });
         },
         []
@@ -130,27 +128,23 @@ export function ConnectionTestProvider({
             group: string
         ) => {
             if (newDataPlanes.length > 0) {
-                setDataPlanes((prev) => {
-                    const next = new Map(prev);
-                    const existing = prev.get(group) ?? [];
-                    next.set(group, [...existing, ...newDataPlanes]);
-                    return next;
-                });
+                setDataPlanes((prev) => ({
+                    ...prev,
+                    [group]: [...(prev[group] ?? []), ...newDataPlanes],
+                }));
             }
 
             if (newStores.length > 0) {
-                setStores((prev) => {
-                    const next = new Map(prev);
-                    const existing = prev.get(group) ?? [];
-                    next.set(group, [...existing, ...newStores]);
-                    return next;
-                });
+                setStores((prev) => ({
+                    ...prev,
+                    [group]: [...(prev[group] ?? []), ...newStores],
+                }));
             }
 
             // Create connections for all new pairs:
             // newDPs × (existingStores + newStores) + existingDPs × newStores
-            const existingDPs = dataPlanes.get(group) ?? [];
-            const existingStores = stores.get(group) ?? [];
+            const existingDPs = dataPlanes[group] ?? [];
+            const existingStores = stores[group] ?? [];
             const allStores = [...existingStores, ...newStores];
 
             const hasNewPairs =
@@ -160,8 +154,7 @@ export function ConnectionTestProvider({
             if (!hasNewPairs) return;
 
             setConnections((prev) => {
-                const next = new Map(prev);
-                const existing = prev.get(group) ?? [];
+                const existing = prev[group] ?? [];
                 const updated = [...existing];
 
                 const upsert = (dpName: string, storeId: string) => {
@@ -193,8 +186,7 @@ export function ConnectionTestProvider({
                     }
                 }
 
-                next.set(group, updated);
-                return next;
+                return { ...prev, [group]: updated };
             });
         },
         [dataPlanes, stores]
@@ -203,18 +195,16 @@ export function ConnectionTestProvider({
     const removeDataPlane = useCallback(
         (dataPlaneName: string, group: string) => {
             setDataPlanes((prev) => {
-                const existing = prev.get(group);
+                const existing = prev[group];
                 if (!existing) return prev;
 
-                const next = new Map(prev);
-                next.set(
-                    group,
-                    existing.filter(
+                return {
+                    ...prev,
+                    [group]: existing.filter(
                         (dp: DataPlaneNode) =>
                             dp.dataPlaneName !== dataPlaneName
-                    )
-                );
-                return next;
+                    ),
+                };
             });
         },
         []
@@ -222,15 +212,15 @@ export function ConnectionTestProvider({
 
     const removeStore = useCallback((storeId: string, group: string) => {
         setStores((prev) => {
-            const existing = prev.get(group);
+            const existing = prev[group];
             if (!existing) return prev;
 
-            const next = new Map(prev);
-            next.set(
-                group,
-                existing.filter((s: FragmentStore) => getStoreId(s) !== storeId)
-            );
-            return next;
+            return {
+                ...prev,
+                [group]: existing.filter(
+                    (s: FragmentStore) => getStoreId(s) !== storeId
+                ),
+            };
         });
     }, []);
 
@@ -242,14 +232,13 @@ export function ConnectionTestProvider({
             group: string
         ) => {
             setConnections((prev) => {
-                const existing = prev.get(group) ?? [];
+                const existing = prev[group] ?? [];
                 const idx = existing.findIndex(
                     (c) =>
                         c.dataPlaneName === dataPlaneName &&
                         c.storeId === storeId
                 );
 
-                const next = new Map(prev);
                 const updated = [...existing];
 
                 if (idx >= 0) {
@@ -263,8 +252,7 @@ export function ConnectionTestProvider({
                     });
                 }
 
-                next.set(group, updated);
-                return next;
+                return { ...prev, [group]: updated };
             });
         },
         []
@@ -272,24 +260,20 @@ export function ConnectionTestProvider({
 
     const clearGroup = useCallback((group: string) => {
         setConnections((prev) => {
-            const next = new Map(prev);
-            next.delete(group);
-            return next;
+            const { [group]: _, ...rest } = prev;
+            return rest;
         });
         setDataPlanes((prev) => {
-            const next = new Map(prev);
-            next.delete(group);
-            return next;
+            const { [group]: _, ...rest } = prev;
+            return rest;
         });
         setStores((prev) => {
-            const next = new Map(prev);
-            next.delete(group);
-            return next;
+            const { [group]: _, ...rest } = prev;
+            return rest;
         });
         setOriginalEndpoints((prev) => {
-            const next = new Map(prev);
-            next.delete(group);
-            return next;
+            const { [group]: _, ...rest } = prev;
+            return rest;
         });
     }, []);
 
@@ -302,7 +286,7 @@ export function ConnectionTestProvider({
                 stores,
                 originalEndpoints,
                 addEndpoints,
-                setOriginals,
+                initializeEndpoints,
                 removeDataPlane,
                 removeStore,
                 updateConnection,
@@ -335,7 +319,7 @@ export function useConnectionTest(
     const {
         catalog_prefix: catalogPrefix,
         addEndpoints: ctxAddEndpoints,
-        setOriginals: ctxSetOriginals,
+        initializeEndpoints: ctxInitializeEndpoints,
         updateConnection: ctxUpdateConnection,
         removeDataPlane: ctxRemoveDataPlane,
         removeStore: ctxRemoveStore,
@@ -346,14 +330,11 @@ export function useConnectionTest(
     // via addEndpoints after this point is considered "new".
     const originalsRegistered = useRef(false);
     useEffect(() => {
-        if (
-            originalsRegistered.current ||
-            !initialOriginals?.dataPlanes.length
-        )
+        if (originalsRegistered.current || !initialOriginals?.dataPlanes.length)
             return;
 
         originalsRegistered.current = true;
-        ctxSetOriginals(
+        ctxInitializeEndpoints(
             initialOriginals.dataPlanes,
             initialOriginals.stores,
             resolvedGroup
@@ -363,30 +344,25 @@ export function useConnectionTest(
             initialOriginals.stores,
             resolvedGroup
         );
-    }, [
-        initialOriginals,
-        resolvedGroup,
-        ctxSetOriginals,
-        ctxAddEndpoints,
-    ]);
+    }, [initialOriginals, resolvedGroup, ctxInitializeEndpoints, ctxAddEndpoints]);
 
     const dataPlanes = useMemo(
-        () => context.dataPlanes.get(resolvedGroup) ?? emptyDataPlanes,
+        () => context.dataPlanes[resolvedGroup] ?? emptyDataPlanes,
         [context.dataPlanes, resolvedGroup]
     );
 
     const stores = useMemo(
-        () => context.stores.get(resolvedGroup) ?? emptyStores,
+        () => context.stores[resolvedGroup] ?? emptyStores,
         [context.stores, resolvedGroup]
     );
 
     const connections = useMemo(
-        () => context.connections.get(resolvedGroup) ?? emptyConnections,
+        () => context.connections[resolvedGroup] ?? emptyConnections,
         [context.connections, resolvedGroup]
     );
 
     const originals = useMemo(
-        () => context.originalEndpoints.get(resolvedGroup) ?? emptyOriginals,
+        () => context.originalEndpoints[resolvedGroup] ?? emptyOriginals,
         [context.originalEndpoints, resolvedGroup]
     );
 
