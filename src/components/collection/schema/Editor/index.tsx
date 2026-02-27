@@ -27,6 +27,7 @@ import { useEntityType } from 'src/context/EntityContext';
 import { useProjectionsForSkim } from 'src/hooks/projections/useProjectionsForSkim';
 import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
 
 export interface Props {
@@ -62,6 +63,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         useBindingsEditorStore_populateSkimProjectionResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
     const disableSchemaEditing = useDisableSchemaEditing();
+    const formActive = useFormStateStore_isActive();
 
     useEffect(() => {
         if (draftSpec?.spec && entityName) {
@@ -159,11 +161,15 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
-                    disabled={!editModeEnabled || disableSchemaEditing}
+                    disabled={
+                        !editModeEnabled || disableSchemaEditing || formActive
+                    }
                     onChange={onKeyChange}
                 />
                 <PropertiesViewer
-                    disabled={!editModeEnabled || disableSchemaEditing}
+                    disabled={
+                        !editModeEnabled || disableSchemaEditing || formActive
+                    }
                     editorProps={{
                         localZustandScope,
                         onChange: onPropertiesViewerChange,
