@@ -22,14 +22,12 @@ interface ResolvedConnection {
 }
 
 function resolveConnections(
-    newActiveConnections: ReturnType<
-        typeof useConnectionTest
-    >['activeConnections'],
+    connections: ReturnType<typeof useConnectionTest>['activeConnections'],
     contextDataPlanes: DataPlaneNode[],
     contextStores: FragmentStore[]
 ): ResolvedConnection[] {
     const resolved: ResolvedConnection[] = [];
-    for (const connection of newActiveConnections) {
+    for (const connection of connections) {
         const dataPlane = contextDataPlanes.find(
             (dp) => dp.dataPlaneName === connection.dataPlaneName
         );
@@ -47,26 +45,39 @@ function resolveConnections(
     return resolved;
 }
 
-function keys(items: ResolvedConnection[]): Set<string> {
+function keySet(items: ResolvedConnection[]): Set<string> {
     return new Set(items.map((item) => item.key));
 }
 
-export function NewConnectionTests() {
+interface RenderItem extends ResolvedConnection {
+    disabled: boolean;
+    isNew: boolean;
+}
+
+export function ConnectionTests() {
     const {
         activeConnections,
+        orphanedOriginalConnections,
         isOriginalConnection,
         testOne,
         testConnections,
+        isTesting,
         dataPlanes: contextDataPlanes,
         stores: contextStores,
     } = useConnectionTest();
 
+    // Split into new vs existing
     const newActiveConnections = useMemo(
         () => activeConnections.filter((c) => !isOriginalConnection(c)),
         [activeConnections, isOriginalConnection]
     );
+    const existingActiveConnections = useMemo(
+        () => activeConnections.filter((c) => isOriginalConnection(c)),
+        [activeConnections, isOriginalConnection]
+    );
 
-    const currentResolved = useMemo(
+    // --- Resolve connections ---
+    const newResolved = useMemo(
         () =>
             resolveConnections(
                 newActiveConnections,
@@ -76,55 +87,95 @@ export function NewConnectionTests() {
         [newActiveConnections, contextDataPlanes, contextStores]
     );
 
-    const [expandedKey, setExpandedKey] = useState<string | null>(null);
-
-    // Once the card has appeared, keep it on screen even if new connections are removed
-    const hasAppeared = useRef(false);
-    if (newActiveConnections.length > 0) {
-        hasAppeared.current = true;
-    }
-
-    const isTesting = useMemo(
-        () => newActiveConnections.some((c) => c.status === 'testing'),
-        [newActiveConnections]
+    const existingResolved = useMemo(
+        () =>
+            resolveConnections(
+                existingActiveConnections,
+                contextDataPlanes,
+                contextStores
+            ),
+        [existingActiveConnections, contextDataPlanes, contextStores]
     );
 
-    // Queue of newly added connections to auto-test
+    // Cache endpoint objects so orphaned connections remain resolvable
+    const dpCacheRef = useRef<Map<string, DataPlaneNode>>(new Map());
+    const storeCacheRef = useRef<Map<string, FragmentStore>>(new Map());
+
+    useEffect(() => {
+        for (const dp of contextDataPlanes) {
+            dpCacheRef.current.set(dp.dataPlaneName, dp);
+        }
+    }, [contextDataPlanes]);
+
+    useEffect(() => {
+        for (const store of contextStores) {
+            storeCacheRef.current.set(getStoreId(store), store);
+        }
+    }, [contextStores]);
+
+    const orphanedResolved = useMemo(() => {
+        const entries: ResolvedConnection[] = [];
+        for (const connection of orphanedOriginalConnections) {
+            const dataPlane = dpCacheRef.current.get(connection.dataPlaneName);
+            const store = storeCacheRef.current.get(connection.storeId);
+            if (dataPlane && store) {
+                entries.push({
+                    key: `${connection.dataPlaneName}-${connection.storeId}`,
+                    dataPlane,
+                    store,
+                });
+            }
+        }
+        return entries;
+    }, [orphanedOriginalConnections]);
+
+    // --- Auto-test existing connections once after hydration ---
+    const initialTestTriggered = useRef(false);
+    useEffect(() => {
+        if (initialTestTriggered.current) return;
+        if (existingActiveConnections.length === 0) return;
+
+        initialTestTriggered.current = true;
+        void testConnections(existingActiveConnections).catch(() => {});
+    }, [existingActiveConnections, testConnections]);
+
+    // --- New connection enter/exit animations ---
+    const [expandedKey, setExpandedKey] = useState<string | null>(null);
     const pendingTestsRef = useRef<ResolvedConnection[]>([]);
 
-    // Track incoming/outgoing for enter/exit animations
-    const [prevResolved, setPrevResolved] =
-        useState<ResolvedConnection[]>(currentResolved);
+    const [prevNewResolved, setPrevNewResolved] =
+        useState<ResolvedConnection[]>(newResolved);
     const [incomingKeys, setIncomingKeys] = useState<Set<string>>(new Set());
     const [outgoing, setOutgoing] = useState<ResolvedConnection[]>([]);
-    const outgoingKeys = useMemo(() => keys(outgoing), [outgoing]);
+    const outgoingKeys = useMemo(() => keySet(outgoing), [outgoing]);
 
-    // Detect changes during render
-    // https://react.dev/reference/react/useState#storing-information-from-previous-renders
-    if (prevResolved !== currentResolved) {
-        setPrevResolved(currentResolved);
-        const prevKeys = keys(prevResolved);
-        const nextKeys = keys(currentResolved);
+    // Detect new connection changes during render
+    if (prevNewResolved !== newResolved) {
+        setPrevNewResolved(newResolved);
+        const prevKeys = keySet(prevNewResolved);
+        const nextKeys = keySet(newResolved);
 
-        const removed = prevResolved.filter((item) => !nextKeys.has(item.key));
+        const removed = prevNewResolved.filter(
+            (item) => !nextKeys.has(item.key)
+        );
         if (removed.length > 0) {
             setOutgoing((prev) => [...prev, ...removed]);
         }
 
-        const added = currentResolved.filter((item) => !prevKeys.has(item.key));
+        const added = newResolved.filter((item) => !prevKeys.has(item.key));
         if (added.length > 0) {
-            setIncomingKeys(keys(added));
+            setIncomingKeys(keySet(added));
             pendingTestsRef.current.push(...added);
         }
     }
 
-    const renderList = useMemo(() => {
-        const currentKeys = keys(currentResolved);
+    const newRenderList = useMemo(() => {
+        const currentKeys = keySet(newResolved);
         return [
-            ...currentResolved,
+            ...newResolved,
             ...outgoing.filter((item) => !currentKeys.has(item.key)),
         ];
-    }, [currentResolved, outgoing]);
+    }, [newResolved, outgoing]);
 
     useEffect(() => {
         if (incomingKeys.size === 0) return;
@@ -132,13 +183,12 @@ export function NewConnectionTests() {
         return () => cancelAnimationFrame(frame);
     }, [incomingKeys]);
 
-    // Auto-test newly added connections that haven't been tested yet
+    // Auto-test newly added connections
     useEffect(() => {
         const pending = pendingTestsRef.current.splice(0);
         for (const item of pending) {
             const connection = newActiveConnections.find(
-                (c) =>
-                    `${c.dataPlaneName}-${c.storeId}` === item.key
+                (c) => `${c.dataPlaneName}-${c.storeId}` === item.key
             );
             if (connection && connection.status === 'idle') {
                 void testOne(item.dataPlane, item.store);
@@ -150,96 +200,109 @@ export function NewConnectionTests() {
         setOutgoing((prev) => prev.filter((item) => item.key !== key));
     }, []);
 
+    // --- Combined render list ---
+    const allRenderItems = useMemo(() => {
+        const items: RenderItem[] = [];
+
+        for (const item of existingResolved) {
+            items.push({ ...item, disabled: false, isNew: false });
+        }
+        for (const item of orphanedResolved) {
+            items.push({ ...item, disabled: true, isNew: false });
+        }
+        for (const item of newRenderList) {
+            items.push({ ...item, disabled: false, isNew: true });
+        }
+
+        return items;
+    }, [newRenderList, existingResolved, orphanedResolved]);
+
+    const flipKey = `${allRenderItems.length}-${allRenderItems.map((item) => item.key).join(',')}`;
+
+    const hasAnyConnections =
+        activeConnections.length > 0 || orphanedOriginalConnections.length > 0;
+
+    if (!hasAnyConnections) return null;
+
     return (
-        <Collapse
-            in={newActiveConnections.length > 0 || hasAppeared.current}
-            unmountOnExit
-        >
-            <CardWrapper disableMinWidth sx={{ overflow: 'hidden' }}>
-                <Box
+        <CardWrapper disableMinWidth sx={{ overflow: 'hidden' }}>
+            <Box
+                sx={{
+                    ...cardHeaderSx,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Typography sx={cardHeaderSx}>Connection Tests</Typography>
+                <Link
+                    component="button"
+                    variant="body2"
+                    underline="hover"
+                    disabled={isTesting}
+                    onClick={() =>
+                        void testConnections(activeConnections).catch(() => {})
+                    }
                     sx={{
-                        ...cardHeaderSx,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
+                        opacity: isTesting ? 0.5 : 1,
+                        pointerEvents: isTesting ? 'none' : 'auto',
                     }}
                 >
-                    <Typography sx={cardHeaderSx}>New Connections</Typography>
-                    {newActiveConnections.length > 0 && (
-                        <Link
-                            component="button"
-                            variant="body2"
-                            underline="hover"
-                            disabled={isTesting}
-                            onClick={() =>
-                                void testConnections(
-                                    newActiveConnections
-                                ).catch(() => {})
-                            }
-                            sx={{
-                                opacity: isTesting ? 0.5 : 1,
-                                pointerEvents: isTesting ? 'none' : 'auto',
-                            }}
-                        >
-                            Run tests
-                        </Link>
-                    )}
-                </Box>
-                <Typography>
-                    New connections must pass before saving changes.
-                </Typography>
-                <Flipper
-                    flipKey={`${renderList.length}-${renderList.map((item) => item.key).join(',')}`}
-                >
-                    <Stack spacing={1}>
-                        <Flipped flipId="__empty">
-                            <Collapse
-                                in={newActiveConnections.length === 0}
-                                unmountOnExit
-                            >
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    sx={{
-                                        fontSize: 12,
-                                        width: '100%',
-                                        textAlign: 'center',
-                                    }}
+                    Run tests
+                </Link>
+            </Box>
+            <Typography>
+                Each data plane must be able to connect to each storage
+                location. New connections must pass before saving changes.
+            </Typography>
+            <Flipper flipKey={flipKey}>
+                <Stack spacing={1}>
+                    {allRenderItems.map((item) => {
+                        const animatedVisible = item.isNew
+                            ? !outgoingKeys.has(item.key) &&
+                              !incomingKeys.has(item.key)
+                            : true;
+
+                        return (
+                            <Flipped key={item.key} flipId={item.key}>
+                                <Collapse
+                                    in={animatedVisible}
+                                    onExited={
+                                        item.isNew
+                                            ? () =>
+                                                  onExitAnimationComplete(
+                                                      item.key
+                                                  )
+                                            : undefined
+                                    }
+                                    unmountOnExit
                                 >
-                                    (Nothing here)
-                                </Typography>
-                            </Collapse>
-                        </Flipped>
-                        {renderList.map((item) => {
-                            const visible =
-                                !outgoingKeys.has(item.key) &&
-                                !incomingKeys.has(item.key);
-                            return (
-                                <Flipped key={item.key} flipId={item.key}>
-                                    <Collapse
-                                        in={visible}
-                                        onExited={() =>
-                                            onExitAnimationComplete(item.key)
+                                    <ConnectionAccordion
+                                        dataPlane={item.dataPlane}
+                                        store={item.store}
+                                        expanded={
+                                            item.disabled
+                                                ? false
+                                                : expandedKey === item.key
                                         }
-                                        unmountOnExit
-                                    >
-                                        <ConnectionAccordion
-                                            dataPlane={item.dataPlane}
-                                            store={item.store}
-                                            expanded={expandedKey === item.key}
-                                            onToggle={(isExpanded) =>
-                                                setExpandedKey(
-                                                    isExpanded ? item.key : null
-                                                )
-                                            }
-                                        />
-                                    </Collapse>
-                                </Flipped>
-                            );
-                        })}
-                    </Stack>
-                </Flipper>
-            </CardWrapper>
-        </Collapse>
+                                        onToggle={
+                                            item.disabled
+                                                ? () => {}
+                                                : (isExpanded) =>
+                                                      setExpandedKey(
+                                                          isExpanded
+                                                              ? item.key
+                                                              : null
+                                                      )
+                                        }
+                                        disabled={item.disabled}
+                                    />
+                                </Collapse>
+                            </Flipped>
+                        );
+                    })}
+                </Stack>
+            </Flipper>
+        </CardWrapper>
     );
 }
