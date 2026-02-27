@@ -60,7 +60,7 @@ function CreateMappingWizardInner({
         testAll,
         allTestsPassing,
         clear: clearConnectionTests,
-        syncEndpoints,
+        initializeEndpoints,
     } = useConnectionTest();
     const { getValues, formState, watch, setValue, reset } =
         useFormContext<StorageMappingFormData>();
@@ -70,6 +70,8 @@ function CreateMappingWizardInner({
             required: 'At least one data plane is required',
         },
     });
+
+    // const removeDataPlane = (index: number) => {
 
     const dataPlanes = watch('data_planes');
     const allowPublic = watch('allow_public');
@@ -150,6 +152,8 @@ function CreateMappingWizardInner({
                     }),
                     canAdvance: () => formState.isValid,
                     onAdvance: async () => {
+                        initializeEndpoints(dataPlanes, stores);
+
                         await testAll();
                         return true;
                     },
@@ -163,12 +167,21 @@ function CreateMappingWizardInner({
                     onAdvance: handleComplete,
                 },
             ] satisfies WizardStep[],
-        [intl, formState.isValid, getValues, allTestsPassing, testAll]
+        [
+            intl,
+            formState.isValid,
+            getValues,
+            allTestsPassing,
+            testAll,
+            dataPlanes,
+            allowPublic,
+            stores,
+        ]
     );
 
-    useEffect(() => {
-        syncEndpoints(dataPlanes, stores);
-    }, [dataPlanes, stores, syncEndpoints]);
+    // useEffect(() => {
+    //     syncEndpoints(dataPlanes, stores);
+    // }, [dataPlanes, stores, syncEndpoints]);
 
     return <WizardDialog open={open} onClose={closeDialog} steps={steps} />;
 }
@@ -199,7 +212,7 @@ export function CreateMappingWizard() {
 
     return (
         <FormProvider {...methods}>
-            <ConnectionTestProvider catalog_prefix={catalogPrefix}>
+            <ConnectionTestProvider catalogPrefix={catalogPrefix}>
                 <CreateMappingWizardInner open={open} onClose={onClose} />
             </ConnectionTestProvider>
         </FormProvider>

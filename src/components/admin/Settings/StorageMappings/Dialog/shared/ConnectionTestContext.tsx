@@ -304,20 +304,20 @@ export function useConnectionTest(initialEndpoints?: {
 
     const clear = useCallback(() => {
         initializeEndpoints([], []);
-        initialized.current = false;
+        // initialized.current = false;
     }, [initializeEndpoints]);
 
     // run once when the hook is invoked with initial endpoints to set up the context state
-    const initialized = useRef(false);
-    useEffect(() => {
-        if (initialized.current || !initialEndpoints?.dataPlanes.length) return;
+    // const initialized = useRef(false);
+    // useEffect(() => {
+    //     if (initialized.current || !initialEndpoints?.dataPlanes.length) return;
 
-        initialized.current = true;
-        initializeEndpoints(
-            initialEndpoints.dataPlanes,
-            initialEndpoints.stores
-        );
-    }, [initialEndpoints, initializeEndpoints]);
+    //     initialized.current = true;
+    //     initializeEndpoints(
+    //         initialEndpoints.dataPlanes,
+    //         initialEndpoints.stores
+    //     );
+    // }, [initialEndpoints, initializeEndpoints]);
 
     // --- Derived state ---
 
@@ -423,6 +423,7 @@ export function useConnectionTest(initialEndpoints?: {
         removeStore,
         testAll,
         testOne,
+        initializeEndpoints,
         clear,
     };
 }
