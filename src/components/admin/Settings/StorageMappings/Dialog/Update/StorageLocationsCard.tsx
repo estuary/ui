@@ -256,6 +256,8 @@ export function StorageLocationsCard() {
                     justifyContent: 'space-between',
                     // if the nested form is open, negative margin shrinks some unused whitespace above the form actions
                     mb: showNestedStorageForm ? -4 : 0,
+                    transition: (theme) =>
+                        theme.transitions.create('margin-bottom'),
                 }}
             >
                 <Typography sx={cardHeaderSx}>Storage Locations</Typography>
