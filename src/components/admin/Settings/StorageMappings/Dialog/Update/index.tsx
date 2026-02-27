@@ -147,11 +147,13 @@ function DialogInner({
     const { getValues, watch } = methods;
 
     const handleClose = useCallback(() => {
-        // Remove any pending (unsaved) stores before closing
+        // Remove any unsaved stores (pending or newly added) before closing
         const stores = methods.getValues('fragment_stores');
-        const withoutPending = stores.filter((s) => !s._isPending);
-        if (withoutPending.length !== stores.length) {
-            methods.setValue('fragment_stores', withoutPending);
+        const withoutUnsaved = stores.filter(
+            (s) => !s._isPending && !s._isNew
+        );
+        if (withoutUnsaved.length !== stores.length) {
+            methods.setValue('fragment_stores', withoutUnsaved);
         }
         clearConnectionTests();
         originalsResolved.current = false;
