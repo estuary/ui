@@ -408,12 +408,14 @@ export const useBinding_setCurrentBindingWithTimeout = (
 };
 
 export const useBinding_hasFieldConflicts = (bindingUUID?: string) => {
-    return useBindingStore((state) =>
-        bindingUUID
-            ? Boolean(state.selections?.[bindingUUID]?.hasConflicts)
-            : Object.values(state.selections).some(
-                  (selection) => selection.hasConflicts
-              )
+    return useBindingStore(
+        useShallow((state) =>
+            bindingUUID
+                ? Boolean(state.selections?.[bindingUUID]?.hasConflicts)
+                : Object.values(state.selections).some(
+                      (selection) => selection.hasConflicts
+                  )
+        )
     );
 };
 
@@ -423,6 +425,9 @@ const DEFAULT_GROUP_BY = {
 };
 export const useBinding_groupBy = (bindingUUID: string) =>
     useBindingStore(
-        (state) =>
-            state.selections?.[bindingUUID].groupBy.value ?? DEFAULT_GROUP_BY
+        useShallow(
+            (state) =>
+                state.selections?.[bindingUUID].groupBy.value ??
+                DEFAULT_GROUP_BY
+        )
     );
