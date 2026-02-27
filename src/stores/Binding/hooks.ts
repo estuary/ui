@@ -416,3 +416,13 @@ export const useBinding_hasFieldConflicts = (bindingUUID?: string) => {
               )
     );
 };
+
+const DEFAULT_GROUP_BY = {
+    explicit: [],
+    implicit: [],
+};
+export const useBinding_groupBy = (bindingUUID: string) =>
+    useBindingStore(
+        (state) =>
+            state.selections?.[bindingUUID].groupBy.value ?? DEFAULT_GROUP_BY
+    );

@@ -1,16 +1,10 @@
 import type { DefinedKeyProps } from 'src/components/fieldSelection/types';
 
 import ExistingKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ExistingKey';
-import { useBindingStore } from 'src/stores/Binding/Store';
+import { useBinding_groupBy } from 'src/stores/Binding/hooks';
 
 const ImplicitKey = ({ bindingUUID }: DefinedKeyProps) => {
-    const groupBy = useBindingStore(
-        (state) =>
-            state.selections?.[bindingUUID].groupBy.value ?? {
-                explicit: [],
-                implicit: [],
-            }
-    );
+    const groupBy = useBinding_groupBy(bindingUUID);
 
     return (
         <ExistingKey

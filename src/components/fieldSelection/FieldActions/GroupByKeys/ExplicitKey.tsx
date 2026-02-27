@@ -4,18 +4,12 @@ import { useMemo } from 'react';
 
 import ExistingKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ExistingKey';
 import useLiveGroupByKey from 'src/hooks/fieldSelection/useLiveGroupByKey';
-import { useBindingStore } from 'src/stores/Binding/Store';
+import { useBinding_groupBy } from 'src/stores/Binding/hooks';
 
 const ExplicitKey = ({ bindingUUID }: DefinedKeyProps) => {
     const { existingGroupByKey } = useLiveGroupByKey(bindingUUID);
 
-    const groupBy = useBindingStore(
-        (state) =>
-            state.selections?.[bindingUUID].groupBy.value ?? {
-                explicit: [],
-                implicit: [],
-            }
-    );
+    const groupBy = useBinding_groupBy(bindingUUID);
 
     const displayExplicitKeys = useMemo(
         () =>
