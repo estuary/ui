@@ -55,6 +55,7 @@ export function NewConnectionTests() {
     const {
         activeConnections,
         isOriginalConnection,
+        testOne,
         testConnections,
         dataPlanes: contextDataPlanes,
         stores: contextStores,
@@ -88,6 +89,9 @@ export function NewConnectionTests() {
         [newActiveConnections]
     );
 
+    // Queue of newly added connections to auto-test
+    const pendingTestsRef = useRef<ResolvedConnection[]>([]);
+
     // Track incoming/outgoing for enter/exit animations
     const [prevResolved, setPrevResolved] =
         useState<ResolvedConnection[]>(currentResolved);
@@ -110,6 +114,7 @@ export function NewConnectionTests() {
         const added = currentResolved.filter((item) => !prevKeys.has(item.key));
         if (added.length > 0) {
             setIncomingKeys(keys(added));
+            pendingTestsRef.current.push(...added);
         }
     }
 
@@ -126,6 +131,20 @@ export function NewConnectionTests() {
         const frame = requestAnimationFrame(() => setIncomingKeys(new Set()));
         return () => cancelAnimationFrame(frame);
     }, [incomingKeys]);
+
+    // Auto-test newly added connections that haven't been tested yet
+    useEffect(() => {
+        const pending = pendingTestsRef.current.splice(0);
+        for (const item of pending) {
+            const connection = newActiveConnections.find(
+                (c) =>
+                    `${c.dataPlaneName}-${c.storeId}` === item.key
+            );
+            if (connection && connection.status === 'idle') {
+                void testOne(item.dataPlane, item.store);
+            }
+        }
+    });
 
     const onExitAnimationComplete = useCallback((key: string) => {
         setOutgoing((prev) => prev.filter((item) => item.key !== key));
