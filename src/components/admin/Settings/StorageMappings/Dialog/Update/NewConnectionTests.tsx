@@ -12,7 +12,6 @@ import {
     getStoreId,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
-import CardWrapper from 'src/components/shared/CardWrapper';
 import { cardHeaderSx } from 'src/context/Theme';
 
 interface ResolvedConnection {
