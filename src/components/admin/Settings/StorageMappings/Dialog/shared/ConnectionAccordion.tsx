@@ -2,7 +2,7 @@ import type { DataPlaneNode } from 'src/api/dataPlanesGql';
 import type { FragmentStore } from 'src/api/storageMappingsGql';
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import {
     Accordion,
@@ -11,7 +11,6 @@ import {
     Box,
     Button,
     CircularProgress,
-    Collapse,
     Stack,
     Typography,
 } from '@mui/material';
@@ -35,105 +34,45 @@ interface ConnectionStatusBadgeProps {
     compact?: boolean;
 }
 
-function ConnectionStatusBadge({
-    result,
-    compact = false,
-}: ConnectionStatusBadgeProps) {
-    if (result.status === 'idle') {
-        return null;
-    }
+function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
+    const badges = {
+        idle: null,
+        testing: {
+            text: null,
+            icon: <CircularProgress size={16} color="inherit" />,
+            color: 'text.secondary',
+        },
+        success: {
+            text: 'Ready',
+            icon: <CheckCircle width={16} height={16} />,
+            color: 'success.main',
+        },
+        error: {
+            text: 'Needs Attention',
+            icon: <WarningTriangle width={16} height={16} />,
+            color: 'warning.main',
+        },
+    } satisfies Record<
+        Connection['status'],
+        { text: string | null; icon: React.ReactNode; color: string } | null
+    >;
 
-    if (result.status === 'testing') {
-        return (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <CircularProgress size={compact ? 16 : 20} color="inherit" />
-            </Box>
-        );
-    }
+    const badge = badges[result.status];
 
-    if (result.status === 'success') {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    color: 'success.main',
-                }}
-            >
-                <Typography variant="body2">Ready</Typography>
-                <CheckCircle
-                    width={compact ? 16 : 20}
-                    height={compact ? 16 : 20}
-                />
-            </Box>
-        );
-    }
-
-    if (result.status === 'error') {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    color: 'warning.main',
-                }}
-            >
-                <Typography variant="body2">Needs Attention</Typography>
-                <WarningTriangle
-                    width={compact ? 16 : 20}
-                    height={compact ? 16 : 20}
-                />
-            </Box>
-        );
-    }
-
-    return null;
-}
-
-interface ConnectionErrorProps {
-    result: Connection;
-    errorMessage?: string;
-    onRetry: () => void;
-}
-
-function ConnectionError({
-    result,
-    errorMessage,
-    onRetry,
-}: ConnectionErrorProps) {
-    const message = errorMessage || result.errorMessage || 'Connection failed';
-    const isRetrying = result.status === 'testing';
+    if (!badge) return null;
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                color: 'warning.main',
-            }}
+        <Stack
+            direction="row"
+            spacing={1}
+            alignItems={'center'}
+            sx={{ color: badge.color }}
         >
-            <Typography variant="body2" sx={{ flex: 1 }}>
-                {message}
-            </Typography>
-            <Button
-                variant="text"
-                size="small"
-                disabled={isRetrying}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onRetry();
-                }}
-                startIcon={
-                    !isRetrying ? <Refresh width={16} height={16} /> : null
-                }
-                sx={{ ml: 1 }}
-            >
-                {isRetrying ? 'Retrying...' : 'Retry'}
-            </Button>
-        </Box>
+            {badge.text && (
+                <Typography variant="body2">{badge.text}</Typography>
+            )}
+            {badge.icon}
+        </Stack>
     );
 }
 
@@ -155,21 +94,14 @@ export function ConnectionAccordion({
     const { testOne, connectionFor } = useConnectionTest();
     const testResult = connectionFor(dataPlane, store);
 
-    const [lastErrorMessage, setLastErrorMessage] = useState<string>();
     const prevStatusRef = useRef(testResult.status);
     const onToggleRef = useRef(onToggle);
     onToggleRef.current = onToggle;
 
-    // Track error messages and auto-collapse on success
     useEffect(() => {
-        // Capture error message when it occurs
-        if (testResult.status === 'error' && testResult.errorMessage) {
-            setLastErrorMessage(testResult.errorMessage);
-        }
-
-        // Collapse when status changes to success
+        // Collapse only when transitioning from testing to success
         if (
-            prevStatusRef.current !== 'success' &&
+            prevStatusRef.current === 'testing' &&
             testResult.status === 'success'
         ) {
             onToggleRef.current(false);
@@ -187,8 +119,9 @@ export function ConnectionAccordion({
             disabled={disabled}
             disableGutters
             sx={{
-                '&:before': { display: 'none' },
                 'border': 1,
+                '&:first-of-type': { borderRadius: 2 },
+                '&:last-of-type': { borderRadius: 2 },
                 'borderColor': disabled
                     ? 'divider'
                     : testResult.status === 'success'
@@ -196,10 +129,7 @@ export function ConnectionAccordion({
                       : testResult.status === 'error'
                         ? 'warning.main'
                         : 'divider',
-                'borderRadius': 2,
-                'opacity': disabled ? 0.5 : 1,
-                '&:first-of-type': { borderRadius: 2 },
-                '&:last-of-type': { borderRadius: 2 },
+                'opacity': disabled ? 0.6 : 1,
                 '&.Mui-disabled': {
                     bgcolor: 'background.paper',
                 },
@@ -233,29 +163,39 @@ export function ConnectionAccordion({
                     <Typography fontWeight={600} noWrap sx={{ minWidth: 0 }}>
                         {toPresentableName(dataPlane)} &rarr;{' '}
                         {getStoreId(store)}
-                        {store.prefix ? `/${store.prefix}` : ''}{' '}
-                        <Typography component="span" variant="body2">
-                            ({store.provider})
-                        </Typography>
                     </Typography>
-                    <ConnectionStatusBadge result={testResult} compact />
+                    <ConnectionStatusBadge result={testResult} />
                 </Box>
             </AccordionSummary>
-            <AccordionDetails>
-                <Stack spacing={2}>
-                    <Collapse
-                        in={
-                            testResult.status === 'error' ||
-                            (testResult.status === 'testing' &&
-                                !!lastErrorMessage)
-                        }
+            <AccordionDetails sx={{ pt: 0.5 }}>
+                <Stack spacing={1}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}
                     >
-                        <ConnectionError
-                            result={testResult}
-                            errorMessage={lastErrorMessage}
-                            onRetry={() => testOne(dataPlane, store)}
-                        />
-                    </Collapse>
+                        <Box>
+                            {testResult.errorMessage ? (
+                                <Typography
+                                    variant="body2"
+                                    sx={{ color: 'warning.main' }}
+                                >
+                                    {testResult.errorMessage}
+                                </Typography>
+                            ) : null}
+                        </Box>
+                        <Button
+                            variant="text"
+                            size="small"
+                            disabled={testResult.status === 'testing'}
+                            onClick={() => testOne(dataPlane, store)}
+                            startIcon={<Refresh width={16} height={16} />}
+                        >
+                            Retry
+                        </Button>
+                    </Box>
                     <ConnectionInstructions
                         provider={store.provider}
                         bucket={getStoreId(store)}
@@ -263,9 +203,7 @@ export function ConnectionAccordion({
                         gcpServiceAccountEmail={
                             dataPlane.gcpServiceAccountEmail ?? ''
                         }
-                        storageAccountName={
-                            store.storage_account_name ?? undefined
-                        }
+                        storageAccountName={store.storage_account_name ?? ''}
                         azureApplicationClientId={
                             dataPlane.azureApplicationClientId ?? ''
                         }

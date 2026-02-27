@@ -61,9 +61,9 @@ const emptyOriginals: OriginalEndpoints = {
 
 export function getStoreId(store: FragmentStore): string {
     if (store.provider === 'AZURE') {
-        return `AZURE/${store.storage_account_name}/${store.container_name}/${store.prefix ?? ''}`;
+        return `AZ/${store.storage_account_name}/${store.container_name}/${store.storage_prefix ?? ''}`;
     }
-    return `${store.provider}/${store.bucket}/${store.prefix ?? ''}`;
+    return `${store.provider}/${store.bucket}/${store.storage_prefix ?? ''}`;
 }
 
 const ConnectionTestContext = createContext<ConnectionTestContextValue | null>(
@@ -93,9 +93,7 @@ export function ConnectionTestProvider({
     const initializeEndpoints = useCallback(
         (dataPlanes: DataPlaneNode[], stores: FragmentStore[]) => {
             setOriginalEndpoints({
-                dpNames: new Set(
-                    dataPlanes.map((dp) => dp.dataPlaneName)
-                ),
+                dpNames: new Set(dataPlanes.map((dp) => dp.dataPlaneName)),
                 storeIds: new Set(stores.map((s) => getStoreId(s))),
             });
         },
@@ -241,7 +239,9 @@ interface UseConnectionTestOriginals {
     stores: FragmentStore[];
 }
 
-export function useConnectionTest(initialOriginals?: UseConnectionTestOriginals) {
+export function useConnectionTest(
+    initialOriginals?: UseConnectionTestOriginals
+) {
     const context = useContext(ConnectionTestContext);
     if (!context) {
         throw new Error(
@@ -275,10 +275,7 @@ export function useConnectionTest(initialOriginals?: UseConnectionTestOriginals)
             initialOriginals.dataPlanes,
             initialOriginals.stores
         );
-        addEndpoints(
-            initialOriginals.dataPlanes,
-            initialOriginals.stores
-        );
+        addEndpoints(initialOriginals.dataPlanes, initialOriginals.stores);
     }, [initialOriginals, initializeEndpoints, addEndpoints]);
 
     // Derived: connections where both endpoints are currently in the maps
@@ -392,13 +389,7 @@ export function useConnectionTest(initialOriginals?: UseConnectionTestOriginals)
                 throw e;
             }
         },
-        [
-            catalogPrefix,
-            dataPlanes,
-            stores,
-            updateConnection,
-            testConnection,
-        ]
+        [catalogPrefix, dataPlanes, stores, updateConnection, testConnection]
     );
 
     const testAll = useCallback(async () => {
@@ -488,13 +479,7 @@ export function useConnectionTest(initialOriginals?: UseConnectionTestOriginals)
                 removeStore(getStoreId(store));
             }
         },
-        [
-            dataPlanes,
-            stores,
-            addEndpoints,
-            removeDataPlane,
-            removeStore,
-        ]
+        [dataPlanes, stores, addEndpoints, removeDataPlane, removeStore]
     );
 
     const clear = useCallback(() => {

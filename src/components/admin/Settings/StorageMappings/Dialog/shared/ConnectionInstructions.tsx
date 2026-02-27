@@ -2,11 +2,11 @@ import type { CloudProvider } from 'src/components/admin/Settings/StorageMapping
 
 import { useMemo } from 'react';
 
-import { MarkdownInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/MarkdownInstructions';
-
 import awsMd from './instructions/aws.md?raw';
 import azureMd from './instructions/azure.md?raw';
 import gcpMd from './instructions/gcp.md?raw';
+
+import { MarkdownInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/MarkdownInstructions';
 
 interface ConnectionInstructionsProps {
     provider: CloudProvider;
