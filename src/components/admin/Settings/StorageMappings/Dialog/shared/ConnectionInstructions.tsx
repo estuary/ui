@@ -28,12 +28,12 @@ export function ConnectionInstructions({
             provider,
             region,
             bucket,
-            storage_prefix,
+            storagePrefix,
 
             // Azure-specific fields
-            container_name,
-            storage_account_name,
-            account_tenant_id,
+            containerName,
+            storageAccountName,
+            accountTenantId,
         } = connection.store;
 
         switch (provider as CloudProvider) {
@@ -83,7 +83,8 @@ export function ConnectionInstructions({
                     variables: {
                         azureApplicationName,
                         storageAccountName,
-                        container_name,
+                        containerName,
+                        accountTenantId,
                     },
                 };
             }

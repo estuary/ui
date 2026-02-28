@@ -100,7 +100,7 @@ export function toApiStore(
         case 'AZURE':
             return {
                 ...base,
-                container_name: store.container_name,
+                containerName: store.container_name,
                 storage_account_name: store.storage_account_name,
                 account_tenant_id: store.account_tenant_id || 'temp',
             };

@@ -11,17 +11,25 @@ import { useTenantStore } from 'src/stores/Tenant/Store';
 // Storage provider values used by the GraphQL server
 type StorageProvider = 'GCS' | 'S3' | 'AZURE' | 'CUSTOM';
 
+export interface StorageMapping {
+    catalogPrefix: string;
+    spec: {
+        data_planes: string[];
+        stores: FragmentStore[];
+    };
+}
+
 // External type - used by consumers of this service
 export interface FragmentStore {
     provider: CloudProvider;
     region?: string | null;
     bucket?: string | null;
-    storage_prefix?: string | null;
+    storagePrefix?: string | null;
 
     // Azure-specific fields
-    container_name?: string | null;
-    storage_account_name?: string | null;
-    account_tenant_id?: string | null;
+    containerName?: string | null;
+    storageAccountName?: string | null;
+    accountTenantId?: string | null;
 }
 
 // Internal type - used for server communication
@@ -166,11 +174,7 @@ interface StorageMappingsQueryResponse {
                 catalogPrefix: string;
                 spec: {
                     data_planes: string[];
-                    stores: {
-                        provider: StorageProvider;
-                        bucket: string;
-                        prefix?: string;
-                    }[];
+                    stores: ServerFragmentStore[];
                 };
             };
         }[];
@@ -199,7 +203,10 @@ const CLOUD_TO_STORAGE_PROVIDER: Record<CloudProvider, StorageProvider> = {
 };
 
 // Maps storage provider variants (from server) back to cloud provider names
-const STORAGE_TO_CLOUD_PROVIDER: Record<StorageProvider, CloudProvider> = {
+const STORAGE_TO_CLOUD_PROVIDER: Omit<
+    Record<StorageProvider, CloudProvider>,
+    'CUSTOM'
+> = {
     GCS: 'GCP',
     S3: 'AWS',
     AZURE: 'AZURE',
@@ -402,15 +409,18 @@ export function useStorageMappings() {
         pause: !tenant,
     });
 
-    const storageMappings =
+    const storageMappings: StorageMapping[] =
         data?.storageMappings.edges.map((edge) => ({
             ...edge.node,
             spec: {
                 ...edge.node.spec,
-                stores: edge.node.spec.stores.map((store) => ({
-                    ...store,
-                    provider: storageProviderToCloudProvider(store.provider),
-                })),
+                stores: edge.node.spec.stores.map(
+                    ({ prefix, provider, ...rest }): FragmentStore => ({
+                        ...rest,
+                        provider: storageProviderToCloudProvider(provider),
+                        storagePrefix: prefix,
+                    })
+                ),
             },
         })) ?? [];
 
