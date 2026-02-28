@@ -403,7 +403,16 @@ export function useStorageMappings() {
     });
 
     const storageMappings =
-        data?.storageMappings.edges.map((edge) => edge.node) ?? [];
+        data?.storageMappings.edges.map((edge) => ({
+            ...edge.node,
+            spec: {
+                ...edge.node.spec,
+                stores: edge.node.spec.stores.map((store) => ({
+                    ...store,
+                    provider: storageProviderToCloudProvider(store.provider),
+                })),
+            },
+        })) ?? [];
 
     return {
         storageMappings,
