@@ -5,7 +5,7 @@ import type {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Typography } from '@mui/material';
 
@@ -58,7 +58,6 @@ function toFragmentStore(store: StoreEntry): FragmentStore {
             return {
                 provider: store.provider,
                 bucket: store.bucket,
-                region: '',
                 storage_prefix: store.storage_prefix,
             };
         case 'AWS':
@@ -71,18 +70,16 @@ function toFragmentStore(store: StoreEntry): FragmentStore {
         case 'AZURE':
             return {
                 provider: store.provider,
-                bucket: '',
-                region: '',
-                storage_prefix: store.storage_prefix,
                 container_name: store.container_name,
                 storage_account_name: store.storage_account_name,
                 account_tenant_id: store.account_tenant_id,
+                storage_prefix: store.storage_prefix,
             };
     }
 }
 
 interface MappingData {
-    catalog_prefix: string;
+    catalogPrefix: string;
     spec: {
         data_planes: string[];
         stores: StoreEntry[];
@@ -129,7 +126,7 @@ function DialogInner({
     });
     const refresh = useStorageMappingsRefresh();
 
-    const { getValues, watch } = useForm<StorageMappingFormData>({
+    const { getValues, setValue, watch } = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {
             catalog_prefix: mapping.catalog_prefix,
@@ -141,16 +138,16 @@ function DialogInner({
 
     const handleClose = useCallback(() => {
         // Remove any unsaved stores (pending or newly added) before closing
-        const stores = methods.getValues('fragment_stores');
+        const stores = getValues('fragment_stores');
         const withoutUnsaved = stores.filter((s) => !s._isPending && !s._isNew);
         if (withoutUnsaved.length !== stores.length) {
-            methods.setValue('fragment_stores', withoutUnsaved);
+            setValue('fragment_stores', withoutUnsaved);
         }
         clearConnectionTests();
         originalsResolved.current = false;
         setResolvedOriginalDPs(undefined);
         onClose();
-    }, [methods, onClose, clearConnectionTests]);
+    }, [onClose, clearConnectionTests, getValues, setValue]);
 
     const dataPlanes = watch('data_planes');
     const fragmentStores = watch('fragment_stores');
@@ -258,56 +255,23 @@ function DialogInner({
 export function UpdateMappingWizard() {
     const { open, onClose, context } = useDialog('EDIT_STORAGE_MAPPING');
     const { storageMappings } = useStorageMappings();
+    const { dataPlanes } = useDataPlanes();
 
     const prefix = context.prefix;
 
-    const mapping = useMemo((): MappingData | null => {
+    const storageMapping = useMemo((): MappingData | null => {
         if (!prefix) return null;
 
-        const match = storageMappings.find((sm) => sm.catalogPrefix === prefix);
-        if (!match) return null;
-
-        return {
-            catalog_prefix: match.catalogPrefix,
-            spec: {
-                data_planes: match.spec.data_planes,
-                stores: match.spec.stores.map((store): StoreEntry => {
-                    const provider = storageProviderToCloudProvider(
-                        store.provider
-                    );
-                    switch (provider) {
-                        case 'GCP':
-                            return {
-                                provider,
-                                bucket: store.bucket,
-                                storage_prefix: store.prefix,
-                            };
-                        case 'AWS':
-                            return {
-                                provider,
-                                bucket: store.bucket,
-                                region: '',
-                                storage_prefix: store.prefix,
-                            };
-                        case 'AZURE':
-                            return {
-                                provider,
-                                container_name: store.bucket,
-                                storage_account_name: '',
-                                account_tenant_id: '',
-                                storage_prefix: store.prefix,
-                            };
-                    }
-                }),
-            },
-        };
+        return (
+            storageMappings.find((sm) => sm.catalogPrefix === prefix) ?? null
+        );
     }, [prefix, storageMappings]);
 
     // Preserve mapping during exit animation so dialog content doesn't disappear
-    const lastMapping = useRef(mapping);
-    if (mapping) lastMapping.current = mapping;
+    const lastMapping = useRef(storageMapping);
+    if (storageMapping) lastMapping.current = storageMapping;
 
-    const displayMapping = mapping ?? lastMapping.current;
+    const displayMapping = storageMapping ?? lastMapping.current;
 
     if (!displayMapping) return null;
 
