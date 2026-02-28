@@ -5,7 +5,9 @@ import {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useMemo,
+    useRef,
     useState,
 } from 'react';
 
@@ -52,9 +54,9 @@ const emptyOriginals: InitialEndpoints = {
 
 export function getStoreId(store: FragmentStore): string {
     if (store.provider === 'AZURE') {
-        return `AZ/${store.storage_account_name}/${store.container_name}/${store.storage_prefix ?? ''}`;
+        return `AZ/${store.storageAccountName}/${store.containerName}/${store.storagePrefix ?? ''}`;
     }
-    return `${store.provider}/${store.bucket}/${store.storage_prefix ?? ''}`;
+    return `${store.provider}/${store.bucket}/${store.storagePrefix ?? ''}`;
 }
 
 const ConnectionTestContext = createContext<ConnectionTestContextValue | null>(
@@ -92,6 +94,15 @@ export function ConnectionTestProvider({
         </ConnectionTestContext.Provider>
     );
 }
+
+const convertConnectionForConsumer = (c: InternalConnection): Connection =>
+    ({
+        dataPlane: c.dataPlane,
+        store: c.store,
+        status: c.status,
+        errorMessage: c.errorMessage,
+        orphaned: !c.active && c.initial,
+    }) satisfies Connection;
 
 export function useConnectionTest(initialEndpoints?: {
     dataPlanes: DataPlaneNode[];
@@ -208,63 +219,91 @@ export function useConnectionTest(initialEndpoints?: {
         []
     );
 
-    function restoreOrAdd(
-        prev: InternalConnection[],
-        pairs: { dataPlane: DataPlaneNode; store: FragmentStore }[]
-    ): InternalConnection[] {
-        const updated = [...prev];
-        for (const { dataPlane, store } of pairs) {
-            const dataPlaneName = dataPlane.dataPlaneName;
-            const idx = updated.findIndex(
-                (c) =>
-                    c.dataPlane.dataPlaneName === dataPlaneName &&
-                    getStoreId(c.store) === getStoreId(store)
-            );
-            if (idx >= 0) {
-                updated[idx] = { ...updated[idx], active: true };
-            } else {
-                updated.push({
-                    dataPlane,
-                    store,
-                    initial: false,
-                    active: true,
-                    status: 'idle',
-                });
-            }
-        }
-        return updated;
-    }
+    const initialized = useRef(false);
+    useEffect(() => {
+        if (initialized.current) return;
+        if (!initialEndpoints) return;
+        if (
+            initialEndpoints.dataPlanes.length === 0 ||
+            initialEndpoints.stores.length === 0
+        )
+            return;
+
+        initialized.current = true;
+        initializeEndpoints(
+            initialEndpoints.dataPlanes,
+            initialEndpoints.stores
+        );
+    }, [initialEndpoints, initializeEndpoints]);
 
     const addDataPlane = useCallback(
-        (newDP: DataPlaneNode) => {
+        (newDP: DataPlaneNode): Connection[] => {
             setDataPlanes((prev) => [...prev, newDP]);
-            setConnections((existingConnections) =>
-                restoreOrAdd(
-                    existingConnections,
-                    stores.map((store) => ({
+
+            const affected: InternalConnection[] = [];
+            const updated = [...connections];
+
+            for (const store of stores) {
+                const idx = updated.findIndex(
+                    (c) =>
+                        c.dataPlane.dataPlaneName === newDP.dataPlaneName &&
+                        getStoreId(c.store) === getStoreId(store)
+                );
+                if (idx >= 0) {
+                    updated[idx] = { ...updated[idx], active: true };
+                    affected.push(updated[idx]);
+                } else {
+                    const conn: InternalConnection = {
                         dataPlane: newDP,
-                        store: store,
-                    }))
-                )
-            );
+                        store,
+                        initial: false,
+                        active: true,
+                        status: 'idle',
+                    };
+                    updated.push(conn);
+                    affected.push(conn);
+                }
+            }
+
+            setConnections(updated);
+            return affected.map(convertConnectionForConsumer);
         },
-        [stores]
+        [stores, connections]
     );
 
     const addStore = useCallback(
-        (newStore: FragmentStore) => {
+        (newStore: FragmentStore): Connection[] => {
             setStores((prev) => [...prev, newStore]);
-            setConnections((existingConnections) =>
-                restoreOrAdd(
-                    existingConnections,
-                    dataPlanes.map((dp) => ({
+
+            const affected: InternalConnection[] = [];
+            const updated = [...connections];
+
+            for (const dp of dataPlanes) {
+                const idx = updated.findIndex(
+                    (c) =>
+                        c.dataPlane.dataPlaneName === dp.dataPlaneName &&
+                        getStoreId(c.store) === getStoreId(newStore)
+                );
+                if (idx >= 0) {
+                    updated[idx] = { ...updated[idx], active: true };
+                    affected.push(updated[idx]);
+                } else {
+                    const conn: InternalConnection = {
                         dataPlane: dp,
                         store: newStore,
-                    }))
-                )
-            );
+                        initial: false,
+                        active: true,
+                        status: 'idle',
+                    };
+                    updated.push(conn);
+                    affected.push(conn);
+                }
+            }
+
+            setConnections(updated);
+            return affected.map(convertConnectionForConsumer);
         },
-        [dataPlanes]
+        [dataPlanes, connections]
     );
 
     const removeDataPlane = useCallback((dataPlane: DataPlaneNode) => {
@@ -303,16 +342,7 @@ export function useConnectionTest(initialEndpoints?: {
         () =>
             connections
                 .filter((c) => c.active || c.initial)
-                .map(
-                    (c) =>
-                        ({
-                            dataPlane: c.dataPlane,
-                            store: c.store,
-                            status: c.status,
-                            errorMessage: c.errorMessage,
-                            orphaned: !c.active && c.initial,
-                        }) satisfies Connection
-                ),
+                .map(convertConnectionForConsumer),
         [connections]
     );
 
