@@ -56,7 +56,9 @@ function DialogInner({
         allTestsPassing,
         connections,
         testConnections,
+        testOne,
         addDataPlane: connectToDp,
+        removeDataPlane: disconnectDp,
     } = useConnectionTest({
         dataPlanes: mapping.dataPlanes,
         stores: mapping.stores,
@@ -76,7 +78,7 @@ function DialogInner({
         useFormContext<StorageMappingFormData>();
     const {
         append: appendDataPlane,
-        remove: removeDataPlane,
+        remove: removeDataPlaneField,
         move: moveDataPlane,
     } = useFieldArray({
         name: 'data_planes',
@@ -92,9 +94,24 @@ function DialogInner({
         (dp: DataPlaneNode) => {
             appendDataPlane(dp);
             const connections = connectToDp(dp);
-            testConnections(connections).catch(() => {});
+
+            // only test connections that don't have previous results
+            testConnections(
+                connections.filter((c) => c.status === 'idle')
+            ).catch(() => {});
         },
         [appendDataPlane, connectToDp, testConnections]
+    );
+
+    const deselectDataPlane = useCallback(
+        (index: number) => {
+            const dp = dataPlanes[index];
+            removeDataPlaneField(index);
+            if (dp) {
+                disconnectDp(dp);
+            }
+        },
+        [dataPlanes, removeDataPlaneField, disconnectDp]
     );
 
     const handleClose = useCallback(() => {
@@ -110,7 +127,7 @@ function DialogInner({
     }, [onClose, clearConnectionTests, getValues, setValue]);
 
     const hasPendingStore = useMemo(
-        () => fragmentStores?.some((s) => s._isPending), // optional??
+        () => fragmentStores.some((s) => s._isPending), // optional??
         [fragmentStores]
     );
 
@@ -197,10 +214,10 @@ function DialogInner({
                                         }
                                         allowPublicChecked={allowPublic}
                                         onSelect={selectDataPlane}
-                                        // onRemove={remove}
-                                        // onSelectDefault={(index) =>
-                                        //     move(index, 0)
-                                        // }
+                                        onRemove={deselectDataPlane}
+                                        onSelectDefault={(index) =>
+                                            moveDataPlane(index, 0)
+                                        }
                                         onToggleAllowPublic={(value) =>
                                             setValue('allow_public', value)
                                         }
@@ -266,11 +283,30 @@ export function UpdateMappingWizard() {
         mode: 'onChange',
         defaultValues: {
             catalog_prefix: storageMapping?.catalogPrefix,
-            data_planes: storageMapping?.dataPlanes,
+            data_planes: storageMapping?.dataPlanes ?? [],
             fragment_stores: storageMapping?.stores ?? [],
             allow_public: true,
         },
     });
+
+    // Reset form values when the target mapping changes (identified by prefix).
+    // defaultValues only apply on mount, so if storageMapping is null initially
+    // (data still loading), the form needs to be reset once data arrives.
+    const initializedForPrefix = useRef<string | null>(null);
+    useEffect(() => {
+        if (
+            storageMapping &&
+            initializedForPrefix.current !== storageMapping.catalogPrefix
+        ) {
+            initializedForPrefix.current = storageMapping.catalogPrefix;
+            methods.reset({
+                catalog_prefix: storageMapping.catalogPrefix,
+                data_planes: storageMapping.dataPlanes,
+                fragment_stores: storageMapping.stores ?? [],
+                allow_public: true,
+            });
+        }
+    }, [storageMapping, methods]);
 
     if (!storageMapping) return null;
 

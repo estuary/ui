@@ -1,5 +1,3 @@
-import type { FragmentStore } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
-
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Collapse, Link, Stack, Typography } from '@mui/material';
@@ -21,100 +19,79 @@ export function ConnectionTests() {
     const { testOne, testConnections, isTesting, connections } =
         useConnectionTest();
 
-    // --- Auto-test existing connections once after hydration ---
-    // const initialTestTriggered = useRef(false);
-    // useEffect(() => {
-    //     if (initialTestTriggered.current) return;
-    //     if (existingActiveConnections.length === 0) return;
-
-    //     initialTestTriggered.current = true;
-    //     void testConnections(existingActiveConnections).catch(() => {});
-    // }, [existingActiveConnections, testConnections]);
-
-    // // --- New connection enter/exit animations ---
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
-    // const pendingTestsRef = useRef<ResolvedConnection[]>([]);
 
-    // const [prevNewResolved, setPrevNewResolved] =
-    //     useState<ResolvedConnection[]>(newResolved);
-    // const [incomingKeys, setIncomingKeys] = useState<Set<string>>(new Set());
-    // const [outgoing, setOutgoing] = useState<ResolvedConnection[]>([]);
-    // const outgoingKeys = useMemo(() => keySet(outgoing), [outgoing]);
+    // --- Enter/exit animation state ---
+    const isInitialLoad = useRef(true);
+    const pendingTestsRef = useRef<Connection[]>([]);
+    const [prevConnections, setPrevConnections] = useState(connections);
+    const [entering, setEntering] = useState<Set<string>>(new Set());
+    const [leaving, setLeaving] = useState<Connection[]>([]);
+    const leavingKeys = useMemo(
+        () => new Set(leaving.map(connectionKey)),
+        [leaving]
+    );
 
-    // // Detect new connection changes during render
-    // if (prevNewResolved !== newResolved) {
-    //     setPrevNewResolved(newResolved);
-    //     const prevKeys = keySet(prevNewResolved);
-    //     const nextKeys = keySet(newResolved);
+    // Detect connection list changes during render (derived state pattern)
+    if (prevConnections !== connections) {
+        setPrevConnections(connections);
 
-    //     const removed = prevNewResolved.filter(
-    //         (item) => !nextKeys.has(item.key)
-    //     );
-    //     if (removed.length > 0) {
-    //         setOutgoing((prev) => [...prev, ...removed]);
-    //     }
+        const prevKeys = new Set(prevConnections.map(connectionKey));
+        const nextKeys = new Set(connections.map(connectionKey));
 
-    //     const added = newResolved.filter((item) => !prevKeys.has(item.key));
-    //     if (added.length > 0) {
-    //         setIncomingKeys(keySet(added));
-    //         pendingTestsRef.current.push(...added);
-    //     }
-    // }
+        // Connections that disappeared → animate out
+        const removed = prevConnections.filter(
+            (c) => !nextKeys.has(connectionKey(c))
+        );
+        if (removed.length > 0) {
+            setLeaving((prev) => [...prev, ...removed]);
+        }
 
-    // const newRenderList = useMemo(() => {
-    //     const currentKeys = keySet(newResolved);
-    //     return [
-    //         ...newResolved,
-    //         ...outgoing.filter((item) => !currentKeys.has(item.key)),
-    //     ];
-    // }, [newResolved, outgoing]);
+        // Connections that appeared → animate in + auto-test (skip initial load)
+        const added = connections.filter(
+            (c) => !prevKeys.has(connectionKey(c))
+        );
+        if (added.length > 0 && !isInitialLoad.current) {
+            setEntering(new Set(added.map(connectionKey)));
+            pendingTestsRef.current.push(...added);
+        }
 
-    // useEffect(() => {
-    //     if (incomingKeys.size === 0) return;
-    //     const frame = requestAnimationFrame(() => setIncomingKeys(new Set()));
-    //     return () => cancelAnimationFrame(frame);
-    // }, [incomingKeys]);
+        if (isInitialLoad.current && connections.length > 0) {
+            isInitialLoad.current = false;
+        }
+    }
 
-    // // Auto-test newly added connections
-    // useEffect(() => {
-    //     const pending = pendingTestsRef.current.splice(0);
-    //     for (const item of pending) {
-    //         const connection = newActiveConnections.find(
-    //             (c) => `${c.dataPlaneName}-${c.storeId}` === item.key
-    //         );
-    //         if (connection && connection.status === 'idle') {
-    //             void testOne(item.dataPlane, item.store);
-    //         }
-    //     }
-    // });
+    // Merge current + leaving connections for rendering
+    const renderList = useMemo(() => {
+        const currentKeys = new Set(connections.map(connectionKey));
+        return [
+            ...connections,
+            ...leaving.filter((c) => !currentKeys.has(connectionKey(c))),
+        ];
+    }, [connections, leaving]);
 
-    // const onExitAnimationComplete = useCallback((key: string) => {
-    //     setOutgoing((prev) => prev.filter((item) => item.key !== key));
-    // }, []);
+    // Clear entering flags on next animation frame to trigger expand
+    useEffect(() => {
+        if (entering.size === 0) return;
+        const frame = requestAnimationFrame(() => setEntering(new Set()));
+        return () => cancelAnimationFrame(frame);
+    }, [entering]);
 
-    // // --- Combined render list ---
-    // const allRenderItems = useMemo(() => {
-    //     const items: RenderItem[] = [];
+    // Auto-test newly added connections
+    useEffect(() => {
+        const pending = pendingTestsRef.current.splice(0);
+        for (const c of pending) {
+            if (c.status === 'idle') {
+                void testOne(c);
+            }
+        }
+    });
 
-    //     for (const item of existingResolved) {
-    //         items.push({ ...item, disabled: false, isNew: false });
-    //     }
-    //     for (const item of orphanedResolved) {
-    //         items.push({ ...item, disabled: true, isNew: false });
-    //     }
-    //     for (const item of newRenderList) {
-    //         items.push({ ...item, disabled: false, isNew: true });
-    //     }
+    const onExitComplete = useCallback((key: string) => {
+        setLeaving((prev) => prev.filter((c) => connectionKey(c) !== key));
+    }, []);
 
-    //     return items;
-    // }, [newRenderList, existingResolved, orphanedResolved]);
-
-    const flipKey = `${connections.length}-${connections.map(connectionKey).join(',')}`;
-
-    // const hasAnyConnections =
-    //     activeConnections.length > 0 || orphanedOriginalConnections.length > 0;
-
-    // if (!hasAnyConnections) return null;
+    const flipKey = `${renderList.length}-${renderList.map(connectionKey).join(',')}`;
 
     return (
         <>
@@ -149,27 +126,21 @@ export function ConnectionTests() {
             </Typography>
             <Flipper flipKey={flipKey}>
                 <Stack spacing={1} sx={{ contain: 'inline-size' }}>
-                    {connections.map((c) => {
-                        // const animatedVisible = item.isNew
-                        //     ? !outgoingKeys.has(item.key) &&
-                        //       !incomingKeys.has(item.key)
-                        //     : true;
+                    {renderList.map((c) => {
+                        const key = connectionKey(c);
+                        const isLeaving = leavingKeys.has(key);
+                        const isEntering = entering.has(key);
+                        const visible = !isLeaving && !isEntering;
 
                         return (
-                            <Flipped
-                                key={connectionKey(c)}
-                                flipId={connectionKey(c)}
-                            >
+                            <Flipped key={key} flipId={key}>
                                 <Collapse
-                                    in={true}
-                                    // onExited={
-                                    //     item.isNew
-                                    //         ? () =>
-                                    //               onExitAnimationComplete(
-                                    //                   item.key
-                                    //               )
-                                    //         : undefined
-                                    // }
+                                    in={visible}
+                                    onExited={
+                                        isLeaving
+                                            ? () => onExitComplete(key)
+                                            : undefined
+                                    }
                                     unmountOnExit
                                 >
                                     <ConnectionAccordion
@@ -177,8 +148,7 @@ export function ConnectionTests() {
                                         expanded={
                                             c.orphaned
                                                 ? false
-                                                : expandedKey ===
-                                                  connectionKey(c)
+                                                : expandedKey === key
                                         }
                                         onToggle={
                                             c.orphaned
@@ -186,7 +156,7 @@ export function ConnectionTests() {
                                                 : (isExpanded) =>
                                                       setExpandedKey(
                                                           isExpanded
-                                                              ? connectionKey(c)
+                                                              ? key
                                                               : null
                                                       )
                                         }
