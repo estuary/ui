@@ -3,14 +3,14 @@ import type { FormDataPlane } from 'src/components/admin/Settings/StorageMapping
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Box, Collapse, Link, Stack, Typography } from '@mui/material';
+import { Collapse, Stack } from '@mui/material';
 
 import DataPlaneRow from './DataPlaneRow';
 import DataPlaneSelector from './DataPlaneSelector';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 
 import { useDataPlanes } from 'src/api/dataPlanesGql';
-import { cardHeaderSx } from 'src/context/Theme';
+import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
 
 interface DataPlanesCardProps {
     dataPlanes: FormDataPlane[];
@@ -137,27 +137,12 @@ export default function DataPlanesCard({
 
     return (
         <>
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <Typography sx={cardHeaderSx}>Data Planes</Typography>
-                <Link
-                    component="button"
-                    variant="body2"
-                    underline="hover"
-                    disabled={effectiveSelectorIsOpen || !hasMoreOptions}
-                    onClick={() => setSelectorIsOpen(true)}
-                    sx={{
-                        '&:disabled': { opacity: 0.5, pointerEvents: 'none' },
-                    }}
-                >
-                    Add data plane
-                </Link>
-            </Box>
+            <CardTitle
+                title="Data Planes"
+                action="Add data plane"
+                onAction={() => setSelectorIsOpen(true)}
+                actionDisabled={effectiveSelectorIsOpen || !hasMoreOptions}
+            />
             <Flipper
                 flipKey={`${renderList.length}-${renderList
                     .map((dp) => dp.dataPlaneName)

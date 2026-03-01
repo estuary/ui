@@ -18,11 +18,11 @@ import { useIntl } from 'react-intl';
 
 import { useStorageMappingService } from 'src/api/storageMappingsGql';
 import { toApiStore } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 import {
     ConnectionTestProvider,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
-import { TestConnectionResult } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/TestConnectionResult';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
@@ -163,7 +163,24 @@ function CreateMappingWizardInner({
                     title: intl.formatMessage({
                         id: 'storageMappings.wizard.title.test',
                     }),
-                    component: <TestConnectionResult />,
+                    component: (
+                        <Stack spacing={3}>
+                            <Typography>
+                                Each data plane that processes your data needs
+                                its own access to your storage bucket. For more
+                                details, see the{' '}
+                                <Link
+                                    href={docsUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    documentation
+                                </Link>
+                            </Typography>
+
+                            <ConnectionList />
+                        </Stack>
+                    ),
                     canAdvance: () => allTestsPassing,
                     onAdvance: handleComplete,
                 },
