@@ -5,8 +5,9 @@ import { Collapse, Stack } from '@mui/material';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 
 import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionAccordion';
+import type {
+    Connection} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 import {
-    Connection,
     getStoreId,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';

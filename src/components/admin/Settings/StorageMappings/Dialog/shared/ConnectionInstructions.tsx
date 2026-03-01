@@ -2,12 +2,12 @@ import type { CloudProvider } from 'src/components/admin/Settings/StorageMapping
 
 import { useMemo } from 'react';
 
-import { Connection } from './ConnectionTestContext';
-import awsMd from './instructions/aws.md?raw';
-import azureMd from './instructions/azure.md?raw';
-import gcpMd from './instructions/gcp.md?raw';
-
 import { MarkdownInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/MarkdownInstructions';
+import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+import awsMd from 'src/components/admin/Settings/StorageMappings/Dialog/shared/instructions/aws.md?raw';
+import azureMd from 'src/components/admin/Settings/StorageMappings/Dialog/shared/instructions/azure.md?raw';
+import gcpMd from 'src/components/admin/Settings/StorageMappings/Dialog/shared/instructions/gcp.md?raw';
+
 
 export function ConnectionInstructions({
     connection,

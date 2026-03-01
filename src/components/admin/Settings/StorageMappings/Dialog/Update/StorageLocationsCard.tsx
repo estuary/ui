@@ -62,7 +62,7 @@ function CompactStoreRow({
                 ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
             ]}
         >
-            <Stack direction="row" alignItems={'center'} spacing={1}>
+            <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography variant="body2">
                     {store.provider === 'AZURE'
                         ? store.container_name
@@ -284,7 +284,7 @@ export function StorageLocationsCard() {
                     onExited={handleCancelNestedComplete}
                     unmountOnExit
                 >
-                    <Stack alignItems={'flex-end'}>
+                    <Stack alignItems="flex-end">
                         <NestedFormActions
                             onAccept={handleAcceptNestedForm}
                             onCancel={handleCancelNestedForm}

@@ -63,12 +63,10 @@ function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
         <Stack
             direction="row"
             spacing={1}
-            alignItems={'center'}
+            alignItems="center"
             sx={{ color: badge.color }}
         >
-            {badge.text && (
-                <Typography variant="body2">{badge.text}</Typography>
-            )}
+            {badge.text ? <Typography variant="body2">{badge.text}</Typography> : null}
             {badge.icon}
         </Stack>
     );
