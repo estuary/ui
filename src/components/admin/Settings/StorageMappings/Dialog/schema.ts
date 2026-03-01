@@ -101,8 +101,8 @@ export function toApiStore(
             return {
                 ...base,
                 containerName: store.container_name,
-                storage_account_name: store.storage_account_name,
-                account_tenant_id: store.account_tenant_id || 'temp',
+                storageAccountName: store.storage_account_name,
+                accountTenantId: store.account_tenant_id,
             };
     }
 }
