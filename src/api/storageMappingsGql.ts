@@ -221,7 +221,9 @@ function cloudProviderToStorageProvider(
 export function storageProviderToCloudProvider(
     storageProvider: StorageProvider
 ): CloudProvider {
-    return STORAGE_TO_CLOUD_PROVIDER[storageProvider];
+    return STORAGE_TO_CLOUD_PROVIDER[
+        storageProvider as keyof typeof STORAGE_TO_CLOUD_PROVIDER
+    ];
 }
 
 // Real GraphQL implementation
