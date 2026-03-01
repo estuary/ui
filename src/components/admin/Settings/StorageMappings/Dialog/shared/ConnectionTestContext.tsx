@@ -148,7 +148,7 @@ export function useConnectionTest(initialEndpoints?: {
                 return updated;
             });
         },
-        []
+        [setConnections]
     );
 
     const testOne = useCallback(
@@ -216,7 +216,7 @@ export function useConnectionTest(initialEndpoints?: {
                 orphaned: false,
             }));
         },
-        []
+        [setOriginalEndpoints, setDataPlanes, setStores, setConnections]
     );
 
     const initialized = useRef(false);
@@ -268,7 +268,7 @@ export function useConnectionTest(initialEndpoints?: {
             setConnections(updated);
             return affected.map(convertConnectionForConsumer);
         },
-        [stores, connections]
+        [stores, connections, setDataPlanes, setConnections]
     );
 
     const addStore = useCallback(
@@ -303,7 +303,7 @@ export function useConnectionTest(initialEndpoints?: {
             setConnections(updated);
             return affected.map(convertConnectionForConsumer);
         },
-        [dataPlanes, connections]
+        [dataPlanes, connections, setStores, setConnections]
     );
 
     const removeDataPlane = useCallback((dataPlane: DataPlaneNode) => {
@@ -320,7 +320,7 @@ export function useConnectionTest(initialEndpoints?: {
                     : c
             )
         );
-    }, []);
+    }, [setDataPlanes, setConnections]);
 
     const removeStore = useCallback((store: FragmentStore) => {
         const storeId = getStoreId(store);
@@ -332,7 +332,7 @@ export function useConnectionTest(initialEndpoints?: {
                 getStoreId(c.store) === storeId ? { ...c, active: false } : c
             )
         );
-    }, []);
+    }, [setStores, setConnections]);
 
     const clear = useCallback(() => {
         initializeEndpoints([], []);
@@ -411,7 +411,7 @@ export function useConnectionTest(initialEndpoints?: {
                 throw e;
             }
         },
-        [catalogPrefix, dataPlanes, stores, updateConnection, testConnection]
+        [catalogPrefix, updateConnection, testConnection]
     );
 
     return {

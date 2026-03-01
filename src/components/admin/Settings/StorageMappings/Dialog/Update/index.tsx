@@ -160,7 +160,7 @@ function DialogInner({
         mapping.dataPlanes,
     ]);
 
-    const save = async () => {
+    const save = useCallback(async () => {
         const data = getValues();
         await update({
             catalogPrefix: data.catalog_prefix,
@@ -171,7 +171,7 @@ function DialogInner({
         });
         refresh();
         return true;
-    };
+    }, [getValues, update, refresh]);
 
     const title = useMemo(
         () => (
@@ -240,7 +240,7 @@ function DialogInner({
                     onAdvance: save,
                 },
             ] satisfies WizardStep[],
-        [dataPlanes, allTestsPassing, hasPendingStore, title]
+        [dataPlanes, allTestsPassing, hasPendingStore, title, allowPublic, deselectDataPlane, moveDataPlane, save, selectDataPlane, setValue]
     );
 
     return (

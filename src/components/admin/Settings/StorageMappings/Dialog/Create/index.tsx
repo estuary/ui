@@ -1,7 +1,7 @@
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { Link, Stack, Typography } from '@mui/material';
 
@@ -83,11 +83,11 @@ function CreateMappingWizardInner({
         clearConnectionTests();
     };
 
-    const handleComplete = async () => {
+    const handleComplete = useCallback(async () => {
         await create(buildMappingPayload(getValues()));
         refresh();
         return true;
-    };
+    }, [create, getValues, refresh]);
 
     const steps = useMemo(
         () =>
@@ -188,12 +188,17 @@ function CreateMappingWizardInner({
         [
             intl,
             formState.isValid,
-            getValues,
             allTestsPassing,
             testConnections,
             dataPlanes,
             allowPublic,
             stores,
+            append,
+            handleComplete,
+            initializeEndpoints,
+            move,
+            remove,
+            setValue,
         ]
     );
 

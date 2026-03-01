@@ -93,7 +93,7 @@ export function PrefixCard() {
                 },
             },
         }),
-        [storageMappingPrefixes, liveSpecNames, duplicateDialogLinkParams]
+        [storageMappingPrefixes, liveSpecNames, duplicateDialogLinkParams, couldMatchRoot]
     );
 
     return (

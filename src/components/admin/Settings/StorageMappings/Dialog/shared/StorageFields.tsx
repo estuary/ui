@@ -1,3 +1,4 @@
+import type { SxProps, Theme } from '@mui/material';
 import type {
     CloudProvider,
     FormDataPlane,
@@ -6,15 +7,15 @@ import type {
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Alert, Collapse, Link, Stack, type SxProps, type Theme } from '@mui/material';
+import { Alert, Collapse, Link, Stack } from '@mui/material';
 
-import { storeValidation } from './StorageValidation';
 import { useFormContext } from 'react-hook-form';
 
 import {
     AWS_REGIONS,
     PROVIDER_LABELS,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { storeValidation } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageValidation';
 import { RHFSelect, RHFTextField } from 'src/components/shared/RHFFields/';
 import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
@@ -31,7 +32,10 @@ interface StorageFieldsProps {
 }
 
 const PENDING_STORE_INDEX = 0 as const;
-export function StorageFields({ defaultDataPlane = null, sx }: StorageFieldsProps) {
+export function StorageFields({
+    defaultDataPlane = null,
+    sx,
+}: StorageFieldsProps) {
     const { watch, setValue } = useFormContext<StorageMappingFormData>();
 
     const storeProvider = watch(
@@ -56,7 +60,7 @@ export function StorageFields({ defaultDataPlane = null, sx }: StorageFieldsProp
             `fragment_stores.${PENDING_STORE_INDEX}.region`,
             defaultDataPlane.region
         );
-    }, [defaultDataPlane, trackDefaultDp]);
+    }, [defaultDataPlane, trackDefaultDp, setValue]);
 
     const awsRegionOptions = useMemo(
         () => AWS_REGIONS.map((region) => ({ value: region, label: region })),
@@ -80,9 +84,11 @@ export function StorageFields({ defaultDataPlane = null, sx }: StorageFieldsProp
         return false;
     }, [defaultDataPlane, storeProvider, storeRegion]);
 
+    const showMismatchWarning = mismatch && !!defaultDataPlane;
+
     return (
         <Stack spacing={2} sx={sx}>
-            <Collapse in={mismatch && !!defaultDataPlane}>
+            <Collapse in={showMismatchWarning}>
                 <Alert severity="warning">
                     The selected cloud provider / region do not match the
                     default data plane. This may result in additional egress

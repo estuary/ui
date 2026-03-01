@@ -246,6 +246,9 @@ export function StorageLocationsCard() {
     }, [removingKey, fragmentStores, remove]);
 
     const showNestedStorageForm = hasPendingStore && !closing;
+    const showHistoricalDataNote =
+        fragmentStores.filter((s) => !s._isPending).length > 1 ||
+        (hasPendingStore && !closing);
 
     return (
         <>
@@ -309,10 +312,13 @@ export function StorageLocationsCard() {
                         if (store._isPending) return null;
 
                         const key = getStoreKey(store);
+                        const animate =
+                            key !== removingKey && key !== addingKey;
+
                         return (
                             <Collapse
                                 key={key}
-                                in={key !== removingKey && key !== addingKey}
+                                in={animate}
                                 onExited={handleStoreRemoveExited}
                                 unmountOnExit
                             >
@@ -347,13 +353,7 @@ export function StorageLocationsCard() {
                         );
                     })}
                 </Flipper>
-                <Collapse
-                    in={
-                        fragmentStores.filter((s) => !s._isPending).length >
-                            1 ||
-                        (hasPendingStore && !closing)
-                    }
-                >
+                <Collapse in={showHistoricalDataNote}>
                     <Typography
                         variant="caption"
                         color="text.secondary"
