@@ -1,4 +1,5 @@
 import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { FragmentStore as ApiFragmentStore } from 'src/api/storageMappingsGql';
 
 export type CloudProvider = 'AWS' | 'GCP' | 'AZURE';
 
@@ -86,7 +87,7 @@ export interface StorageMappingFormData {
  */
 export function toApiStore(
     store: FragmentStore
-): import('src/api/storageMappingsGql').FragmentStore {
+): ApiFragmentStore {
     const base = {
         provider: store.provider,
         prefix: store.storage_prefix || undefined,
