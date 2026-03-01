@@ -94,10 +94,16 @@ export function useDialogLink<K extends DialogKey>(
     ...args: OpenArgs<K>
 ) {
     const [searchParams] = useSearchParams();
+    const context = args[0] as Record<string, string> | undefined;
 
     return useMemo(() => {
         const params = new URLSearchParams(searchParams);
-        openDialogParams(key, ...args)(params);
+        params.set(GlobalSearchParams.DIALOG, Dialogs[key].id);
+        if (context) {
+            for (const [k, value] of Object.entries(context)) {
+                params.set(k, value);
+            }
+        }
         return `?${params}`;
-    }, [searchParams, key, ...args]);
+    }, [searchParams, key, context]);
 }
