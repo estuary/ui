@@ -5,9 +5,6 @@ import { useEffect, useMemo } from 'react';
 
 import { Link, Stack, Typography } from '@mui/material';
 
-import DataPlanesCard from '../shared/DataPlanesCard';
-import { StorageFields } from '../shared/StorageFields';
-import { PrefixCard } from './PrefixCard';
 import {
     FormProvider,
     useFieldArray,
@@ -28,6 +25,9 @@ import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { cardHeaderSx } from 'src/context/Theme';
 import { useDialog } from 'src/hooks/useDialog';
+import DataPlanesCard from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
+import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
+import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
 
 const docsUrl =
     'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';

@@ -5,12 +5,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Collapse, Stack } from '@mui/material';
 
-import DataPlaneRow from './DataPlaneRow';
-import DataPlaneSelector from './DataPlaneSelector';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 
 import { useDataPlanes } from 'src/api/dataPlanesGql';
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
+import DataPlaneRow from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneRow';
+import DataPlaneSelector from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneSelector';
 
 interface DataPlanesCardProps {
     dataPlanes: FormDataPlane[];

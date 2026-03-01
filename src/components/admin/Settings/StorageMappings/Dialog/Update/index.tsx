@@ -8,9 +8,6 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Link, Stack, Typography } from '@mui/material';
 
-import DataPlanesCard from '../shared/DataPlanesCard';
-import { ConnectionTests } from './NewConnectionTests';
-import { StorageLocationsCard } from './StorageLocationsCard';
 import {
     FormProvider,
     useFieldArray,
@@ -18,7 +15,8 @@ import {
     useFormContext,
 } from 'react-hook-form';
 
-import { DataPlaneNode, useDataPlanes } from 'src/api/dataPlanesGql';
+import type { DataPlaneNode} from 'src/api/dataPlanesGql';
+import { useDataPlanes } from 'src/api/dataPlanesGql';
 import {
     useStorageMappings,
     useStorageMappingService,
@@ -33,6 +31,9 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { useDialog } from 'src/hooks/useDialog';
+import { ConnectionTests } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/NewConnectionTests';
+import DataPlanesCard from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
+import { StorageLocationsCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/StorageLocationsCard';
 
 interface MappingData {
     catalogPrefix: string;
@@ -56,7 +57,6 @@ function DialogInner({
         allTestsPassing,
         connections,
         testConnections,
-        testOne,
         addDataPlane: connectToDp,
         removeDataPlane: disconnectDp,
     } = useConnectionTest({
