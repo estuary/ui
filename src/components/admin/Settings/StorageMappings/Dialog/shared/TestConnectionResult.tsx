@@ -1,19 +1,10 @@
-import { useState } from 'react';
-
 import { Link, Stack, Typography } from '@mui/material';
 
-import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionAccordion';
-import {
-    getStoreId,
-    useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 
 const docsBaseUrl = 'https://docs.estuary.dev/getting-started/installation/#';
 
 export function TestConnectionResult() {
-    const { connections } = useConnectionTest();
-    const [expandedKey, setExpandedKey] = useState<string | null>(null);
-
     return (
         <Stack spacing={3}>
             <Typography>
@@ -28,21 +19,7 @@ export function TestConnectionResult() {
                 </Link>
             </Typography>
 
-            <Stack spacing={1}>
-                {connections.map((connection) => {
-                    const key = `${connection.dataPlane.dataPlaneName}-${getStoreId(connection.store)}`;
-                    return (
-                        <ConnectionAccordion
-                            key={key}
-                            connection={connection}
-                            expanded={expandedKey === key}
-                            onToggle={(isExpanded) =>
-                                setExpandedKey(isExpanded ? key : null)
-                            }
-                        />
-                    );
-                })}
-            </Stack>
+            <ConnectionList />
         </Stack>
     );
 }
