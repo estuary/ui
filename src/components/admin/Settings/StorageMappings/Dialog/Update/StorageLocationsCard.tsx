@@ -172,18 +172,19 @@ export function StorageLocationsCard({
     const fragmentStores = watch('fragment_stores');
     const dataPlanes = watch('data_planes');
     const defaultDataPlane = dataPlanes[0];
-    const hasNewStore = fragmentStores.some((f) => f._isNew);
+    const [newKey, setNewKey] = useState<string | null>(null);
+    const hasNewStore = newKey !== null;
 
-    const [addingKey, setAddingKey] = useState<string | null>(null);
-    const [removingKey, setRemovingKey] = useState<string | null>(null);
+    const [incomingKey, setIncomingKey] = useState<string | null>(null);
+    const [outgoingKey, setOutgoingKey] = useState<string | null>(null);
 
     // Items mount with Collapse `in={false}`, then this clears incomingIds
     // on the next frame so they transition to `in={true}` and animate open.
     useEffect(() => {
-        if (!addingKey) return;
-        const frame = requestAnimationFrame(() => setAddingKey(null));
+        if (!incomingKey) return;
+        const frame = requestAnimationFrame(() => setIncomingKey(null));
         return () => cancelAnimationFrame(frame);
-    }, [addingKey]);
+    }, [incomingKey]);
 
     const handleStartAdding = () => {
         // important to set nulls otherwise the new store will inherit values
@@ -199,7 +200,6 @@ export function StorageLocationsCard({
             container_name: null,
             storage_account_name: null,
             account_tenant_id: null,
-            _isNew: true,
         };
         prepend(newStore);
         setFormOpen(true);
@@ -215,7 +215,9 @@ export function StorageLocationsCard({
         );
         const valid = await trigger(fieldsToValidate);
         if (valid) {
-            setAddingKey(getStoreKey(fragmentStores[0]));
+            const addKey = getStoreKey(fragmentStores[0]);
+            setNewKey(addKey);
+            setIncomingKey(addKey);
             setFormOpen(false);
         }
     };
@@ -230,31 +232,33 @@ export function StorageLocationsCard({
         if (closing) {
             setClosing(false);
             setFormOpen(false);
+            setNewKey(null);
             remove(0);
         }
     }, [closing, remove, setFormOpen]);
 
     const handleRemoveStore = (key: string) => {
-        setRemovingKey(key);
+        setNewKey(null);
+        setOutgoingKey(key);
     };
 
     const handleStoreRemoveExited = useCallback(() => {
-        if (!removingKey) return;
+        if (!outgoingKey) return;
         const index = fragmentStores.findIndex(
-            (s) => getStoreKey(s) === removingKey
+            (s) => getStoreKey(s) === outgoingKey
         );
         if (index !== -1) {
             remove(index);
         }
-        setRemovingKey(null);
-    }, [removingKey, fragmentStores, remove]);
+        setOutgoingKey(null);
+    }, [outgoingKey, fragmentStores, remove]);
 
     const showNestedStorageForm = formOpen && !closing;
 
     // complicated logic to coordinate animations for nested form or store row with the historicalDataNote
     const showHistoricalDataNote = closing
         ? fragmentStores.length > 2
-        : fragmentStores.length > (removingKey ? 2 : 1);
+        : fragmentStores.length > (outgoingKey ? 2 : 1);
 
     return (
         <>
@@ -318,8 +322,9 @@ export function StorageLocationsCard({
                         if (formOpen && index === 0) return null;
 
                         const key = getStoreKey(store);
+                        const showRowActions = key === newKey;
                         const animate =
-                            key !== removingKey && key !== addingKey;
+                            key !== outgoingKey && key !== incomingKey;
 
                         return (
                             <Collapse
@@ -340,7 +345,7 @@ export function StorageLocationsCard({
                                             store={store}
                                             inactive={index > 0}
                                         />
-                                        {store._isNew ? (
+                                        {showRowActions ? (
                                             <StoreRowActions
                                                 onEdit={() => setFormOpen(true)}
                                                 onRemove={() =>
