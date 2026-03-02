@@ -62,7 +62,7 @@ function AutocompletedField({
                         input: {
                             ...InputProps,
                             sx: { borderRadius: 3 },
-                        }
+                        },
                     }}
                 />
             )}

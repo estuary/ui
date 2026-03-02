@@ -117,7 +117,7 @@ function CaptureInterval({ readOnly }: CaptureIntervalProps) {
                             input: {
                                 ...InputProps,
                                 sx: { borderRadius: 3 },
-                            }
+                            },
                         }}
                     />
                 )}

@@ -136,7 +136,7 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                         slotProps={{
                             htmlInput: {
                                 minLength: 5,
-                            }
+                            },
                         }}
                     />
                 ) : null}

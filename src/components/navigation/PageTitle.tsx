@@ -1,6 +1,6 @@
-import { useShallow } from 'zustand/react/shallow';
-
 import { Stack, Typography } from '@mui/material';
+
+import { useShallow } from 'zustand/react/shallow';
 
 import { FormattedMessage } from 'react-intl';
 

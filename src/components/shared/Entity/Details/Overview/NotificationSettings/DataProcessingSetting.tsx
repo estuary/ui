@@ -196,7 +196,7 @@ function DataProcessingSetting({
                                     input: {
                                         ...InputProps,
                                         sx: { borderRadius: 3 },
-                                    }
+                                    },
                                 }}
                             />
                         )}

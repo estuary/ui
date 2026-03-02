@@ -19,7 +19,8 @@ export const useDetailsForm_changed_connectorId = () => {
                 state.previousDetails.data.connectorImage.connectorId ||
             Boolean(
                 connectorId &&
-                connectorId !== state.details.data.connectorImage.connectorId
+                    connectorId !==
+                        state.details.data.connectorImage.connectorId
             )
     );
 };

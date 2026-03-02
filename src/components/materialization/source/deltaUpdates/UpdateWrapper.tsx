@@ -19,7 +19,11 @@ export default function DeltaUpdatesUpdateWrapper() {
     const setFormState = useFormStateStore_setFormState();
 
     const [deltaUpdates, setDeltaUpdates, setSaving] = useSourceCaptureStore(
-        useShallow((state) => [state.deltaUpdates, state.setDeltaUpdates, state.setSaving])
+        useShallow((state) => [
+            state.deltaUpdates,
+            state.setDeltaUpdates,
+            state.setSaving,
+        ])
     );
 
     const { currentSetting, updateSourceSetting } =

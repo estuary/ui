@@ -22,7 +22,11 @@ export default function TargetSchemaUpdateWrapper() {
     const setFormState = useFormStateStore_setFormState();
 
     const [targetSchema, setTargetSchema, setSaving] = useSourceCaptureStore(
-        useShallow((state) => [state.targetSchema, state.setTargetSchema, state.setSaving])
+        useShallow((state) => [
+            state.targetSchema,
+            state.setTargetSchema,
+            state.setSaving,
+        ])
     );
 
     const { currentSetting, updateSourceSetting } =

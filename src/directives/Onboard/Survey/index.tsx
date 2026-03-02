@@ -2,7 +2,13 @@ import type { ChangeEvent } from 'react';
 
 import useConstant from 'use-constant';
 
-import { chipClasses, FormControl, FormLabel, formControlLabelClasses, RadioGroup } from '@mui/material';
+import {
+    chipClasses,
+    FormControl,
+    formControlLabelClasses,
+    FormLabel,
+    RadioGroup,
+} from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -75,7 +81,7 @@ function OnboardingSurvey() {
                 row
                 sx={{
                     ...hiddenButAccessibleRadio,
-                    'gap': 1,
+                    gap: 1,
                     [`& .${formControlLabelClasses.root}`]: {
                         ml: 0,
                         mr: 0,

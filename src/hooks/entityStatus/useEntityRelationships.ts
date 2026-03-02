@@ -1,8 +1,8 @@
 import type { FetcherArgs } from 'src/hooks/entityStatus/types';
 
-import { useMount } from 'react-use';
-
 import { useShallow } from 'zustand/react/shallow';
+
+import { useMount } from 'react-use';
 import useSWR from 'swr';
 
 import { getEntityRelationships } from 'src/api/entityStatus';

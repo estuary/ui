@@ -41,7 +41,11 @@ function AppLayout() {
     const [rightPaneFlex, setRightPaneFlex] = useState<any>(0.0);
 
     const [animateOpening, setAnimateOpening, docsURL] = useSidePanelDocsStore(
-        useShallow((state) => [state.animateOpening, state.setAnimateOpening, state.url])
+        useShallow((state) => [
+            state.animateOpening,
+            state.setAnimateOpening,
+            state.url,
+        ])
     );
 
     const { showDocs } = useShowSidePanelDocs();

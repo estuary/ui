@@ -19,7 +19,7 @@ function ShardsDisableWarning() {
         return (
             <Box
                 sx={{
-                    'mb': 2,
+                    mb: 2,
                     [`& .${alertTitleClasses.root}`]: {
                         textTransform: 'capitalize',
                     },

@@ -82,7 +82,7 @@ function FieldEditor({
                     }}
                     size="small"
                     sx={{
-                        'flex': '1 1 0px',
+                        flex: '1 1 0px',
                         [`& .${inputBaseClasses.root}`]: {
                             borderRadius: 3,
                         },

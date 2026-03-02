@@ -47,7 +47,7 @@ export default function FieldFilter({ disabled }: Props) {
             onChange={filterTable}
             size="small"
             sx={{
-                'width': 300,
+                width: 300,
                 [`& .${inputBaseClasses.root}`]: {
                     borderRadius: 3,
                 },

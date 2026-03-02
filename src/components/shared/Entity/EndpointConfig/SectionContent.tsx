@@ -42,7 +42,10 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
 
     // Endpoint Config Store
     const [endpointCanBeEmpty, hydrationErrorsExist] = useEndpointConfigStore(
-        useShallow((state) => [state.endpointCanBeEmpty, state.hydrationErrorsExist])
+        useShallow((state) => [
+            state.endpointCanBeEmpty,
+            state.hydrationErrorsExist,
+        ])
     );
     const endpointConfig = useEndpointConfigStore_endpointConfig_data();
     const previousEndpointConfig =

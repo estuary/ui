@@ -8,14 +8,14 @@ import {
     Typography,
 } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import {
     AddressElement,
     PaymentElement,
     useElements,
     useStripe,
 } from '@stripe/react-stripe-js';
-import { useShallow } from 'zustand/react/shallow';
-
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';

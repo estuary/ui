@@ -36,7 +36,7 @@ export default function PrefixField({ staticPrefix }: Props) {
                     slotProps={{
                         input: {
                             sx: { borderRadius: 3 },
-                        }
+                        },
                     }}
                 />
             ) : (

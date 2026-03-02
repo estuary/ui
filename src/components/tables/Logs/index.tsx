@@ -2,7 +2,15 @@ import type { VariableSizeList } from 'react-window';
 
 import { useLayoutEffect, useRef } from 'react';
 
-import { Box, Stack, Table, tableCellClasses, TableContainer, tableHeadClasses, tableRowClasses } from '@mui/material';
+import {
+    Box,
+    Stack,
+    Table,
+    tableCellClasses,
+    TableContainer,
+    tableHeadClasses,
+    tableRowClasses,
+} from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -71,18 +79,19 @@ function LogsTable() {
                     size="small"
                     stickyHeader
                     sx={{
-                        'minWidth': 250,
-                        'width': '100%',
-                        'height': '100%',
+                        minWidth: 250,
+                        width: '100%',
+                        height: '100%',
                         // Keeps the header showing the border row on the header and not the cells
                         //  becaues they do not take the entire width
-                        'borderCollapse': 'collapse',
-                        [`& > .${tableHeadClasses.root} .${tableRowClasses.root}`]: {
-                            borderBottomColor: (theme) =>
-                                defaultOutlineColor[theme.palette.mode],
-                            borderBottomWidth: 1,
-                            borderBottomStyle: 'solid',
-                        },
+                        borderCollapse: 'collapse',
+                        [`& > .${tableHeadClasses.root} .${tableRowClasses.root}`]:
+                            {
+                                borderBottomColor: (theme) =>
+                                    defaultOutlineColor[theme.palette.mode],
+                                borderBottomWidth: 1,
+                                borderBottomStyle: 'solid',
+                            },
                         [`& > .${tableHeadClasses.root} .${tableRowClasses.root} .${tableCellClasses.root}`]:
                             {
                                 borderBottom: 'none',

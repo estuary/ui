@@ -85,7 +85,9 @@ export const mapCustomStateToCombinatorRendererProps = (
 // based on : packages/react/src/JsonFormsContext.tsx @ withContextToOneOfProps
 const withCustomContextToOneOfProps =
     (
-        Component: ComponentType<React.PropsWithChildren<CombinatorRendererProps>>
+        Component: ComponentType<
+            React.PropsWithChildren<CombinatorRendererProps>
+        >
     ): ComponentType<React.PropsWithChildren<OwnPropsOfControl>> =>
     // eslint-disable-next-line react/display-name
     ({ ctx, props }: any) => {

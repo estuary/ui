@@ -33,7 +33,11 @@ interface Props {
 function SidePanelIframe({ show }: Props) {
     const intl = useIntl();
     const [disabled, setAnimateOpening, docsURL] = useSidePanelDocsStore(
-        useShallow((state) => [state.disabled, state.setAnimateOpening, state.url])
+        useShallow((state) => [
+            state.disabled,
+            state.setAnimateOpening,
+            state.url,
+        ])
     );
 
     const colorMode = useColorMode();

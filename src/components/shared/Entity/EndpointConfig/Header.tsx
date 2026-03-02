@@ -16,7 +16,10 @@ function EndpointConfigHeader() {
 
     const [endpointConfigErrorsExist, hydrationErrorsExist] =
         useEndpointConfigStore(
-            useShallow((state) => [state.errorsExist, state.hydrationErrorsExist])
+            useShallow((state) => [
+                state.errorsExist,
+                state.hydrationErrorsExist,
+            ])
         );
     const docsURL = useSidePanelDocsStore((state) => state.url);
 

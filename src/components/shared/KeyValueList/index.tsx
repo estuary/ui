@@ -57,8 +57,9 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                     secondary: {
                                         color: theme.palette.text.primary,
                                         component: 'div',
-                                    }
-                                }} />
+                                    },
+                                }}
+                            />
                         </ListItem>
                     ))}
                 </List>

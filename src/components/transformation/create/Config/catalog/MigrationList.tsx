@@ -5,8 +5,8 @@ import { useMemo, useState } from 'react';
 import {
     Accordion,
     AccordionDetails,
-    accordionSummaryClasses,
     AccordionSummary,
+    accordionSummaryClasses,
     Typography,
     useTheme,
 } from '@mui/material';

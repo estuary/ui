@@ -56,7 +56,7 @@ function PrefixSelector({
                                 ? { disableUnderline: true }
                                 : {}),
                             sx: { borderRadius: 3 },
-                        }
+                        },
                     }}
                 />
             )}

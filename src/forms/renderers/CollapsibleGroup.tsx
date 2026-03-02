@@ -83,8 +83,7 @@ const CollapsibleGroupRenderer = ({
                     />
                 }
                 sx={{
-                    backgroundColor:
-                        jsonFormsGroupHeaders[theme.palette.mode],
+                    backgroundColor: jsonFormsGroupHeaders[theme.palette.mode],
                 }}
             >
                 <Typography sx={{ fontWeight: 500 }}>
@@ -119,9 +118,7 @@ const CollapsibleGroupRenderer = ({
                                 variant="text"
                                 size="small"
                                 onClick={clearSettings}
-                                startIcon={
-                                    <Xmark style={{ fontSize: 13 }} />
-                                }
+                                startIcon={<Xmark style={{ fontSize: 13 }} />}
                                 sx={{
                                     maxWidth: '75%',
                                 }}

@@ -9,7 +9,11 @@ import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';
 
 export const JournalDataLogsHydrator = ({ children }: BaseComponentProps) => {
     const [resetState, setActive, hydrate] = useJournalDataLogsStore(
-        useShallow((state) => [state.resetState, state.setActive, state.hydrate])
+        useShallow((state) => [
+            state.resetState,
+            state.setActive,
+            state.hydrate,
+        ])
     );
 
     const { docs, error, loading, readStatus, refresh } = useOpsLogs();

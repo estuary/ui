@@ -87,7 +87,7 @@ const RedactFieldDialog = ({
                                 input: {
                                     ...InputProps,
                                     sx: { borderRadius: 3 },
-                                }
+                                },
                             }}
                         />
                     )}

@@ -29,7 +29,7 @@ function RefreshTokenDescription() {
             slotProps={{
                 input: {
                     sx: { borderRadius: 3 },
-                }
+                },
             }}
         />
     );

@@ -6,6 +6,8 @@ import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { TableBody } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { isEmpty } from 'lodash';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { VariableSizeList } from 'react-window';
@@ -21,8 +23,6 @@ import {
     WAITING_ROW_HEIGHT,
 } from 'src/components/tables/Logs/shared';
 import useLogColumns from 'src/components/tables/Logs/useLogColumns';
-import { useShallow } from 'zustand/react/shallow';
-
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useJournalDataLogsStore } from 'src/stores/JournalData/Logs/Store';

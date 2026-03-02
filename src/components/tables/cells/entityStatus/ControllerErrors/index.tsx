@@ -47,8 +47,8 @@ export default function ControllerErrors({
                         severity="error"
                         short
                         sx={{
-                            'mb': 1,
-                            'width': 600,
+                            mb: 1,
+                            width: 600,
                             [`& .${alertClasses.message}`]: {
                                 width: '100%',
                             },

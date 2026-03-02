@@ -42,7 +42,7 @@ function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
             <Alert
                 severity={showWarnings ? 'warning' : 'error'}
                 sx={{
-                    'mb': 1,
+                    mb: 1,
                     [`& .${alertClasses.message}`]: {
                         width: '100%',
                     },

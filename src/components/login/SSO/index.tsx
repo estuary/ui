@@ -153,7 +153,7 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                         slotProps={{
                             htmlInput: {
                                 type: 'email',
-                            }
+                            },
                         }}
                     />
 

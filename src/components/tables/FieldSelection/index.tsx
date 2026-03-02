@@ -8,7 +8,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Stack, Table, TableContainer, Tooltip } from '@mui/material';
 
-
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';

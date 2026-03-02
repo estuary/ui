@@ -1,6 +1,13 @@
 import type { EntityTableHeaderProps } from 'src/components/tables/EntityTable/types';
 
-import { TableCell, tableCellClasses, TableHead, TableRow, TableSortLabel, tableSortLabelClasses } from '@mui/material';
+import {
+    TableCell,
+    tableCellClasses,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+    tableSortLabelClasses,
+} from '@mui/material';
 
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';

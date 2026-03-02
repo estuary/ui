@@ -58,7 +58,7 @@ function CollectionSelectorHeaderName({
                             onClear={updateParent}
                         />
                     ),
-                }
+                },
             }}
         />
     );

@@ -16,7 +16,10 @@ export default function DeltaUpdatesForm({
     const workflow = useEntityWorkflow();
 
     const [setDeltaUpdatesHasError, setDeltaUpdates] = useSourceCaptureStore(
-        useShallow((state) => [state.setDeltaUpdatesHasError, state.setDeltaUpdates])
+        useShallow((state) => [
+            state.setDeltaUpdatesHasError,
+            state.setDeltaUpdates,
+        ])
     );
 
     // If we are editing make sure we store the current value into the store "on load"

@@ -101,10 +101,7 @@ export const CustomMaterialInputControl = (
                 inputEvents
                     ? (event) => {
                           if (
-                              endsWith(
-                                  event.target.id,
-                                  CLEAR_BUTTON_ID_SUFFIX
-                              )
+                              endsWith(event.target.id, CLEAR_BUTTON_ID_SUFFIX)
                           ) {
                               // Clear button was clicked so we do not want to fire the focus event
                               // Return here so we do not fire the focus events. This way when a user

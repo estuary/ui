@@ -168,7 +168,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     slotProps={{
                         input: {
                             sx: { borderRadius: 3 },
-                        }
+                        },
                     }}
                 />
             </Grid>

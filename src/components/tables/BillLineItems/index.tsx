@@ -3,7 +3,14 @@ import type { TableColumns } from 'src/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Button, Skeleton, Table, TableContainer, tableRowClasses } from '@mui/material';
+import {
+    Box,
+    Button,
+    Skeleton,
+    Table,
+    TableContainer,
+    tableRowClasses,
+} from '@mui/material';
 
 import { CreditCard, Download } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -90,7 +97,7 @@ function BillingLineItemsTable() {
                     stickyHeader
                     sx={{
                         ...getTableHeaderWithoutHeaderColor(),
-                        'minWidth': 350,
+                        minWidth: 350,
                         [`& .${tableRowClasses.root}`]: {
                             height: INVOICE_ROW_HEIGHT,
                         },

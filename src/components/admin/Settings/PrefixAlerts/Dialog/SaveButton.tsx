@@ -62,9 +62,9 @@ function SaveButton({ closeDialog }: Props) {
         () =>
             Boolean(
                 !hasLength(prefix) ||
-                prefixErrorsExist ||
-                !subscriptions ||
-                inputUncommitted
+                    prefixErrorsExist ||
+                    !subscriptions ||
+                    inputUncommitted
             ),
         [inputUncommitted, prefix, prefixErrorsExist, subscriptions]
     );

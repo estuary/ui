@@ -285,7 +285,7 @@ function EntityTable({
                                     defaultValue={searchQuery}
                                     onChange={handlers.filterTable}
                                     sx={{
-                                        'width': '100%',
+                                        width: '100%',
                                         [`& .${inputBaseClasses.root}`]: {
                                             borderRadius: 3,
                                         },

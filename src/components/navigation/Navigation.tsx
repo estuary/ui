@@ -61,7 +61,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     border: 0,
                     background: paperBackground[theme.palette.mode],
                 },
-                'transition': (drawerTheme) =>
+                transition: (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
                 width,
             }}

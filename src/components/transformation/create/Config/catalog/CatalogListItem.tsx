@@ -8,8 +8,8 @@ import {
     IconButton,
     List,
     ListItemButton,
-    listItemTextClasses,
     ListItemText,
+    listItemTextClasses,
     Stack,
     useTheme,
 } from '@mui/material';
@@ -115,7 +115,7 @@ function CatalogListItem({
                     <ListItemText
                         primary={itemLabel}
                         sx={{
-                            'ml': 0.5,
+                            ml: 0.5,
                             [`& .${listItemTextClasses.primary}`]: {
                                 fontWeight: 500,
                                 whiteSpace: 'nowrap',

@@ -1,9 +1,9 @@
 import type { BaseComponentProps } from 'src/types';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
-
-import { useShallow } from 'zustand/react/shallow';
 
 import FullPageError from 'src/components/fullPage/Error';
 import { logRocketEvent } from 'src/services/shared';

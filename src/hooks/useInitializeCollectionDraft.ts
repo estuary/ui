@@ -73,7 +73,10 @@ function useInitializeCollectionDraft() {
 
     // Workflow Store
     const [initializeProjections, upsertCollection] = useWorkflowStore(
-        useShallow((state) => [state.initializeProjections, state.upsertCollection])
+        useShallow((state) => [
+            state.initializeProjections,
+            state.upsertCollection,
+        ])
     );
 
     const createCollectionDraftSpec = useCallback(

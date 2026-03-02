@@ -62,7 +62,7 @@ function TableLoadingRows({
                     component={trComponent}
                     sx={{
                         ...styling,
-                        'opacity': '25%',
+                        opacity: '25%',
                         [`& .${tableCellClasses.root}`]: {
                             borderBottom: 'transparent',
                         },

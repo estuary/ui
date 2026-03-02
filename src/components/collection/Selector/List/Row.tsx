@@ -27,7 +27,7 @@ function CollectionSelectorRow({
             <ListItemText
                 primary={collection}
                 slotProps={{
-                    primary: { ...typographyTruncation }
+                    primary: { ...typographyTruncation },
                 }}
             />
             <IconButton
