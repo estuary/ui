@@ -94,10 +94,75 @@ const GCP_REGIONS: Record<string, string> = {
     'us-west4': 'US West (Las Vegas)',
 };
 
+const AZURE_REGIONS: Record<string, string> = {
+    // Americas
+    eastus: 'East US (Virginia)',
+    eastus2: 'East US 2 (Virginia)',
+    centralus: 'Central US (Iowa)',
+    northcentralus: 'North Central US (Illinois)',
+    southcentralus: 'South Central US (Texas)',
+    westcentralus: 'West Central US (Wyoming)',
+    westus: 'West US (California)',
+    westus2: 'West US 2 (Washington)',
+    westus3: 'West US 3 (Arizona)',
+    canadacentral: 'Canada Central (Toronto)',
+    canadaeast: 'Canada East (Quebec City)',
+    brazilsouth: 'Brazil South (São Paulo)',
+    brazilsoutheast: 'Brazil Southeast (Rio de Janeiro)',
+    chilecentral: 'Chile Central (Santiago)',
+    mexicocentral: 'Mexico Central (Querétaro)',
+
+    // Europe
+    northeurope: 'North Europe (Ireland)',
+    westeurope: 'West Europe (Netherlands)',
+    uksouth: 'UK South (London)',
+    ukwest: 'UK West (Cardiff)',
+    francecentral: 'France Central (Paris)',
+    francesouth: 'France South (Marseille)',
+    germanywestcentral: 'Germany West Central (Frankfurt)',
+    germanynorth: 'Germany North (Berlin)',
+    switzerlandnorth: 'Switzerland North (Zürich)',
+    switzerlandwest: 'Switzerland West (Geneva)',
+    norwayeast: 'Norway East (Oslo)',
+    norwaywest: 'Norway West (Stavanger)',
+    swedencentral: 'Sweden Central (Gävle)',
+    polandcentral: 'Poland Central (Warsaw)',
+    italynorth: 'Italy North (Milan)',
+    spaincentral: 'Spain Central (Madrid)',
+    austriaeast: 'Austria East (Vienna)',
+    belgiumcentral: 'Belgium Central (Brussels)',
+    denmarkeast: 'Denmark East (Copenhagen)',
+
+    // Asia Pacific
+    eastasia: 'East Asia (Hong Kong)',
+    southeastasia: 'Southeast Asia (Singapore)',
+    japaneast: 'Japan East (Tokyo)',
+    japanwest: 'Japan West (Osaka)',
+    australiaeast: 'Australia East (Sydney)',
+    australiasoutheast: 'Australia Southeast (Melbourne)',
+    australiacentral: 'Australia Central (Canberra)',
+    australiacentral2: 'Australia Central 2 (Canberra)',
+    koreacentral: 'Korea Central (Seoul)',
+    koreasouth: 'Korea South (Busan)',
+    centralindia: 'Central India (Pune)',
+    southindia: 'South India (Chennai)',
+    westindia: 'West India (Mumbai)',
+    indonesiacentral: 'Indonesia Central (Jakarta)',
+    malaysiawest: 'Malaysia West (Kuala Lumpur)',
+    newzealandnorth: 'New Zealand North (Auckland)',
+
+    // Middle East & Africa
+    uaenorth: 'UAE North (Dubai)',
+    uaecentral: 'UAE Central (Abu Dhabi)',
+    southafricanorth: 'South Africa North (Johannesburg)',
+    southafricawest: 'South Africa West (Cape Town)',
+    qatarcentral: 'Qatar Central (Doha)',
+    israelcentral: 'Israel Central (Tel Aviv)',
+};
 const REGION_MAPS: Record<CloudProvider, Record<string, string>> = {
     AWS: AWS_REGIONS,
     GCP: GCP_REGIONS,
-    AZURE: {}, // TODO: fill these in
+    AZURE: AZURE_REGIONS,
 };
 
 export const getRegionDisplayName = (
