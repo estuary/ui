@@ -40,6 +40,3 @@ export const useTenantStore = create<TenantState>()(
         persistOptions
     )
 );
-useTenantStore.setState({
-    ...getInitialStateData(),
-});
