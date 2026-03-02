@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import { Grid, Skeleton } from '@mui/material';
+
+import { useShallow } from 'zustand/react/shallow';
 
 import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/EmailSelector';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -50,6 +50,7 @@ export default function EmailListField({ open }: Props) {
                 maxHeight: 250,
                 overflow: 'auto',
                 display: 'flex',
+                pt: 1, //Used to keep label from clipping header
             }}
         >
             {subscriptions === undefined ? (

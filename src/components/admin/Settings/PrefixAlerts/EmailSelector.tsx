@@ -244,6 +244,7 @@ function EmailSelector({
                                 key={`email-tag-${email}-${index}`}
                                 label={email}
                                 size="small"
+                                variant="outlined"
                             />
                         );
                     });

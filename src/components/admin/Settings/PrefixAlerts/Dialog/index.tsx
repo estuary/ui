@@ -91,9 +91,9 @@ function AlertSubscriptionDialog({
                     container
                     spacing={2}
                     sx={{
-                        mb: 3,
+                        mb: 2,
                         pt: 1,
-                        alignItems: 'flex-start',
+                        alignItems: 'flex-end',
                     }}
                 >
                     <PrefixField staticPrefix={staticPrefix} />
