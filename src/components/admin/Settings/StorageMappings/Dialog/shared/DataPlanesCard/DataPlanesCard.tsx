@@ -8,8 +8,8 @@ import { Flipped, Flipper } from 'react-flip-toolkit';
 
 import { useDataPlanes } from 'src/api/gql/dataPlanes';
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
-import DataPlaneRow from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneRow';
-import DataPlaneSelector from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneSelector';
+import { DataPlaneRow } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneRow';
+import { DataPlaneSelector } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneSelector';
 
 interface DataPlanesCardProps {
     dataPlanes: DataPlaneNode[];

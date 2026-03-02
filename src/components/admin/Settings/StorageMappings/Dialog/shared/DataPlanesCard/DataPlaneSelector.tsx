@@ -12,7 +12,7 @@ import {
 
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
-function DataPlaneSelector({
+export function DataPlaneSelector({
     options,
     allowPublicChecked,
     allowPublicDisabled,
@@ -72,5 +72,3 @@ function DataPlaneSelector({
         </Stack>
     );
 }
-
-export default DataPlaneSelector;
