@@ -104,7 +104,10 @@ const useDirectiveGuard = (
                     );
                 };
 
+                // This should fix the local issue where you could get stuck in an
+                //  infinite loop loading after restarting your local.
                 autoRanOnce.current = true;
+
                 fetchDirective()
                     .then((response) => {
                         if (response.data) {
