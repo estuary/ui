@@ -11,8 +11,7 @@ export interface AlgorithmMenuProps extends BaseMenuProps {
     targetFieldsRecommended?: boolean;
 }
 
-export interface BaseButtonProps {
-    bindingUUID: string;
+export interface BaseButtonProps extends BindingUUIDProp {
     loading: boolean;
     selections: FieldSelection[] | null | undefined;
 }
@@ -22,7 +21,7 @@ export interface BaseMenuProps {
     disabled: boolean;
 }
 
-export interface DefinedKeyProps {
+export interface BindingUUIDProp {
     bindingUUID: string;
 }
 
@@ -41,10 +40,6 @@ export interface GroupByKeysSaveButtonProps extends BaseButtonProps {
     close: () => void;
 }
 
-export interface KeyChangeAlertProps {
-    bindingUUID: string;
-}
-
 export interface MenuActionProps extends BaseMenuProps {
     close: () => void;
     selectionAlgorithm: SelectionAlgorithm | null;
@@ -55,8 +50,7 @@ export interface MenuOptionsProps {
     setSelectionAlgorithm: Dispatch<SetStateAction<SelectionAlgorithm | null>>;
 }
 
-export interface FieldSelectionViewerProps {
-    bindingUUID: string;
+export interface FieldSelectionViewerProps extends BindingUUIDProp {
     collectionName: string;
     refreshRequired: boolean;
     refresh: Function;

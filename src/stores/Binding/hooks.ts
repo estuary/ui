@@ -431,3 +431,18 @@ export const useBinding_groupBy = (bindingUUID: string) =>
                 DEFAULT_GROUP_BY
         )
     );
+
+export const useBinding_fieldSelectionValidationContext = () => {
+    return useBindingStore(
+        useShallow((state) =>
+            Object.entries(state.selections)
+                .filter(
+                    ([_uuid, { status }]) => status === 'VALIDATION_REQUESTED'
+                )
+                .map(([uuid, { validationAttempts }]) => ({
+                    uuid,
+                    validationAttempts,
+                }))
+        )
+    );
+};
