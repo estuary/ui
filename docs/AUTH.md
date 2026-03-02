@@ -160,7 +160,7 @@ The URQL `authExchange` handles token refresh for all GraphQL requests:
 
 `/sso/login` or `/sso/register` → Supabase OAuth redirect → `/auth` callback page → `supabaseClient.auth.initialize()` parses URL params → `onAuthStateChange` fires
 
-### Magic link
+### Magic link (DEV ONLY)
 
 `/magicLink` → email sent → link opens `/auth` → same callback path as SSO
 

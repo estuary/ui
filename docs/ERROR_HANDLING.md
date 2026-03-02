@@ -17,6 +17,8 @@ Errors are handled at four levels:
 
 Uses `react-error-boundary`. On error it renders an expandable `AlertBox` with the stack trace and calls `logRocketEvent(CustomEvents.ERROR_BOUNDARY_DISPLAYED)`. A top-level boundary wraps the entire app in `src/context/index.tsx`; additional boundaries are placed around individual lazy-loaded routes.
 
+This component is missing the feature to allow user to reload just the section that failed.
+
 ---
 
 ## API Errors
@@ -32,8 +34,10 @@ interface CallSupabaseResponse<T> {
 }
 
 // Usage in src/api/ layer:
-const result = await supabaseRetry(() => query, 'operationName')
-    .then(handleSuccess<MyType>, handleFailure);
+const result = await supabaseRetry(() => query, 'operationName').then(
+    handleSuccess<MyType>,
+    handleFailure
+);
 
 if (result.error) {
     // handle error
@@ -44,9 +48,15 @@ if (result.error) {
 
 ```typescript
 export const BASE_ERROR: PostgrestError = {
-    code: '', details: '', hint: '', message: '', name: '',
+    code: '',
+    details: '',
+    hint: '',
+    message: '',
+    name: '',
 };
 ```
+
+This allows us to more easily share an error rendering component. This is mainly historical but still followed for ease of development.
 
 ---
 
@@ -57,10 +67,10 @@ export const BASE_ERROR: PostgrestError = {
 Stores that implement `StoreWithHydration` track error state:
 
 ```typescript
-hydrationError: string | null        // Error message, null if none
-hydrationErrorsExist: boolean        // True if any binding/sub-store errored
-networkFailed: boolean               // True if error matches FAILED_TO_FETCH
-hydrationWarning: ProtocolStatus | null
+hydrationError: string | null; // Error message, null if none
+hydrationErrorsExist: boolean; // True if any binding/sub-store errored
+networkFailed: boolean; // True if error matches FAILED_TO_FETCH
+hydrationWarning: ProtocolStatus | null;
 ```
 
 `setHydrationError(value)` only stores the error if `state.active` is `true` — errors from inactive stores are silently dropped.
@@ -68,6 +78,8 @@ hydrationWarning: ProtocolStatus | null
 **How errors surface to UI:**
 
 Hydrator components (e.g., `src/stores/Workflow/Hydrator.tsx`) read `hydrationError` and render `<Error condensed error={{ ...BASE_ERROR, message: hydrationError }} />` when it is set.
+
+See `docs/STATE.md` for more details about `Store Hydaration`
 
 ---
 
@@ -100,8 +112,8 @@ General-purpose error display. Renders an `AlertBox` with a title and message.
     condensed          // Smaller layout
     error={myError}    // PostgrestError | any | null
     severity="error"   // AlertColor, defaults to "error"
-    hideTitle
-    hideIcon
+    hideTitle          // Hides the title on the AlertBox
+    hideIcon           // Hides the large icon on the side of the AlertBox
     cta={<Button>Retry</Button>}
 />
 ```
