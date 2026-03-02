@@ -173,13 +173,6 @@ function KeyAutoComplete({ disabled, onChange, value }: KeyAutoCompleteProps) {
                     );
                 }}
                 renderOption={(renderOptionProps, option, state) => {
-                    console.log(
-                        'renderOptionProps, option, state >>>>>>>>> ',
-                        renderOptionProps,
-                        option,
-                        state
-                    );
-
                     const { ptr, inference } = option;
 
                     // We do this logic here to pass the specific component (Stack with custom prop)
