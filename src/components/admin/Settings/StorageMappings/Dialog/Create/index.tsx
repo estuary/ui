@@ -1,4 +1,4 @@
-import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
 import { useCallback, useEffect, useMemo } from 'react';
@@ -14,20 +14,19 @@ import {
 import { useIntl } from 'react-intl';
 
 import { useStorageMappingService } from 'src/api/storageMappingsGql';
-import { toApiStore } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
 import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 import {
     ConnectionTestProvider,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+import DataPlanesCard from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
+import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { cardHeaderSx } from 'src/context/Theme';
 import { useDialog } from 'src/hooks/useDialog';
-import DataPlanesCard from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
-import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
-import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
 
 const docsUrl =
     'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';
@@ -38,10 +37,10 @@ function buildMappingPayload(
     'dryRun'
 > {
     return {
-        catalogPrefix: mapping.catalog_prefix,
+        catalogPrefix: mapping.catalogPrefix,
         spec: {
-            stores: mapping.fragment_stores.map(toApiStore),
-            data_planes: mapping.data_planes.map((dp) => dp.dataPlaneName),
+            fragmentStores: mapping.fragmentStores,
+            dataPlanes: mapping.dataPlanes.map((dp) => dp.dataPlaneName),
         },
         detail: undefined,
     };
@@ -65,15 +64,15 @@ function CreateMappingWizardInner({
     const { getValues, formState, watch, setValue, reset } =
         useFormContext<StorageMappingFormData>();
     const { append, remove, move } = useFieldArray({
-        name: 'data_planes',
+        name: 'dataPlanes',
         rules: {
             required: 'At least one data plane is required',
         },
     });
 
-    const dataPlanes = watch('data_planes');
-    const allowPublic = watch('allow_public');
-    const stores = watch('fragment_stores');
+    const dataPlanes = watch('dataPlanes');
+    const allowPublic = watch('allowPublic');
+    const stores = watch('fragmentStores');
 
     const refresh = useStorageMappingsRefresh();
 
@@ -130,7 +129,7 @@ function CreateMappingWizardInner({
                                             move(index, 0)
                                         }
                                         onToggleAllowPublic={(value) =>
-                                            setValue('allow_public', value)
+                                            setValue('allowPublic', value)
                                         }
                                     />
                                 </CardWrapper>
@@ -211,9 +210,9 @@ export function CreateMappingWizard() {
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {
-            data_planes: [],
-            fragment_stores: [{}],
-            allow_public: false,
+            dataPlanes: [],
+            fragmentStores: [{}],
+            allowPublic: false,
         },
     });
 
@@ -223,7 +222,7 @@ export function CreateMappingWizard() {
         }
     }, [open, methods]);
 
-    const catalogPrefix = methods.watch('catalog_prefix');
+    const catalogPrefix = methods.watch('catalogPrefix');
 
     return (
         <FormProvider {...methods}>

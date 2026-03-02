@@ -1,5 +1,5 @@
 import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 import type { Client } from 'urql';
 
 import { useCallback } from 'react';
@@ -14,8 +14,8 @@ type StorageProvider = 'GCS' | 'S3' | 'AZURE' | 'CUSTOM';
 export interface StorageMapping {
     catalogPrefix: string;
     spec: {
-        data_planes: string[];
-        stores: FragmentStore[];
+        dataPlanes: string[];
+        fragmentStores: FragmentStore[];
     };
 }
 
@@ -105,8 +105,8 @@ interface TestConnectionHealthVariables {
 export interface CreateStorageMappingInput {
     catalogPrefix: string;
     spec: {
-        stores: FragmentStore[];
-        data_planes: string[];
+        fragmentStores: FragmentStore[];
+        dataPlanes: string[];
     };
     detail?: string;
 }
@@ -218,12 +218,38 @@ function cloudProviderToStorageProvider(
     return CLOUD_TO_STORAGE_PROVIDER[cloudProvider];
 }
 
-export function storageProviderToCloudProvider(
+function storageProviderToCloudProvider(
     storageProvider: StorageProvider
 ): CloudProvider {
     return STORAGE_TO_CLOUD_PROVIDER[
         storageProvider as keyof typeof STORAGE_TO_CLOUD_PROVIDER
     ];
+}
+
+function toServerStore(store: FragmentStore): ServerFragmentStore {
+    return {
+        provider: cloudProviderToStorageProvider(store.provider),
+        bucket: store.bucket,
+        region: store.region,
+        prefix: store.storagePrefix,
+        container_name: store.containerName,
+        storage_account_name: store.storageAccountName,
+        account_tenant_id: store.accountTenantId,
+    };
+}
+
+function fromServerStore(store: ServerFragmentStore): FragmentStore {
+    return {
+        provider: storageProviderToCloudProvider(
+            store.provider as keyof typeof STORAGE_TO_CLOUD_PROVIDER
+        ),
+        bucket: store.bucket,
+        region: store.region,
+        storagePrefix: store.prefix,
+        containerName: store.container_name,
+        storageAccountName: store.storage_account_name,
+        accountTenantId: store.account_tenant_id,
+    };
 }
 
 // Real GraphQL implementation
@@ -233,16 +259,10 @@ const testStorageConnection = async (
     dataPlanes: DataPlaneNode[],
     stores: FragmentStore[]
 ): Promise<TestConnectionHealthResult[]> => {
-    // Convert cloud provider names to storage provider format for the server
-    const serverStores = stores.map((store) => ({
-        ...store,
-        provider: cloudProviderToStorageProvider(store.provider),
-    }));
-
     const result = await client.mutation(TEST_CONNECTION_HEALTH, {
         catalogPrefix,
         spec: {
-            stores: serverStores,
+            stores: stores.map(toServerStore),
             data_planes: dataPlanes.map((dp) => dp.dataPlaneName),
         },
     } satisfies TestConnectionHealthVariables);
@@ -255,15 +275,9 @@ const testStorageConnection = async (
         );
     }
 
-    // Convert storage provider names back to cloud provider format
     return (
         result.data?.testConnectionHealth?.results.map((r) => ({
-            fragmentStore: {
-                ...r.fragmentStore,
-                provider: storageProviderToCloudProvider(
-                    r.fragmentStore.provider
-                ),
-            },
+            fragmentStore: fromServerStore(r.fragmentStore),
             dataPlaneName: r.dataPlaneName,
             error: r.error,
         })) ?? []
@@ -275,19 +289,14 @@ const realCreateStorageMapping = async (
     client: Client,
     input: CreateStorageMappingInput
 ): Promise<CreateStorageMappingResult> => {
-    // Convert cloud provider names to storage provider format for the server
-    const serverInput = {
-        ...input,
+    const result = await client.mutation(CREATE_STORAGE_MAPPING, {
+        catalogPrefix: input.catalogPrefix,
+        detail: input.detail,
         spec: {
-            ...input.spec,
-            stores: input.spec.stores.map((store) => ({
-                ...store,
-                provider: cloudProviderToStorageProvider(store.provider),
-            })),
+            stores: input.spec.fragmentStores.map(toServerStore),
+            data_planes: input.spec.dataPlanes,
         },
-    };
-
-    const result = await client.mutation(CREATE_STORAGE_MAPPING, serverInput);
+    });
 
     if (result.error) {
         throw new Error(
@@ -309,18 +318,14 @@ const realUpdateStorageMapping = async (
     client: Client,
     input: CreateStorageMappingInput
 ): Promise<UpdateStorageMappingResult> => {
-    const serverInput = {
-        ...input,
+    const result = await client.mutation(UPDATE_STORAGE_MAPPING, {
+        catalogPrefix: input.catalogPrefix,
+        detail: input.detail,
         spec: {
-            ...input.spec,
-            stores: input.spec.stores.map((store) => ({
-                ...store,
-                provider: cloudProviderToStorageProvider(store.provider),
-            })),
+            stores: input.spec.fragmentStores.map(toServerStore),
+            data_planes: input.spec.dataPlanes,
         },
-    };
-
-    const result = await client.mutation(UPDATE_STORAGE_MAPPING, serverInput);
+    });
 
     if (result.error) {
         throw new Error(
@@ -393,16 +398,10 @@ export function useStorageMappings() {
 
     const storageMappings: StorageMapping[] =
         data?.storageMappings.edges.map((edge) => ({
-            ...edge.node,
+            catalogPrefix: edge.node.catalogPrefix,
             spec: {
-                ...edge.node.spec,
-                stores: edge.node.spec.stores.map(
-                    ({ prefix, provider, ...rest }): FragmentStore => ({
-                        ...rest,
-                        provider: storageProviderToCloudProvider(provider),
-                        storagePrefix: prefix,
-                    })
-                ),
+                fragmentStores: edge.node.spec.stores.map(fromServerStore),
+                dataPlanes: edge.node.spec.data_planes,
             },
         })) ?? [];
 

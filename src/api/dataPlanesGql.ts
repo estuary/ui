@@ -1,4 +1,4 @@
-import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { gql, useQuery } from 'urql';
 
