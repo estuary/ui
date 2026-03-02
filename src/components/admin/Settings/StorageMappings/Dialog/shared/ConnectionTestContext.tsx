@@ -1,5 +1,5 @@
-import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type { FragmentStore } from 'src/api/storageMappingsGql';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
+import type { FragmentStore } from 'src/api/gql/storageMappings';
 
 import {
     createContext,
@@ -9,7 +9,7 @@ import {
     useState,
 } from 'react';
 
-import { useStorageMappingService } from 'src/api/storageMappingsGql';
+import { useStorageMappingService } from 'src/api/gql/storageMappings';
 
 interface BaseConnection {
     dataPlane: DataPlaneNode;

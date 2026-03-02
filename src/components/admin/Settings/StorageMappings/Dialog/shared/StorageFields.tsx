@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from '@mui/material';
-import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 import type { CloudProvider } from 'src/utils/cloudRegions';
 

@@ -1,4 +1,4 @@
-import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import {
     Checkbox,
