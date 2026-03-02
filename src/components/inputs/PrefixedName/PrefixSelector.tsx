@@ -52,7 +52,9 @@ function PrefixSelector({
                     slotProps={{
                         input: {
                             ...InputProps,
-                            disableUnderline: variantString === 'standard',
+                            ...(variantString === 'standard'
+                                ? { disableUnderline: true }
+                                : {}),
                             sx: { borderRadius: 3 },
                         }
                     }}
