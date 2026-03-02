@@ -11,12 +11,10 @@ import { Alert, Collapse, Link, Stack } from '@mui/material';
 
 import { useFormContext } from 'react-hook-form';
 
-import {
-    AWS_REGIONS,
-    PROVIDER_LABELS,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { PROVIDER_LABELS } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import { storeValidation } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageValidation';
 import { RHFSelect, RHFTextField } from 'src/components/shared/RHFFields/';
+import { AWS_REGIONS } from 'src/utils/cloudRegions';
 import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
 export const PROVIDER_OPTIONS = (
@@ -63,7 +61,10 @@ export function StorageFields({
     }, [defaultDataPlane, trackDefaultDp, setValue]);
 
     const awsRegionOptions = useMemo(
-        () => AWS_REGIONS.map((region) => ({ value: region, label: region })),
+        () =>
+            Object.keys(AWS_REGIONS)
+                .sort()
+                .map((region) => ({ value: region, label: region })),
         []
     );
 
