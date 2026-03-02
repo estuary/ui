@@ -73,6 +73,7 @@ You will want to _test all these before AND after_ clicking `next` cta.
 1. setting `source` defaults and adding bindings
 1. removing bindings
 1. happy path save with old collection using trial storage
+1. edit starts with no bindings
 
 ### Edit Scenarios
 
@@ -81,6 +82,7 @@ You will want to do all the same testing as you do on Create - but just in the e
 #### Both
 
 1. happy path edit and save
+1. edit starts with all bindings disabled
 1. edit `endpoint` config
 1. `backfill` a single binding
 1. `backfill` all bindings

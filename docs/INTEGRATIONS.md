@@ -6,8 +6,7 @@ PostgreSQL database, Edge Functions, and auth.
 
 - Single anonymous client created in `GlobalProviders.tsx`
 - Auth state synced to `UserStore` via `onAuthStateChange` listener
-- Tables used: `live_specs`, `draft_specs`, `publications`, `tenants`, `auth_roles`
-- RPCs used: `auth_roles`, `user_info_summary`, `view_logs`, `billing_report`
+- Both Tables and RPCs are consistently used
 - REST queries wrapped in `src/api/` for error handling and retry logic
 - Integrated with SWR via `@supabase-cache-helpers/postgrest-swr` (LRU cache, 500-entry limit)
 

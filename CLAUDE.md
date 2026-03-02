@@ -123,13 +123,12 @@ to be documented later
 ## Common Gotchas
 
 1. **Encrypted fields break discriminator matching**: Use custom logic in `src/forms/shared.ts` that matches by discriminator value alone — see `docs/JSONFORMS.md`
-2. **GraphQL cache disabled for real-time types**: Alerts/LiveSpecRef return `null` for cache key to always fetch fresh for now
-3. **Store active flag**: Set `store.setActive(false)` on unmount to prevent unnecessary hydration. Eventually this should be replaced by cleaning up / cancelling ongoing calls during unmount.
-4. **LogRocket before Supabase**: LogRocket must initialize first to capture Supabase network requests — see `docs/INTEGRATIONS.md`
-5. **Monaco workers**: Must be configured before React renders (done in `src/index.tsx`) — see `docs/INTEGRATIONS.md`
-6. **Data plane token refresh**: Check `shouldRefreshToken()` on errors and re-authenticate before retry — see `docs/INTEGRATIONS.md`
-7. **Trial collections**: Cannot be deleted, have special handling in `useTrialCollections()` hook
-8. **Binding UUID tracking**: Use correct index mapping when cross-referencing errors between client/server state — see `docs/STATE.md`
+1. **Store active flag**: Set `store.setActive(false)` on unmount to prevent unnecessary hydration. Eventually this should be replaced by cleaning up / cancelling ongoing calls during unmount.
+1. **LogRocket before Supabase**: LogRocket must initialize first to capture Supabase network requests — see `docs/INTEGRATIONS.md`
+1. **Monaco workers**: Must be configured before React renders (done in `src/index.tsx`) — see `docs/INTEGRATIONS.md`
+1. **Data plane token refresh**: Check `shouldRefreshToken()` on errors and re-authenticate before retry — see `docs/INTEGRATIONS.md`
+1. **Trial collections**: Cannot be deleted, have special handling in `useTrialCollections()` hook
+1. **Binding UUID tracking**: Use correct index mapping when cross-referencing errors between client/server state — see `docs/STATE.md`
 
 ## Testing
 
@@ -141,6 +140,10 @@ See `docs/TESTING.md` for detailed test scenarios (connector edge cases, create/
 ## GraphQL Migration
 
 Currently migrating from PostgREST to GraphQL for select features. See `docs/GRAPHQL.md` for details and current status.
+
+### Gotchas
+
+1. **GraphQL cache disabled for real-time types**: Alerts/LiveSpecRef return `null` for cache key to always fetch fresh for now — see `docs/GRAPHQL.md`
 
 ## Ongoing Refactoring and Migrations
 

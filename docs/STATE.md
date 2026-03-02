@@ -7,6 +7,7 @@ Three layers of state:
 1. **React Context** — top-level app concerns (auth, routing, theme, notifications)
 2. **Zustand Stores** — complex domain state (user, entities, forms, bindings, workflows)
 3. **SWR** — REST data fetching with caching/revalidation
+4. **GQL** — Moving towards using GQL and just accessing data directly
 
 ---
 
@@ -32,11 +33,13 @@ getInitialState = (set) => ({
 });
 ```
 
-State mutations use Immer's `produce()` when updating multiple or deeply nested values.
+State mutations use Immer's `produce()` when updating multiple or deeply nested values. However, we are looking at moving away from using Immer specifically due to some performance issues.
 
 ### Consuming Stores in Components
 
-Prefer direct selector access with `useShallow`:
+As of Q1 2026 - We are moving back to having pre-made hooks. This way we can more easily make mass changes during migrations/refactoring/etc.
+
+We currently have a lot of direct selector access with `useShallow`:
 
 ```typescript
 const [active, setActive] = useBillingStore(
@@ -72,6 +75,10 @@ Components call `store.hydrateState()` on mount. Set `store.setActive(false)` on
 ### With GraphQL
 
 Data is not loaded into a store when using GraphQL — it stays in the URQL cache. This allows graph caching to work correctly. See `docs/GRAPHQL.md` for details.
+
+### React 18 StrictMode
+
+Our application's approach to hydration does NOT work with React 18 hydration approach. We are still working out how we want to handle this.
 
 ---
 
