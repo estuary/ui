@@ -105,7 +105,7 @@ export function useConnectionTest() {
     const updateConnection = useCallback(
         (
             connection: Connection,
-            update: Partial<Omit<Connection, 'dataPlaneName' | 'storeId'>>
+            update: Partial<Pick<Connection, 'status' | 'errorMessage'>>
         ) => {
             setConnections((prev) => {
                 const idx = prev.findIndex(
@@ -138,7 +138,7 @@ export function useConnectionTest() {
             const newConnections = newDataPlanes.flatMap((dp) =>
                 newStores.map((store) => ({
                     dataPlane: dp,
-                    store: store,
+                    store,
                     initial: true,
                     active: true,
                     status: 'idle' as const,
@@ -167,8 +167,7 @@ export function useConnectionTest() {
             for (const { dataPlane, store } of pairs) {
                 const idx = updated.findIndex(
                     (c) =>
-                        c.dataPlane.dataPlaneName ===
-                            dataPlane.dataPlaneName &&
+                        c.dataPlane.dataPlaneName === dataPlane.dataPlaneName &&
                         getStoreId(c.store) === getStoreId(store)
                 );
                 if (idx >= 0) {
