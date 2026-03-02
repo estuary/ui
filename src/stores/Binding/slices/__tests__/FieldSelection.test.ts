@@ -1,4 +1,7 @@
-import type { BindingFieldSelection, StoreWithFieldSelection } from 'src/stores/Binding/slices/FieldSelection';
+import type {
+    BindingFieldSelection,
+    StoreWithFieldSelection,
+} from 'src/stores/Binding/slices/FieldSelection';
 
 import { createStore } from 'zustand/vanilla';
 
@@ -36,8 +39,8 @@ const mockSelection = (
 const createTestStore = (
     initialSelections: Record<string, BindingFieldSelection> = {}
 ) => {
-    const store = createStore<StoreWithFieldSelection>(
-        (set) => getStoreWithFieldSelectionSettings(set as any)
+    const store = createStore<StoreWithFieldSelection>((set) =>
+        getStoreWithFieldSelectionSettings(set as any)
     );
 
     if (Object.keys(initialSelections).length > 0) {

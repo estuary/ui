@@ -65,7 +65,9 @@ describe('initializeCollections', () => {
             const store = createTestStore();
             const name = 'acmeCo/widgets';
 
-            store.getState().initializeCollections(new Map([[name, mockMeta()]]));
+            store
+                .getState()
+                .initializeCollections(new Map([[name, mockMeta()]]));
             store.getState().initializeCollections(new Map());
 
             expect(store.getState().collections).toHaveProperty(name);
@@ -90,8 +92,12 @@ describe('initializeCollections', () => {
             const col1 = 'acmeCo/widgets';
             const col2 = 'acmeCo/sprockets';
 
-            store.getState().initializeCollections(new Map([[col1, mockMeta()]]));
-            store.getState().initializeCollections(new Map([[col2, mockMeta(true)]]));
+            store
+                .getState()
+                .initializeCollections(new Map([[col1, mockMeta()]]));
+            store
+                .getState()
+                .initializeCollections(new Map([[col2, mockMeta(true)]]));
 
             expect(store.getState().collections).toHaveProperty(col1);
             expect(store.getState().collections).toHaveProperty(col2);
