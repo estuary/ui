@@ -1,5 +1,4 @@
 import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type { FormDataPlane } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -13,10 +12,10 @@ import DataPlaneRow from 'src/components/admin/Settings/StorageMappings/Dialog/s
 import DataPlaneSelector from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneSelector';
 
 interface DataPlanesCardProps {
-    dataPlanes: FormDataPlane[];
-    defaultDataPlane: FormDataPlane | null;
+    dataPlanes: DataPlaneNode[];
+    defaultDataPlane: DataPlaneNode | null;
     allowPublicChecked: boolean;
-    onSelect: (dataPlane: FormDataPlane) => void;
+    onSelect: (dataPlane: DataPlaneNode) => void;
     onRemove: (index: number) => void;
     onSelectDefault: (index: number) => void;
     onToggleAllowPublic: (value: boolean) => void;
@@ -42,7 +41,7 @@ export default function DataPlanesCard({
     // Track incoming prop changes to enable enter/exit animations
     const [prevSelected, setPrevSelected] = useState(selectedDps);
     const [incomingNames, setIncomingNames] = useState<Set<string>>(new Set());
-    const [outgoingDps, setOutgoingDps] = useState<FormDataPlane[]>([]);
+    const [outgoingDps, setOutgoingDps] = useState<DataPlaneNode[]>([]);
     const outgoingNames = useMemo(() => names(outgoingDps), [outgoingDps]);
 
     const [unselectedDps, hasMoreOptions] = useMemo(() => {
@@ -74,7 +73,7 @@ export default function DataPlanesCard({
     );
 
     const handleAccept = (dataPlane: DataPlaneNode) => {
-        onSelect({ ...dataPlane, _isNew: true });
+        onSelect(dataPlane);
         setSelectorIsOpen(false);
     };
 

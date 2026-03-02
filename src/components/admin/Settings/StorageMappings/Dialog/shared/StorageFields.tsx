@@ -1,7 +1,7 @@
 import type { SxProps, Theme } from '@mui/material';
+import type { DataPlaneNode } from 'src/api/dataPlanesGql';
 import type {
     CloudProvider,
-    FormDataPlane,
     StorageMappingFormData,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 
@@ -27,7 +27,7 @@ export const PROVIDER_OPTIONS = (
 }));
 
 interface StorageFieldsProps {
-    defaultDataPlane: FormDataPlane | null;
+    defaultDataPlane: DataPlaneNode | null;
     sx?: SxProps<Theme>;
 }
 

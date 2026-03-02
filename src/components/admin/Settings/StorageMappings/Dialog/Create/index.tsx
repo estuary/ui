@@ -212,11 +212,7 @@ export function CreateMappingWizard() {
         mode: 'onChange',
         defaultValues: {
             data_planes: [],
-            fragment_stores: [
-                {
-                    _isNew: true,
-                },
-            ],
+            fragment_stores: [{}],
             allow_public: false,
         },
     });
