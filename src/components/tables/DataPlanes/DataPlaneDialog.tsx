@@ -80,7 +80,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                                 id: 'admin.dataPlanes.dialog.cloudProvider',
                             })}
                             value={toPresentableCloudProvider(
-                                dataPlaneName.provider
+                                dataPlaneName.provider as CloudProvider
                             )}
                             showCopyButton={false}
                         />
@@ -91,7 +91,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                                 id: 'admin.dataPlanes.column.header.region',
                             })}
                             value={getRegionDisplayName(
-                                dataPlaneName.provider,
+                                dataPlaneName.provider as CloudProvider,
                                 dataPlaneName.region
                             )}
                             showCopyButton={false}
