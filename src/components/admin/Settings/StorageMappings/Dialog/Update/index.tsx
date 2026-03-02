@@ -1,3 +1,4 @@
+import type { DataPlaneNode } from 'src/api/dataPlanesGql';
 import type {
     FragmentStore,
     StorageMappingFormData,
@@ -15,25 +16,25 @@ import {
     useFormContext,
 } from 'react-hook-form';
 
-import type { DataPlaneNode} from 'src/api/dataPlanesGql';
 import { useDataPlanes } from 'src/api/dataPlanesGql';
 import {
     useStorageMappings,
     useStorageMappingService,
 } from 'src/api/storageMappingsGql';
 import { toApiStore } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
+import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 import {
     ConnectionTestProvider,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+import DataPlanesCard from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
+import { StorageLocationsCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/StorageLocationsCard';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { useDialog } from 'src/hooks/useDialog';
-import { ConnectionTests } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/NewConnectionTests';
-import DataPlanesCard from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
-import { StorageLocationsCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/StorageLocationsCard';
 
 interface MappingData {
     catalogPrefix: string;
@@ -59,6 +60,8 @@ function DialogInner({
         initializeEndpoints,
         addDataPlane: connectToDp,
         removeDataPlane: disconnectDp,
+        connections,
+        isTesting,
     } = useConnectionTest();
 
     const initialized = useRef(false);
@@ -229,7 +232,23 @@ function DialogInner({
                                     <StorageLocationsCard />
                                 </CardWrapper>
                                 <CardWrapper>
-                                    <ConnectionTests />
+                                    <CardTitle
+                                        title="Connection Tests"
+                                        action="Run tests"
+                                        onAction={() =>
+                                            // errors are surfaced in each accordion in the ConnectionTestList - safe to catch and ignore here
+                                            void testConnections(
+                                                connections
+                                            ).catch(() => {})
+                                        }
+                                        actionDisabled={isTesting}
+                                    />
+                                    <Typography>
+                                        All connections must pass before saving
+                                        changes.
+                                    </Typography>
+
+                                    <ConnectionList autoTest />
                                 </CardWrapper>
                             </Stack>
                         </>
@@ -242,7 +261,18 @@ function DialogInner({
                     onAdvance: save,
                 },
             ] satisfies WizardStep[],
-        [dataPlanes, allTestsPassing, hasPendingStore, title, allowPublic, deselectDataPlane, moveDataPlane, save, selectDataPlane, setValue]
+        [
+            dataPlanes,
+            allTestsPassing,
+            hasPendingStore,
+            title,
+            allowPublic,
+            deselectDataPlane,
+            moveDataPlane,
+            save,
+            selectDataPlane,
+            setValue,
+        ]
     );
 
     return (
