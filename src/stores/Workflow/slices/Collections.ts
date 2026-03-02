@@ -53,10 +53,6 @@ export interface StoreWithCollections {
     ) => void;
     initializeCollections: (collections: Map<string, any>) => void;
 
-    // Temporary before we implement a proper state machine pattern
-    collectionsHydrating: boolean;
-    setCollectionsHydrating: (newVal: boolean) => void;
-
     collectionsError: boolean;
     setCollectionsError: (newVal: boolean) => void;
     collectionsInited: boolean;
@@ -68,14 +64,10 @@ export interface StoreWithCollections {
 
 export const getInitialCollectionData = (): Pick<
     StoreWithCollections,
-    | 'collections'
-    | 'collectionsError'
-    | 'collectionsInited'
-    | 'collectionsHydrating'
+    'collections' | 'collectionsError' | 'collectionsInited'
 > => ({
     collections: {},
     collectionsError: false,
-    collectionsHydrating: false,
     collectionsInited: false,
 });
 
@@ -106,28 +98,29 @@ export const getStoreWithCollectionSettings = (
             (state) => ({
                 ...state,
                 collectionsError,
-                collectionsHydrating: false,
             }),
             false,
             'setCollectionsError'
         );
     },
 
-    setCollectionsHydrating: (collectionsHydrating) => {
-        set(
-            (state) => ({
-                ...state,
-                collectionsHydrating,
-            }),
-            false,
-            'setCollectionsHydrating'
-        );
-    },
-
     initializeCollections: (collections) => {
-        // Do not set 'inited' here as we can just return and assume
-        //  we are still loading whatever we need
+        // useCollectionsHydrator calls this and that hooks has special handling
+        //  for when there is NO spec vs an empty bindings array (potentially due to all disabled)
+        //  this means that in this function it is safe to make this is done when collections is empty.
+        // When this functionality was added we did not set `inited` here because we treated collections being empty
+        //  due to missing draft spec, empty bindings, OR all disabled bindings that same - WRONG. It causes
+        //  issues with FieldSelect being able to refresh a binding because if everything was disabled the collections
+        //  would be in an infinite loop of hydrating.
         if (collections.size < 1) {
+            set(
+                (state) => ({
+                    ...state,
+                    collectionsInited: true,
+                }),
+                false,
+                'initializeCollections_empty'
+            );
             return;
         }
 
@@ -135,7 +128,6 @@ export const getStoreWithCollectionSettings = (
             (state) => ({
                 ...state,
                 collectionsInited: true,
-                collectionsHydrating: false,
                 collections: {
                     ...state.collections,
                     ...Object.fromEntries(collections),
