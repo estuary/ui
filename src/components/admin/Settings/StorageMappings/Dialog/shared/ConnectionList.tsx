@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Collapse, Stack } from '@mui/material';
 
 import { Flipped, Flipper } from 'react-flip-toolkit';
 
 import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionAccordion';
-import type {
-    Connection} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 import {
     getStoreId,
     useConnectionTest,
@@ -15,25 +15,19 @@ import {
 const connectionKey = (connection: Connection): string =>
     `${connection.dataPlane.dataPlaneName}-${getStoreId(connection.store)}`;
 
-interface ConnectionListProps {
-    autoTest?: boolean;
-}
-
-export function ConnectionList({ autoTest = false }: ConnectionListProps) {
+export function ConnectionList({ autoTest = false }: { autoTest?: boolean }) {
     const { testOne, connections } = useConnectionTest();
 
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
     // --- Enter/exit animation state ---
     const isInitialLoad = useRef(true);
-    const pendingTestsRef = useRef<Connection[]>([]);
+    const autoTestQueue = useRef<Connection[]>([]);
     const [prevConnections, setPrevConnections] = useState(connections);
-    const [entering, setEntering] = useState<Set<string>>(new Set());
-    const [leaving, setLeaving] = useState<Connection[]>([]);
-    const leavingKeys = useMemo(
-        () => new Set(leaving.map(connectionKey)),
-        [leaving]
-    );
+    const [incomingKeys, setIncomingKeys] = useState<Set<string>>(new Set());
+    const [outgoingConnections, setOutgoingConnections] = useState<
+        Connection[]
+    >([]);
 
     // Detect connection list changes during render (derived state pattern)
     if (prevConnections !== connections) {
@@ -42,22 +36,27 @@ export function ConnectionList({ autoTest = false }: ConnectionListProps) {
         const prevKeys = new Set(prevConnections.map(connectionKey));
         const nextKeys = new Set(connections.map(connectionKey));
 
-        // Connections that disappeared → animate out
         const removed = prevConnections.filter(
             (c) => !nextKeys.has(connectionKey(c))
         );
         if (removed.length > 0) {
-            setLeaving((prev) => [...prev, ...removed]);
+            // these will be animated out and then cleared
+            setOutgoingConnections((prev) => [...prev, ...removed]);
         }
 
-        // Connections that appeared → animate in (+ queue auto-test)
         const added = connections.filter(
             (c) => !prevKeys.has(connectionKey(c))
         );
+
+        // initial load flag prevents weird animation when the list first appears
         if (added.length > 0 && !isInitialLoad.current) {
-            setEntering(new Set(added.map(connectionKey)));
+            // these will be animated in - storing the keys so we know when the animation is done
+            setIncomingKeys(new Set(added.map(connectionKey)));
             if (autoTest) {
-                pendingTestsRef.current.push(...added);
+                // only autotest connections that don't already have results
+                autoTestQueue.current.push(
+                    ...added.filter((c) => c.status === 'idle')
+                );
             }
         }
 
@@ -70,42 +69,47 @@ export function ConnectionList({ autoTest = false }: ConnectionListProps) {
     const renderList = useMemo(() => {
         const currentKeys = new Set(connections.map(connectionKey));
         return [
+            // incoming connections are already included here
             ...connections,
-            ...leaving.filter((c) => !currentKeys.has(connectionKey(c))),
+            // outgoing connections kept around so they have time to animate out
+            ...outgoingConnections.filter(
+                (c) => !currentKeys.has(connectionKey(c))
+            ),
         ];
-    }, [connections, leaving]);
+    }, [connections, outgoingConnections]);
 
     // Clear entering flags on next animation frame to trigger expand
     useEffect(() => {
-        if (entering.size === 0) return;
-        const frame = requestAnimationFrame(() => setEntering(new Set()));
+        if (incomingKeys.size === 0) return;
+        const frame = requestAnimationFrame(() => setIncomingKeys(new Set()));
         return () => cancelAnimationFrame(frame);
-    }, [entering]);
+    }, [incomingKeys]);
 
-    // Auto-test newly added connections
+    // Drain the autotest queue
     useEffect(() => {
         if (!autoTest) return;
-        const pending = pendingTestsRef.current.splice(0);
+        const pending = autoTestQueue.current.splice(0);
         for (const c of pending) {
-            if (c.status === 'idle') {
-                void testOne(c);
-            }
+            void testOne(c);
         }
-    });
+    }, [autoTest, connections, testOne]);
 
-    const onExitComplete = useCallback((key: string) => {
-        setLeaving((prev) => prev.filter((c) => connectionKey(c) !== key));
-    }, []);
+    const removeKeyWhenAnimationComplete = (key: string) =>
+        setOutgoingConnections((prev) =>
+            prev.filter((c) => connectionKey(c) !== key)
+        );
 
-    const flipKey = `${renderList.length}-${renderList.map(connectionKey).join(',')}`;
+    const flipKey = `${renderList.map(connectionKey).join(',')}`;
 
     return (
         <Flipper flipKey={flipKey}>
             <Stack spacing={1} sx={{ contain: 'inline-size' }}>
                 {renderList.map((c) => {
                     const key = connectionKey(c);
-                    const isLeaving = leavingKeys.has(key);
-                    const isEntering = entering.has(key);
+                    const isLeaving = outgoingConnections.some(
+                        (lc) => connectionKey(lc) === key
+                    );
+                    const isEntering = incomingKeys.has(key);
                     const visible = !isLeaving && !isEntering;
 
                     return (
@@ -114,7 +118,10 @@ export function ConnectionList({ autoTest = false }: ConnectionListProps) {
                                 in={visible}
                                 onExited={
                                     isLeaving
-                                        ? () => onExitComplete(key)
+                                        ? () =>
+                                              removeKeyWhenAnimationComplete(
+                                                  key
+                                              )
                                         : undefined
                                 }
                                 unmountOnExit
