@@ -59,20 +59,13 @@ export interface FragmentStore {
     storage_account_name?: string | null;
     account_tenant_id?: string | null;
 
-    // _isNew is metadata to track whether this store was added in the update flow
-    // failing connection tests to newly added stores block the user from saving
-    _isNew?: boolean;
-}
-
-export interface FormDataPlane extends DataPlaneNode {
-    // _isNew is metadata to track whether this data plane was added in the update flow
-    // failing connection tests to newly added data planes block the user from saving
+    // metadata: tracks stores added during the update flow so the UI can show edit/delete actions
     _isNew?: boolean;
 }
 
 export interface StorageMappingFormData {
     catalog_prefix: string;
-    data_planes: FormDataPlane[];
+    data_planes: DataPlaneNode[];
     fragment_stores: FragmentStore[];
     allow_public: boolean;
 }
