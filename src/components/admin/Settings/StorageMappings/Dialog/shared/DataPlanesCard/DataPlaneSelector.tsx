@@ -36,7 +36,7 @@ function DataPlaneSelector({
                     label="Data Plane"
                     onChange={(e) => {
                         const node = options.find(
-                            (dp) => dp.dataPlaneName === e.target.value
+                            (dp) => dp.name === e.target.value
                         );
                         if (node) {
                             onAccept(node);
@@ -44,10 +44,7 @@ function DataPlaneSelector({
                     }}
                 >
                     {options.map((dp) => (
-                        <MenuItem
-                            key={dp.dataPlaneName}
-                            value={dp.dataPlaneName}
-                        >
+                        <MenuItem key={dp.name} value={dp.name}>
                             {toPresentableName(dp)} ({dp.scope})
                         </MenuItem>
                     ))}

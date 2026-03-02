@@ -13,7 +13,7 @@ import {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 
 const connectionKey = (connection: Connection): string =>
-    `${connection.dataPlane.dataPlaneName}-${getStoreId(connection.store)}`;
+    `${connection.dataPlane.name}-${getStoreId(connection.store)}`;
 
 export function ConnectionList({ autoTest = false }: { autoTest?: boolean }) {
     const { testOne, connections } = useConnectionTest();

@@ -7,13 +7,13 @@ import type { Shard } from 'data-plane-gateway/types/shard_client';
 import type { ResponseError } from 'data-plane-gateway/types/util';
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 import type {
     DataPlaneName,
     DataPlaneOption,
 } from 'src/stores/DetailsForm/types';
 import type { Endpoint } from 'src/stores/ShardDetail/types';
 import type { StorageMappingDictionary } from 'src/types';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 
@@ -253,7 +253,7 @@ const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
 };
 
 export function toPresentableName(dp: DataPlaneNode): string {
-    const dataPlaneName = parseDataPlaneName(dp.dataPlaneName, dp.scope);
+    const dataPlaneName = parseDataPlaneName(dp.name, dp.scope);
     return formatDataPlaneName(dataPlaneName);
 }
 

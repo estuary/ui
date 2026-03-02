@@ -22,7 +22,7 @@ interface DataPlanesCardProps {
 }
 
 function names(dataPlanes: DataPlaneNode[]): Set<string> {
-    return new Set(dataPlanes.map((dp) => dp.dataPlaneName));
+    return new Set(dataPlanes.map((dp) => dp.name));
 }
 
 export default function DataPlanesCard({
@@ -46,9 +46,7 @@ export default function DataPlanesCard({
 
     const [unselectedDps, hasMoreOptions] = useMemo(() => {
         const selectedNames = names(selectedDps);
-        const unselected = allDps.filter(
-            (dp) => !selectedNames.has(dp.dataPlaneName)
-        );
+        const unselected = allDps.filter((dp) => !selectedNames.has(dp.name));
         return [unselected, unselected.length > 0];
     }, [allDps, selectedDps]);
 
@@ -67,7 +65,7 @@ export default function DataPlanesCard({
                     if (a.isPublic !== b.isPublic) {
                         return a.isPublic ? 1 : -1;
                     }
-                    return a.dataPlaneName.localeCompare(b.dataPlaneName);
+                    return a.name.localeCompare(b.name);
                 }),
         [unselectedDps, effectiveAllowPublic]
     );
@@ -89,7 +87,7 @@ export default function DataPlanesCard({
 
     const onExitAnimationComplete = useCallback((dataPlaneName: string) => {
         setOutgoingDps((prev) =>
-            prev.filter((dp) => dp.dataPlaneName !== dataPlaneName)
+            prev.filter((dp) => dp.name !== dataPlaneName)
         );
     }, []);
 
@@ -101,17 +99,13 @@ export default function DataPlanesCard({
         const nextNames = names(selectedDps);
 
         // Snapshot removed items for exit animation
-        const removed = prevSelected.filter(
-            (dp) => !nextNames.has(dp.dataPlaneName)
-        );
+        const removed = prevSelected.filter((dp) => !nextNames.has(dp.name));
         if (removed.length > 0) {
             setOutgoingDps((prev) => [...prev, ...removed]);
         }
 
         // Detect additions for enter animation
-        const added = selectedDps.filter(
-            (dp) => !prevNames.has(dp.dataPlaneName)
-        );
+        const added = selectedDps.filter((dp) => !prevNames.has(dp.name));
         if (added.length > 0) {
             setIncomingNames(names(added));
         }
@@ -122,7 +116,7 @@ export default function DataPlanesCard({
         const selectedNames = names(selectedDps);
         return [
             ...selectedDps,
-            ...outgoingDps.filter((dp) => !selectedNames.has(dp.dataPlaneName)),
+            ...outgoingDps.filter((dp) => !selectedNames.has(dp.name)),
         ];
     }, [selectedDps, outgoingDps]);
 
@@ -144,12 +138,12 @@ export default function DataPlanesCard({
             />
             <Flipper
                 flipKey={`${renderList.length}-${renderList
-                    .map((dp) => dp.dataPlaneName)
+                    .map((dp) => dp.name)
                     .join(',')}`}
             >
                 <Stack spacing={1}>
                     {renderList.map((dp, index) => {
-                        const name = dp.dataPlaneName;
+                        const name = dp.name;
                         const visible =
                             !outgoingNames.has(name) &&
                             !incomingNames.has(name);
@@ -164,9 +158,7 @@ export default function DataPlanesCard({
                                 >
                                     <DataPlaneRow
                                         dataPlane={dp}
-                                        isDefault={
-                                            name === defaultDp?.dataPlaneName
-                                        }
+                                        isDefault={name === defaultDp?.name}
                                         handleSetDefault={() =>
                                             onSelectDefault(index)
                                         }

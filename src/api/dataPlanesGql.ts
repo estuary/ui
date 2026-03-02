@@ -19,7 +19,7 @@ interface DataPlaneGqlNode {
 // Exported type with snake_case aliases for migration
 export interface DataPlaneNode {
     // Canonical camelCase fields
-    dataPlaneName: string;
+    name: string;
     cloudProvider: CloudProvider;
     isPublic: boolean;
     region: string;
@@ -34,7 +34,7 @@ export interface DataPlaneNode {
     // Deprecated snake_case aliases (for migration from PostgREST)
     /** @deprecated Use `fqdn` instead */
     data_plane_fqdn: string;
-    /** @deprecated Use `dataPlaneName` instead */
+    /** @deprecated Use `name` instead */
     data_plane_name: string;
     /** @deprecated Use `cloudProvider` instead */
     cloud_provider: CloudProvider;
@@ -50,6 +50,7 @@ export interface DataPlaneNode {
 const toDataPlaneNode = (node: DataPlaneGqlNode): DataPlaneNode => {
     return {
         ...node,
+        name: node.dataPlaneName,
         data_plane_name: node.dataPlaneName,
         cloud_provider: node.cloudProvider,
         is_public: node.isPublic,
