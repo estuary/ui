@@ -19,7 +19,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm install              # Install dependencies
 npm start               # Start dev server at localhost:3000 (runs licenses check first)
-npm run preview         # Build and preview production mode
 ```
 
 ### Code Quality
@@ -73,6 +72,12 @@ See `docs/REACT.md` for React-specific patterns (context, hooks, code splitting,
 
 See `docs/GRAPHQL.md` for migration status and URQL patterns.
 
+### Authentication
+
+Supabase auth with JWT refresh, SSO, magic link, and access grant token support. Auth state flows from Supabase → `UserStore` (Zustand) → `RequireAuth` route guards.
+
+See `docs/AUTH.md` for the full auth flow, provider nesting order, and JWT refresh strategy.
+
 ### Routing & Code Splitting
 
 Routes defined in `src/app/routes.ts` with two top-level objects:
@@ -82,11 +87,31 @@ Routes defined in `src/app/routes.ts` with two top-level objects:
 
 All lazy-loaded routes and `<Suspense>` boundaries are centralized in `src/context/Router/index.tsx`.
 
+See `docs/ROUTING.md` for the full route structure, guards, and URL param conventions.
+
 ### JSON Forms
 
 Custom renderer pipeline for connector configuration forms. Takes a connector JSON schema, generates a UI schema, applies custom renderers (OAuth, Duration, Discriminator), and binds to Zustand store data.
 
 See `docs/JSONFORMS.md` for the full pipeline, custom annotations, renderers, and AJV validation setup.
+
+### UI / MUI
+
+MUI v7 with a custom theme in `src/context/Theme.tsx`. Prefer exported theme tokens over hardcoded values. Use `slots`/`slotProps` (not `components`/`componentsProps`). Prefer `iconoir-react` over `@mui/icons-material`.
+
+See `docs/MUI.md` for theme tokens, conventions, and known gotchas.
+
+### i18n
+
+`react-intl` with English-only messages in `src/lang/en-US/`. Missing keys are logged to LogRocket.
+
+See `docs/I18N.md` for message file structure, usage patterns, and naming conventions.
+
+### Error Handling
+
+Four layers: React error boundaries, store hydration errors, form validation (AJV), and API call errors. All error display flows through `<AlertBox>` and logs to LogRocket.
+
+See `docs/ERROR_HANDLING.md` for the full error flow and display components.
 
 ### External Integrations
 
@@ -116,9 +141,11 @@ See `docs/BUILD.md` for plugin details.
 
 ### Provider Nesting Order (Important!)
 
-Specific order required for dependencies:
+See `docs/AUTH.md` for the full nesting order. Critical rules:
 
-to be documented later
+- LogRocket initializes **before** Supabase client creation
+- `UrqlConfigProvider` must be inside `UserStoreProvider`
+- Monaco workers are configured in `src/index.tsx` before React renders
 
 ## Common Gotchas
 
