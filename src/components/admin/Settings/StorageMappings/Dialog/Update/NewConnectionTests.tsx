@@ -13,6 +13,7 @@ export function ConnectionTests() {
                 title="Connection Tests"
                 action="Run tests"
                 onAction={() =>
+                    // errors are surfaced in each accordion in the Connectionlist - safe to catch and ignore here
                     void testConnections(connections).catch(() => {})
                 }
                 actionDisabled={isTesting}
