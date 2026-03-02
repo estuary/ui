@@ -96,7 +96,7 @@ export function useConnectionTest(initialEndpoints?: {
             'useConnectionTest must be used within ConnectionTestProvider'
         );
     }
-    const { testConnection, testSingleConnection } = useStorageMappingService();
+    const { testConnection } = useStorageMappingService();
     const {
         catalogPrefix,
         dataPlanes,
@@ -130,39 +130,6 @@ export function useConnectionTest(initialEndpoints?: {
             });
         },
         [setConnections]
-    );
-
-    const testOne = useCallback(
-        async (connection: Connection) => {
-            if (!catalogPrefix) {
-                throw new Error('Catalog prefix is not defined in context');
-            }
-            const prefix = catalogPrefix;
-            updateConnection(connection, {
-                status: 'testing',
-            });
-            try {
-                const result = await testSingleConnection(
-                    prefix,
-                    connection.dataPlane,
-                    connection.store
-                );
-                updateConnection(connection, {
-                    status: result.error ? 'error' : 'success',
-                    errorMessage: result.error ?? undefined,
-                });
-            } catch (e) {
-                // intentionally swallowing this error since it's already reflected in the UI state and we don't want to force calling code to handle it
-                updateConnection(connection, {
-                    status: 'error',
-                    errorMessage:
-                        e instanceof Error
-                            ? e.message
-                            : 'Connection test failed',
-                });
-            }
-        },
-        [catalogPrefix, updateConnection, testSingleConnection]
     );
 
     const initializeEndpoints = useCallback(
@@ -396,6 +363,17 @@ export function useConnectionTest(initialEndpoints?: {
             }
         },
         [catalogPrefix, updateConnection, testConnection]
+    );
+
+    const testOne = useCallback(
+        async (connection: Connection) => {
+            try {
+                await testConnections([connection]);
+            } catch {
+                // swallow — already reflected in UI state
+            }
+        },
+        [testConnections]
     );
 
     return {
