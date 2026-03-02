@@ -5,9 +5,7 @@ import {
     createContext,
     useCallback,
     useContext,
-    useEffect,
     useMemo,
-    useRef,
     useState,
 } from 'react';
 
@@ -86,10 +84,7 @@ const convertConnectionForConsumer = (c: InternalConnection): Connection =>
         orphaned: !c.active && c.initial,
     }) satisfies Connection;
 
-export function useConnectionTest(initialEndpoints?: {
-    dataPlanes: DataPlaneNode[];
-    stores: FragmentStore[];
-}) {
+export function useConnectionTest() {
     const context = useContext(ConnectionTestContext);
     if (!context) {
         throw new Error(
@@ -161,23 +156,6 @@ export function useConnectionTest(initialEndpoints?: {
         },
         [setDataPlanes, setStores, setConnections]
     );
-
-    const initialized = useRef(false);
-    useEffect(() => {
-        if (initialized.current) return;
-        if (!initialEndpoints) return;
-        if (
-            initialEndpoints.dataPlanes.length === 0 ||
-            initialEndpoints.stores.length === 0
-        )
-            return;
-
-        initialized.current = true;
-        initializeEndpoints(
-            initialEndpoints.dataPlanes,
-            initialEndpoints.stores
-        );
-    }, [initialEndpoints, initializeEndpoints]);
 
     const addDataPlane = useCallback(
         (newDP: DataPlaneNode): Connection[] => {

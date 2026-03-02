@@ -55,22 +55,24 @@ function DialogInner({
     const {
         clear: clearConnectionTests,
         allTestsPassing,
-        connections,
         testConnections,
+        initializeEndpoints,
         addDataPlane: connectToDp,
         removeDataPlane: disconnectDp,
-    } = useConnectionTest({
-        dataPlanes: mapping.dataPlanes,
-        stores: mapping.stores,
-    });
+    } = useConnectionTest();
 
-    const initialTestTriggered = useRef(false);
+    const initialized = useRef(false);
     useEffect(() => {
-        if (connections.length === 0) return;
-        if (initialTestTriggered.current) return;
-        initialTestTriggered.current = true;
+        if (initialized.current) return;
+        if (mapping.dataPlanes.length === 0 || mapping.stores.length === 0)
+            return;
+        initialized.current = true;
+        const connections = initializeEndpoints(
+            mapping.dataPlanes,
+            mapping.stores
+        );
         void testConnections(connections).catch(() => {});
-    }, [connections, testConnections]);
+    }, [mapping, initializeEndpoints, testConnections]);
 
     const refresh = useStorageMappingsRefresh();
 
@@ -121,7 +123,7 @@ function DialogInner({
         if (withoutUnsaved.length !== stores.length) {
             setValue('fragment_stores', withoutUnsaved);
         }
-        initialTestTriggered.current = false;
+        initialized.current = false;
         clearConnectionTests();
         onClose();
     }, [onClose, clearConnectionTests, getValues, setValue]);
