@@ -51,18 +51,7 @@ function EndpointConfigForm({ readOnly }: Props) {
     }
 
     return (
-        <Box
-            id={CONFIG_EDITOR_ID}
-            sx={
-                jsonFormsPadding
-                // TODO (horizontal forms) : potential styling for making form horizontal
-                // '& .MuiAccordionDetails-root .MuiGrid-root.MuiGrid-item > .MuiFormControl-root':
-                //     {
-                //         background: 'red',
-                //         minWidth: 300,
-                //     },
-            }
-        >
+        <Box id={CONFIG_EDITOR_ID} sx={jsonFormsPadding}>
             <JsonForms
                 {...jsonFormsDefaults}
                 schema={endpointSchema}
