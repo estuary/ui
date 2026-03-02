@@ -58,9 +58,6 @@ export interface FragmentStore {
     container_name?: string | null;
     storage_account_name?: string | null;
     account_tenant_id?: string | null;
-
-    // metadata: tracks stores added during the update flow so the UI can show edit/delete actions
-    _isNew?: boolean;
 }
 
 export interface StorageMappingFormData {
@@ -74,9 +71,7 @@ export interface StorageMappingFormData {
  * Converts a form FragmentStore to the shape expected by the API.
  * Maps Azure-specific field names and strips form metadata.
  */
-export function toApiStore(
-    store: FragmentStore
-): ApiFragmentStore {
+export function toApiStore(store: FragmentStore): ApiFragmentStore {
     const base = {
         provider: store.provider,
         prefix: store.storage_prefix || undefined,
