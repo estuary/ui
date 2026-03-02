@@ -2,7 +2,6 @@ import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { gql, useQuery } from 'urql';
 
-// GraphQL response type (camelCase from API)
 interface DataPlaneGqlNode {
     dataPlaneName: string;
     cloudProvider: CloudProvider;
@@ -16,9 +15,7 @@ interface DataPlaneGqlNode {
     dataPlaneFqdn: string;
 }
 
-// Exported type with snake_case aliases for migration
 export interface DataPlaneNode {
-    // Canonical camelCase fields
     name: string;
     cloudProvider: CloudProvider;
     isPublic: boolean;
@@ -76,7 +73,6 @@ interface DataPlanesResponse {
     dataPlanes: DataPlanesConnection;
 }
 
-// GraphQL Query
 const DATA_PLANES_QUERY = gql<DataPlanesResponse>`
     query DataPlanes {
         dataPlanes {
@@ -98,7 +94,6 @@ const DATA_PLANES_QUERY = gql<DataPlanesResponse>`
     }
 `;
 
-// Hook for reactive data fetching
 export function useDataPlanes() {
     const [result] = useQuery({ query: DATA_PLANES_QUERY });
 

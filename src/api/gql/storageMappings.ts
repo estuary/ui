@@ -7,8 +7,18 @@ import { gql, useClient, useQuery } from 'urql';
 
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
-// Storage provider values used by the GraphQL server
-type StorageProvider = 'GCS' | 'S3' | 'AZURE' | 'CUSTOM';
+// Public types
+export interface FragmentStore {
+    provider: CloudProvider;
+    region?: string | null;
+    bucket?: string | null;
+    storagePrefix?: string | null;
+
+    // Azure-specific
+    containerName?: string | null;
+    storageAccountName?: string | null;
+    accountTenantId?: string | null;
+}
 
 export interface StorageMapping {
     catalogPrefix: string;
@@ -18,36 +28,34 @@ export interface StorageMapping {
     };
 }
 
-// External type - used by consumers of this service
-export interface FragmentStore {
-    provider: CloudProvider;
-    region?: string | null;
-    bucket?: string | null;
-    storagePrefix?: string | null;
-
-    // Azure-specific fields
-    containerName?: string | null;
-    storageAccountName?: string | null;
-    accountTenantId?: string | null;
+export interface StorageMappingInput {
+    catalogPrefix: string;
+    spec: {
+        fragmentStores: FragmentStore[];
+        dataPlanes: string[];
+    };
+    detail?: string;
 }
 
-// Internal type - used for server communication
+export interface TestConnectionHealthResult {
+    fragmentStore: FragmentStore;
+    dataPlaneName: string;
+    error: string | null;
+}
+
+// Internal types
+type StorageProvider = 'GCS' | 'S3' | 'AZURE' | 'CUSTOM';
+
 interface ServerFragmentStore {
     provider: StorageProvider;
     bucket?: string | null;
     region?: string | null;
     prefix?: string | null;
 
-    // Azure-specific fields
+    // Azure-specific
     container_name?: string | null;
     storage_account_name?: string | null;
     account_tenant_id?: string | null;
-}
-
-// GraphQL Types
-interface CreateStorageMappingResult {
-    created: boolean;
-    catalogPrefix: string;
 }
 
 interface StorageMappingVariables {
@@ -59,26 +67,14 @@ interface StorageMappingVariables {
     detail?: string;
 }
 
+interface CreateStorageMappingResult {
+    created: boolean;
+    catalogPrefix: string;
+}
+
 interface UpdateStorageMappingResult {
     republish: boolean;
     catalogPrefix: string;
-}
-
-// Public result type returned by the service
-export interface TestConnectionHealthResult {
-    fragmentStore: FragmentStore;
-    dataPlaneName: string;
-    error: string | null;
-}
-
-// Public input type for consumers of this service
-export interface StorageMappingInput {
-    catalogPrefix: string;
-    spec: {
-        fragmentStores: FragmentStore[];
-        dataPlanes: string[];
-    };
-    detail?: string;
 }
 
 // GraphQL Mutations
