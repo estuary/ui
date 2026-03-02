@@ -2,9 +2,15 @@
 // - AWS: https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
 // - GCP: https://status.cloud.google.com/regional/americas
 
-import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+export type CloudProvider = 'AWS' | 'GCP' | 'AZURE';
 
-const AWS_REGIONS: Record<string, string> = {
+export const PROVIDER_LABELS: Record<CloudProvider, string> = {
+    AWS: 'Amazon S3',
+    GCP: 'Google Cloud Storage',
+    AZURE: 'Azure Blob Storage',
+};
+
+export const AWS_REGIONS: Record<string, string> = {
     'af-south-1': 'Africa (Cape Town)',
     'ap-east-1': 'Asia Pacific (Hong Kong)',
     'ap-east-2': 'Asia Pacific (Taipei)',
