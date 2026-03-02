@@ -13,6 +13,7 @@ interface DataPlaneGqlNode {
     gcpServiceAccountEmail: string | null;
     azureApplicationClientId: string | null;
     azureApplicationName: string | null;
+    dataPlaneFqdn: string;
 }
 
 // Exported type with snake_case aliases for migration
@@ -23,6 +24,7 @@ export interface DataPlaneNode {
     isPublic: boolean;
     region: string;
     scope: 'public' | 'private';
+    fqdn: string;
     cidrBlocks: string[];
     awsIamUserArn: string | null;
     gcpServiceAccountEmail: string | null;
@@ -30,6 +32,8 @@ export interface DataPlaneNode {
     azureApplicationName: string | null;
 
     // Deprecated snake_case aliases (for migration from PostgREST)
+    /** @deprecated Use `fqdn` instead */
+    data_plane_fqdn: string;
     /** @deprecated Use `dataPlaneName` instead */
     data_plane_name: string;
     /** @deprecated Use `cloudProvider` instead */
@@ -53,6 +57,8 @@ const toDataPlaneNode = (node: DataPlaneGqlNode): DataPlaneNode => {
         gcp_service_account_email: node.gcpServiceAccountEmail,
         azureApplicationClientId: node.azureApplicationClientId ?? null,
         azureApplicationName: node.azureApplicationName,
+        fqdn: node.dataPlaneFqdn,
+        data_plane_fqdn: node.dataPlaneFqdn,
         scope: node.isPublic ? 'public' : 'private',
     };
 };
@@ -79,6 +85,7 @@ const DATA_PLANES_QUERY = gql<DataPlanesResponse>`
                     cloudProvider
                     region
                     isPublic
+                    dataPlaneFqdn
                     cidrBlocks
                     awsIamUserArn
                     gcpServiceAccountEmail
