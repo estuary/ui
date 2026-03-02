@@ -28,11 +28,6 @@ export interface Connection extends BaseConnection {
     orphaned: boolean;
 }
 
-interface InitialEndpoints {
-    dpNames: Set<string>;
-    storeIds: Set<string>;
-}
-
 interface ConnectionTestContextValue {
     catalogPrefix?: string;
     dataPlanes: DataPlaneNode[];
@@ -41,16 +36,7 @@ interface ConnectionTestContextValue {
     setStores: React.Dispatch<React.SetStateAction<FragmentStore[]>>;
     connections: InternalConnection[];
     setConnections: React.Dispatch<React.SetStateAction<InternalConnection[]>>;
-    originalEndpoints: InitialEndpoints;
-    setOriginalEndpoints: React.Dispatch<
-        React.SetStateAction<InitialEndpoints>
-    >;
 }
-
-const emptyOriginals: InitialEndpoints = {
-    dpNames: new Set(),
-    storeIds: new Set(),
-};
 
 export function getStoreId(store: FragmentStore): string {
     if (store.provider === 'AZURE') {
@@ -73,8 +59,6 @@ export function ConnectionTestProvider({
     const [dataPlanes, setDataPlanes] = useState<DataPlaneNode[]>([]);
     const [stores, setStores] = useState<FragmentStore[]>([]);
     const [connections, setConnections] = useState<InternalConnection[]>([]);
-    const [originalEndpoints, setOriginalEndpoints] =
-        useState<InitialEndpoints>(emptyOriginals);
 
     return (
         <ConnectionTestContext.Provider
@@ -86,8 +70,6 @@ export function ConnectionTestProvider({
                 setStores,
                 connections,
                 setConnections,
-                originalEndpoints,
-                setOriginalEndpoints,
             }}
         >
             {children}
@@ -123,7 +105,6 @@ export function useConnectionTest(initialEndpoints?: {
         setStores,
         connections,
         setConnections,
-        setOriginalEndpoints,
     } = context;
 
     const updateConnection = useCallback(
@@ -189,11 +170,6 @@ export function useConnectionTest(initialEndpoints?: {
             newDataPlanes: DataPlaneNode[],
             newStores: FragmentStore[]
         ): Connection[] => {
-            setOriginalEndpoints({
-                dpNames: new Set(newDataPlanes.map((dp) => dp.dataPlaneName)),
-                storeIds: new Set(newStores.map((s) => getStoreId(s))),
-            });
-
             setDataPlanes(newDataPlanes);
             setStores(newStores);
 
@@ -216,7 +192,7 @@ export function useConnectionTest(initialEndpoints?: {
                 orphaned: false,
             }));
         },
-        [setOriginalEndpoints, setDataPlanes, setStores, setConnections]
+        [setDataPlanes, setStores, setConnections]
     );
 
     const initialized = useRef(false);
@@ -306,33 +282,41 @@ export function useConnectionTest(initialEndpoints?: {
         [dataPlanes, connections, setStores, setConnections]
     );
 
-    const removeDataPlane = useCallback((dataPlane: DataPlaneNode) => {
-        setDataPlanes((prev) =>
-            prev.filter(
-                (dp: DataPlaneNode) =>
-                    dp.dataPlaneName !== dataPlane.dataPlaneName
-            )
-        );
-        setConnections((prev) =>
-            prev.map((c) =>
-                c.dataPlane.dataPlaneName === dataPlane.dataPlaneName
-                    ? { ...c, active: false }
-                    : c
-            )
-        );
-    }, [setDataPlanes, setConnections]);
+    const removeDataPlane = useCallback(
+        (dataPlane: DataPlaneNode) => {
+            setDataPlanes((prev) =>
+                prev.filter(
+                    (dp: DataPlaneNode) =>
+                        dp.dataPlaneName !== dataPlane.dataPlaneName
+                )
+            );
+            setConnections((prev) =>
+                prev.map((c) =>
+                    c.dataPlane.dataPlaneName === dataPlane.dataPlaneName
+                        ? { ...c, active: false }
+                        : c
+                )
+            );
+        },
+        [setDataPlanes, setConnections]
+    );
 
-    const removeStore = useCallback((store: FragmentStore) => {
-        const storeId = getStoreId(store);
-        setStores((prev) =>
-            prev.filter((s: FragmentStore) => getStoreId(s) !== storeId)
-        );
-        setConnections((prev) =>
-            prev.map((c) =>
-                getStoreId(c.store) === storeId ? { ...c, active: false } : c
-            )
-        );
-    }, [setStores, setConnections]);
+    const removeStore = useCallback(
+        (store: FragmentStore) => {
+            const storeId = getStoreId(store);
+            setStores((prev) =>
+                prev.filter((s: FragmentStore) => getStoreId(s) !== storeId)
+            );
+            setConnections((prev) =>
+                prev.map((c) =>
+                    getStoreId(c.store) === storeId
+                        ? { ...c, active: false }
+                        : c
+                )
+            );
+        },
+        [setStores, setConnections]
+    );
 
     const clear = useCallback(() => {
         initializeEndpoints([], []);
