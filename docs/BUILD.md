@@ -1,5 +1,7 @@
 # Build Configuration
 
+This project was initially bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
 ## Vite
 
 Configuration lives in `vite.config.ts`. Key plugins:
