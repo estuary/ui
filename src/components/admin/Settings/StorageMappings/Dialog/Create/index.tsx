@@ -40,7 +40,7 @@ function buildMappingPayload(
         catalogPrefix: mapping.catalogPrefix,
         spec: {
             fragmentStores: mapping.fragmentStores,
-            dataPlanes: mapping.dataPlanes.map((dp) => dp.dataPlaneName),
+            dataPlanes: mapping.dataPlanes.map((dp) => dp.name),
         },
         detail: undefined,
     };

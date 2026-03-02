@@ -110,8 +110,7 @@ export function useConnectionTest() {
             setConnections((prev) => {
                 const idx = prev.findIndex(
                     (c) =>
-                        c.dataPlane.dataPlaneName ===
-                            connection.dataPlane.dataPlaneName &&
+                        c.dataPlane.name === connection.dataPlane.name &&
                         getStoreId(c.store) === getStoreId(connection.store)
                 );
 
@@ -167,7 +166,7 @@ export function useConnectionTest() {
             for (const { dataPlane, store } of pairs) {
                 const idx = updated.findIndex(
                     (c) =>
-                        c.dataPlane.dataPlaneName === dataPlane.dataPlaneName &&
+                        c.dataPlane.name === dataPlane.name &&
                         getStoreId(c.store) === getStoreId(store)
                 );
                 if (idx >= 0) {
@@ -215,14 +214,11 @@ export function useConnectionTest() {
     const removeDataPlane = useCallback(
         (dataPlane: DataPlaneNode) => {
             setDataPlanes((prev) =>
-                prev.filter(
-                    (dp: DataPlaneNode) =>
-                        dp.dataPlaneName !== dataPlane.dataPlaneName
-                )
+                prev.filter((dp: DataPlaneNode) => dp.name !== dataPlane.name)
             );
             setConnections((prev) =>
                 prev.map((c) =>
-                    c.dataPlane.dataPlaneName === dataPlane.dataPlaneName
+                    c.dataPlane.name === dataPlane.name
                         ? { ...c, active: false }
                         : c
                 )
@@ -300,8 +296,7 @@ export function useConnectionTest() {
                 for (const result of testResponse) {
                     const target = connections.find(
                         (t) =>
-                            t.dataPlane.dataPlaneName ===
-                                result.dataPlaneName &&
+                            t.dataPlane.name === result.dataPlaneName &&
                             getStoreId(t.store) ===
                                 getStoreId(result.fragmentStore)
                     );

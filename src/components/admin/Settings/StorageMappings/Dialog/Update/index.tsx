@@ -134,21 +134,14 @@ function DialogInner({
     const hasChanges = useMemo(() => {
         const dpChanged =
             // default dp has changed
-            dataPlanes[0]?.dataPlaneName !==
-                mapping.dataPlanes[0]?.dataPlaneName ||
+            dataPlanes[0]?.name !== mapping.dataPlanes[0]?.name ||
             // or any dp has been added
             dataPlanes.some(
-                (dp) =>
-                    !mapping.dataPlanes.some(
-                        (d) => d.dataPlaneName === dp.dataPlaneName
-                    )
+                (dp) => !mapping.dataPlanes.some((d) => d.name === dp.name)
             ) ||
             // or any dp has been removed
             mapping.dataPlanes.some(
-                (dp) =>
-                    !dataPlanes.some(
-                        (d) => d.dataPlaneName === dp.dataPlaneName
-                    )
+                (dp) => !dataPlanes.some((d) => d.name === dp.name)
             );
         // Length check is sufficient — the UI only supports adding stores, not editing existing ones
         const storesChanged = fragmentStores.length !== mapping.stores.length;
@@ -166,7 +159,7 @@ function DialogInner({
             catalogPrefix: data.catalogPrefix,
             spec: {
                 fragmentStores: data.fragmentStores,
-                dataPlanes: data.dataPlanes.map((dp) => dp.dataPlaneName),
+                dataPlanes: data.dataPlanes.map((dp) => dp.name),
             },
         });
         refresh();
@@ -305,7 +298,7 @@ export function UpdateMappingWizard() {
             catalogPrefix: mapping.catalogPrefix,
             dataPlanes: mapping.spec.dataPlanes
                 .map((name: string) =>
-                    dataPlanes.find((dp) => dp.dataPlaneName === name)
+                    dataPlanes.find((dp) => dp.name === name)
                 )
                 .filter((dp): dp is DataPlaneNode => dp !== undefined),
             stores: mapping.spec.fragmentStores,

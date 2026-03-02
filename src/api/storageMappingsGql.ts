@@ -263,7 +263,7 @@ const testStorageConnection = async (
         catalogPrefix,
         spec: {
             stores: stores.map(toServerStore),
-            data_planes: dataPlanes.map((dp) => dp.dataPlaneName),
+            data_planes: dataPlanes.map((dp) => dp.name),
         },
     } satisfies TestConnectionHealthVariables);
 
