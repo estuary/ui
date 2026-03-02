@@ -356,25 +356,6 @@ export function useStorageMappingService() {
         [client]
     );
 
-    const testSingleConnection = useCallback(
-        async (
-            catalogPrefix: string,
-            dataPlane: DataPlaneNode,
-            store: FragmentStore
-        ): Promise<TestConnectionHealthResult> => {
-            const results = await testConnection(
-                catalogPrefix,
-                [dataPlane],
-                [store]
-            );
-            if (!results[0]) {
-                throw new Error('Server returned no test results');
-            }
-            return results[0];
-        },
-        [testConnection]
-    );
-
     const create = useCallback(
         async (
             input: CreateStorageMappingInput
@@ -396,7 +377,6 @@ export function useStorageMappingService() {
 
     return {
         testConnection,
-        testSingleConnection,
         create,
         update,
     };
