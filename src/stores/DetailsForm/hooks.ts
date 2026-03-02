@@ -32,7 +32,7 @@ export const useDetailsForm_endpointConfig = ():
     const endpointConfig_dekaf: DekafConfig = useDetailsFormStore(
         useShallow((state) => ({
             config: EMPTY_CONFIG,
-            // @ts-expect-error have to fetch this way due to changes in hooks
+            // @ts-expect-error we only use this after checking for dekaf down below
             variant: state.details.data.connectorImage.variant,
         }))
     );
@@ -40,7 +40,7 @@ export const useDetailsForm_endpointConfig = ():
     const endpointConfig_default: ConnectorConfig = useDetailsFormStore(
         useShallow((state) => ({
             config: EMPTY_CONFIG,
-            // @ts-expect-error have to fetch this way due to changes in hooks
+            // @ts-expect-error we only use this after checking for dekaf down below
             image: state.details.data.connectorImage.imagePath,
         }))
     );
