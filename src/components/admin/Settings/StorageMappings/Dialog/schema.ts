@@ -62,10 +62,6 @@ export interface FragmentStore {
     // _isNew is metadata to track whether this store was added in the update flow
     // failing connection tests to newly added stores block the user from saving
     _isNew?: boolean;
-
-    // _isPending is metadata to track whether the store subform is open in the storage locations card
-    // (and thus should block the user from advancing to connection tests)
-    _isPending?: boolean;
 }
 
 export interface FormDataPlane extends DataPlaneNode {

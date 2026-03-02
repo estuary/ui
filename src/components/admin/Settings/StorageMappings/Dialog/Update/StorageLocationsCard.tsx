@@ -155,10 +155,16 @@ const getStoreKey = (store: FragmentStore) =>
     store.region +
     (store.provider === 'AZURE' ? store.container_name : store.bucket);
 
-export function StorageLocationsCard() {
+export function StorageLocationsCard({
+    formOpen,
+    setFormOpen,
+}: {
+    formOpen: boolean;
+    setFormOpen: (editing: boolean) => void;
+}) {
     const { control, watch, trigger, getValues } =
         useFormContext<StorageMappingFormData>();
-    const { prepend, remove, update } = useFieldArray({
+    const { prepend, remove } = useFieldArray({
         control,
         name: 'fragment_stores',
     });
@@ -167,7 +173,6 @@ export function StorageLocationsCard() {
     const dataPlanes = watch('data_planes');
     const defaultDataPlane = dataPlanes[0];
     const hasNewStore = fragmentStores.some((f) => f._isNew);
-    const hasPendingStore = fragmentStores.some((f) => f._isPending);
 
     const [addingKey, setAddingKey] = useState<string | null>(null);
     const [removingKey, setRemovingKey] = useState<string | null>(null);
@@ -195,25 +200,23 @@ export function StorageLocationsCard() {
             storage_account_name: null,
             account_tenant_id: null,
             _isNew: true,
-            _isPending: true,
         };
         prepend(newStore);
+        setFormOpen(true);
     };
 
     const handleAcceptNestedForm = async () => {
         const store = getValues('fragment_stores.0');
 
         // validate all fields on the new store to present per-field errors, if there are any
-        const fieldsToValidate = Object.keys(store)
-            .filter((key) => !key.startsWith('_'))
-            .map(
-                (key) =>
-                    `fragment_stores.0.${key}` as FieldPath<StorageMappingFormData>
-            );
+        const fieldsToValidate = Object.keys(store).map(
+            (key) =>
+                `fragment_stores.0.${key}` as FieldPath<StorageMappingFormData>
+        );
         const valid = await trigger(fieldsToValidate);
         if (valid) {
             setAddingKey(getStoreKey(fragmentStores[0]));
-            update(0, { ...fragmentStores[0], _isPending: false });
+            setFormOpen(false);
         }
     };
 
@@ -226,9 +229,10 @@ export function StorageLocationsCard() {
     const handleCancelNestedComplete = useCallback(() => {
         if (closing) {
             setClosing(false);
+            setFormOpen(false);
             remove(0);
         }
-    }, [closing, remove]);
+    }, [closing, remove, setFormOpen]);
 
     const handleRemoveStore = (key: string) => {
         setRemovingKey(key);
@@ -245,10 +249,12 @@ export function StorageLocationsCard() {
         setRemovingKey(null);
     }, [removingKey, fragmentStores, remove]);
 
-    const showNestedStorageForm = hasPendingStore && !closing;
-    const showHistoricalDataNote =
-        fragmentStores.filter((s) => !s._isPending).length > 1 ||
-        (hasPendingStore && !closing);
+    const showNestedStorageForm = formOpen && !closing;
+
+    // complicated logic to coordinate animations for nested form or store row with the historicalDataNote
+    const showHistoricalDataNote = closing
+        ? fragmentStores.length > 2
+        : fragmentStores.length > (removingKey ? 2 : 1);
 
     return (
         <>
@@ -303,13 +309,13 @@ export function StorageLocationsCard() {
                 </Collapse>
                 <Flipper
                     flipKey={fragmentStores
-                        .filter((s) => !s._isPending)
+                        .filter((_, i) => !(formOpen && i === 0))
                         .map(getStoreKey)
                         .join(',')}
                 >
                     {fragmentStores.map((store, index) => {
-                        //don't render the store that's currently being edited by the nested form
-                        if (store._isPending) return null;
+                        // skip the store being edited in the nested form
+                        if (formOpen && index === 0) return null;
 
                         const key = getStoreKey(store);
                         const animate =
@@ -336,12 +342,7 @@ export function StorageLocationsCard() {
                                         />
                                         {store._isNew ? (
                                             <StoreRowActions
-                                                onEdit={() =>
-                                                    update(index, {
-                                                        ...store,
-                                                        _isPending: true,
-                                                    })
-                                                }
+                                                onEdit={() => setFormOpen(true)}
                                                 onRemove={() =>
                                                     handleRemoveStore(key)
                                                 }
