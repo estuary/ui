@@ -9,23 +9,9 @@ export default function Overview() {
     const entityType = useEntityType();
 
     return (
-        <Grid
-            container
-            spacing={1}
-            sx={
-                {
-                    // TODO Test before merge
-                    // This no longer exists - also seems okay while testing
-                    // [selector]: {
-                    //     pl: 0,
-                    // },
-                }
-            }
-        >
+        <Grid container spacing={1}>
             {entityType === 'collection' ? null : <ConnectorOverview />}
-
             <ControllerOverview />
-
             {entityType === 'capture' ? <AutoDiscoveryOverview /> : null}
         </Grid>
     );
