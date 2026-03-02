@@ -4,7 +4,8 @@ import { useMemo } from 'react';
 
 import { useFormContext } from 'react-hook-form';
 
-import { useBasePrefixes, useLiveSpecs } from 'src/api/gql/prefixes';
+import { useLiveSpecs } from 'src/api/gql/liveSpecs';
+import { useBasePrefixes } from 'src/api/gql/prefixes';
 import { useStorageMappings } from 'src/api/gql/storageMappings';
 import { useCouldMatchRoot } from 'src/components/shared/LeavesAutocomplete';
 import { RHFLeavesAutocomplete } from 'src/components/shared/RHFFields';
