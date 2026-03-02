@@ -91,39 +91,44 @@ const RedactFieldDialog = ({
                             }}
                         />
                     )}
-                    renderOption={(renderOptionProps, option, state) => (
-                        <SelectableAutocompleteOption
-                            Content={
-                                <>
-                                    <Typography
-                                        style={{
-                                            fontWeight: 500,
-                                            marginBottom: 4,
-                                            textTransform: 'capitalize',
-                                        }}
-                                    >
-                                        {intl.formatMessage({
-                                            id: `projection.option.${option}.label`,
-                                        })}
-                                    </Typography>
+                    renderOption={(renderOptionProps, option, state) => {
+                        const { key, ...restRenderOptionProps } =
+                            renderOptionProps;
+                        return (
+                            <SelectableAutocompleteOption
+                                key={key}
+                                Content={
+                                    <>
+                                        <Typography
+                                            style={{
+                                                fontWeight: 500,
+                                                marginBottom: 4,
+                                                textTransform: 'capitalize',
+                                            }}
+                                        >
+                                            {intl.formatMessage({
+                                                id: `projection.option.${option}.label`,
+                                            })}
+                                        </Typography>
 
-                                    <Typography
-                                        sx={{
-                                            color: diminishedTextColor[
-                                                theme.palette.mode
-                                            ],
-                                        }}
-                                    >
-                                        {intl.formatMessage({
-                                            id: `projection.option.${option}.description`,
-                                        })}
-                                    </Typography>
-                                </>
-                            }
-                            renderOptionProps={renderOptionProps}
-                            state={state}
-                        />
-                    )}
+                                        <Typography
+                                            sx={{
+                                                color: diminishedTextColor[
+                                                    theme.palette.mode
+                                                ],
+                                            }}
+                                        >
+                                            {intl.formatMessage({
+                                                id: `projection.option.${option}.description`,
+                                            })}
+                                        </Typography>
+                                    </>
+                                }
+                                renderOptionProps={restRenderOptionProps}
+                                state={state}
+                            />
+                        );
+                    }}
                     value={redactionStrategy}
                 />
             </DialogContent>

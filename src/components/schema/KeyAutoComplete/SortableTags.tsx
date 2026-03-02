@@ -27,7 +27,7 @@ import SortableTag from 'src/components/schema/KeyAutoComplete/SortableTag';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 interface Props {
-    getTagProps: AutocompleteRenderValueGetItemProps<any>;
+    getTagProps: AutocompleteRenderValueGetItemProps<true>;
     onOrderChange: (activeId: string, overId: string) => PromiseLike<any>;
     ownerState: any;
     values: any;
@@ -50,18 +50,21 @@ function SortableTags({
     );
 
     const renderedTags = useMemo(() => {
-        return values.map((tagValue: any, tagValueIndex: number) => (
-            <SortableTag
-                key={`autocomplete-selected-tag-${tagValue}`}
-                label={tagValue}
-                tagProps={getTagProps({ index: tagValueIndex })}
-                validOption={
-                    validateOptions
-                        ? keyIsValidOption(ownerState.options, tagValue)
-                        : true
-                }
-            />
-        ));
+        return values.map((tagValue: any, tagValueIndex: number) => {
+            const { key, ...tagProps } = getTagProps({ index: tagValueIndex });
+            return (
+                <SortableTag
+                    key={`autocomplete-selected-tag-${tagValue}-${key}`}
+                    label={tagValue}
+                    tagProps={tagProps}
+                    validOption={
+                        validateOptions
+                            ? keyIsValidOption(ownerState.options, tagValue)
+                            : true
+                    }
+                />
+            );
+        });
     }, [getTagProps, ownerState.options, validateOptions, values]);
 
     return (

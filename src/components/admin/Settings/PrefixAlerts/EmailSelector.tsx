@@ -185,15 +185,16 @@ function EmailSelector({
                             input: {
                                 ...InputProps,
                                 sx: { borderRadius: 3 },
-                            }
+                            },
                         }}
                     />
                 )}
                 renderOption={(renderOptionProps, option) => {
+                    const { key, ...restRenderOptionProps } = renderOptionProps;
                     return typeof option === 'string' ? (
-                        <Typography>{option}</Typography>
+                        <Typography key={key}>{option}</Typography>
                     ) : (
-                        <ListItem {...renderOptionProps} key={option.user_id}>
+                        <ListItem key={key} {...restRenderOptionProps}>
                             <UserAvatar
                                 userName={option.user_full_name}
                                 avatarUrl={option.user_avatar_url}
@@ -217,14 +218,15 @@ function EmailSelector({
                                             color: (theme) =>
                                                 theme.palette.text.primary,
                                         },
-                                    }
-                                }} />
+                                    },
+                                }}
+                            />
                         </ListItem>
                     );
                 }}
                 renderValue={(values, getTagProps) => {
                     return values.map((value, index) => {
-                        const tagProps = getTagProps({ index });
+                        const { key, ...tagProps } = getTagProps({ index });
 
                         const email =
                             typeof value === 'string'
