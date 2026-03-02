@@ -6,7 +6,7 @@ import { Star, StarSolid, Xmark } from 'iconoir-react';
 
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
-function DataPlaneRow({
+export function DataPlaneRow({
     dataPlane,
     isDefault,
     handleSetDefault,
@@ -85,5 +85,3 @@ function DataPlaneRow({
         </Stack>
     );
 }
-
-export default DataPlaneRow;
