@@ -1,6 +1,5 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type { CloudProvider } from 'src/utils/cloudRegions';
-import type { Client } from 'urql';
 
 import { useCallback } from 'react';
 
@@ -51,11 +50,7 @@ interface CreateStorageMappingResult {
     catalogPrefix: string;
 }
 
-interface CreateStorageMappingResponse {
-    createStorageMapping: CreateStorageMappingResult | null;
-}
-
-interface CreateStorageMappingVariables {
+interface StorageMappingVariables {
     catalogPrefix: string;
     spec: {
         stores: ServerFragmentStore[];
@@ -69,10 +64,6 @@ interface UpdateStorageMappingResult {
     catalogPrefix: string;
 }
 
-interface UpdateStorageMappingResponse {
-    updateStorageMapping: UpdateStorageMappingResult | null;
-}
-
 // Public result type returned by the service
 export interface TestConnectionHealthResult {
     fragmentStore: FragmentStore;
@@ -80,29 +71,8 @@ export interface TestConnectionHealthResult {
     error: string | null;
 }
 
-// Internal types for GraphQL communication
-interface ServerTestConnectionHealthResult {
-    fragmentStore: ServerFragmentStore;
-    dataPlaneName: string;
-    error: string | null;
-}
-
-interface TestConnectionHealthResponse {
-    testConnectionHealth: {
-        results: ServerTestConnectionHealthResult[];
-    } | null;
-}
-
-interface TestConnectionHealthVariables {
-    catalogPrefix: string;
-    spec: {
-        stores: ServerFragmentStore[];
-        data_planes: string[];
-    };
-}
-
 // Public input type for consumers of this service
-export interface CreateStorageMappingInput {
+export interface StorageMappingInput {
     catalogPrefix: string;
     spec: {
         fragmentStores: FragmentStore[];
@@ -113,8 +83,8 @@ export interface CreateStorageMappingInput {
 
 // GraphQL Mutations
 const CREATE_STORAGE_MAPPING = gql<
-    CreateStorageMappingResponse,
-    CreateStorageMappingVariables
+    { createStorageMapping: CreateStorageMappingResult | null },
+    StorageMappingVariables
 >`
     mutation CreateStorageMapping(
         $catalogPrefix: Prefix!
@@ -132,8 +102,8 @@ const CREATE_STORAGE_MAPPING = gql<
 `;
 
 const UPDATE_STORAGE_MAPPING = gql<
-    UpdateStorageMappingResponse,
-    CreateStorageMappingVariables
+    { updateStorageMapping: UpdateStorageMappingResult | null },
+    StorageMappingVariables
 >`
     mutation UpdateStorageMapping(
         $catalogPrefix: Prefix!
@@ -152,8 +122,16 @@ const UPDATE_STORAGE_MAPPING = gql<
 `;
 
 const TEST_CONNECTION_HEALTH = gql<
-    TestConnectionHealthResponse,
-    TestConnectionHealthVariables
+    {
+        testConnectionHealth: {
+            results: {
+                fragmentStore: ServerFragmentStore;
+                dataPlaneName: string;
+                error: string | null;
+            }[];
+        } | null;
+    },
+    StorageMappingVariables
 >`
     mutation TestConnectionHealth($catalogPrefix: Prefix!, $spec: JSON!) {
         testConnectionHealth(catalogPrefix: $catalogPrefix, spec: $spec) {
@@ -252,97 +230,6 @@ function fromServerStore(store: ServerFragmentStore): FragmentStore {
     };
 }
 
-// Real GraphQL implementation
-const testStorageConnection = async (
-    client: Client,
-    catalogPrefix: string,
-    dataPlanes: DataPlaneNode[],
-    stores: FragmentStore[]
-): Promise<TestConnectionHealthResult[]> => {
-    const result = await client.mutation(TEST_CONNECTION_HEALTH, {
-        catalogPrefix,
-        spec: {
-            stores: stores.map(toServerStore),
-            data_planes: dataPlanes.map((dp) => dp.name),
-        },
-    } satisfies TestConnectionHealthVariables);
-
-    if (result.error) {
-        throw new Error(
-            result.error.graphQLErrors?.[0]?.message ??
-                result.error.message ??
-                'Failed to test connection health'
-        );
-    }
-
-    return (
-        result.data?.testConnectionHealth?.results.map((r) => ({
-            fragmentStore: fromServerStore(r.fragmentStore),
-            dataPlaneName: r.dataPlaneName,
-            error: r.error,
-        })) ?? []
-    );
-};
-
-// Real GraphQL implementation for creating storage mapping
-const realCreateStorageMapping = async (
-    client: Client,
-    input: CreateStorageMappingInput
-): Promise<CreateStorageMappingResult> => {
-    const result = await client.mutation(CREATE_STORAGE_MAPPING, {
-        catalogPrefix: input.catalogPrefix,
-        detail: input.detail,
-        spec: {
-            stores: input.spec.fragmentStores.map(toServerStore),
-            data_planes: input.spec.dataPlanes,
-        },
-    });
-
-    if (result.error) {
-        throw new Error(
-            result.error.graphQLErrors?.[0]?.message ??
-                result.error.message ??
-                'Failed to create storage mapping'
-        );
-    }
-
-    if (!result.data?.createStorageMapping) {
-        throw new Error('No response from createStorageMapping mutation');
-    }
-
-    return result.data.createStorageMapping;
-};
-
-// Real GraphQL implementation for updating storage mapping
-const realUpdateStorageMapping = async (
-    client: Client,
-    input: CreateStorageMappingInput
-): Promise<UpdateStorageMappingResult> => {
-    const result = await client.mutation(UPDATE_STORAGE_MAPPING, {
-        catalogPrefix: input.catalogPrefix,
-        detail: input.detail,
-        spec: {
-            stores: input.spec.fragmentStores.map(toServerStore),
-            data_planes: input.spec.dataPlanes,
-        },
-    });
-
-    if (result.error) {
-        throw new Error(
-            result.error.graphQLErrors?.[0]?.message ??
-                result.error.message ??
-                'Failed to update storage mapping'
-        );
-    }
-
-    if (!result.data?.updateStorageMapping) {
-        throw new Error('No response from updateStorageMapping mutation');
-    }
-
-    return result.data.updateStorageMapping;
-};
-
-// Hook that provides storage mapping service methods
 export function useStorageMappingService() {
     const client = useClient();
 
@@ -351,31 +238,94 @@ export function useStorageMappingService() {
             catalogPrefix: string,
             dataPlanes: DataPlaneNode[],
             stores: FragmentStore[]
-        ): Promise<TestConnectionHealthResult[]> =>
-            await testStorageConnection(
-                client,
+        ): Promise<TestConnectionHealthResult[]> => {
+            const result = await client.mutation(TEST_CONNECTION_HEALTH, {
                 catalogPrefix,
-                dataPlanes,
-                stores
-            ),
+                spec: {
+                    stores: stores.map(toServerStore),
+                    data_planes: dataPlanes.map((dp) => dp.name),
+                },
+            } satisfies StorageMappingVariables);
+
+            if (result.error) {
+                throw new Error(
+                    result.error.graphQLErrors?.[0]?.message ??
+                        result.error.message ??
+                        'Failed to test connection health'
+                );
+            }
+
+            return (
+                result.data?.testConnectionHealth?.results.map((r) => ({
+                    fragmentStore: fromServerStore(r.fragmentStore),
+                    dataPlaneName: r.dataPlaneName,
+                    error: r.error,
+                })) ?? []
+            );
+        },
         [client]
     );
 
     const create = useCallback(
         async (
-            input: CreateStorageMappingInput
+            input: StorageMappingInput
         ): Promise<CreateStorageMappingResult> => {
-            return realCreateStorageMapping(client, input);
+            const result = await client.mutation(CREATE_STORAGE_MAPPING, {
+                catalogPrefix: input.catalogPrefix,
+                detail: input.detail,
+                spec: {
+                    stores: input.spec.fragmentStores.map(toServerStore),
+                    data_planes: input.spec.dataPlanes,
+                },
+            });
+
+            if (result.error) {
+                throw new Error(
+                    result.error.graphQLErrors?.[0]?.message ??
+                        result.error.message ??
+                        'Failed to create storage mapping'
+                );
+            }
+
+            if (!result.data?.createStorageMapping) {
+                throw new Error(
+                    'No response from createStorageMapping mutation'
+                );
+            }
+
+            return result.data.createStorageMapping;
         },
         [client]
     );
 
     const update = useCallback(
         async (
-            // TODO: input type is same here? maybe rename
-            input: CreateStorageMappingInput
+            input: StorageMappingInput
         ): Promise<UpdateStorageMappingResult> => {
-            return realUpdateStorageMapping(client, input);
+            const result = await client.mutation(UPDATE_STORAGE_MAPPING, {
+                catalogPrefix: input.catalogPrefix,
+                detail: input.detail,
+                spec: {
+                    stores: input.spec.fragmentStores.map(toServerStore),
+                    data_planes: input.spec.dataPlanes,
+                },
+            });
+
+            if (result.error) {
+                throw new Error(
+                    result.error.graphQLErrors?.[0]?.message ??
+                        result.error.message ??
+                        'Failed to update storage mapping'
+                );
+            }
+
+            if (!result.data?.updateStorageMapping) {
+                throw new Error(
+                    'No response from updateStorageMapping mutation'
+                );
+            }
+
+            return result.data.updateStorageMapping;
         },
         [client]
     );
