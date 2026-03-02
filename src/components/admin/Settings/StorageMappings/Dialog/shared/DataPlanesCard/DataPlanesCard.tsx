@@ -1,4 +1,4 @@
-import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -6,7 +6,7 @@ import { Collapse, Stack } from '@mui/material';
 
 import { Flipped, Flipper } from 'react-flip-toolkit';
 
-import { useDataPlanes } from 'src/api/dataPlanesGql';
+import { useDataPlanes } from 'src/api/gql/dataPlanes';
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
 import DataPlaneRow from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneRow';
 import DataPlaneSelector from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard/DataPlaneSelector';

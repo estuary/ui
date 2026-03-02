@@ -6,7 +6,7 @@ import type {
 import type { Shard } from 'data-plane-gateway/types/shard_client';
 import type { ResponseError } from 'data-plane-gateway/types/util';
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
-import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type {
     DataPlaneName,
     DataPlaneOption,

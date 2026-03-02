@@ -31,7 +31,8 @@ export function CardTitle({
             ]}
         >
             <Typography sx={cardHeaderSx}>{title}</Typography>
-            {action ? <Link
+            {action ? (
+                <Link
                     component="button"
                     variant="body2"
                     underline="hover"
@@ -43,7 +44,8 @@ export function CardTitle({
                     }}
                 >
                     {action}
-                </Link> : null}
+                </Link>
+            ) : null}
         </Box>
     );
 }

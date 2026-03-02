@@ -1,9 +1,9 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/DataPlanes/types';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useState } from 'react';
 

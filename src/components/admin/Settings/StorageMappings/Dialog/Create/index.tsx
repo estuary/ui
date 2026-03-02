@@ -13,7 +13,7 @@ import {
 } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
-import { useStorageMappingService } from 'src/api/storageMappingsGql';
+import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
 import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 import {

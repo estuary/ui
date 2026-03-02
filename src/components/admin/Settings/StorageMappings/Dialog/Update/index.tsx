@@ -1,5 +1,5 @@
-import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type { FragmentStore } from 'src/api/storageMappingsGql';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
+import type { FragmentStore } from 'src/api/gql/storageMappings';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
@@ -14,11 +14,11 @@ import {
     useFormContext,
 } from 'react-hook-form';
 
-import { useDataPlanes } from 'src/api/dataPlanesGql';
+import { useDataPlanes } from 'src/api/gql/dataPlanes';
 import {
     useStorageMappings,
     useStorageMappingService,
-} from 'src/api/storageMappingsGql';
+} from 'src/api/gql/storageMappings';
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
 import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 import {

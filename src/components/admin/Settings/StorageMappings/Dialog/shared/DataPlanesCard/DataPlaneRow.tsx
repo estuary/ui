@@ -1,12 +1,6 @@
-import type { DataPlaneNode } from 'src/api/dataPlanesGql';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
-import {
-    Box,
-    IconButton,
-    Stack,
-    Tooltip,
-    Typography,
-} from '@mui/material';
+import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
 import { Star, StarSolid, Xmark } from 'iconoir-react';
 

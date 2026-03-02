@@ -4,12 +4,9 @@ import { useMemo } from 'react';
 
 import { useFormContext } from 'react-hook-form';
 
-import { useStorageMappings } from 'src/api/storageMappingsGql';
-import {
-    useBasePrefixes,
-    useCouldMatchRoot,
-    useLiveSpecs,
-} from 'src/components/shared/LeavesAutocomplete';
+import { useBasePrefixes, useLiveSpecs } from 'src/api/gql/prefixes';
+import { useStorageMappings } from 'src/api/gql/storageMappings';
+import { useCouldMatchRoot } from 'src/components/shared/LeavesAutocomplete';
 import { RHFLeavesAutocomplete } from 'src/components/shared/RHFFields';
 import { useDialogLink } from 'src/hooks/useDialog';
 import { validateCatalogName } from 'src/validation';
@@ -93,7 +90,12 @@ export function PrefixCard() {
                 },
             },
         }),
-        [storageMappingPrefixes, liveSpecNames, duplicateDialogLinkParams, couldMatchRoot]
+        [
+            storageMappingPrefixes,
+            liveSpecNames,
+            duplicateDialogLinkParams,
+            couldMatchRoot,
+        ]
     );
 
     return (

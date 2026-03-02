@@ -2,16 +2,7 @@ import { useMemo } from 'react';
 
 import { gql, useQuery } from 'urql';
 
-interface BasePrefixesQueryResponse {
-    prefixes: {
-        edges: {
-            cursor: string;
-            node: {
-                prefix: string;
-            };
-        }[];
-    };
-}
+import { useBasePrefixes } from 'src/api/gql/prefixes';
 
 interface LiveSpecsQueryResponse {
     liveSpecs: {
@@ -26,18 +17,6 @@ interface LiveSpecsQueryResponse {
         }[];
     };
 }
-
-const BasePrefixesQuery = gql<BasePrefixesQueryResponse>`
-    query BasePrefixesQuery {
-        prefixes(by: { minCapability: admin }, first: 20) {
-            edges {
-                node {
-                    prefix
-                }
-            }
-        }
-    }
-`;
 
 const LiveSpecsQuery = gql<
     LiveSpecsQueryResponse,
@@ -59,18 +38,6 @@ const LiveSpecsQuery = gql<
         }
     }
 `;
-
-export function useBasePrefixes() {
-    const [{ data: prefixData }] = useQuery({
-        query: BasePrefixesQuery,
-    });
-
-    const basePrefixes = useMemo(() => {
-        return prefixData?.prefixes.edges.map((edge) => edge.node.prefix) ?? [];
-    }, [prefixData]);
-
-    return basePrefixes;
-}
 
 export function useLiveSpecs() {
     const basePrefixes = useBasePrefixes();

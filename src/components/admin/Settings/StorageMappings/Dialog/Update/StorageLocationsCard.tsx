@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { FieldPath } from 'react-hook-form';
-import type { FragmentStore } from 'src/api/storageMappingsGql';
+import type { FragmentStore } from 'src/api/gql/storageMappings';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 
 import { useCallback, useEffect, useState } from 'react';
