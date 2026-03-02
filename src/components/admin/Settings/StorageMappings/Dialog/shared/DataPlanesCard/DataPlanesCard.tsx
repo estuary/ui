@@ -92,7 +92,6 @@ export default function DataPlanesCard({
     }, []);
 
     // Detect changes to the prop during render
-    // https://react.dev/reference/react/useState#storing-information-from-previous-renders
     if (prevSelected !== selectedDps) {
         setPrevSelected(selectedDps);
         const prevNames = names(prevSelected);
