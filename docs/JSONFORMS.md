@@ -32,6 +32,7 @@ Located in `src/forms/renderers/`:
 - **OAuth** — button that triggers an OAuth flow with backend token exchange
 - **Duration** — ISO 8601 interval autocomplete with special UX handling
 - **Discriminator** — handles OneOf selection even when encrypted fields break schema validation
+- **DataPlane** — data plane selection UI
 
 ---
 

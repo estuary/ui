@@ -47,7 +47,7 @@ npm run test:debug      # Debug tests with inspector
 npm run generate-flow-types         # Generate types from estuary/flow (requires Flow installed)
 ```
 
-### Local Development Hacks
+### Vendored Dependencies
 
 ```bash
 npm run hack-in-web-flow           # Use to pull latest @estuary/flow-web build
@@ -59,7 +59,7 @@ npm run hack-in-dpg                # Use local data-plane-gateway build
 
 ### State Management
 
-Three layers: React Context (top-level concerns), Zustand stores (domain state), and SWR (REST fetching). Stores are composed from slices and consumed with `useShallow` selectors.
+Three layers: React Context (top-level concerns), Zustand stores (domain state), and SWR (REST fetching). Stores are composed from slices and accessed via pre-made hooks (moving away from inline `useShallow` selectors as of Q1 2026).
 
 See `docs/STATE.md` for store composition, hydration patterns, workflow state machines, and binding index tracking.
 

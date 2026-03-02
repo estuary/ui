@@ -20,6 +20,8 @@ Currently on **React 18**.
 
 `StrictMode` is commented out in `src/index.tsx`. React 18 StrictMode double-invokes effects in development to help surface side effects, but this breaks the `useEffectOnce` hydration pattern used across several stores and components.
 
+##### useEffectOnce
+
 Affected files using `useEffectOnce`:
 
 - `src/stores/Workflow/Hydrator.tsx`
@@ -32,6 +34,10 @@ Affected files using `useEffectOnce`:
 The fix is to replace `useEffectOnce` with `useEffect` and a ref guard (or restructure hydration) so effects are idempotent and safe to run twice. This is tracked with a TODO comment in `src/stores/Workflow/Hydrator.tsx`.
 
 Until this is resolved, StrictMode should remain disabled in development.
+
+##### Zustand Hydration
+
+Our common approach to hydration includes kicking off `useEffect` from a `Hydrator` component. This does not work with the double mounting approach. We will need to figure out a new approach.
 
 ---
 

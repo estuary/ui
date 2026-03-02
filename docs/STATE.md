@@ -21,6 +21,7 @@ Stores are assembled from reusable slice factories:
 - `getStoreWithFieldSelectionSettings()` — field picker state
 - `getStoreWithBackfillSettings()` — backfill configuration
 - `getStoreWithToggleDisableSettings()` — enable/disable toggles
+- `getStoreWithTimeTravelSettings()` — time travel / historical data settings
 
 Example from `BindingStore`:
 
@@ -47,7 +48,7 @@ const [active, setActive] = useBillingStore(
 );
 ```
 
-Pre-made named hooks (e.g., `useBinding_sourceCaptureFlags`) are still used for complex derived state to keep selector logic out of components. The older `use{StoreName}_{property}` pattern is being replaced with the `useShallow` approach.
+Pre-made named hooks (e.g., `useBinding_sourceCaptureFlags`) are used for complex derived state to keep selector logic out of components.
 
 ### Local Zustand (Scoped Stores)
 
@@ -78,7 +79,7 @@ Data is not loaded into a store when using GraphQL — it stays in the URQL cach
 
 ### React 18 StrictMode
 
-Our application's approach to hydration does NOT work with React 18 hydration approach. We are still working out how we want to handle this.
+Our application's approach to hydration does NOT work with React 18 StrictMode's double-invoke behavior. We are still working out how we want to handle this. See `docs/REACT.md` for the full list of affected files and the planned fix.
 
 ---
 
