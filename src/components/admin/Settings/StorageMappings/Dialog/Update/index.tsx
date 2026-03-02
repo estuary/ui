@@ -5,7 +5,7 @@ import type {
 } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Link, Stack, Typography } from '@mui/material';
 
@@ -79,7 +79,7 @@ function DialogInner({
 
     const refresh = useStorageMappingsRefresh();
 
-    const { getValues, watch, setValue } =
+    const { getValues, watch, setValue, reset } =
         useFormContext<StorageMappingFormData>();
     const {
         append: appendDataPlane,
@@ -119,22 +119,20 @@ function DialogInner({
         [dataPlanes, removeDataPlaneField, disconnectDp]
     );
 
+    const [nestedStoreFormOpen, setNestedStoreFormOpen] = useState(false);
+
     const handleClose = useCallback(() => {
-        // Remove any unsaved stores (pending or newly added) before closing
-        const stores = getValues('fragment_stores');
-        const withoutUnsaved = stores.filter((s) => !s._isPending && !s._isNew);
-        if (withoutUnsaved.length !== stores.length) {
-            setValue('fragment_stores', withoutUnsaved);
-        }
+        reset({
+            catalog_prefix: mapping.catalogPrefix,
+            data_planes: mapping.dataPlanes,
+            fragment_stores: mapping.stores,
+            allow_public: false,
+        });
+        setNestedStoreFormOpen(false);
         initialized.current = false;
         clearConnectionTests();
         onClose();
-    }, [onClose, clearConnectionTests, getValues, setValue]);
-
-    const hasPendingStore = useMemo(
-        () => fragmentStores.some((s) => s._isPending), // optional??
-        [fragmentStores]
-    );
+    }, [onClose, clearConnectionTests, reset, mapping]);
 
     const hasChanges = useMemo(() => {
         const dpChanged =
@@ -229,7 +227,10 @@ function DialogInner({
                                     />
                                 </CardWrapper>
                                 <CardWrapper>
-                                    <StorageLocationsCard />
+                                    <StorageLocationsCard
+                                        formOpen={nestedStoreFormOpen}
+                                        setFormOpen={setNestedStoreFormOpen}
+                                    />
                                 </CardWrapper>
                                 <CardWrapper>
                                     <CardTitle
@@ -256,7 +257,7 @@ function DialogInner({
                     nextLabel: 'Save Changes',
                     canAdvance: () =>
                         dataPlanes.length > 0 &&
-                        !hasPendingStore &&
+                        !nestedStoreFormOpen &&
                         allTestsPassing,
                     onAdvance: save,
                 },
@@ -264,7 +265,7 @@ function DialogInner({
         [
             dataPlanes,
             allTestsPassing,
-            hasPendingStore,
+            nestedStoreFormOpen,
             title,
             allowPublic,
             deselectDataPlane,
