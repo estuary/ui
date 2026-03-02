@@ -1,9 +1,7 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type {
-    CloudProvider,
-    StorageMappingFormData,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -11,10 +9,9 @@ import { Alert, Collapse, Link, Stack } from '@mui/material';
 
 import { useFormContext } from 'react-hook-form';
 
-import { PROVIDER_LABELS } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import { storeValidation } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageValidation';
 import { RHFSelect, RHFTextField } from 'src/components/shared/RHFFields/';
-import { AWS_REGIONS } from 'src/utils/cloudRegions';
+import { AWS_REGIONS, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
 export const PROVIDER_OPTIONS = (
@@ -37,9 +34,9 @@ export function StorageFields({
     const { watch, setValue } = useFormContext<StorageMappingFormData>();
 
     const storeProvider = watch(
-        `fragment_stores.${PENDING_STORE_INDEX}.provider`
+        `fragmentStores.${PENDING_STORE_INDEX}.provider`
     );
-    const storeRegion = watch(`fragment_stores.${PENDING_STORE_INDEX}.region`);
+    const storeRegion = watch(`fragmentStores.${PENDING_STORE_INDEX}.region`);
 
     const [trackDefaultDp, setTrackDefaultDp] = useState(
         !storeProvider && !storeRegion
@@ -51,11 +48,11 @@ export function StorageFields({
             return;
         }
         setValue(
-            `fragment_stores.${PENDING_STORE_INDEX}.provider`,
+            `fragmentStores.${PENDING_STORE_INDEX}.provider`,
             defaultDataPlane.cloudProvider
         );
         setValue(
-            `fragment_stores.${PENDING_STORE_INDEX}.region`,
+            `fragmentStores.${PENDING_STORE_INDEX}.region`,
             defaultDataPlane.region
         );
     }, [defaultDataPlane, trackDefaultDp, setValue]);
@@ -106,7 +103,7 @@ export function StorageFields({
             <Stack direction="row" spacing={1}>
                 <RHFSelect<StorageMappingFormData>
                     key="provider"
-                    name={`fragment_stores.${PENDING_STORE_INDEX}.provider`}
+                    name={`fragmentStores.${PENDING_STORE_INDEX}.provider`}
                     label="Cloud Provider"
                     options={PROVIDER_OPTIONS}
                     required
@@ -116,7 +113,7 @@ export function StorageFields({
                 {storeProvider === 'AWS' ? (
                     <RHFSelect<StorageMappingFormData>
                         key="region"
-                        name={`fragment_stores.${PENDING_STORE_INDEX}.region`}
+                        name={`fragmentStores.${PENDING_STORE_INDEX}.region`}
                         label="Region"
                         options={awsRegionOptions}
                         required
@@ -130,19 +127,19 @@ export function StorageFields({
                 <Collapse in={storeProvider === 'AZURE'} unmountOnExit>
                     <Stack direction="row" spacing={2}>
                         <RHFTextField<StorageMappingFormData>
-                            name={`fragment_stores.${PENDING_STORE_INDEX}.account_tenant_id`}
+                            name={`fragmentStores.${PENDING_STORE_INDEX}.accountTenantId`}
                             label="Account Tenant ID"
                             required
                             progressiveRules={
-                                storeValidation.azure_account_tenant_id
+                                storeValidation.azureAccountTenantId
                             }
                         />
                         <RHFTextField<StorageMappingFormData>
-                            name={`fragment_stores.${PENDING_STORE_INDEX}.storage_account_name`}
+                            name={`fragmentStores.${PENDING_STORE_INDEX}.storageAccountName`}
                             label="Storage Account Name"
                             required
                             progressiveRules={
-                                storeValidation.azure_storage_account_name
+                                storeValidation.azureStorageAccountName
                             }
                         />
                     </Stack>
@@ -150,31 +147,31 @@ export function StorageFields({
                 <Stack direction="row" spacing={2}>
                     {storeProvider === 'AZURE' ? (
                         <RHFTextField<StorageMappingFormData>
-                            name={`fragment_stores.${PENDING_STORE_INDEX}.container_name`}
+                            name={`fragmentStores.${PENDING_STORE_INDEX}.containerName`}
                             label="Container Name"
                             required
                             helperText="Destination for Estuary collection data"
                             progressiveRules={
-                                storeValidation.azure_container_name
+                                storeValidation.azureContainerName
                             }
                         />
                     ) : (
                         <RHFTextField<StorageMappingFormData>
-                            name={`fragment_stores.${PENDING_STORE_INDEX}.bucket`}
+                            name={`fragmentStores.${PENDING_STORE_INDEX}.bucket`}
                             label="Bucket"
                             required
                             helperText="Destination for Estuary collection data"
                             progressiveRules={
                                 storeProvider === 'AWS'
-                                    ? storeValidation.aws_bucket
+                                    ? storeValidation.awsBucket
                                     : storeProvider === 'GCP'
-                                      ? storeValidation.gcp_bucket
+                                      ? storeValidation.gcpBucket
                                       : undefined
                             }
                         />
                     )}
                     <RHFTextField<StorageMappingFormData>
-                        name={`fragment_stores.${PENDING_STORE_INDEX}.storage_prefix`}
+                        name={`fragmentStores.${PENDING_STORE_INDEX}.storagePrefix`}
                         label="Storage Prefix"
                         helperText="Optional prefix of keys written to the bucket"
                         onBlurTransform={(value) =>
@@ -182,7 +179,7 @@ export function StorageFields({
                                 ? appendWithForwardSlash(value)
                                 : value
                         }
-                        progressiveRules={storeValidation.storage_prefix}
+                        progressiveRules={storeValidation.storagePrefix}
                     />
                 </Stack>
             </Stack>

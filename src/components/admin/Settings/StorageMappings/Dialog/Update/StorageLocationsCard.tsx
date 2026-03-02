@@ -1,9 +1,7 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { FieldPath } from 'react-hook-form';
-import type {
-    FragmentStore,
-    StorageMappingFormData,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { FragmentStore } from 'src/api/storageMappingsGql';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -42,12 +40,11 @@ function CompactStoreRow({
 }) {
     const details: string[] = [store.provider];
     if (store.provider === 'AZURE') {
-        if (store.storage_account_name)
-            details.push(store.storage_account_name);
+        if (store.storageAccountName) details.push(store.storageAccountName);
     } else {
         if (store.region) details.push(store.region);
     }
-    if (store.storage_prefix) details.push(store.storage_prefix);
+    if (store.storagePrefix) details.push(store.storagePrefix);
 
     return (
         <Box
@@ -65,7 +62,7 @@ function CompactStoreRow({
             <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography variant="body2">
                     {store.provider === 'AZURE'
-                        ? store.container_name
+                        ? store.containerName
                         : store.bucket}
                 </Typography>
                 <Typography
@@ -153,7 +150,7 @@ function StoreRowActions({
 const getStoreKey = (store: FragmentStore) =>
     store.provider +
     store.region +
-    (store.provider === 'AZURE' ? store.container_name : store.bucket);
+    (store.provider === 'AZURE' ? store.containerName : store.bucket);
 
 export function StorageLocationsCard({
     formOpen,
@@ -166,11 +163,11 @@ export function StorageLocationsCard({
         useFormContext<StorageMappingFormData>();
     const { prepend, remove } = useFieldArray({
         control,
-        name: 'fragment_stores',
+        name: 'fragmentStores',
     });
 
-    const fragmentStores = watch('fragment_stores');
-    const dataPlanes = watch('data_planes');
+    const fragmentStores = watch('fragmentStores');
+    const dataPlanes = watch('dataPlanes');
     const defaultDataPlane = dataPlanes[0];
     const [newKey, setNewKey] = useState<string | null>(null);
     const hasNewStore = newKey !== null;
@@ -196,22 +193,22 @@ export function StorageLocationsCard({
                     ? defaultDataPlane?.region
                     : null,
             bucket: null,
-            storage_prefix: null,
-            container_name: null,
-            storage_account_name: null,
-            account_tenant_id: null,
+            storagePrefix: null,
+            containerName: null,
+            storageAccountName: null,
+            accountTenantId: null,
         };
         prepend(newStore);
         setFormOpen(true);
     };
 
     const handleAcceptNestedForm = async () => {
-        const store = getValues('fragment_stores.0');
+        const store = getValues('fragmentStores.0');
 
         // validate all fields on the new store to present per-field errors, if there are any
         const fieldsToValidate = Object.keys(store).map(
             (key) =>
-                `fragment_stores.0.${key}` as FieldPath<StorageMappingFormData>
+                `fragmentStores.0.${key}` as FieldPath<StorageMappingFormData>
         );
         const valid = await trigger(fieldsToValidate);
         if (valid) {

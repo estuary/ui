@@ -1,5 +1,5 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
-import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 import type {
     RowProps,
     RowsProps,

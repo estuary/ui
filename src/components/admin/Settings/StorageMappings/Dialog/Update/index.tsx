@@ -1,8 +1,6 @@
 import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type {
-    FragmentStore,
-    StorageMappingFormData,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { FragmentStore } from 'src/api/storageMappingsGql';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -21,7 +19,6 @@ import {
     useStorageMappings,
     useStorageMappingService,
 } from 'src/api/storageMappingsGql';
-import { toApiStore } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
 import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 import {
@@ -86,14 +83,14 @@ function DialogInner({
         remove: removeDataPlaneField,
         move: moveDataPlane,
     } = useFieldArray({
-        name: 'data_planes',
+        name: 'dataPlanes',
         rules: {
             required: 'At least one data plane is required',
         },
     });
-    const allowPublic = watch('allow_public');
-    const dataPlanes = watch('data_planes');
-    const fragmentStores = watch('fragment_stores');
+    const allowPublic = watch('allowPublic');
+    const dataPlanes = watch('dataPlanes');
+    const fragmentStores = watch('fragmentStores');
 
     const selectDataPlane = useCallback(
         (dp: DataPlaneNode) => {
@@ -123,10 +120,10 @@ function DialogInner({
 
     const handleClose = useCallback(() => {
         reset({
-            catalog_prefix: mapping.catalogPrefix,
-            data_planes: mapping.dataPlanes,
-            fragment_stores: mapping.stores,
-            allow_public: false,
+            catalogPrefix: mapping.catalogPrefix,
+            dataPlanes: mapping.dataPlanes,
+            fragmentStores: mapping.stores,
+            allowPublic: false,
         });
         setNestedStoreFormOpen(false);
         initialized.current = false;
@@ -166,10 +163,10 @@ function DialogInner({
     const save = useCallback(async () => {
         const data = getValues();
         await update({
-            catalogPrefix: data.catalog_prefix,
+            catalogPrefix: data.catalogPrefix,
             spec: {
-                stores: data.fragment_stores.map(toApiStore),
-                data_planes: data.data_planes.map((dp) => dp.dataPlaneName),
+                fragmentStores: data.fragmentStores,
+                dataPlanes: data.dataPlanes.map((dp) => dp.dataPlaneName),
             },
         });
         refresh();
@@ -222,7 +219,7 @@ function DialogInner({
                                             moveDataPlane(index, 0)
                                         }
                                         onToggleAllowPublic={(value) =>
-                                            setValue('allow_public', value)
+                                            setValue('allowPublic', value)
                                         }
                                     />
                                 </CardWrapper>
@@ -303,22 +300,22 @@ export function UpdateMappingWizard() {
 
         return {
             catalogPrefix: mapping.catalogPrefix,
-            dataPlanes: mapping.spec.data_planes
+            dataPlanes: mapping.spec.dataPlanes
                 .map((name: string) =>
                     dataPlanes.find((dp) => dp.dataPlaneName === name)
                 )
                 .filter((dp): dp is DataPlaneNode => dp !== undefined),
-            stores: mapping.spec.stores,
+            stores: mapping.spec.fragmentStores,
         };
     }, [prefix, storageMappings, dataPlanes]);
 
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {
-            catalog_prefix: storageMapping?.catalogPrefix,
-            data_planes: storageMapping?.dataPlanes ?? [],
-            fragment_stores: storageMapping?.stores ?? [],
-            allow_public: true,
+            catalogPrefix: storageMapping?.catalogPrefix,
+            dataPlanes: storageMapping?.dataPlanes ?? [],
+            fragmentStores: storageMapping?.stores ?? [],
+            allowPublic: true,
         },
     });
 
@@ -333,10 +330,10 @@ export function UpdateMappingWizard() {
         ) {
             initializedForPrefix.current = storageMapping.catalogPrefix;
             methods.reset({
-                catalog_prefix: storageMapping.catalogPrefix,
-                data_planes: storageMapping.dataPlanes,
-                fragment_stores: storageMapping.stores ?? [],
-                allow_public: true,
+                catalogPrefix: storageMapping.catalogPrefix,
+                dataPlanes: storageMapping.dataPlanes,
+                fragmentStores: storageMapping.stores ?? [],
+                allowPublic: true,
             });
         }
     }, [storageMapping, methods]);

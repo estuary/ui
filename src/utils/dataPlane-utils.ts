@@ -7,7 +7,7 @@ import type { Shard } from 'data-plane-gateway/types/shard_client';
 import type { ResponseError } from 'data-plane-gateway/types/util';
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
 import type { DataPlaneNode } from 'src/api/dataPlanesGql';
-import type { CloudProvider } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 import type {
     DataPlaneName,
     DataPlaneOption,

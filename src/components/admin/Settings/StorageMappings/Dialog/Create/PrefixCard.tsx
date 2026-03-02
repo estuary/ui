@@ -1,4 +1,4 @@
-import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/schema';
+import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
 
 import { useMemo } from 'react';
 
@@ -21,7 +21,7 @@ export function PrefixCard() {
     const { watch } = useFormContext<StorageMappingFormData>();
     const couldMatchRoot = useCouldMatchRoot(basePrefixes);
 
-    const currentPrefix = watch('catalog_prefix');
+    const currentPrefix = watch('catalogPrefix');
 
     const duplicateDialogLinkParams = useDialogLink('EDIT_STORAGE_MAPPING', {
         prefix: currentPrefix,
@@ -97,8 +97,8 @@ export function PrefixCard() {
     );
 
     return (
-        <RHFLeavesAutocomplete<StorageMappingFormData, 'catalog_prefix'>
-            name="catalog_prefix"
+        <RHFLeavesAutocomplete<StorageMappingFormData, 'catalogPrefix'>
+            name="catalogPrefix"
             leaves={leaves}
             label="Estuary Prefix"
             required

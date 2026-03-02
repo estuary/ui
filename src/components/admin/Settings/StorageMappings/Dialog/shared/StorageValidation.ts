@@ -1,7 +1,7 @@
 import type { ProgressiveRules } from 'src/components/shared/RHFFields/types';
 
 export const storeValidation = {
-    azure_container_name: {
+    azureContainerName: {
         partial: {
             maxLength: {
                 value: 62,
@@ -26,7 +26,7 @@ export const storeValidation = {
             },
         },
     },
-    azure_storage_account_name: {
+    azureStorageAccountName: {
         partial: {
             maxLength: {
                 value: 24,
@@ -45,12 +45,12 @@ export const storeValidation = {
             },
         },
     },
-    azure_account_tenant_id: {
+    azureAccountTenantId: {
         final: {
             required: 'Account tenant ID is required',
         },
     },
-    aws_bucket: {
+    awsBucket: {
         partial: {
             pattern: {
                 value: /^[a-z0-9][a-z0-9\-\.]*$/,
@@ -67,7 +67,7 @@ export const storeValidation = {
             },
         },
     },
-    gcp_bucket: {
+    gcpBucket: {
         partial: {
             maxLength: {
                 value: 62,
@@ -92,7 +92,7 @@ export const storeValidation = {
             },
         },
     },
-    storage_prefix: {
+    storagePrefix: {
         partial: {
             pattern: {
                 value: /^[a-zA-Z0-9]([a-zA-Z0-9_\-.]|\/{1}(?!\/))*[a-zA-Z0-9/]?$/,
