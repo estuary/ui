@@ -157,17 +157,18 @@ export function useConnectionTest() {
         [setDataPlanes, setStores, setConnections]
     );
 
-    const addDataPlane = useCallback(
-        (newDP: DataPlaneNode): Connection[] => {
-            setDataPlanes((prev) => [...prev, newDP]);
-
+    const connectEndpoints = useCallback(
+        (
+            pairs: { dataPlane: DataPlaneNode; store: FragmentStore }[]
+        ): Connection[] => {
             const affected: InternalConnection[] = [];
             const updated = [...connections];
 
-            for (const store of stores) {
+            for (const { dataPlane, store } of pairs) {
                 const idx = updated.findIndex(
                     (c) =>
-                        c.dataPlane.dataPlaneName === newDP.dataPlaneName &&
+                        c.dataPlane.dataPlaneName ===
+                            dataPlane.dataPlaneName &&
                         getStoreId(c.store) === getStoreId(store)
                 );
                 if (idx >= 0) {
@@ -175,7 +176,7 @@ export function useConnectionTest() {
                     affected.push(updated[idx]);
                 } else {
                     const conn: InternalConnection = {
-                        dataPlane: newDP,
+                        dataPlane,
                         store,
                         initial: false,
                         active: true,
@@ -189,42 +190,27 @@ export function useConnectionTest() {
             setConnections(updated);
             return affected.map(convertConnectionForConsumer);
         },
-        [stores, connections, setDataPlanes, setConnections]
+        [connections, setConnections]
+    );
+
+    const addDataPlane = useCallback(
+        (newDP: DataPlaneNode): Connection[] => {
+            setDataPlanes((prev) => [...prev, newDP]);
+            return connectEndpoints(
+                stores.map((store) => ({ dataPlane: newDP, store }))
+            );
+        },
+        [stores, setDataPlanes, connectEndpoints]
     );
 
     const addStore = useCallback(
         (newStore: FragmentStore): Connection[] => {
             setStores((prev) => [...prev, newStore]);
-
-            const affected: InternalConnection[] = [];
-            const updated = [...connections];
-
-            for (const dp of dataPlanes) {
-                const idx = updated.findIndex(
-                    (c) =>
-                        c.dataPlane.dataPlaneName === dp.dataPlaneName &&
-                        getStoreId(c.store) === getStoreId(newStore)
-                );
-                if (idx >= 0) {
-                    updated[idx] = { ...updated[idx], active: true };
-                    affected.push(updated[idx]);
-                } else {
-                    const conn: InternalConnection = {
-                        dataPlane: dp,
-                        store: newStore,
-                        initial: false,
-                        active: true,
-                        status: 'idle',
-                    };
-                    updated.push(conn);
-                    affected.push(conn);
-                }
-            }
-
-            setConnections(updated);
-            return affected.map(convertConnectionForConsumer);
+            return connectEndpoints(
+                dataPlanes.map((dp) => ({ dataPlane: dp, store: newStore }))
+            );
         },
-        [dataPlanes, connections, setStores, setConnections]
+        [dataPlanes, setStores, connectEndpoints]
     );
 
     const removeDataPlane = useCallback(
