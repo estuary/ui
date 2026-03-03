@@ -30,9 +30,11 @@ export const MASKED = '**MASKED**';
 
 const completelyIgnoredURLs = [
     // We do not control user extensions so we do not need to know about them
-    'browser-extension://',
-    'chrome-extension://',
-    'moz-extension://',
+    'chrome-extension://', // Chromium-based
+    'moz-extension://', // Firefox
+    'safari-web-extension://', // Safari (macOS/iOS)
+    'safari-extension://', // Safari (legacy)
+    'ms-browser-extension://', // Edge (legacy)
 ];
 
 // for endpoints where we want nothing ever logged
