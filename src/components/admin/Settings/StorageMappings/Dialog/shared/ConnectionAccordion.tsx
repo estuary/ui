@@ -19,6 +19,7 @@ import {
     Refresh,
     WarningTriangle,
 } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
 import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionInstructions';
 import {
@@ -33,6 +34,8 @@ interface ConnectionStatusBadgeProps {
 }
 
 function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
+    const intl = useIntl();
+
     const badges = {
         idle: null,
         testing: {
@@ -41,12 +44,16 @@ function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
             color: 'text.secondary',
         },
         success: {
-            text: 'Ready',
+            text: intl.formatMessage({
+                id: 'storageMappings.dialog.connectionTests.status.ready',
+            }),
             icon: <CheckCircle width={16} height={16} />,
             color: 'success.main',
         },
         error: {
-            text: 'Needs Attention',
+            text: intl.formatMessage({
+                id: 'storageMappings.dialog.connectionTests.status.needsAttention',
+            }),
             icon: <WarningTriangle width={16} height={16} />,
             color: 'warning.main',
         },
@@ -88,6 +95,7 @@ export function ConnectionAccordion({
     disabled = false,
 }: ConnectionAccordionProps) {
     const { testOne } = useConnectionTest();
+    const intl = useIntl();
 
     const prevStatusRef = useRef(connection.status);
     const onToggleRef = useRef(onToggle);
@@ -186,7 +194,9 @@ export function ConnectionAccordion({
                             onClick={() => testOne(connection)}
                             startIcon={<Refresh width={16} height={16} />}
                         >
-                            Retry
+                            {intl.formatMessage({
+                                id: 'storageMappings.dialog.connectionTests.retry',
+                            })}
                         </Button>
                     </Stack>
                     <ConnectionInstructions connection={connection} />

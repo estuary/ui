@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Collapse, Stack } from '@mui/material';
 
 import { Flipped, Flipper } from 'react-flip-toolkit';
+import { useIntl } from 'react-intl';
 
 import { useDataPlanes } from 'src/api/gql/dataPlanes';
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
@@ -34,6 +35,7 @@ export function DataPlanesCard({
     onSelectDefault,
     onToggleAllowPublic,
 }: DataPlanesCardProps) {
+    const intl = useIntl();
     const { dataPlanes: allDps } = useDataPlanes();
 
     const [selectorIsOpen, setSelectorIsOpen] = useState(false);
@@ -130,8 +132,12 @@ export function DataPlanesCard({
     return (
         <>
             <CardTitle
-                title="Data Planes"
-                action="Add data plane"
+                title={intl.formatMessage({
+                    id: 'storageMappings.dialog.dataPlanes.title',
+                })}
+                action={intl.formatMessage({
+                    id: 'storageMappings.dialog.dataPlanes.addAction',
+                })}
                 onAction={() => setSelectorIsOpen(true)}
                 actionDisabled={effectiveSelectorIsOpen || !hasMoreOptions}
             />

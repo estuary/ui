@@ -9,6 +9,8 @@ import {
     useReducer,
 } from 'react';
 
+import { useIntl } from 'react-intl';
+
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import { logRocketConsole } from 'src/services/shared';
 
@@ -248,6 +250,7 @@ export function useConnectionTest() {
             'useConnectionTest must be used within ConnectionTestProvider'
         );
     }
+    const intl = useIntl();
     const { testConnection } = useStorageMappingService();
     const { catalogPrefix, state, dispatch } = context;
 
@@ -397,7 +400,11 @@ export function useConnectionTest() {
                 );
 
                 const message =
-                    e instanceof Error ? e.message : 'Connection test failed';
+                    e instanceof Error
+                        ? e.message
+                        : intl.formatMessage({
+                              id: 'storageMappings.dialog.connectionTests.testFailed',
+                          });
 
                 dispatch({
                     type: 'UPDATE_STATUSES',
@@ -411,7 +418,7 @@ export function useConnectionTest() {
                 throw e;
             }
         },
-        [catalogPrefix, dispatch, testConnection]
+        [catalogPrefix, dispatch, testConnection, intl]
     );
 
     const testOne = useCallback(

@@ -3,6 +3,7 @@ import type { StorageMappingFormData } from 'src/components/admin/Settings/Stora
 import { useMemo } from 'react';
 
 import { useFormContext } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 
 import { useLiveSpecs } from 'src/api/gql/liveSpecs';
 import { useStorageMappings } from 'src/api/gql/storageMappings';
@@ -13,6 +14,7 @@ import { useTenantStore } from 'src/stores/Tenant/Store';
 import { validateCatalogName } from 'src/validation';
 
 export function PrefixCard() {
+    const intl = useIntl();
     const { storageMappings } = useStorageMappings();
     const liveSpecNames = useLiveSpecs();
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
@@ -49,17 +51,26 @@ export function PrefixCard() {
                 validate: {
                     validCharacters: (value: string) =>
                         validateCatalogName(value, false, true) == null ||
-                        'Invalid prefix - only letters, numbers, dashes, underscores, and periods are allowed.',
+                        intl.formatMessage({
+                            id: 'storageMappings.dialog.prefix.validation.invalidCharacters',
+                        }),
                     couldMatchRoot,
                 },
             },
             final: {
-                required: 'Estuary prefix is required.',
+                required: intl.formatMessage({
+                    id: 'storageMappings.dialog.prefix.validation.required',
+                }),
                 validate: {
                     notDuplicateMapping: (value: string) => {
                         return (
                             !storageMappingPrefixes.includes(value) ||
-                            `A storage mapping already exists at this prefix. [Click here to see it.](${duplicateDialogLinkParams})`
+                            intl.formatMessage(
+                                {
+                                    id: 'storageMappings.dialog.prefix.validation.duplicate',
+                                },
+                                { link: duplicateDialogLinkParams }
+                            )
                         );
                     },
 
@@ -86,7 +97,12 @@ export function PrefixCard() {
 
                         return (
                             uncoveredSpecs.length === 0 ||
-                            `${uncoveredSpecs.length} live spec(s) would be impacted by creating this storage mapping. Choose an empty prefix or contact support for help.`
+                            intl.formatMessage(
+                                {
+                                    id: 'storageMappings.dialog.prefix.validation.uncoveredSpecs',
+                                },
+                                { count: uncoveredSpecs.length }
+                            )
                         );
                     },
                 },
@@ -97,6 +113,7 @@ export function PrefixCard() {
             liveSpecNames,
             duplicateDialogLinkParams,
             couldMatchRoot,
+            intl,
         ]
     );
 
@@ -104,7 +121,9 @@ export function PrefixCard() {
         <RHFLeavesAutocomplete<StorageMappingFormData, 'catalogPrefix'>
             name="catalogPrefix"
             leaves={leaves}
-            label="Estuary Prefix"
+            label={intl.formatMessage({
+                id: 'storageMappings.dialog.prefix.label',
+            })}
             required
             progressiveRules={progressiveRules}
         />

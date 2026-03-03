@@ -13,6 +13,7 @@ import {
     useForm,
     useFormContext,
 } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 
 import { useDataPlanes } from 'src/api/gql/dataPlanes';
 import {
@@ -49,6 +50,7 @@ function DialogInner({
     open: boolean;
     onClose: () => void;
 }) {
+    const intl = useIntl();
     const { update } = useStorageMappingService();
 
     const {
@@ -86,7 +88,9 @@ function DialogInner({
     } = useFieldArray({
         name: 'dataPlanes',
         rules: {
-            required: 'At least one data plane is required',
+            required: intl.formatMessage({
+                id: 'storageMappings.dialog.dataPlanes.validation.required',
+            }),
         },
     });
     const allowPublic = watch('allowPublic');
@@ -170,11 +174,13 @@ function DialogInner({
     const title = useMemo(
         () => (
             <Typography variant="h6" component="span" fontWeight={600}>
-                Storage for{' '}
+                {intl.formatMessage({
+                    id: 'storageMappings.dialog.update.title',
+                })}
                 <TechnicalEmphasis>{mapping.catalogPrefix}</TechnicalEmphasis>
             </Typography>
         ),
-        [mapping.catalogPrefix]
+        [intl, mapping.catalogPrefix]
     );
 
     const steps = useMemo(
@@ -185,17 +191,23 @@ function DialogInner({
                     component: (
                         <>
                             <Typography sx={{ mb: 4 }}>
-                                Update your data plane or collection storage
-                                configuration below. For information and access
-                                requirements, see the{' '}
+                                {intl.formatMessage({
+                                    id: 'storageMappings.dialog.update.description.prefix',
+                                })}
                                 <Link
-                                    href="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow"
+                                    href={intl.formatMessage({
+                                        id: 'storageMappings.dialog.docsPath',
+                                    })}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    documentation
+                                    {intl.formatMessage({
+                                        id: 'storageMappings.dialog.docsLink',
+                                    })}
                                 </Link>
-                                .
+                                {intl.formatMessage({
+                                    id: 'storageMappings.dialog.update.description.suffix',
+                                })}
                             </Typography>
                             <Stack spacing={2}>
                                 <CardWrapper>
@@ -225,8 +237,12 @@ function DialogInner({
                                 </CardWrapper>
                                 <CardWrapper>
                                     <CardTitle
-                                        title="Connection Tests"
-                                        action="Run tests"
+                                        title={intl.formatMessage({
+                                            id: 'storageMappings.dialog.connectionTests.title',
+                                        })}
+                                        action={intl.formatMessage({
+                                            id: 'storageMappings.dialog.connectionTests.runTests',
+                                        })}
                                         onAction={() =>
                                             // errors are surfaced in each accordion in the ConnectionTestList - safe to catch and ignore here
                                             void testConnections(
@@ -238,8 +254,9 @@ function DialogInner({
                                         actionDisabled={isTesting}
                                     />
                                     <Typography>
-                                        All connections must pass before saving
-                                        changes.
+                                        {intl.formatMessage({
+                                            id: 'storageMappings.dialog.connectionTests.allMustPass',
+                                        })}
                                     </Typography>
 
                                     <ConnectionList autoTest />
@@ -247,7 +264,9 @@ function DialogInner({
                             </Stack>
                         </>
                     ),
-                    nextLabel: 'Save Changes',
+                    nextLabel: intl.formatMessage({
+                        id: 'storageMappings.dialog.update.saveChanges',
+                    }),
                     canAdvance: () =>
                         dataPlanes.length > 0 &&
                         !nestedStoreFormOpen &&
@@ -256,6 +275,7 @@ function DialogInner({
                 },
             ] satisfies WizardStep[],
         [
+            intl,
             dataPlanes,
             allTestsPassing,
             nestedStoreFormOpen,
