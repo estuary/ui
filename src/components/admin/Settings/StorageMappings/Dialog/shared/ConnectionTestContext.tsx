@@ -6,7 +6,7 @@ import {
     useCallback,
     useContext,
     useMemo,
-    useState,
+    useReducer,
 } from 'react';
 
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
@@ -27,21 +27,187 @@ export interface Connection extends BaseConnection {
     orphaned: boolean;
 }
 
-interface ConnectionTestContextValue {
-    catalogPrefix?: string;
-    dataPlanes: DataPlaneNode[];
-    setDataPlanes: React.Dispatch<React.SetStateAction<DataPlaneNode[]>>;
-    stores: FragmentStore[];
-    setStores: React.Dispatch<React.SetStateAction<FragmentStore[]>>;
-    connections: InternalConnection[];
-    setConnections: React.Dispatch<React.SetStateAction<InternalConnection[]>>;
-}
-
 export function getStoreId(store: FragmentStore): string {
     if (store.provider === 'AZURE') {
         return `AZ/${store.storageAccountName}/${store.containerName}/${store.storagePrefix ?? ''}`;
     }
     return `${store.provider}/${store.bucket}/${store.storagePrefix ?? ''}`;
+}
+
+interface ConnectionState {
+    dataPlanes: DataPlaneNode[];
+    stores: FragmentStore[];
+    connections: InternalConnection[];
+}
+
+type ConnectionAction =
+    | {
+          type: 'INITIALIZE';
+          dataPlanes: DataPlaneNode[];
+          stores: FragmentStore[];
+      }
+    | { type: 'ADD_DATA_PLANE'; dataPlane: DataPlaneNode }
+    | { type: 'REMOVE_DATA_PLANE'; dataPlane: DataPlaneNode }
+    | { type: 'ADD_STORE'; store: FragmentStore }
+    | { type: 'REMOVE_STORE'; store: FragmentStore }
+    | {
+          type: 'UPDATE_STATUSES';
+          updates: {
+              dataPlane: string;
+              store: string;
+              status: InternalConnection['status'];
+              errorMessage?: string;
+          }[];
+      };
+
+const initialState: ConnectionState = {
+    dataPlanes: [],
+    stores: [],
+    connections: [],
+};
+
+function connectPairs(
+    connections: InternalConnection[],
+    pairs: { dataPlane: DataPlaneNode; store: FragmentStore }[]
+): {
+    allConnections: InternalConnection[];
+    upsertedConnections: InternalConnection[];
+} {
+    const allConnections = [...connections];
+    const upsertedConnections: InternalConnection[] = [];
+
+    for (const { dataPlane, store } of pairs) {
+        const idx = allConnections.findIndex(
+            (c) =>
+                c.dataPlane.name === dataPlane.name &&
+                getStoreId(c.store) === getStoreId(store)
+        );
+        if (idx >= 0) {
+            allConnections[idx] = { ...allConnections[idx], active: true };
+            upsertedConnections.push(allConnections[idx]);
+        } else {
+            const conn: InternalConnection = {
+                dataPlane,
+                store,
+                initial: false,
+                active: true,
+                status: 'idle',
+            };
+            allConnections.push(conn);
+            upsertedConnections.push(conn);
+        }
+    }
+
+    return { allConnections, upsertedConnections };
+}
+
+function connectionReducer(
+    state: ConnectionState,
+    action: ConnectionAction
+): ConnectionState {
+    switch (action.type) {
+        case 'INITIALIZE': {
+            return {
+                dataPlanes: action.dataPlanes,
+                stores: action.stores,
+                connections: action.dataPlanes.flatMap((dp) =>
+                    action.stores.map(
+                        (store): InternalConnection => ({
+                            dataPlane: dp,
+                            store,
+                            initial: true,
+                            active: true,
+                            status: 'idle',
+                        })
+                    )
+                ),
+            };
+        }
+
+        case 'ADD_DATA_PLANE': {
+            const pairs = state.stores.map((store) => ({
+                dataPlane: action.dataPlane,
+                store,
+            }));
+            const { allConnections: connections } = connectPairs(
+                state.connections,
+                pairs
+            );
+            return {
+                ...state,
+                dataPlanes: [...state.dataPlanes, action.dataPlane],
+                connections,
+            };
+        }
+
+        case 'REMOVE_DATA_PLANE': {
+            return {
+                ...state,
+                dataPlanes: state.dataPlanes.filter(
+                    (dp) => dp.name !== action.dataPlane.name
+                ),
+                connections: state.connections.map((c) =>
+                    c.dataPlane.name === action.dataPlane.name
+                        ? { ...c, active: false }
+                        : c
+                ),
+            };
+        }
+
+        case 'ADD_STORE': {
+            const pairs = state.dataPlanes.map((dp) => ({
+                dataPlane: dp,
+                store: action.store,
+            }));
+            const { allConnections: connections } = connectPairs(
+                state.connections,
+                pairs
+            );
+            return {
+                ...state,
+                stores: [...state.stores, action.store],
+                connections,
+            };
+        }
+
+        case 'REMOVE_STORE': {
+            const storeId = getStoreId(action.store);
+            return {
+                ...state,
+                stores: state.stores.filter((s) => getStoreId(s) !== storeId),
+                connections: state.connections.map((c) =>
+                    getStoreId(c.store) === storeId
+                        ? { ...c, active: false }
+                        : c
+                ),
+            };
+        }
+
+        case 'UPDATE_STATUSES': {
+            const updated = [...state.connections];
+            for (const u of action.updates) {
+                const idx = updated.findIndex(
+                    (c) =>
+                        c.dataPlane.name === u.dataPlane &&
+                        getStoreId(c.store) === u.store
+                );
+                if (idx >= 0) {
+                    updated[idx] = {
+                        ...updated[idx],
+                        status: u.status,
+                        errorMessage: u.errorMessage,
+                    };
+                }
+            }
+            return { ...state, connections: updated };
+        }
+    }
+}
+
+interface ConnectionTestContextValue {
+    catalogPrefix?: string;
+    state: ConnectionState;
+    dispatch: React.Dispatch<ConnectionAction>;
 }
 
 const ConnectionTestContext = createContext<ConnectionTestContextValue | null>(
@@ -55,21 +221,11 @@ export function ConnectionTestProvider({
     catalogPrefix?: string;
     children: React.ReactNode;
 }) {
-    const [dataPlanes, setDataPlanes] = useState<DataPlaneNode[]>([]);
-    const [stores, setStores] = useState<FragmentStore[]>([]);
-    const [connections, setConnections] = useState<InternalConnection[]>([]);
+    const [state, dispatch] = useReducer(connectionReducer, initialState);
 
     return (
         <ConnectionTestContext.Provider
-            value={{
-                catalogPrefix,
-                dataPlanes,
-                setDataPlanes,
-                stores,
-                setStores,
-                connections,
-                setConnections,
-            }}
+            value={{ catalogPrefix, state, dispatch }}
         >
             {children}
         </ConnectionTestContext.Provider>
@@ -93,172 +249,84 @@ export function useConnectionTest() {
         );
     }
     const { testConnection } = useStorageMappingService();
-    const {
-        catalogPrefix,
-        dataPlanes,
-        setDataPlanes,
-        stores,
-        setStores,
-        connections,
-        setConnections,
-    } = context;
-
-    const updateConnection = useCallback(
-        (
-            connection: Connection,
-            update: Partial<Pick<Connection, 'status' | 'errorMessage'>>
-        ) => {
-            setConnections((prev) => {
-                const idx = prev.findIndex(
-                    (c) =>
-                        c.dataPlane.name === connection.dataPlane.name &&
-                        getStoreId(c.store) === getStoreId(connection.store)
-                );
-
-                const updated = [...prev];
-
-                // silently ignore updates to non-existent connections
-                if (idx >= 0) {
-                    updated[idx] = { ...updated[idx], ...update };
-                }
-                return updated;
-            });
-        },
-        [setConnections]
-    );
+    const { catalogPrefix, state, dispatch } = context;
 
     const initializeEndpoints = useCallback(
         (
             newDataPlanes: DataPlaneNode[],
             newStores: FragmentStore[]
         ): Connection[] => {
-            setDataPlanes(newDataPlanes);
-            setStores(newStores);
-
-            const newConnections = newDataPlanes.flatMap((dp) =>
-                newStores.map((store) => ({
-                    dataPlane: dp,
-                    store,
-                    initial: true,
-                    active: true,
-                    status: 'idle' as const,
-                }))
-            );
-
-            setConnections(newConnections);
-
-            return newConnections.map((c) => ({
-                dataPlane: c.dataPlane,
-                store: c.store,
-                status: c.status,
-                orphaned: false,
-            }));
-        },
-        [setDataPlanes, setStores, setConnections]
-    );
-
-    const connectEndpoints = useCallback(
-        (
-            pairs: { dataPlane: DataPlaneNode; store: FragmentStore }[]
-        ): Connection[] => {
-            const affected: InternalConnection[] = [];
-
-            setConnections((prev) => {
-                const updated = [...prev];
-
-                for (const { dataPlane, store } of pairs) {
-                    const idx = updated.findIndex(
-                        (c) =>
-                            c.dataPlane.name === dataPlane.name &&
-                            getStoreId(c.store) === getStoreId(store)
-                    );
-                    if (idx >= 0) {
-                        updated[idx] = { ...updated[idx], active: true };
-                        affected.push(updated[idx]);
-                    } else {
-                        const conn: InternalConnection = {
-                            dataPlane,
-                            store,
-                            initial: false,
-                            active: true,
-                            status: 'idle',
-                        };
-                        updated.push(conn);
-                        affected.push(conn);
-                    }
-                }
-
-                return updated;
+            dispatch({
+                type: 'INITIALIZE',
+                dataPlanes: newDataPlanes,
+                stores: newStores,
             });
 
-            return affected.map(convertConnectionForConsumer);
+            return newDataPlanes.flatMap((dp) =>
+                newStores.map(
+                    (store): Connection => ({
+                        dataPlane: dp,
+                        store,
+                        status: 'idle',
+                        orphaned: false,
+                    })
+                )
+            );
         },
-        [setConnections]
+        [dispatch]
     );
 
     const addDataPlane = useCallback(
         (newDP: DataPlaneNode): Connection[] => {
-            setDataPlanes((prev) => [...prev, newDP]);
-            return connectEndpoints(
-                stores.map((store) => ({ dataPlane: newDP, store }))
+            dispatch({ type: 'ADD_DATA_PLANE', dataPlane: newDP });
+            const { upsertedConnections } = connectPairs(
+                state.connections,
+                state.stores.map((store) => ({ dataPlane: newDP, store }))
             );
+            return upsertedConnections.map(convertConnectionForConsumer);
         },
-        [stores, setDataPlanes, connectEndpoints]
+        [state, dispatch]
     );
 
     const addStore = useCallback(
         (newStore: FragmentStore): Connection[] => {
-            setStores((prev) => [...prev, newStore]);
-            return connectEndpoints(
-                dataPlanes.map((dp) => ({ dataPlane: dp, store: newStore }))
+            dispatch({ type: 'ADD_STORE', store: newStore });
+            const { upsertedConnections } = connectPairs(
+                state.connections,
+                state.dataPlanes.map((dp) => ({
+                    dataPlane: dp,
+                    store: newStore,
+                }))
             );
+            return upsertedConnections.map(convertConnectionForConsumer);
         },
-        [dataPlanes, setStores, connectEndpoints]
+        [state, dispatch]
     );
 
     const removeDataPlane = useCallback(
         (dataPlane: DataPlaneNode) => {
-            setDataPlanes((prev) =>
-                prev.filter((dp: DataPlaneNode) => dp.name !== dataPlane.name)
-            );
-            setConnections((prev) =>
-                prev.map((c) =>
-                    c.dataPlane.name === dataPlane.name
-                        ? { ...c, active: false }
-                        : c
-                )
-            );
+            dispatch({ type: 'REMOVE_DATA_PLANE', dataPlane });
         },
-        [setDataPlanes, setConnections]
+        [dispatch]
     );
 
     const removeStore = useCallback(
         (store: FragmentStore) => {
-            const storeId = getStoreId(store);
-            setStores((prev) =>
-                prev.filter((s: FragmentStore) => getStoreId(s) !== storeId)
-            );
-            setConnections((prev) =>
-                prev.map((c) =>
-                    getStoreId(c.store) === storeId
-                        ? { ...c, active: false }
-                        : c
-                )
-            );
+            dispatch({ type: 'REMOVE_STORE', store });
         },
-        [setStores, setConnections]
+        [dispatch]
     );
 
     const clear = useCallback(() => {
-        initializeEndpoints([], []);
-    }, [initializeEndpoints]);
+        dispatch({ type: 'INITIALIZE', dataPlanes: [], stores: [] });
+    }, [dispatch]);
 
     const derivedConnections = useMemo(
         () =>
-            connections
+            state.connections
                 .filter((c) => c.active || c.initial)
                 .map(convertConnectionForConsumer),
-        [connections]
+        [state.connections]
     );
 
     const activeConnections = useMemo(
@@ -285,11 +353,14 @@ export function useConnectionTest() {
             const prefix = catalogPrefix;
             if (connections.length === 0) return;
 
-            for (const c of connections) {
-                updateConnection(c, {
-                    status: 'testing',
-                });
-            }
+            dispatch({
+                type: 'UPDATE_STATUSES',
+                updates: connections.map((c) => ({
+                    dataPlane: c.dataPlane.name,
+                    store: getStoreId(c.store),
+                    status: 'testing' as const,
+                })),
+            });
 
             try {
                 const testResponse = await testConnection(
@@ -298,20 +369,26 @@ export function useConnectionTest() {
                     connections.map((c) => c.store)
                 );
 
-                for (const result of testResponse) {
-                    const target = connections.find(
-                        (t) =>
-                            t.dataPlane.name === result.dataPlaneName &&
-                            getStoreId(t.store) ===
-                                getStoreId(result.fragmentStore)
-                    );
-                    if (!target) continue;
-
-                    updateConnection(target, {
-                        status: result.error ? 'error' : 'success',
-                        errorMessage: result.error ?? undefined,
-                    });
-                }
+                dispatch({
+                    type: 'UPDATE_STATUSES',
+                    updates: testResponse
+                        .filter((result) =>
+                            connections.some(
+                                (t) =>
+                                    t.dataPlane.name === result.dataPlaneName &&
+                                    getStoreId(t.store) ===
+                                        getStoreId(result.fragmentStore)
+                            )
+                        )
+                        .map((result) => ({
+                            dataPlane: result.dataPlaneName,
+                            store: getStoreId(result.fragmentStore),
+                            status: (result.error
+                                ? 'error'
+                                : 'success') as InternalConnection['status'],
+                            errorMessage: result.error ?? undefined,
+                        })),
+                });
             } catch (e) {
                 logRocketConsole(
                     'StorageMapping:testConnections:error',
@@ -322,16 +399,19 @@ export function useConnectionTest() {
                 const message =
                     e instanceof Error ? e.message : 'Connection test failed';
 
-                for (const c of connections) {
-                    updateConnection(c, {
-                        status: 'error',
+                dispatch({
+                    type: 'UPDATE_STATUSES',
+                    updates: connections.map((c) => ({
+                        dataPlane: c.dataPlane.name,
+                        store: getStoreId(c.store),
+                        status: 'error' as const,
                         errorMessage: message,
-                    });
-                }
+                    })),
+                });
                 throw e;
             }
         },
-        [catalogPrefix, updateConnection, testConnection]
+        [catalogPrefix, dispatch, testConnection]
     );
 
     const testOne = useCallback(
