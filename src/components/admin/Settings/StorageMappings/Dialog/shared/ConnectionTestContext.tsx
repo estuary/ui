@@ -162,34 +162,38 @@ export function useConnectionTest() {
             pairs: { dataPlane: DataPlaneNode; store: FragmentStore }[]
         ): Connection[] => {
             const affected: InternalConnection[] = [];
-            const updated = [...connections];
 
-            for (const { dataPlane, store } of pairs) {
-                const idx = updated.findIndex(
-                    (c) =>
-                        c.dataPlane.name === dataPlane.name &&
-                        getStoreId(c.store) === getStoreId(store)
-                );
-                if (idx >= 0) {
-                    updated[idx] = { ...updated[idx], active: true };
-                    affected.push(updated[idx]);
-                } else {
-                    const conn: InternalConnection = {
-                        dataPlane,
-                        store,
-                        initial: false,
-                        active: true,
-                        status: 'idle',
-                    };
-                    updated.push(conn);
-                    affected.push(conn);
+            setConnections((prev) => {
+                const updated = [...prev];
+
+                for (const { dataPlane, store } of pairs) {
+                    const idx = updated.findIndex(
+                        (c) =>
+                            c.dataPlane.name === dataPlane.name &&
+                            getStoreId(c.store) === getStoreId(store)
+                    );
+                    if (idx >= 0) {
+                        updated[idx] = { ...updated[idx], active: true };
+                        affected.push(updated[idx]);
+                    } else {
+                        const conn: InternalConnection = {
+                            dataPlane,
+                            store,
+                            initial: false,
+                            active: true,
+                            status: 'idle',
+                        };
+                        updated.push(conn);
+                        affected.push(conn);
+                    }
                 }
-            }
 
-            setConnections(updated);
+                return updated;
+            });
+
             return affected.map(convertConnectionForConsumer);
         },
-        [connections, setConnections]
+        [setConnections]
     );
 
     const addDataPlane = useCallback(
