@@ -18,6 +18,7 @@ import { Check, EditPencil, Xmark } from 'iconoir-react';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
+import { ActionLink } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ActionLink';
 import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
 import { cardHeaderSx } from 'src/context/Theme';
@@ -287,20 +288,12 @@ export function StorageLocationsCard({
             >
                 <Typography sx={cardHeaderSx}>Storage Locations</Typography>
                 <Collapse in={!showNestedStorageForm}>
-                    <Link
-                        component="button"
-                        variant="body2"
-                        underline="hover"
-                        // disabled prop prevents onClick from firing, but it doesn't prevent the link from looking clickable
-                        // disabled={hasNewStore}
+                    <ActionLink
                         onClick={handleStartAdding}
-                        sx={{
-                            opacity: hasNewStore ? 0.5 : 1,
-                            pointerEvents: hasNewStore ? 'none' : 'auto',
-                        }}
+                        disabled={hasNewStore}
                     >
                         Change primary store
-                    </Link>
+                    </ActionLink>
                 </Collapse>
             </Stack>
             <Stack spacing={1}>
