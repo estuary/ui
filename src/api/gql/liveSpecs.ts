@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { gql, useQuery } from 'urql';
 
-import { useBasePrefixes } from 'src/api/gql/prefixes';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
 interface LiveSpecsQueryResponse {
     liveSpecs: {
@@ -49,16 +49,23 @@ const LiveSpecsQuery = gql<
 `;
 
 export function useLiveSpecs() {
-    const basePrefixes = useBasePrefixes();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const allNames = useRef<Set<string>>(new Set());
     const [after, setAfter] = useState<string | undefined>(undefined);
     const [result, setResult] = useState<string[]>([]);
 
+    // reset when tenant changes
+    useEffect(() => {
+        allNames.current = new Set();
+        setAfter(undefined);
+        setResult([]);
+    }, [selectedTenant]);
+
     const [{ fetching, data }] = useQuery({
         query: LiveSpecsQuery,
-        variables: { prefix: basePrefixes[0], after },
-        pause: basePrefixes.length === 0,
+        variables: { prefix: selectedTenant ?? '', after },
+        pause: !selectedTenant,
     });
 
     useEffect(() => {
