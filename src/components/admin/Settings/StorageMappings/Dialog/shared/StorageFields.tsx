@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Alert, Collapse, Link, Stack } from '@mui/material';
 
 import { useFormContext } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 
 import { storeValidation } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageValidation';
 import { RHFSelect, RHFTextField } from 'src/components/shared/RHFFields/';
@@ -31,6 +32,7 @@ export function StorageFields({
     defaultDataPlane = null,
     sx,
 }: StorageFieldsProps) {
+    const intl = useIntl();
     const { watch, setValue } = useFormContext<StorageMappingFormData>();
 
     const storeProvider = watch(
@@ -88,15 +90,17 @@ export function StorageFields({
         <Stack spacing={2} sx={sx}>
             <Collapse in={showMismatchWarning}>
                 <Alert severity="warning">
-                    The selected cloud provider / region do not match the
-                    default data plane. This may result in additional egress
-                    fees.{' '}
+                    {intl.formatMessage({
+                        id: 'storageMappings.dialog.storageFields.mismatchWarning',
+                    })}{' '}
                     <Link
                         component="button"
                         variant="body2"
                         onClick={() => setTrackDefaultDp(true)}
                     >
-                        Match default data plane
+                        {intl.formatMessage({
+                            id: 'storageMappings.dialog.storageFields.matchDefault',
+                        })}
                     </Link>
                 </Alert>
             </Collapse>
@@ -104,21 +108,33 @@ export function StorageFields({
                 <RHFSelect<StorageMappingFormData>
                     key="provider"
                     name={`fragmentStores.${PENDING_STORE_INDEX}.provider`}
-                    label="Cloud Provider"
+                    label={intl.formatMessage({
+                        id: 'storageMappings.dialog.storageFields.cloudProvider',
+                    })}
                     options={PROVIDER_OPTIONS}
                     required
-                    rules={{ required: 'Cloud provider is required' }}
+                    rules={{
+                        required: intl.formatMessage({
+                            id: 'storageMappings.dialog.storageFields.validation.cloudProviderRequired',
+                        }),
+                    }}
                     onUserSelect={() => setTrackDefaultDp(false)}
                 />
                 {storeProvider === 'AWS' ? (
                     <RHFSelect<StorageMappingFormData>
                         key="region"
                         name={`fragmentStores.${PENDING_STORE_INDEX}.region`}
-                        label="Region"
+                        label={intl.formatMessage({
+                            id: 'storageMappings.dialog.storageFields.region',
+                        })}
                         options={awsRegionOptions}
                         required
                         disabled={!storeProvider}
-                        rules={{ required: 'Region is required' }}
+                        rules={{
+                            required: intl.formatMessage({
+                                id: 'storageMappings.dialog.storageFields.validation.regionRequired',
+                            }),
+                        }}
                         onUserSelect={() => setTrackDefaultDp(false)}
                     />
                 ) : null}
@@ -128,7 +144,9 @@ export function StorageFields({
                     <Stack direction="row" spacing={2}>
                         <RHFTextField<StorageMappingFormData>
                             name={`fragmentStores.${PENDING_STORE_INDEX}.accountTenantId`}
-                            label="Account Tenant ID"
+                            label={intl.formatMessage({
+                                id: 'storageMappings.dialog.storageFields.accountTenantId',
+                            })}
                             required
                             progressiveRules={
                                 storeValidation.azureAccountTenantId
@@ -136,7 +154,9 @@ export function StorageFields({
                         />
                         <RHFTextField<StorageMappingFormData>
                             name={`fragmentStores.${PENDING_STORE_INDEX}.storageAccountName`}
-                            label="Storage Account Name"
+                            label={intl.formatMessage({
+                                id: 'storageMappings.dialog.storageFields.storageAccountName',
+                            })}
                             required
                             progressiveRules={
                                 storeValidation.azureStorageAccountName
@@ -148,9 +168,13 @@ export function StorageFields({
                     {storeProvider === 'AZURE' ? (
                         <RHFTextField<StorageMappingFormData>
                             name={`fragmentStores.${PENDING_STORE_INDEX}.containerName`}
-                            label="Container Name"
+                            label={intl.formatMessage({
+                                id: 'storageMappings.dialog.storageFields.containerName',
+                            })}
                             required
-                            helperText="Destination for Estuary collection data"
+                            helperText={intl.formatMessage({
+                                id: 'storageMappings.dialog.storageFields.bucketHelperText',
+                            })}
                             progressiveRules={
                                 storeValidation.azureContainerName
                             }
@@ -158,9 +182,13 @@ export function StorageFields({
                     ) : (
                         <RHFTextField<StorageMappingFormData>
                             name={`fragmentStores.${PENDING_STORE_INDEX}.bucket`}
-                            label="Bucket"
+                            label={intl.formatMessage({
+                                id: 'storageMappings.dialog.storageFields.bucket',
+                            })}
                             required
-                            helperText="Destination for Estuary collection data"
+                            helperText={intl.formatMessage({
+                                id: 'storageMappings.dialog.storageFields.bucketHelperText',
+                            })}
                             progressiveRules={
                                 storeProvider === 'AWS'
                                     ? storeValidation.awsBucket
@@ -172,8 +200,12 @@ export function StorageFields({
                     )}
                     <RHFTextField<StorageMappingFormData>
                         name={`fragmentStores.${PENDING_STORE_INDEX}.storagePrefix`}
-                        label="Storage Prefix"
-                        helperText="Optional prefix of keys written to the bucket"
+                        label={intl.formatMessage({
+                            id: 'storageMappings.dialog.storageFields.storagePrefix',
+                        })}
+                        helperText={intl.formatMessage({
+                            id: 'storageMappings.dialog.storageFields.storagePrefixHelperText',
+                        })}
                         onBlurTransform={(value) =>
                             !!value && !value.endsWith('/')
                                 ? appendWithForwardSlash(value)

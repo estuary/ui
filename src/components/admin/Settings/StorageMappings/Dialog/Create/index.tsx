@@ -28,8 +28,6 @@ import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings
 import { cardHeaderSx } from 'src/context/Theme';
 import { useDialog } from 'src/hooks/useDialog';
 
-const docsUrl =
-    'https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow';
 function buildMappingPayload(
     mapping: StorageMappingFormData
 ): Omit<
@@ -66,7 +64,9 @@ function CreateMappingWizardInner({
     const { append, remove, move } = useFieldArray({
         name: 'dataPlanes',
         rules: {
-            required: 'At least one data plane is required',
+            required: intl.formatMessage({
+                id: 'storageMappings.dialog.dataPlanes.validation.required',
+            }),
         },
     });
 
@@ -98,17 +98,23 @@ function CreateMappingWizardInner({
                     component: (
                         <>
                             <Typography sx={{ mb: 4 }}>
-                                Add a new storage location for your collection
-                                data. For information and access requirements,
-                                see the{' '}
+                                {intl.formatMessage({
+                                    id: 'storageMappings.dialog.create.description.prefix',
+                                })}
                                 <Link
-                                    href={docsUrl}
+                                    href={intl.formatMessage({
+                                        id: 'storageMappings.dialog.docsPath',
+                                    })}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    documentation
+                                    {intl.formatMessage({
+                                        id: 'storageMappings.dialog.docsLink',
+                                    })}
                                 </Link>
-                                .
+                                {intl.formatMessage({
+                                    id: 'storageMappings.dialog.create.description.suffix',
+                                })}
                             </Typography>
                             <Stack spacing={2}>
                                 <CardWrapper>
@@ -135,7 +141,9 @@ function CreateMappingWizardInner({
                                 </CardWrapper>
                                 <CardWrapper>
                                     <Typography sx={cardHeaderSx}>
-                                        Storage Locations
+                                        {intl.formatMessage({
+                                            id: 'storageMappings.dialog.storageLocations.title',
+                                        })}
                                     </Typography>
                                     <StorageFields
                                         defaultDataPlane={dataPlanes[0]}
@@ -165,15 +173,19 @@ function CreateMappingWizardInner({
                     component: (
                         <Stack spacing={3}>
                             <Typography>
-                                Each data plane that processes your data needs
-                                its own access to your storage bucket. For more
-                                details, see the{' '}
+                                {intl.formatMessage({
+                                    id: 'storageMappings.dialog.create.testDescription.prefix',
+                                })}
                                 <Link
-                                    href={docsUrl}
+                                    href={intl.formatMessage({
+                                        id: 'storageMappings.dialog.docsPath',
+                                    })}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    documentation
+                                    {intl.formatMessage({
+                                        id: 'storageMappings.dialog.docsLink',
+                                    })}
                                 </Link>
                             </Typography>
 

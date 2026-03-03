@@ -10,6 +10,8 @@ import {
     Stack,
 } from '@mui/material';
 
+import { useIntl } from 'react-intl';
+
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
 export function DataPlaneSelector({
@@ -27,13 +29,20 @@ export function DataPlaneSelector({
     onAccept: (dataPlane: DataPlaneNode) => void;
     onToggleAllowPublic: (value: boolean) => void;
 }) {
+    const intl = useIntl();
     return (
         <Stack spacing={1} direction="row" alignItems="end" sx={{ px: 1 }}>
             <FormControl fullWidth size="small" required>
-                <InputLabel>Data Plane</InputLabel>
+                <InputLabel>
+                    {intl.formatMessage({
+                        id: 'storageMappings.dialog.dataPlanes.selector.label',
+                    })}
+                </InputLabel>
                 <Select
                     value=""
-                    label="Data Plane"
+                    label={intl.formatMessage({
+                        id: 'storageMappings.dialog.dataPlanes.selector.label',
+                    })}
                     onChange={(e) => {
                         const node = options.find(
                             (dp) => dp.name === e.target.value
@@ -62,7 +71,9 @@ export function DataPlaneSelector({
                             size="small"
                         />
                     }
-                    label="Allow public"
+                    label={intl.formatMessage({
+                        id: 'storageMappings.dialog.dataPlanes.allowPublic',
+                    })}
                     slotProps={{
                         typography: { variant: 'body2' },
                     }}
