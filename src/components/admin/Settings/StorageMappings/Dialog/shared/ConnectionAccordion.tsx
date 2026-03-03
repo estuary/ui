@@ -144,11 +144,11 @@ export function ConnectionAccordion({
                     },
                 }}
             >
-                <Box
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
                         width: '100%',
                         pr: 1,
                         m: 0,
@@ -160,16 +160,14 @@ export function ConnectionAccordion({
                         {getStoreId(connection.store)}
                     </Typography>
                     <ConnectionStatusBadge result={connection} />
-                </Box>
+                </Stack>
             </AccordionSummary>
             <AccordionDetails sx={{ pt: 0.5 }}>
                 <Stack spacing={1}>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
                     >
                         <Box>
                             {connection.errorMessage ? (
@@ -190,7 +188,7 @@ export function ConnectionAccordion({
                         >
                             Retry
                         </Button>
-                    </Box>
+                    </Stack>
                     <ConnectionInstructions connection={connection} />
                 </Stack>
             </AccordionDetails>

@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 
-import { Box, Link, Typography } from '@mui/material';
+import { Link, Stack, Typography } from '@mui/material';
 
 import { cardHeaderSx } from 'src/context/Theme';
 
@@ -20,15 +20,11 @@ export function CardTitle({
     sx,
 }: CardTitleProps) {
     return (
-        <Box
-            sx={[
-                {
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                },
-                ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
-            ]}
+        <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={sx}
         >
             <Typography sx={cardHeaderSx}>{title}</Typography>
             {action ? (
@@ -46,6 +42,6 @@ export function CardTitle({
                     {action}
                 </Link>
             ) : null}
-        </Box>
+        </Stack>
     );
 }
