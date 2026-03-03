@@ -1,6 +1,8 @@
 import type { CloudProvider } from 'src/utils/cloudRegions';
 
-import { gql, useQuery } from 'urql';
+import { gql } from 'urql';
+
+import { useAllPages } from 'src/api/gql/useAllPages';
 
 interface DataPlaneGqlNode {
     dataPlaneName: string;
@@ -27,20 +29,6 @@ export interface DataPlaneNode {
     gcpServiceAccountEmail: string | null;
     azureApplicationClientId: string | null;
     azureApplicationName: string | null;
-
-    // // Deprecated snake_case aliases (for migration from PostgREST)
-    // /** @deprecated Use `fqdn` instead */
-    // data_plane_fqdn: string;
-    // /** @deprecated Use `name` instead */
-    // data_plane_name: string;
-    // /** @deprecated Use `cloudProvider` instead */
-    // cloud_provider: CloudProvider;
-    // /** @deprecated Use `isPublic` instead */
-    // is_public: boolean;
-    // /** @deprecated Use `awsIamUserArn` instead */
-    // aws_iam_user_arn: string | null;
-    // /** @deprecated Use `gcpServiceAccountEmail` instead */
-    // gcp_service_account_email: string | null;
 }
 
 // Transform GQL response to exported type (adds snake_case aliases and derived fields)
@@ -48,34 +36,28 @@ const toDataPlaneNode = (node: DataPlaneGqlNode): DataPlaneNode => {
     return {
         ...node,
         name: node.dataPlaneName,
-        // data_plane_name: node.dataPlaneName,
-        // cloud_provider: node.cloudProvider,
-        // is_public: node.isPublic,
-        // aws_iam_user_arn: node.awsIamUserArn,
-        // gcp_service_account_email: node.gcpServiceAccountEmail,
         azureApplicationClientId: node.azureApplicationClientId ?? null,
         azureApplicationName: node.azureApplicationName,
         fqdn: node.dataPlaneFqdn,
-        // data_plane_fqdn: node.dataPlaneFqdn,
         scope: node.isPublic ? 'public' : 'private',
     };
 };
 
-interface DataPlanesEdge {
-    node: DataPlaneGqlNode;
-}
-
-interface DataPlanesConnection {
-    edges: DataPlanesEdge[];
-}
-
 interface DataPlanesResponse {
-    dataPlanes: DataPlanesConnection;
+    dataPlanes: {
+        edges: {
+            node: DataPlaneGqlNode;
+        }[];
+        pageInfo: {
+            hasNextPage: boolean;
+            endCursor: string;
+        };
+    };
 }
 
-const DATA_PLANES_QUERY = gql<DataPlanesResponse>`
-    query DataPlanes {
-        dataPlanes {
+const DATA_PLANES_QUERY = gql<DataPlanesResponse, { after?: string }>`
+    query DataPlanes($after: String) {
+        dataPlanes(first: 100, after: $after) {
             edges {
                 node {
                     dataPlaneName
@@ -90,21 +72,23 @@ const DATA_PLANES_QUERY = gql<DataPlanesResponse>`
                     azureApplicationName
                 }
             }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
         }
     }
 `;
 
 export function useDataPlanes() {
-    const [result] = useQuery({ query: DATA_PLANES_QUERY });
+    const {
+        data: dataPlanes,
+        loading,
+        error,
+    } = useAllPages(DATA_PLANES_QUERY, {
+        getConnection: (data) => data.dataPlanes,
+        transform: toDataPlaneNode,
+    });
 
-    const dataPlanes =
-        result.data?.dataPlanes.edges.map((edge) =>
-            toDataPlaneNode(edge.node)
-        ) ?? [];
-
-    return {
-        dataPlanes,
-        loading: result.fetching,
-        error: result.error,
-    };
+    return { dataPlanes, loading, error };
 }
