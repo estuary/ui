@@ -1,7 +1,8 @@
 import type { SxProps, Theme } from '@mui/material';
 
-import { Link, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
+import { ActionLink } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ActionLink';
 import { cardHeaderSx } from 'src/context/Theme';
 
 interface CardTitleProps {
@@ -28,19 +29,9 @@ export function CardTitle({
         >
             <Typography sx={cardHeaderSx}>{title}</Typography>
             {action ? (
-                <Link
-                    component="button"
-                    variant="body2"
-                    underline="hover"
-                    disabled={actionDisabled}
-                    onClick={onAction}
-                    sx={{
-                        opacity: actionDisabled ? 0.5 : 1,
-                        pointerEvents: actionDisabled ? 'none' : 'auto',
-                    }}
-                >
+                <ActionLink onClick={onAction} disabled={actionDisabled}>
                     {action}
-                </Link>
+                </ActionLink>
             ) : null}
         </Stack>
     );
