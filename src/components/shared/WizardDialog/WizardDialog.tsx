@@ -10,6 +10,7 @@ import { Collapse, Dialog } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
+import { logRocketConsole } from 'src/services/shared';
 import { WizardContext } from 'src/components/shared/WizardDialog/context';
 import { WizardActions } from 'src/components/shared/WizardDialog/WizardActions';
 import { WizardContent } from 'src/components/shared/WizardDialog/WizardContent';
@@ -55,6 +56,11 @@ export function WizardDialog({
                     return false;
                 }
             } catch (error) {
+                logRocketConsole(
+                    'WizardDialog:advance:error',
+                    currentStep,
+                    error
+                );
                 setError(
                     error instanceof Error
                         ? error.message

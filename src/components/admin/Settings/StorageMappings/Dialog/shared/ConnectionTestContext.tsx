@@ -10,6 +10,7 @@ import {
 } from 'react';
 
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
+import { logRocketConsole } from 'src/services/shared';
 
 interface BaseConnection {
     dataPlane: DataPlaneNode;
@@ -308,6 +309,12 @@ export function useConnectionTest() {
                     });
                 }
             } catch (e) {
+                logRocketConsole(
+                    'StorageMapping:testConnections:error',
+                    prefix,
+                    e
+                );
+
                 const message =
                     e instanceof Error ? e.message : 'Connection test failed';
 
