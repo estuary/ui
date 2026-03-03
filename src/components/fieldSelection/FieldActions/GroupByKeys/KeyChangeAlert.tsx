@@ -1,4 +1,4 @@
-import type { KeyChangeAlertProps } from 'src/components/fieldSelection/types';
+import type { BindingUUIDProp } from 'src/components/fieldSelection/types';
 
 import { Typography } from '@mui/material';
 
@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import AlertBox from 'src/components/shared/AlertBox';
 import useLiveGroupByKey from 'src/hooks/fieldSelection/useLiveGroupByKey';
 
-const KeyChangeAlert = ({ bindingUUID }: KeyChangeAlertProps) => {
+const KeyChangeAlert = ({ bindingUUID }: BindingUUIDProp) => {
     const intl = useIntl();
 
     const { backfillRequired } = useLiveGroupByKey(bindingUUID);

@@ -412,3 +412,18 @@ export const useBinding_hasFieldConflicts = (bindingUUID?: string) => {
               )
     );
 };
+
+export const useBinding_fieldSelectionValidationContext = () => {
+    return useBindingStore(
+        useShallow((state) =>
+            Object.entries(state.selections)
+                .filter(
+                    ([_uuid, { status }]) => status === 'VALIDATION_REQUESTED'
+                )
+                .map(([uuid, { validationAttempts }]) => ({
+                    uuid,
+                    validationAttempts,
+                }))
+        )
+    );
+};

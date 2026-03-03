@@ -18,8 +18,8 @@ export const Workflows: Record<string, string> = {
     'workflows.error.initForm': `An issue was encountered initializing the form.`,
     'workflows.error.initFormSection': `An issue was encountered initializing this section of the form.`,
 
-    'workflows.error.bindings': `There was an issue fetching data related to your bindings.`,
-    'workflows.error.collections': `There was an issue fetching data related to your collections.`,
+    'workflows.error.bindings': `There was an issue fetching data related to your bindings. Please try again.`,
+    'workflows.error.collections': `There was an issue fetching data related to your collections. Please try again.`,
 
     'workflows.error.oldBoundCollection.added': `Your account uses Estuary's Trial bucket which includes ${trialDuration} days of storage and this collection is older than that. To ensure you have all data, please also backfill this collection from the source after adding it to the materialization.`,
     'workflows.error.oldBoundCollection.backfillAll': `Your account uses Estuary's Trial bucket which includes ${trialDuration} days of storage. There are collections bound to this materialization that are older than that.`,
@@ -181,7 +181,7 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.dialog.refreshFields.header': `Please wait while we gather information about your resource fields`,
     'fieldSelection.refresh.alert': `Refreshing the fields is recommended as editing the config or collection can sometimes change the options below.`,
     'fieldSelection.error.serverUpdateFailed': `Field selection update failed`,
-    'fieldSelection.error.validationFailed': `Field selection validation failed for {collection}.`,
+    'fieldSelection.error.validationFailed': `Field selection validation failed. If this issue persists, please contact support.`,
     'fieldSelection.error.groupBySaveFailed': `Group-by key update failed for {collection}.`,
     'fieldSelection.error.genericTerm.binding': `a binding`,
     'fieldSelection.table.cta.excludeAll': `Exclude All`,

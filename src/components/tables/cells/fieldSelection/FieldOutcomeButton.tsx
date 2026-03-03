@@ -11,6 +11,7 @@ import {
     hasFieldConflict,
     isSelectedField,
 } from 'src/utils/fieldSelection-utils';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
 const FieldOutcomeButton = ({
     bindingUUID,
@@ -19,7 +20,9 @@ const FieldOutcomeButton = ({
     const theme = useTheme();
 
     const validationFailed = useBindingStore((state) =>
-        bindingUUID ? state.selections[bindingUUID].validationFailed : false
+        bindingUUID && hasOwnProperty(state.selections, bindingUUID)
+            ? state.selections[bindingUUID].validationFailed
+            : false
     );
 
     const conflictExists = hasFieldConflict(outcome);

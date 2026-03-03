@@ -21,7 +21,8 @@ function DetailsRange() {
         store.range,
         store.setRange,
     ]);
-    const { relativeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
+    const { relativeUnit, selectedLabelKey } =
+        LUXON_GRAIN_SETTINGS[range.grain];
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -61,7 +62,9 @@ function DetailsRange() {
             >
                 {intl.formatMessage(
                     {
-                        id: `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
+                        id:
+                            selectedLabelKey ??
+                            `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
                     },
                     { range: range.amount }
                 )}
@@ -153,6 +156,18 @@ function DetailsRange() {
                             range: 30,
                         }
                     )}
+                </MenuItem>
+                <MenuItem
+                    onClick={() =>
+                        handlers.setFilter({
+                            amount: 13, // Ensure we include the previous year's current month
+                            grain: DataGrains.monthly,
+                        })
+                    }
+                >
+                    {intl.formatMessage({
+                        id: 'detailsPanel.recentUsage.filter.label.year',
+                    })}
                 </MenuItem>
             </Menu>
         </Stack>

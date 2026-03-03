@@ -10,6 +10,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
+import FieldValidationError from 'src/components/fieldSelection/Error';
 import KeyChangeAlert from 'src/components/fieldSelection/FieldActions/GroupByKeys/KeyChangeAlert';
 import RefreshButton from 'src/components/fieldSelection/RefreshButton';
 import RefreshStatus from 'src/components/fieldSelection/RefreshStatus';
@@ -104,12 +105,9 @@ function FieldSelectionViewer({
                     });
 
                     enqueueSnackbar(
-                        intl.formatMessage(
-                            {
-                                id: 'fieldSelection.error.validationFailed',
-                            },
-                            { collection: collectionName }
-                        ),
+                        intl.formatMessage({
+                            id: 'fieldSelection.error.validationFailed',
+                        }),
                         { ...snackbarSettings, variant: 'error' }
                     );
 
@@ -149,6 +147,8 @@ function FieldSelectionViewer({
                     </Stack>
 
                     <KeyChangeAlert bindingUUID={bindingUUID} />
+
+                    <FieldValidationError bindingUUID={bindingUUID} />
 
                     <RefreshStatus
                         show={
