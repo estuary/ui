@@ -60,8 +60,6 @@ const maskEverythingURLs = [
     // Same as above but just for local
     'src/',
     'node_modules/',
-
-    ...completelyIgnoredURLs,
 ];
 
 const shouldMaskEverything = (url?: string) =>
