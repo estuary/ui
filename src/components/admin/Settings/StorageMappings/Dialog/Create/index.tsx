@@ -222,6 +222,7 @@ export function CreateMappingWizard() {
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
         defaultValues: {
+            catalogPrefix: '',
             dataPlanes: [],
             fragmentStores: [{}],
             allowPublic: false,
