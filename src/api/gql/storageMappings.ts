@@ -232,7 +232,13 @@ export function useStorageMappingService() {
 
     const refetchMappings = useCallback(() => {
         if (tenant) {
-            client.query(QUERY, { underPrefix: tenant }, { requestPolicy: 'network-only' }).toPromise();
+            client
+                .query(
+                    QUERY,
+                    { underPrefix: tenant },
+                    { requestPolicy: 'network-only' }
+                )
+                .toPromise();
         }
     }, [client, tenant]);
 

@@ -10,10 +10,10 @@ import { Collapse, Dialog } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
-import { logRocketConsole } from 'src/services/shared';
 import { WizardContext } from 'src/components/shared/WizardDialog/context';
 import { WizardActions } from 'src/components/shared/WizardDialog/WizardActions';
 import { WizardContent } from 'src/components/shared/WizardDialog/WizardContent';
+import { logRocketConsole } from 'src/services/shared';
 
 const TITLE_ID = 'wizard-dialog-title';
 
