@@ -1,1 +1,1 @@
-export { default } from './DataPlanesCard';
+export { DataPlanesCard } from './DataPlanesCard';
