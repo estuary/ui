@@ -94,7 +94,7 @@ export function ConnectionAccordion({
     onToggle,
     disabled = false,
 }: ConnectionAccordionProps) {
-    const { testOne } = useConnectionTest();
+    const { connections, testConnections, isTesting } = useConnectionTest();
     const intl = useIntl();
 
     const prevStatusRef = useRef(connection.status);
@@ -102,8 +102,9 @@ export function ConnectionAccordion({
     onToggleRef.current = onToggle;
 
     useEffect(() => {
-        // Collapse only when transitioning from testing to success
+        // Collapse only when this expanded accordion transitions from testing to success
         if (
+            expanded &&
             prevStatusRef.current === 'testing' &&
             connection.status === 'success'
         ) {
@@ -111,7 +112,7 @@ export function ConnectionAccordion({
         }
 
         prevStatusRef.current = connection.status;
-    }, [connection.status, connection.errorMessage]);
+    }, [expanded, connection.status, connection.errorMessage]);
 
     return (
         <Accordion
@@ -190,8 +191,16 @@ export function ConnectionAccordion({
                         <Button
                             variant="text"
                             size="small"
-                            disabled={connection.status === 'testing'}
-                            onClick={() => testOne(connection)}
+                            disabled={isTesting}
+                            onClick={() => {
+                                const storeId = getStoreId(connection.store);
+                                const sameBucket = connections.filter(
+                                    (c) =>
+                                        !c.orphaned &&
+                                        getStoreId(c.store) === storeId
+                                );
+                                testConnections(sameBucket).catch(() => {});
+                            }}
                             startIcon={<Refresh width={16} height={16} />}
                         >
                             {intl.formatMessage({
