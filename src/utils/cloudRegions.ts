@@ -170,5 +170,5 @@ export const getRegionDisplayName = (
     region: string
 ): string => {
     const regionMap = REGION_MAPS[provider];
-    return regionMap?.[region] ?? region + provider;
+    return regionMap?.[region] ?? `${provider}/${region}`;
 };
