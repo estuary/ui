@@ -28,15 +28,22 @@ const logRocketSettings = getLogRocketSettings();
 export const MISSING = '**MISSING**';
 export const MASKED = '**MASKED**';
 
-// for endspoints where we want nothing ever logged
+const completelyIgnoredURLs = [
+    // We do not control user extensions so we do not need to know about them
+    'browser-extension://',
+    'chrome-extension://',
+    'moz-extension://',
+];
+
+// for endpoints where we want nothing ever logged
 const maskEverythingURLs = [
     // When calling encryption stuff we never want to leak anything
     'config-encryption.estuary.dev',
 
-    // Support staf make A LOT of these and we do not need them
+    // Support staff make A LOT of these and we do not need them
     'auth_roles?offset',
 
-    // We do not need to track analytics specifically
+    // No need to track 3rd party
     'google.com',
     'doubleclick.net',
     'googleapis.com',
@@ -51,10 +58,15 @@ const maskEverythingURLs = [
     // Same as above but just for local
     'src/',
     'node_modules/',
+
+    ...completelyIgnoredURLs,
 ];
 
 const shouldMaskEverything = (url?: string) =>
     maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
+
+const shouldIgnore = (url?: string) =>
+    completelyIgnoredURLs.some((el) => url?.toLowerCase().includes(el));
 
 const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
 const shouldMaskEverythingInOperation = (operation?: string) =>
@@ -64,9 +76,9 @@ const shouldMaskEverythingInOperation = (operation?: string) =>
 
 // for endpoints where we do not want to mess with the request at all
 //  These should stay in sync with what is added to the CSP policy (public/nginx.conf)
-const ignoreRegEx =
-    /https?:\/\/(?:[\w-]+\.)*(?:logrocket|lr-ingest|lr-in|lr-in-prod|lr-intake|intake-lr|logr-ingest)/;
-const shouldIgnore = (url?: string) => ignoreRegEx.test(url ?? '');
+const logRocketRegEx =
+    /https?:\/\/(?:[\w-]+\.)*(?:logrocket|lr-ingest|lr-in|lr-in-prod|lr-intake|intake-lr|logr-ingest|lrkt-in|lgrckt-in)/;
+const logRocketRequest = (url?: string) => logRocketRegEx.test(url ?? '');
 
 // The headers we never want to have logged
 const maskHeaderKeys = ['apikey', 'Authorization'];
@@ -140,7 +152,7 @@ const parseBody = (body: any): ParsedBody => {
 // Go through the request and handle the skipping, masking, filtering
 const maskContent = (requestResponse: any) => {
     // Sometimes we just want to pass along the content exactly as is
-    if (shouldIgnore(requestResponse.url)) {
+    if (logRocketRequest(requestResponse.url)) {
         return requestResponse;
     }
 
@@ -212,13 +224,23 @@ export const initLogRocket = () => {
         ) {
             settings.network = {};
             if (logRocketSettings.sanitize.response) {
-                settings.network.responseSanitizer = (response: any) =>
-                    maskContent(response);
+                settings.network.responseSanitizer = (response: any) => {
+                    if (shouldIgnore(response.url ?? '')) {
+                        return null;
+                    }
+
+                    return maskContent(response);
+                };
             }
 
             if (logRocketSettings.sanitize.request) {
-                settings.network.requestSanitizer = (request: any) =>
-                    maskContent(request);
+                settings.network.requestSanitizer = (request: any) => {
+                    if (shouldIgnore(request.url ?? '')) {
+                        return null;
+                    }
+
+                    return maskContent(request);
+                };
             }
         }
 
