@@ -228,6 +228,13 @@ function fromServerStore(store: ServerFragmentStore): FragmentStore {
 
 export function useStorageMappingService() {
     const client = useClient();
+    const tenant = useTenantStore((state) => state.selectedTenant);
+
+    const refetchMappings = useCallback(() => {
+        if (tenant) {
+            client.query(QUERY, { underPrefix: tenant }, { requestPolicy: 'network-only' }).toPromise();
+        }
+    }, [client, tenant]);
 
     const testConnection = useCallback(
         async (
@@ -289,9 +296,10 @@ export function useStorageMappingService() {
                 );
             }
 
+            refetchMappings();
             return result.data.createStorageMapping;
         },
-        [client]
+        [client, refetchMappings]
     );
 
     const update = useCallback(
@@ -321,9 +329,10 @@ export function useStorageMappingService() {
                 );
             }
 
+            refetchMappings();
             return result.data.updateStorageMapping;
         },
-        [client]
+        [client, refetchMappings]
     );
 
     return {
