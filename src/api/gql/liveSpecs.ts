@@ -50,40 +50,53 @@ const LiveSpecsQuery = gql<
 
 export function useLiveSpecs() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const prefix = selectedTenant ?? '';
 
-    const allNames = useRef<Set<string>>(new Set());
-    const [after, setAfter] = useState<string | undefined>(undefined);
+    const accumulator = useRef<{ tenant: string; names: Set<string> }>({
+        tenant: '',
+        names: new Set(),
+    });
+    const [cursor, setCursor] = useState<string | undefined>();
     const [result, setResult] = useState<string[]>([]);
 
-    // reset when tenant changes
+    // Reset when tenant changes
     useEffect(() => {
-        allNames.current = new Set();
-        setAfter(undefined);
+        accumulator.current = { tenant: prefix, names: new Set() };
+        setCursor(undefined);
         setResult([]);
-    }, [selectedTenant]);
+    }, [prefix]);
 
     const [{ fetching, data }] = useQuery({
         query: LiveSpecsQuery,
-        variables: { prefix: selectedTenant ?? '', after },
+        variables: { prefix, after: cursor },
         pause: !selectedTenant,
     });
 
+    // Accumulate paginated specs, then setResult when we reach the end
     useEffect(() => {
         if (fetching || !data) {
             return;
         }
 
-        for (const edge of data.liveSpecs.edges) {
-            allNames.current.add(edge.node.catalogName);
+        const acc = accumulator.current;
+
+        // just in case tenant changes while we're fetching pages
+        if (acc.tenant !== prefix) {
+            return;
         }
 
-        const endCursor = data.liveSpecs.pageInfo?.endCursor;
-        if (data.liveSpecs.pageInfo?.hasNextPage && endCursor) {
-            setAfter(endCursor);
-        } else {
-            setResult(Array.from(allNames.current));
+        for (const { node } of data.liveSpecs.edges) {
+            acc.names.add(node.catalogName);
         }
-    }, [data, fetching]);
+
+        const { hasNextPage, endCursor } = data.liveSpecs.pageInfo;
+
+        if (hasNextPage && endCursor) {
+            setCursor(endCursor);
+        } else {
+            setResult([...acc.names]);
+        }
+    }, [data, fetching, prefix]);
 
     return result;
 }
