@@ -95,6 +95,7 @@ export function useDialogLink<K extends DialogKey>(
 ) {
     const [searchParams] = useSearchParams();
     const context = args[0] as Record<string, string> | undefined;
+    const stableContextKey = context ? JSON.stringify(context) : '';
 
     return useMemo(() => {
         const params = new URLSearchParams(searchParams);
@@ -105,5 +106,8 @@ export function useDialogLink<K extends DialogKey>(
             }
         }
         return `?${params}`;
-    }, [searchParams, key, context]);
+        // stableContextKey is a stable proxy for the context object which always looks fresh
+        // and would otherwise cause this to recompute on every render
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams, key, stableContextKey]);
 }
