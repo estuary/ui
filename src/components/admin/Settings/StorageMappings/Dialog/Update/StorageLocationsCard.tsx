@@ -6,7 +6,6 @@ import type { StorageMappingFormData } from 'src/components/admin/Settings/Stora
 import { useCallback, useEffect, useState } from 'react';
 
 import {
-    Box,
     Collapse,
     Divider,
     IconButton,
@@ -48,12 +47,12 @@ function CompactStoreRow({
     if (store.storagePrefix) details.push(store.storagePrefix);
 
     return (
-        <Box
+        <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
             sx={[
                 {
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
                     ...primaryStoreSx,
                     opacity: inactive ? 0.6 : 1,
                 },
@@ -79,7 +78,7 @@ function CompactStoreRow({
             <Typography variant="caption" color="text.secondary">
                 {details.join(' \u00B7 ')}
             </Typography>
-        </Box>
+        </Stack>
     );
 }
 
@@ -149,9 +148,7 @@ function StoreRowActions({
 }
 
 const getStoreKey = (store: FragmentStore) =>
-    store.provider +
-    store.region +
-    (store.provider === 'AZURE' ? store.containerName : store.bucket);
+    `${store.provider}${store.region}${store.provider === 'AZURE' ? store.containerName : store.bucket}`;
 
 export function StorageLocationsCard({
     formOpen,
@@ -277,11 +274,11 @@ export function StorageLocationsCard({
 
     return (
         <>
-            <Box
+            <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
                 sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
                     // if the nested form is open, negative margin shrinks some unused whitespace above the form actions
                     mb: showNestedStorageForm ? -4 : 0,
                     transition: (theme) =>
@@ -305,7 +302,7 @@ export function StorageLocationsCard({
                         Change primary store
                     </Link>
                 </Collapse>
-            </Box>
+            </Stack>
             <Stack spacing={1}>
                 <Collapse
                     in={showNestedStorageForm}
