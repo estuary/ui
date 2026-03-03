@@ -282,12 +282,12 @@ function DialogInner({
 export function UpdateMappingWizard() {
     const { open, onClose, context } = useDialog('EDIT_STORAGE_MAPPING');
     const { storageMappings } = useStorageMappings();
-    const { dataPlanes } = useDataPlanes();
+    const { dataPlanes, loading: dataPlanesLoading } = useDataPlanes();
 
     const prefix = context.prefix;
 
     const storageMapping = useMemo((): MappingData | null => {
-        if (!prefix) return null;
+        if (!prefix || dataPlanesLoading) return null;
 
         const mapping = storageMappings.find(
             (sm) => sm.catalogPrefix === prefix
@@ -303,7 +303,7 @@ export function UpdateMappingWizard() {
                 .filter((dp): dp is DataPlaneNode => dp !== undefined),
             stores: mapping.spec.fragmentStores,
         };
-    }, [prefix, storageMappings, dataPlanes]);
+    }, [prefix, storageMappings, dataPlanes, dataPlanesLoading]);
 
     const methods = useForm<StorageMappingFormData>({
         mode: 'onChange',
