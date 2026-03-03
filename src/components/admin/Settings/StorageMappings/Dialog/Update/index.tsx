@@ -322,6 +322,12 @@ export function UpdateMappingWizard() {
     // defaultValues only apply on mount, so if storageMapping is null initially
     // (data still loading), the form needs to be reset once data arrives.
     const initializedForPrefix = useRef<string | null>(null);
+    const handleClose = useCallback(() => {
+        // Clear the initialized ref so that if the same mapping is edited again, the form will reset to the correct values.
+        initializedForPrefix.current = null;
+        onClose();
+    }, [onClose]);
+
     useEffect(() => {
         if (
             storageMapping &&
@@ -360,7 +366,7 @@ export function UpdateMappingWizard() {
                     key={storageMapping.catalogPrefix}
                     mapping={storageMapping}
                     open={open}
-                    onClose={onClose}
+                    onClose={handleClose}
                 />
             </ConnectionTestProvider>
         </FormProvider>
