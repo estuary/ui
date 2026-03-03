@@ -7,8 +7,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Link, Stack, Typography } from '@mui/material';
 
-import { logRocketConsole } from 'src/services/shared';
-
 import {
     FormProvider,
     useFieldArray,
@@ -34,6 +32,7 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { useDialog } from 'src/hooks/useDialog';
+import { logRocketConsole } from 'src/services/shared';
 
 interface MappingData {
     catalogPrefix: string;
@@ -231,7 +230,9 @@ function DialogInner({
                                         onAction={() =>
                                             // errors are surfaced in each accordion in the ConnectionTestList - safe to catch and ignore here
                                             void testConnections(
-                                                connections
+                                                connections.filter(
+                                                    (c) => !c.orphaned
+                                                )
                                             ).catch(() => {})
                                         }
                                         actionDisabled={isTesting}
