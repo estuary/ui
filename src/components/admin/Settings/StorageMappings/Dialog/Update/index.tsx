@@ -7,6 +7,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Link, Stack, Typography } from '@mui/material';
 
+import { logRocketConsole } from 'src/services/shared';
+
 import {
     FormProvider,
     useFieldArray,
@@ -333,6 +335,17 @@ export function UpdateMappingWizard() {
             });
         }
     }, [storageMapping, methods]);
+
+    // If the dialog is open but we can't resolve a mapping (missing prefix
+    // or no match) and we're not still loading, close the dialog to clear
+    // stale query params. This shouldn't ever happen.
+    const notFound = open && !dataPlanesLoading && (!prefix || !storageMapping);
+    useEffect(() => {
+        if (notFound) {
+            logRocketConsole('StorageMapping:edit:notFound', { prefix });
+            onClose();
+        }
+    }, [notFound, onClose, prefix]);
 
     if (!storageMapping) return null;
 
