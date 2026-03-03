@@ -19,6 +19,7 @@ import { Check, EditPencil, Xmark } from 'iconoir-react';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
+import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
 import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
 import { cardHeaderSx } from 'src/context/Theme';
 
@@ -161,6 +162,11 @@ export function StorageLocationsCard({
 }) {
     const { control, watch, trigger, getValues } =
         useFormContext<StorageMappingFormData>();
+    const {
+        addStore: connectStore,
+        removeStore: disconnectStore,
+        testConnections,
+    } = useConnectionTest();
     const { prepend, remove } = useFieldArray({
         control,
         name: 'fragmentStores',
@@ -216,6 +222,8 @@ export function StorageLocationsCard({
             setNewKey(addKey);
             setIncomingKey(addKey);
             setFormOpen(false);
+            const newConnections = connectStore(store);
+            testConnections(newConnections).catch(() => {});
         }
     };
 
@@ -227,14 +235,24 @@ export function StorageLocationsCard({
 
     const handleCancelNestedComplete = useCallback(() => {
         if (closing) {
+            // If the store was previously accepted (has a newKey), notify the
+            // parent so its connections can be cleaned up before we remove it.
+            if (newKey) {
+                const store = getValues('fragmentStores.0');
+                disconnectStore(store);
+            }
             setClosing(false);
             setFormOpen(false);
             setNewKey(null);
             remove(0);
         }
-    }, [closing, remove, setFormOpen]);
+    }, [closing, remove, setFormOpen, newKey, getValues, disconnectStore]);
 
     const handleRemoveStore = (key: string) => {
+        const store = fragmentStores.find((s) => getStoreKey(s) === key);
+        if (store) {
+            disconnectStore(store);
+        }
         setNewKey(null);
         setOutgoingKey(key);
     };
