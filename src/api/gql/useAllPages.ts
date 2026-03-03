@@ -89,6 +89,12 @@ export function useAllPages<
             return;
         }
 
+        // When on the first page, reset the accumulator so URQL refetches
+        // (TTL expiry, StrictMode double-run) don't duplicate items.
+        if (!cursor) {
+            acc.items = [];
+        }
+
         const connection = getConnectionRef.current(data);
 
         for (const { node } of connection.edges) {
@@ -102,7 +108,7 @@ export function useAllPages<
         } else {
             setResult([...acc.items]);
         }
-    }, [data, fetching, variablesKey]);
+    }, [data, fetching, variablesKey, cursor]);
 
     return {
         data: result,
