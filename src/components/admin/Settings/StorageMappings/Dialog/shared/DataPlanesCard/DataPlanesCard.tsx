@@ -25,7 +25,7 @@ function names(dataPlanes: DataPlaneNode[]): Set<string> {
     return new Set(dataPlanes.map((dp) => dp.name));
 }
 
-export default function DataPlanesCard({
+export function DataPlanesCard({
     dataPlanes: selectedDps,
     defaultDataPlane: defaultDp,
     allowPublicChecked,
