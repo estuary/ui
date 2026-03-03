@@ -1,87 +1,11 @@
-import type {
-    DataPlaneCellsProps,
-    RowProps,
-    RowsProps,
-} from 'src/components/tables/StorageMappings/types';
+import type { RowsProps } from 'src/components/tables/StorageMappings/types';
 
 import { TableCell, TableRow, useTheme } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
-import ChipStatus from 'src/components/tables/cells/ChipStatus';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import { useDialog } from 'src/hooks/useDialog';
-
-function DataPlaneCells({ dataPlanes, store }: DataPlaneCellsProps) {
-    const { provider, bucket, prefix } = store;
-
-    return (
-        <>
-            <ChipListCell
-                values={dataPlanes ?? []}
-                maxChips={3}
-                stripPath={false}
-            />
-
-            <TableCell>{provider}</TableCell>
-
-            <TableCell>{bucket}</TableCell>
-
-            <TableCell>{prefix}</TableCell>
-        </>
-    );
-}
-
-function Row({ row, rowSx, onRowClick }: RowProps) {
-    const key = `StorageMappings-${row.id}-stores-`;
-
-    return (
-        <>
-            {row.spec.stores.map((store, index) =>
-                index === 0 ? (
-                    <TableRow
-                        hover
-                        key={`${key}${index}`}
-                        sx={rowSx}
-                        onClick={() => onRowClick(row)}
-                    >
-                        <TableCell>{row.catalog_prefix}</TableCell>
-
-                        <ChipStatus
-                            color="success"
-                            messageId="storageMappings.status.active"
-                        />
-
-                        <DataPlaneCells
-                            store={store}
-                            dataPlanes={row.spec.data_planes}
-                        />
-
-                        <TimeStamp time={row.updated_at} enableRelative />
-                    </TableRow>
-                ) : (
-                    <TableRow
-                        hover
-                        key={`${key}${index}`}
-                        sx={rowSx}
-                        onClick={() => onRowClick(row)}
-                    >
-                        <TableCell />
-
-                        <TableCell />
-
-                        <DataPlaneCells
-                            store={store}
-                            dataPlanes={row.spec.data_planes}
-                        />
-
-                        <TableCell />
-                    </TableRow>
-                )
-            )}
-        </>
-    );
-}
 
 function Rows({ data }: RowsProps) {
     const theme = useTheme();
@@ -94,14 +18,34 @@ function Rows({ data }: RowsProps) {
 
     return (
         <>
-            {data.map((row) => (
-                <Row
-                    row={row}
-                    key={row.id}
-                    rowSx={getEntityTableRowSx(theme)}
-                    onRowClick={handleRowClick}
-                />
-            ))}
+            {data.map((row) => {
+                const store = row.spec.stores[0];
+
+                return (
+                    <TableRow
+                        hover
+                        key={`StorageMappings-${row.id}`}
+                        sx={getEntityTableRowSx(theme)}
+                        onClick={() => handleRowClick(row)}
+                    >
+                        <TableCell>{row.catalog_prefix}</TableCell>
+
+                        <ChipListCell
+                            values={row.spec.data_planes ?? []}
+                            maxChips={3}
+                            stripPath={false}
+                        />
+
+                        <TableCell>
+                            {store.provider}/{store.bucket}
+                        </TableCell>
+
+                        <TableCell>{store.prefix}</TableCell>
+
+                        <TimeStamp time={row.updated_at} enableRelative />
+                    </TableRow>
+                );
+            })}
         </>
     );
 }

@@ -22,19 +22,11 @@ export const tableColumns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'data.status',
-    },
-    {
-        field: null,
         headerIntlKey: 'entityTable.data.dataPlanes',
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.provider',
-    },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.data.bucket',
+        headerIntlKey: 'entityTable.data.primaryStore',
     },
     {
         field: null,
