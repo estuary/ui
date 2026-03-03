@@ -53,10 +53,7 @@ export function ConnectionList({ autoTest = false }: { autoTest?: boolean }) {
             // these will be animated in - storing the keys so we know when the animation is done
             setIncomingKeys(new Set(added.map(connectionKey)));
             if (autoTest) {
-                // only autotest connections that don't already have results
-                autoTestQueue.current.push(
-                    ...added.filter((c) => c.status === 'idle')
-                );
+                autoTestQueue.current.push(...added);
             }
         }
 
