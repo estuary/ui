@@ -21,12 +21,11 @@ import {
     useStorageMappingService,
 } from 'src/api/gql/storageMappings';
 import {
-    ConnectionList,
     ConnectionTestProvider,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
 import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard';
-import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
+import { ConnectionTestsCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/ConnectionTestsCard';
 import { StorageLocationsCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/StorageLocationsCard';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import CardWrapper from 'src/components/shared/CardWrapper';
@@ -60,8 +59,6 @@ function DialogInner({
         initializeEndpoints,
         addDataPlane: connectToDp,
         removeDataPlane: disconnectDp,
-        connections,
-        isTesting,
     } = useConnectionTest();
 
     const initialized = useRef(false);
@@ -236,30 +233,7 @@ function DialogInner({
                                     />
                                 </CardWrapper>
                                 <CardWrapper>
-                                    <CardTitle
-                                        title={intl.formatMessage({
-                                            id: 'storageMappings.dialog.connectionTests.title',
-                                        })}
-                                        action={intl.formatMessage({
-                                            id: 'storageMappings.dialog.connectionTests.runTests',
-                                        })}
-                                        onAction={() =>
-                                            // errors are surfaced in each accordion in the ConnectionTestList - safe to catch and ignore here
-                                            void testConnections(
-                                                connections.filter(
-                                                    (c) => !c.orphaned
-                                                )
-                                            ).catch(() => {})
-                                        }
-                                        actionDisabled={isTesting}
-                                    />
-                                    <Typography>
-                                        {intl.formatMessage({
-                                            id: 'storageMappings.dialog.connectionTests.allMustPass',
-                                        })}
-                                    </Typography>
-
-                                    <ConnectionList autoTest />
+                                    <ConnectionTestsCard />
                                 </CardWrapper>
                             </Stack>
                         </>
@@ -287,8 +261,6 @@ function DialogInner({
             selectDataPlane,
             setValue,
             testConnections,
-            connections,
-            isTesting,
         ]
     );
 
