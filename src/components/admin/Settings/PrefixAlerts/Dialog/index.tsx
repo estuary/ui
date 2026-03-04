@@ -97,9 +97,9 @@ function AlertSubscriptionDialog({
                 >
                     <PrefixField staticPrefix={staticPrefix} />
 
-                    <AlertTypeField />
-
                     <EmailListField />
+
+                    <AlertTypeField />
                 </Grid>
             </DialogContent>
 

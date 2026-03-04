@@ -7,6 +7,7 @@ export default function EmailListField() {
         <Grid
             item
             xs={12}
+            md={7}
             sx={{
                 maxHeight: 250,
                 overflow: 'auto',
