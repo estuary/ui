@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 
 import { Check, EditPencil, Xmark } from 'iconoir-react';
-import { Flipped, Flipper } from 'react-flip-toolkit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
@@ -338,12 +337,7 @@ export function StorageLocationsCard({
                         />
                     </Stack>
                 </Collapse>
-                <Flipper
-                    flipKey={fragmentStores
-                        .filter((_, i) => !(formOpen && i === 0))
-                        .map(getStoreKey)
-                        .join(',')}
-                >
+                <Stack>
                     {fragmentStores.map((store, index) => {
                         // skip the store being edited in the nested form
                         if (formOpen && index === 0) return null;
@@ -360,32 +354,30 @@ export function StorageLocationsCard({
                                 onExited={handleStoreRemoveExited}
                                 unmountOnExit
                             >
-                                <Flipped flipId={key}>
-                                    <Stack
-                                        direction="row"
-                                        alignItems="center"
-                                        spacing={1}
-                                        sx={{ mb: 1 }}
-                                    >
-                                        <CompactStoreRow
-                                            sx={{ flex: 1 }}
-                                            store={store}
-                                            inactive={index > 0}
+                                <Stack
+                                    direction="row"
+                                    alignItems="center"
+                                    spacing={1}
+                                    sx={{ mb: 1 }}
+                                >
+                                    <CompactStoreRow
+                                        sx={{ flex: 1 }}
+                                        store={store}
+                                        inactive={index > 0}
+                                    />
+                                    {showRowActions ? (
+                                        <StoreRowActions
+                                            onEdit={() => setFormOpen(true)}
+                                            onRemove={() =>
+                                                handleRemoveStore(key)
+                                            }
                                         />
-                                        {showRowActions ? (
-                                            <StoreRowActions
-                                                onEdit={() => setFormOpen(true)}
-                                                onRemove={() =>
-                                                    handleRemoveStore(key)
-                                                }
-                                            />
-                                        ) : null}
-                                    </Stack>
-                                </Flipped>
+                                    ) : null}
+                                </Stack>
                             </Collapse>
                         );
                     })}
-                </Flipper>
+                </Stack>
                 <Collapse in={showHistoricalDataNote}>
                     <Typography
                         variant="caption"

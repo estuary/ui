@@ -4,8 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Collapse, Stack } from '@mui/material';
 
-import { Flipped, Flipper } from 'react-flip-toolkit';
-
 import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionAccordion';
 import {
     getStoreId,
@@ -96,53 +94,43 @@ export function ConnectionList({ autoTest = false }: { autoTest?: boolean }) {
             prev.filter((c) => connectionKey(c) !== key)
         );
 
-    const flipKey = `${renderList.map(connectionKey).join(',')}`;
-
     return (
-        <Flipper flipKey={flipKey}>
-            <Stack spacing={1} sx={{ contain: 'inline-size' }}>
-                {renderList.map((c) => {
-                    const key = connectionKey(c);
-                    const isLeaving = outgoingConnections.some(
-                        (lc) => connectionKey(lc) === key
-                    );
-                    const isEntering = incomingKeys.has(key);
-                    const visible = !isLeaving && !isEntering;
+        <Stack spacing={1} sx={{ contain: 'inline-size' }}>
+            {renderList.map((c) => {
+                const key = connectionKey(c);
+                const isLeaving = outgoingConnections.some(
+                    (lc) => connectionKey(lc) === key
+                );
+                const isEntering = incomingKeys.has(key);
+                const visible = !isLeaving && !isEntering;
 
-                    return (
-                        <Flipped key={key} flipId={key}>
-                            <Collapse
-                                in={visible}
-                                onExited={
-                                    isLeaving
-                                        ? () =>
-                                              removeKeyWhenAnimationComplete(
-                                                  key
-                                              )
-                                        : undefined
-                                }
-                                unmountOnExit
-                            >
-                                <ConnectionAccordion
-                                    connection={c}
-                                    expanded={
-                                        c.orphaned ? false : expandedKey === key
-                                    }
-                                    onToggle={
-                                        c.orphaned
-                                            ? () => {}
-                                            : (isExpanded) =>
-                                                  setExpandedKey(
-                                                      isExpanded ? key : null
-                                                  )
-                                    }
-                                    disabled={c.orphaned}
-                                />
-                            </Collapse>
-                        </Flipped>
-                    );
-                })}
-            </Stack>
-        </Flipper>
+                return (
+                    <Collapse
+                        key={key}
+                        in={visible}
+                        onExited={
+                            isLeaving
+                                ? () => removeKeyWhenAnimationComplete(key)
+                                : undefined
+                        }
+                        unmountOnExit
+                    >
+                        <ConnectionAccordion
+                            connection={c}
+                            expanded={c.orphaned ? false : expandedKey === key}
+                            onToggle={
+                                c.orphaned
+                                    ? () => {}
+                                    : (isExpanded) =>
+                                          setExpandedKey(
+                                              isExpanded ? key : null
+                                          )
+                            }
+                            disabled={c.orphaned}
+                        />
+                    </Collapse>
+                );
+            })}
+        </Stack>
     );
 }
