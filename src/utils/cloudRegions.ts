@@ -1,6 +1,7 @@
 // Sources:
 // - AWS: https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html
 // - GCP: https://status.cloud.google.com/regional/americas
+// - Azure: https://learn.microsoft.com/en-us/azure/reliability/regions-list
 
 export type CloudProvider = 'AWS' | 'GCP' | 'AZURE';
 
@@ -96,68 +97,70 @@ const GCP_REGIONS: Record<string, string> = {
 
 const AZURE_REGIONS: Record<string, string> = {
     // Americas
+    brazilsouth: 'Brazil South (São Paulo)',
+    brazilsoutheast: 'Brazil Southeast (Rio de Janeiro)',
+    canadacentral: 'Canada Central (Toronto)',
+    canadaeast: 'Canada East (Quebec City)',
+    centralus: 'Central US (Iowa)',
+    chilecentral: 'Chile Central (Santiago)',
     eastus: 'East US (Virginia)',
     eastus2: 'East US 2 (Virginia)',
-    centralus: 'Central US (Iowa)',
+    mexicocentral: 'Mexico Central (Querétaro)',
     northcentralus: 'North Central US (Illinois)',
     southcentralus: 'South Central US (Texas)',
     westcentralus: 'West Central US (Wyoming)',
     westus: 'West US (California)',
     westus2: 'West US 2 (Washington)',
     westus3: 'West US 3 (Arizona)',
-    canadacentral: 'Canada Central (Toronto)',
-    canadaeast: 'Canada East (Quebec City)',
-    brazilsouth: 'Brazil South (São Paulo)',
-    brazilsoutheast: 'Brazil Southeast (Rio de Janeiro)',
-    chilecentral: 'Chile Central (Santiago)',
-    mexicocentral: 'Mexico Central (Querétaro)',
 
     // Europe
-    northeurope: 'North Europe (Ireland)',
-    westeurope: 'West Europe (Netherlands)',
-    uksouth: 'UK South (London)',
-    ukwest: 'UK West (Cardiff)',
-    francecentral: 'France Central (Paris)',
-    francesouth: 'France South (Marseille)',
-    germanywestcentral: 'Germany West Central (Frankfurt)',
-    germanynorth: 'Germany North (Berlin)',
-    switzerlandnorth: 'Switzerland North (Zürich)',
-    switzerlandwest: 'Switzerland West (Geneva)',
-    norwayeast: 'Norway East (Oslo)',
-    norwaywest: 'Norway West (Stavanger)',
-    swedencentral: 'Sweden Central (Gävle)',
-    polandcentral: 'Poland Central (Warsaw)',
-    italynorth: 'Italy North (Milan)',
-    spaincentral: 'Spain Central (Madrid)',
     austriaeast: 'Austria East (Vienna)',
     belgiumcentral: 'Belgium Central (Brussels)',
     denmarkeast: 'Denmark East (Copenhagen)',
+    francecentral: 'France Central (Paris)',
+    francesouth: 'France South (Marseille)',
+    germanynorth: 'Germany North (Berlin)',
+    germanywestcentral: 'Germany West Central (Frankfurt)',
+    italynorth: 'Italy North (Milan)',
+    northeurope: 'North Europe (Ireland)',
+    norwayeast: 'Norway East (Oslo)',
+    norwaywest: 'Norway West (Stavanger)',
+    polandcentral: 'Poland Central (Warsaw)',
+    spaincentral: 'Spain Central (Madrid)',
+    swedencentral: 'Sweden Central (Gävle)',
+    switzerlandnorth: 'Switzerland North (Zürich)',
+    switzerlandwest: 'Switzerland West (Geneva)',
+    uksouth: 'UK South (London)',
+    ukwest: 'UK West (Cardiff)',
+    westeurope: 'West Europe (Netherlands)',
 
     // Asia Pacific
-    eastasia: 'East Asia (Hong Kong)',
-    southeastasia: 'Southeast Asia (Singapore)',
-    japaneast: 'Japan East (Tokyo)',
-    japanwest: 'Japan West (Osaka)',
-    australiaeast: 'Australia East (Sydney)',
-    australiasoutheast: 'Australia Southeast (Melbourne)',
     australiacentral: 'Australia Central (Canberra)',
     australiacentral2: 'Australia Central 2 (Canberra)',
+    australiaeast: 'Australia East (Sydney)',
+    australiasoutheast: 'Australia Southeast (Melbourne)',
+    centralindia: 'Central India (Pune)',
+    eastasia: 'East Asia (Hong Kong)',
+    indonesiacentral: 'Indonesia Central (Jakarta)',
+    japaneast: 'Japan East (Tokyo)',
+    japanwest: 'Japan West (Osaka)',
     koreacentral: 'Korea Central (Seoul)',
     koreasouth: 'Korea South (Busan)',
-    centralindia: 'Central India (Pune)',
-    southindia: 'South India (Chennai)',
-    westindia: 'West India (Mumbai)',
-    indonesiacentral: 'Indonesia Central (Jakarta)',
     malaysiawest: 'Malaysia West (Kuala Lumpur)',
     newzealandnorth: 'New Zealand North (Auckland)',
+    southindia: 'South India (Chennai)',
+    southeastasia: 'Southeast Asia (Singapore)',
+    westindia: 'West India (Mumbai)',
 
-    // Middle East & Africa
-    uaenorth: 'UAE North (Dubai)',
+    // Middle East
+    israelcentral: 'Israel Central (Tel Aviv)',
+    qatarcentral: 'Qatar Central (Doha)',
     uaecentral: 'UAE Central (Abu Dhabi)',
+    uaenorth: 'UAE North (Dubai)',
+
+    // Africa
     southafricanorth: 'South Africa North (Johannesburg)',
     southafricawest: 'South Africa West (Cape Town)',
-    qatarcentral: 'Qatar Central (Doha)',
-    israelcentral: 'Israel Central (Tel Aviv)',
 };
 const REGION_MAPS: Record<CloudProvider, Record<string, string>> = {
     AWS: AWS_REGIONS,
