@@ -1,5 +1,8 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { AlertTypeSelectorProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { AlertTypeDef } from 'src/types/gql';
+
+import { useMemo } from 'react';
 
 import {
     Autocomplete,
@@ -16,25 +19,22 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
 import { diminishedTextColor } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
-import { hasOwnProperty } from 'src/utils/misc-utils';
 import { UNDERSCORE_RE } from 'src/validation';
 
 const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
-    const alertTypes = useAlertSubscriptionsStore((state) => {
-        const alertNames =
-            state.prefix.length > 0 &&
-            state.subscriptions &&
-            hasOwnProperty(state.subscriptions, state.prefix)
-                ? state.subscriptions[state.prefix].alertTypes
-                : [];
-
-        return options.filter(({ name }) => alertNames.includes(name));
-    });
+    const alertTypes = useAlertSubscriptionsStore(
+        (state) => state.subscription.alertTypes
+    );
     const setAlertTypes = useAlertSubscriptionsStore(
         (state) => state.setAlertTypes
+    );
+
+    const values: AlertTypeDef[] = useMemo(
+        () => options.filter(({ name }) => alertTypes.includes(name)),
+        [options, alertTypes]
     );
 
     return (
@@ -116,7 +116,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                         );
                     });
                 }}
-                value={alertTypes}
+                value={values}
             />
         </FormControl>
     );

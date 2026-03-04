@@ -5,7 +5,6 @@ import { FormattedMessage } from 'react-intl';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useUpdateAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpdateAlertSubscription';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
-import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     closeDialog: () => void;
@@ -14,28 +13,22 @@ interface Props {
 function SaveButton({ closeDialog }: Props) {
     const { loading, onClick } = useUpdateAlertSubscription(closeDialog);
 
-    const inputUncommitted = useAlertSubscriptionsStore(
-        (state) => state.inputUncommitted
-    );
-
-    const prefix = useAlertSubscriptionsStore((state) => state.prefix);
     const prefixErrorsExist = useAlertSubscriptionsStore(
         (state) => state.prefixErrorsExist
     );
 
-    const subscriptions = useAlertSubscriptionsStore(
-        (state) => state.subscriptions
+    const subscription = useAlertSubscriptionsStore(
+        (state) => state.subscription
     );
 
     const disabled = useMemo(
         () =>
             Boolean(
-                !hasLength(prefix) ||
-                    prefixErrorsExist ||
-                    !subscriptions ||
-                    inputUncommitted
+                prefixErrorsExist ||
+                    subscription.catalogPrefix.length === 0 ||
+                    subscription.email.length === 0
             ),
-        [inputUncommitted, prefix, prefixErrorsExist, subscriptions]
+        [prefixErrorsExist, subscription.catalogPrefix, subscription.email]
     );
 
     return (

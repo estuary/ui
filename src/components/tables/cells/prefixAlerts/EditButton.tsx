@@ -18,7 +18,6 @@ function AlertEditButton({ executeQuery, prefix }: EditButtonProps) {
                 onClick={(event) => {
                     event.preventDefault();
 
-                    executeQuery({ requestPolicy: 'network-only' });
                     setOpen(true);
                 }}
             >

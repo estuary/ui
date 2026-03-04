@@ -17,7 +17,6 @@ import Rows from 'src/components/tables/PrefixAlerts/Rows';
 import { columns } from 'src/components/tables/PrefixAlerts/shared';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { TableStatuses } from 'src/types';
-import { formatNotificationSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
 function PrefixAlertTable() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
@@ -28,8 +27,8 @@ function PrefixAlertTable() {
         pause: !selectedTenant,
     });
 
-    const initializeSubscriptionState = useAlertSubscriptionsStore(
-        (state) => state.initializeState
+    const setInitializationError = useAlertSubscriptionsStore(
+        (state) => state.setInitializationError
     );
 
     const [searchQuery, _setSearchQuery] = useState<string>('');
@@ -47,21 +46,11 @@ function PrefixAlertTable() {
 
     useEffect(() => {
         void (async () => {
-            const existingSubscriptions = data
-                ? formatNotificationSubscriptionsByPrefix(
-                      data.alertSubscriptions
-                  )
-                : {};
-
             if (!fetching) {
-                initializeSubscriptionState(
-                    selectedTenant,
-                    existingSubscriptions,
-                    error
-                );
+                setInitializationError(error);
             }
         })();
-    }, [data, error, fetching, initializeSubscriptionState, selectedTenant]);
+    }, [error, fetching, setInitializationError]);
 
     useEffect(() => {
         if (fetching) {

@@ -33,6 +33,9 @@ export const MAC_ADDR_RE = new RegExp(/^([0-9A-F]{2}:){7}([0-9A-F]{2})$/i);
 
 export const UNDERSCORE_RE = new RegExp(/_+/g);
 
+// Validation is VERY basic 'non-whitespace@non-whitespace'
+export const BASIC_EMAIL_RE = new RegExp(/^\S+@\S+$/m);
+
 export const validateCatalogName = (
     value: string,
     allowBlank?: boolean,

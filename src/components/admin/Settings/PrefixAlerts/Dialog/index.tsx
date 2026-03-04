@@ -39,12 +39,12 @@ function AlertSubscriptionDialog({
     );
 
     const closeDialog = (queryTrigger?: boolean) => {
+        setOpen(false);
+        resetSubscriptionState();
+
         if (queryTrigger) {
             executeQuery({ requestPolicy: 'network-only' });
         }
-
-        setOpen(false);
-        resetSubscriptionState();
     };
 
     return (
@@ -99,7 +99,7 @@ function AlertSubscriptionDialog({
 
                     <AlertTypeField />
 
-                    <EmailListField open={open} />
+                    <EmailListField />
                 </Grid>
             </DialogContent>
 

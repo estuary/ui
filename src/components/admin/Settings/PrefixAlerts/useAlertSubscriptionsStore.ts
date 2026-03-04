@@ -1,7 +1,6 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { ReducedAlertSubscription } from 'src/api/types';
 import type { AlertTypeDef } from 'src/types/gql';
-import type { PrefixSubscriptionDictionary } from 'src/utils/notification-utils';
 import type { CombinedError } from 'urql';
 
 import { create } from 'zustand';
@@ -9,52 +8,40 @@ import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 
-import { hasOwnProperty } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface AlertSubscriptionState {
-    existingEmails: EmailDictionary;
+    alertTypes: AlertTypeDef[];
     initializationError: CombinedError | PostgrestError | null | undefined;
-    initializeState: (
-        prefix: string | undefined,
-        subscriptions: AlertSubscriptionState['subscriptions'],
-        error: AlertSubscriptionState['initializationError']
-    ) => void;
-    inputUncommitted: boolean;
-    prefix: string;
     prefixErrorsExist: boolean;
     saveErrors: (CombinedError | PostgrestError | null | undefined)[];
-    subscriptions: PrefixSubscriptionDictionary | null | undefined;
+    subscription: Pick<
+        ReducedAlertSubscription,
+        'alertTypes' | 'catalogPrefix' | 'email'
+    >;
     resetState: () => void;
-    setAlertTypes: (values: AlertTypeDef[]) => void;
-    setInputUncommitted: (
-        value: AlertSubscriptionState['inputUncommitted']
+    setAlertTypes: (values: AlertTypeDef[], initialize?: boolean) => void;
+    setInitializationError: (
+        value: AlertSubscriptionState['initializationError']
     ) => void;
     setSaveErrors: (value: AlertSubscriptionState['saveErrors']) => void;
-    setUpdatedEmails: (value: AlertSubscriptionState['updatedEmails']) => void;
-    updatePrefix: (value: string, errors: string | null) => void;
-    updatedEmails: EmailDictionary;
+    setSubscribedEmail: (value: string) => void;
+    setSubscribedPrefix: (value: string, errors: string | null) => void;
 }
 
 const getInitialState = (): Pick<
     AlertSubscriptionState,
-    | 'existingEmails'
+    | 'alertTypes'
     | 'initializationError'
-    | 'inputUncommitted'
-    | 'prefix'
     | 'prefixErrorsExist'
     | 'saveErrors'
-    | 'subscriptions'
-    | 'updatedEmails'
+    | 'subscription'
 > => ({
-    existingEmails: {},
+    alertTypes: [],
     initializationError: null,
-    inputUncommitted: false,
-    prefix: '',
     prefixErrorsExist: false,
     saveErrors: [],
-    subscriptions: undefined,
-    updatedEmails: {},
+    subscription: { alertTypes: [], catalogPrefix: '', email: '' },
 });
 
 const name = 'estuary.alert-subscriptions-store';
@@ -64,63 +51,30 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
         return {
             ...getInitialState(),
 
-            initializeState: (prefix, subscriptions, error) =>
-                set(
-                    produce((state: AlertSubscriptionState) => {
-                        if (prefix) {
-                            state.prefix = prefix;
-                        }
-
-                        if (
-                            subscriptions === null ||
-                            subscriptions === undefined
-                        ) {
-                            state.existingEmails = {};
-                        } else {
-                            Object.entries(subscriptions).forEach(
-                                ([key, value]) => {
-                                    state.existingEmails[key] =
-                                        value.userSubscriptions.map(
-                                            ({ email }) => email
-                                        );
-                                }
-                            );
-                        }
-
-                        state.subscriptions = subscriptions;
-                        state.initializationError = error;
-                    }),
-                    false,
-                    'state initialized'
-                ),
-
             resetState: () => set(getInitialState(), false, 'state reset'),
 
-            setAlertTypes: (values) =>
+            setAlertTypes: (values, initialize) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        if (
-                            state.prefix.length === 0 ||
-                            !state.subscriptions ||
-                            !hasOwnProperty(state.subscriptions, state.prefix)
-                        ) {
-                            return;
+                        if (initialize) {
+                            state.alertTypes = values;
+                        } else {
+                            state.subscription.alertTypes = values.map(
+                                ({ name }) => name
+                            );
                         }
-
-                        state.subscriptions[state.prefix].alertTypes =
-                            values.map(({ name }) => name);
                     }),
                     false,
                     'alert types set'
                 ),
 
-            setInputUncommitted: (value) =>
+            setInitializationError: (value) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.inputUncommitted = value;
+                        state.initializationError = value;
                     }),
                     false,
-                    'input uncommitted set'
+                    'initialization error set'
                 ),
 
             setSaveErrors: (value) =>
@@ -132,23 +86,23 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'save errors set'
                 ),
 
-            setUpdatedEmails: (value) =>
+            setSubscribedEmail: (value) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.updatedEmails = value;
+                        state.subscription.email = value;
                     }),
                     false,
-                    'updated emails set'
+                    'subscribed email set'
                 ),
 
-            updatePrefix: (value, errors) =>
+            setSubscribedPrefix: (value, errors) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.prefix = value;
+                        state.subscription.catalogPrefix = value;
                         state.prefixErrorsExist = Boolean(errors);
                     }),
                     false,
-                    'prefix updated'
+                    'subscribed prefix set'
                 ),
         };
     }, devtoolsOptions(name))

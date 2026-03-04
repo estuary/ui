@@ -6,30 +6,22 @@ import { useCallback, useEffect } from 'react';
 import { useMutation } from 'urql';
 
 import { AlertSubscriptionCreateMutation } from 'src/api/alerts';
-import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { hasOwnProperty, isPromiseFulfilledResult } from 'src/utils/misc-utils';
+import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 export function useCreateAlertSubscription() {
     const [updateSubscriptionResult, updateSubscription] = useMutation(
         AlertSubscriptionCreateMutation
     );
 
-    const alertTypes = useAlertSubscriptionsStore((state) =>
-        state.prefix.length > 0 &&
-        state.subscriptions &&
-        hasOwnProperty(state.subscriptions, state.prefix)
-            ? state.subscriptions[state.prefix].alertTypes
-            : []
-    );
-
     const createSubscription = useCallback(
         async (
             subscriptionKeys: AlertSubscriptionCreateMutationInput[]
         ): Promise<AlertSubscriptionResponse[]> => {
-            const promises = subscriptionKeys.map(({ prefix, email }) =>
-                updateSubscription({ alertTypes, email, prefix })
+            const promises = subscriptionKeys.map(
+                ({ alertTypes, prefix, email }) =>
+                    updateSubscription({ alertTypes, email, prefix })
             );
 
             const evaluatedResponses: AlertSubscriptionResponse[] = [];
@@ -117,7 +109,7 @@ export function useCreateAlertSubscription() {
 
             return evaluatedResponses;
         },
-        [alertTypes, updateSubscription]
+        [updateSubscription]
     );
 
     useEffect(() => {

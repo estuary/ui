@@ -20,7 +20,6 @@ function AlertGenerateButton({ executeQuery }: BaseButtonProps) {
                 onClick={(event) => {
                     event.preventDefault();
 
-                    executeQuery({ requestPolicy: 'network-only' });
                     setOpen(true);
                 }}
             >
