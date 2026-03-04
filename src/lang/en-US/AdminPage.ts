@@ -194,10 +194,8 @@ export const AdminPage: Record<string, string> = {
     // Connection tests
     'storageMappings.dialog.connectionTests.title': `Connection Tests`,
     'storageMappings.dialog.connectionTests.runTests': `Run tests`,
-    'storageMappings.dialog.connectionTests.allMustPass': `All connections must pass before saving changes.`,
+    'storageMappings.dialog.connectionTests.allMustPass': `All tests must pass before saving changes.`,
     'storageMappings.dialog.connectionTests.retry': `Retry`,
-    'storageMappings.dialog.connectionTests.status.ready': `Ready`,
-    'storageMappings.dialog.connectionTests.status.needsAttention': `Needs Attention`,
     'storageMappings.dialog.connectionTests.testFailed': `Connection test failed`,
 
     // Data planes card

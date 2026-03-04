@@ -34,32 +34,23 @@ interface ConnectionStatusBadgeProps {
 }
 
 function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
-    const intl = useIntl();
-
     const badges = {
         idle: null,
         testing: {
-            text: null,
-            icon: <CircularProgress size={16} color="inherit" />,
+            icon: <CircularProgress size={20} color="inherit" />,
             color: 'text.secondary',
         },
         success: {
-            text: intl.formatMessage({
-                id: 'storageMappings.dialog.connectionTests.status.ready',
-            }),
-            icon: <CheckCircle width={16} height={16} />,
+            icon: <CheckCircle width={20} height={20} />,
             color: 'success.main',
         },
         error: {
-            text: intl.formatMessage({
-                id: 'storageMappings.dialog.connectionTests.status.needsAttention',
-            }),
-            icon: <WarningTriangle width={16} height={16} />,
+            icon: <WarningTriangle width={20} height={20} />,
             color: 'warning.main',
         },
     } satisfies Record<
         Connection['status'],
-        { text: string | null; icon: React.ReactNode; color: string } | null
+        { icon: React.ReactNode; color: string } | null
     >;
 
     const badge = badges[result.status];
@@ -73,9 +64,6 @@ function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
             alignItems="center"
             sx={{ color: badge.color }}
         >
-            {badge.text ? (
-                <Typography variant="body2">{badge.text}</Typography>
-            ) : null}
             {badge.icon}
         </Stack>
     );
