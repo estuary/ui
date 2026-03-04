@@ -193,13 +193,24 @@ export function ConnectionAccordion({
                             size="small"
                             disabled={isTesting}
                             onClick={() => {
-                                const storeId = getStoreId(connection.store);
-                                const sameBucket = connections.filter(
-                                    (c) =>
-                                        !c.orphaned &&
-                                        getStoreId(c.store) === storeId
-                                );
-                                testConnections(sameBucket).catch(() => {});
+                                // there's a risk of breaking other connections when updating the bucket policy for AWS,
+                                // so we want to test all connections using the same bucket at once.
+                                // For other providers, we can just test the single connection.
+                                if (connection.store.provider === 'AWS') {
+                                    const storeId = getStoreId(
+                                        connection.store
+                                    );
+                                    const sameBucket = connections.filter(
+                                        (c) =>
+                                            !c.orphaned &&
+                                            getStoreId(c.store) === storeId
+                                    );
+                                    testConnections(sameBucket).catch(() => {});
+                                } else {
+                                    testConnections([connection]).catch(
+                                        () => {}
+                                    );
+                                }
                             }}
                             startIcon={<Refresh width={16} height={16} />}
                         >
