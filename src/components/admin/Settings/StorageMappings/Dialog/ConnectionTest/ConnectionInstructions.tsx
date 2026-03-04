@@ -10,12 +10,15 @@ export function ConnectionInstructions({
 }: {
     connection: Connection;
 }) {
-    switch (connection.store.provider as CloudProvider) {
-        case 'GCP':
-            return <GcpInstructions connection={connection} />;
+    const { provider } = connection.store;
+
+    switch (provider as CloudProvider) {
         case 'AWS':
             return <AwsInstructions connection={connection} />;
         case 'AZURE':
             return <AzureInstructions connection={connection} />;
+        case 'GCP':
+            return <GcpInstructions connection={connection} />;
     }
+    return null;
 }
