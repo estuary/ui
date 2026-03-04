@@ -14,12 +14,12 @@ import {
 import { useIntl } from 'react-intl';
 
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
-import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
 import {
     ConnectionList,
     ConnectionTestProvider,
     useConnectionTest,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
+import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
 import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard';
 import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields';
 import CardWrapper from 'src/components/shared/CardWrapper';

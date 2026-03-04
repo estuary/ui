@@ -260,7 +260,6 @@ function DialogInner({
             save,
             selectDataPlane,
             setValue,
-            testConnections,
         ]
     );
 
