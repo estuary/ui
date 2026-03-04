@@ -1,4 +1,4 @@
-import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
 import { useEffect, useRef } from 'react';
 
@@ -21,11 +21,11 @@ import {
 } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionInstructions';
+import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionInstructions';
 import {
     getStoreId,
     useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 import { toPresentableName } from 'src/utils/dataPlane-utils';
 
 interface ConnectionStatusBadgeProps {

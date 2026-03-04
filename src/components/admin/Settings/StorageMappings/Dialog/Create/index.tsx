@@ -15,13 +15,13 @@ import { useIntl } from 'react-intl';
 
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
-import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 import {
+    ConnectionList,
     ConnectionTestProvider,
     useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
-import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
-import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
+} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
+import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard';
+import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
