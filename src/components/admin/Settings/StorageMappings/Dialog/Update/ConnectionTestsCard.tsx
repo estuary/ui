@@ -21,13 +21,15 @@ export function ConnectionTestsCard() {
                 action={intl.formatMessage({
                     id: 'storageMappings.dialog.connectionTests.runTests',
                 })}
-                onAction={() =>
-                    void testConnections(
-                        connections.filter((c) => !c.orphaned)
-                    ).catch((e) => {
-                        // errors are surfaced in each accordion in the ConnectionTestList - safe to catch and ignore here
-                    })
-                }
+                onAction={() => {
+                    for (const connection of connections.filter(
+                        (c) => !c.orphaned
+                    )) {
+                        void testConnections([connection]).catch((e) => {
+                            // errors are surfaced in each accordion in the ConnectionTestList - safe to catch and ignore here
+                        });
+                    }
+                }}
                 actionDisabled={isTesting}
             />
             <Typography>

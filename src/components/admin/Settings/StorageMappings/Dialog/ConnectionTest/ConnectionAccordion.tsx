@@ -193,7 +193,9 @@ export function ConnectionAccordion({
                                             !c.orphaned &&
                                             getStoreId(c.store) === storeId
                                     );
-                                    testConnections(sameBucket).catch(() => {});
+                                    for (const c of sameBucket) {
+                                        testConnections([c]).catch(() => {});
+                                    }
                                 } else {
                                     testConnections([connection]).catch(
                                         () => {}
