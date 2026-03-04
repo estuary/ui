@@ -19,9 +19,9 @@ import { Flipped, Flipper } from 'react-flip-toolkit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
+import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
+import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields';
 import { ActionLink } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ActionLink';
-import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
-import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/StorageFields';
 import { cardHeaderSx } from 'src/context/Theme';
 
 export const primaryStoreSx = {

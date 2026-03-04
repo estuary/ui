@@ -1,4 +1,4 @@
-import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -6,11 +6,11 @@ import { Collapse, Stack } from '@mui/material';
 
 import { Flipped, Flipper } from 'react-flip-toolkit';
 
-import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionAccordion';
+import { ConnectionAccordion } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionAccordion';
 import {
     getStoreId,
     useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
+} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
 const connectionKey = (connection: Connection): string =>
     `${connection.dataPlane.name}-${getStoreId(connection.store)}`;

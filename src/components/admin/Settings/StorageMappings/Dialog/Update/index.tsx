@@ -20,13 +20,13 @@ import {
     useStorageMappings,
     useStorageMappingService,
 } from 'src/api/gql/storageMappings';
-import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
-import { ConnectionList } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionList';
 import {
+    ConnectionList,
     ConnectionTestProvider,
     useConnectionTest,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/shared/ConnectionTestContext';
-import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/DataPlanesCard';
+} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest';
+import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard';
+import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';
 import { StorageLocationsCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/StorageLocationsCard';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import CardWrapper from 'src/components/shared/CardWrapper';
