@@ -16,10 +16,10 @@ import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import AlertTypeField from 'src/components/admin/Settings/PrefixAlerts/Dialog/AlertTypeField';
-import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/EmailListField';
 import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
+import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/EmailSelector';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 const TITLE_ID = 'alert-subscription-dialog-title';
@@ -97,7 +97,18 @@ function AlertSubscriptionDialog({
                 >
                     <PrefixField staticPrefix={staticPrefix} />
 
-                    <EmailListField />
+                    <Grid
+                        item
+                        xs={12}
+                        md={7}
+                        sx={{
+                            maxHeight: 250,
+                            overflow: 'auto',
+                            display: 'flex',
+                        }}
+                    >
+                        <EmailSelector />
+                    </Grid>
 
                     <AlertTypeField />
                 </Grid>
