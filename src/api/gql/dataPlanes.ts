@@ -36,8 +36,6 @@ const toDataPlaneNode = (node: DataPlaneGqlNode): DataPlaneNode => {
     return {
         ...node,
         name: node.dataPlaneName,
-        azureApplicationClientId: node.azureApplicationClientId ?? null,
-        azureApplicationName: node.azureApplicationName,
         fqdn: node.dataPlaneFqdn,
         scope: node.isPublic ? 'public' : 'private',
     };
