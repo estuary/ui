@@ -63,7 +63,6 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                         label={intl.formatMessage({
                             id: 'entityTable.data.alertTypes',
                         })}
-                        required
                         size="small"
                         variant="outlined"
                     />
