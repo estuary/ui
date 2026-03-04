@@ -51,7 +51,38 @@ export const AWS_REGIONS: Record<string, string> = {
 };
 
 const GCP_REGIONS: Record<string, string> = {
-    'africa-south1': 'Africa (Johannesburg)',
+    // Americas
+    'us-central1': 'US Central (Iowa)',
+    'us-east1': 'US East (South Carolina)',
+    'us-east4': 'US East (N. Virginia)',
+    'us-east5': 'US East (Columbus)',
+    'us-south1': 'US South (Dallas)',
+    'us-west1': 'US West (Oregon)',
+    'us-west2': 'US West (Los Angeles)',
+    'us-west3': 'US West (Salt Lake City)',
+    'us-west4': 'US West (Las Vegas)',
+    'northamerica-northeast1': 'Canada (Montréal)',
+    'northamerica-northeast2': 'Canada (Toronto)',
+    'northamerica-south1': 'Mexico (Querétaro)',
+    'southamerica-east1': 'South America (São Paulo)',
+    'southamerica-west1': 'South America (Santiago)',
+
+    // Europe
+    'europe-west1': 'Europe West (Belgium)',
+    'europe-west2': 'Europe West (London)',
+    'europe-west3': 'Europe West (Frankfurt)',
+    'europe-west4': 'Europe West (Netherlands)',
+    'europe-west6': 'Europe West (Zurich)',
+    'europe-west8': 'Europe West (Milan)',
+    'europe-west9': 'Europe West (Paris)',
+    'europe-west10': 'Europe West (Berlin)',
+    'europe-west12': 'Europe West (Turin)',
+    'europe-central2': 'Europe Central (Warsaw)',
+    'europe-north1': 'Europe North (Finland)',
+    'europe-north2': 'Europe North (Stockholm)',
+    'europe-southwest1': 'Europe Southwest (Madrid)',
+
+    // Asia Pacific
     'asia-east1': 'Asia Pacific (Taiwan)',
     'asia-east2': 'Asia Pacific (Hong Kong)',
     'asia-northeast1': 'Asia Pacific (Tokyo)',
@@ -63,36 +94,14 @@ const GCP_REGIONS: Record<string, string> = {
     'asia-southeast2': 'Asia Pacific (Jakarta)',
     'australia-southeast1': 'Australia (Sydney)',
     'australia-southeast2': 'Australia (Melbourne)',
-    'europe-central2': 'Europe Central (Warsaw)',
-    'europe-north1': 'Europe North (Finland)',
-    'europe-north2': 'Europe North (Stockholm)',
-    'europe-southwest1': 'Europe Southwest (Madrid)',
-    'europe-west1': 'Europe West (Belgium)',
-    'europe-west10': 'Europe West (Berlin)',
-    'europe-west12': 'Europe West (Turin)',
-    'europe-west2': 'Europe West (London)',
-    'europe-west3': 'Europe West (Frankfurt)',
-    'europe-west4': 'Europe West (Netherlands)',
-    'europe-west6': 'Europe West (Zurich)',
-    'europe-west8': 'Europe West (Milan)',
-    'europe-west9': 'Europe West (Paris)',
+
+    // Middle East
     'me-central1': 'Middle East (Doha)',
     'me-central2': 'Middle East (Dammam)',
     'me-west1': 'Middle East (Tel Aviv)',
-    'northamerica-northeast1': 'Canada (Montréal)',
-    'northamerica-northeast2': 'Canada (Toronto)',
-    'northamerica-south1': 'Mexico (Querétaro)',
-    'southamerica-east1': 'South America (São Paulo)',
-    'southamerica-west1': 'South America (Santiago)',
-    'us-central1': 'US Central (Iowa)',
-    'us-east1': 'US East (South Carolina)',
-    'us-east4': 'US East (N. Virginia)',
-    'us-east5': 'US East (Columbus)',
-    'us-south1': 'US South (Dallas)',
-    'us-west1': 'US West (Oregon)',
-    'us-west2': 'US West (Los Angeles)',
-    'us-west3': 'US West (Salt Lake City)',
-    'us-west4': 'US West (Las Vegas)',
+
+    // Africa
+    'africa-south1': 'Africa (Johannesburg)',
 };
 
 const AZURE_REGIONS: Record<string, string> = {
