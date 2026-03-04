@@ -7,9 +7,14 @@ import { Button, TableCell } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
-function AlertEditButton({ executeQuery, prefix }: EditButtonProps) {
+function AlertEditButton({ email, executeQuery, prefix }: EditButtonProps) {
     const [open, setOpen] = useState(false);
+
+    const setSubscribedEmail = useAlertSubscriptionsStore(
+        (state) => state.setSubscribedEmail
+    );
 
     return (
         <TableCell>
@@ -18,6 +23,7 @@ function AlertEditButton({ executeQuery, prefix }: EditButtonProps) {
                 onClick={(event) => {
                     event.preventDefault();
 
+                    setSubscribedEmail(email);
                     setOpen(true);
                 }}
             >

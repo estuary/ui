@@ -29,6 +29,7 @@ export interface BaseButtonProps {
 }
 
 export interface EditButtonProps extends BaseButtonProps {
+    email: string;
     prefix: string;
 }
 

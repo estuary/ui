@@ -25,6 +25,7 @@ function Row({ executeQuery, row }: RowProps) {
             <TableCell>{row.email}</TableCell>
 
             <AlertEditButton
+                email={row.email}
                 executeQuery={executeQuery}
                 prefix={row.catalogPrefix}
             />

@@ -25,8 +25,6 @@ type Option = Grant_UserExt | string;
 
 const minCapability = 'admin';
 
-// const stringHasCommas = (value: string) => value.includes(',');
-
 const sanitizeEmail = (value: string) => {
     return value.trim();
 };
@@ -34,15 +32,17 @@ const sanitizeEmail = (value: string) => {
 function EmailSelector() {
     const intl = useIntl();
 
-    const [inputValue, setInputValue] = useState('');
-
     const serverError = useAlertSubscriptionsStore(
         (state) => state.initializationError
     );
-    const [prefix, setSubscribedEmail] = useAlertSubscriptionsStore((state) => [
-        state.subscription.catalogPrefix,
-        state.setSubscribedEmail,
-    ]);
+    const [prefix, subscribedEmail, setSubscribedEmail] =
+        useAlertSubscriptionsStore((state) => [
+            state.subscription.catalogPrefix,
+            state.subscription.email,
+            state.setSubscribedEmail,
+        ]);
+
+    const [inputValue, setInputValue] = useState(subscribedEmail);
 
     const { data: adminPrefixes } = usePrefixAdministrators(
         prefix,
