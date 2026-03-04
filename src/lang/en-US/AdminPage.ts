@@ -238,8 +238,43 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.prefix.validation.duplicate': `A storage mapping already exists at this prefix. [Click here to see it.]({link})`,
     'storageMappings.dialog.prefix.validation.uncoveredSpecs': `{count} live spec(s) would be impacted by creating this storage mapping. Choose an empty prefix or contact support for help.`,
 
-    // Instructions (TODO placeholders)
-    'storageMappings.dialog.instructions.aws': `TODO: AWS connection instructions`,
-    'storageMappings.dialog.instructions.azure': `TODO: Azure connection instructions`,
-    'storageMappings.dialog.instructions.gcp': `TODO: GCP connection instructions`,
+    // Instructions - shared
+    'storageMappings.dialog.instructions.step1.createBucket': `Step 1: Create the storage bucket`,
+    'storageMappings.dialog.instructions.step1.createBucket.prompt': `If you haven't already, `,
+    'storageMappings.dialog.instructions.bucketName': `Bucket name:`,
+    'storageMappings.dialog.instructions.region': `Region:`,
+    'storageMappings.dialog.instructions.optionA': `Option A - Web UI:`,
+    'storageMappings.dialog.instructions.optionB': `Option B - CLI:`,
+    'storageMappings.dialog.instructions.pasteInTerminal': `Paste the following into your terminal:`,
+
+    // Instructions - AWS
+    'storageMappings.dialog.instructions.aws.createBucketLink': `create the S3 bucket`,
+    'storageMappings.dialog.instructions.aws.step2.title': `Step 2: Apply the bucket policy`,
+    'storageMappings.dialog.instructions.aws.step2.webUi': `Navigate to the Permissions tab and paste this into your bucket policy.`,
+    'storageMappings.dialog.instructions.aws.step2.note': `This policy includes all data planes that use this bucket, so existing connections will be preserved.`,
+
+    // Instructions - GCP
+    'storageMappings.dialog.instructions.gcp.createBucketLink': `create the GCP bucket`,
+    'storageMappings.dialog.instructions.gcp.step2.title': `Step 2: Grant bucket permissions`,
+    'storageMappings.dialog.instructions.gcp.step2.webUi.navigate': `In the Cloud Console, navigate to your bucket, click Permissions, then Grant Access`,
+    'storageMappings.dialog.instructions.gcp.step2.webUi.paste': `Paste this service account email into the Principals field:`,
+    'storageMappings.dialog.instructions.gcp.step2.webUi.selectRole': `Select the Storage Admin role.`,
+
+    // Instructions - Azure
+    'storageMappings.dialog.instructions.azure.step1.title': `Step 1: Create the blob storage container`,
+    'storageMappings.dialog.instructions.azure.step1.prompt': `If you haven't already, `,
+    'storageMappings.dialog.instructions.azure.step1.link': `create the Azure blob storage container`,
+    'storageMappings.dialog.instructions.azure.step2.title': `Step 2: Add the Estuary application to your Azure tenant`,
+    'storageMappings.dialog.instructions.azure.step2.description': `An Azure AD administrator must add Estuary's Azure application to your tenant. This creates a service principal that Estuary uses to access your storage.`,
+    'storageMappings.dialog.instructions.azure.step2.link': `Click here to add the application`,
+    'storageMappings.dialog.instructions.azure.step3.title': `Step 3: Assign the Storage Blob Data Owner role`,
+    'storageMappings.dialog.instructions.azure.step3.navigateToAccount': `Navigate to your storage account {storageAccountName}`,
+    'storageMappings.dialog.instructions.azure.step3.openIam': `Open "Access Control (IAM)"`,
+    'storageMappings.dialog.instructions.azure.step3.addRole': `Click "Add role assignment"`,
+    'storageMappings.dialog.instructions.azure.step3.selectRole': `In the "Role" tab, search for and select Storage Blob Data Owner`,
+    'storageMappings.dialog.instructions.azure.step3.selectMember': `In the "Members" tab, search for and select {applicationName}`,
+    'storageMappings.dialog.instructions.azure.step3.reviewAssign': `Click Review + assign`,
+    'storageMappings.dialog.instructions.azure.step3.note': `Note: Role assignments can take up to 10 minutes to propagate. If the connection test fails after assigning the role, wait a few minutes and retry.`,
+    'storageMappings.dialog.instructions.azure.docsLink': `For more help, see the `,
+    'storageMappings.dialog.instructions.azure.docsLinkText': `Azure docs`,
 };
