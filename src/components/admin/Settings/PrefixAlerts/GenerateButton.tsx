@@ -1,13 +1,17 @@
+import type { BaseButtonProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+
+import { useState } from 'react';
+
 import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
-import useAlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
 
-function AlertGenerateButton() {
+function AlertGenerateButton({ executeQuery }: BaseButtonProps) {
     const intl = useIntl();
-    const { open, setOpen } = useAlertSubscriptionDialog();
+
+    const [open, setOpen] = useState(false);
 
     return (
         <>
@@ -23,6 +27,7 @@ function AlertGenerateButton() {
             </Button>
 
             <AlertSubscriptionDialog
+                executeQuery={executeQuery}
                 headerId="alerts.config.dialog.generate.header"
                 open={open}
                 setOpen={setOpen}

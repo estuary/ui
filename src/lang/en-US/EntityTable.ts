@@ -31,6 +31,7 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.created': `Created`,
     'entityTable.data.description': `Description`,
     'entityTable.data.user': `User`,
+    'entityTable.data.alertTypes': `Alert Types`,
 
     'entityTable.stats.filter.label': `${
         CommonMessages[`filter.time.label`]

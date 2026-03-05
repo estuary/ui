@@ -1,16 +1,25 @@
+import type { EditButtonProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+
+import { useState } from 'react';
+
 import { Button, TableCell } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
-import useAlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionDialog';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
-interface Props {
-    prefix: string;
-}
+function AlertEditButton({
+    alertTypes,
+    email,
+    executeQuery,
+    prefix,
+}: EditButtonProps) {
+    const [open, setOpen] = useState(false);
 
-function AlertEditButton({ prefix }: Props) {
-    const { open, setOpen } = useAlertSubscriptionDialog(prefix);
+    const setSubscribedEmail = useAlertSubscriptionsStore(
+        (state) => state.setSubscribedEmail
+    );
 
     return (
         <TableCell>
@@ -19,6 +28,7 @@ function AlertEditButton({ prefix }: Props) {
                 onClick={(event) => {
                     event.preventDefault();
 
+                    setSubscribedEmail(email);
                     setOpen(true);
                 }}
             >
@@ -26,10 +36,14 @@ function AlertEditButton({ prefix }: Props) {
             </Button>
 
             <AlertSubscriptionDialog
+                enableDeletion
+                executeQuery={executeQuery}
+                existingAlertTypes={alertTypes}
                 headerId="alerts.config.dialog.update.header"
                 open={open}
                 setOpen={setOpen}
                 staticPrefix={prefix}
+                staticEmail={email}
             />
         </TableCell>
     );

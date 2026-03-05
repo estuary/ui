@@ -10,8 +10,8 @@ interface Props {
     closeDialog: () => void;
 }
 
-function SaveButton({ closeDialog }: Props) {
-    const { loading, onClick } = useModifyAlertSubscription(closeDialog);
+const DeleteButton = ({ closeDialog }: Props) => {
+    const { loading, onClick } = useModifyAlertSubscription(closeDialog, true);
 
     const prefixErrorsExist = useAlertSubscriptionsStore(
         (state) => state.prefixErrorsExist
@@ -33,15 +33,16 @@ function SaveButton({ closeDialog }: Props) {
 
     return (
         <SafeLoadingButton
-            variant="contained"
-            size="small"
+            color="error"
             disabled={disabled}
             loading={loading}
             onClick={onClick}
+            size="small"
+            variant="outlined"
         >
-            <FormattedMessage id="cta.save" />
+            <FormattedMessage id="cta.delete" />
         </SafeLoadingButton>
     );
-}
+};
 
-export default SaveButton;
+export default DeleteButton;
