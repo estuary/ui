@@ -11,14 +11,14 @@ import {
     getNotificationSubscriptionForUser,
     getTaskNotification,
 } from 'src/api/alerts';
-import { useCreateAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useCreateAlertSubscription';
+import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
 function useInitializeTaskNotification(catalogName: string) {
-    const { createSubscription } = useCreateAlertSubscription();
+    const { upsertSubscription } = useUpsertAlertSubscription();
 
     const user = useUserStore((state) => state.user);
 
@@ -48,7 +48,7 @@ function useInitializeTaskNotification(catalogName: string) {
             };
         }
 
-        const response = await createSubscription([
+        const response = await upsertSubscription([
             {
                 prefix,
                 email: user.email,
@@ -56,7 +56,7 @@ function useInitializeTaskNotification(catalogName: string) {
         ]);
 
         return { data: response };
-    }, [createSubscription, prefix, user?.email]);
+    }, [prefix, upsertSubscription, user?.email]);
 
     const getNotificationSubscription = useCallback(async (): Promise<{
         data: LegacyAlertSubscriptionQuery[] | null;

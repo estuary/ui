@@ -6,26 +6,19 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
-import { useQuery } from 'urql';
 
-import { AlertSubscriptionQuery } from 'src/api/alerts';
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/PrefixAlerts/Rows';
 import { columns } from 'src/components/tables/PrefixAlerts/shared';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { TableStatuses } from 'src/types';
 
 function PrefixAlertTable() {
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-
-    const [{ data, error, fetching }, executeQuery] = useQuery({
-        query: AlertSubscriptionQuery,
-        variables: { prefix: selectedTenant },
-        pause: !selectedTenant,
-    });
+    const [{ data, error, fetching }, executeQuery] =
+        useGetAlertSubscriptions();
 
     const setInitializationError = useAlertSubscriptionsStore(
         (state) => state.setInitializationError

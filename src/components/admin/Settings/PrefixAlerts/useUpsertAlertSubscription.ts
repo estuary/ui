@@ -1,27 +1,44 @@
 import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
-import type { AlertSubscriptionCreateMutationInput } from 'src/types/gql';
+import type { AlertSubscriptionMutationInput } from 'src/types/gql';
 
 import { useCallback, useEffect } from 'react';
 
 import { useMutation } from 'urql';
 
-import { AlertSubscriptionCreateMutation } from 'src/api/alerts';
+import {
+    AlertSubscriptionCreateMutation,
+    AlertSubscriptionUpdateMutation,
+} from 'src/api/alerts';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
-export function useCreateAlertSubscription() {
-    const [updateSubscriptionResult, updateSubscription] = useMutation(
-        AlertSubscriptionCreateMutation
+export function useUpsertAlertSubscription() {
+    const [{ data }] = useGetAlertSubscriptions();
+
+    const subscription = useAlertSubscriptionsStore(
+        (state) => state.subscription
     );
 
-    const createSubscription = useCallback(
+    const query = data?.alertSubscriptions.find(
+        ({ catalogPrefix, email }) =>
+            subscription.catalogPrefix === catalogPrefix &&
+            subscription.email === email
+    )
+        ? AlertSubscriptionUpdateMutation
+        : AlertSubscriptionCreateMutation;
+
+    const [upsertSubscriptionResult, mutateSubscription] = useMutation(query);
+
+    const upsertSubscription = useCallback(
         async (
-            subscriptionKeys: AlertSubscriptionCreateMutationInput[]
+            subscriptionKeys: AlertSubscriptionMutationInput[]
         ): Promise<AlertSubscriptionResponse[]> => {
             const promises = subscriptionKeys.map(
                 ({ alertTypes, prefix, email }) =>
-                    updateSubscription({ alertTypes, email, prefix })
+                    mutateSubscription({ alertTypes, email, prefix })
             );
 
             const evaluatedResponses: AlertSubscriptionResponse[] = [];
@@ -109,12 +126,12 @@ export function useCreateAlertSubscription() {
 
             return evaluatedResponses;
         },
-        [updateSubscription]
+        [mutateSubscription]
     );
 
     useEffect(() => {
-        console.log(updateSubscriptionResult);
-    }, [updateSubscriptionResult]);
+        console.log(upsertSubscriptionResult);
+    }, [upsertSubscriptionResult]);
 
-    return { createSubscription, updateSubscriptionResult };
+    return { upsertSubscription, upsertSubscriptionResult };
 }

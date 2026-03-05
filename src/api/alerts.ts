@@ -4,7 +4,7 @@ import type {
     AlertSubscription as LegacyAlertSubscription,
 } from 'src/types';
 import type {
-    AlertSubscriptionCreateMutationInput,
+    AlertSubscriptionMutationInput,
     AlertSubscriptionsBy,
     AlertTypeQueryResponse,
 } from 'src/types/gql';
@@ -49,7 +49,7 @@ const AlertTypeQuery = gql<AlertTypeQueryResponse>`
 
 const AlertSubscriptionCreateMutation = gql<
     { catalogPrefix: string; email: string },
-    AlertSubscriptionCreateMutationInput
+    AlertSubscriptionMutationInput
 >`
     mutation CreateAlertSubscriptionMutation(
         $prefix: String!
@@ -71,13 +71,35 @@ const AlertSubscriptionCreateMutation = gql<
 
 const AlertSubscriptionDeleteMutation = gql<
     { catalogPrefix: string; email: string },
-    AlertSubscriptionCreateMutationInput
+    AlertSubscriptionMutationInput
 >`
     mutation DeleteAlertSubscriptionMutation(
         $prefix: String!
         $email: String!
     ) {
         deleteAlertSubscription(prefix: $prefix, email: $email) {
+            catalogPrefix
+            email
+        }
+    }
+`;
+
+const AlertSubscriptionUpdateMutation = gql<
+    { catalogPrefix: string; email: string },
+    AlertSubscriptionMutationInput
+>`
+    mutation UpdateAlertSubscriptionMutation(
+        $prefix: String!
+        $email: String!
+        $alertTypes: [String!]
+        $detail: String
+    ) {
+        updateAlertSubscription(
+            prefix: $prefix
+            email: $email
+            alertTypes: $alertTypes
+            detail: $detail
+        ) {
             catalogPrefix
             email
         }
@@ -157,6 +179,7 @@ export {
     AlertSubscriptionCreateMutation,
     AlertSubscriptionDeleteMutation,
     AlertSubscriptionQuery,
+    AlertSubscriptionUpdateMutation,
     AlertTypeQuery,
     createDataProcessingNotification,
     deleteDataProcessingNotification,

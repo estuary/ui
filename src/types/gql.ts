@@ -134,7 +134,8 @@ export interface AlertSubscription extends BaseFields {
     email: string;
 }
 
-export interface AlertSubscriptionCreateMutationInput
+// This interface is used for create and update alert subscription mutations.
+export interface AlertSubscriptionMutationInput
     extends BaseAlertSubscriptionMutationInput {
     alertTypes?: string[];
     detail?: string;

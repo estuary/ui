@@ -1,4 +1,4 @@
-import type { AlertSubscriptionCreateMutationInput } from 'src/types/gql';
+import type { AlertSubscriptionMutationInput } from 'src/types/gql';
 
 import { useRef, useState } from 'react';
 
@@ -6,7 +6,7 @@ import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useCreateAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useCreateAlertSubscription';
+import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
 import { hasLength } from 'src/utils/misc-utils';
 import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
@@ -17,7 +17,7 @@ export function useModifyAlertSubscription(closeDialog: () => void) {
         }, DEFAULT_DEBOUNCE_WAIT)
     );
 
-    const { createSubscription } = useCreateAlertSubscription();
+    const { upsertSubscription } = useUpsertAlertSubscription();
 
     const setServerError = useAlertSubscriptionsStore(
         (state) => state.setSaveErrors
@@ -34,7 +34,7 @@ export function useModifyAlertSubscription(closeDialog: () => void) {
         setLoading(true);
         setServerError([]);
 
-        const subscriptionsToCreate: AlertSubscriptionCreateMutationInput[] = [
+        const subscriptionsToUpsert: AlertSubscriptionMutationInput[] = [
             {
                 alertTypes: subscription.alertTypes,
                 email: subscription.email,
@@ -42,13 +42,13 @@ export function useModifyAlertSubscription(closeDialog: () => void) {
             },
         ];
 
-        const subscriptionCreated = createSubscription(subscriptionsToCreate);
+        const subscriptionUpserted = upsertSubscription(subscriptionsToUpsert);
 
-        const createResponse = await subscriptionCreated;
+        const upsertResponse = await subscriptionUpserted;
 
         // The create could be undefined and this was easier to mark than tweak logic
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const errors = createResponse
+        const errors = upsertResponse
             .filter((r) => r?.error)
             .map((r) => r?.error);
 
