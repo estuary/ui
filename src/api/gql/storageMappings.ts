@@ -20,7 +20,7 @@ export interface FragmentStore {
     accountTenantId?: string | null;
 }
 
-export interface StorageMapping {
+interface StorageMapping {
     catalogPrefix: string;
     spec: {
         dataPlanes: string[];
@@ -28,7 +28,7 @@ export interface StorageMapping {
     };
 }
 
-export interface StorageMappingInput {
+interface StorageMappingInput {
     catalogPrefix: string;
     spec: {
         fragmentStores: FragmentStore[];
@@ -37,7 +37,7 @@ export interface StorageMappingInput {
     detail?: string;
 }
 
-export interface TestConnectionHealthResult {
+interface TestConnectionHealthResult {
     fragmentStore: FragmentStore;
     dataPlaneName: string;
     error: string | null;

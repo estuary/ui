@@ -15,12 +15,12 @@ import { RHFSelect, RHFTextField } from 'src/components/shared/RHFFields/';
 import { AWS_REGIONS, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
-export const PROVIDER_OPTIONS = (
-    Object.keys(PROVIDER_LABELS) as CloudProvider[]
-).map((code) => ({
-    value: code,
-    label: PROVIDER_LABELS[code],
-}));
+const PROVIDER_OPTIONS = (Object.keys(PROVIDER_LABELS) as CloudProvider[]).map(
+    (code) => ({
+        value: code,
+        label: PROVIDER_LABELS[code],
+    })
+);
 
 interface StorageFieldsProps {
     defaultDataPlane: DataPlaneNode | null;
