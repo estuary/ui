@@ -13,7 +13,6 @@ import type {
 } from 'src/stores/DetailsForm/types';
 import type { Endpoint } from 'src/stores/ShardDetail/types';
 import type { StorageMappingDictionary } from 'src/types';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 
@@ -255,18 +254,6 @@ const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
 export function toPresentableName(dp: DataPlaneNode): string {
     const dataPlaneName = parseDataPlaneName(dp.name, dp.scope);
     return formatDataPlaneName(dataPlaneName);
-}
-
-export function toPresentableCloudProvider(provider: CloudProvider): string {
-    if (provider === 'AWS') {
-        return 'Amazon Web Services';
-    } else if (provider === 'GCP') {
-        return 'Google Cloud Platform';
-    } else if (provider === 'AZURE') {
-        return 'Microsoft Azure';
-    } else {
-        return provider;
-    }
 }
 
 /** @deprecated details are now returned by dataplane gql query */
