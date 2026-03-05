@@ -23,7 +23,7 @@ import { ActionLink } from 'src/components/admin/Settings/StorageMappings/Dialog
 import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields';
 import { cardHeaderSx } from 'src/context/Theme';
 
-export const primaryStoreSx = {
+const primaryStoreSx = {
     px: 1.5,
     py: 1,
     borderRadius: 1,

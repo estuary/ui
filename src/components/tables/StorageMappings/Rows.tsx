@@ -1,4 +1,4 @@
-import type { RowsProps } from 'src/components/tables/StorageMappings/types';
+import type { StorageMappingsQuery } from 'src/types';
 
 import { TableCell, TableRow, useTheme } from '@mui/material';
 
@@ -7,7 +7,7 @@ import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import { useDialog } from 'src/hooks/useDialog';
 
-function Rows({ data }: RowsProps) {
+function Rows({ data }: { data: StorageMappingsQuery[] }) {
     const theme = useTheme();
 
     const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
