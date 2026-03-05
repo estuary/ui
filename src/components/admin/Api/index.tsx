@@ -18,7 +18,7 @@ function AdminApi() {
             <AdminTabs />
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
-                <Grid item xs={12} md={9}>
+                <Grid size={{ xs: 12, md: 9 }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
                         <FormattedMessage id="admin.cli_api.header" />
                     </Typography>

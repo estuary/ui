@@ -191,9 +191,9 @@ function UsageByMonthGraph() {
                                     id: 'admin.billing.graph.usageByMonth.dataFormatter',
                                 },
                                 {
-                                    value,
+                                    value: String(value),
                                 }
-                            ) as unknown as string;
+                            );
                         },
                     },
                 },
@@ -214,9 +214,9 @@ function UsageByMonthGraph() {
                                     id: 'admin.billing.graph.usageByMonth.hoursFormatter',
                                 },
                                 {
-                                    value,
+                                    value: String(value),
                                 }
-                            ) as unknown as string;
+                            );
                         },
                     },
                     yAxisIndex: 1,

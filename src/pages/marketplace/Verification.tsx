@@ -3,15 +3,14 @@ import type { PostgrestError } from '@supabase/postgrest-js';
 import { useCallback, useState } from 'react';
 import useConstant from 'use-constant';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Navigate } from 'react-router';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import { authenticatedRoutes } from 'src/app/routes';
 import PrefixedName from 'src/components/inputs/PrefixedName';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import Error from 'src/components/shared/Error';
 import useMarketplaceLocalStorage from 'src/hooks/useMarketplaceLocalStorage';
 import useMarketplaceVerify from 'src/hooks/useMarketplaceVerify';
@@ -82,11 +81,11 @@ function MarketplaceVerification() {
                 ) : null}
 
                 <Typography variant="h5" align="center">
-                    <FormattedMessage id="tenant.marketplace.header" />
+                    {intl.formatMessage({ id: 'tenant.marketplace.header' })}
                 </Typography>
 
                 <Typography>
-                    <FormattedMessage id="tenant.marketplace.message" />
+                    {intl.formatMessage({ id: 'tenant.marketplace.message' })}
                 </Typography>
 
                 <Box>
@@ -110,15 +109,15 @@ function MarketplaceVerification() {
                         justifyContent: 'center',
                     }}
                 >
-                    <SafeLoadingButton
+                    <Button
                         variant="contained"
                         loading={loading}
                         disabled={Boolean(prefixHasErrors || loading)}
                         onClick={() => startVerification(prefix)}
                         sx={{ mt: 2 }}
                     >
-                        <FormattedMessage id="cta.continue" />
-                    </SafeLoadingButton>
+                        {intl.formatMessage({ id: 'cta.continue' })}
+                    </Button>
                 </Box>
             </Stack>
         </FullPageWrapper>

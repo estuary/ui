@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useIntl } from 'react-intl';
 
 import RelatedEntities from 'src/components/shared/Entity/Details/RelatedEntities';
@@ -17,13 +19,15 @@ function useRelatedEntities() {
         relatedCollections,
         hydrationError,
         hydrated,
-    ] = useEntityRelationshipStore((state) => [
-        state.captures,
-        state.materializations,
-        state.collections,
-        state.hydrationError,
-        state.hydrated,
-    ]);
+    ] = useEntityRelationshipStore(
+        useShallow((state) => [
+            state.captures,
+            state.materializations,
+            state.collections,
+            state.hydrationError,
+            state.hydrated,
+        ])
+    );
 
     return useMemo(() => {
         const response = [];

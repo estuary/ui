@@ -6,6 +6,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    accordionSummaryClasses,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -94,7 +95,7 @@ function MigrationList() {
                 }
                 sx={{
                     'px': 1,
-                    '& .MuiAccordionSummary-content': {
+                    [`& .${accordionSummaryClasses.content}`]: {
                         'my': 0,
                         'color': migrationSelected
                             ? theme.palette.primary.main

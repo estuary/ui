@@ -2,6 +2,8 @@ import type { LoadDocumentsOffsets } from 'src/hooks/journals/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { JournalClient, JournalSelector } from 'data-plane-gateway';
 import { isEmpty } from 'lodash';
 import { useCounter } from 'react-use';
@@ -146,10 +148,12 @@ const useJournalData = (
     const failures = useRef(0);
     const initialLoadComplete = useRef(false);
 
-    const [brokerAddress, brokerToken] = useJournalStore((state) =>
-        opsJournalTarget
-            ? [state.taskBrokerAddress, state.taskBrokerToken]
-            : [state.collectionBrokerAddress, state.collectionBrokerToken]
+    const [brokerAddress, brokerToken] = useJournalStore(
+        useShallow((state) =>
+            opsJournalTarget
+                ? [state.taskBrokerAddress, state.taskBrokerToken]
+                : [state.collectionBrokerAddress, state.collectionBrokerToken]
+        )
     );
 
     const journalClient = useMemo(() => {

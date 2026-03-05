@@ -174,10 +174,6 @@ function EmailSelector({
                 }: AutocompleteRenderInputParams) => (
                     <TextField
                         {...params}
-                        InputProps={{
-                            ...InputProps,
-                            sx: { borderRadius: 3 },
-                        }}
                         error={inputErrorExists}
                         label={intl.formatMessage({
                             id: 'data.email',
@@ -185,13 +181,20 @@ function EmailSelector({
                         required
                         size="small"
                         variant="outlined"
+                        slotProps={{
+                            input: {
+                                ...InputProps,
+                                sx: { borderRadius: 3 },
+                            },
+                        }}
                     />
                 )}
                 renderOption={(renderOptionProps, option) => {
+                    const { key, ...restRenderOptionProps } = renderOptionProps;
                     return typeof option === 'string' ? (
-                        <Typography>{option}</Typography>
+                        <Typography key={key}>{option}</Typography>
                     ) : (
-                        <ListItem {...renderOptionProps} key={option.user_id}>
+                        <ListItem key={key} {...restRenderOptionProps}>
                             <UserAvatar
                                 userName={option.user_full_name}
                                 avatarUrl={option.user_avatar_url}
@@ -201,26 +204,29 @@ function EmailSelector({
                             <ListItemText
                                 primary={option.user_full_name}
                                 secondary={option.user_email}
-                                primaryTypographyProps={{
-                                    sx: {
-                                        fontWeight: 500,
-                                        fontSize: 16,
-                                    },
-                                }}
-                                secondaryTypographyProps={{
-                                    sx: {
-                                        color: (theme) =>
-                                            theme.palette.text.primary,
-                                    },
-                                }}
                                 sx={{ ml: 2 }}
+                                slotProps={{
+                                    primary: {
+                                        sx: {
+                                            fontWeight: 500,
+                                            fontSize: 16,
+                                        },
+                                    },
+
+                                    secondary: {
+                                        sx: {
+                                            color: (theme) =>
+                                                theme.palette.text.primary,
+                                        },
+                                    },
+                                }}
                             />
                         </ListItem>
                     );
                 }}
-                renderTags={(values, getTagProps) => {
+                renderValue={(values, getTagProps) => {
                     return values.map((value, index) => {
-                        const tagProps = getTagProps({ index });
+                        const { key, ...tagProps } = getTagProps({ index });
 
                         const email =
                             typeof value === 'string'
@@ -238,6 +244,7 @@ function EmailSelector({
                                 key={`email-tag-${email}-${index}`}
                                 label={email}
                                 size="small"
+                                variant="outlined"
                             />
                         );
                     });
@@ -245,7 +252,6 @@ function EmailSelector({
                 sx={{ flexGrow: 1 }}
                 value={emails}
             />
-
             {inputErrorExists ? (
                 <FormHelperText error={inputErrorExists}>
                     {intl.formatMessage({

@@ -7,6 +7,8 @@ export const CLEAR_BUTTON_ID_SUFFIX = '__clear-button';
 export const INVALID_DATE = 'Invalid Date';
 export const TIMEZONE_OFFSET_REPLACEMENT = 'Z';
 
+export const MINUTES_STEP = 5;
+
 export const DEFAULT_ANCHOR_ORIGIN: PopoverOrigin = {
     vertical: 'center',
     horizontal: 'right',

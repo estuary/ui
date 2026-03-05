@@ -60,7 +60,7 @@ function useDiscoverStartSubscription(entityType: Entity) {
     const storeDiscoveredCollections = useStoreDiscoveredCaptures();
 
     const jobFailed = useCallback(
-        (error) => {
+        (error: any) => {
             setFormState({
                 error,
                 status: FormStatus.FAILED,

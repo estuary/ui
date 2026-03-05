@@ -93,7 +93,6 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                     </AlertBox>
                 </Box>
             ) : null}
-
             <form
                 onSubmit={handlers.submit}
                 style={{
@@ -134,8 +133,10 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                         name="token"
                         error={showErrors}
                         color={showErrors ? 'error' : undefined}
-                        inputProps={{
-                            minLength: 5,
+                        slotProps={{
+                            htmlInput: {
+                                minLength: 5,
+                            },
                         }}
                     />
                 ) : null}

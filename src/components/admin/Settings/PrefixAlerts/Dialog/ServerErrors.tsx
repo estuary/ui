@@ -1,12 +1,16 @@
 import { Stack } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import Error from 'src/components/shared/Error';
 import { hasLength } from 'src/utils/misc-utils';
 
 export default function ServerErrors() {
-    const serverErrors = useAlertSubscriptionsStore((state) =>
-        [state.initializationError].concat(state.saveErrors)
+    const serverErrors = useAlertSubscriptionsStore(
+        useShallow((state) =>
+            [state.initializationError].concat(state.saveErrors)
+        )
     );
 
     if (!hasLength(serverErrors)) {

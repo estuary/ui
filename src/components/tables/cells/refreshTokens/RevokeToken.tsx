@@ -3,16 +3,15 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useState } from 'react';
 
-import { Stack, TableCell, Tooltip, useTheme } from '@mui/material';
+import { Button, Stack, TableCell, Tooltip, useTheme } from '@mui/material';
 
 import { WarningCircle } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import {
     INVALID_TOKEN_INTERVAL,
     updateRefreshTokenValidity,
 } from 'src/api/tokens';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import Error from 'src/components/shared/Error';
 import { sample_blue } from 'src/context/Theme';
 import { useZustandStore } from 'src/context/Zustand/provider';
@@ -24,6 +23,7 @@ interface Props {
 }
 
 function RevokeTokenButton({ id }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const hydrate = useZustandStore<
@@ -62,14 +62,14 @@ function RevokeTokenButton({ id }: Props) {
     return (
         <TableCell>
             <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-                <SafeLoadingButton
+                <Button
                     color={error ? 'error' : 'primary'}
-                    loading={saving}
+                    loading={Boolean(saving)}
                     onClick={revokeToken}
                     variant="text"
                 >
-                    <FormattedMessage id="cta.remove" />
-                </SafeLoadingButton>
+                    {intl.formatMessage({ id: 'cta.remove' })}
+                </Button>
 
                 {error ? (
                     <Tooltip

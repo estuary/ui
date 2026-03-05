@@ -50,7 +50,7 @@ export const OutlinedChip = styled(Chip, {
                       : `1px ${borderStyle} ${theme.palette[colorKey].main}`,
         },
         '&:hover::after': { background },
-        '& .MuiChip-deleteIcon': {
+        [`& .${chipClasses.deleteIcon}`]: {
             'color':
                 colorKey === 'default'
                     ? undefined
@@ -59,7 +59,7 @@ export const OutlinedChip = styled(Chip, {
                 color: theme.palette.error.main,
             },
         },
-        '& .MuiChip-deleteIconSmall': {
+        [`&.${chipClasses.sizeSmall} > .${chipClasses.deleteIcon}`]: {
             marginRight: '1px',
         },
         [`& .${chipClasses.label}`]: {

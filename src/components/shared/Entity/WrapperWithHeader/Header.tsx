@@ -1,6 +1,12 @@
 import type { BaseComponentProps } from 'src/types';
 
-import { AccordionSummary, Fade, Typography, useTheme } from '@mui/material';
+import {
+    AccordionSummary,
+    accordionSummaryClasses,
+    Fade,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
@@ -24,9 +30,9 @@ function Header({ children, disableClose, expanded, readOnly }: Props) {
                 ) : undefined
             }
             sx={{
-                'backgroundColor':
+                backgroundColor:
                     theme.palette.mode === 'dark' ? 'transparent' : 'white',
-                '& .MuiAccordionSummary-content': {
+                [`& .${accordionSummaryClasses.content}`]: {
                     alignItems: 'center',
                 },
             }}

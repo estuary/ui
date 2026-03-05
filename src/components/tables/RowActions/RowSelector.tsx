@@ -51,7 +51,7 @@ function RowSelector({
 
             <Grid container alignItems="center" gap={1}>
                 {hideActions ? null : (
-                    <Grid item>
+                    <Grid>
                         <ButtonGroup
                             aria-label={intl.formatMessage({
                                 id: 'capturesTable.ctaGroup.aria',
@@ -83,7 +83,7 @@ function RowSelector({
                 )}
 
                 {showMaterialize ? (
-                    <Grid item>
+                    <Grid>
                         <Materialize
                             selectableTableStoreName={selectableTableStoreName}
                         />
@@ -91,7 +91,7 @@ function RowSelector({
                 ) : null}
 
                 {showTransform ? (
-                    <Grid item>
+                    <Grid>
                         <Transform
                             selectableTableStoreName={selectableTableStoreName}
                         />

@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 
 import { Grid, Skeleton } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/EmailSelector';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
@@ -24,7 +26,7 @@ export default function EmailListField({ open }: Props) {
         (state) => state.existingEmails
     );
     const [updatedEmails, setUpdatedEmails] = useAlertSubscriptionsStore(
-        (state) => [state.updatedEmails, state.setUpdatedEmails]
+        useShallow((state) => [state.updatedEmails, state.setUpdatedEmails])
     );
 
     useEffect(() => {
@@ -43,13 +45,12 @@ export default function EmailListField({ open }: Props) {
 
     return (
         <Grid
-            item
-            xs={12}
-            md={7}
+            size={{ xs: 12, md: 7 }}
             sx={{
                 maxHeight: 250,
                 overflow: 'auto',
                 display: 'flex',
+                pt: 1, //Used to keep label from clipping header
             }}
         >
             {subscriptions === undefined ? (

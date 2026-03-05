@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { inputBaseClasses, TextField } from '@mui/material';
 
 interface Props {
     label: string;
@@ -19,8 +19,8 @@ function SearchField({ label, changeHandler, id, autoFocus }: Props) {
             size="small"
             onChange={changeHandler}
             sx={{
-                'width': '100%',
-                '& .MuiInputBase-root': { borderRadius: 3 },
+                width: '100%',
+                [`& .${inputBaseClasses.root}`]: { borderRadius: 3 },
             }}
         />
     );

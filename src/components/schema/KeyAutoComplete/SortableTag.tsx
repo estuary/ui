@@ -1,6 +1,6 @@
 import type { ChipProps } from '@mui/material';
 
-import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
+import { Box, chipClasses, IconButton, Tooltip, useTheme } from '@mui/material';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -67,7 +67,7 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                     }
                     label={label}
                     sx={{
-                        '.MuiChip-icon': {
+                        [`.${chipClasses.icon}`]: {
                             marginLeft: 0,
                         },
                     }}
