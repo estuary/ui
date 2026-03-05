@@ -43,8 +43,11 @@ export function GcpInstructions({ connection }: { connection: Connection }) {
                                 id: 'storageMappings.dialog.instructions.bucketName',
                             })}
                         </strong>{' '}
-                        <TechnicalEmphasis>
-                            &ldquo;{bucket}&rdquo;
+                        <TechnicalEmphasis
+                            enableBackground
+                            sx={{ px: '4px', py: '2px', borderRadius: 2 }}
+                        >
+                            {bucket}
                         </TechnicalEmphasis>
                     </Typography>
                 </Box>

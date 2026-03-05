@@ -100,6 +100,7 @@ export function AwsInstructions({ connection }: { connection: Connection }) {
                     bgcolor: codeBackground[theme.palette.mode],
                     overflow: 'auto',
                     fontFamily: 'monospace',
+                    fontSize: 12,
                 }}
             >
                 {policy.formatted}
