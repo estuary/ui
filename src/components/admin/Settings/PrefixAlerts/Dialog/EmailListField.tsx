@@ -1,4 +1,4 @@
-import type { EmailSelectorProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { EmailListFieldProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import { Grid, TextField } from '@mui/material';
 
@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/EmailSelector';
 
-const EmailListField = ({ staticEmail }: EmailSelectorProps) => {
+const EmailListField = ({ staticEmail }: EmailListFieldProps) => {
     const intl = useIntl();
 
     return (

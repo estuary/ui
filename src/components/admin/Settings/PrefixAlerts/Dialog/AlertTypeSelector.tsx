@@ -69,6 +69,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                 )}
                 renderOption={(renderOptionProps, option, state) => {
                     const { description, name } = option;
+
                     return (
                         <SelectableAutocompleteOption
                             Content={

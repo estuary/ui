@@ -1,11 +1,14 @@
 import type { Dispatch, SetStateAction } from 'react';
+import type { ReducedAlertSubscription } from 'src/api/types';
 import type {
     AlertTypeDef,
     BaseAlertSubscriptionMutationInput,
 } from 'src/types/gql';
 import type { UseQueryExecute } from 'urql';
 
-export interface AlertSubscriptionDialogProps extends EmailSelectorProps {
+export interface AlertSubscriptionDialogProps
+    extends AlertTypeFieldProps,
+        EmailListFieldProps {
     executeQuery: UseQueryExecute;
     headerId: string;
     open: boolean;
@@ -20,6 +23,10 @@ export interface AlertSubscriptionResponse
     invalid?: boolean;
 }
 
+export interface AlertTypeFieldProps {
+    existingAlertTypes?: ReducedAlertSubscription['alertTypes'];
+}
+
 export interface AlertTypeSelectorProps {
     options: AlertTypeDef[];
 }
@@ -29,6 +36,7 @@ export interface BaseButtonProps {
 }
 
 export interface EditButtonProps extends BaseButtonProps {
+    alertTypes: ReducedAlertSubscription['alertTypes'];
     email: string;
     prefix: string;
 }
@@ -37,6 +45,6 @@ export interface EmailDictionary {
     [prefix: string]: string[];
 }
 
-export interface EmailSelectorProps {
+export interface EmailListFieldProps {
     staticEmail?: string;
 }

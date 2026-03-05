@@ -9,7 +9,12 @@ import { FormattedMessage } from 'react-intl';
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
-function AlertEditButton({ email, executeQuery, prefix }: EditButtonProps) {
+function AlertEditButton({
+    alertTypes,
+    email,
+    executeQuery,
+    prefix,
+}: EditButtonProps) {
     const [open, setOpen] = useState(false);
 
     const setSubscribedEmail = useAlertSubscriptionsStore(
@@ -32,6 +37,7 @@ function AlertEditButton({ email, executeQuery, prefix }: EditButtonProps) {
 
             <AlertSubscriptionDialog
                 executeQuery={executeQuery}
+                existingAlertTypes={alertTypes}
                 headerId="alerts.config.dialog.update.header"
                 open={open}
                 setOpen={setOpen}

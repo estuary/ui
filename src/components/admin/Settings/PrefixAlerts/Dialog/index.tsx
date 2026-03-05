@@ -26,6 +26,7 @@ const TITLE_ID = 'alert-subscription-dialog-title';
 
 function AlertSubscriptionDialog({
     executeQuery,
+    existingAlertTypes,
     headerId,
     open,
     setOpen,
@@ -100,7 +101,7 @@ function AlertSubscriptionDialog({
 
                     <EmailListField staticEmail={staticEmail} />
 
-                    <AlertTypeField />
+                    <AlertTypeField existingAlertTypes={existingAlertTypes} />
                 </Grid>
             </DialogContent>
 
