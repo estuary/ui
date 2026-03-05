@@ -80,12 +80,6 @@ export function AwsInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Typography variant="subtitle2" fontWeight={700}>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.optionA',
-                })}
-            </Typography>
-
             <Typography>
                 {intl.formatMessage({
                     id: 'storageMappings.dialog.instructions.aws.step2.webUi',
@@ -121,15 +115,9 @@ export function AwsInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Typography variant="subtitle2" fontWeight={700}>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.optionB',
-                })}
-            </Typography>
-
             <Typography>
                 {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.pasteInTerminal',
+                    id: 'storageMappings.dialog.instructions.aws.step2.cli',
                 })}
             </Typography>
 
