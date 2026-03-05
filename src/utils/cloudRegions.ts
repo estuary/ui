@@ -6,9 +6,9 @@
 export type CloudProvider = 'AWS' | 'GCP' | 'AZURE';
 
 export const PROVIDER_LABELS: Record<CloudProvider, string> = {
-    AWS: 'Amazon S3',
-    GCP: 'Google Cloud Storage',
-    AZURE: 'Azure Blob Storage',
+    AWS: 'Amazon Web Services',
+    GCP: 'Google Cloud Platform',
+    AZURE: 'Microsoft Azure',
 };
 
 export const AWS_REGIONS: Record<string, string> = {

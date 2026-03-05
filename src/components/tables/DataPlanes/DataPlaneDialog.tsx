@@ -10,12 +10,11 @@ import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';
 import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
-import { getRegionDisplayName } from 'src/utils/cloudRegions';
+import { getRegionDisplayName, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import {
     formatDataPlaneName,
     formatIamOidc,
     generateDataPlaneOption,
-    toPresentableCloudProvider,
 } from 'src/utils/dataPlane-utils';
 
 const TITLE_ID = 'data-plane-dialog-title';
@@ -79,9 +78,11 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             label={intl.formatMessage({
                                 id: 'admin.dataPlanes.dialog.cloudProvider',
                             })}
-                            value={toPresentableCloudProvider(
-                                dataPlaneName.provider as CloudProvider
-                            )}
+                            value={
+                                PROVIDER_LABELS[
+                                    dataPlaneName.provider as CloudProvider
+                                ]
+                            }
                             showCopyButton={false}
                         />
                     ) : null}
