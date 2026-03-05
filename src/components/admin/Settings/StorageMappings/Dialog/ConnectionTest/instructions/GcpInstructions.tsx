@@ -59,21 +59,9 @@ export function GcpInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Typography variant="subtitle2" fontWeight={700}>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.optionA',
-                })}
-            </Typography>
-
             <Typography>
                 {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.gcp.step2.webUi.navigate',
-                })}
-            </Typography>
-
-            <Typography>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.gcp.step2.webUi.paste',
+                    id: 'storageMappings.dialog.instructions.gcp.step2.webUi',
                 })}
             </Typography>
 
@@ -85,15 +73,9 @@ export function GcpInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Typography variant="subtitle2" fontWeight={700}>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.optionB',
-                })}
-            </Typography>
-
             <Typography>
                 {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.pasteInTerminal',
+                    id: 'storageMappings.dialog.instructions.gcp.step2.cli',
                 })}
             </Typography>
 
