@@ -8,6 +8,7 @@ import {
     DialogTitle,
     Grid,
     IconButton,
+    Stack,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -16,6 +17,7 @@ import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import AlertTypeField from 'src/components/admin/Settings/PrefixAlerts/Dialog/AlertTypeField';
+import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
 import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/EmailListField';
 import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
@@ -25,6 +27,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 const TITLE_ID = 'alert-subscription-dialog-title';
 
 function AlertSubscriptionDialog({
+    enableDeletion,
     executeQuery,
     existingAlertTypes,
     headerId,
@@ -105,20 +108,32 @@ function AlertSubscriptionDialog({
                 </Grid>
             </DialogContent>
 
-            <DialogActions>
-                <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={(event) => {
-                        event.preventDefault();
+            <DialogActions
+                style={{
+                    justifyContent: enableDeletion
+                        ? 'space-between'
+                        : 'flex-end',
+                }}
+            >
+                {enableDeletion ? (
+                    <DeleteButton closeDialog={() => closeDialog(true)} />
+                ) : null}
 
-                        closeDialog();
-                    }}
-                >
-                    {intl.formatMessage({ id: 'cta.cancel' })}
-                </Button>
+                <Stack direction="row" spacing={1}>
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={(event) => {
+                            event.preventDefault();
 
-                <SaveButton closeDialog={() => closeDialog(true)} />
+                            closeDialog();
+                        }}
+                    >
+                        {intl.formatMessage({ id: 'cta.cancel' })}
+                    </Button>
+
+                    <SaveButton closeDialog={() => closeDialog(true)} />
+                </Stack>
             </DialogActions>
         </Dialog>
     );

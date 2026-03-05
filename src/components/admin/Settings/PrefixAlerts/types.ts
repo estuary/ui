@@ -13,6 +13,7 @@ export interface AlertSubscriptionDialogProps
     headerId: string;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    enableDeletion?: boolean;
     staticPrefix?: string;
 }
 
