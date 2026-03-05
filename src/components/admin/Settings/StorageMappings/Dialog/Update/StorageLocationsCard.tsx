@@ -163,7 +163,7 @@ function StoreRowActions({
 }
 
 const getStoreKey = (store: FragmentStore) =>
-    `${store.provider}${store.region}${store.provider === 'AZURE' ? store.containerName : store.bucket}`;
+    `${store.provider}${store.region}${store.provider === 'AZURE' ? `${store.storageAccountName}${store.containerName}` : store.bucket}${store.storagePrefix}`;
 
 export function StorageLocationsCard({
     formOpen,
