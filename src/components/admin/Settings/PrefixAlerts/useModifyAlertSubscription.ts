@@ -1,12 +1,22 @@
 import type { AlertSubscriptionCreateMutationInput } from 'src/types/gql';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+
+import { debounce } from 'lodash';
+import { useUnmount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useCreateAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useCreateAlertSubscription';
 import { hasLength } from 'src/utils/misc-utils';
+import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
-export function useUpdateAlertSubscription(closeDialog: () => void) {
+export function useModifyAlertSubscription(closeDialog: () => void) {
+    const debounceDialogClosure = useRef(
+        debounce(() => {
+            closeDialog();
+        }, DEFAULT_DEBOUNCE_WAIT)
+    );
+
     const { createSubscription } = useCreateAlertSubscription();
 
     const setServerError = useAlertSubscriptionsStore(
@@ -43,12 +53,16 @@ export function useUpdateAlertSubscription(closeDialog: () => void) {
             .map((r) => r?.error);
 
         if (!hasLength(errors)) {
-            closeDialog();
+            debounceDialogClosure.current();
         }
 
         setServerError(errors);
         setLoading(false);
     };
+
+    useUnmount(() => {
+        debounceDialogClosure.current?.cancel();
+    });
 
     return { loading, onClick };
 }

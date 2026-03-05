@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useUpdateAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpdateAlertSubscription';
+import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 function SaveButton({ closeDialog }: Props) {
-    const { loading, onClick } = useUpdateAlertSubscription(closeDialog);
+    const { loading, onClick } = useModifyAlertSubscription(closeDialog);
 
     const prefixErrorsExist = useAlertSubscriptionsStore(
         (state) => state.prefixErrorsExist
