@@ -5,7 +5,7 @@ import type {
 } from 'src/types/gql';
 import type { UseQueryExecute } from 'urql';
 
-export interface AlertSubscriptionDialogProps {
+export interface AlertSubscriptionDialogProps extends EmailSelectorProps {
     executeQuery: UseQueryExecute;
     headerId: string;
     open: boolean;
@@ -35,4 +35,8 @@ export interface EditButtonProps extends BaseButtonProps {
 
 export interface EmailDictionary {
     [prefix: string]: string[];
+}
+
+export interface EmailSelectorProps {
+    staticEmail?: string;
 }

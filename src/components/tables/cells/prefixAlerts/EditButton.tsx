@@ -36,6 +36,7 @@ function AlertEditButton({ email, executeQuery, prefix }: EditButtonProps) {
                 open={open}
                 setOpen={setOpen}
                 staticPrefix={prefix}
+                staticEmail={email}
             />
         </TableCell>
     );
