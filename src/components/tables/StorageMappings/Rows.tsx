@@ -1,82 +1,51 @@
-import type {
-    DataPlaneCellsProps,
-    RowProps,
-    RowsProps,
-} from 'src/components/tables/StorageMappings/types';
+import type { StorageMappingsQuery } from 'src/types';
 
-import { TableCell, TableRow } from '@mui/material';
+import { TableCell, TableRow, useTheme } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
-import ChipStatus from 'src/components/tables/cells/ChipStatus';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import { getEntityTableRowSx } from 'src/context/Theme';
+import { useDialog } from 'src/hooks/useDialog';
 
-function DataPlaneCells({ dataPlanes, store }: DataPlaneCellsProps) {
-    const { provider, bucket, prefix } = store;
+function Rows({ data }: { data: StorageMappingsQuery[] }) {
+    const theme = useTheme();
 
-    return (
-        <>
-            <ChipListCell
-                values={dataPlanes ?? []}
-                maxChips={3}
-                stripPath={false}
-            />
+    const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
 
-            <TableCell>{provider}</TableCell>
-
-            <TableCell>{bucket}</TableCell>
-
-            <TableCell>{prefix}</TableCell>
-        </>
-    );
-}
-
-function Row({ row }: RowProps) {
-    const key = `StorageMappings-${row.id}-stores-`;
+    const handleRowClick = (row: (typeof data)[0]) => {
+        onOpen({ prefix: row.catalog_prefix });
+    };
 
     return (
         <>
-            {row.spec.stores.map((store, index) =>
-                index === 0 ? (
-                    <TableRow key={`${key}${index}`}>
+            {data.map((row) => {
+                const store = row.spec.stores[0];
+
+                return (
+                    <TableRow
+                        hover
+                        key={`StorageMappings-${row.id}`}
+                        sx={getEntityTableRowSx(theme)}
+                        onClick={() => handleRowClick(row)}
+                    >
                         <TableCell>{row.catalog_prefix}</TableCell>
 
-                        <ChipStatus
-                            color="success"
-                            messageId="storageMappings.status.active"
+                        <ChipListCell
+                            values={row.spec.data_planes ?? []}
+                            maxChips={3}
+                            stripPath={false}
                         />
 
-                        <DataPlaneCells
-                            store={store}
-                            dataPlanes={row.spec.data_planes}
-                        />
+                        <TableCell>
+                            {store.provider}/{store.bucket}
+                        </TableCell>
+
+                        <TableCell>{store.prefix}</TableCell>
 
                         <TimeStamp time={row.updated_at} enableRelative />
                     </TableRow>
-                ) : (
-                    <TableRow key={`${key}${index}`}>
-                        <TableCell />
-
-                        <TableCell />
-
-                        <DataPlaneCells
-                            store={store}
-                            dataPlanes={row.spec.data_planes}
-                        />
-
-                        <TableCell />
-                    </TableRow>
-                )
-            )}
-        </>
-    );
-}
-
-function Rows({ data }: RowsProps) {
-    return (
-        <>
-            {data.map((row) => (
-                <Row row={row} key={row.id} />
-            ))}
+                );
+            })}
         </>
     );
 }
