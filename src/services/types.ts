@@ -29,8 +29,6 @@ export enum CustomEvents {
     CAPTURE_DISCOVER = 'Capture_Discover',
     CAPTURE_EDIT = 'Capture_Edit',
     CAPTURE_INTERVAL = 'CaptureInterval',
-    CAPTURE_MATERIALIZE_FAILED = 'Capture_Materialize_Failed',
-    CAPTURE_MATERIALIZE_SUCCESS = 'Capture_Materialize_Success',
     CAPTURE_TEST = 'Capture_Test',
     COLLECTION_CREATE = 'Collection_Create',
     COLLECTION_SCHEMA = 'CollectionSchema',
