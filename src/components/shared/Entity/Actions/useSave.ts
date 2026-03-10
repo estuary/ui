@@ -8,6 +8,7 @@ import type { CustomEvents } from 'src/services/types';
 
 import { useCallback, useMemo } from 'react';
 
+import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
 
 import {
@@ -66,6 +67,7 @@ function useSave(
     dryRun?: boolean
 ) {
     const intl = useIntl();
+    const postHog = usePostHog();
 
     const { jobStatusPoller } = useJobStatusPoller();
 
@@ -168,6 +170,10 @@ function useSave(
                     }
 
                     trackEvent(logEvent, payload);
+                    postHog.capture(logEvent, {
+                        entity_type: entityType,
+                        status: payload.job_status?.type,
+                    });
                 },
                 async (payload: any) => {
                     if (dryRun) {
@@ -187,6 +193,10 @@ function useSave(
                     }
 
                     trackEvent(logEvent, payload);
+                    postHog.capture(logEvent, {
+                        entity_type: entityType,
+                        status: payload.job_status?.type,
+                    });
 
                     const incompatibleCollections =
                         payload?.job_status?.incompatible_collections;
@@ -206,12 +216,14 @@ function useSave(
         },
         [
             dryRun,
+            entityType,
             intl,
             jobStatusPoller,
             logEvent,
             messagePrefix,
             mutateDraftSpecs,
             onFailure,
+            postHog,
             setFormState,
             setIncompatibleCollections,
             setPubId,
