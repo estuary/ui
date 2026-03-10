@@ -171,7 +171,7 @@ function useSave(
 
                     trackEvent(logEvent, payload);
                     postHog.capture(logEvent, {
-                        entity_type: entityType,
+                        entityType,
                         status: payload.job_status?.type,
                     });
                 },
@@ -194,7 +194,7 @@ function useSave(
 
                     trackEvent(logEvent, payload);
                     postHog.capture(logEvent, {
-                        entity_type: entityType,
+                        entityType,
                         status: payload.job_status?.type,
                     });
 

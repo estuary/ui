@@ -337,8 +337,8 @@ function useGenerateCatalog() {
                     status: FormStatus.GENERATED,
                 });
 
-                postHog.capture('Materialization', {
-                    entity_type: ENTITY_TYPE,
+                postHog.capture('Draft:Create', {
+                    entityType: 'materialization',
                     status: FormStatus.GENERATED,
                 });
 

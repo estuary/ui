@@ -2,6 +2,7 @@ import type { TransformConfig } from 'src/stores/TransformationCreate/types';
 
 import { useCallback, useMemo } from 'react';
 
+import { usePostHog } from '@posthog/react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 
@@ -35,10 +36,13 @@ interface Props {
     selectedCollections: Set<string>;
 }
 
+const EVENT_NAME = 'Derivation:Create';
+
 function InitializeDraftButton({
     entityNameError,
     selectedCollections,
 }: Props) {
+    const postHog = usePostHog();
     const navigate = useNavigate();
 
     // Draft Editor Store
@@ -133,6 +137,12 @@ function InitializeDraftButton({
                 );
 
                 if (draftSpecResponse.error) {
+                    postHog.capture(EVENT_NAME, {
+                        status: 'error',
+                        language,
+                        collectionCount: selectedCollections.size,
+                    });
+
                     setFormState({
                         status: FormStatus.FAILED,
                         error: {
@@ -146,11 +156,22 @@ function InitializeDraftButton({
 
                     setFormState({ status: FormStatus.GENERATED });
 
+                    postHog.capture(EVENT_NAME, {
+                        collectionCount: selectedCollections.size,
+                        status: 'success',
+                        language,
+                    });
+
                     // TODO (transform): Replace this with the navigate to create workflow hook and the production-ready URL
                     //   when it is time to launch this feature.
                     navigate(authenticatedRoutes.beta.new.fullPath);
                 }
             } else {
+                postHog.capture(EVENT_NAME, {
+                    status: 'failure',
+                    language,
+                    collectionCount: selectedCollections.size,
+                });
                 setFormState({ status: FormStatus.FAILED });
             }
         }
@@ -160,6 +181,7 @@ function InitializeDraftButton({
         entityName,
         language,
         navigate,
+        postHog,
         selectedCollections,
         setCatalogName,
         setDraftId,

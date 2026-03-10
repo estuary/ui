@@ -10,7 +10,8 @@ import useDirectiveGuard from 'src/app/guards/hooks';
 import MessageWithButton from 'src/components/content/MessageWithButton';
 import Error from 'src/components/shared/Error';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
+import { jobStatusQuery } from 'src/directives/shared';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { DEMO_TENANT } from 'src/utils/misc-utils';
@@ -32,6 +33,7 @@ function AcceptDemoInvitation({
     setOpen,
     goToFilteredTable,
 }: Props) {
+    const trackEvent = useDirectiveEventTracking();
     const { directive, mutate } = useDirectiveGuard(directiveName, {
         hideAlert: true,
     });

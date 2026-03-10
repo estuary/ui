@@ -85,8 +85,8 @@ function useDiscoverStartSubscription(entityType: Entity) {
             });
 
             postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
-                entity_type: entityType,
-                status: 'starting',
+                entityType,
+                status: 'start',
             });
 
             setDraftId(null);
@@ -132,15 +132,15 @@ function useDiscoverStartSubscription(entityType: Entity) {
 
                     trackEvent(payload);
                     postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
-                        entity_type: entityType,
-                        capture_name: payload.capture_name,
+                        entityType,
+                        name: payload.capture_name,
                         status: payload.job_status?.type,
                     });
                 },
                 (payload: any) => {
                     trackEvent(payload);
                     postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
-                        entity_type: entityType,
+                        entityType,
                         status: payload.job_status?.type ?? payload.error,
                     });
 

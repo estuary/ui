@@ -8,9 +8,8 @@ import type { AppliedDirective } from 'src/types';
 import { isEmpty } from 'lodash';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { logRocketConsole, logRocketEvent } from 'src/services/shared';
+import { logRocketConsole } from 'src/services/shared';
 import { JOB_STATUS_COLUMNS, TABLES } from 'src/services/supabase';
-import { CustomEvents } from 'src/services/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v3';
@@ -265,19 +264,3 @@ export const DIRECTIVES: Directives = {
 };
 export type DirectivesList = (keyof typeof DIRECTIVES)[];
 
-export const trackEvent = (
-    type: string,
-    directive?: AppliedDirective<UserClaims>
-) => {
-    logRocketEvent(
-        `${CustomEvents.DIRECTIVE}:${type}`,
-        directive
-            ? {
-                  id: directive.id,
-                  directive_id: directive.directive_id,
-                  logs_token: directive.logs_token,
-                  status: directive.job_status.type,
-              }
-            : undefined
-    );
-};

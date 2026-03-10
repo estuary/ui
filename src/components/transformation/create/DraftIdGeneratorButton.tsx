@@ -2,6 +2,7 @@ import type { DraftIdGeneratorButtonProps } from 'src/components/transformation/
 
 import { useCallback, useMemo, useState } from 'react';
 
+import { usePostHog } from '@posthog/react';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -18,6 +19,8 @@ import {
     useTransformationCreate_transformConfigs,
 } from 'src/stores/TransformationCreate/hooks';
 import { generateInitialSpec } from 'src/utils/derivation-utils';
+
+const EVENT_NAME = 'Derivation:Draft:Create';
 
 function DraftIdGeneratorButton({
     draftCreationCallback,
@@ -39,6 +42,7 @@ function DraftIdGeneratorButton({
     const entityName = useTransformationCreate_name();
     const catalogName = useTransformationCreate_catalogName();
 
+    const postHog = usePostHog();
     const [urlLoading, setUrlLoading] = useState(false);
 
     const submitButtonError = useMemo(() => {
@@ -182,8 +186,17 @@ function DraftIdGeneratorButton({
                     );
                 }
 
+                postHog.capture(EVENT_NAME, {
+                    status: 'success',
+                    language,
+                });
+
                 return evaluatedDraftId;
             } catch (e: unknown) {
+                postHog.capture(EVENT_NAME, {
+                    status: 'failure',
+                    language,
+                });
                 displayError(
                     intl.formatMessage({
                         id: 'newTransform.errors.draftCreateFailed',
@@ -195,7 +208,7 @@ function DraftIdGeneratorButton({
                 setUrlLoading(false);
             }
         },
-        [catalogName, displayError, generateDraftWithSpecs, intl]
+        [catalogName, displayError, generateDraftWithSpecs, intl, language, postHog]
     );
 
     return (
