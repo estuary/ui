@@ -12,7 +12,7 @@ const useDirectiveEventTracking = () => {
     const postHog = usePostHog();
 
     return useCallback(
-        (type: string, directive?: AppliedDirective<UserClaims>) => {
+        (eventName: string, directive?: AppliedDirective<UserClaims>) => {
             const properties = directive
                 ? {
                       id: directive.id,
@@ -24,10 +24,16 @@ const useDirectiveEventTracking = () => {
                       status: 'incomplete',
                   };
 
-            logRocketEvent(`${CustomEvents.DIRECTIVE}:${type}`, properties);
+            logRocketEvent(
+                `${CustomEvents.DIRECTIVE}:${eventName}`,
+                properties
+            );
 
-            postHog?.capture(type, {
-                status: properties.status, // DO NOT SEND EVERYTHING TO POSTHOG
+            // Two changes for PH:
+            //  1 - we do not send all the data over
+            //  2 - we do not include the `directive` part of the event name as that feels "leaky"
+            postHog?.capture(eventName, {
+                status: properties.status,
             });
         },
         [postHog]
