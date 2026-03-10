@@ -26,6 +26,8 @@ export interface BaseDataPlaneQuery {
     cidr_blocks: string[] | null;
     gcp_service_account_email: string | null;
     aws_iam_user_arn: string | null;
+    azure_application_name: string | null;
+    azure_application_client_id: string | null;
     data_plane_fqdn: string | null;
     // aws_link_endpoints: AwsLinkEndpoint | null;
 }
@@ -38,6 +40,8 @@ const COLUMNS = [
     'cidr_blocks',
     'gcp_service_account_email',
     'aws_iam_user_arn',
+    // 'azure_application_name', TODO uncomment after RLS policy is updated
+    'azure_application_client_id',
     // 'aws_link_endpoints', TODO uncomment after https://github.com/estuary/flow/pull/1816 is done
 ];
 

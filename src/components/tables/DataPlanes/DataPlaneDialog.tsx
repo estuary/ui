@@ -135,6 +135,30 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             }[]
                         }
                     />
+
+                    <DataPlaneDialogField
+                        label={intl.formatMessage({
+                            id: 'data.azureConsentLink',
+                        })}
+                        value={
+                            dataPlane.azure_application_client_id
+                                ? `https://login.microsoftonline.com/organizations/v2.0/adminconsent?client_id=${dataPlane.azure_application_client_id}&scope=https://storage.azure.com/.default`
+                                : intl.formatMessage({
+                                      id: 'admin.dataPlanes.dialog.notAvailable',
+                                  })
+                        }
+                    />
+                    <DataPlaneDialogField
+                        label={intl.formatMessage({
+                            id: 'data.azureApplicationName',
+                        })}
+                        value={
+                            dataPlane.azure_application_name ??
+                            intl.formatMessage({
+                                id: 'admin.dataPlanes.dialog.notAvailable',
+                            })
+                        }
+                    />
                     <ToggleField
                         lowercaseButton
                         label={intl.formatMessage({
