@@ -84,11 +84,6 @@ function useDiscoverStartSubscription(entityType: Entity) {
                 component: 'useDiscoverStartSubscription',
             });
 
-            postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
-                entityType,
-                status: 'start',
-            });
-
             setDraftId(null);
             setDiscoveredDraftId(discoverDraftId);
 
@@ -132,15 +127,12 @@ function useDiscoverStartSubscription(entityType: Entity) {
 
                     trackEvent(payload);
                     postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
-                        entityType,
-                        name: payload.capture_name,
                         status: payload.job_status?.type,
                     });
                 },
                 (payload: any) => {
                     trackEvent(payload);
                     postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
-                        entityType,
                         status: payload.job_status?.type ?? payload.error,
                     });
 

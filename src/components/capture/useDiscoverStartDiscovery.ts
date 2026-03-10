@@ -2,6 +2,8 @@ import type { Entity } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { usePostHog } from '@posthog/react';
+
 import { discover } from 'src/api/discovers';
 import { createEntityDraft } from 'src/api/drafts';
 import useDiscoverStartSubscription from 'src/components/capture/useDiscoverStartSubscription';
@@ -18,6 +20,8 @@ import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointC
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 
 function useDiscoverStartDiscovery(entityType: Entity) {
+    const postHog = usePostHog();
+
     const createDiscoversSubscription =
         useDiscoverStartSubscription(entityType);
     const { callFailed } = useEntityWorkflowHelpers();
@@ -30,6 +34,10 @@ function useDiscoverStartDiscovery(entityType: Entity) {
 
     const imageConnectorTagId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.id
+    );
+
+    const imageTag = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imageTag
     );
 
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
@@ -63,6 +71,11 @@ function useDiscoverStartDiscovery(entityType: Entity) {
 
                 return false;
             }
+
+            postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
+                status: 'init',
+                imageTag,
+            });
 
             setCatalogName(processedEntityName);
 
@@ -114,7 +127,9 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             createDiscoversSubscription,
             endpointConfigData,
             imageConnectorTagId,
+            imageTag,
             persistedDraftId,
+            postHog,
             setCatalogName,
             setDraftId,
             setFormState,
