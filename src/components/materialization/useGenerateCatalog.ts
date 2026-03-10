@@ -4,6 +4,8 @@ import type { DekafConfig } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { usePostHog } from '@posthog/react';
+
 import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
@@ -59,6 +61,7 @@ import {
 const ENTITY_TYPE = 'materialization';
 
 function useGenerateCatalog() {
+    const postHog = usePostHog();
     const isEdit = useEntityWorkflow_Editing();
     const { callFailed } = useEntityWorkflowHelpers();
 
@@ -334,6 +337,11 @@ function useGenerateCatalog() {
                     status: FormStatus.GENERATED,
                 });
 
+                postHog.capture('Materialization', {
+                    entity_type: ENTITY_TYPE,
+                    status: FormStatus.GENERATED,
+                });
+
                 // Materializations do not use this setting but still letting it get populated to keep
                 //  the stores simpler. Also, I could easily see us needing to know what collections
                 //  were enabled during an edit in materializations.
@@ -351,6 +359,7 @@ function useGenerateCatalog() {
         [
             bindings,
             callFailed,
+            postHog,
             detailsFormsErrorsExist,
             endpointConfig,
             endpointConfigData,

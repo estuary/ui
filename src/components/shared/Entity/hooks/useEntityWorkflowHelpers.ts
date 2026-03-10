@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
+import { usePostHog } from '@posthog/react';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +29,7 @@ import { snackbarSettings } from 'src/utils/notification-utils';
 type RouteHandler = (customRoute?: string, external?: boolean) => void;
 
 function useEntityWorkflowHelpers() {
+    const postHog = usePostHog();
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const entityType = useEntityType();
@@ -138,8 +140,10 @@ function useEntityWorkflowHelpers() {
                 { ...snackbarSettings, variant: 'error' }
             );
             logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_FAILED);
+            postHog.capture(CustomEvents.CAPTURE_MATERIALIZE_FAILED);
         } else {
             logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_SUCCESS);
+            postHog.capture(CustomEvents.CAPTURE_MATERIALIZE_SUCCESS);
             exit(
                 getPathWithParams(
                     authenticatedRoutes.materializations.create.fullPath,
@@ -147,7 +151,7 @@ function useEntityWorkflowHelpers() {
                 )
             );
         }
-    }, [catalogName, enqueueSnackbar, exit, intl, pubId]);
+    }, [catalogName, enqueueSnackbar, exit, intl, postHog, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }
