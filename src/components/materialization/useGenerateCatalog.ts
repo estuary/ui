@@ -354,7 +354,6 @@ function useGenerateCatalog() {
         [
             bindings,
             callFailed,
-            postHog,
             detailsFormsErrorsExist,
             endpointConfig,
             endpointConfigData,
