@@ -36,8 +36,8 @@ function useDiscoverStartDiscovery(entityType: Entity) {
         (state) => state.details.data.connectorImage.id
     );
 
-    const imageTag = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.imageTag
+    const imageName = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imageName
     );
 
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
@@ -74,7 +74,7 @@ function useDiscoverStartDiscovery(entityType: Entity) {
 
             postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
                 status: 'init',
-                imageTag,
+                imageName,
             });
 
             setCatalogName(processedEntityName);
@@ -127,7 +127,7 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             createDiscoversSubscription,
             endpointConfigData,
             imageConnectorTagId,
-            imageTag,
+            imageName,
             persistedDraftId,
             postHog,
             setCatalogName,
