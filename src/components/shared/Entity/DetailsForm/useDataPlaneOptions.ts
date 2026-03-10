@@ -42,6 +42,8 @@ export const useDataPlaneOptions = () => {
                             gcp_service_account_email: null,
                             aws_iam_user_arn: null,
                             data_plane_fqdn: null,
+                            azure_application_name: null,
+                            azure_application_client_id: null,
                         },
                         dataPlaneNames.at(0)
                     )
