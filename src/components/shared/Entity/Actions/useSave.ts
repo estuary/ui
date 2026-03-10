@@ -214,7 +214,6 @@ function useSave(
         },
         [
             dryRun,
-            entityType,
             intl,
             jobStatusPoller,
             logEvent,
