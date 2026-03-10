@@ -337,11 +337,6 @@ function useGenerateCatalog() {
                     status: FormStatus.GENERATED,
                 });
 
-                postHog.capture('Draft:Create', {
-                    entityType: 'materialization',
-                    status: FormStatus.GENERATED,
-                });
-
                 // Materializations do not use this setting but still letting it get populated to keep
                 //  the stores simpler. Also, I could easily see us needing to know what collections
                 //  were enabled during an edit in materializations.

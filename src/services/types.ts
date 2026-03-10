@@ -71,8 +71,6 @@ export enum CustomEvents {
     JSON_SCHEMA_DEREF = 'JsonSchema:Deref',
     MARKETPLACE_VERIFY = 'Marketplace:Verify',
     MATERIALIZATION_CREATE = 'Materialization_Create',
-    MATERIALIZATION_CREATE_CONFIG_CREATE = 'Materialization_Create_Config_Create',
-    MATERIALIZATION_CREATE_CONFIG_EDIT = 'Materialization_Create_Config_Edit',
     MATERIALIZATION_EDIT = 'Materialization_Edit',
     MATERIALIZATION_TEST = 'Materialization_Test',
     MATERIALIZATION_TEST_BACKGROUND = 'Materialization_Test_Background',
