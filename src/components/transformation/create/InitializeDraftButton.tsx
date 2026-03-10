@@ -135,11 +135,13 @@ function InitializeDraftButton({
                     'collection'
                 );
 
+                const collectionCount = selectedCollections.size;
+
                 if (draftSpecResponse.error) {
                     postHog.capture(EVENT_NAME, {
-                        status: 'failure',
+                        collectionCount,
                         language,
-                        collectionCount: selectedCollections.size,
+                        status: 'failure',
                     });
 
                     setFormState({
@@ -156,9 +158,9 @@ function InitializeDraftButton({
                     setFormState({ status: FormStatus.GENERATED });
 
                     postHog.capture(EVENT_NAME, {
-                        collectionCount: selectedCollections.size,
-                        status: 'success',
+                        collectionCount,
                         language,
+                        status: 'success',
                     });
 
                     // TODO (transform): Replace this with the navigate to create workflow hook and the production-ready URL
@@ -167,9 +169,9 @@ function InitializeDraftButton({
                 }
             } else {
                 postHog.capture(EVENT_NAME, {
-                    status: 'failure',
+                    collectionCount: -1,
                     language,
-                    collectionCount: selectedCollections.size,
+                    status: 'failure',
                 });
                 setFormState({ status: FormStatus.FAILED });
             }
