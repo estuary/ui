@@ -4,8 +4,6 @@ import type { DekafConfig } from 'src/types';
 
 import { useCallback } from 'react';
 
-import { usePostHog } from '@posthog/react';
-
 import { createEntityDraft } from 'src/api/drafts';
 import {
     createDraftSpec,
@@ -61,7 +59,6 @@ import {
 const ENTITY_TYPE = 'materialization';
 
 function useGenerateCatalog() {
-    const postHog = usePostHog();
     const isEdit = useEntityWorkflow_Editing();
     const { callFailed } = useEntityWorkflowHelpers();
 
