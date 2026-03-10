@@ -15,6 +15,7 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { EVENT_NAME } from 'src/components/transformation/create/shared';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import {
@@ -35,8 +36,6 @@ interface Props {
     entityNameError: string | null;
     selectedCollections: Set<string>;
 }
-
-const EVENT_NAME = 'Derivation:Create';
 
 function InitializeDraftButton({
     entityNameError,
@@ -138,7 +137,7 @@ function InitializeDraftButton({
 
                 if (draftSpecResponse.error) {
                     postHog.capture(EVENT_NAME, {
-                        status: 'error',
+                        status: 'failure',
                         language,
                         collectionCount: selectedCollections.size,
                     });

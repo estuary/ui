@@ -171,7 +171,7 @@ function GenerateInvitation({
                 (error) => {
                     setServerError(error);
                     postHog.capture(EVENT_NAME, {
-                        status: 'error',
+                        status: 'failure',
                         capability,
                         singleUse,
                     });

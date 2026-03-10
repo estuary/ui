@@ -10,6 +10,7 @@ import { createEntityDraft } from 'src/api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { EVENT_NAME } from 'src/components/transformation/create/shared';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
@@ -19,8 +20,6 @@ import {
     useTransformationCreate_transformConfigs,
 } from 'src/stores/TransformationCreate/hooks';
 import { generateInitialSpec } from 'src/utils/derivation-utils';
-
-const EVENT_NAME = 'Derivation:Draft:Create';
 
 function DraftIdGeneratorButton({
     draftCreationCallback,
@@ -208,7 +207,14 @@ function DraftIdGeneratorButton({
                 setUrlLoading(false);
             }
         },
-        [catalogName, displayError, generateDraftWithSpecs, intl, language, postHog]
+        [
+            catalogName,
+            displayError,
+            generateDraftWithSpecs,
+            intl,
+            language,
+            postHog,
+        ]
     );
 
     return (
