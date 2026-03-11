@@ -23,7 +23,8 @@ import {
     useOnboardingStore_surveyResponse,
 } from 'src/directives/Onboard/Store/hooks';
 import OnboardingSurvey from 'src/directives/Onboard/Survey';
-import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import { jobStatusQuery } from 'src/directives/shared';
+import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { fireGtmEvent } from 'src/services/gtm';
@@ -33,6 +34,7 @@ import { hasLength } from 'src/utils/misc-utils';
 
 const directiveName = 'betaOnboard';
 const NAME_TAKEN_MESSAGE = 'is already in use';
+const EVENT_NAME = 'Tenant:Create';
 
 const submit_onboard = async (
     requestedTenant: string,
@@ -49,6 +51,7 @@ const submit_onboard = async (
 
 const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
     const postHog = usePostHog();
+    const trackEvent = useDirectiveEventTracking();
     const { jobStatusPoller } = useJobStatusPoller();
 
     // Onboarding Store
@@ -116,7 +119,8 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         tenant: requestedTenant,
                         ignore_referrer: true,
                     });
-                    postHog.capture('Register', {
+                    postHog.capture(EVENT_NAME, {
+                        status: 'success',
                         tenant: requestedTenant,
                     });
                     trackEvent(`${directiveName}:Complete`, directive);
@@ -133,7 +137,8 @@ const BetaOnboard = ({ directive, mutate, status }: DirectiveProps) => {
                         tenant: requestedTenant,
                         ignore_referrer: true,
                     });
-                    postHog.capture('RegisterFailed', {
+                    postHog.capture(EVENT_NAME, {
+                        status: 'failure',
                         tenantAlreadyTaken: tenantTaken,
                         tenant: requestedTenant,
                     });

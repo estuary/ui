@@ -2,7 +2,6 @@ import type { EntityCreateSaveButtonProps } from 'src/components/shared/Entity/A
 
 import { Button } from '@mui/material';
 
-import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
 
 import { PreSaveConfirmation } from 'src/components/editor/Bindings/Backfill/PreSaveConfirmation';
@@ -28,7 +27,6 @@ function EntityCreateSave({
     logEvent,
     onFailure,
 }: EntityCreateSaveButtonProps) {
-    const postHog = usePostHog();
     const intl = useIntl();
 
     const entityWorkFlow = useEntityWorkflow();
@@ -84,10 +82,6 @@ function EntityCreateSave({
                 } else {
                     void save(draftId);
                 }
-
-                postHog.capture(
-                    isDryRun ? 'test_click' : 'save_and_publish_click'
-                );
             }}
         >
             {intl.formatMessage({

@@ -13,7 +13,8 @@ import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import AlertBox from 'src/components/shared/AlertBox';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import { jobStatusQuery } from 'src/directives/shared';
+import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 
 interface Props {
@@ -33,6 +34,7 @@ function AcceptGrant({
     grantedCapability,
 }: Props) {
     const intl = useIntl();
+    const trackEvent = useDirectiveEventTracking();
 
     const { jobStatusPoller } = useJobStatusPoller();
     const mutate_userInfoSummary = useUserInfoSummaryStore(
