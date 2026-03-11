@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
 
-import { StyledEngineProvider } from '@mui/material';
-
 import { JsonForms } from '@jsonforms/react';
 
 import { custom_generateDefaultUISchema } from 'src/services/jsonforms';
@@ -77,19 +75,17 @@ function ResourceConfigForm({
     }
 
     return (
-        <StyledEngineProvider injectFirst>
-            <JsonForms
-                {...jsonFormsDefaults}
-                schema={resourceSchema}
-                uischema={uiSchema}
-                data={formData}
-                readonly={readOnly || isActive}
-                validationMode={showValidationVal}
-                onChange={(state) => {
-                    handlers.onChange(name.current, uuid.current, state);
-                }}
-            />
-        </StyledEngineProvider>
+        <JsonForms
+            {...jsonFormsDefaults}
+            schema={resourceSchema}
+            uischema={uiSchema}
+            data={formData}
+            readonly={readOnly || isActive}
+            validationMode={showValidationVal}
+            onChange={(state) => {
+                handlers.onChange(name.current, uuid.current, state);
+            }}
+        />
     );
 }
 

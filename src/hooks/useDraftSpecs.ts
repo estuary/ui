@@ -54,12 +54,12 @@ function useDraftSpecs(
                   .returns<DraftSpecQuery[]>()
     );
 
-    return {
-        draftSpecs: data ?? defaultResponse,
-        error,
-        mutate,
-        isValidating,
-    };
+    const draftSpecs = data ?? defaultResponse;
+
+    return useMemo(
+        () => ({ draftSpecs, error, mutate, isValidating }),
+        [draftSpecs, error, mutate, isValidating]
+    );
 }
 
 export function useDraftSpecs_editWorkflow(
@@ -77,12 +77,12 @@ export function useDraftSpecs_editWorkflow(
                   .returns<DraftSpecQuery[]>()
     );
 
-    return {
-        draftSpecs: data ?? defaultResponse,
-        error,
-        mutate,
-        isValidating,
-    };
+    const draftSpecs = data ?? defaultResponse;
+
+    return useMemo(
+        () => ({ draftSpecs, error, mutate, isValidating }),
+        [draftSpecs, error, mutate, isValidating]
+    );
 }
 
 export function useDraftSpecs_forEditor(
@@ -102,14 +102,12 @@ export function useDraftSpecs_forEditor(
                   .returns<DraftSpecQuery[]>()
     );
 
-    return useMemo(() => {
-        return {
-            draftSpecs: data ?? defaultResponse,
-            error,
-            mutate,
-            isValidating,
-        };
-    }, [data, error, isValidating, mutate]);
+    const draftSpecs = data ?? defaultResponse;
+
+    return useMemo(
+        () => ({ draftSpecs, error, mutate, isValidating }),
+        [draftSpecs, error, mutate, isValidating]
+    );
 }
 
 export default useDraftSpecs;

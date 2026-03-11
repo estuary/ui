@@ -44,8 +44,12 @@ export default function FieldSelectionTable({
 }: FieldSelectionTableProps) {
     const intl = useIntl();
 
-    const selections: ExpandedFieldSelection[] = useBindingStore((state) =>
-        getExpandedFieldSelection(state.selections?.[bindingUUID])
+    const bindingFieldSelection = useBindingStore(
+        (state) => state.selections?.[bindingUUID]
+    );
+    const selections: ExpandedFieldSelection[] = useMemo(
+        () => getExpandedFieldSelection(bindingFieldSelection),
+        [bindingFieldSelection]
     );
     const selectionsHydrating = useBindingStore(
         (state) => state.selections?.[bindingUUID]?.hydrating

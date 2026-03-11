@@ -1,6 +1,12 @@
 import type { ReactNode } from 'react';
 
-import { List, ListItem, ListItemText, Typography } from '@mui/material';
+import {
+    List,
+    ListItem,
+    ListItemText,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { diminishedTextColor } from 'src/context/Theme';
 
@@ -16,13 +22,13 @@ interface Props {
 }
 
 function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
+    const theme = useTheme();
     if (data.length > 0) {
         return (
             <>
                 {sectionTitle ? (
                     <Typography variant="subtitle1">{sectionTitle}</Typography>
                 ) : null}
-
                 <List dense sx={{ pt: 0, overflowY: 'auto' }}>
                     {data.map(({ title, val }, index) => (
                         <ListItem
@@ -37,20 +43,21 @@ function KeyValueList({ data, disableTypography, sectionTitle }: Props) {
                                 disableTypography={disableTypography}
                                 primary={title}
                                 secondary={val}
-                                primaryTypographyProps={{
-                                    color: (theme) =>
-                                        val
+                                slotProps={{
+                                    primary: {
+                                        color: val
                                             ? diminishedTextColor[
                                                   theme.palette.mode
                                               ]
                                             : theme.palette.text.primary,
-                                    component: 'div',
-                                    marginBottom: val ? '2px' : undefined,
-                                }}
-                                secondaryTypographyProps={{
-                                    color: (theme) =>
-                                        theme.palette.text.primary,
-                                    component: 'div',
+                                        component: 'div',
+                                        marginBottom: val ? '2px' : undefined,
+                                    },
+
+                                    secondary: {
+                                        color: theme.palette.text.primary,
+                                        component: 'div',
+                                    },
                                 }}
                             />
                         </ListItem>

@@ -117,7 +117,9 @@ export function WizardDialog({
             maxWidth={maxWidth}
             fullWidth
             aria-labelledby={TITLE_ID}
-            TransitionProps={{ onExited }}
+            slotProps={{
+                transition: { onExited },
+            }}
         >
             <WizardContext.Provider value={contextValue}>
                 <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>

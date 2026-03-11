@@ -1,6 +1,11 @@
 import type { OrganizationNameFieldProps } from 'src/directives/Onboard/types';
 
-import { FormControl, FormLabel, TextField } from '@mui/material';
+import {
+    FormControl,
+    FormLabel,
+    inputBaseClasses,
+    TextField,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -55,8 +60,8 @@ function OrganizationNameField({ forceError }: OrganizationNameFieldProps) {
                 value={requestedTenant}
                 variant="outlined"
                 sx={{
-                    'maxWidth': 424,
-                    '& .MuiInputBase-root': { borderRadius: 3 },
+                    maxWidth: 424,
+                    [`& .${inputBaseClasses.root}`]: { borderRadius: 3 },
                 }}
             />
         </FormControl>

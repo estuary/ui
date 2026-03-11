@@ -1,4 +1,4 @@
-import type { EmotionJSX } from '@emotion/react/dist/declarations/src/jsx-namespace';
+import type { ReactElement } from 'react';
 import type {
     LoginButtonProps,
     ProviderButtonProps,
@@ -14,7 +14,7 @@ import { loginButtonStyling } from 'src/context/Theme';
 function LoginButton({ login, provider, isRegister }: LoginButtonProps) {
     const theme = useTheme();
 
-    let ButtonComponent: (props: ProviderButtonProps) => EmotionJSX.Element,
+    let ButtonComponent: (props: ProviderButtonProps) => ReactElement,
         scopes: string;
 
     switch (provider) {

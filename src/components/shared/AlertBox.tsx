@@ -2,7 +2,13 @@ import type { AlertBoxProps } from 'src/components/shared/types';
 
 import { forwardRef, useMemo } from 'react';
 
-import { Alert, AlertTitle, Typography, useTheme } from '@mui/material';
+import {
+    Alert,
+    alertClasses,
+    AlertTitle,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import {
     CheckCircle,
@@ -93,17 +99,17 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
             onClose={onClose}
             sx={{
                 ...(sx ?? {}),
-                'backgroundColor': alertBackground[theme.palette.mode],
-                'color': alertTextPrimary[theme.palette.mode],
-                'borderColor': theme.palette[severity][theme.palette.mode],
-                'padding': 0,
-                'pl': hideIcon ? 2 : undefined,
-                '& > .MuiAlert-message': {
+                backgroundColor: alertBackground[theme.palette.mode],
+                color: alertTextPrimary[theme.palette.mode],
+                borderColor: theme.palette[severity][theme.palette.mode],
+                padding: 0,
+                pl: hideIcon ? 2 : undefined,
+                [`& > .${alertClasses.message}`]: {
                     p: 1,
                     pl: 0,
                     width: '100%',
                 },
-                '& > .MuiAlert-action': short
+                [`& > .${alertClasses.action}`]: short
                     ? {
                           margin: 0,
                           padding: 1,
@@ -114,7 +120,7 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
                           margin: 0,
                           padding: 1,
                       },
-                '& > .MuiAlert-icon': short
+                [`& > .${alertClasses.icon}`]: short
                     ? {
                           ...SHARED_STYLING,
                           borderLeftColor:

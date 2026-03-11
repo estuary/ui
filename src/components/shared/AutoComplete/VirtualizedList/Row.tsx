@@ -37,12 +37,15 @@ function Row(props: ListChildComponentProps) {
     }
 
     const selected = dataSet[2];
+    // MUI v7 passes ownerState in renderOption props for styled-system use;
+    // strip it before spreading onto a DOM element to avoid the React warning.
+    const { ownerState: _ownerState, ...liProps } = dataSet[0];
     return (
-        <li {...dataSet[0]} style={inlineStyle} key={dataSet.key}>
+        <li {...liProps} style={inlineStyle} key={liProps.key}>
             <Box
                 sx={{
                     alignSelf: 'flex-start',
-                    ml: -2,
+                    // ml: -2,
                     mr: 0.5,
                 }}
             >

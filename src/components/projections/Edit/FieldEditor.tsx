@@ -3,6 +3,7 @@ import type { FieldEditorProps } from 'src/components/projections/types';
 import {
     FormHelperText,
     FormLabel,
+    inputBaseClasses,
     Stack,
     TextField,
     Typography,
@@ -81,8 +82,8 @@ function FieldEditor({
                     }}
                     size="small"
                     sx={{
-                        'flex': '1 1 0px',
-                        '& .MuiInputBase-root': {
+                        flex: '1 1 0px',
+                        [`& .${inputBaseClasses.root}`]: {
                             borderRadius: 3,
                         },
                     }}

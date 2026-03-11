@@ -3,14 +3,15 @@ import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
 import { useMemo } from 'react';
 
+import { Button } from '@mui/material';
+
 import { isEmpty } from 'lodash';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { submitDirective } from 'src/api/directives';
 import useDirectiveGuard from 'src/app/guards/hooks';
 import useRepublishPrefix from 'src/components/admin/Settings/StorageMappings/Dialog/useRepublishPrefix';
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { jobStatusQuery, trackEvent } from 'src/directives/shared';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
@@ -35,6 +36,7 @@ const submitStorageMapping = async (
 };
 
 function SaveButton() {
+    const intl = useIntl();
     const republishPrefix = useRepublishPrefix();
 
     const { jobStatusPoller } = useJobStatusPoller();
@@ -114,17 +116,17 @@ function SaveButton() {
     };
 
     return (
-        <SafeLoadingButton
+        <Button
             disabled={
                 isEmpty(formData) || hasLength(formErrors) || loading || saving
             }
-            loading={loading || saving}
+            loading={Boolean(loading || saving)}
             onClick={onClick}
             size="small"
             variant="contained"
         >
-            <FormattedMessage id="cta.save" />
-        </SafeLoadingButton>
+            {intl.formatMessage({ id: 'cta.save' })}
+        </Button>
     );
 }
 

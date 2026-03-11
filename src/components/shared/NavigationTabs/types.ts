@@ -4,7 +4,7 @@ import type { ComponentType } from 'react';
 export interface NavigationTabProps<T = any> {
     labelMessageId: string;
     path: string;
-    Wrapper?: ComponentType<T>;
+    Wrapper?: ComponentType<React.PropsWithChildren<T>>;
     wrapperProps?: T;
 }
 

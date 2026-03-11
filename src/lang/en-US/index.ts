@@ -12,6 +12,7 @@ import { Details } from 'src/lang/en-US/Details';
 import { EntityTable } from 'src/lang/en-US/EntityTable';
 import { Errors } from 'src/lang/en-US/Errors';
 import { Fetchers } from 'src/lang/en-US/Fetchers';
+import { GeneratedModules } from 'src/lang/en-US/GeneratedModules';
 import { Graphs } from 'src/lang/en-US/Graphs';
 import { HomePage } from 'src/lang/en-US/HomePage';
 import { JsonForms } from 'src/lang/en-US/JsonForms';
@@ -55,6 +56,7 @@ const enUSMessages: Record<string, string> = {
     ...RouteTitles,
     ...Transforms,
     ...Workflows,
+    ...GeneratedModules,
 };
 
 export default enUSMessages;

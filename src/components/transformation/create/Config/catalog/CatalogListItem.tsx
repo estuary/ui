@@ -3,11 +3,13 @@ import type { DerivationAttribute } from 'src/stores/TransformationCreate/types'
 import { useState } from 'react';
 
 import {
+    buttonBaseClasses,
     Collapse,
     IconButton,
     List,
     ListItemButton,
     ListItemText,
+    listItemTextClasses,
     Stack,
     useTheme,
 } from '@mui/material';
@@ -92,7 +94,7 @@ function CatalogListItem({
                         'borderBottom': open
                             ? 'none'
                             : defaultOutline[theme.palette.mode],
-                        '&.MuiButtonBase-root:hover::after': {
+                        [`&.${buttonBaseClasses.root}:hover::after`]: {
                             backgroundColor: 'rgba(0, 0, 0, 0.04)',
                         },
                         '&.Mui-selected': {
@@ -113,8 +115,8 @@ function CatalogListItem({
                     <ListItemText
                         primary={itemLabel}
                         sx={{
-                            'ml': 0.5,
-                            '& .MuiListItemText-primary': {
+                            ml: 0.5,
+                            [`& .${listItemTextClasses.primary}`]: {
                                 fontWeight: 500,
                                 whiteSpace: 'nowrap',
                             },
@@ -138,7 +140,7 @@ function CatalogListItem({
                             onClick={handlers.displayAttributeSQL(attributeId)}
                             sx={{
                                 'pl': 5,
-                                '&.MuiButtonBase-root:hover::after': {
+                                [`&.${buttonBaseClasses.root}:hover::after`]: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.04)',
                                 },
                                 '&.Mui-selected': {
@@ -149,7 +151,7 @@ function CatalogListItem({
                             <ListItemText
                                 primary={nestedItemLabel}
                                 sx={{
-                                    '& .MuiListItemText-primary': {
+                                    [`& .${listItemTextClasses.primary}`]: {
                                         whiteSpace: 'nowrap',
                                     },
                                 }}
@@ -172,7 +174,7 @@ function CatalogListItem({
                     onClick={handlers.displayAttributeSQL(attributeId)}
                     sx={{
                         'px': 1,
-                        '&.MuiButtonBase-root:hover::after': {
+                        [`&.${buttonBaseClasses.root}:hover::after`]: {
                             backgroundColor: 'rgba(0, 0, 0, 0.04)',
                         },
                         '&.Mui-selected': {
@@ -193,7 +195,7 @@ function CatalogListItem({
                     <ListItemText
                         primary={itemLabel}
                         sx={{
-                            '& .MuiListItemText-primary': {
+                            [`& .${listItemTextClasses.primary}`]: {
                                 whiteSpace: 'nowrap',
                             },
                         }}

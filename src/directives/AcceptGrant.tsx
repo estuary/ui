@@ -4,12 +4,11 @@ import type { KeyedMutator } from 'swr';
 
 import { useState } from 'react';
 
-import { Box, LinearProgress, Stack, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, Stack, Typography } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { submitDirective } from 'src/api/directives';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import AlertBox from 'src/components/shared/AlertBox';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -149,7 +148,7 @@ function AcceptGrant({
                     justifyContent: 'center',
                 }}
             >
-                <SafeLoadingButton
+                <Button
                     variant="contained"
                     loading={saving}
                     disabled={saving}
@@ -157,7 +156,7 @@ function AcceptGrant({
                     sx={{ mt: 2 }}
                 >
                     {intl.formatMessage({ id: 'cta.accept' })}
-                </SafeLoadingButton>
+                </Button>
             </Box>
         </Stack>
     );

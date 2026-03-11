@@ -33,6 +33,7 @@ import {
     useBinding_serverUpdateRequired,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useDetailsForm_endpointConfig } from 'src/stores/DetailsForm/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_serverUpdateRequired,
@@ -49,7 +50,6 @@ import {
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
-import { isDekafConnector } from 'src/utils/connector-utils';
 import { encryptEndpointConfig } from 'src/utils/sops-utils';
 import {
     generateTaskSpec,
@@ -72,18 +72,10 @@ function useGenerateCatalog() {
     const imageConnectorId = useDetailsFormStore(
         (state) => state.details.data.connectorImage.connectorId
     );
-    const endpointConfig: ConnectorConfig | DekafConfig = useDetailsFormStore(
-        (state) =>
-            isDekafConnector(state.details.data.connectorImage)
-                ? {
-                      config: {},
-                      variant: state.details.data.connectorImage.variant,
-                  }
-                : {
-                      config: {},
-                      image: state.details.data.connectorImage.imagePath,
-                  }
-    );
+
+    const endpointConfig: ConnectorConfig | DekafConfig =
+        useDetailsForm_endpointConfig();
+
     const setDraftedEntityName = useDetailsFormStore(
         (state) => state.setDraftedEntityName
     );

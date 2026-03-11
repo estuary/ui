@@ -131,7 +131,7 @@ export function LeavesAutocomplete({
                     size="small"
                 />
             )}
-            renderOption={(props, option, state) => {
+            renderOption={({ key, ...props }, option, state) => {
                 // styling to help distinguish the current input from the rest of the path in matching options.
                 // truncate the matched prefix to just its last two path components (e.g. "acmeCo/prod/anvils/" → "…/prod/anvils/")
                 const input = state.inputValue;
@@ -150,7 +150,7 @@ export function LeavesAutocomplete({
                 const truncatedPrefix = truncatedComplete + partial;
 
                 return (
-                    <Box component="li" {...props} key={option}>
+                    <Box component="li" {...props} key={key}>
                         <Typography component="span">
                             <Typography
                                 component="span"

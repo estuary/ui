@@ -11,15 +11,14 @@ function HeroOverview() {
 
     return (
         <>
-            <Grid item xs={12} sx={{ mb: 0.25 }}>
+            <Grid size={{ xs: 12 }} sx={{ mb: 0.25 }}>
                 <Typography variant="subtitle1" align="center">
                     <MessageWithEmphasis messageID="home.hero.companyOverview.description" />
                 </Typography>
             </Grid>
 
             <Grid
-                item
-                xs={12}
+                size={{ xs: 12 }}
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
