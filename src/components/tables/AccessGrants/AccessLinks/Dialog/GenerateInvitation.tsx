@@ -1,6 +1,5 @@
-import type { ReactNode } from 'react';
-import type { GenerateInvitationProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
-import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { Capability } from '@estuary/graphql-schema';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 
 import { useRef, useState } from 'react';
 
@@ -18,22 +17,25 @@ import {
 import { useTheme } from '@mui/material/styles';
 
 import { useIntl } from 'react-intl';
+import { CombinedError } from 'urql';
 
-import { generateGrantDirective } from 'src/api/directives';
+import { useCreateInviteLink } from 'src/api/gql/inviteLinks';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
-import { useZustandStore } from 'src/context/Zustand/provider';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 
+interface GenerateInvitationProps {
+    serverError: CombinedError | null;
+    setServerError: Dispatch<SetStateAction<CombinedError | null>>;
+    prefix: string;
+    onCreated: () => void;
+}
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
 // outside of advanced cases.
-const capabilityOptions = ['admin', 'read'];
-const typeOptions = ['single-use', 'multi-use'];
+const capabilityOptions: Capability[] = ['admin', 'read'];
 const MAX_PREFIX_LENGTH = 12;
 
 const RadioOption = ({
@@ -81,17 +83,12 @@ const RadioOption = ({
 function GenerateInvitation({
     serverError,
     setServerError,
+    onCreated,
 }: GenerateInvitationProps) {
     const intl = useIntl();
     const { palette } = useTheme();
 
-    const hydrate = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['hydrate']
-    >(
-        SelectTableStoreNames.ACCESS_GRANTS_LINKS,
-        selectableTableStoreSelectors.query.hydrate
-    );
+    const [, createInviteLink] = useCreateInviteLink();
 
     const {
         handlers: prefixHandlers,
@@ -106,9 +103,12 @@ function GenerateInvitation({
         defaultPrefix: true,
     });
 
-    const [capability, setCapability] = useState<string>(capabilityOptions[0]);
-    const [reusability, setReusability] = useState<string>(typeOptions[0]);
+    const [capability, setCapability] = useState<Capability>(
+        capabilityOptions[0]
+    );
+    const [singleUse, setSingleUse] = useState(true);
     const [accessScope, setAccessScope] = useState<string | null>(null);
+    const [saving, setSaving] = useState(false);
     const subPrefixInputRef = useRef<HTMLInputElement>(null);
 
     const limitedAccessScope = accessScope === 'limited';
@@ -126,43 +126,36 @@ function GenerateInvitation({
                 setServerError(null);
             }
 
-            setCapability(value);
+            setCapability(value as Capability);
         },
-        setGrantReusability: (_event: React.SyntheticEvent, value: string) => {
-            if (serverError) {
-                setServerError(null);
-            }
-
-            setReusability(value);
-        },
-        generateInvitation: (event: React.MouseEvent<HTMLElement>) => {
+        generateInvitation: async (event: React.MouseEvent<HTMLElement>) => {
             event.preventDefault();
 
             const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
-            const processedObject = appendWithForwardSlash(objectRole);
+            const catalogPrefix = appendWithForwardSlash(objectRole);
 
-            generateGrantDirective(
-                processedObject,
+            setSaving(true);
+
+            const result = await createInviteLink({
+                catalogPrefix,
                 capability,
-                reusability === 'single-use'
-            ).then(
-                (response) => {
-                    if (response.error) {
-                        setServerError(response.error);
-                    } else if (hasLength(response.data)) {
-                        if (serverError) {
-                            setServerError(null);
-                        }
+                singleUse,
+            });
 
-                        hydrate();
-                    }
-                },
-                (error) => setServerError(error)
-            );
+            setSaving(false);
+
+            if (result.error) {
+                setServerError(result.error);
+            } else {
+                if (serverError) {
+                    setServerError(null);
+                }
+                onCreated();
+            }
         },
     };
 
-    const onChange = (value: string, errors: string | null) => {
+    const onChange = (value: string, _errors: string | null) => {
         if (serverError) {
             setServerError(null);
         }
@@ -318,14 +311,9 @@ function GenerateInvitation({
                 <FormControlLabel
                     control={
                         <Checkbox
-                            checked={reusability === 'multi-use'}
+                            checked={!singleUse}
                             onChange={(event) => {
-                                handlers.setGrantReusability(
-                                    event,
-                                    event.target.checked
-                                        ? 'multi-use'
-                                        : 'single-use'
-                                );
+                                setSingleUse(!event.target.checked);
                             }}
                         />
                     }
@@ -338,6 +326,7 @@ function GenerateInvitation({
                 />
                 <Button
                     disabled={
+                        saving ||
                         accessScope === null ||
                         (limitedAccessScope &&
                             (hasLength(nameError) || !hasLength(name)))

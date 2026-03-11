@@ -261,6 +261,10 @@ export type AutoDiscoverStatus = {
   pendingPublish?: Maybe<AutoDiscoverOutcome>;
 };
 
+export type BoolFilter = {
+  eq?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 /** Capability within the Estuary role-based access control (RBAC) authorization system. */
 export type Capability =
   | 'admin'
@@ -439,6 +443,45 @@ export type InferredSchemaStatus = {
    * on the next controller run, which would update the hash but not actually modify the schema.
    */
   schemaMd5?: Maybe<Scalars['String']['output']>;
+};
+
+/** An invite link that grants access to a catalog prefix. */
+export type InviteLink = {
+  __typename?: 'InviteLink';
+  /** The capability level granted by this invite link. */
+  capability: Capability;
+  /** The catalog prefix this invite link grants access to. */
+  catalogPrefix: Scalars['Prefix']['output'];
+  /** When this invite link was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** Optional description of this invite link. */
+  detail?: Maybe<Scalars['String']['output']>;
+  /** Whether this invite link can only be used once. */
+  singleUse: Scalars['Boolean']['output'];
+  /** The secret token for this invite link. */
+  token: Scalars['UUID']['output'];
+};
+
+export type InviteLinkConnection = {
+  __typename?: 'InviteLinkConnection';
+  /** A list of edges. */
+  edges: Array<InviteLinkEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type InviteLinkEdge = {
+  __typename?: 'InviteLinkEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: InviteLink;
+};
+
+export type InviteLinksFilter = {
+  prefix?: InputMaybe<PrefixFilter>;
+  singleUse?: InputMaybe<BoolFilter>;
 };
 
 /** The status of a publication. */
@@ -623,6 +666,13 @@ export type MutationRoot = {
    */
   createAlertSubscription: AlertSubscription;
   /**
+   * Create an invite link that grants access to a catalog prefix.
+   *
+   * The caller must have admin capability on the catalog prefix.
+   * Share the returned token with the intended recipient out-of-band.
+   */
+  createInviteLink: InviteLink;
+  /**
    * Create a storage mapping for the given catalog prefix.
    *
    * This validates that the user has admin access to the catalog prefix,
@@ -634,6 +684,17 @@ export type MutationRoot = {
   createStorageMapping: CreateStorageMappingResult;
   /** Delete an alert subscription that exactly matches the given prefix and email. */
   deleteAlertSubscription: AlertSubscription;
+  /**
+   * Delete an invite link, revoking it so it can no longer be redeemed.
+   *
+   * The caller must have admin capability on the invite link's catalog prefix.
+   */
+  deleteInviteLink: Scalars['Boolean']['output'];
+  /**
+   * Redeem an invite link token, granting the caller access to the associated
+   * catalog prefix with the specified capability.
+   */
+  redeemInviteLink: RedeemInviteLinkResult;
   /**
    * Check storage health for a given catalog prefix and storage definition.
    *
@@ -672,6 +733,14 @@ export type MutationRootCreateAlertSubscriptionArgs = {
 };
 
 
+export type MutationRootCreateInviteLinkArgs = {
+  capability: Capability;
+  catalogPrefix: Scalars['Prefix']['input'];
+  detail?: InputMaybe<Scalars['String']['input']>;
+  singleUse?: Scalars['Boolean']['input'];
+};
+
+
 export type MutationRootCreateStorageMappingArgs = {
   catalogPrefix: Scalars['Prefix']['input'];
   detail?: InputMaybe<Scalars['String']['input']>;
@@ -682,6 +751,16 @@ export type MutationRootCreateStorageMappingArgs = {
 export type MutationRootDeleteAlertSubscriptionArgs = {
   email: Scalars['String']['input'];
   prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootDeleteInviteLinkArgs = {
+  token: Scalars['UUID']['input'];
+};
+
+
+export type MutationRootRedeemInviteLinkArgs = {
+  token: Scalars['UUID']['input'];
 };
 
 
@@ -727,6 +806,10 @@ export type PendingConfigUpdateStatus = {
   /** The id of the build when the associated config update event was generated. */
   build: Scalars['Id']['output'];
   nextAttempt: Scalars['DateTime']['output'];
+};
+
+export type PrefixFilter = {
+  startsWith?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** A prefix to which the user is authorized. */
@@ -837,6 +920,13 @@ export type QueryRoot = {
    */
   dataPlanes: DataPlaneConnection;
   /**
+   * List invite links the caller has admin access to.
+   *
+   * Returns invite links under all prefixes where the caller has admin
+   * capability, optionally narrowed by a prefix filter.
+   */
+  inviteLinks: InviteLinkConnection;
+  /**
    * Returns a paginated list of live specs under the given prefix and
    * matching the given type.
    *
@@ -880,6 +970,13 @@ export type QueryRootDataPlanesArgs = {
 };
 
 
+export type QueryRootInviteLinksArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<InviteLinksFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryRootLiveSpecsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -902,6 +999,15 @@ export type QueryRootStorageMappingsArgs = {
   by: StorageMappingsBy;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** Result of redeeming an invite link. */
+export type RedeemInviteLinkResult = {
+  __typename?: 'RedeemInviteLinkResult';
+  /** The capability level that was granted. */
+  capability: Capability;
+  /** The catalog prefix that was granted. */
+  catalogPrefix: Scalars['Prefix']['output'];
 };
 
 export type RepublishRequested = {
@@ -1186,6 +1292,38 @@ export type UpdateStorageMappingResult = {
   republish: Scalars['Boolean']['output'];
 };
 
+export type InviteLinksQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type InviteLinksQuery = { __typename?: 'QueryRoot', inviteLinks: { __typename?: 'InviteLinkConnection', edges: Array<{ __typename?: 'InviteLinkEdge', cursor: string, node: { __typename?: 'InviteLink', token: any, catalogPrefix: any, capability: Capability, singleUse: boolean, detail?: string | null, createdAt: any } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+
+export type CreateInviteLinkMutationVariables = Exact<{
+  catalogPrefix: Scalars['Prefix']['input'];
+  capability: Capability;
+  singleUse: Scalars['Boolean']['input'];
+  detail?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type CreateInviteLinkMutation = { __typename?: 'MutationRoot', createInviteLink: { __typename?: 'InviteLink', token: any, catalogPrefix: any, capability: Capability, singleUse: boolean, detail?: string | null, createdAt: any } };
+
+export type DeleteInviteLinkMutationVariables = Exact<{
+  token: Scalars['UUID']['input'];
+}>;
+
+
+export type DeleteInviteLinkMutation = { __typename?: 'MutationRoot', deleteInviteLink: boolean };
+
+export type RedeemInviteLinkMutationVariables = Exact<{
+  token: Scalars['UUID']['input'];
+}>;
+
+
+export type RedeemInviteLinkMutation = { __typename?: 'MutationRoot', redeemInviteLink: { __typename?: 'RedeemInviteLinkResult', capability: Capability, catalogPrefix: any } };
+
 export type AlertingOverviewQueryQueryVariables = Exact<{
   prefix: Scalars['String']['input'];
   active?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1227,6 +1365,10 @@ export type AuthRolesQueryQueryVariables = Exact<{
 export type AuthRolesQueryQuery = { __typename?: 'QueryRoot', prefixes: { __typename?: 'PrefixRefConnection', edges: Array<{ __typename?: 'PrefixRefEdge', node: { __typename?: 'PrefixRef', prefix: any, userCapability: Capability } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export const PageInfoReverseFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoReverse"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<PageInfoReverseFragment, unknown>;
+export const InviteLinksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"InviteLinks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"inviteLinks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<InviteLinksQuery, InviteLinksQueryVariables>;
+export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"capability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Capability"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"capability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"capability"}}},{"kind":"Argument","name":{"kind":"Name","value":"singleUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateInviteLinkMutation, CreateInviteLinkMutationVariables>;
+export const DeleteInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<DeleteInviteLinkMutation, DeleteInviteLinkMutationVariables>;
+export const RedeemInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RedeemInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"redeemInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<RedeemInviteLinkMutation, RedeemInviteLinkMutationVariables>;
 export const AlertingOverviewQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertingOverviewQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"active"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alerts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"active"},"value":{"kind":"Variable","name":{"kind":"Name","value":"active"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","name":{"kind":"Name","value":"firedAt"}},{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","alias":{"kind":"Name","value":"alertDetails"},"name":{"kind":"Name","value":"arguments"}},{"kind":"Field","name":{"kind":"Name","value":"resolvedAt"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AlertingOverviewQueryQuery, AlertingOverviewQueryQueryVariables>;
 export const ActiveAlertCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ActiveAlertCount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"names"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeAlerts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ActiveAlertCountQuery, ActiveAlertCountQueryVariables>;
 export const ActiveAlertsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ActiveAlertsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"names"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeAlerts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","alias":{"kind":"Name","value":"alertDetails"},"name":{"kind":"Name","value":"arguments"}},{"kind":"Field","name":{"kind":"Name","value":"firedAt"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ActiveAlertsQueryQuery, ActiveAlertsQueryQueryVariables>;

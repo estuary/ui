@@ -1,7 +1,6 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
-import type { PrefixInvitationDialogProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
+import type { CombinedError } from 'urql';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
     Box,
@@ -19,6 +18,12 @@ import { useIntl } from 'react-intl';
 import Error from 'src/components/shared/Error';
 import AccessLinksTable from 'src/components/tables/AccessGrants/AccessLinks';
 import GenerateInvitation from 'src/components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+
+interface PrefixInvitationDialogProps {
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 const TITLE_ID = 'share-prefix-dialog-title';
 
@@ -29,7 +34,15 @@ function PrefixInvitationDialog({
     const intl = useIntl();
     const theme = useTheme();
 
-    const [serverError, setServerError] = useState<PostgrestError | null>(null);
+    const objectRoles = useEntitiesStore_capabilities_adminable();
+    const defaultPrefix = objectRoles[0] ?? '';
+
+    const [serverError, setServerError] = useState<CombinedError | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const handleCreated = useCallback(() => {
+        setRefreshKey((prev) => prev + 1);
+    }, []);
 
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
@@ -84,9 +97,14 @@ function PrefixInvitationDialog({
                 <GenerateInvitation
                     serverError={serverError}
                     setServerError={setServerError}
+                    prefix={defaultPrefix}
+                    onCreated={handleCreated}
                 />
 
-                <AccessLinksTable />
+                <AccessLinksTable
+                    catalogPrefix={defaultPrefix}
+                    refreshKey={refreshKey}
+                />
             </DialogContent>
         </Dialog>
     );

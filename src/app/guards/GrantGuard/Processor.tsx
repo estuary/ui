@@ -1,159 +1,183 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
+import type { RedeemInviteLinkResult } from '@estuary/graphql-schema';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
-import { Stack, Typography } from '@mui/material';
+import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-import { Navigate } from 'react-router';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
 
-import { getDirectiveByToken } from 'src/api/directives';
+import { useRedeemInviteLink } from 'src/api/gql/inviteLinks';
 import FullPageWrapper from 'src/app/FullPageWrapper';
-import useDirectiveGuard from 'src/app/guards/hooks';
 import { authenticatedRoutes } from 'src/app/routes';
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import FullPageSpinner from 'src/components/fullPage/Spinner';
-import { HomePageErrors } from 'src/components/login/shared';
-import AcceptGrant from 'src/directives/AcceptGrant';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { getPathWithParams } from 'src/utils/misc-utils';
-
-const SELECTED_DIRECTIVE = 'grant';
+import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import AlertBox from 'src/components/shared/AlertBox';
+import { defaultOutline } from 'src/context/Theme';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 
 interface Props {
     grantToken: string;
 }
 
 function GrantGuardProcessor({ grantToken }: Props) {
-    const [processUninitiated, setProcessUninitiated] = useState<boolean>(true);
-    const [serverError, setServerError] = useState<string | null>(null);
-    const [prefix, setPrefix] = useState<string | null | undefined>(null);
-    const [capability, setCapability] = useState<string | null | undefined>(
-        null
+    const intl = useIntl();
+    const navigate = useNavigate();
+
+    const [, redeemInviteLink] = useRedeemInviteLink();
+    const mutate_userInfoSummary = useUserInfoSummaryStore(
+        (state) => state.mutate
     );
 
-    const {
-        directive,
-        loading,
-        status,
-        mutate,
-        error: configError,
-    } = useDirectiveGuard(SELECTED_DIRECTIVE, { token: grantToken });
+    const [saving, setSaving] = useState(false);
+    const [serverError, setServerError] = useState<string | null>(null);
+    const [grantResult, setGrantResult] =
+        useState<RedeemInviteLinkResult | null>(null);
 
-    // home page error related
-    // We do not really differeniate between these two with messages to users
-    //  but still setting them as two different messages just in case we need to
-    //  sometime in the future.
-    const homePageError = useMemo(() => {
-        if (grantToken && processUninitiated) {
-            if (directive?.directives?.uses_remaining === null) {
-                return HomePageErrors.GRANT_TOKEN_NOT_APPLIED_MULTI_USE;
-            }
-            if (directive?.directives?.uses_remaining === 0) {
-                return HomePageErrors.GRANT_TOKEN_NOT_APPLIED_SINGLE_USE;
-            }
-        }
-        return null;
-    }, [directive?.directives?.uses_remaining, grantToken, processUninitiated]);
+    const handleRedeem = async () => {
+        setSaving(true);
+        setServerError(null);
 
-    if (status !== 'fulfilled') {
-        if (
-            (loading ||
-                status === null ||
-                prefix === null ||
-                capability === null) &&
-            !serverError &&
-            !configError
-        ) {
-            if (processUninitiated && directive) {
-                // Start fetching the directive details based on token to see what we need to do
-                setProcessUninitiated(false);
+        const result = await redeemInviteLink({ token: grantToken });
 
-                void getDirectiveByToken(grantToken).then(
-                    (response) => {
-                        if (response.error) {
-                            setServerError(
-                                (response.error as PostgrestError).message
-                            );
-                        } else if (response.data && response.data.length > 0) {
-                            const {
-                                grantedPrefix,
-                                capability: grantedCapability,
-                            } = response.data[0].spec;
-
-                            setPrefix(grantedPrefix);
-                            setCapability(grantedCapability);
-                        } else {
-                            setServerError(
-                                'No directive on file with specified token'
-                            );
-                        }
-                    },
-                    (error) => setServerError(error)
-                );
-            }
-
-            return <FullPageSpinner />;
-        } else if (
-            serverError ||
-            configError ||
-            prefix === undefined ||
-            capability === undefined
-        ) {
-            //  Show the "full stop" error page to make sure the user knows we were unable
-            //      to give them access and do not see a previous submiting
-            return (
-                <FullPageWrapper>
-                    <Stack spacing={2}>
-                        <Typography variant="h5" align="center">
-                            <FormattedMessage id="tenant.grantDirective.error.header" />
-                        </Typography>
-
-                        <Typography>
-                            <FormattedMessage id="tenant.grantDirective.error.message" />
-                        </Typography>
-
-                        <MessageWithLink messageID="tenant.grantDirective.error.message.help" />
-                    </Stack>
-                </FullPageWrapper>
+        if (result.error) {
+            setSaving(false);
+            setServerError(
+                result.error.graphQLErrors[0]?.message ??
+                    result.error.message ??
+                    intl.formatMessage({
+                        id: 'tenant.grantDirective.error.message',
+                    })
             );
-        } else {
-            // Show the page to give user access
-            return (
-                <FullPageWrapper>
-                    {prefix && capability ? (
-                        <AcceptGrant
-                            directive={directive}
-                            mutate={mutate}
-                            grantedPrefix={prefix}
-                            grantedCapability={capability}
-                        />
-                    ) : (
-                        <Stack spacing={2}>
-                            <Typography variant="h5" align="center">
-                                <FormattedMessage id="tenant.grantDirective.error.header" />
-                            </Typography>
+        } else if (result.data) {
+            // Refresh the user info summary so the new grant is reflected
+            if (mutate_userInfoSummary) {
+                try {
+                    await mutate_userInfoSummary();
+                } catch {
+                    // Best-effort refresh; the grant still succeeded
+                }
+            }
 
-                            <Typography>
-                                <FormattedMessage id="tenant.grantDirective.error.message" />
-                            </Typography>
-
-                            <MessageWithLink messageID="tenant.grantDirective.error.message.help" />
-                        </Stack>
-                    )}
-                </FullPageWrapper>
-            );
+            setSaving(false);
+            setGrantResult(result.data.redeemInviteLink);
         }
-    } else {
-        // This should mean we have a grant token that has been fulfilled
-        //  So now it is safe to see if we need to show an error or not.
-        const navigateToPath = homePageError
-            ? getPathWithParams(authenticatedRoutes.home.path, {
-                  [GlobalSearchParams.HOME_PAGE_ERROR]: homePageError,
-              })
-            : authenticatedRoutes.home.path;
-        return <Navigate to={navigateToPath} replace />;
+    };
+
+    const handleContinue = () => {
+        void navigate(authenticatedRoutes.home.path, { replace: true });
+    };
+
+    if (serverError) {
+        return (
+            <FullPageWrapper>
+                <Stack spacing={2}>
+                    <Typography variant="h5" align="center">
+                        <FormattedMessage id="tenant.grantDirective.error.header" />
+                    </Typography>
+
+                    <AlertBox
+                        severity="error"
+                        short
+                        title={<FormattedMessage id="common.fail" />}
+                    >
+                        {serverError}
+                    </AlertBox>
+
+                    <MessageWithLink messageID="tenant.grantDirective.error.message.help" />
+                </Stack>
+            </FullPageWrapper>
+        );
     }
+
+    if (grantResult) {
+        return (
+            <FullPageWrapper>
+                <Stack spacing={2}>
+                    <Typography variant="h5" align="center">
+                        <FormattedMessage id="tenant.grantDirective.success.header" />
+                    </Typography>
+
+                    <Typography>
+                        {intl.formatMessage(
+                            { id: 'tenant.grantDirective.message' },
+                            {
+                                grantedCapability: (
+                                    <b>{grantResult.capability}</b>
+                                ),
+                            }
+                        )}
+                    </Typography>
+
+                    <Box
+                        sx={{
+                            p: 1,
+                            border: (theme) =>
+                                defaultOutline[theme.palette.mode],
+                            borderRadius: 3,
+                            overflow: 'auto',
+                        }}
+                    >
+                        <Typography>{grantResult.catalogPrefix}</Typography>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <SafeLoadingButton
+                            variant="contained"
+                            onClick={handleContinue}
+                            sx={{ mt: 2 }}
+                        >
+                            {intl.formatMessage({ id: 'cta.continue' })}
+                        </SafeLoadingButton>
+                    </Box>
+                </Stack>
+            </FullPageWrapper>
+        );
+    }
+
+    return (
+        <FullPageWrapper>
+            <Stack spacing={2}>
+                {saving ? <LinearProgress variant="indeterminate" /> : null}
+
+                <Typography variant="h5" align="center">
+                    {intl.formatMessage({
+                        id: 'tenant.grantDirective.header',
+                    })}
+                </Typography>
+
+                <Typography>
+                    {intl.formatMessage({
+                        id: 'tenant.grantDirective.message.accept',
+                    })}
+                </Typography>
+
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <SafeLoadingButton
+                        variant="contained"
+                        loading={saving}
+                        disabled={saving}
+                        onClick={handleRedeem}
+                        sx={{ mt: 2 }}
+                    >
+                        {intl.formatMessage({ id: 'cta.accept' })}
+                    </SafeLoadingButton>
+                </Box>
+            </Stack>
+        </FullPageWrapper>
+    );
 }
 
 export default GrantGuardProcessor;
