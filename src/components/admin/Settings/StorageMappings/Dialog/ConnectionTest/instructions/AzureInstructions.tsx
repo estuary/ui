@@ -1,6 +1,13 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
-import { Box, Link, Stack, Typography } from '@mui/material';
+import {
+    Link,
+    List,
+    ListItem,
+    ListItemText,
+    Stack,
+    Typography,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -65,56 +72,31 @@ export function AzureInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Box component="ol" sx={{ my: 0, pl: 4 }}>
-                <Box component="li">
-                    <Typography>
-                        {intl.formatMessage(
-                            {
-                                id: 'storageMappings.dialog.instructions.azure.step3.navigateToAccount',
-                            },
-                            { storageAccountName }
-                        )}
-                    </Typography>
-                </Box>
-                <Box component="li">
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.instructions.azure.step3.openIam',
-                        })}
-                    </Typography>
-                </Box>
-                <Box component="li">
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.instructions.azure.step3.addRole',
-                        })}
-                    </Typography>
-                </Box>
-                <Box component="li">
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.instructions.azure.step3.selectRole',
-                        })}
-                    </Typography>
-                </Box>
-                <Box component="li">
-                    <Typography>
-                        {intl.formatMessage(
-                            {
-                                id: 'storageMappings.dialog.instructions.azure.step3.selectMember',
-                            },
-                            { applicationName: azureApplicationName ?? '' }
-                        )}
-                    </Typography>
-                </Box>
-                <Box component="li">
-                    <Typography>
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.instructions.azure.step3.reviewAssign',
-                        })}
-                    </Typography>
-                </Box>
-            </Box>
+            <List component="ol" disablePadding sx={{ listStyleType: 'decimal', pl: 4 }}>
+                {([
+                    {
+                        id: 'storageMappings.dialog.instructions.azure.step3.navigateToAccount',
+                        values: { storageAccountName },
+                    },
+                    { id: 'storageMappings.dialog.instructions.azure.step3.openIam' },
+                    { id: 'storageMappings.dialog.instructions.azure.step3.addRole' },
+                    { id: 'storageMappings.dialog.instructions.azure.step3.selectRole' },
+                    {
+                        id: 'storageMappings.dialog.instructions.azure.step3.selectMember',
+                        values: { applicationName: azureApplicationName ?? '' },
+                    },
+                    { id: 'storageMappings.dialog.instructions.azure.step3.reviewAssign' },
+                ] as const).map(({ id, ...rest }) => (
+                    <ListItem key={id} disablePadding sx={{ display: 'list-item' }}>
+                        <ListItemText
+                            primary={intl.formatMessage(
+                                { id },
+                                'values' in rest ? rest.values : undefined
+                            )}
+                        />
+                    </ListItem>
+                ))}
+            </List>
 
             <Typography
                 variant="body2"
