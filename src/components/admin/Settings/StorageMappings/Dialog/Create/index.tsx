@@ -13,6 +13,7 @@ import {
 } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
+import { useDataPlanes } from 'src/api/gql/dataPlanes';
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import {
     ConnectionList,
@@ -22,6 +23,7 @@ import {
 import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
 import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard';
 import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields';
+import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
@@ -52,6 +54,7 @@ function CreateMappingWizardInner({
     onClose: () => void;
 }) {
     const intl = useIntl();
+    const { error: dataPlanesError } = useDataPlanes();
     const { create } = useStorageMappingService();
     const {
         testConnections,
@@ -89,115 +92,141 @@ function CreateMappingWizardInner({
     }, [create, getValues, refresh]);
 
     const steps = useMemo(
-        () =>
-            [
-                {
-                    title: intl.formatMessage({
-                        id: 'storageMappings.wizard.title.configure',
-                    }),
-                    component: (
-                        <>
-                            <Typography sx={{ mb: 4 }}>
-                                {intl.formatMessage({
-                                    id: 'storageMappings.dialog.create.description.prefix',
-                                })}
-                                <Link
-                                    href={intl.formatMessage({
-                                        id: 'storageMappings.dialog.docsPath',
-                                    })}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {intl.formatMessage({
-                                        id: 'storageMappings.dialog.docsLink',
-                                    })}
-                                </Link>
-                                {intl.formatMessage({
-                                    id: 'storageMappings.dialog.create.description.suffix',
-                                })}
-                            </Typography>
-                            <Stack spacing={2}>
-                                <CardWrapper>
-                                    <PrefixCard />
-                                </CardWrapper>
-                                <CardWrapper>
-                                    <DataPlanesCard
-                                        dataPlanes={dataPlanes}
-                                        defaultDataPlane={
-                                            dataPlanes.length > 0
-                                                ? dataPlanes[0]
-                                                : null
-                                        }
-                                        allowPublicChecked={allowPublic}
-                                        onSelect={append}
-                                        onRemove={remove}
-                                        onSelectDefault={(index) =>
-                                            move(index, 0)
-                                        }
-                                        onToggleAllowPublic={(value) =>
-                                            setValue('allowPublic', value)
-                                        }
-                                    />
-                                </CardWrapper>
-                                <CardWrapper>
-                                    <Typography sx={cardHeaderSx}>
-                                        {intl.formatMessage({
-                                            id: 'storageMappings.dialog.storageLocations.title',
-                                        })}
-                                    </Typography>
-                                    <StorageFields
-                                        defaultDataPlane={dataPlanes[0]}
-                                    />
-                                </CardWrapper>
-                            </Stack>
-                        </>
-                    ),
-                    nextLabel: intl.formatMessage({
-                        id: 'storageMappings.wizard.cta.testConnection',
-                    }),
-                    canAdvance: () => formState.isValid,
-                    onAdvance: async () => {
-                        const connections = initializeEndpoints(
-                            dataPlanes,
-                            stores
-                        );
+        (): WizardStep[] =>
+            dataPlanesError
+                ? [
+                      {
+                          title: intl.formatMessage({
+                              id: 'storageMappings.wizard.title.configure',
+                          }),
+                          component: (
+                              <AlertBox short severity="error">
+                                  {intl.formatMessage({
+                                      id: 'storageMappings.dialog.error.loadFailed',
+                                  })}
+                              </AlertBox>
+                          ),
+                          nextLabel: intl.formatMessage({
+                              id: 'cta.close',
+                          }),
+                          onAdvance: async () => {
+                              closeDialog();
+                              return false;
+                          },
+                      },
+                  ]
+                : [
+                      {
+                          title: intl.formatMessage({
+                              id: 'storageMappings.wizard.title.configure',
+                          }),
+                          component: (
+                              <>
+                                  <Typography sx={{ mb: 4 }}>
+                                      {intl.formatMessage({
+                                          id: 'storageMappings.dialog.create.description.prefix',
+                                      })}
+                                      <Link
+                                          href={intl.formatMessage({
+                                              id: 'storageMappings.dialog.docsPath',
+                                          })}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                      >
+                                          {intl.formatMessage({
+                                              id: 'storageMappings.dialog.docsLink',
+                                          })}
+                                      </Link>
+                                      {intl.formatMessage({
+                                          id: 'storageMappings.dialog.create.description.suffix',
+                                      })}
+                                  </Typography>
+                                  <Stack spacing={2}>
+                                      <CardWrapper>
+                                          <PrefixCard />
+                                      </CardWrapper>
+                                      <CardWrapper>
+                                          <DataPlanesCard
+                                              dataPlanes={dataPlanes}
+                                              defaultDataPlane={
+                                                  dataPlanes.length > 0
+                                                      ? dataPlanes[0]
+                                                      : null
+                                              }
+                                              allowPublicChecked={allowPublic}
+                                              onSelect={append}
+                                              onRemove={remove}
+                                              onSelectDefault={(index) =>
+                                                  move(index, 0)
+                                              }
+                                              onToggleAllowPublic={(value) =>
+                                                  setValue(
+                                                      'allowPublic',
+                                                      value
+                                                  )
+                                              }
+                                          />
+                                      </CardWrapper>
+                                      <CardWrapper>
+                                          <Typography sx={cardHeaderSx}>
+                                              {intl.formatMessage({
+                                                  id: 'storageMappings.dialog.storageLocations.title',
+                                              })}
+                                          </Typography>
+                                          <StorageFields
+                                              defaultDataPlane={dataPlanes[0]}
+                                          />
+                                      </CardWrapper>
+                                  </Stack>
+                              </>
+                          ),
+                          nextLabel: intl.formatMessage({
+                              id: 'storageMappings.wizard.cta.testConnection',
+                          }),
+                          canAdvance: () => formState.isValid,
+                          onAdvance: async () => {
+                              const connections = initializeEndpoints(
+                                  dataPlanes,
+                                  stores
+                              );
 
-                        await testConnections(connections);
-                        return true;
-                    },
-                },
-                {
-                    title: intl.formatMessage({
-                        id: 'storageMappings.wizard.title.test',
-                    }),
-                    component: (
-                        <Stack spacing={3}>
-                            <Typography>
-                                {intl.formatMessage({
-                                    id: 'storageMappings.dialog.create.testDescription.prefix',
-                                })}
-                                <Link
-                                    href={intl.formatMessage({
-                                        id: 'storageMappings.dialog.docsPath',
-                                    })}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {intl.formatMessage({
-                                        id: 'storageMappings.dialog.docsLink',
-                                    })}
-                                </Link>
-                            </Typography>
+                              await testConnections(connections);
+                              return true;
+                          },
+                      },
+                      {
+                          title: intl.formatMessage({
+                              id: 'storageMappings.wizard.title.test',
+                          }),
+                          component: (
+                              <Stack spacing={3}>
+                                  <Typography>
+                                      {intl.formatMessage({
+                                          id: 'storageMappings.dialog.create.testDescription.prefix',
+                                      })}
+                                      <Link
+                                          href={intl.formatMessage({
+                                              id: 'storageMappings.dialog.docsPath',
+                                          })}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                      >
+                                          {intl.formatMessage({
+                                              id: 'storageMappings.dialog.docsLink',
+                                          })}
+                                      </Link>
+                                  </Typography>
 
-                            <ConnectionList />
-                        </Stack>
-                    ),
-                    canAdvance: () => allTestsPassing,
-                    onAdvance: handleComplete,
-                },
-            ] satisfies WizardStep[],
+                                  <ConnectionList />
+                              </Stack>
+                          ),
+                          canAdvance: () => allTestsPassing,
+                          onAdvance: handleComplete,
+                      },
+                  ],
         [
             intl,
+            dataPlanesError,
             formState.isValid,
             allTestsPassing,
             testConnections,

@@ -177,6 +177,7 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
 
     // Dialog - shared
+    'storageMappings.dialog.error.loadFailed': `We weren't able to load the data needed for this form. Please reload the page and try again.`,
     'storageMappings.dialog.docsLink': `documentation`,
     'storageMappings.dialog.docsPath': `https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow`,
 
