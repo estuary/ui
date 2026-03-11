@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import {
     useAwsArnsForBucket,
     useBucketPolicy,
-} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/AwsHooks';
+} from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/awsHooks';
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
