@@ -11,7 +11,11 @@ import { useFormContext } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
 import { storeValidation } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields/StorageValidation';
-import { RHFSelect, RHFTextField } from 'src/components/shared/RHFFields/';
+import {
+    RHFAutocomplete,
+    RHFSelect,
+    RHFTextField,
+} from 'src/components/shared/RHFFields/';
 import { AWS_REGIONS, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
@@ -121,7 +125,7 @@ export function StorageFields({
                     onUserSelect={() => setTrackDefaultDp(false)}
                 />
                 {storeProvider === 'AWS' ? (
-                    <RHFSelect<StorageMappingFormData>
+                    <RHFAutocomplete<StorageMappingFormData>
                         key="region"
                         name={`fragmentStores.${PENDING_STORE_INDEX}.region`}
                         label={intl.formatMessage({
