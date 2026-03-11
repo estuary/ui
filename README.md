@@ -41,6 +41,15 @@ Run: `npm start`
 
 The UI is built to hit our own instance of Supabase. That means you will need to have that running locally as well.
 
+## How to log in locally
+
+1. On the login page, enter any email address and click **Sign in with Magic Link**.
+2. Open the local email UI at [http://localhost:5434/](http://localhost:5434/) (Mailpit).
+3. Find the magic link email for your address. You can either:
+   - Click the **Log In** link in the email, or
+   - Copy the OTP code from the email, click **Already have an OTP code?** on the login page, and paste it in.
+4. On first login you will be prompted to accept the terms of service and create an organization.
+
 # How to test against prod?
 
 Run: `npm run build`
