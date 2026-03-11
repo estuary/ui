@@ -1,6 +1,15 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
-import { Box, Link, Stack, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    Link,
+    List,
+    ListItem,
+    ListItemText,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -51,28 +60,36 @@ export function AwsInstructions({ connection }: { connection: Connection }) {
                 </Link>
             </Typography>
 
-            <Box component="ul" sx={{ my: 0 }}>
-                <Box component="li">
-                    <Typography>
-                        <strong>
-                            {intl.formatMessage({
-                                id: 'storageMappings.dialog.instructions.bucketName',
-                            })}
-                        </strong>{' '}
-                        <BucketAttribute>{bucket}</BucketAttribute>
-                    </Typography>
-                </Box>
-                <Box component="li">
-                    <Typography>
-                        <strong>
-                            {intl.formatMessage({
-                                id: 'storageMappings.dialog.instructions.region',
-                            })}
-                        </strong>{' '}
-                        <BucketAttribute>{region}</BucketAttribute>
-                    </Typography>
-                </Box>
-            </Box>
+            <List dense disablePadding sx={{ listStyleType: 'disc', pl: 2 }}>
+                <ListItem disablePadding sx={{ display: 'list-item' }}>
+                    <ListItemText
+                        primary={
+                            <>
+                                <strong>
+                                    {intl.formatMessage({
+                                        id: 'storageMappings.dialog.instructions.bucketName',
+                                    })}
+                                </strong>{' '}
+                                <BucketAttribute>{bucket}</BucketAttribute>
+                            </>
+                        }
+                    />
+                </ListItem>
+                <ListItem disablePadding sx={{ display: 'list-item' }}>
+                    <ListItemText
+                        primary={
+                            <>
+                                <strong>
+                                    {intl.formatMessage({
+                                        id: 'storageMappings.dialog.instructions.region',
+                                    })}
+                                </strong>{' '}
+                                <BucketAttribute>{region}</BucketAttribute>
+                            </>
+                        }
+                    />
+                </ListItem>
+            </List>
 
             <Typography variant="h6" fontSize={18} fontWeight={700}>
                 {intl.formatMessage({
