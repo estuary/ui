@@ -28,6 +28,7 @@ import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Di
 import { ConnectionTestsCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/ConnectionTestsCard';
 import { StorageLocationsCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update/StorageLocationsCard';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
+import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
@@ -274,9 +275,17 @@ function DialogInner({
 }
 
 export function UpdateMappingWizard() {
+    const intl = useIntl();
     const { open, onClose, context } = useDialog('EDIT_STORAGE_MAPPING');
-    const { storageMappings } = useStorageMappings();
-    const { dataPlanes, loading: dataPlanesLoading } = useDataPlanes();
+    const { storageMappings, error: storageMappingsError } =
+        useStorageMappings();
+    const {
+        dataPlanes,
+        loading: dataPlanesLoading,
+        error: dataPlanesError,
+    } = useDataPlanes();
+
+    const queryError = storageMappingsError ?? dataPlanesError;
 
     const prefix = context.prefix;
 
@@ -344,6 +353,32 @@ export function UpdateMappingWizard() {
             onClose();
         }
     }, [notFound, onClose, prefix]);
+
+    if (queryError && open) {
+        const errorSteps: WizardStep[] = [
+            {
+                title: intl.formatMessage({
+                    id: 'storageMappings.dialog.update.title',
+                }),
+                component: (
+                    <AlertBox short severity="error">
+                        {intl.formatMessage({
+                            id: 'storageMappings.dialog.error.loadFailed',
+                        })}
+                    </AlertBox>
+                ),
+                nextLabel: intl.formatMessage({ id: 'cta.close' }),
+                onAdvance: async () => {
+                    onClose();
+                    return false;
+                },
+            },
+        ];
+
+        return (
+            <WizardDialog open={open} onClose={onClose} steps={errorSteps} />
+        );
+    }
 
     if (!storageMapping) return null;
 
