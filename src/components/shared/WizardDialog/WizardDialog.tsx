@@ -124,6 +124,7 @@ export function WizardDialog({
             fullWidth
             aria-labelledby={TITLE_ID}
             TransitionProps={{ onExited }}
+            PaperProps={{ sx: { minWidth: 400 } }}
         >
             <WizardContext.Provider value={contextValue}>
                 <DialogTitleWithClose id={TITLE_ID} onClose={onClose}>
