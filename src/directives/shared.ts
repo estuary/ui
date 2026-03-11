@@ -263,4 +263,3 @@ export const DIRECTIVES: Directives = {
     },
 };
 export type DirectivesList = (keyof typeof DIRECTIVES)[];
-

@@ -13,8 +13,8 @@ import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import AlertBox from 'src/components/shared/AlertBox';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
 import { jobStatusQuery } from 'src/directives/shared';
+import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 
 interface Props {

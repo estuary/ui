@@ -12,8 +12,8 @@ import useRepublishPrefix from 'src/components/admin/Settings/StorageMappings/Di
 import { useStorageMappingStore } from 'src/components/admin/Settings/StorageMappings/Store/create';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
-import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
 import { jobStatusQuery } from 'src/directives/shared';
+import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
