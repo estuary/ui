@@ -1,6 +1,7 @@
+import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
 import type { TableState } from 'src/types';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Stack, Table, TableContainer } from '@mui/material';
 
@@ -13,6 +14,7 @@ import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/PrefixAlerts/Rows';
 import { columns } from 'src/components/tables/PrefixAlerts/shared';
+import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { TableStatuses } from 'src/types';
 
@@ -24,10 +26,25 @@ function PrefixAlertTable() {
         (state) => state.setInitializationError
     );
 
-    const [searchQuery, _setSearchQuery] = useState<string>('');
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
+
+    const processedData: ReducedAlertSubscriptionQueryResponse['alertSubscriptions'] =
+        useMemo(() => {
+            if (!data) {
+                return [];
+            }
+
+            return searchQuery
+                ? data.alertSubscriptions.filter(
+                      ({ catalogPrefix, email }) =>
+                          catalogPrefix.includes(searchQuery) ||
+                          email.includes(searchQuery)
+                  )
+                : data.alertSubscriptions;
+        }, [data, searchQuery]);
 
     const displayLoadingState = useRef(
         debounce(() => setTableState({ status: TableStatuses.LOADING }), 750)
@@ -48,7 +65,7 @@ function PrefixAlertTable() {
     useEffect(() => {
         if (fetching) {
             setTableState({ status: TableStatuses.LOADING });
-        } else if (data && data.alertSubscriptions.length > 0) {
+        } else if (processedData.length > 0) {
             displayLoadingState.current?.cancel();
 
             setTableState({
@@ -63,7 +80,7 @@ function PrefixAlertTable() {
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [data, displayLoadingState, fetching, searchQuery]);
+    }, [displayLoadingState, fetching, processedData.length, searchQuery]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 
@@ -78,6 +95,12 @@ function PrefixAlertTable() {
                 }}
             >
                 <AlertGenerateButton executeQuery={executeQuery} />
+
+                <TableFilter
+                    disabled={loading}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                />
             </Stack>
 
             <TableContainer component={Box}>
@@ -97,9 +120,9 @@ function PrefixAlertTable() {
                         tableState={tableState}
                         loading={loading}
                         rows={
-                            data && data.alertSubscriptions.length > 0 ? (
+                            processedData.length > 0 ? (
                                 <Rows
-                                    data={data.alertSubscriptions}
+                                    data={processedData}
                                     executeQuery={executeQuery}
                                 />
                             ) : null
