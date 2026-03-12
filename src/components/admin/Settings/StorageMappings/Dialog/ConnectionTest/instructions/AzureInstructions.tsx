@@ -1,12 +1,6 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
-import {
-    List,
-    ListItem,
-    ListItemText,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -32,7 +26,11 @@ export function AzureInstructions({ connection }: { connection: Connection }) {
                 {intl.formatMessage({
                     id: 'storageMappings.dialog.instructions.azure.step1.prompt',
                 })}
-                <ExternalLink link={intl.formatMessage({ id: 'storageMappings.dialog.instructions.azure.step1.linkPath' })}>
+                <ExternalLink
+                    link={intl.formatMessage({
+                        id: 'storageMappings.dialog.instructions.azure.step1.linkPath',
+                    })}
+                >
                     {intl.formatMessage({
                         id: 'storageMappings.dialog.instructions.azure.step1.link',
                     })}
@@ -63,22 +61,42 @@ export function AzureInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <List component="ol" disablePadding sx={{ listStyleType: 'decimal', pl: 4 }}>
-                {([
-                    {
-                        id: 'storageMappings.dialog.instructions.azure.step3.navigateToAccount',
-                        values: { storageAccountName },
-                    },
-                    { id: 'storageMappings.dialog.instructions.azure.step3.openIam' },
-                    { id: 'storageMappings.dialog.instructions.azure.step3.addRole' },
-                    { id: 'storageMappings.dialog.instructions.azure.step3.selectRole' },
-                    {
-                        id: 'storageMappings.dialog.instructions.azure.step3.selectMember',
-                        values: { applicationName: azureApplicationName ?? '' },
-                    },
-                    { id: 'storageMappings.dialog.instructions.azure.step3.reviewAssign' },
-                ] as const).map(({ id, ...rest }) => (
-                    <ListItem key={id} disablePadding sx={{ display: 'list-item' }}>
+            <List
+                component="ol"
+                disablePadding
+                sx={{ listStyleType: 'decimal', pl: 4 }}
+            >
+                {(
+                    [
+                        {
+                            id: 'storageMappings.dialog.instructions.azure.step3.navigateToAccount',
+                            values: { storageAccountName },
+                        },
+                        {
+                            id: 'storageMappings.dialog.instructions.azure.step3.openIam',
+                        },
+                        {
+                            id: 'storageMappings.dialog.instructions.azure.step3.addRole',
+                        },
+                        {
+                            id: 'storageMappings.dialog.instructions.azure.step3.selectRole',
+                        },
+                        {
+                            id: 'storageMappings.dialog.instructions.azure.step3.selectMember',
+                            values: {
+                                applicationName: azureApplicationName ?? '',
+                            },
+                        },
+                        {
+                            id: 'storageMappings.dialog.instructions.azure.step3.reviewAssign',
+                        },
+                    ] as const
+                ).map(({ id, ...rest }) => (
+                    <ListItem
+                        key={id}
+                        disablePadding
+                        sx={{ display: 'list-item' }}
+                    >
                         <ListItemText
                             primary={intl.formatMessage(
                                 { id },
@@ -108,7 +126,11 @@ export function AzureInstructions({ connection }: { connection: Connection }) {
                 {intl.formatMessage({
                     id: 'storageMappings.dialog.instructions.azure.docsLink',
                 })}
-                <ExternalLink link={intl.formatMessage({ id: 'storageMappings.dialog.instructions.azure.docsLinkPath' })}>
+                <ExternalLink
+                    link={intl.formatMessage({
+                        id: 'storageMappings.dialog.instructions.azure.docsLinkPath',
+                    })}
+                >
                     {intl.formatMessage({
                         id: 'storageMappings.dialog.instructions.azure.docsLinkText',
                     })}

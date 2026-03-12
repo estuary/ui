@@ -13,7 +13,6 @@ import {
 } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
-import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useDataPlanes } from 'src/api/gql/dataPlanes';
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import {
@@ -24,6 +23,7 @@ import {
 import { PrefixCard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create/PrefixCard';
 import { DataPlanesCard } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard';
 import { StorageFields } from 'src/components/admin/Settings/StorageMappings/Dialog/StorageFields';
+import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
@@ -123,9 +123,7 @@ function CreateMappingWizardInner({
                           }),
                           component: (
                               <>
-                                  <MessageWithLink
-                                      messageID="storageMappings.dialog.create.description"
-                                  />
+                                  <MessageWithLink messageID="storageMappings.dialog.create.description" />
                                   <Stack spacing={2}>
                                       <CardWrapper>
                                           <PrefixCard />
@@ -145,10 +143,7 @@ function CreateMappingWizardInner({
                                                   move(index, 0)
                                               }
                                               onToggleAllowPublic={(value) =>
-                                                  setValue(
-                                                      'allowPublic',
-                                                      value
-                                                  )
+                                                  setValue('allowPublic', value)
                                               }
                                           />
                                       </CardWrapper>

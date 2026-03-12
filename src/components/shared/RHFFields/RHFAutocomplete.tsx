@@ -52,13 +52,11 @@ export function RHFAutocomplete<
                     options={options}
                     getOptionLabel={(option) =>
                         typeof option === 'string'
-                            ? (options.find((o) => o.value === option)
-                                  ?.label ?? option)
+                            ? (options.find((o) => o.value === option)?.label ??
+                              option)
                             : option.label
                     }
-                    value={
-                        options.find((o) => o.value === field.value) ?? null
-                    }
+                    value={options.find((o) => o.value === field.value) ?? null}
                     onChange={(_event, newValue) => {
                         const val = newValue?.value ?? '';
                         field.onChange(val);

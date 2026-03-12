@@ -12,12 +12,11 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import MessageWithLink from 'src/components/content/MessageWithLink';
-
 import {
     useAwsArnsForBucket,
     useBucketPolicy,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/awsHooks';
+import MessageWithLink from 'src/components/content/MessageWithLink';
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { codeBackground } from 'src/context/Theme';
