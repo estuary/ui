@@ -5,7 +5,6 @@ import { Box, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
-
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 
