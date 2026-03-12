@@ -15,9 +15,9 @@ function Row({ executeQuery, row }: RowProps) {
             <TableCell>{row.catalogPrefix}</TableCell>
 
             <ChipListCell
-                values={row.alertTypes.map((value) =>
-                    value.replace(UNDERSCORE_RE, ' ')
-                )}
+                values={row.alertTypes
+                    .map((value) => value.replace(UNDERSCORE_RE, ' '))
+                    .sort()}
                 stripPath={false}
                 maxChips={1}
             />
