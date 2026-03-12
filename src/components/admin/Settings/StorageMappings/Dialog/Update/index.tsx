@@ -15,7 +15,7 @@ import {
 } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
-import { useDataPlanes } from 'src/api/gql/dataPlanes';
+import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import {
     useStorageMappings,
     useStorageMappingService,

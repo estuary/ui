@@ -7,7 +7,7 @@ import { Collapse, Stack } from '@mui/material';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 import { useIntl } from 'react-intl';
 
-import { useDataPlanes } from 'src/api/gql/dataPlanes';
+import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import { DataPlaneRow } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneRow';
 import { DataPlaneSelector } from 'src/components/admin/Settings/StorageMappings/Dialog/DataPlanesCard/DataPlaneSelector';
 import { CardTitle } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/CardTitle';

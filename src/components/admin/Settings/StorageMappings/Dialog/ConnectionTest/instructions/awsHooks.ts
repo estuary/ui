@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useDataPlanes } from 'src/api/gql/dataPlanes';
+import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useStorageMappings } from 'src/api/gql/storageMappings';
 import { useConnectionTest } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
