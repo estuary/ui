@@ -2,8 +2,6 @@ import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { gql } from 'urql';
 
-import { useAllPages } from 'src/api/gql/useAllPages';
-
 interface DataPlaneGqlNode {
     dataPlaneName: string;
     cloudProvider: CloudProvider;
@@ -32,7 +30,7 @@ export interface DataPlaneNode {
 }
 
 // Transform GQL response to exported type (adds snake_case aliases and derived fields)
-const toDataPlaneNode = (node: DataPlaneGqlNode): DataPlaneNode => {
+export const toDataPlaneNode = (node: DataPlaneGqlNode): DataPlaneNode => {
     return {
         ...node,
         name: node.dataPlaneName,
@@ -53,7 +51,7 @@ interface DataPlanesResponse {
     };
 }
 
-const DATA_PLANES_QUERY = gql<DataPlanesResponse, { after?: string }>`
+export const DATA_PLANES_QUERY = gql<DataPlanesResponse, { after?: string }>`
     query DataPlanes($after: String) {
         dataPlanes(first: 100, after: $after) {
             edges {
@@ -77,16 +75,3 @@ const DATA_PLANES_QUERY = gql<DataPlanesResponse, { after?: string }>`
         }
     }
 `;
-
-export function useDataPlanes() {
-    const {
-        data: dataPlanes,
-        loading,
-        error,
-    } = useAllPages(DATA_PLANES_QUERY, {
-        getConnection: (data) => data.dataPlanes,
-        transform: toDataPlaneNode,
-    });
-
-    return { dataPlanes, loading, error };
-}
