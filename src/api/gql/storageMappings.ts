@@ -362,7 +362,7 @@ export function useStorageMappings() {
             catalogPrefix: edge.node.catalogPrefix,
             spec: {
                 fragmentStores: edge.node.spec.stores.map(fromServerStore),
-                dataPlanes: edge.node.spec.data_planes,
+                dataPlanes: edge.node.spec.data_planes ?? [],
             },
         })) ?? [];
 
