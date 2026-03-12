@@ -1,8 +1,10 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
-import { Box, Link, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
+
+import MessageWithLink from 'src/components/content/MessageWithLink';
 
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
@@ -20,20 +22,7 @@ export function GcpInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Typography>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.step1.createBucket.prompt',
-                })}
-                <Link
-                    href="https://cloud.google.com/storage/docs/creating-buckets"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {intl.formatMessage({
-                        id: 'storageMappings.dialog.instructions.gcp.createBucketLink',
-                    })}
-                </Link>
-            </Typography>
+            <MessageWithLink messageID="storageMappings.dialog.instructions.gcp.createBucketPrompt" />
 
             <Box component="ul" sx={{ my: 0 }}>
                 <Box component="li">

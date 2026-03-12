@@ -5,7 +5,7 @@ import type { WizardStep } from 'src/components/shared/WizardDialog/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Link, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
 import {
     FormProvider,
@@ -30,6 +30,7 @@ import { StorageLocationsCard } from 'src/components/admin/Settings/StorageMappi
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
+import ExternalLink from 'src/components/shared/ExternalLink';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { useDialog } from 'src/hooks/useDialog';
@@ -192,17 +193,15 @@ function DialogInner({
                                 {intl.formatMessage({
                                     id: 'storageMappings.dialog.update.description.prefix',
                                 })}
-                                <Link
-                                    href={intl.formatMessage({
+                                <ExternalLink
+                                    link={intl.formatMessage({
                                         id: 'storageMappings.dialog.docsPath',
                                     })}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
                                 >
                                     {intl.formatMessage({
                                         id: 'storageMappings.dialog.docsLink',
                                     })}
-                                </Link>
+                                </ExternalLink>
                                 {intl.formatMessage({
                                     id: 'storageMappings.dialog.update.description.suffix',
                                 })}
