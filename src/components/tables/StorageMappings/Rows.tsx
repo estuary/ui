@@ -31,7 +31,7 @@ function Rows({ data }: { data: StorageMappingsQuery[] }) {
                         <TableCell>{row.catalog_prefix}</TableCell>
 
                         <ChipListCell
-                            values={row.spec.data_planes ?? []}
+                            values={row.spec.data_planes}
                             maxChips={3}
                             stripPath={false}
                         />
