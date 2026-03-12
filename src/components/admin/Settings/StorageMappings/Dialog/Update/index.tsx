@@ -15,7 +15,6 @@ import {
 } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
-import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import {
     useStorageMappings,
     useStorageMappingService,
@@ -33,6 +32,7 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
+import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useDialog } from 'src/hooks/useDialog';
 import { logRocketConsole } from 'src/services/shared';
 
