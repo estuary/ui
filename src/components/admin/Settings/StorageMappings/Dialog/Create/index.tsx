@@ -13,7 +13,6 @@ import {
 } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
-import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import {
     ConnectionList,
@@ -29,6 +28,7 @@ import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
 import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { cardHeaderSx } from 'src/context/Theme';
+import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useDialog } from 'src/hooks/useDialog';
 
 function buildMappingPayload(
@@ -80,11 +80,11 @@ function CreateMappingWizardInner({
 
     const refresh = useStorageMappingsRefresh();
 
-    const closeDialog = () => {
+    const closeDialog = useCallback(() => {
         onClose();
         reset();
         clearConnectionTests();
-    };
+    }, [onClose, reset, clearConnectionTests]);
 
     const handleComplete = useCallback(async () => {
         await create(buildMappingPayload(getValues()));
