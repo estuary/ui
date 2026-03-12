@@ -219,6 +219,7 @@ function CreateMappingWizardInner({
             move,
             remove,
             setValue,
+            closeDialog,
         ]
     );
 
