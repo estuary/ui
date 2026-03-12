@@ -13,6 +13,7 @@ import {
 } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
+import MessageWithLink from 'src/components/content/MessageWithLink';
 import { useDataPlanes } from 'src/api/gql/dataPlanes';
 import { useStorageMappingService } from 'src/api/gql/storageMappings';
 import {
@@ -122,25 +123,9 @@ function CreateMappingWizardInner({
                           }),
                           component: (
                               <>
-                                  <Typography sx={{ mb: 4 }}>
-                                      {intl.formatMessage({
-                                          id: 'storageMappings.dialog.create.description.prefix',
-                                      })}
-                                      <Link
-                                          href={intl.formatMessage({
-                                              id: 'storageMappings.dialog.docsPath',
-                                          })}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                      >
-                                          {intl.formatMessage({
-                                              id: 'storageMappings.dialog.docsLink',
-                                          })}
-                                      </Link>
-                                      {intl.formatMessage({
-                                          id: 'storageMappings.dialog.create.description.suffix',
-                                      })}
-                                  </Typography>
+                                  <MessageWithLink
+                                      messageID="storageMappings.dialog.create.description"
+                                  />
                                   <Stack spacing={2}>
                                       <CardWrapper>
                                           <PrefixCard />

@@ -2,7 +2,6 @@ import type { Connection } from 'src/components/admin/Settings/StorageMappings/D
 
 import {
     Box,
-    Link,
     List,
     ListItem,
     ListItemText,
@@ -12,6 +11,8 @@ import {
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
+
+import MessageWithLink from 'src/components/content/MessageWithLink';
 
 import {
     useAwsArnsForBucket,
@@ -45,20 +46,7 @@ export function AwsInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Typography>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.instructions.step1.createBucket.prompt',
-                })}
-                <Link
-                    href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {intl.formatMessage({
-                        id: 'storageMappings.dialog.instructions.aws.createBucketLink',
-                    })}
-                </Link>
-            </Typography>
+            <MessageWithLink messageID="storageMappings.dialog.instructions.aws.createBucketPrompt" />
 
             <List dense disablePadding sx={{ listStyleType: 'disc', pl: 2 }}>
                 <ListItem disablePadding sx={{ display: 'list-item' }}>

@@ -1,7 +1,6 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
 import {
-    Link,
     List,
     ListItem,
     ListItemText,
@@ -10,6 +9,8 @@ import {
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
+
+import ExternalLink from 'src/components/shared/ExternalLink';
 
 export function AzureInstructions({ connection }: { connection: Connection }) {
     const intl = useIntl();
@@ -31,15 +32,11 @@ export function AzureInstructions({ connection }: { connection: Connection }) {
                 {intl.formatMessage({
                     id: 'storageMappings.dialog.instructions.azure.step1.prompt',
                 })}
-                <Link
-                    href="https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
+                <ExternalLink link={intl.formatMessage({ id: 'storageMappings.dialog.instructions.azure.step1.linkPath' })}>
                     {intl.formatMessage({
                         id: 'storageMappings.dialog.instructions.azure.step1.link',
                     })}
-                </Link>
+                </ExternalLink>
             </Typography>
 
             <Typography variant="h6" fontSize={18} fontWeight={700}>
@@ -54,17 +51,11 @@ export function AzureInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Typography>
-                <Link
-                    href={adminConsentUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {intl.formatMessage({
-                        id: 'storageMappings.dialog.instructions.azure.step2.link',
-                    })}
-                </Link>
-            </Typography>
+            <ExternalLink link={adminConsentUrl}>
+                {intl.formatMessage({
+                    id: 'storageMappings.dialog.instructions.azure.step2.link',
+                })}
+            </ExternalLink>
 
             <Typography variant="h6" fontSize={18} fontWeight={700}>
                 {intl.formatMessage({
@@ -117,15 +108,11 @@ export function AzureInstructions({ connection }: { connection: Connection }) {
                 {intl.formatMessage({
                     id: 'storageMappings.dialog.instructions.azure.docsLink',
                 })}
-                <Link
-                    href="https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
+                <ExternalLink link={intl.formatMessage({ id: 'storageMappings.dialog.instructions.azure.docsLinkPath' })}>
                     {intl.formatMessage({
                         id: 'storageMappings.dialog.instructions.azure.docsLinkText',
                     })}
-                </Link>
+                </ExternalLink>
             </Typography>
         </Stack>
     );
