@@ -3,38 +3,26 @@ import type { CloudProvider } from 'src/utils/cloudRegions';
 import { gql } from 'urql';
 
 interface DataPlaneGqlNode {
-    dataPlaneName: string;
-    cloudProvider: CloudProvider;
-    isPublic: boolean;
-    region: string;
-    cidrBlocks: string[];
-    awsIamUserArn: string | null;
-    gcpServiceAccountEmail: string | null;
-    azureApplicationClientId: string | null;
-    azureApplicationName: string | null;
-    dataPlaneFqdn: string;
-}
-
-export interface DataPlaneNode {
     name: string;
     cloudProvider: CloudProvider;
     isPublic: boolean;
     region: string;
-    scope: 'public' | 'private';
-    fqdn: string;
     cidrBlocks: string[];
     awsIamUserArn: string | null;
     gcpServiceAccountEmail: string | null;
     azureApplicationClientId: string | null;
     azureApplicationName: string | null;
+    fqdn: string;
+}
+
+export interface DataPlaneNode extends DataPlaneGqlNode {
+    scope: 'public' | 'private';
 }
 
 // Transform GQL response to exported type (adds snake_case aliases and derived fields)
 export const toDataPlaneNode = (node: DataPlaneGqlNode): DataPlaneNode => {
     return {
         ...node,
-        name: node.dataPlaneName,
-        fqdn: node.dataPlaneFqdn,
         scope: node.isPublic ? 'public' : 'private',
     };
 };
@@ -56,11 +44,11 @@ export const DATA_PLANES_QUERY = gql<DataPlanesResponse, { after?: string }>`
         dataPlanes(first: 100, after: $after) {
             edges {
                 node {
-                    dataPlaneName
+                    name
                     cloudProvider
                     region
                     isPublic
-                    dataPlaneFqdn
+                    fqdn
                     cidrBlocks
                     awsIamUserArn
                     gcpServiceAccountEmail
