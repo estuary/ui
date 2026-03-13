@@ -15,6 +15,9 @@ const config: CodegenConfig = {
             presetConfig: {
                 fragmentMasking: false,
             },
+            config: {
+                enumsAsTypes: true,
+            },
         },
     },
 };

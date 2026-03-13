@@ -153,13 +153,13 @@ export type AlertSubscriptionsBy = {
   prefix: Scalars['Prefix']['input'];
 };
 
-export enum AlertType {
+export type AlertType =
   /**
    * Triggers when the automated background discovery process fails. If this
    * alert is firing, it means that the Capture may be unable to respond to
    * schema changes in the source system.
    */
-  AutoDiscoverFailed = 'auto_discover_failed',
+  | 'auto_discover_failed'
   /**
    * Triggers when an automated background process needs to publish a spec,
    * but is unable to because of publication errors. Background publications
@@ -168,36 +168,35 @@ export enum AlertType {
    * the source capture. When these publications fail, tasks are likely to
    * stop functioning correctly until the issue can be addressed.
    */
-  BackgroundPublicationFailed = 'background_publication_failed',
+  | 'background_publication_failed'
   /**
    * Triggers when there has been no data successfully processed by the task during
    * the configured alert interval.
    */
-  DataMovementStalled = 'data_movement_stalled',
+  | 'data_movement_stalled'
   /**
    * Triggers automatically for every tenant that begins a free
    * trial, and resolves when the trial period ends.
    */
-  FreeTrial = 'free_trial',
+  | 'free_trial'
   /** Triggers when the free trial is getting close to expiring. */
-  FreeTrialEnding = 'free_trial_ending',
+  | 'free_trial_ending'
   /**
    * Triggers after the free trial period has expired, and still no payment info
    * has been added.
    */
-  FreeTrialStalled = 'free_trial_stalled',
+  | 'free_trial_stalled'
   /**
    * Triggers for any tenants that do not have a payment method, and resolves when
    * a payment method is added.
    */
-  MissingPaymentMethod = 'missing_payment_method',
+  | 'missing_payment_method'
   /**
    * Triggers after repeated task failures have been observed. The task may or may not
    * continue to make progress in between failures, but at a minimum, performance will
    * be degraded. And in many scenarios, the task will be unable to process data at all.
    */
-  ShardFailed = 'shard_failed'
-}
+  | 'shard_failed';
 
 export type AlertsBy = {
   /**
@@ -263,19 +262,17 @@ export type AutoDiscoverStatus = {
 };
 
 /** Capability within the Estuary role-based access control (RBAC) authorization system. */
-export enum Capability {
-  Admin = 'admin',
+export type Capability =
+  | 'admin'
   /** Note that the discriminants here align with those in the database type. */
-  Read = 'read',
-  Write = 'write'
-}
+  | 'read'
+  | 'write';
 
-export enum CatalogType {
-  Capture = 'capture',
-  Collection = 'collection',
-  Materialization = 'materialization',
-  Test = 'test'
-}
+export type CatalogType =
+  | 'capture'
+  | 'collection'
+  | 'materialization'
+  | 'test';
 
 /** Result of checking storage health for a catalog prefix. */
 export type ConnectionHealthTestResult = {
@@ -371,12 +368,11 @@ export type DataPlane = {
 };
 
 /** Cloud provider where the data plane is hosted. */
-export enum DataPlaneCloudProvider {
-  Aws = 'AWS',
-  Azure = 'AZURE',
-  Gcp = 'GCP',
-  Local = 'LOCAL'
-}
+export type DataPlaneCloudProvider =
+  | 'AWS'
+  | 'AZURE'
+  | 'GCP'
+  | 'LOCAL';
 
 export type DataPlaneConnection = {
   __typename?: 'DataPlaneConnection';
@@ -982,17 +978,16 @@ export type ShardStatusCheck = {
 };
 
 /** Represents a high level status aggregate of all the shards for a given task. */
-export enum ShardsStatus {
+export type ShardsStatus =
   /** Any task shard is `Failed` */
-  Failed = 'FAILED',
+  | 'FAILED'
   /** All task shards have a `Primary` member. */
-  Ok = 'OK',
+  | 'OK'
   /**
    * Any task shards are in `Pending` or `Backfill`, and none are `Failed`.
    * Or no task shards yet exist.
    */
-  Pending = 'PENDING'
-}
+  | 'PENDING';
 
 /** Status information about the `sourceCapture` */
 export type SourceCaptureStatus = {
@@ -1063,59 +1058,58 @@ export type SpecPublicationHistoryItemEdge = {
  * we see any problems that might be affecting the correct operation of the
  * task".
  */
-export enum StatusSummaryType {
+export type StatusSummaryType =
   /** There's some sort of error with this catalog spec. */
-  Error = 'ERROR',
+  | 'ERROR'
   /** Things seem ...not bad */
-  Ok = 'OK',
+  | 'OK'
   /**
    * The task is currently disabled. Only pertains to captures, derivations,
    * and materializations.
    */
-  TaskDisabled = 'TASK_DISABLED',
+  | 'TASK_DISABLED'
   /**
    * Something isn't fully working, but the condition is expected to clear
    * automatically soon. Nothing to worry about as long as the condition
    * doesn't persist for too long.
    */
-  Warning = 'WARNING'
-}
+  | 'WARNING';
 
 /** The highest-level status of a publication. */
-export enum StatusType {
+export type StatusType =
   /**
    * There was a failure to build or validate the drafted specs. This could
    * be due to a mistake in the drafted specs, or due to a failure to
    * validate the proposed changes with an external system connected to one
    * of the connected captures or materializations.
    */
-  BuildFailed = 'buildFailed',
+  | 'buildFailed'
   /**
    * Optimistic locking failure for one or more specs in the publication. This case should
    * typically be retried by the publisher.
    */
-  BuildIdLockFailure = 'buildIdLockFailure',
+  | 'buildIdLockFailure'
   /** The publication used the deprecated background flag, which is no longer supported. */
-  DeprecatedBackground = 'deprecatedBackground',
+  | 'deprecatedBackground'
   /**
    * Returned when there are no draft specs (after pruning unbound
    * collections). There will not be any `draft_errors` in this case, because
    * there's no `catalog_name` to associate with an error. And it may not be
    * desirable to treat this as an error, depending on the scenario.
    */
-  EmptyDraft = 'emptyDraft',
+  | 'emptyDraft'
   /**
    * One or more expected `last_pub_id`s did not match the actual `last_pub_id`, indicating that specs
    * have been changed since the draft was created.
    */
-  ExpectPubIdMismatch = 'expectPubIdMismatch',
+  | 'expectPubIdMismatch'
   /**
    * Something went wrong with the publication process. These errors can
    * typically be retried by the client.
    */
-  PublishFailed = 'publishFailed',
+  | 'publishFailed'
   /** The publication has not yet been completed. */
-  Queued = 'queued',
+  | 'queued'
   /**
    * The publication was successful. All drafted specs are now committed as
    * the live specs. Note that activation of the published specs in the data
@@ -1123,10 +1117,9 @@ export enum StatusType {
    * Therefore, it may take some time for the published changes to be
    * reflected in running tasks.
    */
-  Success = 'success',
+  | 'success'
   /** Publication failed due to the failure of one or more tests. */
-  TestFailed = 'testFailed'
-}
+  | 'testFailed';
 
 /** Result of testing storage health for a single data plane and store. */
 export type StorageHealthItem = {
