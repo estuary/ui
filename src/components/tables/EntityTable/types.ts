@@ -47,6 +47,7 @@ export interface EntityTableHeaderProps extends CollectionSelectorHeaderProps {
     selectData?: any;
     selectableTableStoreName?: SelectTableStoreNames;
     sortDirection?: SortDirection;
+    virtualized?: boolean;
 }
 
 export interface EntityTableProps {

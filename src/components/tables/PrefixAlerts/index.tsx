@@ -120,6 +120,7 @@ function PrefixAlertTable() {
                         columns={columns}
                         enableDivRendering
                         selectData={true}
+                        virtualized
                     />
 
                     <EntityTableBody

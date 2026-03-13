@@ -10,16 +10,21 @@ import { SelectTableStoreNames } from 'src/stores/names';
 export const columns: TableColumns[] = [
     {
         field: 'catalog_prefix',
+        flexGrow: true,
         headerIntlKey: 'entityTable.data.catalogPrefix',
+        width: 250,
     },
     {
         field: null,
+        flexGrow: true,
         headerIntlKey: 'entityTable.data.alertTypes',
-        width: 225,
+        width: 250,
     },
     {
         field: null,
+        flexGrow: true,
         headerIntlKey: 'alerts.config.table.label.alertMethod',
+        width: 250,
     },
     {
         field: null,
