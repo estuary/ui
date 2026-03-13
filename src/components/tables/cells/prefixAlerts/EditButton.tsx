@@ -14,6 +14,7 @@ function AlertEditButton({
     email,
     executeQuery,
     prefix,
+    ...props
 }: EditButtonProps) {
     const [open, setOpen] = useState(false);
 
@@ -22,7 +23,7 @@ function AlertEditButton({
     );
 
     return (
-        <TableCell>
+        <TableCell {...props}>
             <Button
                 variant="text"
                 onClick={(event) => {

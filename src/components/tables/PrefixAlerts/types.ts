@@ -4,6 +4,7 @@ import type { UseQueryExecute } from 'urql';
 
 export interface RowProps {
     executeQuery: UseQueryExecute;
+    height: number;
     row: ReducedAlertSubscription;
 }
 

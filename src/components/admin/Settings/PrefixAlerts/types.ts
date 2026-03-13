@@ -1,3 +1,4 @@
+import type { TableCellProps } from '@mui/material';
 import type { Dispatch, SetStateAction } from 'react';
 import type { ReducedAlertSubscription } from 'src/api/types';
 import type {
@@ -36,7 +37,7 @@ export interface BaseButtonProps {
     executeQuery: UseQueryExecute;
 }
 
-export interface EditButtonProps extends BaseButtonProps {
+export interface EditButtonProps extends BaseButtonProps, TableCellProps {
     alertTypes: ReducedAlertSubscription['alertTypes'];
     email: string;
     prefix: string;

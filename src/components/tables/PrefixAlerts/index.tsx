@@ -105,13 +105,26 @@ function PrefixAlertTable() {
 
             <TableContainer component={Box}>
                 <Table
+                    component={Box}
                     size="small"
-                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
+                    sx={{
+                        borderCollapse: 'separate',
+                        height:
+                            processedData.length < 10
+                                ? processedData.length * 75
+                                : 750,
+                        overflow: 'hidden',
+                    }}
                 >
-                    <EntityTableHeader columns={columns} selectData={true} />
+                    <EntityTableHeader
+                        columns={columns}
+                        enableDivRendering
+                        selectData={true}
+                    />
 
                     <EntityTableBody
                         columns={columns}
+                        enableDivRendering
                         noExistingDataContentIds={{
                             header: 'alerts.config.table.noContent.header',
                             message: 'alerts.config.table.noContent.message',
