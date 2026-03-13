@@ -13,7 +13,6 @@ import {
 import { createSchemaEvolutionStore } from 'src/stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'src/stores/ShardDetail/Store';
 import { createBillingTableStore } from 'src/stores/Tables/Billing/Store';
-import { createPrefixAlertTableStore } from 'src/stores/Tables/PrefixAlerts/Store';
 import { createSelectableTableStore } from 'src/stores/Tables/Store';
 import { createTransformationCreateStore } from 'src/stores/TransformationCreate/Store';
 import { MessagePrefixes } from 'src/types';
@@ -88,9 +87,6 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
-    ),
-    [SelectTableStoreNames.PREFIX_ALERTS]: createPrefixAlertTableStore(
-        SelectTableStoreNames.PREFIX_ALERTS
     ),
     [SelectTableStoreNames.REFRESH_TOKENS]: createSelectableTableStore(
         SelectTableStoreNames.REFRESH_TOKENS

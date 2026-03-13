@@ -1,44 +1,119 @@
-import type { PrefixSubscription } from 'src/utils/notification-utils';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/PrefixAlerts/types';
 
-import { TableCell, TableRow } from '@mui/material';
+import { Box, TableCell, TableRow } from '@mui/material';
 
-import ChipListCell from 'src/components/tables/cells/ChipList';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { FixedSizeList } from 'react-window';
+
+import ChipList from 'src/components/shared/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
+import { UNDERSCORE_RE } from 'src/validation';
 
-interface RowsProps {
-    data: [string, PrefixSubscription][];
-}
-
-interface RowProps {
-    row: [string, PrefixSubscription];
-}
-
-function Row({ row }: RowProps) {
-    const prefix = row[0];
-    const data = row[1];
-
+function Row({ executeQuery, height, row }: RowProps) {
     return (
-        <TableRow>
-            <TableCell>{prefix}</TableCell>
+        <TableRow
+            component={Box}
+            style={{
+                alignItems: 'center',
+                display: 'flex',
+            }}
+        >
+            <TableCell
+                component={Box}
+                style={{
+                    alignItems: 'inherit',
+                    display: 'inline-flex',
+                    flexGrow: 1,
+                    flexShrink: 0,
+                    height,
+                    width: 250,
+                }}
+            >
+                {row.catalogPrefix}
+            </TableCell>
 
-            <ChipListCell
-                values={data.userSubscriptions.map(({ email }) => email)}
-                stripPath={false}
-                maxChips={3}
+            <TableCell
+                component={Box}
+                style={{
+                    alignItems: 'inherit',
+                    display: 'inline-flex',
+                    flexGrow: 1,
+                    flexShrink: 0,
+                    height,
+                    width: 250,
+                }}
+            >
+                <ChipList
+                    values={row.alertTypes
+                        .map((value) => value.replace(UNDERSCORE_RE, ' '))
+                        .sort()}
+                    stripPath={false}
+                    maxChips={1}
+                />
+            </TableCell>
+
+            <TableCell
+                component={Box}
+                style={{
+                    alignItems: 'inherit',
+                    display: 'inline-flex',
+                    flexGrow: 1,
+                    flexShrink: 0,
+                    height,
+                    width: 250,
+                }}
+            >
+                {row.email}
+            </TableCell>
+
+            <AlertEditButton
+                alertTypes={row.alertTypes}
+                email={row.email}
+                executeQuery={executeQuery}
+                prefix={row.catalogPrefix}
+                component={Box}
+                style={{
+                    alignItems: 'inherit',
+                    display: 'inline-flex',
+                    height,
+                    width: 'fit-content',
+                }}
             />
-
-            <AlertEditButton prefix={prefix} />
         </TableRow>
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ data, executeQuery }: RowsProps) {
     return (
-        <>
-            {data.map((row) => (
-                <Row key={row[0]} row={row} />
-            ))}
-        </>
+        <AutoSizer>
+            {({ height, width }: AutoSizer['state']) => {
+                return (
+                    <FixedSizeList
+                        height={height < 50 ? 50 : height}
+                        itemCount={data.length}
+                        itemData={data}
+                        itemSize={50}
+                        width={width}
+                    >
+                        {({ data: listData, index }) => {
+                            const row = listData[index];
+
+                            return (
+                                <Row
+                                    executeQuery={executeQuery}
+                                    height={50}
+                                    key={`${row.catalogPrefix}-${row.email}`}
+                                    row={row}
+                                />
+                            );
+                        }}
+                    </FixedSizeList>
+                );
+            }}
+        </AutoSizer>
     );
 }
 

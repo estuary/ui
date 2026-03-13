@@ -1,3 +1,52 @@
+import type { TableCellProps } from '@mui/material';
+import type { Dispatch, SetStateAction } from 'react';
+import type { ReducedAlertSubscription } from 'src/api/types';
+import type {
+    AlertTypeDef,
+    BaseAlertSubscriptionMutationInput,
+} from 'src/types/gql';
+import type { UseQueryExecute } from 'urql';
+
+export interface AlertSubscriptionDialogProps
+    extends AlertTypeFieldProps,
+        EmailListFieldProps {
+    executeQuery: UseQueryExecute;
+    headerId: string;
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
+    enableDeletion?: boolean;
+    staticPrefix?: string;
+}
+
+export interface AlertSubscriptionResponse
+    extends BaseAlertSubscriptionMutationInput {
+    id: string;
+    error?: any;
+    invalid?: boolean;
+}
+
+export interface AlertTypeFieldProps {
+    existingAlertTypes?: ReducedAlertSubscription['alertTypes'];
+}
+
+export interface AlertTypeSelectorProps {
+    options: AlertTypeDef[];
+}
+
+export interface BaseButtonProps {
+    executeQuery: UseQueryExecute;
+}
+
+export interface EditButtonProps extends BaseButtonProps, TableCellProps {
+    alertTypes: ReducedAlertSubscription['alertTypes'];
+    email: string;
+    prefix: string;
+}
+
 export interface EmailDictionary {
     [prefix: string]: string[];
+}
+
+export interface EmailListFieldProps {
+    staticEmail?: string;
 }

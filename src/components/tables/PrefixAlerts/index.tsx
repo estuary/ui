@@ -1,102 +1,150 @@
-import type { TableColumns } from 'src/types';
+import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
+import type { TableState } from 'src/types';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { getNotificationSubscriptionsForTable } from 'src/api/alerts';
+import { Box, Stack, Table, TableContainer } from '@mui/material';
+
+import { debounce } from 'lodash';
+import { useUnmount } from 'react-use';
+
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
-import EntityTable from 'src/components/tables/EntityTable';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/PrefixAlerts/Rows';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
-import TableHydrator from 'src/stores/Tables/Hydrator';
-import { useTenantStore } from 'src/stores/Tenant/Store';
-
-// TODO (optimization): The prefix alert table should have a last updated column
-//   however the current data model does not provide a means to reliably track
-//   when the emails subscribed to alerts under a given prefix were last updated.
-//   If the most recently subscribed email for a given prefix is removed,
-//   the latest `updated_at` value would be rolling back in time.
-const columns: TableColumns[] = [
-    {
-        field: 'catalog_prefix',
-        headerIntlKey: 'entityTable.data.catalogPrefix',
-    },
-    {
-        field: null,
-        headerIntlKey: 'alerts.config.table.label.alertMethod',
-    },
-    {
-        field: null,
-        headerIntlKey: 'entityTable.data.actions',
-    },
-];
-
-const selectableTableStoreName = SelectTableStoreNames.PREFIX_ALERTS;
+import { columns } from 'src/components/tables/PrefixAlerts/shared';
+import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
+import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
+import { TableStatuses } from 'src/types';
 
 function PrefixAlertTable() {
-    const {
-        pagination,
-        setPagination,
-        rowsPerPage,
-        setRowsPerPage,
-        searchQuery,
-        setSearchQuery,
-        sortDirection,
-        setSortDirection,
-        columnToSort,
-        setColumnToSort,
-    } = useTableState(TablePrefixes.prefixAlerts, 'catalog_prefix', 'asc');
+    const [{ data, error, fetching }, executeQuery] =
+        useGetAlertSubscriptions();
 
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const setInitializationError = useAlertSubscriptionsStore(
+        (state) => state.setInitializationError
+    );
 
-    const query = useMemo(() => {
-        return selectedTenant
-            ? getNotificationSubscriptionsForTable(
-                  selectedTenant,
-                  pagination,
-                  searchQuery,
-                  [
-                      {
-                          col: columnToSort,
-                          direction: sortDirection,
-                      },
-                  ]
-              )
-            : null;
-    }, [columnToSort, pagination, searchQuery, selectedTenant, sortDirection]);
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [tableState, setTableState] = useState<TableState>({
+        status: TableStatuses.LOADING,
+    });
+
+    const processedData: ReducedAlertSubscriptionQueryResponse['alertSubscriptions'] =
+        useMemo(() => {
+            if (!data) {
+                return [];
+            }
+
+            return searchQuery
+                ? data.alertSubscriptions.filter(
+                      ({ catalogPrefix, email }) =>
+                          catalogPrefix.includes(searchQuery) ||
+                          email.includes(searchQuery)
+                  )
+                : data.alertSubscriptions;
+        }, [data, searchQuery]);
+
+    const displayLoadingState = useRef(
+        debounce(() => setTableState({ status: TableStatuses.LOADING }), 750)
+    );
+
+    useUnmount(() => {
+        displayLoadingState.current?.cancel();
+    });
+
+    useEffect(() => {
+        void (async () => {
+            if (!fetching) {
+                setInitializationError(error);
+            }
+        })();
+    }, [error, fetching, setInitializationError]);
+
+    useEffect(() => {
+        if (fetching) {
+            setTableState({ status: TableStatuses.LOADING });
+        } else if (processedData.length > 0) {
+            displayLoadingState.current?.cancel();
+
+            setTableState({
+                status: TableStatuses.DATA_FETCHED,
+            });
+        } else {
+            displayLoadingState.current?.cancel();
+
+            setTableState({
+                status: searchQuery
+                    ? TableStatuses.UNMATCHED_FILTER
+                    : TableStatuses.NO_EXISTING_DATA,
+            });
+        }
+    }, [displayLoadingState, fetching, processedData.length, searchQuery]);
+
+    const loading = tableState.status === TableStatuses.LOADING;
 
     return (
-        <TableHydrator
-            disableQueryParamHack
-            query={query}
-            selectableTableStoreName={SelectTableStoreNames.PREFIX_ALERTS}
-        >
-            <EntityTable
-                noExistingDataContentIds={{
-                    header: 'alerts.config.table.noContent.header',
-                    message: 'alerts.config.table.noContent.message',
-                    disableDoclink: true,
+        <Box style={{ margin: '0 16px' }}>
+            <Stack
+                direction="row"
+                sx={{
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    my: 2,
                 }}
-                columns={columns}
-                renderTableRows={(data) => <Rows data={data} />}
-                rowsPerPage={rowsPerPage}
-                setRowsPerPage={setRowsPerPage}
-                pagination={pagination}
-                setPagination={setPagination}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header={null}
-                filterLabel="alerts.config.table.filterLabel"
-                selectableTableStoreName={selectableTableStoreName}
-                showToolbar
-                toolbar={<AlertGenerateButton />}
-                tableAriaLabelKey="alerts.config.table.aria.label"
-            />
-        </TableHydrator>
+            >
+                <AlertGenerateButton executeQuery={executeQuery} />
+
+                <TableFilter
+                    disabled={loading}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                />
+            </Stack>
+
+            <TableContainer component={Box}>
+                <Table
+                    component={Box}
+                    size="small"
+                    sx={{
+                        borderCollapse: 'separate',
+                        height:
+                            processedData.length < 10
+                                ? processedData.length * 75
+                                : 750,
+                        overflow: 'hidden',
+                    }}
+                >
+                    <EntityTableHeader
+                        columns={columns}
+                        enableDivRendering
+                        selectData={true}
+                        virtualized
+                    />
+
+                    <EntityTableBody
+                        columns={columns}
+                        enableDivRendering
+                        noExistingDataContentIds={{
+                            header: 'alerts.config.table.noContent.header',
+                            message: 'alerts.config.table.noContent.message',
+                            disableDoclink: true,
+                        }}
+                        tableState={tableState}
+                        loading={loading}
+                        rows={
+                            processedData.length > 0 ? (
+                                <Rows
+                                    data={processedData}
+                                    executeQuery={executeQuery}
+                                />
+                            ) : null
+                        }
+                    />
+                </Table>
+            </TableContainer>
+        </Box>
     );
 }
 

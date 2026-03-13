@@ -1,12 +1,10 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
-import type { EmailDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { Grant_UserExt } from 'src/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
     Autocomplete,
-    Chip,
     FormControl,
     FormHelperText,
     ListItem,
@@ -21,57 +19,30 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import UserAvatar from 'src/components/shared/UserAvatar';
 import usePrefixAdministrators from 'src/hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'src/hooks/useUserInformationByPrefix';
-import { hasLength } from 'src/utils/misc-utils';
+import { BASIC_EMAIL_RE } from 'src/validation';
 
-type Values = (Grant_UserExt | string)[];
-
-interface Props {
-    prefix: string;
-    emailsByPrefix: EmailDictionary;
-    setEmailsByPrefix: (value: EmailDictionary) => void;
-    disabled?: boolean;
-}
-
-// Validation is VERY basic 'non-whitespace@non-whitespace'
-const simpleEmailRegEx = new RegExp(/^\S+@\S+$/m);
+type Option = Grant_UserExt | string;
 
 const minCapability = 'admin';
 
-const stringHasCommas = (value: string) => value.includes(',');
-
-const cleanupEmail = (value: string) => {
+const sanitizeEmail = (value: string) => {
     return value.trim();
 };
 
-const parseInputWithCommas = (value: string): string[] =>
-    value
-        .split(',')
-        .map((email) => cleanupEmail(email))
-        .filter((email) => hasLength(email));
-
-const flattenValues = (values: Values, checkCommas: boolean): string[] => {
-    return values.flatMap((value) =>
-        typeof value === 'string'
-            ? checkCommas && stringHasCommas(value)
-                ? parseInputWithCommas(value)
-                : cleanupEmail(value)
-            : value.user_email
-    );
-};
-
-function EmailSelector({
-    disabled,
-    prefix,
-    emailsByPrefix,
-    setEmailsByPrefix,
-}: Props) {
+function EmailSelector() {
     const intl = useIntl();
 
-    const [inputValue, setInputValue] = useState('');
-
-    const setInputUncommitted = useAlertSubscriptionsStore(
-        (state) => state.setInputUncommitted
+    const serverError = useAlertSubscriptionsStore(
+        (state) => state.initializationError
     );
+    const [prefix, subscribedEmail, setSubscribedEmail] =
+        useAlertSubscriptionsStore((state) => [
+            state.subscription.catalogPrefix,
+            state.subscription.email,
+            state.setSubscribedEmail,
+        ]);
+
+    const [inputValue, setInputValue] = useState(subscribedEmail);
 
     const { data: adminPrefixes } = usePrefixAdministrators(
         prefix,
@@ -83,34 +54,15 @@ function EmailSelector({
         minCapability
     );
 
-    const emails = useMemo(
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        () => emailsByPrefix[prefix] ?? [],
-        [prefix, emailsByPrefix]
-    );
-
     const inputErrorExists = useMemo(
-        () => emails.some((email) => !simpleEmailRegEx.test(email)),
-        [emails]
+        () => inputValue.length > 0 && !BASIC_EMAIL_RE.test(inputValue),
+        [inputValue]
     );
-
-    const autoCompleteOptions = useMemo(
-        () =>
-            userInfo.filter(
-                ({ user_email }) => !emails.includes(user_email)
-            ) as Values,
-        [emails, userInfo]
-    );
-
-    useEffect(() => {
-        setInputUncommitted(inputValue.length > 0);
-    }, [inputValue, setInputUncommitted]);
 
     return (
         <FormControl fullWidth>
             <Autocomplete
-                disabled={disabled ?? !prefix}
-                disableCloseOnSelect
+                disabled={Boolean(serverError || !prefix)}
                 filterOptions={(options) =>
                     options.filter((option) => {
                         if (typeof option === 'string') {
@@ -133,41 +85,35 @@ function EmailSelector({
                 }
                 handleHomeEndKeys
                 inputValue={inputValue}
-                multiple
-                onChange={(_event, values, reason) => {
-                    const creating = reason === 'createOption';
-
-                    if (creating) {
-                        const newValue = values[values.length - 1];
-                        if (
-                            typeof newValue === 'string' &&
-                            !simpleEmailRegEx.test(newValue)
-                        ) {
-                            setInputValue('');
-                        }
+                onChange={(_event, value, reason) => {
+                    if (!value) {
+                        return;
                     }
 
-                    setEmailsByPrefix({
-                        ...emailsByPrefix,
-                        [prefix]: flattenValues(values, creating),
-                    });
+                    const creating = reason === 'createOption';
+
+                    if (
+                        creating &&
+                        typeof value === 'string' &&
+                        !BASIC_EMAIL_RE.test(value)
+                    ) {
+                        setInputValue('');
+                    }
+
+                    setSubscribedEmail(
+                        typeof value === 'string'
+                            ? sanitizeEmail(value)
+                            : value.user_email
+                    );
                 }}
                 onInputChange={(_event, value) => {
                     setInputValue(value);
 
-                    if (stringHasCommas(value)) {
-                        setEmailsByPrefix({
-                            ...emailsByPrefix,
-                            [prefix]: [
-                                ...emails,
-                                ...parseInputWithCommas(value),
-                            ],
-                        });
-
-                        setInputValue('');
+                    if (value.length > 0 && BASIC_EMAIL_RE.test(value)) {
+                        setSubscribedEmail(sanitizeEmail(value));
                     }
                 }}
-                options={autoCompleteOptions}
+                options={userInfo as Option[]}
                 renderInput={({
                     InputProps,
                     ...params
@@ -218,32 +164,8 @@ function EmailSelector({
                         </ListItem>
                     );
                 }}
-                renderTags={(values, getTagProps) => {
-                    return values.map((value, index) => {
-                        const tagProps = getTagProps({ index });
-
-                        const email =
-                            typeof value === 'string'
-                                ? value
-                                : value.user_email;
-
-                        return (
-                            <Chip
-                                {...tagProps}
-                                color={
-                                    !simpleEmailRegEx.test(email)
-                                        ? 'error'
-                                        : 'default'
-                                }
-                                key={`email-tag-${email}-${index}`}
-                                label={email}
-                                size="small"
-                            />
-                        );
-                    });
-                }}
                 sx={{ flexGrow: 1 }}
-                value={emails}
+                value={inputValue}
             />
 
             {inputErrorExists ? (
