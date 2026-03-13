@@ -30,7 +30,10 @@
         "hack-in-web-flow": "./deps/flow-web/hack-in-prod.sh",
         "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh",
         "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build"
+        "build-storybook": "storybook build",
+        "codegen": "graphql-codegen",
+        "codegen:local": "GQL_URL=http://localhost:8675/api/graphql graphql-codegen",
+        "check-schema": "graphql-codegen && git diff --exit-code schema.graphql src/gql-types/"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -41,6 +44,7 @@
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
         "@estuary/flow-web": "file:__inline-deps__/estuary-flow-web-20260302-150718.tgz",
+        "@estuary/graphql-schema": "file:../flow/.github/graphql-schema-package",
         "@jsonforms/core": "^3.2.1",
         "@jsonforms/material-renderers": "^3.2.1",
         "@jsonforms/react": "^3.2.1",
@@ -117,6 +121,9 @@
         "zustand": "^4.5.0"
     },
     "devDependencies": {
+        "@graphql-codegen/cli": "^6.2.1",
+        "@graphql-codegen/client-preset": "^5.2.4",
+        "@graphql-codegen/schema-ast": "^5.0.1",
         "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
         "@storybook/addon-a11y": "^10.2.8",
         "@storybook/addon-docs": "^10.2.8",
