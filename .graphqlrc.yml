@@ -1,0 +1,16 @@
+schema: schema.graphql
+documents: 'src/**/*.{ts,tsx}'
+extensions:
+  codegen:
+    schema: ${VITE_GQL_URL}
+    ignoreNoDocuments: true
+    generates:
+      ./schema.graphql:
+        plugins:
+          - schema-ast
+      ./src/gql-types/:
+        preset: client
+        presetConfig:
+          fragmentMasking: false
+        config:
+          enumsAsTypes: true

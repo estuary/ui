@@ -32,7 +32,6 @@
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
         "codegen": "graphql-codegen",
-        "codegen:local": "GQL_URL=http://localhost:8675/api/graphql graphql-codegen",
         "check-schema": "graphql-codegen && git diff --exit-code schema.graphql src/gql-types/"
     },
     "dependencies": {
