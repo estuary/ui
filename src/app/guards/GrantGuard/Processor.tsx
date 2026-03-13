@@ -1,4 +1,4 @@
-import type { RedeemInviteLinkResult } from '@estuary/graphql-schema';
+import type { RedeemInviteLinkResult } from 'src/gql-types/graphql';
 
 import { useState } from 'react';
 

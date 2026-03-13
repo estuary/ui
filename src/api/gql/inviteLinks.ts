@@ -1,26 +1,21 @@
+import type {
+    CreateInviteLinkMutation,
+    CreateInviteLinkMutationVariables,
+    DeleteInviteLinkMutation,
+    DeleteInviteLinkMutationVariables,
+    InviteLinksQuery,
+    InviteLinksQueryVariables,
+    RedeemInviteLinkMutation,
+    RedeemInviteLinkMutationVariables,
+} from 'src/gql-types/graphql';
+
 import { useEffect, useMemo } from 'react';
 
 import { gql, useMutation, useQuery } from 'urql';
 
-interface InviteLinksQueryResponse {
-    inviteLinks: InviteLinkConnection;
-}
-
-interface CreateInviteLinkResponse {
-    createInviteLink: InviteLink;
-}
-
-interface DeleteInviteLinkResponse {
-    deleteInviteLink: boolean;
-}
-
-interface RedeemInviteLinkResponse {
-    redeemInviteLink: RedeemInviteLinkResult;
-}
-
 export const INVITE_LINKS_QUERY = gql<
-    InviteLinksQueryResponse,
-    QueryRootInviteLinksArgs
+    InviteLinksQuery,
+    InviteLinksQueryVariables
 >`
     query InviteLinks($first: Int, $after: String) {
         inviteLinks(first: $first, after: $after) {
@@ -46,13 +41,8 @@ export const INVITE_LINKS_QUERY = gql<
 `;
 
 export const CREATE_INVITE_LINK = gql<
-    CreateInviteLinkResponse,
-    {
-        catalogPrefix: string;
-        capability: string;
-        singleUse: boolean;
-        detail?: string;
-    }
+    CreateInviteLinkMutation,
+    CreateInviteLinkMutationVariables
 >`
     mutation CreateInviteLink(
         $catalogPrefix: Prefix!
@@ -77,8 +67,8 @@ export const CREATE_INVITE_LINK = gql<
 `;
 
 export const DELETE_INVITE_LINK = gql<
-    DeleteInviteLinkResponse,
-    MutationRootDeleteInviteLinkArgs
+    DeleteInviteLinkMutation,
+    DeleteInviteLinkMutationVariables
 >`
     mutation DeleteInviteLink($token: UUID!) {
         deleteInviteLink(token: $token)
@@ -122,8 +112,8 @@ export function useDeleteInviteLink() {
 }
 
 export const REDEEM_INVITE_LINK = gql<
-    RedeemInviteLinkResponse,
-    MutationRootRedeemInviteLinkArgs
+    RedeemInviteLinkMutation,
+    RedeemInviteLinkMutationVariables
 >`
     mutation RedeemInviteLink($token: UUID!) {
         redeemInviteLink(token: $token) {

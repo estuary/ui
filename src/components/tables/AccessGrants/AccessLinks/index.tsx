@@ -1,4 +1,4 @@
-import type { InviteLink } from 'src/api/gql/inviteLinks';
+import type { InviteLink } from 'src/gql-types/graphql';
 import type { TableColumns, TableState } from 'src/types';
 
 import { useEffect, useState } from 'react';

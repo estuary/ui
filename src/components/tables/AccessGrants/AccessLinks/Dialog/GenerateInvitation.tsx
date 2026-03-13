@@ -1,4 +1,4 @@
-import type { Capability } from '@estuary/graphql-schema';
+import type { Capability } from 'src/gql-types/graphql';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 
 import { useRef, useState } from 'react';

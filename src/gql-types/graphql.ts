@@ -480,7 +480,7 @@ export type InviteLinkEdge = {
 };
 
 export type InviteLinksFilter = {
-  prefix?: InputMaybe<PrefixFilter>;
+  catalogPrefix?: InputMaybe<PrefixFilter>;
   singleUse?: InputMaybe<BoolFilter>;
 };
 

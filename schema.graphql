@@ -525,7 +525,7 @@ type InviteLinkEdge {
 }
 
 input InviteLinksFilter {
-  prefix: PrefixFilter
+  catalogPrefix: PrefixFilter
   singleUse: BoolFilter
 }
 
