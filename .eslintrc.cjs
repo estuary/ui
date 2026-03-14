@@ -5,7 +5,7 @@ module.exports = {
         'eslint-config-kentcdodds/react',
         'plugin:storybook/recommended',
     ],
-    ignorePatterns: ['vite.config.ts', '__mocks__', 'playwright-tests/'],
+    ignorePatterns: ['vite.config.ts', 'codegen.ts', '__mocks__', 'playwright-tests/', 'src/gql-types/'],
     plugins: ['formatjs', 'unused-imports', 'no-relative-import-paths'],
     parserOptions: {
         project: './tsconfig.json',

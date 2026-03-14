@@ -59,6 +59,9 @@ jobs:
             - name: Licenses
               run: npm run licenses
 
+            - name: GraphQL Schema Check
+              run: npm run check-schema
+
             - name: Typecheck
               run: npm run typecheck
 
