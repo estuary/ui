@@ -1,7 +1,7 @@
 import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { AlertSubscriptionMutationInput } from 'src/types/gql';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { useMutation } from 'urql';
 
@@ -47,8 +47,6 @@ export function useUpsertAlertSubscription() {
                 (responses) => {
                     responses.forEach((response) => {
                         if (isPromiseFulfilledResult(response)) {
-                            console.log('>>> response', response);
-
                             const uuid = crypto.randomUUID();
 
                             if (!response.value || !response.value.data) {
@@ -60,6 +58,7 @@ export function useUpsertAlertSubscription() {
                                             response.value &&
                                                 !response.value.data
                                         ),
+                                        operation: 'upsert',
                                         variables:
                                             response.value.operation.variables,
                                     }
@@ -82,7 +81,8 @@ export function useUpsertAlertSubscription() {
                                 logRocketEvent(
                                     CustomEvents.ALERT_SUBSCRIPTION,
                                     {
-                                        creationError: response.value.error,
+                                        errorResponse: response.value.error,
+                                        operation: 'upsert',
                                         variables:
                                             response.value.operation.variables,
                                     }
@@ -105,22 +105,27 @@ export function useUpsertAlertSubscription() {
                                 response.value.data;
 
                             evaluatedResponses.push({
-                                prefix: catalogPrefix,
                                 email,
                                 id: uuid,
+                                prefix: catalogPrefix,
                             });
 
                             return;
                         }
 
                         logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
-                            promiseRejected: true,
                             details: response.reason,
+                            operation: 'upsert',
+                            promiseRejected: 'implicit',
                         });
                     });
                 },
                 (err) => {
-                    console.log('>>> err', err);
+                    logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                        operation: 'upsert',
+                        promiseRejected: 'explicit',
+                        errorResponse: err,
+                    });
                 }
             );
 
@@ -128,10 +133,6 @@ export function useUpsertAlertSubscription() {
         },
         [mutateSubscription]
     );
-
-    useEffect(() => {
-        console.log(upsertSubscriptionResult);
-    }, [upsertSubscriptionResult]);
 
     return { upsertSubscription, upsertSubscriptionResult };
 }

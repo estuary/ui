@@ -1,7 +1,7 @@
 import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { useMutation } from 'urql';
 
@@ -11,7 +11,7 @@ import { CustomEvents } from 'src/services/types';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 export function useDeleteAlertSubscription() {
-    const [updateSubscriptionResult, updateSubscription] = useMutation(
+    const [deleteSubscriptionResult, mutateSubscription] = useMutation(
         AlertSubscriptionDeleteMutation
     );
 
@@ -20,7 +20,7 @@ export function useDeleteAlertSubscription() {
             subscriptionKeys: BaseAlertSubscriptionMutationInput[]
         ): Promise<AlertSubscriptionResponse[]> => {
             const promises = subscriptionKeys.map(({ prefix, email }) =>
-                updateSubscription({ prefix, email })
+                mutateSubscription({ prefix, email })
             );
 
             const evaluatedResponses: AlertSubscriptionResponse[] = [];
@@ -29,7 +29,10 @@ export function useDeleteAlertSubscription() {
                 (responses) => {
                     responses.forEach((response) => {
                         if (isPromiseFulfilledResult(response)) {
-                            console.log('>>> response', response);
+                            logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                                operation: 'delete',
+                                successResponse: response,
+                            });
 
                             const uuid = crypto.randomUUID();
 
@@ -42,6 +45,7 @@ export function useDeleteAlertSubscription() {
                                             response.value &&
                                                 !response.value.data
                                         ),
+                                        operation: 'delete',
                                         variables:
                                             response.value.operation.variables,
                                     }
@@ -64,7 +68,8 @@ export function useDeleteAlertSubscription() {
                                 logRocketEvent(
                                     CustomEvents.ALERT_SUBSCRIPTION,
                                     {
-                                        creationError: response.value.error,
+                                        errorResponse: response.value.error,
+                                        operation: 'delete',
                                         variables:
                                             response.value.operation.variables,
                                     }
@@ -74,10 +79,10 @@ export function useDeleteAlertSubscription() {
                                     response.value.operation.variables;
 
                                 evaluatedResponses.push({
-                                    prefix,
                                     email,
                                     id: uuid,
                                     invalid: true,
+                                    prefix,
                                 });
 
                                 return;
@@ -96,24 +101,28 @@ export function useDeleteAlertSubscription() {
                         }
 
                         logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
-                            promiseRejected: true,
                             details: response.reason,
+                            operation: 'delete',
+                            promiseRejected: 'implicit',
                         });
                     });
                 },
                 (err) => {
-                    console.log('>>> err', err);
+                    logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                        operation: 'delete',
+                        promiseRejected: 'explicit',
+                        errorResponse: err,
+                    });
                 }
             );
 
             return evaluatedResponses;
         },
-        [updateSubscription]
+        [mutateSubscription]
     );
 
-    useEffect(() => {
-        console.log(updateSubscriptionResult);
-    }, [updateSubscriptionResult]);
-
-    return { deleteSubscription, updateSubscriptionResult };
+    return {
+        deleteSubscription,
+        deleteSubscriptionResult,
+    };
 }
