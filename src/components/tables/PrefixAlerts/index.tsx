@@ -118,7 +118,8 @@ function PrefixAlertTable() {
                                 ? processedData.length
                                 : 10) *
                                 TABLE_ROW_HEIGHT +
-                            TABLE_HEADER_HEIGHT,
+                            TABLE_HEADER_HEIGHT +
+                            TABLE_ROW_HEIGHT / 2,
                     }}
                 >
                     <EntityTableHeader
