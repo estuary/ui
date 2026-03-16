@@ -4,7 +4,7 @@ import type {
     RowsProps,
 } from 'src/components/tables/PrefixAlerts/types';
 
-import { Box, TableCell, TableRow } from '@mui/material';
+import { Box, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from 'react-window';
@@ -17,6 +17,7 @@ import {
     EXPANDING_TABLE_COLUMN_WIDTH,
     TABLE_ROW_HEIGHT,
 } from 'src/components/tables/PrefixAlerts/shared';
+import { truncateTextSx } from 'src/context/Theme';
 import { UNDERSCORE_RE } from 'src/validation';
 
 function Row({ executeQuery, height, row }: RowProps) {
@@ -35,11 +36,30 @@ function Row({ executeQuery, height, row }: RowProps) {
                 display: 'flex',
             }}
         >
-            <TableCell component={Box} style={expandingVirtualizedTableCell}>
-                {row.catalogPrefix}
+            <TableCell
+                component={Box}
+                style={expandingVirtualizedTableCell}
+                sx={truncateTextSx}
+            >
+                <Tooltip placement="bottom-start" title={row.catalogPrefix}>
+                    <Typography component={Box} sx={truncateTextSx}>
+                        {row.catalogPrefix}
+                    </Typography>
+                </Tooltip>
             </TableCell>
 
-            <TableCell component={Box} style={expandingVirtualizedTableCell}>
+            {/* The combination of the customized alignment and padding in this cell
+                is used to mock centered cell contain while maintaining the ability
+                to scroll the ChipList content. */}
+            <TableCell
+                component={Box}
+                style={{
+                    ...expandingVirtualizedTableCell,
+                    alignItems: 'flex-start',
+                    overflow: 'auto',
+                    paddingTop: 10,
+                }}
+            >
                 <ChipList
                     values={row.alertTypes
                         .map((value) => value.replace(UNDERSCORE_RE, ' '))
@@ -50,7 +70,11 @@ function Row({ executeQuery, height, row }: RowProps) {
             </TableCell>
 
             <TableCell component={Box} style={expandingVirtualizedTableCell}>
-                {row.email}
+                <Tooltip placement="bottom-start" title={row.email}>
+                    <Typography component={Box} sx={truncateTextSx}>
+                        {row.email}
+                    </Typography>
+                </Tooltip>
             </TableCell>
 
             <AlertEditButton
