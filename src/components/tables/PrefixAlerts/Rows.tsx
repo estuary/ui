@@ -42,7 +42,11 @@ function Row({ executeQuery, height, row }: RowProps) {
                 sx={truncateTextSx}
             >
                 <Tooltip placement="bottom-start" title={row.catalogPrefix}>
-                    <Typography component={Box} sx={truncateTextSx}>
+                    <Typography
+                        component={Box}
+                        style={{ cursor: 'default' }}
+                        sx={truncateTextSx}
+                    >
                         {row.catalogPrefix}
                     </Typography>
                 </Tooltip>
@@ -71,7 +75,11 @@ function Row({ executeQuery, height, row }: RowProps) {
 
             <TableCell component={Box} style={expandingVirtualizedTableCell}>
                 <Tooltip placement="bottom-start" title={row.email}>
-                    <Typography component={Box} sx={truncateTextSx}>
+                    <Typography
+                        component={Box}
+                        style={{ cursor: 'default' }}
+                        sx={truncateTextSx}
+                    >
                         {row.email}
                     </Typography>
                 </Tooltip>
