@@ -22,31 +22,6 @@ import {
     updateSupabase,
 } from 'src/services/supabase';
 
-const AlertSubscriptionQuery = gql<
-    ReducedAlertSubscriptionQueryResponse,
-    AlertSubscriptionsBy
->`
-    query AlertSubscriptions($prefix: String!) {
-        alertSubscriptions(by: { prefix: $prefix }) {
-            alertTypes
-            catalogPrefix
-            email
-            updatedAt
-        }
-    }
-`;
-
-const AlertTypeQuery = gql<AlertTypeQueryResponse>`
-    query {
-        __type(name: "AlertType") {
-            enumValues {
-                description
-                name
-            }
-        }
-    }
-`;
-
 const AlertSubscriptionCreateMutation = gql<
     { catalogPrefix: string; email: string },
     AlertSubscriptionMutationInput
@@ -84,6 +59,20 @@ const AlertSubscriptionDeleteMutation = gql<
     }
 `;
 
+const AlertSubscriptionQuery = gql<
+    ReducedAlertSubscriptionQueryResponse,
+    AlertSubscriptionsBy
+>`
+    query AlertSubscriptions($prefix: String!) {
+        alertSubscriptions(by: { prefix: $prefix }) {
+            alertTypes
+            catalogPrefix
+            email
+            updatedAt
+        }
+    }
+`;
+
 const AlertSubscriptionUpdateMutation = gql<
     { catalogPrefix: string; email: string },
     AlertSubscriptionMutationInput
@@ -102,6 +91,17 @@ const AlertSubscriptionUpdateMutation = gql<
         ) {
             catalogPrefix
             email
+        }
+    }
+`;
+
+const AlertTypeQuery = gql<AlertTypeQueryResponse>`
+    query {
+        __type(name: "AlertType") {
+            enumValues {
+                description
+                name
+            }
         }
     }
 `;
