@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Box } from '@mui/material';
 
 import { getStorageMappings } from 'src/api/storageMappings';
-import StorageMappingsGenerateButton from 'src/components/admin/Settings/StorageMappings/GenerateButton';
+import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/AddStorageButton';
 import EntityTable from 'src/components/tables/EntityTable';
 import Rows from 'src/components/tables/StorageMappings/Rows';
 import { tableColumns } from 'src/components/tables/StorageMappings/shared';
@@ -72,7 +72,7 @@ function StorageMappingsTable() {
                         SelectTableStoreNames.STORAGE_MAPPINGS
                     }
                     showToolbar
-                    toolbar={<StorageMappingsGenerateButton />}
+                    toolbar={<AddStorageButton />}
                     hideFilter
                     tableAriaLabelKey="storageMappingsTable.table.aria.label"
                 />

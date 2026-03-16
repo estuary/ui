@@ -1,4 +1,5 @@
 import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
@@ -9,11 +10,7 @@ import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';
 import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
-import {
-    getProviderDisplayName,
-    getProviderShortName,
-    getRegionDisplayName,
-} from 'src/utils/cloudRegions';
+import { getRegionDisplayName, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import {
     formatDataPlaneName,
     formatIamOidc,
@@ -81,9 +78,11 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             label={intl.formatMessage({
                                 id: 'admin.dataPlanes.dialog.cloudProvider',
                             })}
-                            value={getProviderDisplayName(
-                                dataPlaneName.provider
-                            )}
+                            value={
+                                PROVIDER_LABELS[
+                                    dataPlaneName.provider as CloudProvider
+                                ]
+                            }
                             showCopyButton={false}
                         />
                     ) : null}
@@ -93,7 +92,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                                 id: 'admin.dataPlanes.column.header.region',
                             })}
                             value={getRegionDisplayName(
-                                dataPlaneName.provider,
+                                dataPlaneName.provider as CloudProvider,
                                 dataPlaneName.region
                             )}
                             showCopyButton={false}
@@ -109,26 +108,32 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         label={intl.formatMessage({
                             id: 'admin.dataPlanes.dialog.serviceAccountIdentity',
                         })}
-                        options={[
-                            {
-                                key: 'aws',
-                                label: getProviderShortName('aws'),
-                                value:
-                                    dataPlane.aws_iam_user_arn ??
-                                    intl.formatMessage({
-                                        id: 'admin.dataPlanes.dialog.notAvailable',
-                                    }),
-                            },
-                            {
-                                key: 'gcp',
-                                label: getProviderShortName('gcp'),
-                                value:
-                                    dataPlane.gcp_service_account_email ??
-                                    intl.formatMessage({
-                                        id: 'admin.dataPlanes.dialog.notAvailable',
-                                    }),
-                            },
-                        ]}
+                        options={
+                            [
+                                {
+                                    key: 'aws',
+                                    label: 'AWS',
+                                    value:
+                                        dataPlane.aws_iam_user_arn ??
+                                        intl.formatMessage({
+                                            id: 'admin.dataPlanes.dialog.notAvailable',
+                                        }),
+                                },
+                                {
+                                    key: 'gcp',
+                                    label: 'GCP',
+                                    value:
+                                        dataPlane.gcp_service_account_email ??
+                                        intl.formatMessage({
+                                            id: 'admin.dataPlanes.dialog.notAvailable',
+                                        }),
+                                },
+                            ] satisfies {
+                                key: string;
+                                label: CloudProvider;
+                                value: string;
+                            }[]
+                        }
                     />
                     <ToggleField
                         lowercaseButton
