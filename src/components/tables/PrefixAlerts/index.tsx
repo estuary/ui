@@ -13,7 +13,11 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/PrefixAlerts/Rows';
-import { columns } from 'src/components/tables/PrefixAlerts/shared';
+import {
+    columns,
+    TABLE_HEADER_HEIGHT,
+    TABLE_ROW_HEIGHT,
+} from 'src/components/tables/PrefixAlerts/shared';
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { TableStatuses } from 'src/types';
@@ -110,10 +114,11 @@ function PrefixAlertTable() {
                     sx={{
                         borderCollapse: 'separate',
                         height:
-                            processedData.length < 10
-                                ? processedData.length * 75
-                                : 750,
-                        overflow: 'hidden',
+                            (processedData.length < 10
+                                ? processedData.length
+                                : 10) *
+                                TABLE_ROW_HEIGHT +
+                            TABLE_HEADER_HEIGHT,
                     }}
                 >
                     <EntityTableHeader

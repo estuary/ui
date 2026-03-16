@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import type {
     RowProps,
     RowsProps,
@@ -10,9 +11,22 @@ import { FixedSizeList } from 'react-window';
 
 import ChipList from 'src/components/shared/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
+import {
+    ACTIONS_TABLE_COLUMN_WIDTH,
+    baseVirtualizedTableCell,
+    EXPANDING_TABLE_COLUMN_WIDTH,
+    TABLE_ROW_HEIGHT,
+} from 'src/components/tables/PrefixAlerts/shared';
 import { UNDERSCORE_RE } from 'src/validation';
 
 function Row({ executeQuery, height, row }: RowProps) {
+    const expandingVirtualizedTableCell: CSSProperties = {
+        ...baseVirtualizedTableCell,
+        flex: '1 0',
+        height,
+        width: EXPANDING_TABLE_COLUMN_WIDTH,
+    };
+
     return (
         <TableRow
             component={Box}
@@ -21,31 +35,11 @@ function Row({ executeQuery, height, row }: RowProps) {
                 display: 'flex',
             }}
         >
-            <TableCell
-                component={Box}
-                style={{
-                    alignItems: 'inherit',
-                    display: 'inline-flex',
-                    flexGrow: 1,
-                    flexShrink: 0,
-                    height,
-                    width: 250,
-                }}
-            >
+            <TableCell component={Box} style={expandingVirtualizedTableCell}>
                 {row.catalogPrefix}
             </TableCell>
 
-            <TableCell
-                component={Box}
-                style={{
-                    alignItems: 'inherit',
-                    display: 'inline-flex',
-                    flexGrow: 1,
-                    flexShrink: 0,
-                    height,
-                    width: 250,
-                }}
-            >
+            <TableCell component={Box} style={expandingVirtualizedTableCell}>
                 <ChipList
                     values={row.alertTypes
                         .map((value) => value.replace(UNDERSCORE_RE, ' '))
@@ -55,17 +49,7 @@ function Row({ executeQuery, height, row }: RowProps) {
                 />
             </TableCell>
 
-            <TableCell
-                component={Box}
-                style={{
-                    alignItems: 'inherit',
-                    display: 'inline-flex',
-                    flexGrow: 1,
-                    flexShrink: 0,
-                    height,
-                    width: 250,
-                }}
-            >
+            <TableCell component={Box} style={expandingVirtualizedTableCell}>
                 {row.email}
             </TableCell>
 
@@ -76,10 +60,9 @@ function Row({ executeQuery, height, row }: RowProps) {
                 prefix={row.catalogPrefix}
                 component={Box}
                 style={{
-                    alignItems: 'inherit',
-                    display: 'inline-flex',
+                    ...baseVirtualizedTableCell,
                     height,
-                    width: 'fit-content',
+                    width: ACTIONS_TABLE_COLUMN_WIDTH,
                 }}
             />
         </TableRow>
@@ -92,10 +75,14 @@ function Rows({ data, executeQuery }: RowsProps) {
             {({ height, width }: AutoSizer['state']) => {
                 return (
                     <FixedSizeList
-                        height={height < 50 ? 50 : height}
+                        height={
+                            height < TABLE_ROW_HEIGHT
+                                ? TABLE_ROW_HEIGHT
+                                : height
+                        }
                         itemCount={data.length}
                         itemData={data}
-                        itemSize={50}
+                        itemSize={TABLE_ROW_HEIGHT}
                         width={width}
                     >
                         {({ data: listData, index }) => {
@@ -104,7 +91,7 @@ function Rows({ data, executeQuery }: RowsProps) {
                             return (
                                 <Row
                                     executeQuery={executeQuery}
-                                    height={50}
+                                    height={TABLE_ROW_HEIGHT}
                                     key={`${row.catalogPrefix}-${row.email}`}
                                     row={row}
                                 />

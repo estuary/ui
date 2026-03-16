@@ -102,6 +102,13 @@ function EntityTableHeader({
                         };
                     }
 
+                    if (column.flexShrink) {
+                        tableCellSX = {
+                            ...tableCellSX,
+                            flexShrink: 0,
+                        };
+                    }
+
                     if (column.renderHeader && selectableTableStoreName) {
                         return column.renderHeader(
                             index,
