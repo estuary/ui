@@ -86,6 +86,14 @@ function PrefixAlertTable() {
         }
     }, [displayLoadingState, fetching, processedData.length, searchQuery]);
 
+    const tableBodyHeight = useMemo(
+        () =>
+            (processedData.length < 10 ? processedData.length : 10) *
+                TABLE_ROW_HEIGHT +
+            TABLE_ROW_HEIGHT / 2,
+        [processedData]
+    );
+
     const loading = tableState.status === TableStatuses.LOADING;
 
     return (
@@ -113,13 +121,7 @@ function PrefixAlertTable() {
                     size="small"
                     sx={{
                         borderCollapse: 'separate',
-                        height:
-                            (processedData.length < 10
-                                ? processedData.length
-                                : 10) *
-                                TABLE_ROW_HEIGHT +
-                            TABLE_HEADER_HEIGHT +
-                            TABLE_ROW_HEIGHT / 2,
+                        height: tableBodyHeight + TABLE_HEADER_HEIGHT,
                     }}
                 >
                     <EntityTableHeader
@@ -132,13 +134,12 @@ function PrefixAlertTable() {
                     <EntityTableBody
                         columns={columns}
                         enableDivRendering
+                        loading={loading}
                         noExistingDataContentIds={{
                             header: 'alerts.config.table.noContent.header',
                             message: 'alerts.config.table.noContent.message',
                             disableDoclink: true,
                         }}
-                        tableState={tableState}
-                        loading={loading}
                         rows={
                             processedData.length > 0 ? (
                                 <Rows
@@ -147,6 +148,14 @@ function PrefixAlertTable() {
                                 />
                             ) : null
                         }
+                        style={{
+                            // These are the same workarounds used in CollectionSelectorBody.
+                            // TODO (Safari Height Hack) - Safari ignores the height when the display is `table-row-group`
+                            display: 'table-cell',
+                            // TODO (FireFox Height Hack) - hardcoded height to make life easier
+                            height: tableBodyHeight,
+                        }}
+                        tableState={tableState}
                     />
                 </Table>
             </TableContainer>
