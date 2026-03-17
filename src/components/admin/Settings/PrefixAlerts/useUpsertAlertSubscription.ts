@@ -37,7 +37,7 @@ export function useUpsertAlertSubscription() {
             email,
             prefix,
         }: AlertSubscriptionMutationInput): Promise<AlertSubscriptionResponse> => {
-            return mutateSubscription({ alertTypes, email: '', prefix }).then(
+            return mutateSubscription({ alertTypes, email, prefix }).then(
                 (response) => {
                     const uuid = crypto.randomUUID();
 
