@@ -70,6 +70,7 @@ function Row({ executeQuery, height, row }: RowProps) {
                         .sort()}
                     stripPath={false}
                     maxChips={1}
+                    sx={{ maxHeight: undefined }}
                 />
             </TableCell>
 
