@@ -13,6 +13,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
+import { hasLength } from 'src/utils/misc-utils';
 
 export function useUpsertAlertSubscription() {
     const [{ data }] = useGetAlertSubscriptions();
@@ -37,7 +38,11 @@ export function useUpsertAlertSubscription() {
             email,
             prefix,
         }: AlertSubscriptionMutationInput): Promise<AlertSubscriptionResponse> => {
-            return mutateSubscription({ alertTypes, email, prefix }).then(
+            return mutateSubscription({
+                alertTypes: hasLength(alertTypes) ? alertTypes : undefined,
+                email,
+                prefix,
+            }).then(
                 (response) => {
                     const uuid = crypto.randomUUID();
 
