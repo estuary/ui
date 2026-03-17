@@ -38,6 +38,8 @@ function SingleLineCode({
                     flexGrow: 1,
                     overflowX: 'auto',
                     textOverflow: 'unset',
+                    fontFamily: 'monospace',
+                    fontSize: 13,
                 }}
             >
                 {value}
