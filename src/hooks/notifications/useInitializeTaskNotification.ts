@@ -48,14 +48,12 @@ function useInitializeTaskNotification(catalogName: string) {
             };
         }
 
-        const response = await upsertSubscription([
-            {
-                prefix,
-                email: user.email,
-            },
-        ]);
+        const response = await upsertSubscription({
+            prefix,
+            email: user.email,
+        });
 
-        return { data: response };
+        return { data: [response] };
     }, [prefix, upsertSubscription, user?.email]);
 
     const getNotificationSubscription = useCallback(async (): Promise<{

@@ -8,7 +8,6 @@ import { useMutation } from 'urql';
 import { AlertSubscriptionDeleteMutation } from 'src/api/alerts';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 export function useDeleteAlertSubscription() {
     const [deleteSubscriptionResult, mutateSubscription] = useMutation(
@@ -16,95 +15,55 @@ export function useDeleteAlertSubscription() {
     );
 
     const deleteSubscription = useCallback(
-        async (
-            subscriptionKeys: BaseAlertSubscriptionMutationInput[]
-        ): Promise<AlertSubscriptionResponse[]> => {
-            const promises = subscriptionKeys.map(({ prefix, email }) =>
-                mutateSubscription({ prefix, email })
-            );
+        async ({
+            email,
+            prefix,
+        }: BaseAlertSubscriptionMutationInput): Promise<AlertSubscriptionResponse> => {
+            return mutateSubscription({ prefix, email }).then(
+                (response) => {
+                    const uuid = crypto.randomUUID();
 
-            const evaluatedResponses: AlertSubscriptionResponse[] = [];
-
-            Promise.allSettled(promises).then(
-                (responses) => {
-                    responses.forEach((response) => {
-                        if (isPromiseFulfilledResult(response)) {
-                            logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
-                                operation: 'delete',
-                                successResponse: response,
-                            });
-
-                            const uuid = crypto.randomUUID();
-
-                            if (!response.value || !response.value.data) {
-                                logRocketEvent(
-                                    CustomEvents.ALERT_SUBSCRIPTION,
-                                    {
-                                        missingResponseValue: !response.value,
-                                        missingResponseData: Boolean(
-                                            response.value &&
-                                                !response.value.data
-                                        ),
-                                        operation: 'delete',
-                                        variables:
-                                            response.value.operation.variables,
-                                    }
-                                );
-
-                                const { email, prefix } =
-                                    response.value.operation.variables;
-
-                                evaluatedResponses.push({
-                                    prefix,
-                                    email,
-                                    id: uuid,
-                                    invalid: true,
-                                });
-
-                                return;
-                            }
-
-                            if (response.value.error) {
-                                logRocketEvent(
-                                    CustomEvents.ALERT_SUBSCRIPTION,
-                                    {
-                                        errorResponse: response.value.error,
-                                        operation: 'delete',
-                                        variables:
-                                            response.value.operation.variables,
-                                    }
-                                );
-
-                                const { email, prefix } =
-                                    response.value.operation.variables;
-
-                                evaluatedResponses.push({
-                                    email,
-                                    id: uuid,
-                                    invalid: true,
-                                    prefix,
-                                });
-
-                                return;
-                            }
-
-                            const { email, catalogPrefix } =
-                                response.value.data;
-
-                            evaluatedResponses.push({
-                                prefix: catalogPrefix,
-                                email,
-                                id: uuid,
-                            });
-
-                            return;
-                        }
-
+                    if (response?.error) {
                         logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
-                            details: response.reason,
+                            errorResponse: response.error,
                             operation: 'delete',
-                            promiseRejected: 'implicit',
+                            variables: response.operation.variables,
                         });
+
+                        const { email, prefix } = response.operation.variables;
+
+                        return Promise.resolve({
+                            email,
+                            error: response.error,
+                            id: uuid,
+                            invalid: true,
+                            prefix,
+                        });
+                    }
+
+                    if (!response || !response?.data) {
+                        logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                            missingResponseData: !response.data,
+                            operation: 'delete',
+                            variables: response.operation.variables,
+                        });
+
+                        const { email, prefix } = response.operation.variables;
+
+                        return Promise.resolve({
+                            prefix,
+                            email,
+                            id: uuid,
+                            invalid: true,
+                        });
+                    }
+
+                    const { email, catalogPrefix } = response.data;
+
+                    return Promise.resolve({
+                        prefix: catalogPrefix,
+                        email,
+                        id: uuid,
                     });
                 },
                 (err) => {
@@ -113,10 +72,10 @@ export function useDeleteAlertSubscription() {
                         promiseRejected: 'explicit',
                         errorResponse: err,
                     });
+
+                    return Promise.reject();
                 }
             );
-
-            return evaluatedResponses;
         },
         [mutateSubscription]
     );

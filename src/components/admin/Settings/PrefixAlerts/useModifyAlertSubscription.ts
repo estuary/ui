@@ -8,7 +8,7 @@ import { useUnmount } from 'react-use';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
 import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
-import { hasLength } from 'src/utils/misc-utils';
+import { BASE_ERROR } from 'src/services/supabase';
 import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 export function useModifyAlertSubscription(
@@ -45,20 +45,28 @@ export function useModifyAlertSubscription(
         };
 
         const response = deletionTrigger
-            ? await deleteSubscription([subscriptionInput])
-            : await upsertSubscription([
-                  { ...subscriptionInput, alertTypes: subscription.alertTypes },
-              ]);
+            ? await deleteSubscription(subscriptionInput)
+            : await upsertSubscription({
+                  ...subscriptionInput,
+                  alertTypes: subscription.alertTypes,
+              });
 
         // The create could be undefined and this was easier to mark than tweak logic
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const errors = response.filter((r) => r?.error).map((r) => r?.error);
+        const error =
+            response?.invalid && !response?.error
+                ? {
+                      ...BASE_ERROR,
+                      message:
+                          'An issue was encountered creating, updating, or deleting an alert subscription',
+                  }
+                : response?.error;
 
-        if (!hasLength(errors)) {
+        if (!error) {
             debounceDialogClosure.current();
         }
 
-        setServerError(errors);
+        setServerError([error]);
         setLoading(false);
     };
 

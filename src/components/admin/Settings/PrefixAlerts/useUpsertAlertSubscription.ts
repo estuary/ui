@@ -13,7 +13,6 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 export function useUpsertAlertSubscription() {
     const [{ data }] = useGetAlertSubscriptions();
@@ -33,91 +32,56 @@ export function useUpsertAlertSubscription() {
     const [upsertSubscriptionResult, mutateSubscription] = useMutation(query);
 
     const upsertSubscription = useCallback(
-        async (
-            subscriptionKeys: AlertSubscriptionMutationInput[]
-        ): Promise<AlertSubscriptionResponse[]> => {
-            const promises = subscriptionKeys.map(
-                ({ alertTypes, prefix, email }) =>
-                    mutateSubscription({ alertTypes, email, prefix })
-            );
+        async ({
+            alertTypes,
+            email,
+            prefix,
+        }: AlertSubscriptionMutationInput): Promise<AlertSubscriptionResponse> => {
+            return mutateSubscription({ alertTypes, email: '', prefix }).then(
+                (response) => {
+                    const uuid = crypto.randomUUID();
 
-            const evaluatedResponses: AlertSubscriptionResponse[] = [];
-
-            Promise.allSettled(promises).then(
-                (responses) => {
-                    responses.forEach((response) => {
-                        if (isPromiseFulfilledResult(response)) {
-                            const uuid = crypto.randomUUID();
-
-                            if (!response.value || !response.value.data) {
-                                logRocketEvent(
-                                    CustomEvents.ALERT_SUBSCRIPTION,
-                                    {
-                                        missingResponseValue: !response.value,
-                                        missingResponseData: Boolean(
-                                            response.value &&
-                                                !response.value.data
-                                        ),
-                                        operation: 'upsert',
-                                        variables:
-                                            response.value.operation.variables,
-                                    }
-                                );
-
-                                const { email, prefix } =
-                                    response.value.operation.variables;
-
-                                evaluatedResponses.push({
-                                    prefix,
-                                    email,
-                                    id: uuid,
-                                    invalid: true,
-                                });
-
-                                return;
-                            }
-
-                            if (response.value.error) {
-                                logRocketEvent(
-                                    CustomEvents.ALERT_SUBSCRIPTION,
-                                    {
-                                        errorResponse: response.value.error,
-                                        operation: 'upsert',
-                                        variables:
-                                            response.value.operation.variables,
-                                    }
-                                );
-
-                                const { email, prefix } =
-                                    response.value.operation.variables;
-
-                                evaluatedResponses.push({
-                                    prefix,
-                                    email,
-                                    id: uuid,
-                                    invalid: true,
-                                });
-
-                                return;
-                            }
-
-                            const { email, catalogPrefix } =
-                                response.value.data;
-
-                            evaluatedResponses.push({
-                                email,
-                                id: uuid,
-                                prefix: catalogPrefix,
-                            });
-
-                            return;
-                        }
-
+                    if (response?.error) {
                         logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
-                            details: response.reason,
+                            errorResponse: response.error,
                             operation: 'upsert',
-                            promiseRejected: 'implicit',
+                            variables: response.operation.variables,
                         });
+
+                        const { email, prefix } = response.operation.variables;
+
+                        return Promise.resolve({
+                            prefix,
+                            email,
+                            error: response.error,
+                            id: uuid,
+                            invalid: true,
+                        });
+                    }
+
+                    if (!response || !response?.data) {
+                        logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                            missingResponseData: !response.data,
+                            operation: 'upsert',
+                            variables: response.operation.variables,
+                        });
+
+                        const { email, prefix } = response.operation.variables;
+
+                        return Promise.resolve({
+                            prefix,
+                            email,
+                            id: uuid,
+                            invalid: true,
+                        });
+                    }
+
+                    const { email, catalogPrefix } = response.data;
+
+                    return Promise.resolve({
+                        email,
+                        id: uuid,
+                        prefix: catalogPrefix,
                     });
                 },
                 (err) => {
@@ -126,10 +90,10 @@ export function useUpsertAlertSubscription() {
                         promiseRejected: 'explicit',
                         errorResponse: err,
                     });
+
+                    return Promise.reject();
                 }
             );
-
-            return evaluatedResponses;
         },
         [mutateSubscription]
     );
