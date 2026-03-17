@@ -78,6 +78,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                                         style={{
                                             fontWeight: 500,
                                             marginBottom: 4,
+                                            textTransform: 'capitalize',
                                         }}
                                     >
                                         {name.replace(UNDERSCORE_RE, ' ')}
