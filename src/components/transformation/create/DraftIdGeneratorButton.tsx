@@ -2,6 +2,7 @@ import type { DraftIdGeneratorButtonProps } from 'src/components/transformation/
 
 import { useCallback, useMemo, useState } from 'react';
 
+import { usePostHog } from '@posthog/react';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -9,6 +10,7 @@ import { createEntityDraft } from 'src/api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { EVENT_NAME } from 'src/components/transformation/create/shared';
 import {
     useTransformationCreate_catalogName,
     useTransformationCreate_language,
@@ -39,6 +41,7 @@ function DraftIdGeneratorButton({
     const entityName = useTransformationCreate_name();
     const catalogName = useTransformationCreate_catalogName();
 
+    const postHog = usePostHog();
     const [urlLoading, setUrlLoading] = useState(false);
 
     const submitButtonError = useMemo(() => {
@@ -182,8 +185,17 @@ function DraftIdGeneratorButton({
                     );
                 }
 
+                postHog.capture(EVENT_NAME, {
+                    status: 'success',
+                    language,
+                });
+
                 return evaluatedDraftId;
             } catch (e: unknown) {
+                postHog.capture(EVENT_NAME, {
+                    status: 'failure',
+                    language,
+                });
                 displayError(
                     intl.formatMessage({
                         id: 'newTransform.errors.draftCreateFailed',
@@ -195,7 +207,14 @@ function DraftIdGeneratorButton({
                 setUrlLoading(false);
             }
         },
-        [catalogName, displayError, generateDraftWithSpecs, intl]
+        [
+            catalogName,
+            displayError,
+            generateDraftWithSpecs,
+            intl,
+            language,
+            postHog,
+        ]
     );
 
     return (

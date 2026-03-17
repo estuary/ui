@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
+import { usePostHog } from '@posthog/react';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +16,6 @@ import { useEntityType } from 'src/context/EntityContext';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { logRocketConsole, logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
 import {
     useFormStateStore_exitWhenLogsClose,
     useFormStateStore_setFormState,
@@ -28,6 +28,7 @@ import { snackbarSettings } from 'src/utils/notification-utils';
 type RouteHandler = (customRoute?: string, external?: boolean) => void;
 
 function useEntityWorkflowHelpers() {
+    const postHog = usePostHog();
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const entityType = useEntityType();
@@ -137,9 +138,11 @@ function useEntityWorkflowHelpers() {
                 }),
                 { ...snackbarSettings, variant: 'error' }
             );
-            logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_FAILED);
+            logRocketEvent('Capture_Materialize', { status: 'failure' });
+            postHog.capture('Capture_Materialize', { status: 'failure' });
         } else {
-            logRocketEvent(CustomEvents.CAPTURE_MATERIALIZE_SUCCESS);
+            logRocketEvent('Capture_Materialize', { status: 'success' });
+            postHog.capture('Capture_Materialize', { status: 'success' });
             exit(
                 getPathWithParams(
                     authenticatedRoutes.materializations.create.fullPath,
@@ -147,7 +150,7 @@ function useEntityWorkflowHelpers() {
                 )
             );
         }
-    }, [catalogName, enqueueSnackbar, exit, intl, pubId]);
+    }, [catalogName, enqueueSnackbar, exit, intl, postHog, pubId]);
 
     return { callFailed, closeLogs, exit, materializeCollections, resetState };
 }
