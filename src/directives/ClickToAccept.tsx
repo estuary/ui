@@ -22,8 +22,8 @@ import Actions from 'src/directives/Actions';
 import {
     CLICK_TO_ACCEPT_LATEST_VERSION,
     jobStatusQuery,
-    trackEvent,
 } from 'src/directives/shared';
+import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { getUrls } from 'src/utils/env-utils';
@@ -41,6 +41,7 @@ const submit_clickToAccept = async (directive: any) => {
 
 const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
     const intl = useIntl();
+    const trackEvent = useDirectiveEventTracking();
     const { jobStatusPoller } = useJobStatusPoller();
 
     const outdated = status === 'outdated';
