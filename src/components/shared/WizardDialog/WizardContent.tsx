@@ -57,7 +57,7 @@ export function WizardContent() {
                     // content height is only animated during step transitions, not during internal resizes
                     // (to avoid jankiness while user interacts with the content)
                     transition: transitioning
-                        ? 'height 300ms ease-in-out'
+                        ? (theme) => theme.transitions.create('height')
                         : 'none',
                 }}
             >

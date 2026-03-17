@@ -56,6 +56,8 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         AlertSubscription: (_data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
+                        StorageMapping: (data) => null,
+                        DataPlane: (data) => null,
                     },
                 }),
                 authExchange(async (utils) => {
