@@ -62,7 +62,7 @@ function EmailSelector() {
     return (
         <FormControl fullWidth>
             <Autocomplete
-                disabled={Boolean(serverError || !prefix)}
+                disabled={Boolean(serverError)}
                 filterOptions={(options) =>
                     options.filter((option) => {
                         if (typeof option === 'string') {

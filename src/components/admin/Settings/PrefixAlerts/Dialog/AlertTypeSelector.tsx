@@ -25,6 +25,9 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
+    const serverError = useAlertSubscriptionsStore(
+        (state) => state.initializationError
+    );
     const alertTypes = useAlertSubscriptionsStore(
         (state) => state.subscription.alertTypes
     );
@@ -41,6 +44,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
         <FormControl fullWidth>
             <Autocomplete
                 disableCloseOnSelect
+                disabled={Boolean(serverError)}
                 getOptionLabel={({ name }) => name}
                 isOptionEqualToValue={(option, value) =>
                     option.name === value.name
