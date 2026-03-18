@@ -3,6 +3,7 @@ import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
 import { useRef, useState } from 'react';
 
 import { debounce } from 'lodash';
+import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -15,6 +16,8 @@ export function useModifyAlertSubscription(
     closeDialog: () => void,
     deletionTrigger?: boolean
 ) {
+    const intl = useIntl();
+
     const debounceDialogClosure = useRef(
         debounce(() => {
             closeDialog();
@@ -57,8 +60,9 @@ export function useModifyAlertSubscription(
             response?.invalid && !response?.error
                 ? {
                       ...BASE_ERROR,
-                      message:
-                          'An issue was encountered creating, updating, or deleting an alert subscription',
+                      message: intl.formatMessage({
+                          id: 'alerts.config.dialog.error.generic',
+                      }),
                   }
                 : response?.error;
 
