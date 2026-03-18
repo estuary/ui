@@ -31,9 +31,9 @@
         "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
-        "codegen": "VITE_GQL_URL=https://agent-api-1084703453822.us-central1.run.app/api/graphql graphql-codegen",
-        "codegen:local": "VITE_GQL_URL=http://localhost:8675/api/graphql graphql-codegen",
-        "check-schema": "VITE_GQL_URL=https://agent-api-1084703453822.us-central1.run.app/api/graphql graphql-codegen && git diff --exit-code schema.graphql src/gql-types/"
+        "codegen": "dotenv -e .env -- graphql-codegen",
+        "codegen:local": "dotenv -e .env.development.local -- graphql-codegen",
+        "check-schema": "dotenv -e .env -- graphql-codegen && git diff --exit-code schema.graphql src/gql-types/"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -142,6 +142,7 @@
         "@vitejs/plugin-react": "^4.3.4",
         "@vitest/ui": "^3.1.2",
         "browserslist-to-esbuild": "^2.1.1",
+        "dotenv-cli": "^11.0.0",
         "eslint": "^8.57.1",
         "eslint-config-kentcdodds": "^21.0.0",
         "eslint-plugin-formatjs": "^4.11.3",
