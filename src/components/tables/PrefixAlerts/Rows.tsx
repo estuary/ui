@@ -14,9 +14,6 @@ function Row({ executeQuery, row }: RowProps) {
         <TableRow>
             <TableCell>{row.catalogPrefix}</TableCell>
 
-            {/* The combination of the customized alignment and padding in this cell
-                is used to mock centered cell contain while maintaining the ability
-                to scroll the ChipList content. */}
             <ChipListCell
                 values={row.alertTypes
                     .map((value) => value.replace(UNDERSCORE_RE, ' '))
