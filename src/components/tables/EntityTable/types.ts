@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type {
     CollectionSelectorColumnProps,
     CollectionSelectorHeaderProps,
@@ -47,7 +47,6 @@ export interface EntityTableHeaderProps extends CollectionSelectorHeaderProps {
     selectData?: any;
     selectableTableStoreName?: SelectTableStoreNames;
     sortDirection?: SortDirection;
-    virtualized?: boolean;
 }
 
 export interface EntityTableProps {
@@ -89,5 +88,4 @@ export interface EntityTableBodyProps {
     rows: any;
     tableState: TableState;
     enableDivRendering?: boolean;
-    style?: CSSProperties;
 }

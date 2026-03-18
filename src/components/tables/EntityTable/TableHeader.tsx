@@ -24,7 +24,6 @@ function EntityTableHeader({
     selectData,
     selectableTableStoreName,
     sortDirection,
-    virtualized,
 }: EntityTableHeaderProps) {
     const enableSort = Boolean(columnToSort && headerClick && sortDirection);
 
@@ -39,7 +38,6 @@ function EntityTableHeader({
                     background: disableBackground
                         ? 'transparent'
                         : (theme) => theme.palette.background.default,
-                    display: virtualized ? 'flex' : undefined,
                     height,
                     position: 'relative',
                     zIndex: zIndexIncrement,
@@ -99,13 +97,6 @@ function EntityTableHeader({
                         tableCellSX = {
                             ...tableCellSX,
                             flexGrow: 1,
-                        };
-                    }
-
-                    if (column.flexShrink) {
-                        tableCellSX = {
-                            ...tableCellSX,
-                            flexShrink: 0,
                         };
                     }
 

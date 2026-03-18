@@ -13,11 +13,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/PrefixAlerts/Rows';
-import {
-    columns,
-    TABLE_HEADER_HEIGHT,
-    TABLE_ROW_HEIGHT,
-} from 'src/components/tables/PrefixAlerts/shared';
+import { columns } from 'src/components/tables/PrefixAlerts/shared';
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { TableStatuses } from 'src/types';
@@ -86,14 +82,6 @@ function PrefixAlertTable() {
         }
     }, [displayLoadingState, fetching, processedData.length, searchQuery]);
 
-    const tableBodyHeight = useMemo(
-        () =>
-            (processedData.length < 10 ? processedData.length : 10) *
-                TABLE_ROW_HEIGHT +
-            TABLE_ROW_HEIGHT / 2,
-        [processedData]
-    );
-
     const loading = tableState.status === TableStatuses.LOADING;
 
     return (
@@ -115,25 +103,12 @@ function PrefixAlertTable() {
                 />
             </Stack>
 
-            <TableContainer component={Box}>
-                <Table
-                    component={Box}
-                    size="small"
-                    sx={{
-                        borderCollapse: 'separate',
-                        height: tableBodyHeight + TABLE_HEADER_HEIGHT,
-                    }}
-                >
-                    <EntityTableHeader
-                        columns={columns}
-                        enableDivRendering
-                        selectData={true}
-                        virtualized
-                    />
+            <TableContainer>
+                <Table size="small" sx={{ borderCollapse: 'separate' }}>
+                    <EntityTableHeader columns={columns} selectData={true} />
 
                     <EntityTableBody
                         columns={columns}
-                        enableDivRendering
                         loading={loading}
                         noExistingDataContentIds={{
                             header: 'alerts.config.table.noContent.header',
@@ -148,13 +123,6 @@ function PrefixAlertTable() {
                                 />
                             ) : null
                         }
-                        style={{
-                            // These are the same workarounds used in CollectionSelectorBody.
-                            // TODO (Safari Height Hack) - Safari ignores the height when the display is `table-row-group`
-                            display: 'table-cell',
-                            // TODO (FireFox Height Hack) - hardcoded height to make life easier
-                            height: tableBodyHeight,
-                        }}
                         tableState={tableState}
                     />
                 </Table>

@@ -20,7 +20,6 @@ function EntityTableBody({
     loading,
     noExistingDataContentIds,
     rows,
-    style,
     tableState,
 }: EntityTableBodyProps) {
     const intl = useIntl();
@@ -33,7 +32,7 @@ function EntityTableBody({
         getTableComponents(enableDivRendering);
 
     return (
-        <TableBody component={tbodyComponent} style={style}>
+        <TableBody component={tbodyComponent}>
             {loading ? (
                 <TableLoadingRows
                     columnKeys={columnKeys}
