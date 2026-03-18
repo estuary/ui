@@ -2,6 +2,7 @@ import ChildProcess from 'child_process';
 import { readFileSync } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
+
 import { babelOptimizerPlugin } from '@graphql-codegen/client-preset';
 import react from '@vitejs/plugin-react';
 import browserslistToEsbuild from 'browserslist-to-esbuild';
