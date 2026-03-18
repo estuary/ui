@@ -38,6 +38,7 @@ export interface ConnectorVersionEvaluationOptions {
     existingImageTag: string;
 }
 
+// TODO (gql:connector) - need to see if this still needs done?
 export function evaluateConnectorVersions(
     connector: ConnectorWithTagQuery | ConnectorsQuery_DetailsForm,
     options?: ConnectorVersionEvaluationOptions

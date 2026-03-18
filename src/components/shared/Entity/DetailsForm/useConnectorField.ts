@@ -48,6 +48,8 @@ export default function useConnectorField(
 
     const connectorTags = useWorkflowStore((state) => state.connectorMetadata);
 
+    // TODO (gql:connector) - maybe we can move away from this approach and just
+    //  look up the specific tag we want right away?
     useEffect(() => {
         if (connectorId && hasLength(connectorTags) && connectorIdChanged) {
             connectorTags.find((connector) => {

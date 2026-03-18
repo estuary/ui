@@ -1,15 +1,17 @@
-import type { ConnectorWithTagQuery } from 'src/api/types';
 import type { ConnectorCardsProps } from 'src/components/connectors/Grid/types';
 import type { TableState } from 'src/types';
+import type {
+    ConnectorsQueryResponse,
+    ConnectorsQueryVariables,
+} from 'src/types/gql';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Grid, Paper, Typography } from '@mui/material';
 
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { FormattedMessage } from 'react-intl';
+import { gql, useQuery } from 'urql';
 
-import { getConnectors } from 'src/api/connectors';
 import Card from 'src/components/connectors/Grid/cards/Card';
 import ConnectorRequestCard from 'src/components/connectors/Grid/cards/ConnectorRequestCard';
 import Detail from 'src/components/connectors/Grid/cards/Detail';
@@ -20,7 +22,6 @@ import { intlConfig } from 'src/components/connectors/Grid/shared';
 import ConnectorSkeleton from 'src/components/connectors/Grid/Skeleton';
 import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import { semiTransparentBackground } from 'src/context/Theme';
-import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
 import { TableStatuses } from 'src/types';
 import { hasLength } from 'src/utils/misc-utils';
 import {
@@ -28,25 +29,68 @@ import {
     getEmptyTableMessage,
 } from 'src/utils/table-utils';
 
+const connectorsQuery = gql<ConnectorsQueryResponse, ConnectorsQueryVariables>`
+    query ConnectorsGrid($protocol: String) {
+        connectors(filter: { protocol: { eq: $protocol } }) {
+            edges {
+                node {
+                    imageName
+                    createdAt
+                    defaultImageTag
+                    externalUrl
+                    logoUrl
+                    longDescription
+                    recommended
+                    shortDescription
+                    title
+                    tags {
+                        imageTag
+                        protocol
+                        specSucceeded
+                    }
+                    connectorTag(orDefault: false, imageTag: "") {
+                        createdAt
+                        disableBackfill
+                        documentationUrl
+                        imageTag
+                        protocol
+                        updatedAt
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export default function ConnectorCards({
     condensed,
     protocol,
     searchQuery,
 }: ConnectorCardsProps) {
     const navigateToCreate = useEntityCreateNavigate();
-    const isFiltering = useRef(false);
 
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
 
-    const query = useMemo(() => {
-        return getConnectors(searchQuery, 'asc', protocol);
-    }, [searchQuery, protocol]);
+    const [{ fetching, data, error }] = useQuery({
+        query: connectorsQuery,
+        variables: protocol ? { protocol } : {},
+    });
 
-    const { data: selectResponse, isValidating, error } = useQuery(query);
+    const selectData = useMemo(() => {
+        const nodes = data?.connectors.edges.map(({ node }) => node) ?? [];
 
-    const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
+        if (!searchQuery) return nodes;
+
+        // TODO (gql:connector) - try to get this into the query
+        const queryValue = searchQuery.toLowerCase();
+        return nodes.filter(
+            (node) =>
+                node.title.toLowerCase().includes(queryValue) ||
+                node.shortDescription?.toLowerCase().includes(queryValue)
+        );
+    }, [data, searchQuery]);
 
     const RequestCard = condensed ? (
         <div key="connector-tile-request" />
@@ -54,27 +98,31 @@ export default function ConnectorCards({
         <ConnectorRequestCard key="connector-tile-request" />
     );
 
-    const primaryCtaClick = (row: ConnectorWithTagQuery) => {
-        navigateToCreate(row.connector_tags[0].protocol, {
-            id: row.connector_tags[0].connector_id,
+    const primaryCtaClick = (nodeProtocol: string, imageName: string) => {
+        // TODO (gql:connector) - we could still use `id` for connector but probably
+        //  can switch over to the imageName instead
+        navigateToCreate(nodeProtocol as any, {
+            id: imageName,
             advanceToForm: true,
             expressWorkflow: condensed,
         });
     };
 
     useEffect(() => {
+        if (fetching) return;
+
         if (selectData.length > 0) {
             setTableState({ status: TableStatuses.DATA_FETCHED });
-        } else if (isFiltering.current) {
+        } else if (searchQuery) {
             setTableState({ status: TableStatuses.UNMATCHED_FILTER });
-        } else if (checkErrorMessage(FAILED_TO_FETCH, error?.message)) {
+        } else if (error?.networkError) {
             setTableState({ status: TableStatuses.NETWORK_FAILED });
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData, isValidating, error?.message]);
+    }, [selectData, fetching, error, searchQuery]);
 
-    if (isValidating || tableState.status === TableStatuses.LOADING) {
+    if (fetching || tableState.status === TableStatuses.LOADING) {
         return <ConnectorSkeleton condensed={condensed} />;
     }
 
@@ -114,26 +162,34 @@ export default function ConnectorCards({
     return (
         <>
             {selectData
-                .map((row) => {
+                .map((node) => {
                     const ConnectorCard = condensed ? Card : LegacyCard;
+                    const nodeProtocol =
+                        node.connectorTag?.protocol ?? node.tags[0]?.protocol;
+
+                    console.log('node', node);
 
                     return (
                         <ConnectorCard
-                            key={`connector-card-${row.id}`}
-                            docsUrl={row.connector_tags[0].documentation_url}
-                            clickHandler={() => primaryCtaClick(row)}
-                            Detail={<Detail content={row.detail} />}
-                            entityType={row.connector_tags[0].protocol}
+                            key={`connector-card-${node.imageName}`}
+                            docsUrl={node.connectorTag?.documentationUrl}
+                            clickHandler={() =>
+                                primaryCtaClick(nodeProtocol, node.imageName)
+                            }
+                            Detail={
+                                <Detail content={node.shortDescription ?? ''} />
+                            }
+                            entityType={nodeProtocol}
                             Logo={
                                 <Logo
-                                    imageSrc={row.image}
+                                    imageSrc={node.logoUrl}
                                     maxHeight={condensed ? '100%' : undefined}
                                 />
                             }
-                            recommended={row.recommended}
+                            recommended={node.recommended}
                             Title={
                                 <Title
-                                    content={row.title}
+                                    content={node.title}
                                     marginBottom={condensed ? '4px' : undefined}
                                 />
                             }

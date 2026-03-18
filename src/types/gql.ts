@@ -125,3 +125,46 @@ export interface AuthRolesQueryResponse {
         pageInfo?: Pick<PageInfo, 'hasNextPage' | 'endCursor'>;
     };
 }
+
+// CONNECTORS
+
+export interface ConnectorTagNode {
+    imageTag: string;
+    protocol: string;
+    specSucceeded: boolean;
+}
+
+export interface ConnectorTagDetailNode {
+    createdAt: string;
+    disableBackfill: boolean;
+    documentationUrl: string;
+    imageTag: string;
+    protocol: string;
+    updatedAt: string;
+}
+
+export interface ConnectorNode {
+    imageName: string;
+    createdAt: string;
+    defaultImageTag: string;
+    externalUrl: string | null;
+    logoUrl: string | null;
+    longDescription: string | null;
+    recommended: boolean;
+    shortDescription: string | null;
+    title: string;
+    tags: ConnectorTagNode[];
+    connectorTag: ConnectorTagDetailNode | null;
+}
+
+export interface ConnectorsQueryResponse {
+    connectors: {
+        edges: {
+            node: ConnectorNode;
+        }[];
+    };
+}
+
+export interface ConnectorsQueryVariables {
+    protocol?: string | null;
+}
