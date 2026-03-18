@@ -1,5 +1,4 @@
 import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
@@ -9,6 +8,7 @@ import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFields/DataPlaneDialogField';
 import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
+import { DataPlaneCloudProvider as CloudProvider } from 'src/gql-types/graphql';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import {

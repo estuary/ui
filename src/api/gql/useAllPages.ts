@@ -8,7 +8,7 @@ interface Connection<TNode> {
     edges: { node: TNode }[];
     pageInfo: {
         hasNextPage: boolean;
-        endCursor: string;
+        endCursor?: string | null;
     };
 }
 

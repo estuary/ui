@@ -1,10 +1,10 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useCallback } from 'react';
 
 import { gql, useClient, useQuery } from 'urql';
 
+import { DataPlaneCloudProvider as CloudProvider } from 'src/gql-types/graphql';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 
 // Public types
@@ -170,7 +170,10 @@ const QUERY = gql<StorageMappingsQueryResponse, { underPrefix: string }>`
 `;
 
 // Maps cloud provider names to storage provider variants (for GraphQL mutations)
-const CLOUD_TO_STORAGE_PROVIDER: Record<CloudProvider, StorageProvider> = {
+const CLOUD_TO_STORAGE_PROVIDER: Record<
+    Exclude<CloudProvider, 'LOCAL'>,
+    StorageProvider
+> = {
     GCP: 'GCS',
     AWS: 'S3',
     AZURE: 'AZURE',
@@ -187,7 +190,7 @@ const STORAGE_TO_CLOUD_PROVIDER: Omit<
 };
 
 function cloudProviderToStorageProvider(
-    cloudProvider: CloudProvider
+    cloudProvider: Exclude<CloudProvider, 'LOCAL'>
 ): StorageProvider {
     return CLOUD_TO_STORAGE_PROVIDER[cloudProvider];
 }
@@ -202,7 +205,9 @@ function storageProviderToCloudProvider(
 
 function toServerStore(store: FragmentStore): ServerFragmentStore {
     return {
-        provider: cloudProviderToStorageProvider(store.provider),
+        provider: cloudProviderToStorageProvider(
+            store.provider as Exclude<CloudProvider, 'LOCAL'>
+        ),
         bucket: store.bucket,
         region: store.region,
         prefix: store.storagePrefix,

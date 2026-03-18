@@ -3,7 +3,6 @@ import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/DataPlanes/types';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useState } from 'react';
 
@@ -12,6 +11,7 @@ import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
 import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import { DataPlaneCloudProvider as CloudProvider } from 'src/gql-types/graphql';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {

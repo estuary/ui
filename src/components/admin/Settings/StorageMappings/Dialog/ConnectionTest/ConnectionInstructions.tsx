@@ -1,9 +1,9 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { AwsInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/AwsInstructions';
 import { AzureInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/AzureInstructions';
 import { GcpInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/GcpInstructions';
+import { DataPlaneCloudProvider as CloudProvider } from 'src/gql-types/graphql';
 
 export function ConnectionInstructions({
     connection,

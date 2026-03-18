@@ -3,12 +3,13 @@
 // - GCP: https://status.cloud.google.com/regional/americas
 // - Azure: https://learn.microsoft.com/en-us/azure/reliability/regions-list
 
-export type CloudProvider = 'AWS' | 'GCP' | 'AZURE';
+import type { DataPlaneCloudProvider as CloudProvider } from 'src/gql-types/graphql';
 
 export const PROVIDER_LABELS: Record<CloudProvider, string> = {
     AWS: 'Amazon Web Services',
     GCP: 'Google Cloud Platform',
     AZURE: 'Microsoft Azure',
+    LOCAL: 'Local',
 };
 
 export const AWS_REGIONS: Record<string, string> = {
@@ -175,6 +176,7 @@ const REGION_MAPS: Record<CloudProvider, Record<string, string>> = {
     AWS: AWS_REGIONS,
     GCP: GCP_REGIONS,
     AZURE: AZURE_REGIONS,
+    LOCAL: {},
 };
 
 export const getRegionDisplayName = (

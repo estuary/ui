@@ -1,7 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type { StorageMappingFormData } from 'src/components/admin/Settings/StorageMappings/Dialog/types';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useEffect, useMemo, useState } from 'react';
 
@@ -16,6 +15,7 @@ import {
     RHFSelect,
     RHFTextField,
 } from 'src/components/shared/RHFFields/';
+import { DataPlaneCloudProvider as CloudProvider } from 'src/gql-types/graphql';
 import { AWS_REGIONS, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
