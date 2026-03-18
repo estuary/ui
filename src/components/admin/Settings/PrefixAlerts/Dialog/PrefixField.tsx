@@ -1,3 +1,5 @@
+import type { PrefixFieldProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+
 import { Grid, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -6,11 +8,7 @@ import { useMount } from 'react-use';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 
-interface Props {
-    staticPrefix?: string;
-}
-
-export default function PrefixField({ staticPrefix }: Props) {
+export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     const intl = useIntl();
 
     const setSubscribedPrefix = useAlertSubscriptionsStore(

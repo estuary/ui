@@ -9,13 +9,13 @@ import type { UseQueryExecute } from 'urql';
 
 export interface AlertSubscriptionDialogProps
     extends AlertTypeFieldProps,
-        EmailListFieldProps {
+        EmailListFieldProps,
+        PrefixFieldProps {
     executeQuery: UseQueryExecute;
     headerId: string;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     enableDeletion?: boolean;
-    staticPrefix?: string;
 }
 
 export interface AlertSubscriptionResponse
@@ -53,4 +53,8 @@ export interface EmailDictionary {
 
 export interface EmailListFieldProps {
     staticEmail?: string;
+}
+
+export interface PrefixFieldProps {
+    staticPrefix?: string;
 }
