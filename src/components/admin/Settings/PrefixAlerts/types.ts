@@ -11,6 +11,7 @@ export interface AlertSubscriptionDialogProps
     extends AlertTypeFieldProps,
         EmailListFieldProps,
         PrefixFieldProps {
+    descriptionId: string;
     executeQuery: UseQueryExecute;
     headerId: string;
     open: boolean;

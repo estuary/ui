@@ -4,10 +4,11 @@ export const Alerts: Record<string, string> = {
     'alerts.config.header': `Organization Notifications`,
     'alerts.config.cta.addAlertMethod': `Configure Notifications`,
 
-    'alerts.config.dialog.description': `Choose where you'd like notifications to be sent. To add an email address, select from the list of admin user emails or enter a custom email address.`,
-    'alerts.config.dialog.error.generic': `An issue was encountered creating, updating, or deleting an alert subscription.`,
     'alerts.config.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
+    'alerts.config.dialog.error.generic': `An issue was encountered creating, updating, or deleting an alert subscription.`,
+    'alerts.config.dialog.generate.description': `Choose where you'd like notifications to be sent. To add an email address, select from the list of admin user emails or enter a custom email address.`,
     'alerts.config.dialog.generate.header': `Configure Notification Methods`,
+    'alerts.config.dialog.update.description': `Choose the notifications you'd like to receive.`,
     'alerts.config.dialog.update.header': `Update Notification Methods`,
 
     'alerts.config.table.aria.label': `Organization Notifications Table`,

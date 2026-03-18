@@ -27,6 +27,7 @@ function AlertGenerateButton({ executeQuery }: BaseButtonProps) {
             </Button>
 
             <AlertSubscriptionDialog
+                descriptionId="alerts.config.dialog.generate.description"
                 executeQuery={executeQuery}
                 headerId="alerts.config.dialog.generate.header"
                 open={open}

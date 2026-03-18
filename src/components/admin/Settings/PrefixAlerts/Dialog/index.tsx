@@ -27,6 +27,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 const TITLE_ID = 'alert-subscription-dialog-title';
 
 const AlertSubscriptionDialog = ({
+    descriptionId,
     enableDeletion,
     executeQuery,
     existingAlertTypes,
@@ -86,9 +87,7 @@ const AlertSubscriptionDialog = ({
                 <ServerErrors />
 
                 <Typography sx={{ mb: 2 }}>
-                    {intl.formatMessage({
-                        id: 'alerts.config.dialog.description',
-                    })}
+                    {intl.formatMessage({ id: descriptionId })}
                 </Typography>
 
                 <Grid

@@ -37,6 +37,7 @@ function AlertEditButton({
             </Button>
 
             <AlertSubscriptionDialog
+                descriptionId="alerts.config.dialog.update.description"
                 enableDeletion
                 executeQuery={executeQuery}
                 existingAlertTypes={alertTypes}
