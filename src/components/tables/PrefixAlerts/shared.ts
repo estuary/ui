@@ -2,6 +2,9 @@ import type { TableColumns } from 'src/types';
 
 import { SelectTableStoreNames } from 'src/stores/names';
 
+export const TABLE_HEADER_HEIGHT = 40;
+export const TABLE_ROW_HEIGHT = 50;
+
 // TODO (optimization): The prefix alert table should have a last updated column
 //   however the current data model does not provide a means to reliably track
 //   when the emails subscribed to alerts under a given prefix were last updated.
