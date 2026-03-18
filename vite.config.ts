@@ -154,6 +154,14 @@ export default defineConfig({
         // Deps
         react({
             jsxImportSource: '@emotion/react',
+            babel: {
+                plugins: [
+                    [
+                        '@graphql-codegen/client-preset/babel-plugin',
+                        { artifactDirectory: './src/gql-types' },
+                    ],
+                ],
+            },
         }),
         wasm(),
 
