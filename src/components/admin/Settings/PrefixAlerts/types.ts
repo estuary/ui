@@ -37,6 +37,10 @@ export interface BaseButtonProps {
     executeQuery: UseQueryExecute;
 }
 
+export interface DialogActionProps {
+    closeDialog: () => void;
+}
+
 export interface EditButtonProps extends BaseButtonProps, TableCellProps {
     alertTypes: ReducedAlertSubscription['alertTypes'];
     email: string;

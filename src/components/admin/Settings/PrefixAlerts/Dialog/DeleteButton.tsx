@@ -1,3 +1,5 @@
+import type { DialogActionProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+
 import { useMemo } from 'react';
 
 import { FormattedMessage } from 'react-intl';
@@ -6,11 +8,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 
-interface Props {
-    closeDialog: () => void;
-}
-
-const DeleteButton = ({ closeDialog }: Props) => {
+const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     const { loading, onClick } = useModifyAlertSubscription(closeDialog, true);
 
     const prefixErrorsExist = useAlertSubscriptionsStore(
