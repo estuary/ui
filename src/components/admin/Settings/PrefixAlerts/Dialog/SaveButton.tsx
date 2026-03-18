@@ -8,7 +8,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 
-function SaveButton({ closeDialog }: DialogActionProps) {
+const SaveButton = ({ closeDialog }: DialogActionProps) => {
     const { loading, onClick } = useModifyAlertSubscription(closeDialog);
 
     const prefixErrorsExist = useAlertSubscriptionsStore(
@@ -40,6 +40,6 @@ function SaveButton({ closeDialog }: DialogActionProps) {
             <FormattedMessage id="cta.save" />
         </SafeLoadingButton>
     );
-}
+};
 
 export default SaveButton;
