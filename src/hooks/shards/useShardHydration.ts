@@ -12,9 +12,13 @@ import {
     useShardDetail_setShards,
 } from 'src/stores/ShardDetail/hooks';
 
+interface UseShardHydrationSettings {
+    defaultMessageId?: ShardStatusMessageIds;
+}
+
 function useShardHydration(
     querySettings: any[],
-    defaultMessageId?: ShardStatusMessageIds
+    settings?: UseShardHydrationSettings
 ) {
     const defaultStatusColor = useShardStatusDefaultColor();
 
@@ -28,16 +32,16 @@ function useShardHydration(
 
     // Handle setting the defaults
     useEffect(() => {
-        if (defaultMessageId) {
-            setDefaultMessageId(defaultMessageId);
+        if (settings?.defaultMessageId) {
+            setDefaultMessageId(settings?.defaultMessageId);
         }
 
         setDefaultStatusColor(defaultStatusColor);
     }, [
-        defaultMessageId,
         defaultStatusColor,
         setDefaultMessageId,
         setDefaultStatusColor,
+        settings?.defaultMessageId,
     ]);
 
     // Handle data

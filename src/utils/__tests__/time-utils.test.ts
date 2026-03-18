@@ -1,4 +1,7 @@
-import { formatCaptureInterval } from 'src/utils/time-utils';
+import {
+    formatCaptureInterval,
+    parsePostgresInterval,
+} from 'src/utils/time-utils';
 
 describe('formatCaptureInterval', () => {
     describe('returns null', () => {
@@ -45,5 +48,60 @@ describe('formatCaptureInterval', () => {
         expect(formatCaptureInterval('10000000000000000000000000000m')).toBe(
             '10000000000000000000000000000m'
         );
+    });
+});
+
+describe('parsePostgresInterval', () => {
+    test('returns an empty object when the interval is not valid', () => {
+        expect(parsePostgresInterval(`11.22.33.444`)).toEqual({});
+        expect(parsePostgresInterval(`this will not parse`)).toEqual({});
+    });
+
+    describe('returns a DurationObjectUnits', () => {
+        test('when the interval is valid', () => {
+            expect(parsePostgresInterval(`T11:22:00.123`)).toEqual({
+                hours: 11,
+                minutes: 22,
+                seconds: 0,
+                milliseconds: 123,
+            });
+
+            expect(parsePostgresInterval(`T00:00:11.123`)).toEqual({
+                hours: 0,
+                minutes: 0,
+                seconds: 11,
+                milliseconds: 123,
+            });
+
+            expect(parsePostgresInterval(`T00:00:00.000`)).toEqual({
+                hours: 0,
+                minutes: 0,
+                seconds: 0,
+                milliseconds: 0,
+            });
+        });
+
+        test('and will remove all 0s if told', () => {
+            expect(parsePostgresInterval(`T11:22:00.123`, true)).toEqual({
+                hours: 11,
+                minutes: 22,
+                seconds: undefined,
+                milliseconds: 123,
+            });
+
+            expect(parsePostgresInterval(`T00:00:11.123`, true)).toEqual({
+                hours: undefined,
+                minutes: undefined,
+                seconds: 11,
+                milliseconds: 123,
+            });
+
+            expect(parsePostgresInterval(`T00:00:00.000`, true)).toEqual({
+                hours: undefined,
+                minutes: undefined,
+                seconds: undefined,
+                milliseconds: undefined,
+            });
+        });
     });
 });

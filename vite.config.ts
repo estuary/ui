@@ -148,7 +148,7 @@ export default defineConfig({
 
         // Code injection
         nodePolyfills({
-            include: ['buffer', 'path', 'process', 'stream'],
+            include: ['buffer', 'path', 'process', 'stream', 'querystring'],
         }),
 
         // Deps

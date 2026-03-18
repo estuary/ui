@@ -29,6 +29,10 @@ function SaveButton({ closeDialog }: Props) {
         selectableTableStoreSelectors.query.hydrate
     );
 
+    const inputUncommitted = useAlertSubscriptionsStore(
+        (state) => state.inputUncommitted
+    );
+
     const prefix = useAlertSubscriptionsStore((state) => state.prefix);
     const prefixErrorsExist = useAlertSubscriptionsStore(
         (state) => state.prefixErrorsExist
@@ -53,8 +57,13 @@ function SaveButton({ closeDialog }: Props) {
 
     const disabled = useMemo(
         () =>
-            Boolean(!hasLength(prefix) || prefixErrorsExist || !subscriptions),
-        [prefix, prefixErrorsExist, subscriptions]
+            Boolean(
+                !hasLength(prefix) ||
+                    prefixErrorsExist ||
+                    !subscriptions ||
+                    inputUncommitted
+            ),
+        [inputUncommitted, prefix, prefixErrorsExist, subscriptions]
     );
 
     const onClick = async (event: React.MouseEvent<HTMLButtonElement>) => {

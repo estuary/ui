@@ -13,7 +13,7 @@ const suffixes = {
     finalEmail: `anything in the app.`,
 };
 
-const impact = `Data flows may fail!`;
+const impact = `${CommonMessages['terms.dataFlow']}s may fail!`;
 
 export const AccessGrants: Record<string, string> = {
     'accessGrantsTable.header': `Captures`,
@@ -44,7 +44,7 @@ export const AccessGrants: Record<string, string> = {
     'accessGrants.actions.extra.confirmation.whatIsChanging.access': `access for`,
 
     'accessGrants.actions.extra.confirmation.title': `Extra Attention Required`,
-    'accessGrants.actions.extra.confirmation.instructions': `These changes may cause your data flows to fail. Please reach out to {docLink} if you have questions.`,
+    'accessGrants.actions.extra.confirmation.instructions': `These changes may cause your ${CommonMessages['terms.dataFlow'].toLowerCase()} to fail. Please reach out to {docLink} if you have questions.`,
     'accessGrants.actions.extra.confirmation.instructions.docLink': `support@estuary.dev`,
     'accessGrants.actions.extra.confirmation.instructions.docPath': `${CommonMessages['support.email']}`,
 

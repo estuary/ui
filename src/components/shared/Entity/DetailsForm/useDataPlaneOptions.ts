@@ -41,6 +41,7 @@ export const useDataPlaneOptions = () => {
                             cidr_blocks: null,
                             gcp_service_account_email: null,
                             aws_iam_user_arn: null,
+                            data_plane_fqdn: null,
                         },
                         dataPlaneNames.at(0)
                     )

@@ -20,35 +20,37 @@ function ExistFilter({ fieldFilter, setFieldFilter, disabled }: Props) {
 
     const fieldOptions: AutoCompleteOptionForExistFilter[] = [
         {
-            id: 'all',
+            id: 'ALL',
             label: intl.formatMessage({
                 id: 'schemaEditor.table.filter.option.all',
             }),
         },
         {
-            id: 'must',
+            id: 'MUST',
             label: intl.formatMessage({
                 id: 'schemaEditor.table.filter.option.must',
             }),
         },
         {
-            id: 'may',
+            id: 'MAY',
             label: intl.formatMessage({
                 id: 'schemaEditor.table.filter.option.may',
             }),
         },
     ];
 
-    const [localValue, setLocalValue] = useState(
-        fieldOptions.find((datum) => datum.id === fieldFilter)
-    );
+    const findOption = (filterVal: FieldFilter) => {
+        return fieldOptions.find((datum) => datum.id === filterVal);
+    };
+
+    const [localValue, setLocalValue] = useState(findOption(fieldFilter));
 
     return (
         <AutocompletedField
             autocompleteSx={{ flexGrow: 1 }}
             changeHandler={(_, value) => {
                 setFieldFilter(value.id);
-                setLocalValue(value.id);
+                setLocalValue(value);
             }}
             defaultValue={localValue}
             label={intl.formatMessage({

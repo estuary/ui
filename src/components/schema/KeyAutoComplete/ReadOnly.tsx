@@ -1,15 +1,16 @@
-import { Chip, Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
+import { Grid, ListItem, Skeleton, Stack, Tooltip } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import {
-    useBindingsEditorStore_inferSchemaResponse_Keys,
-    useBindingsEditorStore_inferSchemaResponseDoneProcessing,
-    useBindingsEditorStore_inferSchemaResponseEmpty,
+    useBindingsEditorStore_skimProjectionResponse_Keys,
+    useBindingsEditorStore_skimProjectionResponseDoneProcessing,
+    useBindingsEditorStore_skimProjectionResponseEmpty,
 } from 'src/components/editor/Bindings/Store/hooks';
 import SchemaKeyHeader from 'src/components/schema/KeyAutoComplete/Header';
 import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
 import AlertBox from 'src/components/shared/AlertBox';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
@@ -20,18 +21,18 @@ function ReadOnly({ value }: Props) {
     const intl = useIntl();
     const valueEmpty = !value || !hasLength(value);
 
-    const inferSchemaResponseEmpty =
-        useBindingsEditorStore_inferSchemaResponseEmpty();
+    const skimProjectionResponseEmpty =
+        useBindingsEditorStore_skimProjectionResponseEmpty();
 
-    const inferSchemaResponseDoneProcessing =
-        useBindingsEditorStore_inferSchemaResponseDoneProcessing();
+    const skimProjectionResponseDoneProcessing =
+        useBindingsEditorStore_skimProjectionResponseDoneProcessing();
 
-    const keys = useBindingsEditorStore_inferSchemaResponse_Keys();
+    const keys = useBindingsEditorStore_skimProjectionResponse_Keys();
 
     // TODO (collection editor) move these helper vars into the store
     const noUsableKeys = !hasLength(keys);
 
-    if (!inferSchemaResponseDoneProcessing) {
+    if (!skimProjectionResponseDoneProcessing) {
         return (
             <Grid item xs={12}>
                 <SchemaKeyHeader />
@@ -80,9 +81,10 @@ function ReadOnly({ value }: Props) {
                                 dense
                                 sx={{ px: 0.5, width: 'auto' }}
                             >
-                                <Chip
-                                    label={key}
+                                <OutlinedChip
                                     color={!validOption ? 'error' : undefined}
+                                    label={key}
+                                    variant="outlined"
                                 />
                             </ListItem>
                         );
@@ -105,7 +107,7 @@ function ReadOnly({ value }: Props) {
                 </Stack>
             )}
 
-            {inferSchemaResponseEmpty ? (
+            {skimProjectionResponseEmpty ? (
                 <AlertBox short severity="warning">
                     <FormattedMessage id="keyAutoComplete.noOptions.message" />
                 </AlertBox>

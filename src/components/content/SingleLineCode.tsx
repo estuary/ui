@@ -1,42 +1,24 @@
 import type { SingleLineCodeProps } from 'src/components/content/types';
 
-import { useState } from 'react';
-
 import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import { codeBackground, getButtonIcon } from 'src/context/Theme';
-
-type TransientButtonState = 'success' | 'error' | undefined;
+import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 const borderRadius = 3;
 
 function SingleLineCode({
     value,
+    compact,
     subsequentCommandExists,
     sx,
 }: SingleLineCodeProps) {
     const intl = useIntl();
     const theme = useTheme();
 
-    const [transientButtonState, setTransientButtonState] =
-        useState<TransientButtonState>(undefined);
-
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(value).then(
-            () => {
-                setTransientButtonState('success');
-
-                setTimeout(() => setTransientButtonState(undefined), 2000);
-            },
-            () => {
-                setTransientButtonState('error');
-
-                setTimeout(() => setTransientButtonState(undefined), 2000);
-            }
-        );
-    };
+    const { isCopied, handleCopy } = useCopyToClipboard('SingleLineCode');
 
     return (
         <Box
@@ -56,6 +38,8 @@ function SingleLineCode({
                     flexGrow: 1,
                     overflowX: 'auto',
                     textOverflow: 'unset',
+                    fontFamily: 'monospace',
+                    fontSize: 13,
                 }}
             >
                 {value}
@@ -63,13 +47,10 @@ function SingleLineCode({
 
             <Tooltip
                 title={intl.formatMessage({
-                    id:
-                        transientButtonState === 'error'
-                            ? 'common.copyFailed'
-                            : 'common.copied',
+                    id: 'common.copied',
                 })}
                 placement="right"
-                open={!!transientButtonState}
+                open={isCopied}
                 arrow
                 disableFocusListener
                 disableHoverListener
@@ -77,9 +58,10 @@ function SingleLineCode({
             >
                 <Button
                     variant="outlined"
-                    color={transientButtonState}
-                    onClick={copyToClipboard}
+                    color={isCopied ? 'success' : undefined}
+                    onClick={() => handleCopy(value)}
                     sx={{
+                        minWidth: compact ? 32 : 64,
                         px: 1,
                         borderTopLeftRadius: 0,
                         borderTopRightRadius: borderRadius,
@@ -87,7 +69,7 @@ function SingleLineCode({
                         borderBottomRightRadius: borderRadius,
                     }}
                 >
-                    {getButtonIcon(theme, transientButtonState)}
+                    {getButtonIcon(theme, isCopied ? 'success' : undefined)}
                 </Button>
             </Tooltip>
         </Box>

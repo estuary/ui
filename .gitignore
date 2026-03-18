@@ -2,6 +2,7 @@
 
 # local stuff
 /.vscode
+/.claude
 
 # dependencies
 /node_modules
@@ -45,3 +46,9 @@ gha-creds-*.json
 /playwright-tests/results/
 /playwright-tests/tmp/
 /playwright-tests/tests/.auth/
+
+*storybook.log
+storybook-static
+
+.playwright-mcp/
+.mcp.json

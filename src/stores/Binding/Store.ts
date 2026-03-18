@@ -3,6 +3,10 @@ import type {
     BindingState,
     ResourceConfig,
 } from 'src/stores/Binding/types';
+import type {
+    MaterializationBuiltBinding,
+    ValidatedBinding,
+} from 'src/types/schemaModels';
 import type { StoreApi } from 'zustand';
 import type { NamedSet } from 'zustand/middleware';
 
@@ -24,6 +28,7 @@ import {
     generateMaterializationResourceSpec,
     getResourceConfigPointers,
 } from 'src/services/ajv';
+import { getDereffedSchema } from 'src/services/jsonforms';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import {
@@ -36,9 +41,11 @@ import {
     initializeBinding,
     initializeCurrentBinding,
     populateResourceConfigErrors,
+    removeBindingsFromDictionary,
     resetCollectionMetadata,
     sortResourceConfigs,
     STORE_KEY,
+    stubBindingFieldSelection,
     updateBackfilledBindingState,
     whatChanged,
 } from 'src/stores/Binding/shared';
@@ -51,12 +58,14 @@ import {
 import { getStoreWithToggleDisableSettings } from 'src/stores/Binding/slices/ToggleDisable';
 import { getStoreWithHydrationSettings } from 'src/stores/extensions/Hydration';
 import { BindingStoreNames } from 'src/stores/names';
-import { getDereffedSchema, hasLength } from 'src/utils/misc-utils';
+import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 import { parsePostgresInterval } from 'src/utils/time-utils';
 import {
     getBackfillCounter,
     getBindingIndex,
+    getBindingIndexByResourcePath,
+    getBuiltBindingIndex,
     getCollectionName,
 } from 'src/utils/workflow-utils';
 import { POSTGRES_INTERVAL_RE } from 'src/validation';
@@ -141,7 +150,14 @@ const getInitialState = (
                                         collectionName,
                                         {}
                                     ),
-                                    meta: { collectionName, bindingIndex },
+                                    meta: {
+                                        bindingIndex,
+                                        builtBindingIndex: -1,
+                                        collectionName,
+                                        liveBindingIndex: -1,
+                                        liveBuiltBindingIndex: -1,
+                                        validatedBindingIndex: -1,
+                                    },
                                 };
                             }
                         });
@@ -157,6 +173,11 @@ const getInitialState = (
 
                 state.bindingErrorsExist = isEmpty(state.bindings);
                 initializeCurrentBinding(state, sortedResourceConfigs);
+
+                state.selections = stubBindingFieldSelection(
+                    state.selections,
+                    Object.keys(state.resourceConfigs)
+                );
             }),
             false,
             'Empty bindings added'
@@ -179,7 +200,7 @@ const getInitialState = (
                 //  while also going through and initializing but I am really tired right now
 
                 // Go through the discovered bindings BEFORE sorting so that
-                //  we know the original indexs of all the bindings.
+                //  we know the original indices of all the bindings.
                 state.resourceConfigs = {};
                 draftSpecResponse.data[0].spec.bindings.forEach(
                     (binding: any, index: number) => {
@@ -317,7 +338,8 @@ const getInitialState = (
         entityType,
         liveBindings,
         draftedBindings,
-        rehydrating
+        rehydrating,
+        requestFieldValidation
     ) => {
         set(
             produce((state: BindingState) => {
@@ -374,6 +396,9 @@ const getInitialState = (
                             state.backfilledBindings.push(UUID);
                         }
 
+                        state.resourceConfigs[UUID].meta.liveBindingIndex =
+                            liveBindingIndex;
+
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                         if (state.collectionMetadata?.[collection]) {
                             // This condition only exists as a safeguard in the event this action
@@ -400,6 +425,8 @@ const getInitialState = (
                 state.resourceConfigs = sortedResourceConfigs;
                 populateResourceConfigErrors(state, sortedResourceConfigs);
 
+                const bindingUUIDs = Object.keys(state.resourceConfigs);
+
                 if (state.backfilledBindings.length > 0) {
                     if (entityType === 'capture') {
                         // if they have anything marked for backfill make sure the setting is forced on
@@ -407,8 +434,7 @@ const getInitialState = (
                     }
 
                     state.backfillAllBindings =
-                        state.backfilledBindings.length ===
-                        Object.keys(state.resourceConfigs).length;
+                        state.backfilledBindings.length === bindingUUIDs.length;
                 } else {
                     state.backfillAllBindings = false;
                 }
@@ -418,6 +444,14 @@ const getInitialState = (
                     state,
                     sortedResourceConfigs,
                     rehydrating // mainly for field selection refresh so the select binding is not lost
+                );
+
+                state.selections = stubBindingFieldSelection(
+                    state.selections,
+                    bindingUUIDs,
+                    requestFieldValidation ? 'SERVER_UPDATING' : undefined,
+                    sortedResourceConfigs,
+                    liveBindings
                 );
             }),
             false,
@@ -493,8 +527,13 @@ const getInitialState = (
                     state.resourceConfigs[bindingUUID] = {
                         ...jsonFormDefaults,
                         meta: {
+                            added: true,
                             bindingIndex: reducedBindingCount + index,
+                            builtBindingIndex: -1,
                             collectionName,
+                            liveBindingIndex: -1,
+                            liveBuiltBindingIndex: -1,
+                            validatedBindingIndex: -1,
                             // When adding default this so the first click on the binding
                             //  does not cause extra renders
                             disable: undefined,
@@ -531,6 +570,11 @@ const getInitialState = (
 
                 // See if the recently updated configs have errors
                 populateResourceConfigErrors(state, reducedResourceConfig);
+
+                state.selections = stubBindingFieldSelection(
+                    state.selections,
+                    bindingUUIDs
+                );
             }),
             false,
             'Resource Config Prefilled'
@@ -598,18 +642,7 @@ const getInitialState = (
                     );
 
                     // Remove the binding from the bindings dictionary.
-                    const evaluatedBindings = state.bindings;
-
-                    evaluatedBindings[collection] = state.bindings[
-                        collection
-                    ].filter((bindingUUID) => bindingUUID !== uuid);
-
-                    state.bindings =
-                        evaluatedBindings[collection].length === 0
-                            ? omit(evaluatedBindings, collection)
-                            : evaluatedBindings;
-
-                    state.bindingErrorsExist = isEmpty(evaluatedBindings);
+                    removeBindingsFromDictionary(state, collection, uuid);
                 }
             }),
             false,
@@ -617,9 +650,11 @@ const getInitialState = (
         );
     },
 
-    removeBindings: (targetUUIDs, workflow, taskName) => {
+    removeBindings: (targets, workflow, taskName) => {
         set(
             produce((state: BindingState) => {
+                const targetUUIDs = targets.map((datum) => datum.uuid);
+
                 const collections = getCollectionNames(state.resourceConfigs);
 
                 // Remove the selected bindings from the resource config dictionary.
@@ -631,22 +666,15 @@ const getInitialState = (
                 state.resourceConfigs = evaluatedResourceConfigs;
                 populateResourceConfigErrors(state, evaluatedResourceConfigs);
 
-                // Repopulate the bindings dictionary, update the value of the current binding,
-                // and update the backfill-related state.
                 const mappedUUIDsAndResourceConfigs = Object.entries(
                     evaluatedResourceConfigs
                 );
 
                 if (hasLength(mappedUUIDsAndResourceConfigs)) {
-                    mappedUUIDsAndResourceConfigs.forEach(
-                        ([uuid, resourceConfig]) => {
-                            initializeBinding(
-                                state,
-                                resourceConfig.meta.collectionName,
-                                uuid
-                            );
-                        }
-                    );
+                    // Update the value of the current binding, and update the backfill-related state.
+                    targets.forEach(({ collection, uuid }) => {
+                        removeBindingsFromDictionary(state, collection, uuid);
+                    });
 
                     const [uuid, resourceConfig] =
                         mappedUUIDsAndResourceConfigs[0];
@@ -801,6 +829,23 @@ const getInitialState = (
         );
     },
 
+    resetResourceConfigAddedMetadata: () => {
+        set(
+            produce((state: BindingState) => {
+                Object.entries(state.resourceConfigs).forEach(
+                    ([bindingUUID, config]) => {
+                        if (config.meta?.added) {
+                            state.resourceConfigs[bindingUUID].meta.added =
+                                false;
+                        }
+                    }
+                );
+            }),
+            false,
+            'Resource Config Added Metadata Reset'
+        );
+    },
+
     // The `hydrated` state property can only be set when the `active` state property is true.
     // An external, hydration component is responsible for setting the `active` state property
     // to true when hydration is initiated and false once completed. Consequently, this property
@@ -950,16 +995,116 @@ const getInitialState = (
         );
     },
 
-    setResourceSchema: async (val) => {
-        const resolved = await getDereffedSchema(val);
+    setRelatedBindingIndices: (
+        builtSpec,
+        validationResponse,
+        liveBuiltSpec
+    ) => {
+        if (!builtSpec || !validationResponse) {
+            return;
+        }
 
         set(
             produce((state: BindingState) => {
-                if (!resolved) {
-                    state.setHydrationErrorsExist(true);
-                    return;
-                }
+                Object.entries(state.resourceConfigs).forEach(
+                    ([
+                        uuid,
+                        {
+                            meta: { collectionName, disable },
+                        },
+                    ]) => {
+                        if (disable) {
+                            state.resourceConfigs[uuid].meta.builtBindingIndex =
+                                -1;
 
+                            state.resourceConfigs[
+                                uuid
+                            ].meta.validatedBindingIndex = -1;
+
+                            return;
+                        }
+
+                        let liveBuiltBindingIndex = liveBuiltSpec
+                            ? getBuiltBindingIndex(
+                                  liveBuiltSpec,
+                                  collectionName
+                              )
+                            : -1;
+
+                        const liveBuiltBinding =
+                            liveBuiltBindingIndex > -1
+                                ? liveBuiltSpec?.bindings.at(
+                                      liveBuiltBindingIndex
+                                  )
+                                : undefined;
+
+                        const draftedBuiltBindingIndex = builtSpec
+                            ? getBuiltBindingIndex(builtSpec, collectionName)
+                            : -1;
+
+                        const draftedBuiltBinding:
+                            | MaterializationBuiltBinding
+                            | undefined =
+                            draftedBuiltBindingIndex > -1
+                                ? builtSpec?.bindings.at(
+                                      draftedBuiltBindingIndex
+                                  )
+                                : undefined;
+
+                        let validatedBindingIndex = -1;
+
+                        if (validationResponse) {
+                            // Evaluate whether the validation response contains a binding that matches
+                            // the live and drafted built bindings.
+                            const liveValidatedBindingIndex =
+                                getBindingIndexByResourcePath<ValidatedBinding>(
+                                    liveBuiltBinding?.resourcePath ?? [],
+                                    validationResponse
+                                );
+
+                            const draftedValidatedBindingIndex =
+                                getBindingIndexByResourcePath<ValidatedBinding>(
+                                    draftedBuiltBinding?.resourcePath ?? [],
+                                    validationResponse
+                                );
+
+                            liveBuiltBindingIndex =
+                                liveValidatedBindingIndex > -1
+                                    ? liveBuiltBindingIndex
+                                    : -1;
+
+                            validatedBindingIndex =
+                                liveValidatedBindingIndex > -1
+                                    ? liveValidatedBindingIndex
+                                    : draftedValidatedBindingIndex;
+                        }
+
+                        state.resourceConfigs[uuid].meta.builtBindingIndex =
+                            draftedBuiltBindingIndex;
+
+                        state.resourceConfigs[uuid].meta.liveBuiltBindingIndex =
+                            liveBuiltBindingIndex;
+
+                        state.resourceConfigs[uuid].meta.validatedBindingIndex =
+                            validatedBindingIndex;
+                    }
+                );
+            }),
+            false,
+            'Related Binding Indices Set'
+        );
+    },
+
+    setResourceSchema: async (val) => {
+        const resolved = await getDereffedSchema(val);
+
+        if (!resolved) {
+            get().setHydrationErrorsExist(true);
+            return;
+        }
+
+        set(
+            produce((state: BindingState) => {
                 state.resourceSchema = resolved;
 
                 // TODO (web flow wasm - source capture - possible perf improvement)
@@ -973,7 +1118,10 @@ const getInitialState = (
                 });
 
                 if (!resourceConfigPointers) {
-                    state.setHydrationErrorsExist(true);
+                    // If we did not get pointers we should be okay to carry on like normal. Previously (pre 2026 Q1)
+                    //  we were setting a "hydration error" here but that was not being stored properly due to https://github.com/estuary/ui/issues/1870
+                    // Pretty sure we are safe just carrying on if we cannot get the pointers. This is mainly true until the
+                    //  pointers we need to fetch are potentially changed. So until then this should be safe.
                     return;
                 }
 
@@ -1084,8 +1232,17 @@ const getInitialState = (
                 const evaluatedConfig: ResourceConfig = {
                     ...value,
                     meta: {
+                        added: targetResourceConfig.meta?.added,
                         bindingIndex: targetResourceConfig.meta.bindingIndex,
+                        builtBindingIndex:
+                            targetResourceConfig.meta.builtBindingIndex,
                         collectionName: targetCollection,
+                        liveBindingIndex:
+                            targetResourceConfig.meta.liveBindingIndex,
+                        liveBuiltBindingIndex:
+                            targetResourceConfig.meta.liveBuiltBindingIndex,
+                        validatedBindingIndex:
+                            targetResourceConfig.meta.validatedBindingIndex,
                         // When adding default this so the first click on the binding
                         //  does not cause extra renders
                         disable: undefined,

@@ -13,7 +13,6 @@ import CatalogEditor from 'src/components/shared/Entity/CatalogEditor';
 import EntityError from 'src/components/shared/Entity/Error';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import DerivationConfig from 'src/components/transformation/create/Config';
-import GitPodButton from 'src/components/transformation/create/GitPodButton';
 import PatchDraftButton from 'src/components/transformation/create/PatchDraftButton';
 import DerivationSchema from 'src/components/transformation/create/Schema';
 import usePageTitle from 'src/hooks/usePageTitle';
@@ -66,7 +65,7 @@ function DerivationCreateAlternate() {
             <Box sx={{ mb: 3 }}>
                 <EntityToolbar
                     GenerateButton={<PatchDraftButton />}
-                    SecondaryButtonComponent={GitPodButton}
+                    SecondaryButtonComponent={<>Previously Linked To GitPod</>}
                     primaryButtonProps={{
                         disabled:
                             emptySQLExists ||

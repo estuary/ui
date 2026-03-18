@@ -60,30 +60,33 @@ export const useBindingsEditorStore_setEditModeEnabled = () => {
     return useBindingsEditorStore((state) => state.setEditModeEnabled);
 };
 
-export const useBindingsEditorStore_inferSchemaResponse = () => {
-    return useBindingsEditorStore((state) => state.inferSchemaResponse);
+export const useBindingsEditorStore_skimProjectionResponse = () => {
+    return useBindingsEditorStore((state) => state.skimProjectionResponse);
 };
 
-export const useBindingsEditorStore_inferSchemaResponse_Keys = () => {
-    return useBindingsEditorStore((state) => state.inferSchemaResponse_Keys);
+export const useBindingsEditorStore_skimProjectionResponse_Keys = () => {
+    return useBindingsEditorStore((state) => state.skimProjectionResponse_Keys);
 };
 
-export const useBindingsEditorStore_inferSchemaResponseDoneProcessing = () => {
+export const useBindingsEditorStore_skimProjectionResponseDoneProcessing =
+    () => {
+        return useBindingsEditorStore(
+            (state) => state.skimProjectionResponseDoneProcessing
+        );
+    };
+
+export const useBindingsEditorStore_skimProjectionResponseEmpty = () => {
+    return useBindingsEditorStore((state) => state.skimProjectionResponseEmpty);
+};
+
+export const useBindingsEditorStore_skimProjectionResponseError = () => {
+    return useBindingsEditorStore((state) => state.skimProjectionResponseError);
+};
+
+export const useBindingsEditorStore_populateSkimProjectionResponse = () => {
     return useBindingsEditorStore(
-        (state) => state.inferSchemaResponseDoneProcessing
+        (state) => state.populateSkimProjectionResponse
     );
-};
-
-export const useBindingsEditorStore_inferSchemaResponseEmpty = () => {
-    return useBindingsEditorStore((state) => state.inferSchemaResponseEmpty);
-};
-
-export const useBindingsEditorStore_inferSchemaResponseError = () => {
-    return useBindingsEditorStore((state) => state.inferSchemaResponseError);
-};
-
-export const useBindingsEditorStore_populateInferSchemaResponse = () => {
-    return useBindingsEditorStore((state) => state.populateInferSchemaResponse);
 };
 
 export const useBindingsEditorStore_resetState = () => {

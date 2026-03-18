@@ -10,6 +10,7 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialStateData = (): Pick<
     SourceCaptureState,
+    | 'fieldsRecommended'
     | 'error'
     | 'sourceCapture'
     | 'saving'
@@ -19,6 +20,7 @@ const getInitialStateData = (): Pick<
     | 'targetSchema'
     | 'targetSchemaHasError'
 > => ({
+    fieldsRecommended: undefined,
     error: null,
     sourceCapture: undefined,
     saving: false,
@@ -33,6 +35,16 @@ const getInitialState = (
     set: NamedSet<SourceCaptureState>
 ): SourceCaptureState => ({
     ...getInitialStateData(),
+
+    setFieldsRecommended: (value) => {
+        set(
+            produce((state: SourceCaptureState) => {
+                state.fieldsRecommended = value;
+            }),
+            false,
+            'Fields Recommended Set'
+        );
+    },
 
     setSourceCapture: (value: SourceCaptureState['sourceCapture']) => {
         set(

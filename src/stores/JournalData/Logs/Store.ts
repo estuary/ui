@@ -13,6 +13,7 @@ import {
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
 import { JournalDataStoreNames } from 'src/stores/names';
+import { journalStatusIsWarning } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 // Since journal data reads data and always returns an array it gets a little weird
@@ -81,7 +82,7 @@ const getInitialState = (
     ...getInitialHydrationData(),
     ...getStoreWithHydrationSettings('JournalsData:Logs', set),
 
-    hydrate: async (docs, refresh, error) => {
+    hydrate: async (docs, refresh, readStatus, error) => {
         if (!get().active) {
             return;
         }
@@ -94,6 +95,10 @@ const getInitialState = (
                 get().setNetworkFailed(error.message);
                 get().addNewDocuments([[0, 0], []]);
                 return;
+            }
+
+            if (readStatus && journalStatusIsWarning(readStatus)) {
+                get().setHydrationWarning(readStatus);
             }
         }
 

@@ -9,7 +9,6 @@ import CollectionSchemaEditor from 'src/components/collection/schema/Editor';
 import DisabledWarning from 'src/components/collection/schema/Editor/DisabledWarning';
 import CollectionSchemaEditorSkeleton from 'src/components/collection/schema/Editor/Skeleton';
 import ControlledEditor from 'src/components/editor/Bindings/ControlledEditor';
-import useBackgroundTest from 'src/components/editor/Bindings/FieldSelection/useBackgroundTest';
 import SchemaEditCLIButton from 'src/components/editor/Bindings/SchemaEdit/CLIButton';
 import SchemaEditToggle from 'src/components/editor/Bindings/SchemaEdit/Toggle';
 import {
@@ -27,6 +26,8 @@ import {
 import AlertBox from 'src/components/shared/AlertBox';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { useEntityType } from 'src/context/EntityContext';
+import useBackgroundTest from 'src/hooks/fieldSelection/useBackgroundTest';
+import useFieldSelectionRefresh from 'src/hooks/fieldSelection/useFieldSelectionRefresh';
 import useInitializeCollectionDraft from 'src/hooks/useInitializeCollectionDraft';
 import {
     useBinding_currentBindingUUID,
@@ -43,6 +44,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
 
     const initializeCollectionDraft = useInitializeCollectionDraft();
     const { refreshRequired } = useBackgroundTest();
+    const { refresh } = useFieldSelectionRefresh();
 
     // Binding Store
     const currentCollection = useBinding_currentCollection();
@@ -98,6 +100,7 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                             collectionName={currentCollection}
                             readOnly={readOnly}
                             refreshRequired={refreshRequired}
+                            refresh={refresh}
                         />
                     ) : collectionData || collectionData === null ? (
                         <Stack spacing={2}>

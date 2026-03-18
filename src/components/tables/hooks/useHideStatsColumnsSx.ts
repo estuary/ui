@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 
-function useHideStatsColumnsSxSx() {
+function useHideStatsColumnsSx() {
     const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
 
     return useMemo<SxProps<Theme>>(
@@ -19,4 +19,4 @@ function useHideStatsColumnsSxSx() {
     );
 }
 
-export default useHideStatsColumnsSxSx;
+export default useHideStatsColumnsSx;

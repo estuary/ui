@@ -1,0 +1,1398 @@
+import type { Schema } from 'src/types';
+
+import {
+    evaluateRedactionEligibility,
+    setSchemaProperties,
+} from 'src/utils/schema-utils';
+
+describe('setSchemaProperties', () => {
+    let collectionSchema: Schema;
+
+    describe('adds a properties object to the schema', () => {
+        beforeEach(() => {
+            collectionSchema = {
+                $defs: {},
+                $ref: 'flow://connector-schema',
+            };
+        });
+
+        describe('with a redaction annotation defined one-degree deep', () => {
+            test('when the pointer contains a single, non-escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            redact: {
+                                strategy: 'block',
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains a single, escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo~1bar', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar': {
+                            redact: {
+                                strategy: 'block',
+                            },
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation removed one-degree deep', () => {
+            test('when the pointer contains a single, non-escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            redact: undefined,
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains a single, escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo~1bar', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar': {
+                            redact: undefined,
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation defined two-degrees deep', () => {
+            test('when the pointer contains two, non-escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            properties: {
+                                bar: {
+                                    redact: {
+                                        strategy: 'block',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains one, non-escaped segment and one, escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar~1baz', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            properties: {
+                                'bar/baz': {
+                                    redact: {
+                                        strategy: 'block',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+
+                collectionSchema = {
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                };
+
+                setSchemaProperties(collectionSchema, '/foo~1bar/baz', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar': {
+                            properties: {
+                                baz: {
+                                    redact: {
+                                        strategy: 'block',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains two, escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo~1bar/baz~1qux', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar': {
+                            properties: {
+                                'baz/qux': {
+                                    redact: {
+                                        strategy: 'block',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation removed two-degrees deep', () => {
+            test('when the pointer contains two, non-escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            properties: {
+                                bar: {
+                                    redact: undefined,
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains one, non-escaped segment and one, escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar~1baz', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            properties: {
+                                'bar/baz': {
+                                    redact: undefined,
+                                },
+                            },
+                        },
+                    },
+                });
+
+                collectionSchema = {
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                };
+
+                setSchemaProperties(collectionSchema, '/foo~1bar/baz', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar': {
+                            properties: {
+                                baz: {
+                                    redact: undefined,
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains two, escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo~1bar/baz~1qux', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar': {
+                            properties: {
+                                'baz/qux': {
+                                    redact: undefined,
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation defined five-degrees deep', () => {
+            test('when the pointer contains five, non-escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar/baz/qux/quux', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            properties: {
+                                bar: {
+                                    properties: {
+                                        baz: {
+                                            properties: {
+                                                qux: {
+                                                    properties: {
+                                                        quux: {
+                                                            redact: {
+                                                                strategy:
+                                                                    'block',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains a mix of five, non-escaped and escaped segments', () => {
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar~1baz/qux/quux~1corge/grault',
+                    {
+                        id: 'redact',
+                        value: { strategy: 'block' },
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            properties: {
+                                'bar/baz': {
+                                    properties: {
+                                        qux: {
+                                            properties: {
+                                                'quux/corge': {
+                                                    properties: {
+                                                        grault: {
+                                                            redact: {
+                                                                strategy:
+                                                                    'block',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+
+                collectionSchema = {
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                };
+
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar~1baz/qux/quux/corge/grault~1garply',
+                    {
+                        id: 'redact',
+                        value: { strategy: 'block' },
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar/baz': {
+                            properties: {
+                                qux: {
+                                    properties: {
+                                        quux: {
+                                            properties: {
+                                                corge: {
+                                                    properties: {
+                                                        'grault/garply': {
+                                                            redact: {
+                                                                strategy:
+                                                                    'block',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains five, escaped segments', () => {
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz~1qux~1quux~1corge/grault~1garply/waldo~1fred~1plugh/xyzzy~1thud',
+                    {
+                        id: 'redact',
+                        value: { strategy: 'block' },
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar': {
+                            properties: {
+                                'baz/qux/quux/corge': {
+                                    properties: {
+                                        'grault/garply': {
+                                            properties: {
+                                                'waldo/fred/plugh': {
+                                                    properties: {
+                                                        'xyzzy/thud': {
+                                                            redact: {
+                                                                strategy:
+                                                                    'block',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation removed five-degrees deep', () => {
+            test('when the pointer contains five, non-escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar/baz/qux/quux', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            properties: {
+                                bar: {
+                                    properties: {
+                                        baz: {
+                                            properties: {
+                                                qux: {
+                                                    properties: {
+                                                        quux: {
+                                                            redact: undefined,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains a mix of five, non-escaped and escaped segments', () => {
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar~1baz/qux/quux~1corge/grault',
+                    {
+                        id: 'redact',
+                        value: undefined,
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        foo: {
+                            properties: {
+                                'bar/baz': {
+                                    properties: {
+                                        qux: {
+                                            properties: {
+                                                'quux/corge': {
+                                                    properties: {
+                                                        grault: {
+                                                            redact: undefined,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+
+                collectionSchema = {
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                };
+
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar~1baz/qux/quux/corge/grault~1garply',
+                    {
+                        id: 'redact',
+                        value: undefined,
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar/baz': {
+                            properties: {
+                                qux: {
+                                    properties: {
+                                        quux: {
+                                            properties: {
+                                                corge: {
+                                                    properties: {
+                                                        'grault/garply': {
+                                                            redact: undefined,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains five, escaped segments', () => {
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz~1qux~1quux~1corge/grault~1garply/waldo~1fred~1plugh/xyzzy~1thud',
+                    {
+                        id: 'redact',
+                        value: undefined,
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        'foo/bar': {
+                            properties: {
+                                'baz/qux/quux/corge': {
+                                    properties: {
+                                        'grault/garply': {
+                                            properties: {
+                                                'waldo/fred/plugh': {
+                                                    properties: {
+                                                        'xyzzy/thud': {
+                                                            redact: undefined,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        });
+    });
+
+    describe('updates a properties object on the schema', () => {
+        const schemaProperties: Schema = {
+            random_a: 'some_string',
+            random_b: 1,
+            random_c: false,
+            random_d: {
+                properties: {},
+                random_d_i: true,
+                random_d_ii: {
+                    random_d_ii_a: 'another_string',
+                },
+            },
+            random_e: {
+                random_e_i: 142,
+            },
+        };
+
+        beforeEach(() => {
+            collectionSchema = {
+                $defs: {},
+                $ref: 'flow://connector-schema',
+                properties: { ...schemaProperties },
+            };
+        });
+
+        describe('with a redaction annotation defined one-degree deep', () => {
+            test('when the pointer contains a single, non-escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            redact: {
+                                strategy: 'block',
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains a single, escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo~1bar', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar': {
+                            redact: {
+                                strategy: 'block',
+                            },
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation removed one-degree deep', () => {
+            test('when the pointer contains a single, non-escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            redact: undefined,
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains a single, escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo~1bar', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar': {
+                            redact: undefined,
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation defined two-degrees deep', () => {
+            test('when the pointer contains two, non-escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            properties: {
+                                bar: {
+                                    redact: {
+                                        strategy: 'block',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains one, non-escaped segment and one, escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar~1baz', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            properties: {
+                                'bar/baz': {
+                                    redact: {
+                                        strategy: 'block',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+
+                collectionSchema = {
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: { ...schemaProperties },
+                };
+
+                setSchemaProperties(collectionSchema, '/foo~1bar/baz', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar': {
+                            properties: {
+                                baz: {
+                                    redact: {
+                                        strategy: 'block',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains two, escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo~1bar/baz~1qux', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar': {
+                            properties: {
+                                'baz/qux': {
+                                    redact: {
+                                        strategy: 'block',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation removed two-degrees deep', () => {
+            test('when the pointer contains two, non-escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            properties: {
+                                bar: {
+                                    redact: undefined,
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains one, non-escaped segment and one, escaped segment', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar~1baz', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            properties: {
+                                'bar/baz': {
+                                    redact: undefined,
+                                },
+                            },
+                        },
+                    },
+                });
+
+                collectionSchema = {
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: { ...schemaProperties },
+                };
+
+                setSchemaProperties(collectionSchema, '/foo~1bar/baz', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar': {
+                            properties: {
+                                baz: {
+                                    redact: undefined,
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains two, escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo~1bar/baz~1qux', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar': {
+                            properties: {
+                                'baz/qux': {
+                                    redact: undefined,
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation defined five-degrees deep', () => {
+            test('when the pointer contains five, non-escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar/baz/qux/quux', {
+                    id: 'redact',
+                    value: { strategy: 'block' },
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            properties: {
+                                bar: {
+                                    properties: {
+                                        baz: {
+                                            properties: {
+                                                qux: {
+                                                    properties: {
+                                                        quux: {
+                                                            redact: {
+                                                                strategy:
+                                                                    'block',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains a mix of five, non-escaped and escaped segments', () => {
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar~1baz/qux/quux~1corge/grault',
+                    {
+                        id: 'redact',
+                        value: { strategy: 'block' },
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            properties: {
+                                'bar/baz': {
+                                    properties: {
+                                        qux: {
+                                            properties: {
+                                                'quux/corge': {
+                                                    properties: {
+                                                        grault: {
+                                                            redact: {
+                                                                strategy:
+                                                                    'block',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+
+                collectionSchema = {
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: { ...schemaProperties },
+                };
+
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar~1baz/qux/quux/corge/grault~1garply',
+                    {
+                        id: 'redact',
+                        value: { strategy: 'block' },
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar/baz': {
+                            properties: {
+                                qux: {
+                                    properties: {
+                                        quux: {
+                                            properties: {
+                                                corge: {
+                                                    properties: {
+                                                        'grault/garply': {
+                                                            redact: {
+                                                                strategy:
+                                                                    'block',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains five, escaped segments', () => {
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz~1qux~1quux~1corge/grault~1garply/waldo~1fred~1plugh/xyzzy~1thud',
+                    {
+                        id: 'redact',
+                        value: { strategy: 'block' },
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar': {
+                            properties: {
+                                'baz/qux/quux/corge': {
+                                    properties: {
+                                        'grault/garply': {
+                                            properties: {
+                                                'waldo/fred/plugh': {
+                                                    properties: {
+                                                        'xyzzy/thud': {
+                                                            redact: {
+                                                                strategy:
+                                                                    'block',
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        });
+
+        describe('with a redaction annotation removed five-degrees deep', () => {
+            test('when the pointer contains five, non-escaped segments', () => {
+                setSchemaProperties(collectionSchema, '/foo/bar/baz/qux/quux', {
+                    id: 'redact',
+                    value: undefined,
+                });
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            properties: {
+                                bar: {
+                                    properties: {
+                                        baz: {
+                                            properties: {
+                                                qux: {
+                                                    properties: {
+                                                        quux: {
+                                                            redact: undefined,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains a mix of five, non-escaped and escaped segments', () => {
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo/bar~1baz/qux/quux~1corge/grault',
+                    {
+                        id: 'redact',
+                        value: undefined,
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        foo: {
+                            properties: {
+                                'bar/baz': {
+                                    properties: {
+                                        qux: {
+                                            properties: {
+                                                'quux/corge': {
+                                                    properties: {
+                                                        grault: {
+                                                            redact: undefined,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+
+                collectionSchema = {
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: { ...schemaProperties },
+                };
+
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar~1baz/qux/quux/corge/grault~1garply',
+                    {
+                        id: 'redact',
+                        value: undefined,
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar/baz': {
+                            properties: {
+                                qux: {
+                                    properties: {
+                                        quux: {
+                                            properties: {
+                                                corge: {
+                                                    properties: {
+                                                        'grault/garply': {
+                                                            redact: undefined,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+
+            test('when the pointer contains five, escaped segments', () => {
+                setSchemaProperties(
+                    collectionSchema,
+                    '/foo~1bar/baz~1qux~1quux~1corge/grault~1garply/waldo~1fred~1plugh/xyzzy~1thud',
+                    {
+                        id: 'redact',
+                        value: undefined,
+                    }
+                );
+
+                expect(collectionSchema).toStrictEqual({
+                    $defs: {},
+                    $ref: 'flow://connector-schema',
+                    properties: {
+                        ...schemaProperties,
+                        'foo/bar': {
+                            properties: {
+                                'baz/qux/quux/corge': {
+                                    properties: {
+                                        'grault/garply': {
+                                            properties: {
+                                                'waldo/fred/plugh': {
+                                                    properties: {
+                                                        'xyzzy/thud': {
+                                                            redact: undefined,
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            });
+        });
+    });
+});
+
+describe('evaluateRedactionEligibility', () => {
+    let expectedToBe = '';
+
+    describe('returns "prevent"', () => {
+        beforeEach(() => {
+            expectedToBe = 'prevent';
+        });
+
+        test('when "empty"', () => {
+            expect(evaluateRedactionEligibility(null)).toBe(expectedToBe);
+            expect(evaluateRedactionEligibility(undefined)).toBe(expectedToBe);
+            expect(evaluateRedactionEligibility('')).toBe(expectedToBe);
+        });
+
+        test('exactly "/_meta"', () => {
+            expect(evaluateRedactionEligibility('/_meta')).toBe(expectedToBe);
+        });
+
+        test('exactly "/_meta/uuid"', () => {
+            expect(evaluateRedactionEligibility('/_meta/uuid')).toBe(
+                expectedToBe
+            );
+        });
+    });
+
+    describe('returns "allowed"', () => {
+        beforeEach(() => {
+            expectedToBe = 'allowed';
+        });
+
+        describe('when pointer is within "/_meta/before"', () => {
+            test('is exactly "/_meta/before"', () => {
+                expect(evaluateRedactionEligibility('/_meta/before')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta/before" and has additional segments', () => {
+                expect(evaluateRedactionEligibility('/_meta/before/foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta/before" with deeply nested path', () => {
+                expect(
+                    evaluateRedactionEligibility('/_meta/before/foo/bar/baz')
+                ).toBe(expectedToBe);
+            });
+
+            test('starts with "/_meta/before" with escaped characters', () => {
+                expect(
+                    evaluateRedactionEligibility('/_meta/before/foo~1bar')
+                ).toBe(expectedToBe);
+            });
+        });
+
+        describe('when pointer is a normal field path', () => {
+            test('top-level field', () => {
+                expect(evaluateRedactionEligibility('/foo')).toBe(expectedToBe);
+            });
+
+            test('nested field', () => {
+                expect(evaluateRedactionEligibility('/foo/bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('deeply nested', () => {
+                expect(
+                    evaluateRedactionEligibility('/foo/bar/baz/qux/quux')
+                ).toBe(expectedToBe);
+            });
+
+            test('contains escaped characters', () => {
+                expect(evaluateRedactionEligibility('/foo~1bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('contains multiple escaped segments', () => {
+                expect(evaluateRedactionEligibility('/foo~1bar/baz~1qux')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+
+        describe('edge case pointers', () => {
+            test('no leading slash', () => {
+                expect(evaluateRedactionEligibility('foo')).toBe(expectedToBe);
+            });
+
+            test('just a slash', () => {
+                expect(evaluateRedactionEligibility('/')).toBe(expectedToBe);
+            });
+
+            test('has trailing slash', () => {
+                expect(evaluateRedactionEligibility('/foo/')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with multiple slashes', () => {
+                expect(evaluateRedactionEligibility('//foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('wrong case on "_meta"', () => {
+                // The function uses startsWith and includes which are case-sensitive
+                expect(evaluateRedactionEligibility('/_Meta')).toBe(
+                    expectedToBe
+                );
+                expect(evaluateRedactionEligibility('/_META')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('is "/_meta/beforee" (extra char, still starts with allowed prefix)', () => {
+                // This starts with "/_meta/before" so it's allowed
+                expect(evaluateRedactionEligibility('/_meta/beforee')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('contains spaces', () => {
+                expect(evaluateRedactionEligibility('/foo bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('contains special characters', () => {
+                expect(evaluateRedactionEligibility('/foo-bar_baz.qux')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+    });
+
+    describe('returns "warning"', () => {
+        beforeEach(() => {
+            expectedToBe = 'warning';
+        });
+
+        describe('when pointer starts with warning prefixes but is not prevented or allowed', () => {
+            test('starts with "/_meta" but is not an exact prevent match', () => {
+                expect(evaluateRedactionEligibility('/_meta/foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta" and has multiple segments', () => {
+                expect(evaluateRedactionEligibility('/_meta/foo/bar')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta/uuid" but has additional segments', () => {
+                expect(evaluateRedactionEligibility('/_meta/uuid/foo')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('is close to but not exactly a prevent match', () => {
+                expect(evaluateRedactionEligibility('/_meta/other')).toBe(
+                    expectedToBe
+                );
+            });
+
+            test('starts with "/_meta" with escaped characters', () => {
+                expect(evaluateRedactionEligibility('/_meta/foo~1bar')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+
+        describe('edge cases', () => {
+            test('starts with "/_meta/befor" (missing last char)', () => {
+                expect(evaluateRedactionEligibility('/_meta/befor')).toBe(
+                    expectedToBe
+                );
+            });
+        });
+    });
+});

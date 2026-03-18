@@ -14,14 +14,18 @@ const MAX_ERRORS_DISPLAYED = 10;
 const DRAFT_SPEC_COLS = ['scope', 'detail', 'draft_id'].join(',');
 const defaultResponse: DraftErrorsQuery[] = [];
 
-function useDraftSpecErrors(draftId?: string | null, enablePolling?: boolean) {
+function useDraftSpecErrors(
+    draftId?: string | null,
+    enablePolling?: boolean,
+    maxErrors?: number
+) {
     const { data, count, error, mutate, isValidating } = useQuery(
         draftId
             ? supabaseClient
                   .from(TABLES.DRAFT_ERRORS)
                   .select(DRAFT_SPEC_COLS, { count: 'exact' })
                   .eq('draft_id', draftId)
-                  .limit(MAX_ERRORS_DISPLAYED)
+                  .limit(maxErrors ?? MAX_ERRORS_DISPLAYED)
                   .returns<DraftErrorsQuery[]>()
             : null,
         {

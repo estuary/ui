@@ -6,14 +6,15 @@ import { useState } from 'react';
 
 import { Box, LinearProgress, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { submitDirective } from 'src/api/directives';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import AlertBox from 'src/components/shared/AlertBox';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import { jobStatusQuery, trackEvent } from 'src/directives/shared';
+import { jobStatusQuery } from 'src/directives/shared';
+import useDirectiveEventTracking from 'src/hooks/eventing/useDirectiveEventTracking';
 import useJobStatusPoller from 'src/hooks/useJobStatusPoller';
 
 interface Props {
@@ -32,6 +33,9 @@ function AcceptGrant({
     grantedPrefix,
     grantedCapability,
 }: Props) {
+    const intl = useIntl();
+    const trackEvent = useDirectiveEventTracking();
+
     const { jobStatusPoller } = useJobStatusPoller();
     const mutate_userInfoSummary = useUserInfoSummaryStore(
         (state) => state.mutate
@@ -119,14 +123,14 @@ function AcceptGrant({
             ) : null}
 
             <Typography variant="h5" align="center">
-                <FormattedMessage id="tenant.grantDirective.header" />
+                {intl.formatMessage({ id: 'tenant.grantDirective.header' })}
             </Typography>
 
             <Typography>
-                <FormattedMessage
-                    id="tenant.grantDirective.message"
-                    values={{ grantedCapability: <b>{grantedCapability}</b> }}
-                />
+                {intl.formatMessage(
+                    { id: 'tenant.grantDirective.message' },
+                    { grantedCapability: <b>{grantedCapability}</b> }
+                )}
             </Typography>
 
             <Box
@@ -134,6 +138,7 @@ function AcceptGrant({
                     p: 1,
                     border: (theme) => defaultOutline[theme.palette.mode],
                     borderRadius: 3,
+                    overflow: 'auto',
                 }}
             >
                 <Typography>{grantedPrefix}</Typography>
@@ -153,7 +158,7 @@ function AcceptGrant({
                     onClick={applyDirective}
                     sx={{ mt: 2 }}
                 >
-                    <FormattedMessage id="cta.continue" />
+                    {intl.formatMessage({ id: 'cta.accept' })}
                 </SafeLoadingButton>
             </Box>
         </Stack>

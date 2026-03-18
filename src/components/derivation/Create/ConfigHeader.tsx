@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { useStore } from 'zustand';
 
 import EntityToolbar from 'src/components/shared/Entity/Header';
-import GitPodButton from 'src/components/transformation/create/GitPodButton';
 import InitializeDraftButton from 'src/components/transformation/create/InitializeDraftButton';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import { CustomEvents } from 'src/services/types';
@@ -39,16 +38,13 @@ function ConfigHeader({ entityNameError }: ConfigHeaderProps) {
                         selectedCollections={new Set(selectedCollections)}
                     />
                 ) : (
-                    <GitPodButton
-                        entityNameError={entityNameError}
-                        sourceCollectionSet={new Set(selectedCollections)}
-                    />
+                    <>Previously Linked To GitPod</>
                 )
             }
             primaryButtonProps={{
                 logEvent: CustomEvents.COLLECTION_CREATE,
             }}
-            SecondaryButtonComponent={GitPodButton}
+            SecondaryButtonComponent={<>Previously Linked To GitPod</>}
             secondaryButtonProps={{
                 buttonVariant: 'outlined',
             }}

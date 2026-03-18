@@ -1,5 +1,6 @@
 import type { DialogProps } from '@mui/material';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
+import type { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 export interface IConfirmationModalOptions {
     confirmText?: string;
@@ -7,6 +8,8 @@ export interface IConfirmationModalOptions {
     title?: string;
     dialogProps?: Partial<DialogProps>;
     message: string | ReactNode;
+    doNotShowAgainStorageKey?: LocalStorageKeys;
+    doNotShowAgainText?: string;
 }
 
 export interface IConfirmationModalContext {

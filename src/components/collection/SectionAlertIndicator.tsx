@@ -6,17 +6,22 @@ import { useIntl } from 'react-intl';
 import {
     useBinding_bindingErrorsExist,
     useBinding_fullSourceErrorsExist,
+    useBinding_hasFieldConflicts,
     useBinding_hydrationErrorsExist,
     useBinding_resourceConfigErrorsExist,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
+import { useWorkflowStore } from 'src/stores/Workflow/Store';
 
 export default function SectionAlertIndicator() {
     const intl = useIntl();
     const theme = useTheme();
 
     // Binding Store
+    const [collectionsError] = useWorkflowStore((state) => {
+        return [state.collectionsError];
+    });
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const bindingErrorsExist = useBinding_bindingErrorsExist();
@@ -26,14 +31,17 @@ export default function SectionAlertIndicator() {
             (meta) => meta.sourceBackfillRecommended
         )
     );
+    const fieldConflictsExist = useBinding_hasFieldConflicts();
 
     // Form State Store
     const messagePrefix = useFormStateStore_messagePrefix();
 
     const hasErrors =
+        collectionsError ||
         bindingHydrationErrorsExist ||
         resourceConfigErrorsExist ||
-        fullSourceErrorsExist;
+        fullSourceErrorsExist ||
+        fieldConflictsExist;
 
     const hasWarnings = bindingErrorsExist || sourceBackfillRecommended;
 
@@ -42,7 +50,7 @@ export default function SectionAlertIndicator() {
             {hasErrors || hasWarnings ? (
                 <WarningCircle
                     style={{
-                        marginRight: 4,
+                        marginRight: 8,
                         fontSize: 12,
                         color: hasErrors
                             ? theme.palette.error.main

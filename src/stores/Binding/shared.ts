@@ -1,6 +1,10 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import type {
+    BindingFieldSelectionDictionary,
+    HydrationStatus,
+} from 'src/stores/Binding/slices/FieldSelection';
+import type {
     BindingChanges,
     Bindings,
     BindingState,
@@ -10,18 +14,21 @@ import type {
 import type { Entity, Schema } from 'src/types';
 import type { StoreApi } from 'zustand';
 
-import { difference, intersection } from 'lodash';
+import { difference, intersection, isEmpty, omit } from 'lodash';
 
 import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import { getSchema_Resource } from 'src/api/hydration';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { BASE_ERROR } from 'src/services/supabase';
 import { getInitialBackfillData } from 'src/stores/Binding/slices/Backfill';
-import { getInitialFieldSelectionData } from 'src/stores/Binding/slices/FieldSelection';
+import {
+    getInitialFieldSelectionData,
+    isHydrating,
+} from 'src/stores/Binding/slices/FieldSelection';
 import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
 import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
 import { populateErrors } from 'src/stores/utils';
-import { hasLength } from 'src/utils/misc-utils';
+import { hasLength, hasOwnProperty } from 'src/utils/misc-utils';
 import { formatCaptureInterval } from 'src/utils/time-utils';
 import { getCollectionName, getDisableProps } from 'src/utils/workflow-utils';
 
@@ -64,7 +71,7 @@ export const resetCollectionMetadata = (
         return;
     }
 
-    Object.keys(state.collectionMetadata).forEach((collection) => {
+    Object.keys(state.collectionMetadata).forEach((collection, index) => {
         resetSingleCollectionMetadata(state, collection);
     });
 };
@@ -171,7 +178,7 @@ export const initializeCurrentBinding = (
     };
 };
 
-export const getResourceConfig = (
+const getResourceConfig = (
     binding: any,
     bindingIndex: number
 ): ResourceConfig => {
@@ -187,9 +194,13 @@ export const getResourceConfig = (
         errors: [],
         meta: {
             ...disableProp,
-            collectionName,
             bindingIndex,
+            builtBindingIndex: -1,
+            collectionName,
+            liveBindingIndex: -1,
+            liveBuiltBindingIndex: -1,
             onIncompatibleSchemaChange: binding?.onIncompatibleSchemaChange,
+            validatedBindingIndex: -1,
         },
     };
 };
@@ -269,6 +280,56 @@ export const updateBackfilledBindingState = (
     }
 };
 
+export const stubBindingFieldSelection = (
+    existingSelections: BindingFieldSelectionDictionary,
+    bindingUUIDs: string[],
+    defaultStatus?: HydrationStatus,
+    resourceConfigs?: ResourceConfigDictionary,
+    liveBindings?: Schema[]
+): BindingFieldSelectionDictionary => {
+    const selections: BindingFieldSelectionDictionary = {};
+
+    bindingUUIDs.forEach((bindingUUID) => {
+        if (!existingSelections?.[bindingUUID]) {
+            let liveGroupByKey: string[] = [];
+
+            if (resourceConfigs && liveBindings && liveBindings.length > 0) {
+                const liveBindingIndex = hasOwnProperty(
+                    resourceConfigs,
+                    bindingUUID
+                )
+                    ? resourceConfigs[bindingUUID].meta.liveBindingIndex
+                    : -1;
+
+                liveGroupByKey =
+                    liveBindingIndex > -1
+                        ? (liveBindings[liveBindingIndex]?.fields?.groupBy ??
+                          [])
+                        : [];
+            }
+
+            selections[bindingUUID] = {
+                groupBy: {
+                    liveGroupByKey,
+                    value: { explicit: [], implicit: [] },
+                },
+                hasConflicts: false,
+                hydrating: defaultStatus ? isHydrating(defaultStatus) : false,
+                status: defaultStatus ?? 'HYDRATED',
+                validationAttempts: 0,
+                validationFailed: false,
+                value: {},
+            };
+
+            return;
+        }
+
+        selections[bindingUUID] = existingSelections[bindingUUID];
+    });
+
+    return selections;
+};
+
 export const STORE_KEY = 'Bindings';
 
 export const hydrateConnectorTagDependentState = async (
@@ -327,7 +388,9 @@ export const hydrateSpecificationDependentState = async (
         bindingChanges = get().prefillBindingDependentState(
             entityType,
             liveSpec.bindings,
-            draftSpecs[0].spec.bindings
+            draftSpecs[0].spec.bindings,
+            undefined,
+            true
         );
 
         const targetInterval = draftSpecs[0].spec?.interval;
@@ -345,7 +408,10 @@ export const hydrateSpecificationDependentState = async (
     } else {
         bindingChanges = get().prefillBindingDependentState(
             entityType,
-            liveSpec.bindings
+            liveSpec.bindings,
+            undefined,
+            undefined,
+            true
         );
 
         get().setCaptureInterval(
@@ -423,3 +489,22 @@ export const getInitialStoreDataAndKeepBindings = () => ({
     ...getInitialTimeTravelData(),
     ...getInitialBackfillData(),
 });
+
+export const removeBindingsFromDictionary = (
+    state: BindingState,
+    collection: string,
+    uuid: string
+) => {
+    const evaluatedBindings = state.bindings;
+
+    evaluatedBindings[collection] = state.bindings[collection].filter(
+        (bindingUUID) => bindingUUID !== uuid
+    );
+
+    state.bindings =
+        evaluatedBindings[collection].length === 0
+            ? omit(evaluatedBindings, collection)
+            : evaluatedBindings;
+
+    state.bindingErrorsExist = isEmpty(evaluatedBindings);
+};

@@ -3,6 +3,8 @@ import type { Schema } from 'src/types';
 
 import { useCallback, useMemo } from 'react';
 
+import { cloneDeep } from 'lodash';
+
 import { modifyDraftSpec } from 'src/api/draftSpecs';
 import {
     useEditorStore_persistedDraftId,
@@ -45,7 +47,7 @@ function useTimeTravel(bindingUUID: string, collectionName: string) {
             } else {
                 const collectionNameProp =
                     getCollectionNameProp('materialization');
-                const spec: Schema = draftSpecs[0].spec;
+                const spec: Schema = cloneDeep(draftSpecs[0].spec);
 
                 // See which binding we need to update
                 const existingBindingIndex = getBindingIndex(

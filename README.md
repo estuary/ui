@@ -1,10 +1,10 @@
 # Estuary UI
 
-The web UI for Estuary Flow.
+The web UI for Estuary.
 
 # How to install?
 
-Make sure Node and npm are installed.
+Ensure `node` and `npm` are both installed. Please check `package.json` for version info.
 
 Run: `npm install`
 
@@ -21,13 +21,9 @@ You need to update `~/.npmrc` with the following:
 
 [Github docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token).
 
-### npm ERR! code EINTEGRITY for `data-plane-gateway`
+### `data-plane-gateway` is outdated
 
-Every so often we need to reinstall the data plane stuff to update the integrity with the following:
-
-```
-npm run installDataPlane
-```
+Please see `__inline-deps__/README.md` for instructions
 
 ### Why don't I see logs locally?
 
@@ -39,11 +35,20 @@ To get logs you will need to grab this "pub id" and update the query... details 
 
 # How to start/run?
 
-Make sure [Estuary Flow](https://github.com/estuary/flow) and [Supabase CLI](https://github.com/supabase/cli) are installed and running.
+Make sure [Estuary](https://github.com/estuary/flow) is running.
 
 Run: `npm start`
 
 The UI is built to hit our own instance of Supabase. That means you will need to have that running locally as well.
+
+## How to log in locally
+
+1. On the login page, enter any email address and click **Sign in with Magic Link**.
+2. Open the local email UI at [http://localhost:5434/](http://localhost:5434/) (Mailpit).
+3. Find the magic link email for your address. You can either:
+   - Click the **Log In** link in the email, or
+   - Copy the OTP code from the email, click **Already have an OTP code?** on the login page, and paste it in.
+4. On first login you will be prompted to accept the terms of service and create an organization.
 
 # How to test against prod?
 
@@ -57,11 +62,11 @@ This will run a build and then start previewing it. When running as `preview` yo
 
 # Stuff we use
 
--   [TypeScript](https://github.com/microsoft/TypeScript) for code
--   [MUI](https://github.com/mui/material-ui) for components
--   [JSON Forms](https://github.com/eclipsesource/jsonforms) for forms
--   [Apache ECharts](https://github.com/apache/echarts) for charts
--   [Zustand](https://github.com/pmndrs/zustand) for local state
--   [Supabase](https://github.com/supabase) for server calls
--   [SWR](https://github.com/vercel/swr) for server calls
--   [Vite](https://github.com/vitejs) for build
+- [TypeScript](https://github.com/microsoft/TypeScript) for code
+- [MUI](https://github.com/mui/material-ui) for components
+- [JSON Forms](https://github.com/eclipsesource/jsonforms) for forms
+- [Apache ECharts](https://github.com/apache/echarts) for charts
+- [Zustand](https://github.com/pmndrs/zustand) for local state
+- [Supabase](https://github.com/supabase) for server calls
+- [SWR](https://github.com/vercel/swr) for server calls
+- [Vite](https://github.com/vitejs) for build

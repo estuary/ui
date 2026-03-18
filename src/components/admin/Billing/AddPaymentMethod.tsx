@@ -2,6 +2,7 @@ import type { Stripe } from '@stripe/stripe-js';
 
 import { Box, Dialog, DialogTitle } from '@mui/material';
 
+import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
@@ -32,6 +33,8 @@ function AddPaymentMethod({
     stripePromise,
     tenant,
 }: Props) {
+    const postHog = usePostHog();
+
     const enable =
         setupIntentSecret !== INTENT_SECRET_LOADING &&
         setupIntentSecret !== INTENT_SECRET_ERROR;
@@ -81,6 +84,10 @@ function AddPaymentMethod({
                                         );
 
                                         fireGtmEvent('Payment_Entered', {
+                                            tenant,
+                                        });
+
+                                        postHog.capture('Payment_Entered', {
                                             tenant,
                                         });
                                     }

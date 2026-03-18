@@ -1,11 +1,20 @@
 import type { RowProps, RowsProps } from 'src/components/tables/Schema/types';
-import type { InferSchemaResponseProperty } from 'src/types';
+import type { BuiltProjection } from 'src/types/schemaModels';
 
 import { useMemo } from 'react';
 
-import { Box, Stack, TableCell, TableRow } from '@mui/material';
+import {
+    Box,
+    Stack,
+    TableCell,
+    TableRow,
+    Tooltip,
+    useTheme,
+} from '@mui/material';
 
+import { Lock } from 'iconoir-react';
 import { orderBy } from 'lodash';
+import { useIntl } from 'react-intl';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import { FieldList } from 'src/components/tables/cells/projections/FieldList';
@@ -15,50 +24,93 @@ import {
     ROW_TYPE_STRING,
 } from 'src/components/tables/Schema/shared';
 import {
+    defaultOutlineColor,
+    diminishedTextColor,
     doubleElevationHoverBackground,
     getStickyTableCell,
 } from 'src/context/Theme';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { basicSort_string } from 'src/utils/misc-utils';
+import { translateRedactionStrategy } from 'src/utils/schema-utils';
 import { isColumnVisible } from 'src/utils/table-utils';
 
 function Row({ columns, row }: RowProps) {
+    const intl = useIntl();
+    const theme = useTheme();
+
     const workflow = useEntityWorkflow();
     const isCaptureWorkflow =
         workflow === 'capture_create' || workflow === 'capture_edit';
 
     const formattedTypes = useMemo(() => {
-        if (row.string_format) {
-            const stringIndex = row.types.findIndex(
-                (rowType) => rowType === ROW_TYPE_STRING
+        if (row.inference.string?.format && row.inference.types) {
+            const stringIndex = row.inference.types.findIndex(
+                (rowType: string) => rowType === ROW_TYPE_STRING
             );
             if (stringIndex > -1) {
-                row.types[stringIndex] =
-                    `${ROW_TYPE_STRING}: ${row.string_format}`;
+                row.inference.types[stringIndex] =
+                    `${ROW_TYPE_STRING}: ${row.inference.string.format}`;
             }
         }
 
-        return row.types;
+        return row.inference.types ?? [];
     }, [row]);
 
     const detailsColumnVisible =
         !isCaptureWorkflow ||
         isColumnVisible(columns, optionalColumnIntlKeys.details);
 
+    const fieldCannotExist = Boolean(row.inference.exists === 'CANNOT');
+    const redacted = Boolean(row.inference?.redact && row?.ptr);
+
     return (
         <TableRow
             sx={{
+                // Giving some more space since we show a tooltip on hover on redact for some fields
+                '& td': {
+                    py: 1.5,
+                },
                 '&:hover td': {
-                    background: (theme) =>
+                    background:
                         doubleElevationHoverBackground[theme.palette.mode],
                 },
             }}
         >
-            {row.name ? (
+            {redacted ? (
+                <TableCell style={{ paddingRight: 0 }}>
+                    <Stack style={{ alignItems: 'center' }}>
+                        <Tooltip
+                            placement="bottom-start"
+                            title={
+                                redacted
+                                    ? intl.formatMessage(
+                                          {
+                                              id: 'projection.tooltip.locationRedacted',
+                                          },
+                                          {
+                                              strategy:
+                                                  translateRedactionStrategy(
+                                                      row.inference.redact
+                                                  ),
+                                          }
+                                      )
+                                    : ''
+                            }
+                        >
+                            <Lock />
+                        </Tooltip>
+                    </Stack>
+                </TableCell>
+            ) : (
+                <TableCell />
+            )}
+
+            {row.field ? (
                 <FieldList
+                    cannotExist={fieldCannotExist}
                     editable={isCaptureWorkflow}
-                    field={row.name}
-                    pointer={row.pointer}
+                    field={row.field}
+                    pointer={row.ptr}
                     sticky
                 />
             ) : (
@@ -66,7 +118,43 @@ function Row({ columns, row }: RowProps) {
             )}
 
             <TableCell>
-                <code>{row.pointer}</code>
+                <Tooltip
+                    placement="bottom-start"
+                    title={
+                        redacted
+                            ? intl.formatMessage(
+                                  {
+                                      id: 'projection.tooltip.locationRedacted',
+                                  },
+                                  {
+                                      strategy: translateRedactionStrategy(
+                                          row.inference.redact
+                                      ),
+                                  }
+                              )
+                            : ''
+                    }
+                >
+                    <code
+                        style={
+                            row.inference.redact === 'REDACT_BLOCK'
+                                ? {
+                                      borderBottom: `1px dashed ${
+                                          defaultOutlineColor[
+                                              theme.palette.mode
+                                          ]
+                                      }`,
+                                      color: diminishedTextColor[
+                                          theme.palette.mode
+                                      ],
+                                      paddingBottom: 2,
+                                  }
+                                : undefined
+                        }
+                    >
+                        {row.ptr}
+                    </code>
+                </Tooltip>
             </TableCell>
 
             <ChipListCell
@@ -78,14 +166,22 @@ function Row({ columns, row }: RowProps) {
             {detailsColumnVisible ? (
                 <TableCell>
                     <Stack component="span" spacing={1}>
-                        {row.title ? <Box>{row.title}</Box> : null}
-                        {row.description ? <Box>{row.description}</Box> : null}
+                        {row.inference.title ? (
+                            <Box>{row.inference.title}</Box>
+                        ) : null}
+                        {row.inference.description ? (
+                            <Box>{row.inference.description}</Box>
+                        ) : null}
                     </Stack>
                 </TableCell>
             ) : null}
 
-            {isCaptureWorkflow && row.name ? (
-                <ProjectionActions field={row.name} pointer={row.pointer} />
+            {!fieldCannotExist && isCaptureWorkflow && row.field ? (
+                <ProjectionActions
+                    field={row.field}
+                    pointer={row.ptr}
+                    redactionStrategy={row.inference?.redact}
+                />
             ) : isCaptureWorkflow ? (
                 <TableCell />
             ) : null}
@@ -106,33 +202,20 @@ function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
         return (
             <>
                 {data
-                    .filter(
-                        (datum: InferSchemaResponseProperty) =>
-                            datum.exists === 'may' || datum.exists === 'must'
-                    )
-                    .sort(
-                        (
-                            first: InferSchemaResponseProperty,
-                            second: InferSchemaResponseProperty
-                        ) =>
-                            basicSort_string(
-                                first.name ?? '',
-                                second.name ?? '',
-                                sortDirection
-                            )
-                    )
-                    .map(
-                        (
-                            record: InferSchemaResponseProperty,
-                            index: number
-                        ) => (
-                            <Row
-                                columns={columns}
-                                row={record}
-                                key={`schema-table-rows-${index}`}
-                            />
+                    .sort((first: BuiltProjection, second: BuiltProjection) =>
+                        basicSort_string(
+                            first.field ?? '',
+                            second.field ?? '',
+                            sortDirection
                         )
-                    )}
+                    )
+                    .map((record: BuiltProjection, index: number) => (
+                        <Row
+                            columns={columns}
+                            row={record}
+                            key={`schema-table-rows-${record.ptr}-${index}`}
+                        />
+                    ))}
             </>
         );
     }
@@ -145,7 +228,7 @@ function Rows({ columns, data, sortDirection, columnToSort }: RowsProps) {
                     <Row
                         columns={columns}
                         row={record}
-                        key={`schema-table-rows-${index}`}
+                        key={`schema-table-rows-${record.ptr}-${index}`}
                     />
                 )
             )}

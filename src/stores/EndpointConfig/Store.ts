@@ -11,6 +11,8 @@ import produce from 'immer';
 import { isEmpty } from 'lodash';
 
 import { createJSONFormDefaults } from 'src/services/ajv';
+import { getDereffedSchema } from 'src/services/jsonforms';
+import { logRocketEvent } from 'src/services/shared';
 import {
     fetchErrors,
     filterErrors,
@@ -21,11 +23,7 @@ import {
     getInitialHydrationData,
     getStoreWithHydrationSettings,
 } from 'src/stores/extensions/Hydration';
-import {
-    configCanBeEmpty,
-    getDereffedSchema,
-    hasLength,
-} from 'src/utils/misc-utils';
+import { configCanBeEmpty, hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 const STORE_KEY = 'Endpoint Config';
@@ -98,12 +96,14 @@ const getInitialState = (
 
     setEndpointSchema: async (val) => {
         const resolved = await getDereffedSchema(val);
+
+        if (!resolved) {
+            get().setHydrationErrorsExist(true);
+            return;
+        }
+
         set(
             produce((state: EndpointConfigState) => {
-                if (!resolved) {
-                    state.setHydrationErrorsExist(true);
-                    return;
-                }
                 state.endpointSchema = resolved;
                 state.endpointCanBeEmpty = configCanBeEmpty(resolved);
 
@@ -177,6 +177,12 @@ const getInitialState = (
     setServerUpdateRequired: (updateRequired) => {
         set(
             produce((state: EndpointConfigState) => {
+                logRocketEvent('EndpointConfig', {
+                    storeUpdate: true,
+                    endpointCanBeEmpty: state.endpointCanBeEmpty,
+                    updateRequired,
+                });
+
                 state.serverUpdateRequired = state.endpointCanBeEmpty
                     ? false
                     : updateRequired;

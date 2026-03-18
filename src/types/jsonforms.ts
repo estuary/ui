@@ -7,6 +7,7 @@ export enum Options {
     multi = 'multi',
     nullable = 'nullable',
     format = 'format',
+    enumWithDescriptions = 'enum_with_descriptions',
     oauthProvider = 'oauth_provider',
     oauthFields = 'oauth_fields',
     oauthPathToFields = 'oauth_path_to_fields',
@@ -33,6 +34,7 @@ export enum Patterns {
 export enum Annotations {
     advanced = 'advanced', // Should be collapsed by default (over ridden if section contains required fields)
     oAuthProvider = 'x-oauth2-provider', // Used to display OAuth
+    iamAuth = 'x-iam-auth', // Used for iam authentication
     multiline = 'multiline', // text input should expect multiple lines
     order = 'order', // Used to order the fields in the UI
     secret = 'secret', // render as a password

@@ -2,9 +2,11 @@ export const endpointConfigHeader = `Endpoint Config`;
 export const CommonMessages: Record<string, string> = {
     // Misc
     'company': `Estuary`,
-    'productName': `Estuary Flow`,
+    'productName': `Estuary`,
     'expressFlowIntegration': `Powered by Estuary`,
-    'common.browserTitle': `Flow`,
+    'spec': `data flow specification`,
+
+    'common.browserTitle': `Estuary`,
     'common.loading': `Loading...`,
     'common.running': `Running...`,
     'common.deleting': `Deleting...`,
@@ -38,7 +40,6 @@ export const CommonMessages: Record<string, string> = {
     'common.tenant.creationForm': `Organization`,
     'common.recommended': `Recommended`,
     'common.copied': `Copied`,
-    'common.copyFailed': `Failed to copy`,
     'common.synchronizing': `Synchronizing`,
     'common.synchronized': `Synchronized`,
     'common.outOfSync': `Out of Sync`,
@@ -77,6 +78,7 @@ export const CommonMessages: Record<string, string> = {
     'terms.destinations': `Destinations`,
     'terms.destination.lowercase': `destination`,
     'terms.destinations.lowercase': `destinations`,
+    'terms.tenant': `Tenant`,
 
     // Terms V2
     // Not 100% sure on this approach yet. Like keeping all this together.
@@ -84,8 +86,8 @@ export const CommonMessages: Record<string, string> = {
     //  is just how react-intl handles it and we might end up rolling our own.
     'terms.bindings.plural': `{count, plural, one {binding} other {bindings}}`,
     'terms.collections.plural': `{count, plural, one {collection} other {collections}}`,
-    'terms.destinations.plural': `{count, plural, one {destination} other {destinations}}`,
-    'terms.sources.plural': `{count, plural, one {source} other {sources}}`,
+    'terms.destinations.plural': `{count, plural, one {materialization} other {materializations}}`,
+    'terms.sources.plural': `{count, plural, one {capture} other {captures}}`,
 
     // Common fields
     'entityPrefix.label': `Prefix`,
@@ -103,7 +105,7 @@ export const CommonMessages: Record<string, string> = {
     // Common sections
     'connectionConfig.header': `Connection Config`,
 
-    'commin.pathShort.prefix': '.../{path}',
+    'common.pathShort.prefix': '.../',
 
     // Alert messages
     'alert.error': 'Error',
@@ -134,6 +136,7 @@ export const CommonMessages: Record<string, string> = {
     'confirm.title': `Are you sure?`,
     'confirm.loseData': `You have unsaved work. If you continue, you will lose your changes.`,
     'confirm.oauth': `You are in the process of OAuth. If you continue, you will lose your changes.`,
+    'confirm.doNotShowAgain': `Do not show again`,
 
     // TODO (entity-status): Reassess once a decision is made regarding the language
     //   used to contextualize entity status.
@@ -141,4 +144,8 @@ export const CommonMessages: Record<string, string> = {
     'status.error.high': `High`,
     'status.error.low': `Low`,
     'status.error.medium': `Medium`,
+
+    // Leaves autocomplete validation
+    'leavesAutocomplete.mustStartWith.single': `Must start with "{root}"`,
+    'leavesAutocomplete.mustStartWith.multiple': `Must start with one of: {roots}`,
 };

@@ -19,7 +19,7 @@ export const Authentication: Record<string, string> = {
     'login.register.perks1': `{emphasis} required`,
     'login.register.perks2.emphasis': `free trial`,
     'login.register.perks2': `30 days {emphasis}`,
-    'login.register.perks3': `Build streaming and batch data flows fast, no code or infrastructure.`,
+    'login.register.perks3': `Build streaming and batch ${CommonMessages['terms.dataFlow'].toLowerCase()}s fast, no code or infrastructure.`,
     'login.register.perks3.emphasis': ``,
     'login.register.perks4': `Move data across 200+ sources and destinations instantly.`,
     'login.register.perks4.emphasis': ``,
@@ -29,7 +29,7 @@ export const Authentication: Record<string, string> = {
     'login.register.marketing.title': `${CommonMessages.productName} is the Universal Data Layer for real-time streaming and batch data integration`,
     'login.register.quote.name': `Jonni Lundy`,
     'login.register.quote.employment': `COO, Resend`,
-    'login.register.quote.body': `"Estuary Flow transformed how we operationalize our data for fraud, security, support, and beyond.. Instead of unreliable, expensive backfills, we have real-time visibility into platform activity. The proactive support and hands-on approach make all the difference."`,
+    'login.register.quote.body': `"${CommonMessages.company} transformed how we operationalize our data for fraud, security, support, and beyond. Instead of unreliable, expensive backfills, we have real-time visibility into platform activity. The proactive support and hands-on approach make all the difference."`,
 
     'login.register.alt.coalesce': `Coalesce`,
     'login.register.alt.resend': `Resend`,
@@ -104,6 +104,7 @@ export const Authentication: Record<string, string> = {
     'tenant.errorMessage.empty': `You must provide an organization name before continuing.`,
     'tenant.errorMessage.invalid': `Your organization name is invalid.`,
     'tenant.origin.errorMessage.empty': `Please let us know where you heard about us.`,
+    'tenant.warningMessage.problematic': `Looks like your organization name contains "test". This is generally not recommended as you cannot rename your organization later.`,
 
     'tenant.docs.message': `To see a detailed explanation please view our {link}`,
     'tenant.docs.message.link': `https://docs.estuary.dev/concepts/catalogs/#namespace`,
@@ -123,8 +124,8 @@ export const Authentication: Record<string, string> = {
     'tenant.origin.radio.linkedIn.label': `LinkedIn`,
     'tenant.origin.radio.other.label': `Other`,
 
-    'tenant.grantDirective.header': `Tenant shared with you`,
-    'tenant.grantDirective.message': `You have been provisioned {grantedCapability} access to the following tenant:`,
+    'tenant.grantDirective.header': `You've been invited to a ${CommonMessages['terms.tenant']}`,
+    'tenant.grantDirective.message': `You're invited to receive {grantedCapability} access to the following tenant:`,
 
     'tenant.grantDirective.error.header': `Unable to Provision Access`,
     'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,

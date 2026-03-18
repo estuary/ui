@@ -14,7 +14,7 @@ function useAppliedDirectives(type: keyof typeof DIRECTIVES, token?: string) {
 
     return useMemo(
         () => ({
-            appliedDirective: data
+            appliedDirective: Array.isArray(data)
                 ? (data[0] as AppliedDirective<any> | undefined)
                 : null,
             error,

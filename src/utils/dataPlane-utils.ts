@@ -6,6 +6,7 @@ import type {
 import type { Shard } from 'data-plane-gateway/types/shard_client';
 import type { ResponseError } from 'data-plane-gateway/types/util';
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type {
     DataPlaneName,
     DataPlaneOption,
@@ -16,7 +17,7 @@ import type { StorageMappingDictionary } from 'src/types';
 import { ShardClient, ShardSelector } from 'data-plane-gateway';
 
 import { client } from 'src/services/client';
-import { logRocketConsole } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import {
     DATA_PLANE_PREFIX,
     DATA_PLANE_SETTINGS,
@@ -25,7 +26,7 @@ import {
     getCollectionAuthorizationSettings,
     getTaskAuthorizationSettings,
 } from 'src/utils/env-utils';
-import { hasLength } from 'src/utils/misc-utils';
+import { hasLength, OPENID_HOST } from 'src/utils/misc-utils';
 
 export enum SHARD_LABELS {
     EXPOSE_PORT = 'estuary.dev/expose-port',
@@ -65,31 +66,61 @@ export const shouldRefreshToken = (errorMessage?: string | null) => {
     );
 };
 
+// Nothing special on selecting here other than making a hypothesis on
+//  what would balance wiggle room needed and not making the page unusable
+const TIMEOUT_MS = 3000;
+const LIST_TIMEOUT_ERROR_MESSAGE = 'Request timed out';
 export async function dataPlaneFetcher_list(
     shardClient: ShardClient,
     selector: ShardSelector,
     key: 'ShardsList'
 ): Promise<Shard[] | ResponseError['body']> {
-    // This can throw an error! Used within fetchers within SWR that is fine and SWR will handle it
-    // TODO (typing)
-    // I hate this but I need to get the bug finished
-    const result = await shardClient.list(selector as any);
+    // TODO (GQL) - once we can fetch the status from GQL I don't think we'll
+    //  need to handle adding in a synthentic timeout.
+    // data plane library allows calls to run forever so we fake this
+    //  this does NOT cancel the call and it will keep running in the background
+    //  but we should be replacing this with GQL anyway so it is okay (Q4 2025)
+    const timeoutPromise = new Promise<ReturnType<typeof shardClient.list>>(
+        async (resolve) => {
+            setTimeout(() => {
+                resolve({
+                    err: () => true,
+                    unwrap_err: () => ({
+                        body: { message: LIST_TIMEOUT_ERROR_MESSAGE },
+                    }),
+                } as any);
+            }, TIMEOUT_MS);
+        }
+    );
 
-    // Check for an error
+    // Race the actual call against the timeout
+    const result = await Promise.race([
+        shardClient.list(selector as any),
+        timeoutPromise,
+    ]);
+
     if (result.err()) {
-        // Unwrap the error, log the error, and reject the response
+        // Unwrap the error, log the error, and reject
         const error = result.unwrap_err();
-        logRocketConsole(`${key} : error : `, error);
+        logRocketEvent('DataPlaneGateway', {
+            key,
+            error: 'promiseError',
+            timeout: Boolean(error.body.message === LIST_TIMEOUT_ERROR_MESSAGE),
+        });
         return Promise.reject(error.body);
     }
 
     try {
         // No error so should be fine to unwrap
         const unwrappedResponse = result.unwrap();
-        return await Promise.resolve(unwrappedResponse);
+        return unwrappedResponse;
     } catch (error: unknown) {
         // This is just here to be safe. We'll keep an eye on it and possibly remove
         logRocketConsole(`${key} : unwrapError : `, error);
+        logRocketEvent('DataPlaneGateway', {
+            key,
+            error: 'unwrapException',
+        });
         return Promise.reject(error);
     }
 }
@@ -174,7 +205,7 @@ export const getJournals = async (
         { data: { selector } },
         brokerToken
     );
-
+/** @deprecated Scope is returned by dataplane gql query */
 export const getDataPlaneScope = (
     dataPlaneName: string
 ): DataPlaneOption['scope'] => {
@@ -220,6 +251,12 @@ const splitDataPlaneSuffix = (suffix: string, firstHyphenIndex: number) => {
     return [provider, region, cluster];
 };
 
+export function toPresentableName(dp: DataPlaneNode): string {
+    const dataPlaneName = parseDataPlaneName(dp.name, dp.scope);
+    return formatDataPlaneName(dataPlaneName);
+}
+
+/** @deprecated details are now returned by dataplane gql query */
 export const parseDataPlaneName = (
     dataPlaneName: string,
     scope: DataPlaneOption['scope']
@@ -251,7 +288,7 @@ export const parseDataPlaneName = (
 
     return { cluster, prefix, provider, region, whole: dataPlaneName };
 };
-
+/** @deprecated use toPresentableName(dataPlane: DataPlaneNode) */
 export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
     const { cluster, provider, region, whole } = dataPlaneName;
 
@@ -262,10 +299,15 @@ export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {
     return formattedName.trim();
 };
 
+export const formatIamOidc = (dataPlaneFqdn: string) => {
+    return `${OPENID_HOST}/${dataPlaneFqdn}/`;
+};
+
 // TODO (data-planes): Determine whether this function should always be called
 //   from a hook. Given the matched storage mapping must be matched to figure
 //   out what the default data-plane name is, it makes more sense to call this
 //   util from a hook that can reference storage mapping state directly.
+/** @deprecated  */
 export const generateDataPlaneOption = (
     { data_plane_name, id, reactor_address, cidr_blocks }: BaseDataPlaneQuery,
     defaultDataPlaneName?: string

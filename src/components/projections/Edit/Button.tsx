@@ -1,4 +1,5 @@
-import type { EditProjectionButtonProps } from 'src/components/projections/Edit/types';
+import type { BaseProjectionProps } from 'src/components/projections/types';
+import type { BaseButtonProps } from 'src/types';
 
 import { useState } from 'react';
 
@@ -12,7 +13,7 @@ function EditProjectionButton({
     disabled,
     field,
     pointer,
-}: EditProjectionButtonProps) {
+}: BaseButtonProps & BaseProjectionProps) {
     const intl = useIntl();
 
     const [open, setOpen] = useState(false);

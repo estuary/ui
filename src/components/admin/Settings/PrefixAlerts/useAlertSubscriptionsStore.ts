@@ -17,11 +17,15 @@ interface AlertSubscriptionState {
         subscriptions: AlertSubscriptionState['subscriptions'],
         error: AlertSubscriptionState['initializationError']
     ) => void;
+    inputUncommitted: boolean;
     prefix: string;
     prefixErrorsExist: boolean;
     saveErrors: (PostgrestError | null | undefined)[];
     subscriptions: PrefixSubscriptionDictionary | null | undefined;
     resetState: () => void;
+    setInputUncommitted: (
+        value: AlertSubscriptionState['inputUncommitted']
+    ) => void;
     setSaveErrors: (value: AlertSubscriptionState['saveErrors']) => void;
     setUpdatedEmails: (value: AlertSubscriptionState['updatedEmails']) => void;
     updatePrefix: (value: string, errors: string | null) => void;
@@ -32,6 +36,7 @@ const getInitialState = (): Pick<
     AlertSubscriptionState,
     | 'existingEmails'
     | 'initializationError'
+    | 'inputUncommitted'
     | 'prefix'
     | 'prefixErrorsExist'
     | 'saveErrors'
@@ -40,6 +45,7 @@ const getInitialState = (): Pick<
 > => ({
     existingEmails: {},
     initializationError: null,
+    inputUncommitted: false,
     prefix: '',
     prefixErrorsExist: false,
     saveErrors: [],
@@ -85,6 +91,15 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                 ),
 
             resetState: () => set(getInitialState(), false, 'state reset'),
+
+            setInputUncommitted: (value) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.inputUncommitted = value;
+                    }),
+                    false,
+                    'input uncommitted set'
+                ),
 
             setSaveErrors: (value) =>
                 set(

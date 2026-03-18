@@ -1,24 +1,3 @@
-declare global {
-    interface Window {
-        Estuary: {
-            api_endpoint: string | null;
-            auth_url: string | null;
-            enableDataFlowReset: boolean;
-        } | null;
-        dataLayer?: any[]; // Must match name we pass to GTM in index.html
-        monaco: any;
-        __REDUX_DEVTOOLS_EXTENSION__: any;
-        // TODO (integrity | logrocket)
-        // When we load in LogRocket with a script tag we'll want this
-        // LogRocket?: {
-        //     identify: Function;
-        //     init: Function;
-        //     log: Function;
-        //     track: Function;
-        // };
-    }
-}
-
 const ENABLED = 'true';
 
 export const isProduction = import.meta.env.PROD;
@@ -118,6 +97,22 @@ export const getLogRocketSettings = (): Settings | null => {
                 text: import.meta.env.VITE_LOGROCKET_SANITIZE_TEXT === ENABLED,
             },
         };
+    }
+
+    return null;
+};
+
+export const getPostHogSettings = () => {
+    if (import.meta.env.VITE_PH_ENABLED === ENABLED) {
+        const settings = {
+            apiHost: import.meta.env.VITE_PH_API_HOST ?? null,
+            publicToken: import.meta.env.VITE_PH_PUBLIC_API_TOKEN ?? null,
+            idUser: import.meta.env.VITE_PH_ID_USER === ENABLED,
+        };
+
+        if (Boolean(settings.apiHost && settings.publicToken)) {
+            return settings;
+        }
     }
 
     return null;

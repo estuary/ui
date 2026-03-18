@@ -44,11 +44,7 @@ export const getUserDetails = (
 };
 
 export const logRocketConsole = (message: string, ...props: any[]) => {
-    // Just want to be very very safe
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (LogRocket?.log) {
-        LogRocket.log(message, props);
-    }
+    LogRocket.log(message, props);
 
     if (!isProduction) {
         console.log(message, props);
@@ -56,39 +52,55 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
 };
 
 export const logRocketEvent = (
-    event: CustomEvents | KnownEvents | string,
+    // (string & {}) preserves autocomplete for CustomEvents and KnownEvents while allowing arbitrary strings
+    event: CustomEvents | KnownEvents | (string & {}),
     eventProperties?: any
 ) => {
-    // Just want to be very very safe
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (LogRocket?.track) {
-        LogRocket.track(event, eventProperties);
-    }
+    // !!! NO AUTO POSTHOG TRACKING HERE !!!
+    // !!! NO AUTO POSTHOG TRACKING HERE !!!
+    // !!! NO AUTO POSTHOG TRACKING HERE !!!
+    //  We use LogRocket for support so we can be a bit less strict with what
+    //  we pass back as only engineers, support, etc. have access and the only
+    //  this it is used for is support of the product. If you want to track something
+    //  we are firing in LogRocket in PostHog then you need to ensure the `eventProperties`
+    //  are safe to pass to PostHog.
+    // !!! NO AUTO POSTHOG TRACKING HERE !!!
+    // !!! NO AUTO POSTHOG TRACKING HERE !!!
+    // !!! NO AUTO POSTHOG TRACKING HERE !!!
+    LogRocket.track(event, eventProperties);
+};
 
-    logRocketConsole(`Event Logging : ${event}`, eventProperties);
+const GRAPHQL_NETWORK_ERRORS = {
+    NOT_FOUND: '[Network] Not Found',
 };
 
 export const FAILED_TO_FETCH = 'FAILED TO FETCH';
-export const RESPONSE_JSON_NOT_FN = 'RESPONSE.JSON IS NOT A FUNCTION';
-export const REQUEST_FAILED = 'REQUEST FAILED';
-export const STATEMENT_TIMEOUT = 'STATEMENT TIMEOUT';
+const RESPONSE_JSON_NOT_FN = 'RESPONSE.JSON IS NOT A FUNCTION';
+const REQUEST_FAILED = 'REQUEST FAILED';
+const STATEMENT_TIMEOUT = 'STATEMENT TIMEOUT';
 export const FETCH_DEFAULT_ERROR = 'Server Error';
 
 // Lazy Loading Errors
-export const FAILED_TO_FETCH_DYNAMIC_IMPORT =
+const FAILED_TO_FETCH_DYNAMIC_IMPORT =
     'FAILED TO FETCH DYNAMICALLY IMPORTED MODULE';
-export const IMPORTING_SCRIPT_FAILED = 'IMPORTING A MODULE SCRIPT FAILED';
-export const LOADING_CHUNK = 'LOADING CHUNK';
+const IMPORTING_SCRIPT_FAILED = 'IMPORTING A MODULE SCRIPT FAILED';
+const LOADING_CHUNK = 'LOADING CHUNK';
 
-export const RETRY_REASONS = [
+const RETRY_REASONS = [
     RESPONSE_JSON_NOT_FN, // We will retry mainly due to the new reactor endpoints sometimes return this
     FAILED_TO_FETCH,
     REQUEST_FAILED,
     STATEMENT_TIMEOUT,
     FETCH_DEFAULT_ERROR,
 ];
-export const NETWORK_ERRORS = [FAILED_TO_FETCH, RESPONSE_JSON_NOT_FN];
-export const LAZY_LOAD_ERRORS = [
+
+const NETWORK_ERRORS = [
+    FAILED_TO_FETCH,
+    RESPONSE_JSON_NOT_FN,
+    GRAPHQL_NETWORK_ERRORS.NOT_FOUND,
+];
+
+const LAZY_LOAD_ERRORS = [
     FAILED_TO_FETCH_DYNAMIC_IMPORT,
     IMPORTING_SCRIPT_FAILED,
     LOADING_CHUNK,

@@ -16,6 +16,7 @@ import {
     useEditorStore_setCatalogName,
     useEditorStore_setDraftInitializationError,
     useEditorStore_setId,
+    useEditorStore_setLiveBuiltSpec,
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
 import useEntityEditNavigate from 'src/components/shared/Entity/hooks/useEntityEditNavigate';
@@ -27,6 +28,7 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { isTaskDisabled } from 'src/utils/entity-utils';
 
 interface SupabaseConfig {
     createNew: boolean;
@@ -59,6 +61,7 @@ function useInitializeTaskDraft() {
     const setDraftInitializationError =
         useEditorStore_setDraftInitializationError();
     const setCatalogName = useEditorStore_setCatalogName();
+    const setLiveBuiltSpec = useEditorStore_setLiveBuiltSpec();
 
     // const persistedDraftId = useEditorStore_persistedDraftId();
     const setPersistedDraftId = useEditorStore_setPersistedDraftId();
@@ -73,6 +76,8 @@ function useInitializeTaskDraft() {
 
             if (liveSpecResponse.data && liveSpecResponse.data.length > 0) {
                 setCatalogName(liveSpecResponse.data[0].catalog_name);
+                setLiveBuiltSpec(liveSpecResponse.data[0].built_spec);
+
                 return liveSpecResponse.data[0];
             } else {
                 setDraftInitializationError({
@@ -82,7 +87,12 @@ function useInitializeTaskDraft() {
 
                 return null;
             }
-        }, [liveSpecId, setCatalogName, setDraftInitializationError]);
+        }, [
+            liveSpecId,
+            setCatalogName,
+            setDraftInitializationError,
+            setLiveBuiltSpec,
+        ]);
 
     const getTaskDraft = useCallback(
         async ({
@@ -217,7 +227,7 @@ function useInitializeTaskDraft() {
                     // Force disabled materializations enabled. This way when a test is ran
                     //  there will not be an error and the backend will connect to the connector
                     const forceEnabled =
-                        Boolean(task.spec?.shards?.disable) &&
+                        isTaskDisabled(task.spec) &&
                         taskSpecType === 'materialization';
                     if (forceEnabled) {
                         task.spec.shards.disable = false;

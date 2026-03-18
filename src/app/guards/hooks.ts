@@ -42,7 +42,6 @@ const useDirectiveGuard = (
             return null;
         }
 
-        setServerError(error ?? null);
         if (error) {
             return 'errored';
         }
@@ -61,13 +60,17 @@ const useDirectiveGuard = (
         serverError,
     ]);
 
+    useEffect(() => {
+        setServerError(error ?? null);
+    }, [error]);
+
     // The memo above was getting called more often than planned and I think it might have
     //  been part of https://github.com/estuary/ui/issues/999. So the thinking here is that
     //  we only really care to update if the value actually changed and that might prevent
     //  extra hook calls that end up getting "confused"
     useEffect(() => {
         logRocketEvent(CustomEvents.DIRECTIVE_GUARD_STATE, {
-            state: directiveState,
+            state: directiveState ?? 'null',
         });
         setCalculatedState(directiveState);
     }, [directiveState]);

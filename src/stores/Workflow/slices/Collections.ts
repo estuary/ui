@@ -1,0 +1,153 @@
+import type { CollectionDef } from 'src/types/wasm';
+import type { NamedSet } from 'zustand/middleware';
+
+export interface CollectionMetadata {
+    spec: CollectionDef | null;
+    belongsToDraft: boolean;
+
+    // TODO (schema edit?) this is a lot to transfer but should come over here
+    // ui/src/components/editor/Bindings/Store/types.ts
+    // Needs state machine status - NO BOOLEANS!
+    // editor state
+    // initAlert: any;
+    // initComplete: boolean;
+    // schemaUpdating: boolean;
+    // schemaUpdated: boolean;
+    // schemaUpdateErrored: boolean;
+
+    // ui/src/stores/Binding/types.ts
+    // Workflow State/meta
+    // added?: boolean;
+    // previouslyBound?: boolean;
+    // sourceBackfillRecommended?: boolean;
+    // trialStorage?: boolean;
+    // updatedAt?: string;
+
+    // Needed for useInitializeCollectionDraft
+    // last_pub_id: any;
+}
+
+// More useful when we have a bigger object but leaving for now
+export const generateDefaultCollectionMetadata = (
+    definition: Partial<CollectionMetadata>
+): CollectionMetadata => {
+    return {
+        spec: null,
+        belongsToDraft: false,
+        ...definition,
+    };
+};
+
+interface CollectionDictionary {
+    [collection: string]: CollectionMetadata;
+}
+
+export interface StoreWithCollections {
+    collections: CollectionDictionary;
+    // TODO (schema edit)
+    //  this is NOT the name we want long term (99% sure of that). Making it this so
+    //  it is easy to find when coming back and wiring edit up to this
+    upsertCollection: (
+        collectionName: string,
+        meta: Partial<CollectionMetadata>
+    ) => void;
+    initializeCollections: (collections: Map<string, any>) => void;
+
+    collectionsError: boolean;
+    setCollectionsError: (newVal: boolean) => void;
+    collectionsInited: boolean;
+
+    // TODO (schema edit)
+    // Leaning towards this not being needed
+    // removeCollections: (collection: string) => void;
+}
+
+export const getInitialCollectionData = (): Pick<
+    StoreWithCollections,
+    'collections' | 'collectionsError' | 'collectionsInited'
+> => ({
+    collections: {},
+    collectionsError: false,
+    collectionsInited: false,
+});
+
+export const getStoreWithCollectionSettings = (
+    set: NamedSet<StoreWithCollections>
+): StoreWithCollections => ({
+    ...getInitialCollectionData(),
+
+    upsertCollection: (collection, meta) => {
+        set(
+            (state) => ({
+                ...state,
+                collections: {
+                    ...state.collections,
+                    [collection]: {
+                        ...(state.collections[collection] ?? {}),
+                        ...meta,
+                    },
+                },
+            }),
+            false,
+            'upsertCollection'
+        );
+    },
+
+    setCollectionsError: (collectionsError) => {
+        set(
+            (state) => ({
+                ...state,
+                collectionsError,
+            }),
+            false,
+            'setCollectionsError'
+        );
+    },
+
+    initializeCollections: (collections) => {
+        // useCollectionsHydrator calls this and that hooks has special handling
+        //  for when there is NO spec vs an empty bindings array (potentially due to all disabled)
+        //  this means that in this function it is safe to make this is done when collections is empty.
+        // When this functionality was added we did not set `inited` here because we treated collections being empty
+        //  due to missing draft spec, empty bindings, OR all disabled bindings that same - WRONG. It causes
+        //  issues with FieldSelect being able to refresh a binding because if everything was disabled the collections
+        //  would be in an infinite loop of hydrating.
+        if (collections.size < 1) {
+            set(
+                (state) => ({
+                    ...state,
+                    collectionsInited: true,
+                }),
+                false,
+                'initializeCollections_empty'
+            );
+            return;
+        }
+
+        set(
+            (state) => ({
+                ...state,
+                collectionsInited: true,
+                collections: {
+                    ...state.collections,
+                    ...Object.fromEntries(collections),
+                },
+            }),
+            false,
+            'initializeCollections'
+        );
+    },
+
+    // removeCollections: (name) => {
+    //     set((state) => {
+    //         return {
+    //             ...state,
+    //             collections: Object.fromEntries(
+    //                 Object.entries(state.collections).filter(
+    //                     ([key]) => !name.includes(key)
+    //                 )
+    //             ),
+    //         };
+    //     });
+    // },
+});

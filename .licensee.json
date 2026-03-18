@@ -39,7 +39,10 @@
         "jsonify": "0.0.1",
 
         "// BSL (only when hacking it in)": "0.0.0",
-        "flow-web": "0.5.12",
+        "flow-web": "0.6.1",
+
+        "// Apache": "0.0.0",
+        "posthog-js": "1.345.5",
 
         "// LGPL - only used for image processing and easy to remove": "0.0.0",
         "@img/sharp-libvips-linux-x64": "1.1.0",

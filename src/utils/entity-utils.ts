@@ -3,7 +3,15 @@ import type { Projections } from 'src/types/schemaModels';
 
 import produce from 'immer';
 
-import { hasLength, specContainsDerivation } from 'src/utils/misc-utils';
+import {
+    hasLength,
+    hasOwnProperty,
+    specContainsDerivation,
+} from 'src/utils/misc-utils';
+
+// Allowing field selection validation to be retried a single time
+// in the event additional resources are not available initially.
+export const MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS = 1;
 
 export const updateShardDisabled = (draftSpec: any, enabling: boolean) => {
     draftSpec.shards ??= {};
@@ -147,4 +155,24 @@ export const getExistingPartition = (
     }
 
     return existingProjection[1].partition;
+};
+
+export const isTaskDisabled = (spec: any) => {
+    return Boolean(spec?.shards?.disable);
+};
+
+export const setFieldsStanzaRecommended = (
+    binding: Schema,
+    source: SourceCaptureDef | null
+) => {
+    const value: boolean | number | undefined =
+        source && hasOwnProperty(source, 'fieldsRecommended')
+            ? source.fieldsRecommended
+            : undefined;
+
+    if (typeof value !== 'undefined' && !binding?.fields) {
+        binding.fields = { recommended: value };
+    }
+
+    return binding;
 };

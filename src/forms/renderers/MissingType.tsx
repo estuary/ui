@@ -21,8 +21,9 @@ const MissingTypeRenderer = (props: LayoutProps) => {
     } = props;
 
     // jsonforms - missing type
-    // This is here so when connectors like Google Sheets have an Authentication
-    //  that only has discriminator, title, and oneOf.
+    // This handles when connectors:
+    //      1. has an authentication that only has discriminator, title, and oneOf (Google Sheets)
+    //      2. has a `discriminator.mapping` that points to multiple objects (Source Shopify Native)
     // After we render the oneOf there is nothing left but the title and discriminator.
     // This leads to Custom_MaterialOneOfRenderer_Discriminator trying to get a UI schema
     //  from just a title and discriminator and deriveTypes will return no types.

@@ -2,6 +2,7 @@ import type { TransformConfig } from 'src/stores/TransformationCreate/types';
 
 import { useCallback, useMemo } from 'react';
 
+import { usePostHog } from '@posthog/react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
 
@@ -14,6 +15,7 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import { EVENT_NAME } from 'src/components/transformation/create/shared';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import {
@@ -39,6 +41,7 @@ function InitializeDraftButton({
     entityNameError,
     selectedCollections,
 }: Props) {
+    const postHog = usePostHog();
     const navigate = useNavigate();
 
     // Draft Editor Store
@@ -132,7 +135,15 @@ function InitializeDraftButton({
                     'collection'
                 );
 
+                const collectionCount = selectedCollections.size;
+
                 if (draftSpecResponse.error) {
+                    postHog.capture(EVENT_NAME, {
+                        collectionCount,
+                        language,
+                        status: 'failure',
+                    });
+
                     setFormState({
                         status: FormStatus.FAILED,
                         error: {
@@ -146,11 +157,22 @@ function InitializeDraftButton({
 
                     setFormState({ status: FormStatus.GENERATED });
 
+                    postHog.capture(EVENT_NAME, {
+                        collectionCount,
+                        language,
+                        status: 'success',
+                    });
+
                     // TODO (transform): Replace this with the navigate to create workflow hook and the production-ready URL
                     //   when it is time to launch this feature.
                     navigate(authenticatedRoutes.beta.new.fullPath);
                 }
             } else {
+                postHog.capture(EVENT_NAME, {
+                    collectionCount: -1,
+                    language,
+                    status: 'failure',
+                });
                 setFormState({ status: FormStatus.FAILED });
             }
         }
@@ -160,6 +182,7 @@ function InitializeDraftButton({
         entityName,
         language,
         navigate,
+        postHog,
         selectedCollections,
         setCatalogName,
         setDraftId,

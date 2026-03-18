@@ -1,13 +1,14 @@
 import type { ChipProps } from '@mui/material';
 
-import { Box, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { MoreVert } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import StyledChip from 'src/components/schema/KeyAutoComplete/StyledChip';
 import { truncateTextSx } from 'src/context/Theme';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 interface Props {
     tagProps: Partial<ChipProps>;
@@ -17,6 +18,8 @@ interface Props {
 
 function SortableTag({ tagProps, label, validOption }: Props) {
     const intl = useIntl();
+    const theme = useTheme();
+
     const {
         attributes,
         listeners,
@@ -46,15 +49,29 @@ function SortableTag({ tagProps, label, validOption }: Props) {
             {...attributes}
         >
             {validOption ? (
-                <StyledChip
-                    componentProps={{
-                        chip: tagProps,
-                        icon: {
-                            ref: setActivatorNodeRef,
-                            ...listeners,
+                <OutlinedChip
+                    {...tagProps}
+                    icon={
+                        <IconButton
+                            ref={setActivatorNodeRef}
+                            {...listeners}
+                            size="small"
+                            sx={{
+                                '&:hover': {
+                                    color: theme.palette.text.primary,
+                                },
+                            }}
+                        >
+                            <MoreVert />
+                        </IconButton>
+                    }
+                    label={label}
+                    sx={{
+                        '.MuiChip-icon': {
+                            marginLeft: 0,
                         },
                     }}
-                    label={label}
+                    variant="outlined"
                 />
             ) : (
                 <Tooltip
@@ -63,18 +80,20 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                     })}
                 >
                     <Box>
-                        <StyledChip
-                            componentProps={{
-                                chip: {
-                                    ...tagProps,
-                                    color: 'error',
-                                },
-                                icon: {
-                                    ref: setActivatorNodeRef,
-                                    ...listeners,
-                                },
-                            }}
+                        <OutlinedChip
+                            {...tagProps}
+                            color="error"
+                            icon={
+                                <IconButton
+                                    ref={setActivatorNodeRef}
+                                    {...listeners}
+                                    size="small"
+                                >
+                                    <MoreVert />
+                                </IconButton>
+                            }
                             label={label}
+                            variant="outlined"
                         />
                     </Box>
                 </Tooltip>

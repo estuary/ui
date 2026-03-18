@@ -91,17 +91,18 @@ export const useBinding_resourceConfigErrors = () => {
     return useBindingStore((state) => state.resourceConfigErrors);
 };
 
-export const useBinding_resourceConfigOfBindingProperty = (
-    bindingUUID: any,
-    property: keyof ResourceConfig
-) => {
+export const useBinding_resourceConfigOfBindingProperty = <
+    K extends keyof ResourceConfig,
+>(
+    bindingUUID: string | undefined,
+    property: K
+): ResourceConfig[K] | null => {
     return useBindingStore(
         useShallow((state) => {
             if (!bindingUUID) {
                 return null;
             }
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            return state.resourceConfigs[bindingUUID]?.[property];
+            return state.resourceConfigs[bindingUUID]?.[property] ?? null;
         })
     );
 };
@@ -117,7 +118,6 @@ export const useBinding_resourceConfigOfMetaBindingProperty = <
             if (!bindingUUID) {
                 return null;
             }
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return state.resourceConfigs[bindingUUID]?.meta?.[property];
         })
     );
@@ -269,44 +269,12 @@ export const useBinding_backfillAllBindings = () => {
     return useBindingStore((state) => state.backfillAllBindings);
 };
 
-export const useBinding_recommendFields = () => {
-    return useBindingStore((state) => state.recommendFields);
-};
-
-export const useBinding_setRecommendFields = () => {
-    return useBindingStore((state) => state.setRecommendFields);
-};
-
-export const useBinding_selections = () => {
-    return useBindingStore((state) => state.selections);
-};
-
-export const useBinding_initializeSelections = () => {
-    return useBindingStore((state) => state.initializeSelections);
-};
-
-export const useBinding_setSingleSelection = () => {
-    return useBindingStore((state) => state.setSingleSelection);
-};
-
-export const useBinding_setMultiSelection = () => {
-    return useBindingStore((state) => state.setMultiSelection);
-};
-
 export const useBinding_searchQuery = () => {
     return useBindingStore((state) => state.searchQuery);
 };
 
 export const useBinding_setSearchQuery = () => {
     return useBindingStore((state) => state.setSearchQuery);
-};
-
-export const useBinding_selectionSaving = () => {
-    return useBindingStore((state) => state.selectionSaving);
-};
-
-export const useBinding_setSelectionSaving = () => {
-    return useBindingStore((state) => state.setSelectionSaving);
 };
 
 export const useBinding_fullSourceOfBinding = (bindingUUID: any) => {
@@ -375,7 +343,7 @@ export const useBinding_collectionsBeingBackfilled = () =>
                 state.backfilledBindings
                     // There is a chance that during rehydration that the resourceConfigs will be
                     //  empty for a little bit. This happens during materialization when a user marks
-                    //  things for backfill, edits the endpoint config, and generates a new catalog.Z
+                    //  things for backfill, edits the endpoint config, and generates a new catalog.
                     .filter((datum) =>
                         Boolean(state.resourceConfigs?.[datum]?.meta)
                     )
@@ -432,5 +400,30 @@ export const useBinding_setCurrentBindingWithTimeout = (
             }
         },
         [currentBindingUUID, setCurrentBinding]
+    );
+};
+
+export const useBinding_hasFieldConflicts = (bindingUUID?: string) => {
+    return useBindingStore((state) =>
+        bindingUUID
+            ? Boolean(state.selections?.[bindingUUID]?.hasConflicts)
+            : Object.values(state.selections).some(
+                  (selection) => selection.hasConflicts
+              )
+    );
+};
+
+export const useBinding_fieldSelectionValidationContext = () => {
+    return useBindingStore(
+        useShallow((state) =>
+            Object.entries(state.selections)
+                .filter(
+                    ([_uuid, { status }]) => status === 'VALIDATION_REQUESTED'
+                )
+                .map(([uuid, { validationAttempts }]) => ({
+                    uuid,
+                    validationAttempts,
+                }))
+        )
     );
 };

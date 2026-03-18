@@ -1,7 +1,7 @@
 import type { JsonFormsCore } from '@jsonforms/core';
 import type { TableCellProps } from '@mui/material';
 import type { PostgrestError } from '@supabase/supabase-js';
-import type { ReactNode } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
@@ -389,30 +389,7 @@ export type ParsedStream =
     | 'cleanup'
     | 'activate';
 
-export interface InferSchemaResponse {
-    properties: InferSchemaResponseProperty[];
-}
-
-export type FieldExistence = 'may' | 'must' | 'cannot' | 'implicit';
-
-export interface InferSchemaResponseProperty {
-    is_pattern_property: boolean;
-    // https://github.com/estuary/flow/blob/db2cdd86825132ee7e0bcac8b432712ab5866c83/crates/doc/src/inference.rs#L1121
-    exists: FieldExistence;
-    title: string;
-    reduction: string;
-    pointer: string;
-    types: string[];
-    enum_vals: any[];
-    name?: string;
-    description?: string;
-    string_format?: string;
-}
-
-export interface InferSchemaPropertyForRender
-    extends InferSchemaResponseProperty {
-    allowedToBeKey: boolean;
-}
+export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
 
 export interface AutoDiscoverySettings {
     addNewBindings: boolean;
@@ -484,6 +461,16 @@ export interface DekafConfig {
 export interface SourceCaptureDef {
     capture?: string;
     deltaUpdates?: boolean;
+    fieldsRecommended?: boolean | number;
     targetSchema?: TargetSchemas; // targetSchema was renamed to targetNaming
     targetNaming?: TargetSchemas;
+}
+
+export interface BaseButtonProps {
+    disabled?: boolean;
+}
+
+export interface BaseDialogProps {
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
 }

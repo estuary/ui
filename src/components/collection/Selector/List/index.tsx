@@ -311,11 +311,13 @@ function CollectionSelectorList({
                         onClick={(event) => {
                             if (filteredRows && filteredRows.length > 0) {
                                 bindingSelectorCells.remove?.handler?.(
-                                    filteredRows.map((datum) => {
-                                        return datum[
+                                    filteredRows.map((datum) => ({
+                                        collection:
+                                            datum[COLLECTION_SELECTOR_NAME_COL],
+                                        uuid: datum[
                                             COLLECTION_SELECTOR_UUID_COL
-                                        ];
-                                    })
+                                        ],
+                                    }))
                                 );
 
                                 // We need to clear out the filter

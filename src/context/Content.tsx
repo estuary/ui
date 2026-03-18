@@ -17,6 +17,9 @@ const ContentProvider = ({ children }: BaseComponentProps) => {
             defaultLocale="en-US"
             locale={userLang}
             messages={enUSMessages}
+            defaultRichTextElements={{
+                b: (chunks) => <strong>{chunks}</strong>,
+            }}
             onError={(err: any) => {
                 logRocketEvent(CustomEvents.TRANSLATION_KEY_MISSING, {
                     key: err?.descriptor?.id ?? err?.message ?? MISSING,

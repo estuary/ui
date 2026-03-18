@@ -3,39 +3,60 @@ import type {
     PostgrestFilterBuilder,
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
+import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { ReactElement, ReactNode } from 'react';
 import type { BaseGrant, Grant_UserExt } from 'src/types';
 
 import { isEmpty, isObject } from 'lodash';
 import { createSearchParams } from 'react-router-dom';
 
-import { derefSchema } from 'src/services/jsonforms';
 import { logRocketConsole } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
+export const OPENID_HOST = 'https://openid.estuary.dev';
 
 export const RESPONSE_DATA_LIMIT = 1000;
 
 // Default size used when splitting up larged promises
 export const CHUNK_SIZE = 10;
 
-const JOURNAL_READ_ERRORS = [
-    'JOURNAL_NOT_FOUND',
+// Descriptions of these:
+// https://github.com/gazette/core/blob/2580071332a6bf7f9302af1e513391f8c6539f5d/broker/protocol/protocol.proto#L20
+export const JOURNAL_READ_WARNINGS = ['OFFSET_NOT_YET_AVAILABLE'];
+export const JOURNAL_READ_ERRORS = [
+    // temporary and quickly resolved
     'NO_JOURNAL_PRIMARY_BROKER',
+
+    // journal is suspended
+    // checked for data preview - ui/src/components/collection/DataPreview/HydrationError.tsx
+    'SUSPENDED',
+
+    // misc journal stuff
     'NOT_JOURNAL_PRIMARY_BROKER',
     'NOT_JOURNAL_BROKER',
     'INSUFFICIENT_JOURNAL_BROKERS',
-    'OFFSET_NOT_YET_AVAILABLE',
+
+    // peer disagreements
     'WRONG_ROUTE',
     'PROPOSAL_MISMATCH',
+
+    // transaction failure
     'ETCD_TRANSACTION_FAILED',
+
+    // access error
     'NOT_ALLOWED',
+
+    // read failure
     'WRONG_APPEND_OFFSET',
     'INDEX_HAS_GREATER_OFFSET',
     'REGISTER_MISMATCH',
+    'JOURNAL_NOT_FOUND',
 ];
+export const journalStatusIsWarning = (status: ProtocolStatus | undefined) => {
+    return status ? JOURNAL_READ_WARNINGS.includes(status) : false;
+};
 export const journalStatusIsError = (status: string | undefined) => {
     return status ? JOURNAL_READ_ERRORS.includes(status) : false;
 };
@@ -70,6 +91,9 @@ export const hasLength = (val: string | any[] | null | undefined): boolean => {
 
 export const appendWithForwardSlash = (value: string): string =>
     hasLength(value) && !value.endsWith('/') ? `${value}/` : value;
+
+export const replaceWhitespacesWithUnderscores = (value: string): string =>
+    value.replaceAll(/\s/g, '_');
 
 export const encodeParamVal = (val: any) => {
     if (typeof val === 'boolean') {
@@ -207,11 +231,6 @@ export const basicSort_string = (
     return b.localeCompare(a);
 };
 
-export const getDereffedSchema = async (val: any) => {
-    const response = val ? await derefSchema(val) : val;
-    return response;
-};
-
 export const configCanBeEmpty = (schema: any) => {
     if (!schema) {
         return false;
@@ -236,3 +255,26 @@ export const isPostgrestFetcher = <T = any>(
 export const isGrant_UserExt = (
     value: Grant_UserExt | BaseGrant
 ): value is Grant_UserExt => isObject(value) && 'user_email' in value;
+
+export const getAuthHeader = (token?: string) => {
+    return {
+        Authorization: `Bearer ${token}`,
+    };
+};
+export const isPromiseFulfilledResult = <T>(
+    value: PromiseSettledResult<T>
+): value is PromiseFulfilledResult<T> => value.status === 'fulfilled';
+
+export const hasOwnProperty = (
+    value: null | object | undefined,
+    property: PropertyKey
+) => {
+    if (!value) {
+        return false;
+    }
+
+    const stringifiedProperty =
+        typeof property === 'string' ? property : property.toString();
+
+    return Object.keys(value).includes(stringifiedProperty);
+};

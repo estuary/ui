@@ -1,10 +1,9 @@
 import type { PrefixSubscription } from 'src/utils/notification-utils';
 
-import { TableCell, TableRow, useTheme } from '@mui/material';
+import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
-import { getEntityTableRowSx } from 'src/context/Theme';
 
 interface RowsProps {
     data: [string, PrefixSubscription][];
@@ -15,13 +14,11 @@ interface RowProps {
 }
 
 function Row({ row }: RowProps) {
-    const theme = useTheme();
-
     const prefix = row[0];
     const data = row[1];
 
     return (
-        <TableRow hover sx={getEntityTableRowSx(theme)}>
+        <TableRow>
             <TableCell>{prefix}</TableCell>
 
             <ChipListCell

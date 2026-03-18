@@ -1,81 +1,92 @@
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/DataPlanes/types';
+import type { CloudProvider } from 'src/utils/cloudRegions';
+
+import { useState } from 'react';
 
 import { Stack, TableCell, TableRow, useTheme } from '@mui/material';
 
-import SingleLineCode from 'src/components/content/SingleLineCode';
-import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
-import CopyCidrBlocks from 'src/components/shared/CopyCidrBlocks';
-import DataPlane from 'src/components/shared/Entity/DataPlane';
+import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
+import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
+import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
+import { getRegionDisplayName } from 'src/utils/cloudRegions';
 import {
     formatDataPlaneName,
     generateDataPlaneOption,
 } from 'src/utils/dataPlane-utils';
 
-interface RowsProps {
-    data: BaseDataPlaneQuery[];
-}
-
-interface RowProps {
-    row: BaseDataPlaneQuery;
-}
-
-function Row({ row }: RowProps) {
-    const theme = useTheme();
-
-    const dataPlaneOption = generateDataPlaneOption(row);
+function Row({ row, rowSx, onRowClick }: RowProps) {
+    const { dataPlaneName, scope } = generateDataPlaneOption(row);
+    const parseCidrBlocks = useParseCidrBlocks();
+    const { ipv4 } = parseCidrBlocks(row.cidr_blocks);
 
     return (
-        <TableRow hover sx={getEntityTableRowSx(theme)}>
+        <TableRow
+            hover
+            sx={{
+                ...rowSx,
+                '& td': {
+                    py: 1,
+                },
+            }}
+            onClick={() => onRowClick(row)}
+        >
             <TableCell>
-                {Boolean(dataPlaneOption.dataPlaneName) ? (
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{
-                            justifyContent: 'space-between',
-                            minWidth: 'fit-content',
-                            whiteSpace: 'nowrap',
-                        }}
-                    >
-                        <DataPlane
-                            dataPlaneName={dataPlaneOption.dataPlaneName}
-                            formattedSuffix={formatDataPlaneName(
-                                dataPlaneOption.dataPlaneName
-                            )}
-                            hidePrefix
-                            logoSize={30}
-                            scope={dataPlaneOption.scope}
-                        />
-                        <CopyToClipboardButton
-                            writeValue={dataPlaneOption.dataPlaneName.whole}
-                        />
-                    </Stack>
-                ) : null}
+                <Stack direction="row" spacing={1} alignItems="center">
+                    <DataPlaneIcon
+                        provider={dataPlaneName.provider}
+                        scope={scope}
+                        size={20}
+                    />
+                </Stack>
             </TableCell>
+            <TableCell>{formatDataPlaneName(dataPlaneName)}</TableCell>
             <TableCell>
-                {row.aws_iam_user_arn ? (
-                    <SingleLineCode value={row.aws_iam_user_arn} />
-                ) : null}
+                {getRegionDisplayName(
+                    dataPlaneName.provider as CloudProvider,
+                    dataPlaneName.region
+                )}
             </TableCell>
-            <TableCell>
-                {row.gcp_service_account_email ? (
-                    <SingleLineCode value={row.gcp_service_account_email} />
-                ) : null}
-            </TableCell>
-            <TableCell>
-                <CopyCidrBlocks cidrBlocks={row.cidr_blocks} />
-            </TableCell>
+            <TableCell sx={{ fontFamily: 'monospace' }}>{ipv4}</TableCell>
         </TableRow>
     );
 }
 
 function Rows({ data }: RowsProps) {
+    const theme = useTheme();
+
+    const [selectedRow, setSelectedRow] = useState<BaseDataPlaneQuery | null>(
+        null
+    );
+
+    const handleRowClick = (row: BaseDataPlaneQuery) => {
+        setSelectedRow(row);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedRow(null);
+    };
+
     return (
         <>
             {data.map((row) => (
-                <Row key={row.id} row={row} />
+                <Row
+                    key={row.id}
+                    row={row}
+                    rowSx={getEntityTableRowSx(theme)}
+                    onRowClick={handleRowClick}
+                />
             ))}
+            {selectedRow ? (
+                <DataPlaneDialog
+                    onClose={handleCloseModal}
+                    dataPlane={selectedRow}
+                />
+            ) : null}
         </>
     );
 }

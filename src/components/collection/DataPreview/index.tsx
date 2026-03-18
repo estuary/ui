@@ -6,8 +6,9 @@ import { useMemo } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 
 import { Refresh } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
+import HydrationError from 'src/components/collection/DataPreview/HydrationError';
 import ListView from 'src/components/collection/DataPreview/ListView';
 import ListViewSkeleton from 'src/components/collection/DataPreview/ListViewSkeleton';
 import NoCollectionJournalsAlert from 'src/components/collection/DataPreview/NoCollectionJournalsAlert';
@@ -15,8 +16,7 @@ import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import JournalAlerts from 'src/components/journals/Alerts';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
-import useIsCollectionDerivation from 'src/components/shared/Entity/Details/useIsCollectionDerivation';
-import Error from 'src/components/shared/Error';
+import useIsCollectionDerivation from 'src/hooks/details/useIsCollectionDerivation';
 import {
     useJournalData,
     useJournalsForCollection,
@@ -38,6 +38,7 @@ interface Props {
 // }
 
 export function DataPreview({ collectionName }: Props) {
+    const intl = useIntl();
     // const [previewMode, setPreviewMode] = useState<Views>(Views.list);
     // const toggleMode = (_event: any, newValue: Views) => {
     //     setPreviewMode(newValue);
@@ -96,7 +97,9 @@ export function DataPreview({ collectionName }: Props) {
                     sx={{ alignItems: 'center' }}
                 >
                     <Typography component="span">
-                        <FormattedMessage id="detailsPanel.dataPreview.header" />
+                        {intl.formatMessage({
+                            id: 'detailsPanel.dataPreview.header',
+                        })}
                     </Typography>
 
                     <Button
@@ -112,7 +115,9 @@ export function DataPreview({ collectionName }: Props) {
                             height: 'auto',
                         }}
                     >
-                        <FormattedMessage id="cta.refresh" />
+                        {intl.formatMessage({
+                            id: 'cta.refresh',
+                        })}
                     </Button>
 
                     {/*
@@ -152,10 +157,12 @@ export function DataPreview({ collectionName }: Props) {
 
                 {tenantHidesError || hide ? (
                     <AlertBox short severity="info">
-                        <FormattedMessage id="detailsPanel.dataPreview.hidden" />
+                        {intl.formatMessage({
+                            id: 'detailsPanel.dataPreview.hidden',
+                        })}
                     </AlertBox>
                 ) : readError ? (
-                    <Error error={readError} condensed />
+                    <HydrationError readError={readError} />
                 ) : isLoading ? (
                     <ListViewSkeleton />
                 ) : (journalData.data?.documents.length ?? 0) > 0 && spec ? (

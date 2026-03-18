@@ -1,7 +1,12 @@
+import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
+
+const RETRY_AND_CONTACT =
+    'Reload the page and if the issue persists, please contact support.';
 
 export const Details: Record<string, string> = {
     'details.tabs.overview': `Overview`,
+    'details.tabs.alerts': `Alerts`,
     'details.tabs.spec': `Spec`,
     'details.tabs.shardStatus': `Status`,
     'details.tabs.history': `History`,
@@ -9,7 +14,8 @@ export const Details: Record<string, string> = {
 
     'details.history.noPublications': `No publications were found.`,
     'details.history.diffFailed': `Unable to get specs to compare.`,
-    'details.history.title': `Publication History`,
+    'details.history.title': `Change History`,
+    'details.history.list.title': `Changes`,
 
     'details.ops.status.cta.formatted': `Dashboard`,
     'details.ops.status.cta.raw': `Code`,
@@ -49,7 +55,7 @@ export const Details: Record<string, string> = {
     'details.spec.cta.formatted': `Table`,
     'details.spec.cta.raw': `Code`,
 
-    'details.taskEndpoints.error.message': `An issue was encountered formatting the connector endpoint(s) for this task. Reload the page and if the issue persists, please contact support.`,
+    'details.taskEndpoints.error.message': `An issue was encountered formatting the connector endpoint(s) for this task. ${RETRY_AND_CONTACT}`,
 
     // Details Panel
     'detailsPanel.logs.title': `Logs`,
@@ -65,8 +71,12 @@ export const Details: Record<string, string> = {
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
-    'detailsPanel.dataPreview.listView.header': `Key`,
+    'detailsPanel.dataPreview.listView.header': `Keys`,
     'detailsPanel.dataPreview.hidden': `Data previews are disabled for this tenant.`,
+
+    'detailsPanel.dataPreview.suspended.title': `No data found in collection.`,
+    'detailsPanel.dataPreview.suspended.message': `If you are using the ${CommonMessages['company']} trial storage mapping, data expires after 20 days.`,
+
     'detailsPanel.specification.header': `Specification`,
     'detailsPanel.status.header': `Status`,
     'detailsPanel.details.title': `Details`,
@@ -76,6 +86,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.recentUsage.filter.label.hours': `{range} hours`,
     'detailsPanel.recentUsage.filter.label.days': `{range} days`,
     'detailsPanel.recentUsage.filter.label.months': `{range} months`,
+    'detailsPanel.recentUsage.filter.label.year': `Year`,
     'detailsPanel.recentUsage.createdAt.label': `Creation hour`,
     'detailsPanel.details.relatedEntity.link': `View details for {catalogName}`,
     'detailsPanel.details.relatedEntity.failed': `failed to find`,
@@ -84,4 +95,6 @@ export const Details: Record<string, string> = {
     'detailsPanel.graph.syncDelay': `Reporting can be delayed by up to {reportingDelay} for this materialization`,
     'detailsPanel.graph.syncDelay.default': `Reporting can be delayed due to update delay for this materialization`,
     'detailsPanel.graph.syncDelay.tooltip': `Reporting can be delayed by up to 2x the set update delay in the configuration.`,
+
+    'detailsPanel.status.taskDisabled.message': `Task is disabled`,
 };

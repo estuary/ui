@@ -6,7 +6,9 @@ import { useEffect, useMemo } from 'react';
 
 import { Box, Collapse } from '@mui/material';
 
+import { closeSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 
 import CollectionConfig from 'src/components/collection/Config';
 import DraftSpecEditorHydrator from 'src/components/editor/Store/DraftSpecsHydrator';
@@ -123,6 +125,10 @@ function EntityEdit({
         [draftSpecs, entityType]
     );
 
+    useUnmount(() => {
+        closeSnackbar();
+    });
+
     useEffect(() => {
         const resetDraftIdFlag =
             endpointConfigServerUpdateRequired ||
@@ -132,6 +138,9 @@ function EntityEdit({
         const newValue = resetDraftIdFlag ? null : persistedDraftId;
 
         logRocketEvent(CustomEvents.DRAFT_ID_SET, {
+            rediscoveryRequired,
+            endpointConfigServerUpdateRequired,
+            resourceConfigServerUpdateRequired,
             newValue,
             component: 'EntityEdit',
         });

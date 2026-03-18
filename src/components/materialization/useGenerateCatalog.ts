@@ -123,6 +123,9 @@ function useGenerateCatalog() {
         useBinding_serverUpdateRequired();
     const prefillBindingDependentState =
         useBinding_prefillBindingDependentState();
+    const resetResourceConfigAddedMetadata = useBindingStore(
+        (state) => state.resetResourceConfigAddedMetadata
+    );
 
     const fullSourceConfigs = useBinding_fullSourceConfigs();
     const fullSourceErrorsExist = useBinding_fullSourceErrorsExist();
@@ -151,7 +154,11 @@ function useGenerateCatalog() {
     );
 
     return useCallback(
-        async (mutateDraftSpecs: Function, skipStoreUpdates?: boolean) => {
+        async (
+            mutateDraftSpecs: Function,
+            skipStoreUpdates?: boolean,
+            requestFieldValidation?: boolean
+        ) => {
             updateFormStatus(FormStatus.GENERATING);
 
             if (
@@ -244,6 +251,7 @@ function useGenerateCatalog() {
                         fullSource: fullSourceConfigs,
                         sourceCaptureDefinition,
                         specOnIncompatibleSchemaChange,
+                        defaultFieldsRecommended: !isEdit,
                     }
                 );
 
@@ -292,7 +300,8 @@ function useGenerateCatalog() {
                     ENTITY_TYPE,
                     [],
                     draftSpecsResponse.data[0].spec.bindings,
-                    true
+                    true,
+                    requestFieldValidation
                 );
 
                 // Mutate the draft first so that we are not running
@@ -311,6 +320,7 @@ function useGenerateCatalog() {
                               .config,
                 });
                 setPreviousEndpointConfig({ data: endpointConfigData });
+                resetResourceConfigAddedMetadata();
 
                 logRocketEvent(CustomEvents.DRAFT_ID_SET, {
                     newValue: evaluatedDraftId,
@@ -350,11 +360,13 @@ function useGenerateCatalog() {
             fullSourceErrorsExist,
             imageConnectorId,
             imageConnectorTagId,
+            isEdit,
             persistedDraftId,
             prefillBindingDependentState,
             processedEntityName,
             resetEditorState,
             resetRediscoverySettings,
+            resetResourceConfigAddedMetadata,
             resourceConfigErrorsExist,
             resourceConfigServerUpdateRequired,
             resourceConfigs,

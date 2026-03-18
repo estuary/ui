@@ -3,7 +3,6 @@ import type { User } from '@supabase/supabase-js';
 import { includeKeys } from 'filter-obj';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
 
 import { OAUTH_OPERATIONS } from 'src/api/shared';
 import { DEFAULT_FILTER, getUserDetails } from 'src/services/shared';
@@ -29,10 +28,45 @@ const logRocketSettings = getLogRocketSettings();
 export const MISSING = '**MISSING**';
 export const MASKED = '**MASKED**';
 
-// for endspoints where we want nothing ever logged
-const maskEverythingURLs = ['config-encryption.estuary.dev'];
+const completelyIgnoredURLs = [
+    // We do not control user extensions so we do not need to know about them
+    'chrome-extension://', // Chromium-based
+    'moz-extension://', // Firefox
+    'safari-web-extension://', // Safari (macOS/iOS)
+    'safari-extension://', // Safari (legacy)
+    'ms-browser-extension://', // Edge (legacy)
+];
+
+// for endpoints where we want nothing ever logged
+const maskEverythingURLs = [
+    // When calling encryption stuff we never want to leak anything
+    'config-encryption.estuary.dev',
+
+    // Support staff make A LOT of these and we do not need them
+    'auth_roles?offset',
+
+    // No need to track 3rd party
+    'google.com',
+    'doubleclick.net',
+    'googleapis.com',
+    'googletagmanager.com',
+    'stripe.com',
+    'stripe.network',
+    'posthog.com',
+
+    // If it is a source file we do not really care about the contents
+    'static/',
+
+    // Same as above but just for local
+    'src/',
+    'node_modules/',
+];
+
 const shouldMaskEverything = (url?: string) =>
     maskEverythingURLs.some((el) => url?.toLowerCase().includes(el));
+
+const shouldIgnore = (url?: string) =>
+    completelyIgnoredURLs.some((el) => url?.toLowerCase().includes(el));
 
 const maskEverythingOperations = [OAUTH_OPERATIONS.ENCRYPT_CONFIG];
 const shouldMaskEverythingInOperation = (operation?: string) =>
@@ -42,9 +76,9 @@ const shouldMaskEverythingInOperation = (operation?: string) =>
 
 // for endpoints where we do not want to mess with the request at all
 //  These should stay in sync with what is added to the CSP policy (public/nginx.conf)
-const ignoreRegEx =
-    /https?:\/\/(?:[\w-]+\.)*(?:logrocket|lr-ingest|lr-in|lr-in-prod|lr-intake|intake-lr|logr-ingest)/;
-const shouldIgnore = (url?: string) => ignoreRegEx.test(url ?? '');
+const logRocketRegEx =
+    /https?:\/\/(?:[\w-]+\.)*(?:logrocket|lr-ingest|lr-in|lr-in-prod|lr-intake|intake-lr|logr-ingest|lrkt-in|lgrckt-in)/;
+const logRocketRequest = (url?: string) => logRocketRegEx.test(url ?? '');
 
 // The headers we never want to have logged
 const maskHeaderKeys = ['apikey', 'Authorization'];
@@ -118,7 +152,7 @@ const parseBody = (body: any): ParsedBody => {
 // Go through the request and handle the skipping, masking, filtering
 const maskContent = (requestResponse: any) => {
     // Sometimes we just want to pass along the content exactly as is
-    if (shouldIgnore(requestResponse.url)) {
+    if (logRocketRequest(requestResponse.url)) {
         return requestResponse;
     }
 
@@ -172,9 +206,11 @@ export const initLogRocket = () => {
         const settings: Settings = {
             release: __ESTUARY_UI_COMMIT_ID__,
             dom: {
+                // isEnabled: false,
                 disableWebAnimations: true,
                 inputSanitizer: logRocketSettings.sanitize.inputs,
                 textSanitizer: logRocketSettings.sanitize.text,
+                privateAttributeBlocklist: ['data-emotion'],
             },
         };
 
@@ -189,19 +225,26 @@ export const initLogRocket = () => {
             settings.network = {};
             if (logRocketSettings.sanitize.response) {
                 settings.network.responseSanitizer = (response: any) => {
+                    if (shouldIgnore(response.url ?? '')) {
+                        return null;
+                    }
+
                     return maskContent(response);
                 };
             }
 
             if (logRocketSettings.sanitize.request) {
                 settings.network.requestSanitizer = (request: any) => {
+                    if (shouldIgnore(request.url ?? '')) {
+                        return null;
+                    }
+
                     return maskContent(request);
                 };
             }
         }
 
         LogRocket.init(logRocketSettings.appID, settings);
-        setupLogRocketReact(LogRocket);
     }
 };
 
@@ -218,10 +261,6 @@ export const identifyUser = (user: User) => {
             traits.email = userDetails?.email ?? DEFAULT_FILTER;
         }
 
-        // Just want to be very very safe
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (LogRocket) {
-            LogRocket.identify(user.id, traits);
-        }
+        LogRocket.identify(user.id, traits);
     }
 };

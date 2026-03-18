@@ -1,11 +1,13 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 import type { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
+import type { LiveSpecsExtQuery_GroupedUpdates } from 'src/api/types';
 import type { SortingProps } from 'src/services/supabase';
 import type {
     CatalogStats,
     Entity,
     EntityWithCreateWorkflow,
     LiveSpecsExtBaseQuery,
+    Schema,
 } from 'src/types';
 
 import { DateTime } from 'luxon';
@@ -338,6 +340,41 @@ const getLiveSpecsByCatalogNames = async (
     );
 };
 
+const getLiveSpecsForGroupedUpdates = async (
+    specType: Entity,
+    catalogNames: string[]
+) => {
+    const limiter = pLimit(3);
+    const promises: Array<
+        Promise<PostgrestResponse<LiveSpecsExtQuery_GroupedUpdates>>
+    > = [];
+    let index = 0;
+
+    // TODO (retry) promise generator
+    const queryPromiseGenerator = (idx: number) => {
+        return (
+            supabaseClient
+                .from(TABLES.LIVE_SPECS_EXT)
+                // TODO (mass row actions support disable)
+                // We would need to fetch the spec as well for disable
+                .select(`catalog_name,id`)
+                .in('catalog_name', catalogNames.slice(idx, idx + CHUNK_SIZE))
+                .eq('spec_type', specType)
+        );
+    };
+
+    while (index < catalogNames.length) {
+        const prom = queryPromiseGenerator(index);
+        promises.push(limiter(() => prom));
+        index = index + CHUNK_SIZE;
+    }
+
+    const responses = await Promise.all(promises);
+    return parsePagedFetchAllResponse<LiveSpecsExtQuery_GroupedUpdates>(
+        responses
+    );
+};
+
 const getLiveSpecsByConnectorId = async (
     specType: EntityWithCreateWorkflow,
     connectorId: string,
@@ -378,6 +415,7 @@ const getLiveSpecsByConnectorId = async (
 };
 
 export interface LiveSpecsExtQuery_ByLiveSpecId {
+    built_spec: Schema | null;
     catalog_name: string;
     id: string;
     spec_type: Entity;
@@ -392,7 +430,7 @@ const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
             supabaseClient
                 .from(TABLES.LIVE_SPECS_EXT)
                 .select(
-                    'catalog_name,id,spec_type,last_pub_id,spec,connector_id'
+                    'built_spec,catalog_name,id,spec_type,last_pub_id,spec,connector_id'
                 )
                 .eq('id', liveSpecId),
         'getLiveSpecsByLiveSpecId'
@@ -530,6 +568,7 @@ export {
     getLiveSpecsByCatalogNames,
     getLiveSpecsByConnectorId,
     getLiveSpecsByLiveSpecId,
+    getLiveSpecsForGroupedUpdates,
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_dataPlaneAuthReq,

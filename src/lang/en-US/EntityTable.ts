@@ -22,10 +22,10 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.lastPubUserFullName': `Last Updated By`,
     'entityTable.data.catalogPrefix': `Catalog Prefix`,
     'entityTable.data.provider': `Provider`,
-    'entityTable.data.bucket': `Bucket`,
+    'entityTable.data.primaryStore': `Primary Store`,
     'entityTable.data.prefix': `Prefix`,
     'entityTable.data.dataPlanes': `Data Planes`,
-    'entityTable.data.storagePrefix': `Prefix`,
+    'entityTable.data.storagePrefix': `Storage Prefix`,
     'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,
     'entityTable.data.created': `Created`,
@@ -58,7 +58,8 @@ export const EntityTable: Record<string, string> = {
     'entityTable.rowSelector.all': `All`,
     'entityTable.rowSelector.none': `None`,
 
-    'entityTable.delete.confirm': `All items will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
+    'entityTable.disableEnable.confirm': `{count} {count, plural, one {item} other {items}} listed below will be {setting}.`,
+    'entityTable.delete.confirm': `{count} {count, plural, one {item} other {items}} listed below will be permanently deleted and this action cannot be undone. Please review the list to continue.`,
 
     'entityTable.viewDetails.aria': `View details of {name}`,
     'entityTable.edit.aria': `Edit specification of {name}`,
@@ -74,12 +75,15 @@ export const EntityTable: Record<string, string> = {
     'updateEntity.noLiveSpecs': `Unable to find entity on server.`,
     'updateEntity.collection.skipped': `${CTAs['cta.enable']} and ${CTAs['cta.disable']} only work on derivations`,
 
+    'updateEntity.running.delete': `Deleting {count} {itemType}`,
+    'updateEntity.success.delete': `Deleted {count} {itemType}`,
+
     // Entity Selector / Add Dialog
     'entityTable.captures.missing.header': `You currently have no captures. Click the captures icon on the menu bar to get started.`,
     'entityTable.materializations.missing.header': `You currently have no materializations. Click the materializations icon on the menu bar to get started.`,
 
     'entityTable.collections.missing.header': `You currently have no collections. Click the captures icon on the menu bar to get started.`,
-    'entityTable.collections.missing.message': `Captures connect to outside systems, pull in data, and generate {docLink} within Flow.`,
+    'entityTable.collections.missing.message': `Captures connect to outside systems, pull in data, and generate {docLink} within ${CommonMessages.productName}.`,
     'entityTable.collections.missing.message.docLink': `collections`,
     'entityTable.collections.missing.message.docPath': `https://docs.estuary.dev/concepts/collections/`,
 };

@@ -24,7 +24,7 @@ import {
 
 import { keyIsValidOption } from 'src/components/schema/KeyAutoComplete/shared';
 import SortableTag from 'src/components/schema/KeyAutoComplete/SortableTag';
-import StyledChip from 'src/components/schema/KeyAutoComplete/StyledChip';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
 interface Props {
     getTagProps: AutocompleteGetTagProps;
@@ -93,7 +93,11 @@ function SortableTags({
             <DragOverlay modifiers={[restrictToFirstScrollableAncestor]}>
                 {/*eslint-disable-next-line @typescript-eslint/no-unnecessary-condition*/}
                 {activeId ? (
-                    <StyledChip id={activeId as string} label={activeId} />
+                    <OutlinedChip
+                        id={activeId as string}
+                        label={activeId}
+                        variant="outlined"
+                    />
                 ) : null}
             </DragOverlay>
         </DndContext>

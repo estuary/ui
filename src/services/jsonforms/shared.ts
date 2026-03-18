@@ -1,5 +1,6 @@
 import type { ValidationMode } from '@jsonforms/core';
 
+export const ONE_OF_WITH_DESCRIPTIONS = 'oneOfWithDescriptions';
 export const CONTAINS_REQUIRED_FIELDS = 'containsRequiredFields';
 export const CHILDREN_HAVE_VALUE = 'childrenHaveValue';
 export const LAYOUT_PATH = 'layoutPath';

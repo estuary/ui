@@ -1,22 +1,15 @@
-import type { LogProps } from 'src/components/logs';
+import type { ErrorLogsProps } from 'src/components/shared/Entity/Error/types';
 
 import { useState } from 'react';
 
 import { Button, Collapse, Stack, useTheme } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import Logs from 'src/components/logs';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { linkButtonSx } from 'src/context/Theme';
-
-export interface ErrorLogsProps {
-    logToken?: string | null;
-    defaultOpen?: boolean;
-    height?: number;
-    logProps?: Omit<LogProps, 'token' | 'height'>;
-}
 
 function ErrorLogs({
     logToken,
@@ -24,6 +17,8 @@ function ErrorLogs({
     height,
     logProps,
 }: ErrorLogsProps) {
+    const intl = useIntl();
+
     const theme = useTheme();
 
     const heightVal = height ?? 250;
@@ -53,13 +48,11 @@ function ErrorLogs({
                         />
                     }
                 >
-                    <FormattedMessage
-                        id={
-                            showLogs
-                                ? 'entityCreate.errors.collapseTitleOpen'
-                                : 'entityCreate.errors.collapseTitle'
-                        }
-                    />
+                    {intl.formatMessage({
+                        id: showLogs
+                            ? 'entityCreate.errors.collapseTitleOpen'
+                            : 'entityCreate.errors.collapseTitle',
+                    })}
                 </Button>
                 <Collapse in={showLogs} unmountOnExit>
                     <ErrorBoundryWrapper>

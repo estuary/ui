@@ -13,6 +13,11 @@ export const optionalColumns = Object.values(optionalColumnIntlKeys);
 
 export const columns: TableColumns[] = [
     {
+        field: null,
+        headerIntlKey: ' ',
+        width: 37,
+    },
+    {
         field: 'name',
         headerIntlKey: 'data.field',
         sticky: true,

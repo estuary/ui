@@ -32,7 +32,8 @@ export const Errors: Record<string, string> = {
     'custom.catalogName.pattern': `must match pattern "organization/name"\nwhich may include ${CommonMessages['catalogName.limitations']}`,
 
     // Draft Errors
-    'draftErrors.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
+    // Also used to SkimProjectionErrors
+    'errors.preface.totalCount': `Displaying {displaying} of {total, plural, one {# error} other {# errors}} `,
 
     // Error Boundry
     'errorBoundry.title': `${CommonMessages['common.errors.heading']}`,
@@ -48,6 +49,9 @@ export const Errors: Record<string, string> = {
     'fullPage.instructions.docLink': `${CTAs['cta.support']}`,
     'fullPage.instructions.docPath': `${CommonMessages['support.email']}`,
     'fullPage.userInfoSummary.error': `We had an issue while checking if your account has access.`,
+
+    // Wizard Dialog
+    'wizardDialog.error.step': `An error occurred during this step`,
 
     // Supabase
     'supabase.poller.failed.title': `${CommonMessages['common.failedFetch']}`,

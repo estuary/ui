@@ -1,25 +1,22 @@
-import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { EntityNameLinkProps } from 'src/components/tables/cells/types';
 
 import { Stack, TableCell } from '@mui/material';
 
 import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetailsLink';
 import EntityStatus from 'src/components/tables/cells/EntityStatus';
-
-interface Props {
-    name: string;
-    showEntityStatus: boolean;
-    entityStatusTypes: ShardEntityTypes[];
-    detailsLink: string;
-}
+import { getTableComponents } from 'src/utils/table-utils';
 
 function EntityNameLink({
     name,
     detailsLink,
     entityStatusTypes,
     showEntityStatus,
-}: Props) {
+    enableDivRendering,
+}: EntityNameLinkProps) {
+    const { tdComponent } = getTableComponents(enableDivRendering);
     return (
         <TableCell
+            component={tdComponent}
             sx={{
                 minWidth: 250,
                 maxWidth: 'min-content',

@@ -1,3 +1,4 @@
+import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { Align } from 'react-window';
 import type { FetchMoreLogsFunction } from 'src/components/tables/Logs/types';
 import type {
@@ -39,6 +40,7 @@ export interface JournalDataLogsState extends StoreWithHydration {
     hydrate: (
         documents: UseOpsLogsDocs,
         refresh: (newOffset?: LoadDocumentsOffsets) => void,
+        readStatus: ProtocolStatus | undefined,
         error?: any
     ) => void;
     refresh: ((newOffset?: LoadDocumentsOffsets) => void) | null;

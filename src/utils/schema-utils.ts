@@ -1,10 +1,72 @@
 import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
-import type { InferSchemaResponse, Schema } from 'src/types';
+import type { Schema } from 'src/types';
+import type {
+    BuiltProjection,
+    CollectionSchema,
+    CollectionSchemaAnnotations,
+    RedactionStrategy_Projection,
+    RedactionStrategy_Schema,
+} from 'src/types/schemaModels';
+import type { WithRequiredProperty } from 'src/types/utils';
+import type {
+    BasicCollectionDef,
+    SkimProjectionResponse,
+    SplitCollectionDef,
+} from 'src/types/wasm';
 
-import { isEmpty } from 'lodash';
+import { has, isEmpty, isPlainObject, set } from 'lodash';
 
-import { hasLength } from 'src/utils/misc-utils';
+import { logRocketConsole } from 'src/services/shared';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 
+const allowRedactPrefixes = ['/_meta/before'];
+const syntheticPrefixes = ['/_meta'];
+
+const syntheticLocations = ['/_meta', '/_meta/uuid'];
+
+export const evaluateRedactionEligibility = (
+    pointer: string | null | undefined
+): 'prevent' | 'warning' | 'allowed' => {
+    // `flow_document` is the main case for when a pointer is missing
+    if (!pointer) {
+        return 'prevent';
+    }
+
+    // Must be CHECKED FIRST otherwise the "warning"s down below would also catch these
+    // Check for allowed first as we never want to accidently stop the user from doing this
+    if (allowRedactPrefixes.some((prefix) => pointer.startsWith(prefix))) {
+        return 'allowed';
+    }
+
+    // See if the pointer is one of these exact matches that we must prevent
+    if (syntheticLocations.includes(pointer)) {
+        return 'prevent';
+    }
+
+    // TODO (redact) - we do not consume this to show a warning (Q1 2026)
+    // See if the user is doing something within these sections which are prone to causing issues
+    if (syntheticPrefixes.some((prefix) => pointer.startsWith(prefix))) {
+        return 'warning';
+    }
+
+    // Everything else is allowed
+    return 'allowed';
+};
+
+// These are inserted by the server and never would make sense as keys
+//  Make sure you lowercase these
+const invalidKeyPointers = [
+    '/_meta/uuid',
+    '/_meta/flow_truncated',
+    '/_meta/inferredschemaisnotavailable',
+];
+const canPointerBeUsedAsKey = (pointer: string | null | undefined) => {
+    return (
+        pointer &&
+        pointer.length > 0 &&
+        !invalidKeyPointers.includes(pointer.toLowerCase())
+    );
+};
 const typesAllowedAsKeys = ['boolean', 'integer', 'null', 'string'];
 
 const hasWriteSchema = (spec: any) => {
@@ -16,8 +78,15 @@ const hasReadSchema = (spec: any) => {
 };
 
 const hasReadAndWriteSchema = (spec: any) => {
-    return Boolean(hasReadSchema(spec) && hasReadSchema(spec));
+    return Boolean(hasReadSchema(spec) && hasWriteSchema(spec));
 };
+
+export const getWriteSchemaProperty = (collectionSpec: any) =>
+    hasWriteSchema(collectionSpec)
+        ? 'writeSchema'
+        : hasOwnProperty(collectionSpec, 'schema')
+          ? 'schema'
+          : undefined;
 
 const getProperSchemaScope = (spec: any) => {
     const readSchemaExists = hasReadSchema(spec);
@@ -32,37 +101,59 @@ const getProperSchemaScope = (spec: any) => {
     return [key, readSchemaExists];
 };
 
-const filterInferSchemaResponse = (schema: InferSchemaResponse | null) => {
-    let fields: any | null = null;
+const isValidKey = (inference: any, pointer?: any) => {
+    if (!inference) {
+        return false;
+    }
+
+    const inferredTypes: string[] = inference.types;
+
+    return Boolean(
+        // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
+        inference.exists !== 'CANNOT' &&
+            // Make sure we only have a single type besides null
+            inferredTypes.filter((type) => type !== 'null').length === 1 &&
+            // make sure all types are valid
+            inferredTypes.every((type) => typesAllowedAsKeys.includes(type)) &&
+            // make sure the pointer is allowed since server inserts on fields
+            (pointer ? canPointerBeUsedAsKey(pointer) : true)
+    );
+};
+
+export const isValidCollectionKey = (inference: any | undefined): boolean => {
+    return isValidKey(inference);
+};
+
+const filterSkimProjectionResponse = (
+    skimProjectionResponse: SkimProjectionResponse | null
+) => {
     const validKeys: string[] = [];
+    let fields: BuiltProjection[] | null = null;
 
-    if (schema) {
-        const { properties } = schema;
+    if (skimProjectionResponse) {
+        const { projections } = skimProjectionResponse;
 
-        fields = properties
-            .filter((inferredProperty: any) => {
-                // If there is a blank pointer it cannot be used
-                return hasLength(inferredProperty.pointer);
-            })
-            .map((inferredProperty: any) => {
-                const inferredPropertyTypes: string[] = inferredProperty.types;
-                const isValidKey = Boolean(
-                    // Happens when the schema contradicts itself, which isnt a "feature" we use intentionally
-                    inferredProperty.exists !== 'cannot' &&
-                        // Make sure we only have a single type besides null
-                        inferredPropertyTypes.filter((type) => type !== 'null')
-                            .length === 1 &&
-                        // make sure all types are valid
-                        inferredPropertyTypes.every((type) =>
-                            typesAllowedAsKeys.includes(type)
-                        )
-                );
-
-                if (isValidKey) {
-                    validKeys.push(inferredProperty.pointer);
+        fields = projections
+            .filter(
+                (inferredProperty) =>
+                    inferredProperty &&
+                    inferredProperty.ptr &&
+                    inferredProperty.ptr.length > 0
+            )
+            .map((inferredProperty) => {
+                if (
+                    // Ensure the key is allowed and can be valid
+                    isValidKey(
+                        inferredProperty.inference,
+                        inferredProperty.ptr
+                    ) &&
+                    // Make sure we have a pointer and it is not duplicated (projections)
+                    inferredProperty.ptr &&
+                    !validKeys.includes(inferredProperty.ptr)
+                ) {
+                    validKeys.push(inferredProperty.ptr);
                 }
 
-                inferredProperty.allowedToBeKey = isValidKey;
                 return inferredProperty;
             });
     }
@@ -105,11 +196,147 @@ const moveUpdatedSchemaToReadSchema = (
     return newSpec;
 };
 
+// Reduce down to get rid of duplicate pointers. We do this mainly so
+//  projections do not show the same pointer multiple times. We _could_ filter
+//  on the explicit property however there are times where certain projections (patterns)
+//  would be a valid reason to use a projection as part of the key
+const reduceBuiltProjections = (
+    acc: any[],
+    inferredProperty: BuiltProjection
+) => {
+    const existingIndex = acc.findIndex(
+        (item) => item.ptr === inferredProperty.ptr
+    );
+
+    if (existingIndex === -1) {
+        acc.push(inferredProperty);
+    }
+
+    return acc;
+};
+
+const getSchemaForProjectionModel = (spec: any) => {
+    // TODO (infer - typing)
+    let schemaProjectionModel: null | BasicCollectionDef | SplitCollectionDef =
+        null;
+    const usingReadSchema = hasReadSchema(spec);
+    const usingWriteSchema = hasWriteSchema(spec);
+    const usingReadAndWriteSchema = usingReadSchema && usingWriteSchema;
+
+    if (usingReadAndWriteSchema) {
+        if (isPlainObject(spec.readSchema) && isPlainObject(spec.writeSchema)) {
+            schemaProjectionModel = {
+                readSchema: spec.readSchema,
+                writeSchema: spec.writeSchema,
+            } as SplitCollectionDef;
+        }
+    } else {
+        if (isPlainObject(spec.schema)) {
+            schemaProjectionModel = {
+                schema: spec.schema,
+            } as BasicCollectionDef;
+        }
+    }
+
+    return {
+        usingReadAndWriteSchema,
+        schemaProjectionModel,
+    };
+};
+
 export {
+    getSchemaForProjectionModel,
     getProperSchemaScope,
-    filterInferSchemaResponse,
+    filterSkimProjectionResponse,
     hasReadAndWriteSchema,
     hasReadSchema,
     hasWriteSchema,
     moveUpdatedSchemaToReadSchema,
+    reduceBuiltProjections,
+};
+
+export const isCollectionSchemaWithProperties = (
+    value: WithRequiredProperty<CollectionSchema, 'properties'>
+): value is WithRequiredProperty<CollectionSchema, 'properties'> =>
+    'properties' in value;
+
+export const parsePointerEscapeCharacters = (value: string) =>
+    value.replace(/~1/g, '/').replace(/~0/g, '~');
+
+interface PointerSegment {
+    id: string;
+    index: number;
+}
+
+const templateSchemaProperties = (
+    schema: CollectionSchemaAnnotations,
+    rootPath: string,
+    targetProperty: { id: string; value: object | undefined },
+    pointerSegments: PointerSegment[],
+    targetSegment: PointerSegment
+): void => {
+    let nextRootPath = `${rootPath}.${targetSegment.id}`;
+
+    if (!has(schema, nextRootPath)) {
+        set(schema, nextRootPath, {});
+    }
+
+    if (targetSegment.index !== pointerSegments.length - 1) {
+        nextRootPath = `${nextRootPath}.properties`;
+
+        if (!has(schema, nextRootPath)) {
+            set(schema, nextRootPath, {});
+        }
+
+        templateSchemaProperties(
+            schema,
+            nextRootPath,
+            targetProperty,
+            pointerSegments,
+            pointerSegments[targetSegment.index + 1]
+        );
+
+        return;
+    }
+
+    set(schema, `${nextRootPath}.${targetProperty.id}`, targetProperty.value);
+    logRocketConsole('redact:set:final_path', { path: nextRootPath });
+};
+
+export const setSchemaProperties = (
+    schema: any,
+    pointer: string | undefined,
+    targetProperty: { id: string; value: object | undefined }
+): void => {
+    if (!pointer) {
+        return;
+    }
+
+    const pointerSegments: PointerSegment[] = pointer
+        .split('/')
+        .filter((id) => id.length !== 0)
+        .map((id, index) => ({ id: parsePointerEscapeCharacters(id), index }));
+
+    schema.properties ??= {};
+
+    templateSchemaProperties(
+        schema,
+        'properties',
+        targetProperty,
+        pointerSegments,
+        pointerSegments[0]
+    );
+};
+
+export const translateRedactionStrategy = (
+    value: RedactionStrategy_Projection | null | undefined
+): RedactionStrategy_Schema | null => {
+    switch (value) {
+        case 'REDACT_BLOCK':
+            return 'block';
+        case 'REDACT_SHA256':
+            return 'sha256';
+        default:
+            return null;
+    }
 };
