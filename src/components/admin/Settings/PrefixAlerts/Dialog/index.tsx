@@ -26,7 +26,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
-function AlertSubscriptionDialog({
+const AlertSubscriptionDialog = ({
     enableDeletion,
     executeQuery,
     existingAlertTypes,
@@ -35,7 +35,7 @@ function AlertSubscriptionDialog({
     setOpen,
     staticEmail,
     staticPrefix,
-}: AlertSubscriptionDialogProps) {
+}: AlertSubscriptionDialogProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -137,6 +137,6 @@ function AlertSubscriptionDialog({
             </DialogActions>
         </Dialog>
     );
-}
+};
 
 export default AlertSubscriptionDialog;
