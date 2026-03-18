@@ -2,16 +2,16 @@ import type { StatusProps } from 'src/components/shared/Entity/Details/Overview/
 
 import { Grid, Stack, Typography } from '@mui/material';
 
-import SectionUpdated from '../../Status/Overview/SectionUpdated';
-import RefreshButton from '../../Status/RefreshButton';
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { ConnectorStatusSection } from 'src/components/shared/Entity/Details/Overview/ConnectorStatusSection';
-import useDetailsEntityTaskTypes from 'src/components/shared/Entity/Details/useDetailsEntityTaskTypes';
+import SectionUpdated from 'src/components/shared/Entity/Details/Status/Overview/SectionUpdated';
+import RefreshButton from 'src/components/shared/Entity/Details/Status/RefreshButton';
 import ShardInformation from 'src/components/shared/Entity/Shard/Information';
 import { useEntityType } from 'src/context/EntityContext';
 import { cardHeaderSx } from 'src/context/Theme';
+import useDetailsEntityTaskTypes from 'src/hooks/details/useDetailsEntityTaskTypes';
 import { hasLength } from 'src/utils/misc-utils';
 
 export const Status = ({ catalogName }: StatusProps) => {
