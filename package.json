@@ -33,7 +33,7 @@
         "build-storybook": "storybook build",
         "codegen": "dotenv -e .env -- graphql-codegen",
         "codegen:local": "dotenv -e .env.development.local -- graphql-codegen",
-        "check-schema": "dotenv -e .env -- graphql-codegen && git diff --exit-code schema.graphql src/gql-types/"
+        "codegen:check": "npm run codegen && git diff --exit-code src/gql-types/"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
