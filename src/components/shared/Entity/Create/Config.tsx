@@ -8,29 +8,28 @@ import { FormattedMessage } from 'react-intl';
 
 import ConnectorGrid from 'src/components/connectors/Grid';
 import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams from 'src/hooks/searchParams/useGlobalSearchParams';
 
 function EntityCreateConfig({
     condensed,
     entityType,
 }: EntityCreateConfigProps) {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const connectorImage = useGlobalSearchParams('conn_img');
 
     const navigateToCreate = useEntityCreateNavigate();
 
     useEffect(() => {
-        if (connectorId) {
+        if (connectorImage) {
+            console.log('connectorImage', connectorImage);
             navigateToCreate(entityType, {
-                id: connectorId,
                 advanceToForm: true,
+                connectorImage,
             });
         }
-    }, [navigateToCreate, connectorId, entityType]);
+    }, [navigateToCreate, connectorImage, entityType]);
 
     return (
-        <Collapse in={!connectorId} unmountOnExit>
+        <Collapse in={!connectorImage} unmountOnExit>
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage id="entityCreate.instructions" />
             </Typography>

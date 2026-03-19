@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { isEmpty } from 'lodash';
 import { useNavigate } from 'react-router';
 
+import { KnownSearchParams } from 'src/hooks/searchParams/types';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
@@ -15,6 +16,7 @@ export interface HookEntityCreateNavigateProps {
     dataPlaneId?: string | null;
     expressWorkflow?: boolean;
     id?: string | null | undefined;
+    connectorImage?: string;
 }
 
 export default function useEntityCreateNavigate() {
@@ -27,11 +29,17 @@ export default function useEntityCreateNavigate() {
             {
                 id,
                 advanceToForm,
+                connectorImage,
                 dataPlaneId,
                 expressWorkflow,
             }: HookEntityCreateNavigateProps
         ) => {
-            const searchParamConfig: { [param: string]: any } = {};
+            const searchParamConfig: Partial<Record<KnownSearchParams, any>> =
+                {};
+
+            if (hasLength(connectorImage)) {
+                searchParamConfig.conn_img = connectorImage;
+            }
 
             if (hasLength(id)) {
                 searchParamConfig[GlobalSearchParams.CONNECTOR_ID] = id;
@@ -59,6 +67,8 @@ export default function useEntityCreateNavigate() {
             //     // TODO (powered-by-estuary): Use an error page as a fallback.
             //     newPath = ENTITY_SETTINGS[entity].routes.createNewExpress;
             // }
+
+            console.log('newSearchParams', newSearchParams);
 
             navigate(
                 newSearchParams

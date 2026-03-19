@@ -29,35 +29,50 @@ import {
     getEmptyTableMessage,
 } from 'src/utils/table-utils';
 
-const connectorsQuery = gql<ConnectorsQueryResponse, ConnectorsQueryVariables>`
-    query ConnectorsGrid($protocol: String) {
-        connectors(filter: { protocol: { eq: $protocol } }) {
-            edges {
-                node {
-                    imageName
-                    createdAt
-                    defaultImageTag
-                    externalUrl
-                    logoUrl
-                    longDescription
-                    recommended
-                    shortDescription
-                    title
-                    tags {
-                        imageTag
-                        protocol
-                        specSucceeded
-                    }
-                    connectorTag(orDefault: false, imageTag: "") {
-                        createdAt
-                        disableBackfill
-                        documentationUrl
-                        imageTag
-                        protocol
-                        updatedAt
-                    }
-                }
+const CONNECTOR_NODE_FIELDS = `
+    edges {
+        node {
+            imageName
+            createdAt
+            defaultImageTag
+            externalUrl
+            logoUrl
+            longDescription
+            recommended
+            shortDescription
+            title
+            tags {
+                imageTag
+                protocol
+                specSucceeded
             }
+            connectorTag(orDefault: false, imageTag: "") {
+                createdAt
+                disableBackfill
+                documentationUrl
+                imageTag
+                protocol
+                updatedAt
+            }
+        }
+    }
+`;
+
+const connectorsQuery = gql<ConnectorsQueryResponse, ConnectorsQueryVariables>`
+    query ConnectorsGrid($protocol: String!) {
+        connectors(filter: { protocol: { eq: $protocol } }) {
+            ${CONNECTOR_NODE_FIELDS}
+        }
+    }
+`;
+
+const connectorsQueryNoProtocol = gql<
+    ConnectorsQueryResponse,
+    ConnectorsQueryVariables
+>`
+    query ConnectorsGridNoProtocol {
+        connectors {
+            ${CONNECTOR_NODE_FIELDS}
         }
     }
 `;
@@ -74,7 +89,7 @@ export default function ConnectorCards({
     });
 
     const [{ fetching, data, error }] = useQuery({
-        query: connectorsQuery,
+        query: protocol ? connectorsQuery : connectorsQueryNoProtocol,
         variables: protocol ? { protocol } : {},
     });
 
@@ -102,7 +117,7 @@ export default function ConnectorCards({
         // TODO (gql:connector) - we could still use `id` for connector but probably
         //  can switch over to the imageName instead
         navigateToCreate(nodeProtocol as any, {
-            id: imageName,
+            connectorImage: imageName,
             advanceToForm: true,
             expressWorkflow: condensed,
         });

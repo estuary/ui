@@ -7,6 +7,15 @@ import type {
     usePublicationSpecsExt_History,
 } from 'src/hooks/usePublicationSpecsExt';
 
+import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
+
+export type SearchParams = 'conn_img'; // connector image (entity create/edit)
+
+export type KnownSearchParams =
+    | GlobalSearchParams
+    | SearchParams
+    | (string & {});
+
 export type UseHistoryDiffFindFunction = (
     publication: PublicationSpecsExt_Spec | PublicationSpecsExt_PubIds
 ) => boolean;

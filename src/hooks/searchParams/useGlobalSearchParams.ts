@@ -2,6 +2,8 @@ import { useCallback, useMemo } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 
+import { KnownSearchParams } from 'src/hooks/searchParams/types';
+
 export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
@@ -23,20 +25,20 @@ export enum GlobalSearchParams {
     DIALOG = 'dialog',
 }
 
-function useGlobalSearchParams<T = string>(key: GlobalSearchParams): T;
+function useGlobalSearchParams<T = string>(key: KnownSearchParams): T;
 function useGlobalSearchParams<T = string>(
-    key: GlobalSearchParams,
+    key: KnownSearchParams,
     fetchAll: true
 ): T[];
 function useGlobalSearchParams<T = string>(
-    key: GlobalSearchParams | Array<GlobalSearchParams>
+    key: KnownSearchParams | Array<KnownSearchParams>
 ): T[];
 function useGlobalSearchParams<T = string>(
-    key: GlobalSearchParams | Array<GlobalSearchParams>,
+    key: KnownSearchParams | Array<KnownSearchParams>,
     fetchAll: true
 ): T[][];
 function useGlobalSearchParams(
-    key: GlobalSearchParams | Array<GlobalSearchParams>,
+    key: KnownSearchParams | Array<KnownSearchParams>,
     fetchAll?: boolean
 ) {
     const [searchParams] = useSearchParams();

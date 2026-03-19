@@ -102,6 +102,8 @@ export const getEndpointConfig = (
         : data[0].spec.endpoint.connector.config;
 
 // TODO (V2 typing) - query should take in filter builder better
+// This is being check in backend but different context
+
 export const requiredConnectorColumnsExist = <Response>(
     query: PostgrestFilterBuilder<any, any, any, any, any>,
     columnPrefix?: string
