@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 
+import { babelOptimizerPlugin } from '@graphql-codegen/client-preset';
 import react from '@vitejs/plugin-react';
 import browserslistToEsbuild from 'browserslist-to-esbuild';
 import license from 'rollup-plugin-license';
@@ -154,6 +155,14 @@ export default defineConfig({
         // Deps
         react({
             jsxImportSource: '@emotion/react',
+            babel: {
+                plugins: [
+                    [
+                        babelOptimizerPlugin,
+                        { artifactDirectory: './src/gql-types' },
+                    ],
+                ],
+            },
         }),
         wasm(),
 
