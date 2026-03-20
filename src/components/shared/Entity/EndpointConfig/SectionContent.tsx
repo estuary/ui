@@ -15,7 +15,6 @@ import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import HydrationError from 'src/components/shared/HydrationError';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import { logRocketEvent } from 'src/services/shared';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_setServerUpdateRequired,
     useEndpointConfigStore_endpointConfig_data,
@@ -23,18 +22,12 @@ import {
 } from 'src/stores/EndpointConfig/hooks';
 import { useEndpointConfigStore } from 'src/stores/EndpointConfig/Store';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
-import { useWorkflowStore_connectorTagProperty } from 'src/stores/Workflow/hooks';
+import { useWorkflowStore_connectorTagDocumentationUrl } from 'src/stores/Workflow/hooks';
 
 const SectionContent = ({ readOnly = false }: SectionContentProps) => {
     // General hooks
     const intl = useIntl();
     const theme = useTheme();
-
-    // Detail Form Store
-    const [connectorId, connectorTagId] = useDetailsFormStore((state) => [
-        state.details.data.connectorImage.connectorId,
-        state.details.data.connectorImage.id,
-    ]);
 
     // Endpoint Config Store
     const [endpointCanBeEmpty, hydrationErrorsExist] = useEndpointConfigStore(
@@ -46,11 +39,7 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
     const setServerUpdateRequired = useEndpointConfig_setServerUpdateRequired();
 
     // Workflow Store
-    const documentationURL = useWorkflowStore_connectorTagProperty(
-        connectorId,
-        connectorTagId,
-        'documentation_url'
-    );
+    const documentationURL = useWorkflowStore_connectorTagDocumentationUrl();
 
     // Workflow related props
     const editWorkflow = useEntityWorkflow_Editing();

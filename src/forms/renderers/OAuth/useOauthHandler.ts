@@ -9,7 +9,6 @@ import { CREDENTIALS, INJECTED_VALUES } from 'src/forms/renderers/OAuth/shared';
 import { useOAuth2 } from 'src/hooks/forks/react-use-oauth2/components';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
 
 // Hook for OAuth popup opening, error handling, error message setting, etc.
@@ -20,9 +19,12 @@ export const useOauthHandler = (
     const intl = useIntl();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
-    const connectorId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.connectorId
-    );
+
+    // TODO (gql:connector) - need to plumb through id or update edge function
+    // const connectorId = useDetailsFormStore(
+    //     (state) => state.details.data.connectorImage.imageName
+    // );
+    const connectorId = 'foo';
 
     // handler for the useOauth stuff
     const onError = useCallback(

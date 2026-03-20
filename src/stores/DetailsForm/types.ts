@@ -23,9 +23,7 @@ export interface DataPlaneOption {
 }
 
 export interface ConnectorMetadata {
-    connectorId: string;
     iconPath: string;
-    id: string;
     imageName: string;
     imageTag: string;
 }

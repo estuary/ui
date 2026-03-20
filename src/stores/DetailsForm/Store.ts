@@ -144,7 +144,7 @@ export const getInitialState = (
         set(
             produce((state: DetailsFormState) => {
                 // If we are defaulting the connector need to populate the initial state
-                if (val.data.connectorImage.id === '') {
+                if (val.data.connectorImage.imageName === '') {
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 }
@@ -198,7 +198,7 @@ export const getInitialState = (
     setDetails_connector: (connectorImage) => {
         set(
             produce((state: DetailsFormState) => {
-                if (connectorImage.id === '') {
+                if (connectorImage.imageName === '') {
                     state.details.data.connectorImage =
                         getInitialStateData().details.data.connectorImage;
                 } else {
@@ -321,6 +321,11 @@ export const getInitialState = (
                 const connectorImage = await getConnectorImage(connectorId);
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
 
+                console.log(
+                    'detailsform create connectorImage',
+                    connectorImage
+                );
+
                 if (connectorImage && dataPlane === null) {
                     get().setDetails_connector(connectorImage);
 
@@ -354,12 +359,8 @@ export const getInitialState = (
                     await getLiveSpecs_detailsForm(liveSpecId);
 
                 if (!error && data && data.length > 0) {
-                    const {
-                        catalog_name,
-                        connector_image_tag,
-                        connector_tag_id,
-                        data_plane_id,
-                    } = data[0];
+                    const { catalog_name, connector_image_tag, data_plane_id } =
+                        data[0];
 
                     const connectorImage = await getConnectorImage(
                         connectorId,
@@ -380,11 +381,6 @@ export const getInitialState = (
                             },
                         };
 
-                        get().setUnsupportedConnectorVersion(
-                            connectorImage.id,
-                            connector_tag_id
-                        );
-
                         get().setDetails(hydratedDetails);
                         get().setPreviousDetails(hydratedDetails);
                     } else {
@@ -395,12 +391,10 @@ export const getInitialState = (
                 }
             } else if (workflow === 'test_json_forms') {
                 get().setDetails_connector({
-                    id: connectorId,
                     iconPath: '',
                     imageName: '',
                     imagePath: '',
                     imageTag: '',
-                    connectorId,
                 });
                 get().setHydrationErrorsExist(true);
             }

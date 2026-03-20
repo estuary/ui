@@ -24,9 +24,7 @@ import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsav
 import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams from 'src/hooks/searchParams/useGlobalSearchParams';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
@@ -50,7 +48,7 @@ function EntityCreate({
     Toolbar: toolbar,
     RediscoverButton,
 }: EntityCreateProps) {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const connectorImage = useGlobalSearchParams('connector_image');
 
     const { resetState } = useEntityWorkflowHelpers();
 
@@ -140,18 +138,11 @@ function EntityCreate({
     const displayResourceConfig = useMemo(
         () =>
             entityType === 'materialization'
-                ? hasLength(imageTag.connectorId)
-                : hasLength(imageTag.connectorId) &&
-                  imageTag.connectorId === connectorId &&
+                ? hasLength(connectorImage)
+                : hasLength(connectorImage) &&
                   !entityNameChanged &&
                   persistedDraftId,
-        [
-            connectorId,
-            entityType,
-            entityNameChanged,
-            imageTag.connectorId,
-            persistedDraftId,
-        ]
+        [connectorImage, entityNameChanged, entityType, persistedDraftId]
     );
 
     const storeHydrationComplete = useFormHydrationChecker();

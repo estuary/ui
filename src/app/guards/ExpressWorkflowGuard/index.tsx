@@ -4,9 +4,7 @@ import { useEffect } from 'react';
 
 import { ConnectorGridSkeleton } from 'src/app/guards/ExpressWorkflowGuard/ConnectorGridSkeleton';
 import { FormSkeleton } from 'src/app/guards/ExpressWorkflowGuard/FormSkeleton';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams from 'src/hooks/searchParams/useGlobalSearchParams';
 import useExpressWorkflowAuth from 'src/hooks/useExpressWorkflowAuth';
 import { logRocketConsole } from 'src/services/shared';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
@@ -15,7 +13,8 @@ export const ExpressWorkflowGuard = ({
     authenticating,
     children,
 }: ExpressWorkflowGuardProps) => {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    // TODO (gql:connector)
+    const connectorImage = useGlobalSearchParams('connector_image');
 
     const { getExpressWorkflowAuth } = useExpressWorkflowAuth();
 
@@ -61,7 +60,7 @@ export const ExpressWorkflowGuard = ({
     ]);
 
     if (authenticating && stateEmpty) {
-        return connectorId ? <FormSkeleton /> : <ConnectorGridSkeleton />;
+        return connectorImage ? <FormSkeleton /> : <ConnectorGridSkeleton />;
     }
 
     // eslint-disable-next-line react/jsx-no-useless-fragment

@@ -32,10 +32,6 @@ function useDiscoverStartDiscovery(entityType: Entity) {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const imageConnectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
-    );
-
     const imageName = useDetailsFormStore(
         (state) => state.details.data.connectorImage.imageName
     );
@@ -84,7 +80,6 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             const discoverResponse = await discover(
                 processedEntityName,
                 encryptedEndpointConfigResponse,
-                imageConnectorTagId,
                 newDraftId,
                 updateOnly,
                 dataPlaneName
@@ -126,7 +121,6 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             callFailed,
             createDiscoversSubscription,
             endpointConfigData,
-            imageConnectorTagId,
             imageName,
             persistedDraftId,
             postHog,

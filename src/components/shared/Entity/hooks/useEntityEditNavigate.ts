@@ -11,6 +11,7 @@ import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface BaseSearchParams {
+    // TODO(gql:connector) - need to replace with fullimagename
     [GlobalSearchParams.CONNECTOR_ID]: string;
     [GlobalSearchParams.LIVE_SPEC_ID]: string;
     [GlobalSearchParams.LAST_PUB_ID]: string;

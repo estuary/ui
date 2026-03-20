@@ -13,8 +13,8 @@ function EndpointConfig({
     hideWrapper,
     readOnly = false,
 }: EndpointConfigProps) {
-    const connectorId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.connectorId
+    const imageName = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imageName
     );
 
     // Draft Editor Store
@@ -34,7 +34,7 @@ function EndpointConfig({
     const forceClose =
         !editWorkflow && draftId !== null && !endpointConfigErrorsExist;
 
-    if (!connectorId) {
+    if (!imageName) {
         return null;
     }
 

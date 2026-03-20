@@ -8,6 +8,7 @@ import { useWorkflowStore_connectorMetadataProperty } from 'src/stores/Workflow/
 export const ExpressHeaderText = () => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
 
+    // todo (gql:connector) - need to update this
     const connectorTitle = useWorkflowStore_connectorMetadataProperty(
         connectorId,
         'title'

@@ -17,7 +17,6 @@ import type { StoreApi } from 'zustand';
 import { difference, intersection, isEmpty, omit } from 'lodash';
 
 import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
-import { getSchema_Resource } from 'src/api/hydration';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { BASE_ERROR } from 'src/services/supabase';
 import { getInitialBackfillData } from 'src/stores/Binding/slices/Backfill';
@@ -28,7 +27,7 @@ import {
 import { getInitialTimeTravelData } from 'src/stores/Binding/slices/TimeTravel';
 import { getInitialHydrationData } from 'src/stores/extensions/Hydration';
 import { populateErrors } from 'src/stores/utils';
-import { hasLength, hasOwnProperty } from 'src/utils/misc-utils';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import { formatCaptureInterval } from 'src/utils/time-utils';
 import { getCollectionName, getDisableProps } from 'src/utils/workflow-utils';
 
@@ -331,28 +330,6 @@ export const stubBindingFieldSelection = (
 };
 
 export const STORE_KEY = 'Bindings';
-
-export const hydrateConnectorTagDependentState = async (
-    connectorTagId: string,
-    get: StoreApi<BindingState>['getState']
-): Promise<Schema | null> => {
-    if (!hasLength(connectorTagId)) {
-        return null;
-    }
-
-    const { data, error } = await getSchema_Resource(connectorTagId);
-
-    if (error) {
-        get().setHydrationErrorsExist(true);
-    } else if (data?.resource_spec_schema) {
-        const schema = data.resource_spec_schema as unknown as Schema;
-        await get().setResourceSchema(schema);
-
-        get().setBackfillSupported(!Boolean(data.disable_backfill));
-    }
-
-    return data;
-};
 
 export const hydrateSpecificationDependentState = async (
     defaultInterval: string | null | undefined,

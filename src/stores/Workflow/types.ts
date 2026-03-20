@@ -1,7 +1,7 @@
-import type { ConnectorWithTagQuery } from 'src/api/types';
 import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
 import type { StoreWithCollections } from 'src/stores/Workflow/slices/Collections';
 import type { StoreWithProjections } from 'src/stores/Workflow/slices/Projections';
+import type { ConnectorTagGqlNode } from 'src/types/gql';
 
 interface CatalogName {
     root: string;
@@ -15,7 +15,7 @@ export interface WorkflowState
         StoreWithProjections,
         StoreWithCollections {
     catalogName: CatalogName;
-    connectorMetadata: ConnectorWithTagQuery[];
+    connectorMetadata: ConnectorTagGqlNode | null;
     customerId: string;
     redirectUrl: string;
     resetState: () => void;

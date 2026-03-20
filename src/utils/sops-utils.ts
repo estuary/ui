@@ -97,6 +97,7 @@ export const parseEncryptedEndpointConfig = (
     }
 };
 
+// TODO (gql:connector) - this require connector and tag ids
 export async function encryptEndpointConfig(
     endpointConfig: { [key: string]: any },
     endpointSchema: Schema,

@@ -35,7 +35,6 @@ import {
     getCollectionNames,
     getInitialStoreData,
     getInitialStoreDataAndKeepBindings,
-    hydrateConnectorTagDependentState,
     hydrateSpecificationDependentState,
     initializeAndGenerateUUID,
     initializeBinding,
@@ -230,7 +229,7 @@ const getInitialState = (
     hydrateState: async (
         editWorkflow,
         entityType,
-        connectorTagId,
+        connectorTag,
         getTrialOnlyPrefixes,
         rehydrating
     ) => {
@@ -247,16 +246,12 @@ const getInitialState = (
 
         get().resetState(materializationRehydrating);
 
-        const connectorTagResponse = await hydrateConnectorTagDependentState(
-            connectorTagId,
-            get
-        );
+        get().setResourceSchema(connectorTag.resourceSpecSchema);
 
-        const fallbackInterval =
-            entityType === 'capture' &&
-            typeof connectorTagResponse?.default_capture_interval === 'string'
-                ? ''
-                : null;
+        get().setBackfillSupported(!connectorTag.disableBackfill);
+
+        // default_capture_interval is not available via GQL; fallback always null
+        const fallbackInterval = null;
 
         if (editWorkflow && liveSpecIds.length > 0) {
             const { data: liveSpecs, error: liveSpecError } =
@@ -273,7 +268,9 @@ const getInitialState = (
 
             const specHydrationResponse =
                 await hydrateSpecificationDependentState(
-                    connectorTagResponse?.default_capture_interval,
+                    // TODO (gql:connector) - need to add to the query
+                    // connectorTag?.default_capture_interval,
+                    null,
                     entityType,
                     fallbackInterval,
                     get,
@@ -305,7 +302,9 @@ const getInitialState = (
         } else {
             get().setCaptureInterval(
                 fallbackInterval,
-                connectorTagResponse?.default_capture_interval
+                // TODO (gql:connector) - need to add to the query
+                // connectorTag?.default_capture_interval,
+                null
             );
         }
 

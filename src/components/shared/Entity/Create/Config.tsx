@@ -14,13 +14,12 @@ function EntityCreateConfig({
     condensed,
     entityType,
 }: EntityCreateConfigProps) {
-    const connectorImage = useGlobalSearchParams('conn_img');
+    const connectorImage = useGlobalSearchParams('connector_image');
 
     const navigateToCreate = useEntityCreateNavigate();
 
     useEffect(() => {
         if (connectorImage) {
-            console.log('connectorImage', connectorImage);
             navigateToCreate(entityType, {
                 advanceToForm: true,
                 connectorImage,

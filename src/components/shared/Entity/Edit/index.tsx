@@ -220,11 +220,11 @@ function EntityEdit({
                     <ErrorBoundryWrapper>
                         <EndpointConfig
                             readOnly={readOnly.endpointConfigForm}
-                            hideBorder={!hasLength(imageTag.connectorId)}
+                            hideBorder={!hasLength(imageTag.imageName)}
                         />
                     </ErrorBoundryWrapper>
 
-                    {hasLength(imageTag.connectorId) ? (
+                    {hasLength(imageTag.imageName) ? (
                         <ErrorBoundryWrapper>
                             <CollectionConfig
                                 draftSpecs={taskDraftSpec}

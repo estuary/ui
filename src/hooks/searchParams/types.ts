@@ -9,7 +9,7 @@ import type {
 
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
-export type SearchParams = 'conn_img'; // connector image (entity create/edit)
+export type SearchParams = 'fin'; // connector image (entity create/edit)
 
 export type KnownSearchParams =
     | GlobalSearchParams

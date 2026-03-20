@@ -79,24 +79,4 @@ const getConnectors_detailsFormTestPage = async (connectorId: string) => {
     return data;
 };
 
-const getSingleConnectorWithTag = async (connectorId: string) => {
-    const data = await supabaseRetry(
-        () =>
-            requiredConnectorColumnsExist<ConnectorWithTagQuery[]>(
-                supabaseClient
-                    .from(TABLES.CONNECTORS)
-                    .select(CONNECTOR_WITH_TAG_QUERY)
-                    .eq('id', connectorId),
-                'connector_tags'
-            ),
-        'getSingleConnectorWithTag'
-    ).then(handleSuccess<ConnectorWithTagQuery[]>, handleFailure);
-
-    return data;
-};
-
-export {
-    getConnectors,
-    getConnectors_detailsFormTestPage,
-    getSingleConnectorWithTag,
-};
+export { getConnectors, getConnectors_detailsFormTestPage };

@@ -46,11 +46,11 @@ function CaptureGenerateButton({
     );
 
     // Details Form Store
-    const selectedConnectorId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.connectorId
+    const selectedConnectorImageName = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imageName
     );
-    const previousConnectorId = useDetailsFormStore(
-        (state) => state.previousDetails.data.connectorImage.connectorId
+    const previousConnectorImageName = useDetailsFormStore(
+        (state) => state.previousDetails.data.connectorImage.imageName
     );
     const entityNameChanged = useDetailsFormStore(
         (state) => state.entityNameChanged
@@ -64,7 +64,7 @@ function CaptureGenerateButton({
             if (
                 !entityNameChanged &&
                 formStatus === FormStatus.GENERATED &&
-                selectedConnectorId === previousConnectorId
+                selectedConnectorImageName === previousConnectorImageName
             ) {
                 createWorkflowMetadata.setInitiateDiscovery(false);
             }
@@ -73,8 +73,8 @@ function CaptureGenerateButton({
         entityNameChanged,
         createWorkflowMetadata,
         formStatus,
-        previousConnectorId,
-        selectedConnectorId,
+        previousConnectorImageName,
+        selectedConnectorImageName,
     ]);
 
     return (

@@ -14,6 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n    query SingleConnectorQuery($imageName: String!) {\n        connector(imageName: $imageName) {\n            connectorTag(orDefault: true) {\n                endpointSpecSchema\n                resourceSpecSchema\n            }\n        }\n    }\n": typeof types.SingleConnectorQueryDocument,
     "\n    query DataPlanes($after: String) {\n        dataPlanes(first: 100, after: $after) {\n            edges {\n                node {\n                    name\n                    cloudProvider\n                    region\n                    isPublic\n                    fqdn\n                    cidrBlocks\n                    awsIamUserArn\n                    gcpServiceAccountEmail\n                    azureApplicationClientId\n                    azureApplicationName\n                }\n            }\n            pageInfo {\n                hasNextPage\n                endCursor\n            }\n        }\n    }\n": typeof types.DataPlanesDocument,
     "\n    query LiveSpecsQuery($prefix: Prefix!, $after: String) {\n        liveSpecs(by: { prefix: $prefix }, first: 100, after: $after) {\n            edges {\n                cursor\n                node {\n                    catalogName\n                    liveSpec {\n                        catalogType\n                    }\n                }\n            }\n            pageInfo {\n                hasNextPage\n                endCursor\n            }\n        }\n    }\n": typeof types.LiveSpecsQueryDocument,
     "\n    mutation CreateStorageMapping(\n        $catalogPrefix: Prefix!\n        $spec: JSON!\n        $detail: String\n    ) {\n        createStorageMapping(\n            catalogPrefix: $catalogPrefix\n            spec: $spec\n            detail: $detail\n        ) {\n            catalogPrefix\n        }\n    }\n": typeof types.CreateStorageMappingDocument,
@@ -28,6 +29,7 @@ type Documents = {
     "\n    query AuthRolesQuery($after: String) {\n        prefixes(by: { minCapability: read }, first: 7500, after: $after) {\n            edges {\n                node {\n                    prefix\n                    userCapability\n                }\n            }\n            pageInfo {\n                hasNextPage\n                endCursor\n            }\n        }\n    }\n": typeof types.AuthRolesQueryDocument,
 };
 const documents: Documents = {
+    "\n    query SingleConnectorQuery($imageName: String!) {\n        connector(imageName: $imageName) {\n            connectorTag(orDefault: true) {\n                endpointSpecSchema\n                resourceSpecSchema\n            }\n        }\n    }\n": types.SingleConnectorQueryDocument,
     "\n    query DataPlanes($after: String) {\n        dataPlanes(first: 100, after: $after) {\n            edges {\n                node {\n                    name\n                    cloudProvider\n                    region\n                    isPublic\n                    fqdn\n                    cidrBlocks\n                    awsIamUserArn\n                    gcpServiceAccountEmail\n                    azureApplicationClientId\n                    azureApplicationName\n                }\n            }\n            pageInfo {\n                hasNextPage\n                endCursor\n            }\n        }\n    }\n": types.DataPlanesDocument,
     "\n    query LiveSpecsQuery($prefix: Prefix!, $after: String) {\n        liveSpecs(by: { prefix: $prefix }, first: 100, after: $after) {\n            edges {\n                cursor\n                node {\n                    catalogName\n                    liveSpec {\n                        catalogType\n                    }\n                }\n            }\n            pageInfo {\n                hasNextPage\n                endCursor\n            }\n        }\n    }\n": types.LiveSpecsQueryDocument,
     "\n    mutation CreateStorageMapping(\n        $catalogPrefix: Prefix!\n        $spec: JSON!\n        $detail: String\n    ) {\n        createStorageMapping(\n            catalogPrefix: $catalogPrefix\n            spec: $spec\n            detail: $detail\n        ) {\n            catalogPrefix\n        }\n    }\n": types.CreateStorageMappingDocument,
@@ -56,6 +58,10 @@ const documents: Documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n    query SingleConnectorQuery($imageName: String!) {\n        connector(imageName: $imageName) {\n            connectorTag(orDefault: true) {\n                endpointSpecSchema\n                resourceSpecSchema\n            }\n        }\n    }\n"): (typeof documents)["\n    query SingleConnectorQuery($imageName: String!) {\n        connector(imageName: $imageName) {\n            connectorTag(orDefault: true) {\n                endpointSpecSchema\n                resourceSpecSchema\n            }\n        }\n    }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

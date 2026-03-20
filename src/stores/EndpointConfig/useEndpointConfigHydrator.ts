@@ -1,11 +1,11 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { ConnectorTag } from 'src/api/types';
 import type { Schema } from 'src/types';
 
 import { useCallback } from 'react';
 
 import { getDraftSpecsByDraftId } from 'src/api/draftSpecs';
 import { getLiveSpecsByLiveSpecId } from 'src/api/hydration';
+import { useConnectorTag } from 'src/context/ConnectorTag';
 import { useEntityType } from 'src/context/EntityContext';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import useGlobalSearchParams, {
@@ -26,28 +26,21 @@ const useStoreEndpointSchema = () => {
         (state) => state.setEndpointCanBeEmpty
     );
 
-    const storeEndpointSchema = async (
-        connectorTagId: string,
-        connectorTags: ConnectorTag[]
-    ) => {
-        const endpointSchema = connectorTags.find(
-            (tag) => tag.id === connectorTagId
-        )?.endpoint_spec_schema;
-
-        if (!endpointSchema) {
+    const storeEndpointSchema = async (endpointSpecSchema: any) => {
+        if (!endpointSpecSchema) {
             return {
                 endpointSchema: null,
                 error: { ...BASE_ERROR, message: 'endpoint schema not found' },
             };
         }
 
-        await setEndpointSchema(endpointSchema);
+        await setEndpointSchema(endpointSpecSchema);
 
         // Storing if this endpointConfig can be empty or not
         //  If so we know there will never be a "change" to the endpoint config
-        setEndpointCanBeEmpty(configCanBeEmpty(endpointSchema));
+        setEndpointCanBeEmpty(configCanBeEmpty(endpointSpecSchema));
 
-        return { endpointSchema, error: null };
+        return { endpointSchema: endpointSpecSchema, error: null };
     };
 
     return { storeEndpointSchema };
@@ -117,6 +110,8 @@ const useHydrateEndpointConfigDependentState = () => {
 };
 
 export const useEndpointConfigHydrator = () => {
+    const connectorTag = useConnectorTag();
+
     const draftId = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
 
@@ -135,73 +130,60 @@ export const useEndpointConfigHydrator = () => {
     const { hydrateEndpointConfigDependentState } =
         useHydrateEndpointConfigDependentState();
 
-    const hydrateEndpointConfig = useCallback(
-        async (
-            connectorTagId: string | null,
-            connectorTags: ConnectorTag[]
-        ) => {
-            setActive(true);
+    const hydrateEndpointConfig = useCallback(async () => {
+        setActive(true);
 
-            if (!connectorTagId || connectorTagId.length === 0) {
-                // TODO: Add a Log Rocket event.
-                setHydrated(true);
-                setHydrationErrorsExist(true);
+        if (
+            workflow === 'capture_create' ||
+            workflow === 'materialization_create'
+        ) {
+            logRocketEvent('EndpointConfig', {
+                hydrationDefault: true,
+            });
+            setServerUpdateRequired(true);
+        }
 
-                return Promise.reject();
-            }
+        const { endpointSchema, error: endpointSchemaError } =
+            await storeEndpointSchema(connectorTag.endpointSpecSchema);
 
-            if (
-                workflow === 'capture_create' ||
-                workflow === 'materialization_create'
-            ) {
-                logRocketEvent('EndpointConfig', {
-                    hydrationDefault: true,
-                });
-                setServerUpdateRequired(true);
-            }
-
-            const { endpointSchema, error: endpointSchemaError } =
-                await storeEndpointSchema(connectorTagId, connectorTags);
-
-            if (endpointSchemaError || !endpointSchema) {
-                setHydrated(true);
-                setHydrationErrorsExist(true);
-
-                return Promise.reject();
-            }
-
-            if (liveSpecId) {
-                const { error: endpointConfigError } =
-                    await hydrateEndpointConfigDependentState(
-                        draftId,
-                        liveSpecId,
-                        endpointSchema
-                    );
-
-                if (endpointConfigError) {
-                    setHydrated(true);
-                    setHydrationErrorsExist(true);
-
-                    return Promise.reject();
-                }
-            }
-
+        if (endpointSchemaError || !endpointSchema) {
             setHydrated(true);
+            setHydrationErrorsExist(true);
 
-            return Promise.resolve();
-        },
-        [
-            draftId,
-            hydrateEndpointConfigDependentState,
-            liveSpecId,
-            setActive,
-            setHydrated,
-            setHydrationErrorsExist,
-            setServerUpdateRequired,
-            storeEndpointSchema,
-            workflow,
-        ]
-    );
+            return Promise.reject();
+        }
+
+        if (liveSpecId) {
+            const { error: endpointConfigError } =
+                await hydrateEndpointConfigDependentState(
+                    draftId,
+                    liveSpecId,
+                    endpointSchema
+                );
+
+            if (endpointConfigError) {
+                setHydrated(true);
+                setHydrationErrorsExist(true);
+
+                return Promise.reject();
+            }
+        }
+
+        setHydrated(true);
+
+        return Promise.resolve();
+    }, [
+        connectorTag,
+        draftId,
+        hydrateEndpointConfigDependentState,
+        liveSpecId,
+        setActive,
+        setHydrated,
+        setHydrationErrorsExist,
+        setServerUpdateRequired,
+        storeEndpointSchema,
+        workflow,
+    ]);
 
     return { hydrateEndpointConfig };
 };

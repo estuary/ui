@@ -11,8 +11,8 @@ function DetailsErrors() {
     const entityName = useDetailsFormStore(
         (state) => state.details.data.entityName
     );
-    const imageId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
+    const imageName = useDetailsFormStore(
+        (state) => state.details.data.connectorImage.imageName
     );
 
     const filteredErrorsList: any[] = [];
@@ -26,7 +26,7 @@ function DetailsErrors() {
     }
 
     // Check if there is a connector
-    if (!hasLength(imageId)) {
+    if (!hasLength(imageName)) {
         filteredErrorsList.push({
             title: intl.formatMessage({
                 id: 'entityCreate.endpointConfig.connectorMissing',

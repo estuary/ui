@@ -15,6 +15,7 @@ import type {
     Schema,
     SourceCaptureDef,
 } from 'src/types';
+import type { ConnectorTagGqlNode } from 'src/types/gql';
 
 export interface CollectionMetadata {
     added?: boolean;
@@ -210,7 +211,7 @@ export interface BindingState
     hydrateState: (
         editWorkflow: boolean,
         entityType: Entity,
-        connectorTagId: string,
+        connectorTag: ConnectorTagGqlNode,
         getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeOrTransform[] | null>;

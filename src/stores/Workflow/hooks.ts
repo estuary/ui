@@ -1,47 +1,37 @@
-import type { ConnectorTag, ConnectorWithTag } from 'src/api/types';
-
-import { useShallow } from 'zustand/react/shallow';
-
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
-import { hasLength } from 'src/utils/misc-utils';
 
-export const useWorkflowStore_connectorMetadataProperty = <
-    K extends keyof ConnectorWithTag,
->(
-    connectorId: string | null | undefined,
-    property: K
-): ConnectorWithTag[K] | undefined => {
+// Returns the title of the connector stored in workflow metadata
+export const useWorkflowStore_connectorTitle = (): string | undefined => {
     return useWorkflowStore(
-        useShallow((state) => {
-            if (!connectorId || !hasLength(state.connectorMetadata)) {
-                return undefined;
-            }
-
-            return state.connectorMetadata.find(
-                (connector) => connector.id === connectorId
-            )?.[property];
-        })
+        (state) => state.connectorMetadata?.connector.title ?? undefined
     );
 };
 
-export const useWorkflowStore_connectorTagProperty = <
-    K extends keyof ConnectorTag,
->(
-    connectorId: string | null | undefined,
-    connectorTagId: string | null | undefined,
-    property: K
-): ConnectorTag[K] | undefined => {
-    return useWorkflowStore(
-        useShallow((state) => {
-            if (!connectorId || !hasLength(state.connectorMetadata)) {
-                return undefined;
-            }
+// Returns the documentation URL of the connector tag stored in workflow metadata
+export const useWorkflowStore_connectorTagDocumentationUrl =
+    (): string | undefined => {
+        return useWorkflowStore(
+            (state) => state.connectorMetadata?.documentationUrl ?? undefined
+        );
+    };
 
-            return state.connectorMetadata
-                .find((connector) => connector.id === connectorId)
-                ?.connector_tags.find((tag) => tag.id === connectorTagId)?.[
-                property
-            ];
-        })
+// Legacy hook names preserved for backward compatibility
+// TODO (gql:connector) - update callers to use the new named hooks above
+export const useWorkflowStore_connectorMetadataProperty = (
+    _connectorId: string | null | undefined,
+    _property: string
+): string | undefined => {
+    return useWorkflowStore(
+        (state) => state.connectorMetadata?.connector.title ?? undefined
+    );
+};
+
+export const useWorkflowStore_connectorTagProperty = (
+    _connectorId: string | null | undefined,
+    _connectorTagId: string | null | undefined,
+    _property: string
+): string | undefined => {
+    return useWorkflowStore(
+        (state) => state.connectorMetadata?.documentationUrl ?? undefined
     );
 };

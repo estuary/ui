@@ -9,9 +9,7 @@ import DetailsErrors from 'src/components/shared/Entity/ValidationErrorSummary/D
 import EndpointConfigErrors from 'src/components/shared/Entity/ValidationErrorSummary/EndpointConfigErrors';
 import NoConnectorError from 'src/components/shared/Entity/ValidationErrorSummary/NoConnectorError';
 import ResourceConfigErrors from 'src/components/shared/Entity/ValidationErrorSummary/ResourceConfigErrors';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
+import useGlobalSearchParams from 'src/hooks/searchParams/useGlobalSearchParams';
 import useScrollIntoView from 'src/hooks/useScrollIntoView';
 import {
     useBinding_fullSourceErrorsExist,
@@ -41,7 +39,7 @@ function ValidationErrorSummary({
     const scrollToTarget = useRef<HTMLDivElement>(null);
     const scrollIntoView = useScrollIntoView(scrollToTarget);
 
-    const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const connectorImage = useGlobalSearchParams('connector_image');
 
     // Binding Store
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
@@ -99,7 +97,7 @@ function ValidationErrorSummary({
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
                     <ErrorComponent />
-                ) : hasLength(connectorID) ? (
+                ) : hasLength(connectorImage) ? (
                     <>
                         <DetailsErrors />
 

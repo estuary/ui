@@ -253,6 +253,7 @@ function useInitializeTaskDraft() {
                             taskSpecType,
                             {
                                 [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
+                                // TODO (gql:connector) - need to replace with fullimagename
                                 [GlobalSearchParams.CONNECTOR_ID]:
                                     task.connector_id,
                                 [GlobalSearchParams.LAST_PUB_ID]:

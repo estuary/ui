@@ -66,12 +66,6 @@ function useGenerateCatalog() {
     const detailsFormsErrorsExist = useDetailsFormStore(
         (state) => state.errorsExist
     );
-    const imageConnectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
-    );
-    const imageConnectorId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.connectorId
-    );
     const endpointConfig: ConnectorConfig | DekafConfig = useDetailsFormStore(
         (state) =>
             isDekafConnector(state.details.data.connectorImage)
@@ -232,8 +226,8 @@ function useGenerateCatalog() {
                         : serverEndpointConfigData,
                     endpointSchema,
                     serverUpdateRequired,
-                    imageConnectorId,
-                    imageConnectorTagId,
+                    'imageConnectorId',
+                    'imageConnectorTagId',
                     callFailed,
                     { overrideJsonFormDefaults: true }
                 );
@@ -358,8 +352,6 @@ function useGenerateCatalog() {
             endpointSchema,
             fullSourceConfigs,
             fullSourceErrorsExist,
-            imageConnectorId,
-            imageConnectorTagId,
             isEdit,
             persistedDraftId,
             prefillBindingDependentState,

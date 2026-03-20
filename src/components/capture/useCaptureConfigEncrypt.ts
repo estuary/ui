@@ -3,7 +3,6 @@ import type { Schema } from 'src/types';
 import { useCallback } from 'react';
 
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import {
     useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_endpointSchema,
@@ -12,13 +11,6 @@ import { encryptEndpointConfig } from 'src/utils/sops-utils';
 
 function useDiscoverConfigEncrypt() {
     const { callFailed } = useEntityWorkflowHelpers();
-
-    const imageConnectorId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.connectorId
-    );
-    const imageConnectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
-    );
 
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
@@ -29,8 +21,8 @@ function useDiscoverConfigEncrypt() {
                 selectedEndpointConfig,
                 endpointSchema,
                 serverUpdateRequired,
-                imageConnectorId,
-                imageConnectorTagId,
+                'imageConnectorId',
+                'imageConnectorTagId',
                 callFailed,
                 { overrideJsonFormDefaults: true }
             );
@@ -48,13 +40,7 @@ function useDiscoverConfigEncrypt() {
 
             return encryptedEndpointConfig;
         },
-        [
-            callFailed,
-            endpointSchema,
-            imageConnectorId,
-            imageConnectorTagId,
-            serverUpdateRequired,
-        ]
+        [callFailed, endpointSchema, serverUpdateRequired]
     );
 }
 

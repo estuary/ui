@@ -31,6 +31,10 @@ export const DATE_TIME_RE = new RegExp(
 
 export const MAC_ADDR_RE = new RegExp(/^([0-9A-F]{2}:){7}([0-9A-F]{2})$/i);
 
+export const CONNECTOR_IMAGE_NAME_RE = new RegExp(
+    /ghcr\.io\/estuary\/(source|materialize|dekaf){1}-.{1,}/i
+);
+
 export const validateCatalogName = (
     value: string,
     allowBlank?: boolean,

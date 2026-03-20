@@ -32,27 +32,15 @@ import {
 const CONNECTOR_NODE_FIELDS = `
     edges {
         node {
-            imageName
-            createdAt
             defaultImageTag
-            externalUrl
+            imageName
             logoUrl
-            longDescription
             recommended
             shortDescription
             title
-            tags {
-                imageTag
-                protocol
-                specSucceeded
-            }
-            connectorTag(orDefault: false, imageTag: "") {
-                createdAt
-                disableBackfill
+            connectorTag(orDefault: true) {
                 documentationUrl
-                imageTag
                 protocol
-                updatedAt
             }
         }
     }
@@ -98,7 +86,6 @@ export default function ConnectorCards({
 
         if (!searchQuery) return nodes;
 
-        // TODO (gql:connector) - try to get this into the query
         const queryValue = searchQuery.toLowerCase();
         return nodes.filter(
             (node) =>
@@ -114,8 +101,6 @@ export default function ConnectorCards({
     );
 
     const primaryCtaClick = (nodeProtocol: string, imageName: string) => {
-        // TODO (gql:connector) - we could still use `id` for connector but probably
-        //  can switch over to the imageName instead
         navigateToCreate(nodeProtocol as any, {
             connectorImage: imageName,
             advanceToForm: true,
@@ -181,8 +166,6 @@ export default function ConnectorCards({
                     const ConnectorCard = condensed ? Card : LegacyCard;
                     const nodeProtocol =
                         node.connectorTag?.protocol ?? node.tags[0]?.protocol;
-
-                    console.log('node', node);
 
                     return (
                         <ConnectorCard
