@@ -16,8 +16,8 @@ const ActiveAlertCountQuery = gql<
     ActiveAlertCountQueryResponse,
     LiveSpecVariables
 >`
-    query ActiveAlertCount($catalogName: String!) {
-        liveSpecs(by: { names: $catalogName }) {
+    query ActiveAlertCount($catalogName: Name!) {
+        liveSpecs(by: { names: [$catalogName] }) {
             edges {
                 cursor
                 node {

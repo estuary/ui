@@ -1,0 +1,18 @@
+schema: src/gql-types/schema.graphql # used by IDE for autocomplete and hover tips in graqphql() calls
+documents: 'src/**/*.{ts,tsx}' # where to look for operations to generate types for
+extensions:
+    codegen:
+        generates:
+            ./src/gql-types/schema.graphql:
+                schema: ${VITE_GQL_URL}
+                plugins:
+                    - schema-ast # converts the json response from introspection query to a .graphql file
+            ./src/gql-types/:
+                schema: ${VITE_GQL_URL}
+                preset: client
+                presetConfig:
+                    # fragmentMasking hides fields outside of the component that defines the fragment
+                    # - turning off is easier to work with, and it doesn't matter because we're not using any fragments yet
+                    fragmentMasking: false
+                config:
+                    enumsAsTypes: true # generates string unions instead of enums

@@ -28,7 +28,7 @@ const LiveSpecsQuery = gql<
         after?: string;
     }
 >`
-    query LiveSpecsQuery($prefix: String!, $after: String) {
+    query LiveSpecsQuery($prefix: Prefix!, $after: String) {
         liveSpecs(by: { prefix: $prefix }, first: 100, after: $after) {
             edges {
                 cursor

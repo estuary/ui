@@ -8,9 +8,19 @@ To prevent us from having to solve everything at once sticking with some ideas/a
 
 ## Typing
 
-Currently manually typing in the UI and not using any CodeGen. This makes the impacts to build/deploy basically nothing. I doubt we will continue manually typing as it is somewhat costly - but since we mainly just use GQL for `alerts` right now it isn't that bad.
+We use [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) with the `client` preset to automatically generate types from the schema and inline `graphql()` calls in source files.
 
-We will keep all the types in a single GQL file for now (ui/src/types/gql.ts).
+- Generated output: `src/gql-types/` (auto-generated `gql.ts`, `graphql.ts`, `index.ts`)
+- Scripts:
+    - `npm run codegen` — generate types against the production GQL endpoint (via `.env`)
+    - `npm run codegen:local` — generate types against a local GQL endpoint (via `.env.development.local`)
+    - `npm run check-schema` — run codegen and verify no uncommitted schema/type changes
+
+When adding or changing `graphql()` queries/mutations/fragments in source files, re-run `npm run codegen` (or `codegen:local` if working against a local dev backend) to regenerate types.
+
+The `check-schema` script runs in CI to verify the committed schema and generated types are up to date with the production endpoint.
+
+Legacy manual types may still exist in `src/types/gql.ts` and should be migrated to use the generated types over time.
 
 ## Client Library: URQL
 
