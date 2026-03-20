@@ -285,6 +285,68 @@ export type ConnectionHealthTestResult = {
   results: Array<StorageHealthItem>;
 };
 
+export type Connector = {
+  __typename?: 'Connector';
+  /** Returns the ConnectorTag object for the given image tag, which must begin with a `:`. */
+  connectorTag?: Maybe<ConnectorTag>;
+  /** Timestamp of when the connector was first created */
+  createdAt: Scalars['DateTime']['output'];
+  /**
+   * Returns the default `ConnectorTag` for this connector. This is the one
+   * that should be used by default when publishing new tasks for this
+   * connector. There will only be a default image tag if at least one tag
+   * has successfully completed the connector Spec RPC.
+   */
+  defaultImageTag?: Maybe<Scalars['String']['output']>;
+  /** Link to an external site with more information about the endpoint */
+  externalUrl: Scalars['String']['output'];
+  /** Name of the conector's OCI (Docker) Container image, for example "ghcr.io/estuary/source-postgres" */
+  imageName: Scalars['String']['output'];
+  /** The connector's logo image, represented as a URL per locale */
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  /** A longform description of this connector */
+  longDescription?: Maybe<Scalars['String']['output']>;
+  /** Does Estuary's marketing team want this one to appear at the top of the results? */
+  recommended: Scalars['Boolean']['output'];
+  /** Brief human readable description, at most a few sentences */
+  shortDescription?: Maybe<Scalars['String']['output']>;
+  /** All the tags that are available for this connector. */
+  tags: Array<ConnectorTagRef>;
+  /** The title, a few words at most */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type ConnectorConnectorTagArgs = {
+  imageTag?: InputMaybe<Scalars['String']['input']>;
+  orDefault: Scalars['Boolean']['input'];
+};
+
+export type ConnectorConnection = {
+  __typename?: 'ConnectorConnection';
+  /** A list of edges. */
+  edges: Array<ConnectorEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type ConnectorEdge = {
+  __typename?: 'ConnectorEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: Connector;
+};
+
+/**
+ * The type of task that the connector is used for. Note that derivation
+ * connectors do exist, but aren't yet represented in `connector_tags`.
+ */
+export type ConnectorProto =
+  | 'capture'
+  | 'materialization';
+
 /** The shape of a connector status, which matches that of an ops::Log. */
 export type ConnectorStatus = {
   __typename?: 'ConnectorStatus';
@@ -299,6 +361,45 @@ export type ConnectorStatus = {
   shard: ShardRef;
   /** The time at which the status was last updated */
   ts: Scalars['DateTime']['output'];
+};
+
+export type ConnectorTag = {
+  __typename?: 'ConnectorTag';
+  /** Time at which the ConnectorTag was created */
+  createdAt: Scalars['DateTime']['output'];
+  /** Whether the UI should hide the backfill button for this connector */
+  disableBackfill: Scalars['Boolean']['output'];
+  /** URL pointing to the documentation page for this connector */
+  documentationUrl?: Maybe<Scalars['String']['output']>;
+  /** Endpoint specification JSON-Schema of the tagged connector */
+  endpointSpecSchema?: Maybe<Scalars['JSON']['output']>;
+  /** The OCI Image tag value, including the leading `:`. For example `:v1` */
+  imageTag: Scalars['String']['output'];
+  /** The protocol of the connector with this tag value */
+  protocol?: Maybe<ConnectorProto>;
+  /** Resource specification JSON-Schema of the tagged connector */
+  resourceSpecSchema?: Maybe<Scalars['JSON']['output']>;
+  /** Time at which the ConnectorTag was last updated */
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ConnectorTagRef = {
+  __typename?: 'ConnectorTagRef';
+  /** The OCI image tag, includeing the leading `:`, for example `:v2` */
+  imageTag: Scalars['String']['output'];
+  /** The protocol of this connector tag, if known */
+  protocol?: Maybe<ConnectorProto>;
+  /**
+   * Returns whether a connector Spec RPC has ever been successful for this tag.
+   * Concretely, this is used to determine whether the tag could be used by the
+   * UI or flowctl for publishing tasks, because the Spec RPC populates the
+   * `endpointSpecSchema`, `resourceSpecSchema`, `protocol`, etc.
+   */
+  specSucceeded: Scalars['Boolean']['output'];
+};
+
+export type ConnectorsFilter = {
+  protocol: ProtocolFilter;
 };
 
 /** Status info related to the controller */
@@ -760,6 +861,10 @@ export type PrefixesBy = {
   minCapability: Capability;
 };
 
+export type ProtocolFilter = {
+  eq: ConnectorProto;
+};
+
 /** Summary of a publication that was attempted by a controller. */
 export type PublicationInfo = {
   __typename?: 'PublicationInfo';
@@ -830,6 +935,29 @@ export type QueryRoot = {
    */
   alerts: AlertConnection;
   /**
+   * Returns information about a single connector, which may or may not have
+   * had a successful Spec RPC, and thus may or may not be usable in the
+   * Estuary UI.
+   */
+  connector?: Maybe<Connector>;
+  /**
+   * Returns the ConnectorTag for a given full (including the version) OCI
+   * image name. The returned tag may be different from the version in the
+   * image name. This would happen if there is no connector spec for the
+   * given tag, but one exists for a different tag. The return value will be
+   * null if either the connector image is unkown, or if there has not been a
+   * successful Spec for any version of that image.
+   */
+  connectorTag?: Maybe<ConnectorTag>;
+  /**
+   * Returns a paginated list of connectors. This query only returns
+   * connectors that have at least one `ConnectorTag` that has had a
+   * successful Spec RPC. Connectors that have not had at least one
+   * successful Spec RPC cannot be used by the Estuary UI, and so are
+   * excluded here.
+   */
+  connectors: ConnectorConnection;
+  /**
    * Returns data planes accessible to the current user.
    *
    * Results are paginated and sorted by data_plane_name.
@@ -867,6 +995,25 @@ export type QueryRootAlertsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   by: AlertsBy;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootConnectorArgs = {
+  imageName: Scalars['String']['input'];
+};
+
+
+export type QueryRootConnectorTagArgs = {
+  fullImageName: Scalars['String']['input'];
+};
+
+
+export type QueryRootConnectorsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter: ConnectorsFilter;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
 };
