@@ -54,7 +54,11 @@ export interface WithOptionLabel {
 }
 
 const areOptionsEqual = (option?: any, value?: any) => {
-    return value?.id && value.id.length > 0 && option.id === value.id;
+    return (
+        value?.imagePath &&
+        value.imagePath.length > 0 &&
+        option.imagePath === value.imagePath
+    );
 };
 
 export const ConnectorAutoComplete = (

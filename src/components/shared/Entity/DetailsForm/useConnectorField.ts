@@ -10,6 +10,7 @@ import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import useGlobalSearchParams from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
+import { DEKAF_IMAGE_PREFIX } from 'src/validation';
 
 export default function useConnectorField(
     entityType: EntityWithCreateWorkflow
@@ -31,7 +32,6 @@ export default function useConnectorField(
             return [];
         }
 
-        const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
         const { imageTag, connector } = connectorTags;
         const base = {
             iconPath: connector.logoUrl ?? '',
@@ -52,6 +52,8 @@ export default function useConnectorField(
 
         return [{ const: connectorImage, title: connector.imageName }];
     }, [connectorTags]);
+
+    console.log('connectorsOneOf', connectorsOneOf);
 
     const connectorSchema = useMemo(
         () => ({

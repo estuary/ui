@@ -35,6 +35,8 @@ export const CONNECTOR_IMAGE_NAME_RE = new RegExp(
     /ghcr\.io\/estuary\/(source|materialize|dekaf){1}-.{1,}/i
 );
 
+export const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
+
 export const validateCatalogName = (
     value: string,
     allowBlank?: boolean,
