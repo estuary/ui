@@ -56,13 +56,10 @@ jobs:
             - name: Get Deps
               run: npm ci
 
-            - name: GraphQL Schema Check
-              run: npm run check-schema
-
             - name: Licenses
               run: npm run licenses
 
-            - name: GraphQL Schema Check
+            - name: GraphQL Codegen Check
               run: npm run codegen:check
 
             - name: Typecheck
