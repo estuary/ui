@@ -1,8 +1,6 @@
-import type { RedeemInviteLinkResult } from 'src/gql-types/graphql';
+import { useEffect, useRef } from 'react';
 
-import { useEffect, useRef, useState } from 'react';
-
-import { Box, LinearProgress, Stack, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, Stack, Typography } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
@@ -11,7 +9,6 @@ import { useRedeemInviteLink } from 'src/api/gql/inviteLinks';
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import { authenticatedRoutes } from 'src/app/routes';
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import AlertBox from 'src/components/shared/AlertBox';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -24,14 +21,11 @@ export function RedeemInviteLink({ grantToken }: Props) {
     const intl = useIntl();
     const navigate = useNavigate();
 
-    const [, redeemInviteLink] = useRedeemInviteLink();
+    const [{ error: redeemError, data: redeemData }, redeemInviteLink] =
+        useRedeemInviteLink();
     const mutate_userInfoSummary = useUserInfoSummaryStore(
         (state) => state.mutate
     );
-
-    const [serverError, setServerError] = useState<string | null>(null);
-    const [grantResult, setGrantResult] =
-        useState<RedeemInviteLinkResult | null>(null);
 
     const redeemed = useRef(false);
 
@@ -42,27 +36,23 @@ export function RedeemInviteLink({ grantToken }: Props) {
         void (async () => {
             const result = await redeemInviteLink({ token: grantToken });
 
-            if (result.error) {
-                setServerError(
-                    result.error.graphQLErrors[0]?.message ??
-                        result.error.message ??
-                        intl.formatMessage({
-                            id: 'tenant.grantDirective.error.message',
-                        })
-                );
-            } else if (result.data) {
-                if (mutate_userInfoSummary) {
-                    try {
-                        await mutate_userInfoSummary();
-                    } catch {
-                        // Best-effort refresh; the grant still succeeded
-                    }
+            if (result.data && mutate_userInfoSummary) {
+                try {
+                    await mutate_userInfoSummary();
+                } catch {
+                    // Best-effort refresh; the grant still succeeded
                 }
-
-                setGrantResult(result.data.redeemInviteLink);
             }
         })();
-    }, [grantToken, intl, mutate_userInfoSummary, redeemInviteLink]);
+    }, [grantToken, mutate_userInfoSummary, redeemInviteLink]);
+
+    const serverError = redeemError
+        ? (redeemError.graphQLErrors[0]?.message ??
+          redeemError.message ??
+          intl.formatMessage({ id: 'tenant.grantDirective.error.message' }))
+        : null;
+
+    const grantResult = redeemData?.redeemInviteLink ?? null;
 
     const handleContinue = () => {
         void navigate(authenticatedRoutes.home.path, { replace: true });
@@ -128,13 +118,13 @@ export function RedeemInviteLink({ grantToken }: Props) {
                             justifyContent: 'center',
                         }}
                     >
-                        <SafeLoadingButton
+                        <Button
                             variant="contained"
                             onClick={handleContinue}
                             sx={{ mt: 2 }}
                         >
                             {intl.formatMessage({ id: 'cta.continue' })}
-                        </SafeLoadingButton>
+                        </Button>
                     </Box>
                 </Stack>
             </FullPageWrapper>
