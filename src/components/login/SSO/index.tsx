@@ -54,6 +54,32 @@ const SSOForm = ({ grantToken, ssoProviderId }: SSOFormProps) => {
         );
     };
 
+    const handleSSOResult = (
+        data: { url?: string } | null,
+        error: Error | null,
+        errorMessageValues?: Record<string, string>
+    ) => {
+        if (error) {
+            setSubmitError(
+                intl.formatMessage(
+                    { id: 'login.signinFailed.message.default' },
+                    errorMessageValues
+                )
+            );
+            setLoading(false);
+            return;
+        }
+
+        if (data?.url) {
+            window.location.href = data.url;
+            return;
+        }
+
+        displayNotification('login.sso', 'success');
+        setLoading(false);
+        navigate(redirectPath, { replace: true });
+    };
+
     // When ssoProviderId is present (e.g. from an invite link), auto-trigger
     // SSO sign-in directly without requiring the user to enter their email.
     useEffect(() => {
@@ -74,24 +100,7 @@ const SSOForm = ({ grantToken, ssoProviderId }: SSOFormProps) => {
 
             if (cancelled) return;
 
-            if (error) {
-                setSubmitError(
-                    intl.formatMessage({
-                        id: 'login.signinFailed.message.default',
-                    })
-                );
-                setLoading(false);
-                return;
-            }
-
-            if (data.url) {
-                window.location.href = data.url;
-                return;
-            }
-
-            displayNotification('login.sso', 'success');
-            setLoading(false);
-            navigate(redirectPath, { replace: true });
+            handleSSOResult(data, error);
         };
 
         void signInWithProvider();
@@ -130,35 +139,7 @@ const SSOForm = ({ grantToken, ssoProviderId }: SSOFormProps) => {
                 },
             });
 
-            if (error) {
-                // Saw these messages but no clue how to handle them right now
-                // sso_provider_not_found
-
-                // The errors returned by this call are kind of weird so overriding
-                //  and setting a common message.
-                setSubmitError(
-                    intl.formatMessage(
-                        { id: 'login.signinFailed.message.default' },
-                        {
-                            domain: submittedDomain,
-                        }
-                    )
-                );
-                setLoading(false);
-                return;
-            }
-
-            if (data.url) {
-                // redirect the user to the identity provider's authentication flow
-                window.location.href = data.url;
-                return;
-            }
-
-            displayNotification('login.sso', 'success');
-            setLoading(false);
-            navigate(redirectPath, {
-                replace: true,
-            });
+            handleSSOResult(data, error, { domain: submittedDomain });
         },
     };
 
