@@ -1,6 +1,5 @@
-import type { CodegenConfig } from '@graphql-codegen/cli';
-
 import { loadEnvFile } from 'node:process';
+import type { CodegenConfig } from '@graphql-codegen/cli';
 
 loadEnvFile(process.env.LOCAL ? '.env.development.local' : '.env');
 
