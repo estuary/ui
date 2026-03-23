@@ -115,7 +115,6 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
     const intl = useIntl();
 
     const [currentPage, setCurrentPage] = useState(0);
-    const [maxPageSeen, setMaxPageSeen] = useState(0);
     const [afterCursor, setAfterCursor] = useState<string | undefined>(
         undefined
     );
@@ -131,20 +130,8 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
             const endCursor = pageInfo?.endCursor;
 
             if (endCursor) {
-                setMaxPageSeen(Math.max(maxPageSeen, page));
                 setAfterCursor(endCursor);
-
-                setCursorHistory((prev) => {
-                    const newHistory = [...prev];
-
-                    while (newHistory.length <= page) {
-                        newHistory.push(undefined);
-                    }
-
-                    newHistory[page] = endCursor;
-
-                    return newHistory;
-                });
+                setCursorHistory((prev) => [...prev, endCursor]);
             }
         } else if (page < currentPage) {
             if (page === 0) {
@@ -186,7 +173,6 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
         if (currentPage > 0) {
             const prevPage = currentPage - 1;
             setCurrentPage(prevPage);
-            setMaxPageSeen(prevPage);
             setAfterCursor(
                 prevPage === 0 ? undefined : cursorHistory[prevPage]
             );
@@ -197,12 +183,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
         setTableState({ status: TableStatuses.NO_EXISTING_DATA });
     }, [fetching, error, inviteLinks, currentPage]);
 
-    const failed =
-        tableState.status === TableStatuses.TECHNICAL_DIFFICULTIES ||
-        tableState.status === TableStatuses.NETWORK_FAILED;
-    const loading = tableState.status === TableStatuses.LOADING;
-    const hasData =
-        !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
+    const hasData = Boolean(pageInfo);
 
     return (
         <Box>
@@ -230,7 +211,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
                             disableDoclink: true,
                         }}
                         tableState={tableState}
-                        loading={loading}
+                        loading={fetching}
                         rows={
                             hasData && inviteLinks.length > 0 ? (
                                 <>
@@ -253,6 +234,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
                                     page={currentPage}
                                     rowsPerPage={INVITE_LINKS_PAGE_SIZE}
                                     rowsPerPageOptions={[
+                                        // one value here overrides the default options and hides the rows-per-page selector
                                         INVITE_LINKS_PAGE_SIZE,
                                     ]}
                                     onPageChange={handlePageChange}
@@ -268,9 +250,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
                                             },
                                             nextButton: {
                                                 disabled:
-                                                    currentPage < maxPageSeen
-                                                        ? false
-                                                        : !pageInfo?.hasNextPage,
+                                                    !pageInfo?.hasNextPage,
                                             },
                                         },
                                     }}
