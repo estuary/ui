@@ -1,7 +1,4 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
-import type { PrefixInvitationDialogProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
-
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 import {
     Box,
@@ -15,10 +12,20 @@ import {
 
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+import { CombinedError } from 'urql';
 
 import Error from 'src/components/shared/Error';
-import AccessLinksTable from 'src/components/tables/AccessGrants/AccessLinks';
-import GenerateInvitation from 'src/components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
+import { AccessLinksTable } from 'src/components/tables/AccessGrants/AccessLinks';
+import { GenerateInvitation } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
+
+export interface InviteErrorProps {
+    setError: Dispatch<SetStateAction<CombinedError | null>>;
+}
+
+interface PrefixInvitationDialogProps {
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 const TITLE_ID = 'share-prefix-dialog-title';
 
@@ -29,12 +36,11 @@ function PrefixInvitationDialog({
     const intl = useIntl();
     const theme = useTheme();
 
-    const [serverError, setServerError] = useState<PostgrestError | null>(null);
-
+    const [error, setError] = useState<CombinedError | null>(null);
     const closeDialog = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        setServerError(null);
+        setError(null);
         setOpen(false);
     };
 
@@ -71,22 +77,19 @@ function PrefixInvitationDialog({
             </DialogTitle>
 
             <DialogContent>
-                {serverError ? (
+                {error ? (
                     <Box sx={{ mb: 3 }}>
                         <Error
-                            error={serverError}
+                            error={error}
                             condensed={true}
                             hideTitle={true}
                         />
                     </Box>
                 ) : null}
 
-                <GenerateInvitation
-                    serverError={serverError}
-                    setServerError={setServerError}
-                />
+                <GenerateInvitation setError={setError} />
 
-                <AccessLinksTable />
+                <AccessLinksTable setError={setError} />
             </DialogContent>
         </Dialog>
     );

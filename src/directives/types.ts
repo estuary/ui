@@ -10,7 +10,6 @@ export interface Directives {
     acceptDemoTenant: DirectiveSettings<AcceptDemoTenantClaim>;
     betaOnboard: DirectiveSettings<OnboardClaim>;
     clickToAccept: DirectiveSettings<ClickToAcceptClaim>;
-    grant: DirectiveSettings<GrantClaim>;
     storageMappings: DirectiveSettings<StorageMappingsClaim>;
 }
 
@@ -40,10 +39,6 @@ export interface ClickToAcceptClaim {
     version: string;
 }
 
-export interface GrantClaim {
-    requestedPrefix: string;
-}
-
 export interface OnboardClaim {
     requestedTenant: string;
     survey: any;
@@ -57,7 +52,6 @@ export interface StorageMappingsClaim {
 export type UserClaims =
     | AcceptDemoTenantClaim
     | ClickToAcceptClaim
-    | GrantClaim
     | OnboardClaim
     | StorageMappingsClaim;
 

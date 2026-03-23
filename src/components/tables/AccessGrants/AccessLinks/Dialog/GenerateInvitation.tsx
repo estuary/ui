@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
-import type { GenerateInvitationProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/types';
-import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { Capability } from 'src/gql-types/graphql';
 
 import { useRef, useState } from 'react';
 
@@ -17,24 +16,21 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
+import { InviteErrorProps } from '.';
 import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
 
-import { generateGrantDirective } from 'src/api/directives';
+import { useCreateInviteLink } from 'src/api/gql/inviteLinks';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
 import AutocompletedField from 'src/components/shared/toolbar/AutocompletedField';
-import { useZustandStore } from 'src/context/Zustand/provider';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
 // outside of advanced cases.
-const capabilityOptions = ['admin', 'read'];
-const typeOptions = ['single-use', 'multi-use'];
+const capabilityOptions: Capability[] = ['admin', 'read'];
 const MAX_PREFIX_LENGTH = 12;
 const EVENT_NAME = 'Invite:Create';
 
@@ -80,21 +76,12 @@ const RadioOption = ({
     );
 };
 
-function GenerateInvitation({
-    serverError,
-    setServerError,
-}: GenerateInvitationProps) {
+export function GenerateInvitation({ setError }: InviteErrorProps) {
     const intl = useIntl();
     const postHog = usePostHog();
     const { palette } = useTheme();
 
-    const hydrate = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['hydrate']
-    >(
-        SelectTableStoreNames.ACCESS_GRANTS_LINKS,
-        selectableTableStoreSelectors.query.hydrate
-    );
+    const [{ fetching }, createInviteLink] = useCreateInviteLink();
 
     const {
         handlers: prefixHandlers,
@@ -109,8 +96,10 @@ function GenerateInvitation({
         defaultPrefix: true,
     });
 
-    const [capability, setCapability] = useState<string>(capabilityOptions[0]);
-    const [reusability, setReusability] = useState<string>(typeOptions[0]);
+    const [capability, setCapability] = useState<Capability>(
+        capabilityOptions[0]
+    );
+    const [singleUse, setSingleUse] = useState(true);
     const [accessScope, setAccessScope] = useState<string | null>(null);
     const subPrefixInputRef = useRef<HTMLInputElement>(null);
 
@@ -123,70 +112,26 @@ function GenerateInvitation({
             ? prefix.slice(0, MAX_PREFIX_LENGTH) + elipsis
             : prefix;
 
-    const handlers = {
-        setGrantCapability: (_event: React.SyntheticEvent, value: string) => {
-            if (serverError) {
-                setServerError(null);
-            }
+    async function generateInvitation(event: React.MouseEvent<HTMLElement>) {
+        event.preventDefault();
 
-            setCapability(value);
-        },
-        setGrantReusability: (_event: React.SyntheticEvent, value: string) => {
-            if (serverError) {
-                setServerError(null);
-            }
+        const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
+        const catalogPrefix = appendWithForwardSlash(objectRole);
 
-            setReusability(value);
-        },
-        generateInvitation: (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault();
+        const result = await createInviteLink({
+            catalogPrefix,
+            capability,
+            singleUse,
+        });
 
-            const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
-            const processedObject = appendWithForwardSlash(objectRole);
+        setError(result.error ?? null);
 
-            const singleUse = reusability === 'single-use';
-
-            generateGrantDirective(processedObject, capability, singleUse).then(
-                (response) => {
-                    if (response.error) {
-                        setServerError(response.error);
-                        postHog.capture(EVENT_NAME, {
-                            status: 'failure',
-                            capability,
-                            singleUse,
-                        });
-                    } else if (hasLength(response.data)) {
-                        if (serverError) {
-                            setServerError(null);
-                        }
-
-                        postHog.capture(EVENT_NAME, {
-                            status: 'success',
-                            capability,
-                            singleUse,
-                        });
-                        hydrate();
-                    }
-                },
-                (error) => {
-                    setServerError(error);
-                    postHog.capture(EVENT_NAME, {
-                        status: 'failure',
-                        capability,
-                        singleUse,
-                    });
-                }
-            );
-        },
-    };
-
-    const onChange = (value: string, errors: string | null) => {
-        if (serverError) {
-            setServerError(null);
-        }
-
-        prefixHandlers.setPrefix(value);
-    };
+        postHog.capture(EVENT_NAME, {
+            status: result.error ? 'failure' : 'success',
+            capability,
+            singleUse,
+        });
+    }
 
     return (
         <Stack sx={{ mb: 2, minWidth: 500 }} spacing={1}>
@@ -200,7 +145,9 @@ function GenerateInvitation({
                             label={intl.formatMessage({
                                 id: 'terms.tenant',
                             })}
-                            onChange={onChange}
+                            onChange={(value) =>
+                                prefixHandlers.setPrefix(value)
+                            }
                         />
                     </Box>
                     <Box sx={{ minWidth: 150 }}>
@@ -211,7 +158,10 @@ function GenerateInvitation({
                             required
                             options={capabilityOptions}
                             defaultValue={capabilityOptions[0]}
-                            changeHandler={handlers.setGrantCapability}
+                            changeHandler={(
+                                _event: React.SyntheticEvent,
+                                value: string
+                            ) => setCapability(value as Capability)}
                         />
                     </Box>
                 </Stack>
@@ -336,14 +286,9 @@ function GenerateInvitation({
                 <FormControlLabel
                     control={
                         <Checkbox
-                            checked={reusability === 'multi-use'}
+                            checked={!singleUse}
                             onChange={(event) => {
-                                handlers.setGrantReusability(
-                                    event,
-                                    event.target.checked
-                                        ? 'multi-use'
-                                        : 'single-use'
-                                );
+                                setSingleUse(!event.target.checked);
                             }}
                         />
                     }
@@ -356,11 +301,12 @@ function GenerateInvitation({
                 />
                 <Button
                     disabled={
+                        fetching ||
                         accessScope === null ||
                         (limitedAccessScope &&
                             (hasLength(nameError) || !hasLength(name)))
                     }
-                    onClick={handlers.generateInvitation}
+                    onClick={generateInvitation}
                 >
                     {intl.formatMessage({
                         id: 'admin.users.prefixInvitation.cta.generateLink',
@@ -371,5 +317,3 @@ function GenerateInvitation({
         </Stack>
     );
 }
-
-export default GenerateInvitation;
