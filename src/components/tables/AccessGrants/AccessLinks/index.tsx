@@ -1,37 +1,54 @@
-import type { TableColumns } from 'src/types';
+import type { InviteLink } from 'src/gql-types/graphql';
+import type { TableColumns, TableState } from 'src/types';
 
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Box } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    Table,
+    TableCell,
+    TableContainer,
+    TableFooter,
+    TablePagination,
+    TableRow,
+    Typography,
+} from '@mui/material';
 
-import { getDirectivesByType } from 'src/api/directives';
-import Rows from 'src/components/tables/AccessGrants/AccessLinks/Rows';
-import EntityTable from 'src/components/tables/EntityTable';
-import RowSelector from 'src/components/tables/RowActions/AccessLinks/RowSelector';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { useTableState } from 'src/stores/Tables/hooks';
-import TableHydrator from 'src/stores/Tables/Hydrator';
+import { InviteErrorProps } from './Dialog';
+import { Trash } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
-export const columns: TableColumns[] = [
+import {
+    INVITE_LINKS_PAGE_SIZE,
+    useDeleteInviteLink,
+    useInviteLinks,
+} from 'src/api/gql/inviteLinks';
+import CopyAccessLink from 'src/components/tables/cells/CopyAccessLink';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { TableStatuses } from 'src/types';
+
+const columns: TableColumns[] = [
     {
-        field: null,
-        headerIntlKey: '',
-    },
-    {
-        field: 'provisioning_prefix',
-        headerIntlKey:
-            'accessGrants.table.accessLinks.label.provisioningPrefix',
-    },
-    {
-        field: 'granted_prefix',
-        headerIntlKey: 'accessGrants.table.accessLinks.label.grantedPrefix',
+        field: 'catalogPrefix',
+        headerIntlKey: 'accessGrants.table.accessLinks.label.prefix',
     },
     {
         field: 'capability',
         headerIntlKey: 'accessGrants.table.accessLinks.label.capability',
     },
     {
-        field: 'updated_at',
+        field: 'singleUse',
+        headerIntlKey: 'accessGrants.table.accessLinks.label.type',
+    },
+    {
+        field: null,
+        headerIntlKey: '',
+    },
+    {
+        field: 'createdAt',
         headerIntlKey: 'accessGrants.table.accessLinks.label.lastUpdated',
     },
     {
@@ -40,69 +57,229 @@ export const columns: TableColumns[] = [
     },
 ];
 
-const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
+function Row({
+    row,
+    setError,
+}: InviteErrorProps & {
+    row: InviteLink;
+}) {
+    const intl = useIntl();
+    const [{ fetching }, deleteInviteLink] = useDeleteInviteLink();
 
-function AccessLinksTable() {
-    const {
-        pagination,
-        setPagination,
-        rowsPerPage,
-        setRowsPerPage,
-        searchQuery,
-        setSearchQuery,
-        sortDirection,
-        setSortDirection,
-        columnToSort,
-        setColumnToSort,
-    } = useTableState('ali', 'updated_at', 'desc');
+    const handleDelete = async () => {
+        const result = await deleteInviteLink({ token: row.token });
 
-    const query = useMemo(() => {
-        return getDirectivesByType('grant', pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, pagination, searchQuery, sortDirection]);
-
-    const headerKey = 'accessGrants.table.accessLinks.title';
-    const filterKey = 'accessGrants.table.accessLinks.label.filter';
+        setError(result.error ?? null);
+    };
 
     return (
-        <Box>
-            <TableHydrator
-                disableQueryParamHack
-                query={query}
-                selectableTableStoreName={selectableTableStoreName}
-            >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'accessGrants.table.accessLinks.header.noData',
-                        message:
-                            'accessGrants.table.accessLinks.message.noData',
-                        disableDoclink: true,
-                    }}
-                    columns={columns}
-                    renderTableRows={(data) => <Rows data={data} />}
-                    rowsPerPage={rowsPerPage}
-                    setRowsPerPage={setRowsPerPage}
-                    pagination={pagination}
-                    setPagination={setPagination}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header={headerKey}
-                    filterLabel={filterKey}
-                    selectableTableStoreName={selectableTableStoreName}
-                    showToolbar
-                    toolbar={<RowSelector />}
-                />
-            </TableHydrator>
-        </Box>
+        <TableRow hover>
+            <TableCell>
+                <Typography>{row.catalogPrefix}</Typography>
+            </TableCell>
+
+            <TableCell>
+                <Typography>{row.capability}</Typography>
+            </TableCell>
+
+            <TableCell>
+                <Typography>
+                    {intl.formatMessage({
+                        id: row.singleUse
+                            ? 'accessGrants.table.accessLinks.label.type.singleUse'
+                            : 'accessGrants.table.accessLinks.label.type.multiUse',
+                    })}
+                </Typography>
+            </TableCell>
+
+            <CopyAccessLink token={row.token} />
+
+            <TimeStamp time={row.createdAt} />
+
+            <TableCell sx={{ width: 50 }}>
+                <IconButton
+                    onClick={handleDelete}
+                    disabled={fetching}
+                    size="small"
+                    sx={{ color: 'error.main' }}
+                    aria-label={intl.formatMessage({ id: 'cta.delete' })}
+                >
+                    <Trash />
+                </IconButton>
+            </TableCell>
+        </TableRow>
     );
 }
 
-export default AccessLinksTable;
+export function AccessLinksTable({ setError }: InviteErrorProps) {
+    const intl = useIntl();
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const [maxPageSeen, setMaxPageSeen] = useState(0);
+    const [afterCursor, setAfterCursor] = useState<string | undefined>(
+        undefined
+    );
+    const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>(
+        []
+    );
+
+    const { inviteLinks, fetching, error, pageInfo } =
+        useInviteLinks(afterCursor);
+
+    const handlePageChange = (_event: any, page: number) => {
+        if (page > currentPage) {
+            const endCursor = pageInfo?.endCursor;
+
+            if (endCursor) {
+                setMaxPageSeen(Math.max(maxPageSeen, page));
+                setAfterCursor(endCursor);
+
+                setCursorHistory((prev) => {
+                    const newHistory = [...prev];
+
+                    while (newHistory.length <= page) {
+                        newHistory.push(undefined);
+                    }
+
+                    newHistory[page] = endCursor;
+
+                    return newHistory;
+                });
+            }
+        } else if (page < currentPage) {
+            if (page === 0) {
+                setAfterCursor(undefined);
+                setCursorHistory([]);
+            } else {
+                setAfterCursor(cursorHistory[page]);
+            }
+        }
+        setCurrentPage(page);
+    };
+
+    const [tableState, setTableState] = useState<TableState>({
+        status: TableStatuses.LOADING,
+    });
+
+    useEffect(() => {
+        if (fetching) {
+            setTableState({ status: TableStatuses.LOADING });
+            return;
+        }
+
+        if (error) {
+            if (error.networkError) {
+                setTableState({ status: TableStatuses.NETWORK_FAILED });
+            } else {
+                setTableState({ status: TableStatuses.TECHNICAL_DIFFICULTIES });
+            }
+            return;
+        }
+
+        if (inviteLinks.length > 0) {
+            setTableState({ status: TableStatuses.DATA_FETCHED });
+            return;
+        }
+
+        // If current page is empty but we're not on page 1,
+        // go back a page (e.g. after deleting the last item on a page)
+        if (currentPage > 0) {
+            const prevPage = currentPage - 1;
+            setCurrentPage(prevPage);
+            setMaxPageSeen(prevPage);
+            setAfterCursor(
+                prevPage === 0 ? undefined : cursorHistory[prevPage]
+            );
+            setCursorHistory((prev) => prev.slice(0, prevPage + 1));
+            return;
+        }
+
+        setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+    }, [fetching, error, inviteLinks, currentPage]);
+
+    const failed =
+        tableState.status === TableStatuses.TECHNICAL_DIFFICULTIES ||
+        tableState.status === TableStatuses.NETWORK_FAILED;
+    const loading = tableState.status === TableStatuses.LOADING;
+    const hasData =
+        !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
+
+    return (
+        <Box>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                {intl.formatMessage({
+                    id: 'accessGrants.table.accessLinks.title',
+                })}
+            </Typography>
+            <TableContainer component={Box}>
+                <Table
+                    size="small"
+                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
+                    aria-label={intl.formatMessage({
+                        id: 'accessGrants.table.accessLinks.title',
+                    })}
+                >
+                    <EntityTableHeader columns={columns} />
+
+                    <EntityTableBody
+                        columns={columns}
+                        noExistingDataContentIds={{
+                            header: 'accessGrants.table.accessLinks.header.noData',
+                            message:
+                                'accessGrants.table.accessLinks.message.noData',
+                            disableDoclink: true,
+                        }}
+                        tableState={tableState}
+                        loading={loading}
+                        rows={
+                            hasData && inviteLinks.length > 0 ? (
+                                <>
+                                    {inviteLinks.map((link) => (
+                                        <Row
+                                            key={link.token}
+                                            row={link}
+                                            setError={setError}
+                                        />
+                                    ))}
+                                </>
+                            ) : null
+                        }
+                    />
+                    {hasData ? (
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    count={-1}
+                                    page={currentPage}
+                                    rowsPerPage={INVITE_LINKS_PAGE_SIZE}
+                                    rowsPerPageOptions={[
+                                        INVITE_LINKS_PAGE_SIZE,
+                                    ]}
+                                    onPageChange={handlePageChange}
+                                    labelDisplayedRows={({ from }) => {
+                                        const to =
+                                            from + inviteLinks.length - 1;
+                                        return `${from}–${to}`;
+                                    }}
+                                    slotProps={{
+                                        actions: {
+                                            previousButton: {
+                                                disabled: currentPage === 0,
+                                            },
+                                            nextButton: {
+                                                disabled:
+                                                    currentPage < maxPageSeen
+                                                        ? false
+                                                        : !pageInfo?.hasNextPage,
+                                            },
+                                        },
+                                    }}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    ) : null}
+                </Table>
+            </TableContainer>
+        </Box>
+    );
+}

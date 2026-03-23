@@ -256,6 +256,10 @@ type AutoDiscoverStatus {
   pendingPublish: AutoDiscoverOutcome
 }
 
+input BoolFilter {
+  eq: Boolean
+}
+
 """
 Capability within the Estuary role-based access control (RBAC) authorization system.
 """
@@ -482,6 +486,56 @@ type InferredSchemaStatus {
   schemaMd5: String
 }
 
+"""An invite link that grants access to a catalog prefix."""
+type InviteLink {
+  """The capability level granted by this invite link."""
+  capability: Capability!
+
+  """The catalog prefix this invite link grants access to."""
+  catalogPrefix: Prefix!
+
+  """When this invite link was created."""
+  createdAt: DateTime!
+
+  """Optional description of this invite link."""
+  detail: String
+
+  """Whether this invite link can only be used once."""
+  singleUse: Boolean!
+
+  """
+  The SSO provider ID for the invite's tenant, if any.
+  When present, the frontend should route the user directly into the SSO
+  flow using this provider ID (e.g. via `supabase.auth.signInWithSSO`).
+  """
+  ssoProviderId: UUID
+
+  """The secret token for this invite link."""
+  token: UUID!
+}
+
+type InviteLinkConnection {
+  """A list of edges."""
+  edges: [InviteLinkEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type InviteLinkEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: InviteLink!
+}
+
+input InviteLinksFilter {
+  catalogPrefix: PrefixFilter
+  singleUse: BoolFilter
+}
+
 """A scalar that can represent any JSON value."""
 scalar JSON
 
@@ -633,6 +687,14 @@ type MutationRoot {
   createAlertSubscription(alertTypes: [AlertType!], detail: String, email: String!, prefix: Prefix!): AlertSubscription!
 
   """
+  Create an invite link that grants access to a catalog prefix.
+  
+  The caller must have admin capability on the catalog prefix.
+  Share the returned token with the intended recipient out-of-band.
+  """
+  createInviteLink(capability: Capability!, catalogPrefix: Prefix!, detail: String, singleUse: Boolean! = true): InviteLink!
+
+  """
   Create a storage mapping for the given catalog prefix.
   
   This validates that the user has admin access to the catalog prefix,
@@ -647,6 +709,19 @@ type MutationRoot {
   Delete an alert subscription that exactly matches the given prefix and email.
   """
   deleteAlertSubscription(email: String!, prefix: Prefix!): AlertSubscription!
+
+  """
+  Delete an invite link, revoking it so it can no longer be redeemed.
+  
+  The caller must have admin capability on the invite link's catalog prefix.
+  """
+  deleteInviteLink(token: UUID!): Boolean!
+
+  """
+  Redeem an invite link token, granting the caller access to the associated
+  catalog prefix with the specified capability.
+  """
+  redeemInviteLink(token: UUID!): RedeemInviteLinkResult!
 
   """
   Check storage health for a given catalog prefix and storage definition.
@@ -709,6 +784,10 @@ type PendingConfigUpdateStatus {
 }
 
 scalar Prefix
+
+input PrefixFilter {
+  startsWith: String
+}
 
 """A prefix to which the user is authorized."""
 type PrefixRef {
@@ -827,6 +906,14 @@ type QueryRoot {
   dataPlanes(after: String, before: String, first: Int, last: Int): DataPlaneConnection!
 
   """
+  List invite links the caller has admin access to.
+  
+  Returns invite links under all prefixes where the caller has admin
+  capability, optionally narrowed by a prefix filter.
+  """
+  inviteLinks(after: String, filter: InviteLinksFilter, first: Int): InviteLinkConnection!
+
+  """
   Returns a paginated list of live specs under the given prefix and
   matching the given type.
   
@@ -846,6 +933,15 @@ type QueryRoot {
   Results are paginated and sorted by catalog_prefix.
   """
   storageMappings(after: String, before: String, by: StorageMappingsBy!, first: Int, last: Int): StorageMappingConnection!
+}
+
+"""Result of redeeming an invite link."""
+type RedeemInviteLinkResult {
+  """The capability level that was granted."""
+  capability: Capability!
+
+  """The catalog prefix that was granted."""
+  catalogPrefix: Prefix!
 }
 
 type RepublishRequested {

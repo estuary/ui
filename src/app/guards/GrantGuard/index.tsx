@@ -1,6 +1,6 @@
 import type { BaseComponentProps } from 'src/types';
 
-import GrantGuardProcessor from 'src/app/guards/GrantGuard/Processor';
+import { RedeemInviteLink } from 'src/app/guards/GrantGuard/RedeemInviteLink';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -13,7 +13,7 @@ function GrantGuard({ children }: BaseComponentProps) {
         //  This means we'll never just "fall through" to the children like below
         //  and even if we can skip this token we'll handle that with a navigate to
         //  home call in the processor
-        return <GrantGuardProcessor grantToken={grantToken} />;
+        return <RedeemInviteLink grantToken={grantToken} />;
     } else {
         // We do not have a grant token so just skip the entire process and render what we need to
 

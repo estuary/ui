@@ -1,3 +1,5 @@
+import type { Cache } from '@urql/exchange-graphcache';
+import type { QueryRoot } from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
 
 import { useMemo } from 'react';
@@ -15,6 +17,21 @@ import { useUserStore } from 'src/context/User/useUserContextStore';
 import useDataFetchErrorHandling from 'src/hooks/useDataFetchErrorHandling';
 import { logRocketEvent } from 'src/services/shared';
 import { getAuthHeader } from 'src/utils/misc-utils';
+
+function invalidateQuery(
+    cache: Cache,
+    queryName: Exclude<keyof QueryRoot, '__typename'>
+) {
+    cache
+        .inspectFields('Query')
+        .filter((f) => f.fieldName === queryName)
+        .forEach((f) => {
+            console.log(
+                `Invalidating cache for ${queryName} with args ${JSON.stringify(f.arguments)}`
+            );
+            cache.invalidate('Query', f.fieldName, f.arguments);
+        });
+}
 
 function UrqlConfigProvider({ children }: BaseComponentProps) {
     const { checkIfAuthInvalid, forceUserToSignOut } =
@@ -53,10 +70,21 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     keys: {
                         // TODO (gql caching)  - see GRAPHQL.md
                         Alert: (_data) => null,
+                        InviteLink: (data) => `${data.token}`,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
+                    },
+                    updates: {
+                        Mutation: {
+                            createInviteLink(_result, _args, cache) {
+                                invalidateQuery(cache, 'inviteLinks');
+                            },
+                            deleteInviteLink(_result, _args, cache) {
+                                invalidateQuery(cache, 'inviteLinks');
+                            },
+                        },
                     },
                 }),
                 authExchange(async (utils) => {
