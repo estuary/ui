@@ -1,4 +1,7 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import type { CombinedError } from 'urql';
+
+import { useState } from 'react';
 
 import {
     Box,
@@ -12,7 +15,6 @@ import {
 
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { CombinedError } from 'urql';
 
 import Error from 'src/components/shared/Error';
 import { AccessLinksTable } from 'src/components/tables/AccessGrants/AccessLinks';

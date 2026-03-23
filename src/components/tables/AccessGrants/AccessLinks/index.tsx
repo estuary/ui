@@ -1,3 +1,4 @@
+import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog';
 import type { InviteLink } from 'src/gql-types/graphql';
 import type { TableColumns, TableState } from 'src/types';
 
@@ -15,7 +16,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { InviteErrorProps } from './Dialog';
 import { Trash } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
@@ -181,7 +181,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
         }
 
         setTableState({ status: TableStatuses.NO_EXISTING_DATA });
-    }, [fetching, error, inviteLinks, currentPage]);
+    }, [fetching, error, inviteLinks, currentPage, cursorHistory]);
 
     const hasData = Boolean(pageInfo);
 

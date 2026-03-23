@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog';
 import type { Capability } from 'src/gql-types/graphql';
 
 import { useRef, useState } from 'react';
@@ -16,7 +17,6 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-import { InviteErrorProps } from '.';
 import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
 
