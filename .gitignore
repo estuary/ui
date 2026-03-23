@@ -49,3 +49,6 @@ gha-creds-*.json
 
 *storybook.log
 storybook-static
+
+.playwright-mcp/
+.mcp.json

@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
+import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
 
 import { generateGrantDirective } from 'src/api/directives';
@@ -35,6 +36,7 @@ import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 const capabilityOptions = ['admin', 'read'];
 const typeOptions = ['single-use', 'multi-use'];
 const MAX_PREFIX_LENGTH = 12;
+const EVENT_NAME = 'Invite:Create';
 
 const RadioOption = ({
     value,
@@ -83,6 +85,7 @@ function GenerateInvitation({
     setServerError,
 }: GenerateInvitationProps) {
     const intl = useIntl();
+    const postHog = usePostHog();
     const { palette } = useTheme();
 
     const hydrate = useZustandStore<
@@ -141,23 +144,38 @@ function GenerateInvitation({
             const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
             const processedObject = appendWithForwardSlash(objectRole);
 
-            generateGrantDirective(
-                processedObject,
-                capability,
-                reusability === 'single-use'
-            ).then(
+            const singleUse = reusability === 'single-use';
+
+            generateGrantDirective(processedObject, capability, singleUse).then(
                 (response) => {
                     if (response.error) {
                         setServerError(response.error);
+                        postHog.capture(EVENT_NAME, {
+                            status: 'failure',
+                            capability,
+                            singleUse,
+                        });
                     } else if (hasLength(response.data)) {
                         if (serverError) {
                             setServerError(null);
                         }
 
+                        postHog.capture(EVENT_NAME, {
+                            status: 'success',
+                            capability,
+                            singleUse,
+                        });
                         hydrate();
                     }
                 },
-                (error) => setServerError(error)
+                (error) => {
+                    setServerError(error);
+                    postHog.capture(EVENT_NAME, {
+                        status: 'failure',
+                        capability,
+                        singleUse,
+                    });
+                }
             );
         },
     };

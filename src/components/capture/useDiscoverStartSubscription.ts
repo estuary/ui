@@ -2,6 +2,8 @@ import type { Entity } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { usePostHog } from '@posthog/react';
+
 import {
     useEditorStore_setDiscoveredDraftId,
     useEditorStore_setId,
@@ -37,6 +39,8 @@ const trackEvent = (payload: any) => {
 };
 
 function useDiscoverStartSubscription(entityType: Entity) {
+    const postHog = usePostHog();
+
     const postGenerateMutate = useMutateDraftSpec();
 
     const { jobStatusPoller } = useJobStatusPoller();
@@ -122,9 +126,16 @@ function useDiscoverStartSubscription(entityType: Entity) {
                     setServerUpdateRequired(false);
 
                     trackEvent(payload);
+                    postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
+                        status: payload.job_status?.type,
+                    });
                 },
                 (payload: any) => {
                     trackEvent(payload);
+                    postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
+                        status: payload.job_status?.type ?? payload.error,
+                    });
+
                     if (payload.error === JOB_STATUS_POLLER_ERROR) {
                         jobFailed(DEFAULT_POLLER_ERROR);
                     } else {
@@ -144,6 +155,7 @@ function useDiscoverStartSubscription(entityType: Entity) {
             jobFailed,
             jobStatusPoller,
             postGenerateMutate,
+            postHog,
             setDiscoveredDraftId,
             setDraftId,
             setDraftedEntityName,

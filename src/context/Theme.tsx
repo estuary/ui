@@ -923,6 +923,9 @@ export const chipOutlinedStyling: SxProps<Theme> = {
     },
 };
 
+const standardTransitionDuration = 300;
+const standardTransitionEasing = 'ease-in-out';
+
 const themeSettings = createTheme({
     breakpoints: {
         values: {
@@ -1021,20 +1024,26 @@ const themeSettings = createTheme({
                 variant: 'standard',
             },
         },
-        // TODO - maybe?
-        // MuiAutocomplete: {
-        //     styleOverrides: {
-        //         option: {
-        //             display: 'flex',
-        //             alignItems: 'flex-start',
-        //         },
-        //     },
-        // },
+        MuiCollapse: {
+            defaultProps: {
+                timeout: standardTransitionDuration,
+            },
+            styleOverrides: {
+                root: {
+                    transitionTimingFunction: standardTransitionEasing,
+                },
+            },
+        },
         MuiTabs: {
             ...baseBackground,
             defaultProps: {
                 indicatorColor: 'secondary',
             },
+        },
+    },
+    transitions: {
+        duration: {
+            standard: standardTransitionDuration,
         },
     },
     shape: {
@@ -1105,6 +1114,9 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                 ...themeSettings.components,
                 MuiAccordion: {
                     defaultProps: {
+                        TransitionProps: {
+                            timeout: standardTransitionDuration,
+                        },
                         sx: {
                             [`& .${iconButtonClasses.root}`]: {
                                 zIndex: accordionButton,

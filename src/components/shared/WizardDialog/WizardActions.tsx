@@ -24,7 +24,7 @@ export function WizardActions() {
     const canAdvance = currentStepConfig?.canAdvance?.() ?? true;
 
     return (
-        <DialogActions sx={{ p: 3, pt: 1 }}>
+        <DialogActions sx={{ px: 3, py: 2 }}>
             {showBackButton ? (
                 <Button
                     variant="outlined"

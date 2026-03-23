@@ -13,6 +13,7 @@ import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { WizardContext } from 'src/components/shared/WizardDialog/context';
 import { WizardActions } from 'src/components/shared/WizardDialog/WizardActions';
 import { WizardContent } from 'src/components/shared/WizardDialog/WizardContent';
+import { logRocketConsole } from 'src/services/shared';
 
 const TITLE_ID = 'wizard-dialog-title';
 
@@ -55,6 +56,11 @@ export function WizardDialog({
                     return false;
                 }
             } catch (error) {
+                logRocketConsole(
+                    'WizardDialog:advance:error',
+                    currentStep,
+                    error
+                );
                 setError(
                     error instanceof Error
                         ? error.message
@@ -118,6 +124,7 @@ export function WizardDialog({
             fullWidth
             aria-labelledby={TITLE_ID}
             slotProps={{
+                paper: { sx: { minWidth: 400 } },
                 transition: { onExited },
             }}
         >
@@ -126,7 +133,15 @@ export function WizardDialog({
                     {displayTitle}
                 </DialogTitleWithClose>
                 <WizardContent />
-                <Collapse in={showActions}>
+                <Collapse
+                    in={showActions}
+                    sx={{
+                        // flexShrink: 0 prevents the actions from being compressed when
+                        // DialogContent's animated height box inflates the flex overflow
+                        // This fixes a bug that was causing nested vertical scroll views inside the dialog
+                        flexShrink: 0,
+                    }}
+                >
                     <WizardActions />
                 </Collapse>
             </WizardContext.Provider>

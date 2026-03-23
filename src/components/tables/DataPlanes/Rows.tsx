@@ -3,6 +3,7 @@ import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/DataPlanes/types';
+import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useState } from 'react';
 
@@ -46,7 +47,7 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
             <TableCell>{formatDataPlaneName(dataPlaneName)}</TableCell>
             <TableCell>
                 {getRegionDisplayName(
-                    dataPlaneName.provider,
+                    dataPlaneName.provider as CloudProvider,
                     dataPlaneName.region
                 )}
             </TableCell>
