@@ -10,21 +10,30 @@ import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface Props {
     token: string;
+    ssoProviderId?: string | null;
 }
 
 const LOGIN_LINK_URL = `${window.location.origin}${unauthenticatedRoutes.login.path}`;
 const SSO_LOGIN_LINK_URL = `${window.location.origin}${unauthenticatedRoutes.sso.login.fullPath}`;
 
-function CopyAccessLink({ token }: Props) {
+function CopyAccessLink({ token, ssoProviderId }: Props) {
     const intl = useIntl();
 
     const usedSSO = useUserStore((state) => state.userDetails?.usedSSO);
 
+    const useSSO = ssoProviderId ?? usedSSO;
+
+    const params: Record<string, string> = {
+        [GlobalSearchParams.GRANT_TOKEN]: token,
+    };
+
+    if (ssoProviderId) {
+        params[GlobalSearchParams.SSO_PROVIDER_ID] = ssoProviderId;
+    }
+
     const accessLink = getPathWithParams(
-        usedSSO ? SSO_LOGIN_LINK_URL : LOGIN_LINK_URL,
-        {
-            [GlobalSearchParams.GRANT_TOKEN]: token,
-        }
+        useSSO ? SSO_LOGIN_LINK_URL : LOGIN_LINK_URL,
+        params
     );
 
     return (

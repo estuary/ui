@@ -133,7 +133,9 @@ export function RedeemInviteLink({ grantToken }: Props) {
                             onClick={handleContinue}
                             sx={{ mt: 2 }}
                         >
-                            {intl.formatMessage({ id: 'cta.continue' })}
+                            {intl.formatMessage({
+                                id: 'tenant.grantDirective.success.cta',
+                            })}
                         </SafeLoadingButton>
                     </Box>
                 </Stack>

@@ -1,11 +1,12 @@
 import type { VariantType } from 'notistack';
 import type { DefaultLoginProps } from 'src/components/login/types';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     Box,
     Button,
+    CircularProgress,
     Divider,
     Stack,
     TextField,
@@ -22,7 +23,11 @@ import AlertBox from 'src/components/shared/AlertBox';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { hasLength } from 'src/utils/misc-utils';
 
-const SSOForm = ({ grantToken }: DefaultLoginProps) => {
+interface SSOFormProps extends DefaultLoginProps {
+    ssoProviderId?: string;
+}
+
+const SSOForm = ({ grantToken, ssoProviderId }: SSOFormProps) => {
     const redirectPath = useRedirectPath(grantToken);
 
     const intl = useIntl();
@@ -48,6 +53,53 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             }
         );
     };
+
+    // When ssoProviderId is present (e.g. from an invite link), auto-trigger
+    // SSO sign-in directly without requiring the user to enter their email.
+    useEffect(() => {
+        if (!ssoProviderId) return;
+
+        let cancelled = false;
+
+        const signInWithProvider = async () => {
+            setLoading(true);
+
+            const { data, error } =
+                await supabaseClient.auth.signInWithSSO({
+                    providerId: ssoProviderId,
+                    options: {
+                        redirectTo: redirectPath,
+                    },
+                });
+
+            if (cancelled) return;
+
+            if (error) {
+                setSubmitError(
+                    intl.formatMessage({
+                        id: 'login.signinFailed.message.default',
+                    })
+                );
+                setLoading(false);
+                return;
+            }
+
+            if (data.url) {
+                window.location.href = data.url;
+                return;
+            }
+
+            displayNotification('login.sso', 'success');
+            setLoading(false);
+            navigate(redirectPath, { replace: true });
+        };
+
+        void signInWithProvider();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [ssoProviderId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handlers = {
         submit: async (event: React.FormEvent<HTMLFormElement>) => {
@@ -109,6 +161,22 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             });
         },
     };
+
+    // When auto-redirecting via ssoProviderId, show a spinner instead of the
+    // email form. Fall through to the full form only if an error occurred so the
+    // user can retry manually.
+    if (ssoProviderId && !submitError) {
+        return (
+            <Stack
+                direction="column"
+                spacing={3}
+                alignItems="center"
+                style={{ width: '100%' }}
+            >
+                <CircularProgress />
+            </Stack>
+        );
+    }
 
     return (
         <Stack direction="column" spacing={3} style={{ width: '100%' }}>

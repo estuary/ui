@@ -12,6 +12,7 @@ const INVITE_LINKS_QUERY = graphql(`
             edges {
                 node {
                     token
+                    ssoProviderId
                     catalogPrefix
                     capability
                     singleUse

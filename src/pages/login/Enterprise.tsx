@@ -11,11 +11,12 @@ const EnterpriseLogin = () => {
         descriptionKey: ogDescriptionKey,
     });
 
-    const { grantToken, isRegister, tabIndex } = useLoginStateHandler(false);
+    const { grantToken, ssoProviderId, isRegister, tabIndex } =
+        useLoginStateHandler(false);
 
     return (
         <LoginWrapper tabIndex={tabIndex} isRegister={isRegister} showBack>
-            <SSOForm grantToken={grantToken} />
+            <SSOForm grantToken={grantToken} ssoProviderId={ssoProviderId} />
         </LoginWrapper>
     );
 };
