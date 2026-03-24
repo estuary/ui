@@ -30,7 +30,10 @@
         "hack-in-web-flow": "./deps/flow-web/hack-in-prod.sh",
         "hack-in-dpg": "./deps/data-plane-gateway/hack-in-dist.sh",
         "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build"
+        "build-storybook": "storybook build",
+        "codegen": "graphql-codegen",
+        "codegen:local": "LOCAL=true graphql-codegen",
+        "codegen:check": "graphql-codegen --check"
     },
     "dependencies": {
         "@date-fns/utc": "^1.0.0",
@@ -118,6 +121,9 @@
         "zustand": "^4.5.0"
     },
     "devDependencies": {
+        "@graphql-codegen/cli": "^6.2.1",
+        "@graphql-codegen/client-preset": "^5.2.4",
+        "@graphql-codegen/schema-ast": "^5.0.1",
         "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
         "@storybook/addon-a11y": "^10.2.8",
         "@storybook/addon-docs": "^10.2.8",
