@@ -4,8 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 import { enableMapSet, setAutoFreeze } from 'immer';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
+import { unauthenticatedRoutes } from 'src/app/routes';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { initLogRocket } from 'src/services/logrocket';
+import { logRocketConsole } from 'src/services/shared';
 
 // This is not a normal provider... more like a guard... kind of. This is here so that we know createClient is called early and also
 //  so it is called in a somewhat consistent order. This is also waiting until the client has been
@@ -37,15 +39,55 @@ const supabaseSettings = {
     anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 };
 
+const SSO_REQUIRED_PREFIX = 'sso_required:';
+
+// Intercepts token refresh responses from Supabase to detect SSO requirements.
+// Login flows handle SSO inline; this covers the background auto-refresh case
+// where there is no other intercept point.
+const ssoCheckingFetch: typeof fetch = async (input, init) => {
+    const response = await fetch(input, init);
+
+    if (!response.ok) {
+        try {
+            const body = await response.clone().json();
+            const message =
+                body?.error_description ?? body?.message ?? body?.error;
+            if (
+                typeof message === 'string' &&
+                message.startsWith(SSO_REQUIRED_PREFIX)
+            ) {
+                const domain = message.slice(SSO_REQUIRED_PREFIX.length);
+                logRocketConsole(
+                    'Auth:SSORequired - intercepted via token refresh',
+                    domain
+                );
+                useUserStore.getState().setSsoNotSatisfied(domain);
+            }
+        } catch {
+            // Non-JSON response, skip
+        }
+    }
+
+    return response;
+};
+
 export const supabaseClient = createClient(
     supabaseSettings.url,
-    supabaseSettings.anonKey
+    supabaseSettings.anonKey,
+    { global: { fetch: ssoCheckingFetch } }
 );
 
 function GlobalProviders({ children }: BaseComponentProps) {
     const initialized = useUserStore((state) => state.initialized);
+    const ssoNotSatisfied = useUserStore((state) => state.ssoNotSatisfied);
 
     if (!initialized) {
+        return <FullPageSpinner />;
+    }
+
+    if (ssoNotSatisfied) {
+        const params = new URLSearchParams({ domain: ssoNotSatisfied });
+        window.location.href = `${unauthenticatedRoutes.ssoRequired.path}?${params}`;
         return <FullPageSpinner />;
     }
 

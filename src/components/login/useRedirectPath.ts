@@ -6,7 +6,7 @@ import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
 // TODO (routes) This is hardcoded because unauthenticated routes is not yet invoked
 //   need to move the routes to a single location. Also... just need to make the route
 //   settings in all JSON probably.
-const redirectToBase = `${window.location.origin}/auth`;
+export const redirectToBase = `${window.location.origin}/auth`;
 
 function useRedirectPath(grantToken: string | undefined) {
     const redirectTo = useLoginRedirectPath(redirectToBase);

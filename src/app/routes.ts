@@ -306,6 +306,9 @@ export const unauthenticatedRoutes = {
             fullPath: '/sso/register',
         },
     },
+    ssoRequired: {
+        path: '/sso-required',
+    },
     magicLink: {
         path: '/magicLink',
     },

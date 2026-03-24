@@ -34,6 +34,7 @@ import GqlExplorer from 'src/pages/dev/gqlExplorer';
 import TestJsonForms from 'src/pages/dev/TestJsonForms';
 import PageNotFound from 'src/pages/error/PageNotFound';
 import HomePage from 'src/pages/Home';
+import { FullPageSSONotSatisfied } from 'src/components/fullPage/SSONotSatisfied';
 import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
@@ -123,6 +124,11 @@ const router = createBrowserRouter(
                         <EnterpriseLogin />
                     </RequireAuth>
                 }
+            />
+
+            <Route
+                path={unauthenticatedRoutes.ssoRequired.path}
+                element={<FullPageSSONotSatisfied />}
             />
 
             <Route path={unauthenticatedRoutes.auth.path} element={<Auth />} />

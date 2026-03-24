@@ -6,6 +6,7 @@ export interface AuthSession {
     initialized: boolean;
     user: User | null;
     session: Session | null;
+    ssoNotSatisfied: string | null;
 }
 
 export interface UserStore extends AuthSession {
@@ -13,4 +14,5 @@ export interface UserStore extends AuthSession {
     setSession: (newVal: AuthSession['session']) => void;
     setUser: (newVal: AuthSession['user']) => void;
     setUserDetails: (newVal: AuthSession['userDetails']) => void;
+    setSsoNotSatisfied: (newVal: AuthSession['ssoNotSatisfied']) => void;
 }
