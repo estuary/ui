@@ -2,8 +2,8 @@ import type { TableCellProps } from '@mui/material';
 import type { Dispatch, SetStateAction } from 'react';
 import type { ReducedAlertSubscription } from 'src/api/types';
 import type {
-    AlertTypeDef,
     BaseAlertSubscriptionMutationInput,
+    ExpandedAlertTypeDef,
 } from 'src/types/gql';
 import type { UseQueryExecute } from 'urql';
 
@@ -31,7 +31,7 @@ export interface AlertTypeFieldProps {
 }
 
 export interface AlertTypeSelectorProps {
-    options: AlertTypeDef[];
+    options: ExpandedAlertTypeDef[];
 }
 
 export interface BaseButtonProps {

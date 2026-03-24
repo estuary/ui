@@ -166,3 +166,9 @@ interface BaseFields {
     detail: string | null;
     updatedAt: Date;
 }
+
+export interface ExpandedAlertTypeDef extends AlertTypeDef {
+    id: string;
+    isDefault: boolean;
+    isSystemAlert: boolean;
+}

@@ -1,6 +1,6 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { ReducedAlertSubscription } from 'src/api/types';
-import type { AlertTypeDef } from 'src/types/gql';
+import type { ExpandedAlertTypeDef } from 'src/types/gql';
 import type { CombinedError } from 'urql';
 
 import { create } from 'zustand';
@@ -11,7 +11,7 @@ import produce from 'immer';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface AlertSubscriptionState {
-    alertTypes: AlertTypeDef[];
+    alertTypes: ExpandedAlertTypeDef[];
     initializationError: CombinedError | PostgrestError | null | undefined;
     prefixErrorsExist: boolean;
     saveErrors: (CombinedError | PostgrestError | null | undefined)[];
@@ -20,7 +20,10 @@ interface AlertSubscriptionState {
         'alertTypes' | 'catalogPrefix' | 'email'
     >;
     resetState: () => void;
-    setAlertTypes: (values: AlertTypeDef[], initialize?: boolean) => void;
+    setAlertTypes: (
+        values: ExpandedAlertTypeDef[],
+        initialize?: boolean
+    ) => void;
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
     ) => void;

@@ -1,5 +1,6 @@
 import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
 import type { TableState } from 'src/types';
+import type { ExpandedAlertTypeDef } from 'src/types/gql';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -7,7 +8,9 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
+import { useQuery } from 'urql';
 
+import { AlertTypeQuery } from 'src/api/alerts';
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -21,10 +24,13 @@ import {
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { TableStatuses } from 'src/types';
+import { expandAlertTypeDef } from 'src/utils/misc-utils';
 
 function PrefixAlertTable() {
     const [{ data, error, fetching }, executeQuery] =
         useGetAlertSubscriptions();
+
+    const [alertTypeResponse] = useQuery({ query: AlertTypeQuery });
 
     const setInitializationError = useAlertSubscriptionsStore(
         (state) => state.setInitializationError
@@ -50,6 +56,14 @@ function PrefixAlertTable() {
                 : data.alertSubscriptions;
         }, [data, searchQuery]);
 
+    const alertTypeDefs: ExpandedAlertTypeDef[] = useMemo(() => {
+        if (!alertTypeResponse.data) {
+            return [];
+        }
+
+        return alertTypeResponse.data.__type.enumValues.map(expandAlertTypeDef);
+    }, [alertTypeResponse.data]);
+
     const displayLoadingState = useRef(
         debounce(() => setTableState({ status: TableStatuses.LOADING }), 750)
     );
@@ -59,15 +73,13 @@ function PrefixAlertTable() {
     });
 
     useEffect(() => {
-        void (async () => {
-            if (!fetching) {
-                setInitializationError(error);
-            }
-        })();
-    }, [error, fetching, setInitializationError]);
+        if (!fetching && !alertTypeResponse.fetching) {
+            setInitializationError(error);
+        }
+    }, [alertTypeResponse.fetching, error, fetching, setInitializationError]);
 
     useEffect(() => {
-        if (fetching) {
+        if (fetching || alertTypeResponse.fetching) {
             setTableState({ status: TableStatuses.LOADING });
         } else if (processedData.length > 0) {
             displayLoadingState.current?.cancel();
@@ -84,7 +96,13 @@ function PrefixAlertTable() {
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [displayLoadingState, fetching, processedData.length, searchQuery]);
+    }, [
+        alertTypeResponse.fetching,
+        displayLoadingState,
+        fetching,
+        processedData.length,
+        searchQuery,
+    ]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 
@@ -133,8 +151,10 @@ function PrefixAlertTable() {
                             disableDoclink: true,
                         }}
                         rows={
-                            processedData.length > 0 ? (
+                            processedData.length > 0 &&
+                            alertTypeDefs.length > 0 ? (
                                 <Rows
+                                    alertTypeDefs={alertTypeDefs}
                                     data={processedData}
                                     executeQuery={executeQuery}
                                 />

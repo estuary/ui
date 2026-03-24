@@ -68,6 +68,7 @@ function ChipWrapper({
         return (
             <OutlinedChip
                 component="span"
+                diminishedText={val?.diminishedText}
                 disabled={disabled}
                 label={displayValue}
                 onClick={
@@ -84,7 +85,7 @@ function ChipWrapper({
                 variant="outlined"
             />
         );
-    }, [disabled, displayValue, onClick, val.link]);
+    }, [disabled, displayValue, onClick, val?.diminishedText, val.link]);
 
     const wrappedChip = useMemo(() => {
         if (val.link) {
