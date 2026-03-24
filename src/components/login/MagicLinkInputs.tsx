@@ -12,16 +12,23 @@ import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import AlertBox from 'src/components/shared/AlertBox';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import { logRocketConsole } from 'src/services/shared';
 
 interface Props {
     onSubmit: Function;
     showToken?: boolean;
 }
 
+const SSO_REQUIRED_PREFIX = 'sso_required:';
+
 const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const intl = useIntl();
+    const setSsoNotSatisfied = useUserStore(
+        (state) => state.setSsoNotSatisfied
+    );
 
     const [showErrors, setShowErrors] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -66,6 +73,18 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
             const { error } = await onSubmit(formData);
 
             if (error) {
+                if (error.message.startsWith(SSO_REQUIRED_PREFIX)) {
+                    const domain = error.message.slice(
+                        SSO_REQUIRED_PREFIX.length
+                    );
+                    logRocketConsole(
+                        'Auth:SSORequired - redirecting to SSO',
+                        domain
+                    );
+                    setSsoNotSatisfied(domain);
+                    return;
+                }
+
                 setSubmitError(error);
                 setLoading(false);
                 return;

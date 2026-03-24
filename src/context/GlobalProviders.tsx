@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { enableMapSet, setAutoFreeze } from 'immer';
 
 import FullPageSpinner from 'src/components/fullPage/Spinner';
+import { FullPageSSONotSatisfied } from 'src/components/fullPage/SSONotSatisfied';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { initLogRocket } from 'src/services/logrocket';
 
@@ -44,9 +45,14 @@ export const supabaseClient = createClient(
 
 function GlobalProviders({ children }: BaseComponentProps) {
     const initialized = useUserStore((state) => state.initialized);
+    const ssoNotSatisfied = useUserStore((state) => state.ssoNotSatisfied);
 
     if (!initialized) {
         return <FullPageSpinner />;
+    }
+
+    if (ssoNotSatisfied) {
+        return <FullPageSSONotSatisfied />;
     }
 
     // Only returning the child and need the JSX Fragment

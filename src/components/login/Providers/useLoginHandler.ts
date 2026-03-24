@@ -8,18 +8,25 @@ import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
 import { supabaseClient } from 'src/context/GlobalProviders';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
+import { logRocketConsole } from 'src/services/shared';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
 const redirectToBase = `${window.location.origin}/auth`;
+
+const SSO_REQUIRED_PREFIX = 'sso_required:';
 
 function useLoginHandler(grantToken?: string, isRegister?: boolean) {
     const intl = useIntl();
 
     const { enqueueSnackbar } = useSnackbar();
     const redirectTo = useLoginRedirectPath(redirectToBase);
+    const setSsoNotSatisfied = useUserStore(
+        (state) => state.setSsoNotSatisfied
+    );
 
     const loginFailed = useCallback(
         (key: Provider) => {
@@ -67,12 +74,25 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
                         // shouldCreateUser: isRegister,
                     },
                 });
-                if (error) loginFailed(provider);
+                if (error) {
+                    if (error.message.startsWith(SSO_REQUIRED_PREFIX)) {
+                        const domain = error.message.slice(
+                            SSO_REQUIRED_PREFIX.length
+                        );
+                        logRocketConsole(
+                            'Auth:SSORequired - redirecting to SSO',
+                            domain
+                        );
+                        setSsoNotSatisfied(domain);
+                        return;
+                    }
+                    loginFailed(provider);
+                }
             } catch (error: unknown) {
                 loginFailed(provider);
             }
         },
-        [grantToken, isRegister, loginFailed, redirectTo]
+        [grantToken, isRegister, loginFailed, redirectTo, setSsoNotSatisfied]
     );
 
     return useMemo(
