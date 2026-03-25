@@ -65,7 +65,10 @@ export const Alerts: Record<string, string> = {
     'alerts.alertType.humanReadable.free_trial_ending': `Free Trial Ending`,
     'alerts.alertType.humanReadable.free_trial_stalled': ``,
     'alerts.alertType.humanReadable.missing_payment_method': `Missing Payment Method`,
-
+    'alerts.alertType.humanReadable.task_chronically_failing': ``,
+    'alerts.alertType.humanReadable.task_auto_disabled_failing': ``,
+    'alerts.alertType.humanReadable.task_idle': `Task Idle`,
+    'alerts.alertType.humanReadable.task_auto_disabled_idle': ``,
     'alerts.alertType.details.humanReadable.error': `Details`,
     'alerts.alertType.details.humanReadable.evaluation_interval': `Details`,
     'alerts.alertType.details.humanReadable.serverError.evaluation_interval': `There has been zero data movement for\nthe configured timeframe of {interval}.`,
