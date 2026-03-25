@@ -4,17 +4,37 @@ import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 import { AUTH_ERROR } from 'src/services/client';
 import { tokenHasIssues_GQL } from 'src/services/gql';
-import { logRocketEvent } from 'src/services/shared';
+import { logRocketConsole, logRocketEvent } from 'src/services/shared';
 import { tokenHasIssues } from 'src/services/supabase';
+
+const SSO_REQUIRED_PREFIX = 'sso_required:';
 
 function useDataFetchErrorHandling() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+    const setSsoNotSatisfied = useUserStore(
+        (state) => state.setSsoNotSatisfied
+    );
 
     return useMemo(() => {
         return {
+            checkForSsoRequired: (
+                message: string | undefined | null
+            ): boolean => {
+                if (message?.startsWith(SSO_REQUIRED_PREFIX)) {
+                    const domain = message.slice(SSO_REQUIRED_PREFIX.length);
+                    logRocketConsole(
+                        'Auth:SSORequired - redirecting to SSO on token refresh',
+                        domain
+                    );
+                    setSsoNotSatisfied(domain);
+                    return true;
+                }
+                return false;
+            },
             checkIfAuthInvalid: (message: string | undefined | null) => {
                 return Boolean(
                     message &&
@@ -59,7 +79,7 @@ function useDataFetchErrorHandling() {
                     });
             },
         };
-    }, [enqueueSnackbar, intl]);
+    }, [enqueueSnackbar, intl, setSsoNotSatisfied]);
 }
 
 export default useDataFetchErrorHandling;

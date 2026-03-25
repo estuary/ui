@@ -34,7 +34,7 @@ function invalidateQuery(
 }
 
 function UrqlConfigProvider({ children }: BaseComponentProps) {
-    const { checkIfAuthInvalid, forceUserToSignOut } =
+    const { checkForSsoRequired, checkIfAuthInvalid, forceUserToSignOut } =
         useDataFetchErrorHandling();
 
     const [accessToken, expiresAt, refreshToken] = useUserStore(
@@ -146,6 +146,9 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             });
 
                             if (error) {
+                                if (checkForSsoRequired(error.message)) {
+                                    return;
+                                }
                                 return forceUserToSignOut('gql');
                             }
 
@@ -158,6 +161,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
         });
     }, [
         accessToken,
+        checkForSsoRequired,
         checkIfAuthInvalid,
         expiresAt,
         forceUserToSignOut,

@@ -28,7 +28,7 @@ export const extendedPollSettings = {
 };
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const { onErrorRetry } = useSWRConfig();
-    const { forceUserToSignOut, checkIfAuthInvalid } =
+    const { checkForSsoRequired, forceUserToSignOut, checkIfAuthInvalid } =
         useDataFetchErrorHandling();
 
     const provider = useCallback(() => {
@@ -81,6 +81,10 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                         );
                     },
                     onError: async (error, _key, _config) => {
+                        if (checkForSsoRequired(error.message)) {
+                            return;
+                        }
+
                         // This happens when a call to the server has returned a 401 but
                         //      the UI thinks the User is still valid. So we need to log them out.
                         if (checkIfAuthInvalid(error.message)) {
