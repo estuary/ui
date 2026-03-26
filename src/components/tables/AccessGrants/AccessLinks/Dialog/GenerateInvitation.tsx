@@ -158,10 +158,9 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                             required
                             options={capabilityOptions}
                             defaultValue={capabilityOptions[0]}
-                            changeHandler={(
-                                _event: React.SyntheticEvent,
-                                value: string
-                            ) => setCapability(value as Capability)}
+                            changeHandler={(_event, value) =>
+                                setCapability(value as Capability)
+                            }
                         />
                     </Box>
                 </Stack>
