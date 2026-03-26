@@ -489,6 +489,12 @@ export type InviteLink = {
   detail?: Maybe<Scalars['String']['output']>;
   /** Whether this invite link can only be used once. */
   singleUse: Scalars['Boolean']['output'];
+  /**
+   * The SSO provider ID for the invite's tenant, if any.
+   * When present, the frontend should route the user directly into the SSO
+   * flow using this provider ID (e.g. via `supabase.auth.signInWithSSO`).
+   */
+  ssoProviderId?: Maybe<Scalars['UUID']['output']>;
   /** The secret token for this invite link. */
   token: Scalars['UUID']['output'];
 };
