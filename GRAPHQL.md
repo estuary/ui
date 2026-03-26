@@ -14,7 +14,7 @@ We use [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) with the 
 - Scripts:
     - `npm run codegen` — generate types against the production GQL endpoint (via `.env`)
     - `npm run codegen:local` — generate types against a local GQL endpoint (via `.env.development.local`)
-    - `npm run check-schema` — run codegen and verify no uncommitted schema/type changes
+    - `npm run codegen:check` — run codegen and verify no uncommitted schema/type changes
 
 When adding or changing `graphql()` queries/mutations/fragments in source files, re-run `npm run codegen` (or `codegen:local` if working against a local dev backend) to regenerate types.
 

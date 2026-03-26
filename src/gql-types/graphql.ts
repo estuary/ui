@@ -43,6 +43,13 @@ export type Scalars = {
   Url: { input: any; output: any; }
 };
 
+/** Status of the abandonment evaluation for a task. */
+export type AbandonStatus = {
+  __typename?: 'AbandonStatus';
+  /** When this spec was last checked for abandonment */
+  lastEvaluated?: Maybe<Scalars['DateTime']['output']>;
+};
+
 /**
  * Status of the task shards running in the data-plane. This records information about
  * the activations of builds in the data-plane, including any subsequent re-activations
@@ -196,7 +203,29 @@ export type AlertType =
    * continue to make progress in between failures, but at a minimum, performance will
    * be degraded. And in many scenarios, the task will be unable to process data at all.
    */
-  | 'shard_failed';
+  | 'shard_failed'
+  /**
+   * The task was automatically disabled because its shards have been
+   * failing continuously for an extended period without any user intervention.
+   */
+  | 'task_auto_disabled_failing'
+  /**
+   * The task was automatically disabled because it had not processed any
+   * data for an extended period and had not been modified recently.
+   */
+  | 'task_auto_disabled_idle'
+  /**
+   * Warning that a task has been unable to run for an extended period. It will
+   * be automatically disabled unless the issue is addressed or a new version
+   * of the spec is published.
+   */
+  | 'task_chronically_failing'
+  /**
+   * Warning that a task has not processed any data for an extended period
+   * and has not been modified recently. It will be automatically disabled
+   * unless a new version of the spec is published.
+   */
+  | 'task_idle';
 
 export type AlertsBy = {
   /**
@@ -259,6 +288,10 @@ export type AutoDiscoverStatus = {
    * reason.
    */
   pendingPublish?: Maybe<AutoDiscoverOutcome>;
+};
+
+export type BoolFilter = {
+  eq?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** Capability within the Estuary role-based access control (RBAC) authorization system. */
@@ -406,6 +439,8 @@ export type ConnectorsFilter = {
 export type Controller = {
   __typename?: 'Controller';
   /** Present for captures, collections, and materializations. */
+  abandon?: Maybe<AbandonStatus>;
+  /** Present for captures, collections, and materializations. */
   activation?: Maybe<ActivationStatus>;
   alerts?: Maybe<Scalars['JSONObject']['output']>;
   /** Only present for captures that use `autoDiscover`. */
@@ -540,6 +575,51 @@ export type InferredSchemaStatus = {
    * on the next controller run, which would update the hash but not actually modify the schema.
    */
   schemaMd5?: Maybe<Scalars['String']['output']>;
+};
+
+/** An invite link that grants access to a catalog prefix. */
+export type InviteLink = {
+  __typename?: 'InviteLink';
+  /** The capability level granted by this invite link. */
+  capability: Capability;
+  /** The catalog prefix this invite link grants access to. */
+  catalogPrefix: Scalars['Prefix']['output'];
+  /** When this invite link was created. */
+  createdAt: Scalars['DateTime']['output'];
+  /** Optional description of this invite link. */
+  detail?: Maybe<Scalars['String']['output']>;
+  /** Whether this invite link can only be used once. */
+  singleUse: Scalars['Boolean']['output'];
+  /**
+   * The SSO provider ID for the invite's tenant, if any.
+   * When present, the frontend should route the user directly into the SSO
+   * flow using this provider ID (e.g. via `supabase.auth.signInWithSSO`).
+   */
+  ssoProviderId?: Maybe<Scalars['UUID']['output']>;
+  /** The secret token for this invite link. */
+  token: Scalars['UUID']['output'];
+};
+
+export type InviteLinkConnection = {
+  __typename?: 'InviteLinkConnection';
+  /** A list of edges. */
+  edges: Array<InviteLinkEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type InviteLinkEdge = {
+  __typename?: 'InviteLinkEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: InviteLink;
+};
+
+export type InviteLinksFilter = {
+  catalogPrefix?: InputMaybe<PrefixFilter>;
+  singleUse?: InputMaybe<BoolFilter>;
 };
 
 /** The status of a publication. */
@@ -724,6 +804,13 @@ export type MutationRoot = {
    */
   createAlertSubscription: AlertSubscription;
   /**
+   * Create an invite link that grants access to a catalog prefix.
+   *
+   * The caller must have admin capability on the catalog prefix.
+   * Share the returned token with the intended recipient out-of-band.
+   */
+  createInviteLink: InviteLink;
+  /**
    * Create a storage mapping for the given catalog prefix.
    *
    * This validates that the user has admin access to the catalog prefix,
@@ -735,6 +822,17 @@ export type MutationRoot = {
   createStorageMapping: CreateStorageMappingResult;
   /** Delete an alert subscription that exactly matches the given prefix and email. */
   deleteAlertSubscription: AlertSubscription;
+  /**
+   * Delete an invite link, revoking it so it can no longer be redeemed.
+   *
+   * The caller must have admin capability on the invite link's catalog prefix.
+   */
+  deleteInviteLink: Scalars['Boolean']['output'];
+  /**
+   * Redeem an invite link token, granting the caller access to the associated
+   * catalog prefix with the specified capability.
+   */
+  redeemInviteLink: RedeemInviteLinkResult;
   /**
    * Check storage health for a given catalog prefix and storage definition.
    *
@@ -773,6 +871,14 @@ export type MutationRootCreateAlertSubscriptionArgs = {
 };
 
 
+export type MutationRootCreateInviteLinkArgs = {
+  capability: Capability;
+  catalogPrefix: Scalars['Prefix']['input'];
+  detail?: InputMaybe<Scalars['String']['input']>;
+  singleUse?: Scalars['Boolean']['input'];
+};
+
+
 export type MutationRootCreateStorageMappingArgs = {
   catalogPrefix: Scalars['Prefix']['input'];
   detail?: InputMaybe<Scalars['String']['input']>;
@@ -783,6 +889,16 @@ export type MutationRootCreateStorageMappingArgs = {
 export type MutationRootDeleteAlertSubscriptionArgs = {
   email: Scalars['String']['input'];
   prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootDeleteInviteLinkArgs = {
+  token: Scalars['UUID']['input'];
+};
+
+
+export type MutationRootRedeemInviteLinkArgs = {
+  token: Scalars['UUID']['input'];
 };
 
 
@@ -828,6 +944,10 @@ export type PendingConfigUpdateStatus = {
   /** The id of the build when the associated config update event was generated. */
   build: Scalars['Id']['output'];
   nextAttempt: Scalars['DateTime']['output'];
+};
+
+export type PrefixFilter = {
+  startsWith?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** A prefix to which the user is authorized. */
@@ -965,6 +1085,13 @@ export type QueryRoot = {
    */
   dataPlanes: DataPlaneConnection;
   /**
+   * List invite links the caller has admin access to.
+   *
+   * Returns invite links under all prefixes where the caller has admin
+   * capability, optionally narrowed by a prefix filter.
+   */
+  inviteLinks: InviteLinkConnection;
+  /**
    * Returns a paginated list of live specs under the given prefix and
    * matching the given type.
    *
@@ -1027,6 +1154,13 @@ export type QueryRootDataPlanesArgs = {
 };
 
 
+export type QueryRootInviteLinksArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<InviteLinksFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryRootLiveSpecsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -1049,6 +1183,15 @@ export type QueryRootStorageMappingsArgs = {
   by: StorageMappingsBy;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** Result of redeeming an invite link. */
+export type RedeemInviteLinkResult = {
+  __typename?: 'RedeemInviteLinkResult';
+  /** The capability level that was granted. */
+  capability: Capability;
+  /** The catalog prefix that was granted. */
+  catalogPrefix: Scalars['Prefix']['output'];
 };
 
 export type RepublishRequested = {

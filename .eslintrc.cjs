@@ -7,6 +7,7 @@ module.exports = {
     ],
     ignorePatterns: [
         'vite.config.ts',
+        'codegen.ts',
         '__mocks__',
         'playwright-tests/',
         'src/gql-types/',
