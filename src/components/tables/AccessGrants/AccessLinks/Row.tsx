@@ -46,7 +46,7 @@ export function Row({
                 </Typography>
             </TableCell>
 
-            <CopyAccessLink token={row.token} />
+            <CopyAccessLink token={row.token} ssoProviderId={row.ssoProviderId} />
 
             <TimeStamp time={row.createdAt} />
 
