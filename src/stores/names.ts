@@ -35,7 +35,6 @@ export enum SchemaEvolutionStoreNames {
 }
 
 export enum SelectTableStoreNames {
-    ACCESS_GRANTS_LINKS = 'AccessGrants-Links',
     ACCESS_GRANTS_USERS = 'AccessGrants-Users',
     ACCESS_GRANTS_PREFIXES = 'AccessGrants-Prefixes',
     BILLING = 'Billing-Table',

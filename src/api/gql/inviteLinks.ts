@@ -51,6 +51,7 @@ export function useInviteLinks(afterCursor?: string) {
         fetching,
         error,
         pageInfo,
+        pageSize: INVITE_LINKS_PAGE_SIZE,
     };
 }
 

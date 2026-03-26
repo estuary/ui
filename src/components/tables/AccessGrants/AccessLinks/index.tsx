@@ -19,11 +19,7 @@ import {
 import { Trash } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import {
-    INVITE_LINKS_PAGE_SIZE,
-    useDeleteInviteLink,
-    useInviteLinks,
-} from 'src/api/gql/inviteLinks';
+import { useDeleteInviteLink, useInviteLinks } from 'src/api/gql/inviteLinks';
 import CopyAccessLink from 'src/components/tables/cells/CopyAccessLink';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -122,7 +118,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
         []
     );
 
-    const { inviteLinks, fetching, error, pageInfo } =
+    const { inviteLinks, fetching, error, pageInfo, pageSize } =
         useInviteLinks(afterCursor);
 
     const handlePageChange = (_event: any, page: number) => {
@@ -232,10 +228,10 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
                                 <TablePagination
                                     count={-1}
                                     page={currentPage}
-                                    rowsPerPage={INVITE_LINKS_PAGE_SIZE}
+                                    rowsPerPage={pageSize}
                                     rowsPerPageOptions={[
                                         // one value here overrides the default options and hides the rows-per-page selector
-                                        INVITE_LINKS_PAGE_SIZE,
+                                        pageSize,
                                     ]}
                                     onPageChange={handlePageChange}
                                     labelDisplayedRows={({ from }) => {

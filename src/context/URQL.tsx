@@ -25,12 +25,7 @@ function invalidateQuery(
     cache
         .inspectFields('Query')
         .filter((f) => f.fieldName === queryName)
-        .forEach((f) => {
-            console.log(
-                `Invalidating cache for ${queryName} with args ${JSON.stringify(f.arguments)}`
-            );
-            cache.invalidate('Query', f.fieldName, f.arguments);
-        });
+        .forEach((f) => cache.invalidate('Query', f.fieldName, f.arguments));
 }
 
 function UrqlConfigProvider({ children }: BaseComponentProps) {

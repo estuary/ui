@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { Box, Button, LinearProgress, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 
 import { useRedeemInviteLink } from 'src/api/gql/inviteLinks';
@@ -12,6 +12,7 @@ import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { logRocketConsole } from 'src/services/shared';
 
 interface Props {
     grantToken: string;
@@ -39,18 +40,17 @@ export function RedeemInviteLink({ grantToken }: Props) {
             if (result.data && mutate_userInfoSummary) {
                 try {
                     await mutate_userInfoSummary();
-                } catch {
-                    // Best-effort refresh; the grant still succeeded
+                } catch (err) {
+                    logRocketConsole(
+                        'userInfoSummary refresh failed after redeeming invite',
+                        err
+                    );
                 }
             }
         })();
     }, [grantToken, mutate_userInfoSummary, redeemInviteLink]);
 
-    const serverError = redeemError
-        ? (redeemError.graphQLErrors[0]?.message ??
-          redeemError.message ??
-          intl.formatMessage({ id: 'tenant.grantDirective.error.message' }))
-        : null;
+    const serverError = redeemError?.message ?? null;
 
     const grantResult = redeemData?.redeemInviteLink ?? null;
 
@@ -63,13 +63,15 @@ export function RedeemInviteLink({ grantToken }: Props) {
             <FullPageWrapper>
                 <Stack spacing={2}>
                     <Typography variant="h5" align="center">
-                        <FormattedMessage id="tenant.grantDirective.error.header" />
+                        {intl.formatMessage({
+                            id: 'tenant.grantDirective.error.header',
+                        })}
                     </Typography>
 
                     <AlertBox
                         severity="error"
                         short
-                        title={<FormattedMessage id="common.fail" />}
+                        title={intl.formatMessage({ id: 'common.fail' })}
                     >
                         {serverError}
                     </AlertBox>
@@ -85,7 +87,9 @@ export function RedeemInviteLink({ grantToken }: Props) {
             <FullPageWrapper>
                 <Stack spacing={2}>
                     <Typography variant="h5" align="center">
-                        <FormattedMessage id="tenant.grantDirective.success.header" />
+                        {intl.formatMessage({
+                            id: 'tenant.grantDirective.success.header',
+                        })}
                     </Typography>
 
                     <Typography>
