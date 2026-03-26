@@ -1,0 +1,2 @@
+schema: src/gql-types/schema.graphql # used by IDE for autocomplete and hover tips in graphql() calls
+documents: 'src/**/*.{ts,tsx}' # where to look for operations to generate types for

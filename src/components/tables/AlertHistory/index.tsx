@@ -44,7 +44,7 @@ const MAX_ACTIVE_ALERTS = 5;
 
 // Query for active alerts
 const activeAlertsQuery = gql<AlertHistoryQueryResponse, LiveSpecVariables>`
-    query ActiveAlertsQuery($catalogName: String!) {
+    query ActiveAlertsQuery($catalogName: [Name!]) {
         liveSpecs(by: { names: $catalogName }) {
             edges {
                 node {
@@ -66,9 +66,9 @@ const alertHistoryQuery = gql<
     WithPagination<LiveSpecVariables>
 >`
     query AlertHistoryQuery(
-        $catalogName: String!
+        $catalogName: [Name!]
         $before: String
-        $last: Int
+        $last: Int!
     ) {
         liveSpecs(by: { names: $catalogName }) {
             edges {
