@@ -19,8 +19,9 @@ import { useTheme } from '@mui/material/styles';
 
 import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
+import { useMutation } from 'urql';
 
-import { useCreateInviteLink } from 'src/api/gql/inviteLinks';
+import { CREATE_INVITE_LINK } from 'src/api/gql/inviteLinks';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
@@ -81,7 +82,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
     const postHog = usePostHog();
     const { palette } = useTheme();
 
-    const [{ fetching }, createInviteLink] = useCreateInviteLink();
+    const [{ fetching }, createInviteLink] = useMutation(CREATE_INVITE_LINK);
 
     const {
         handlers: prefixHandlers,

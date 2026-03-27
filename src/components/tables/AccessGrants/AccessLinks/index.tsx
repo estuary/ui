@@ -1,14 +1,11 @@
 import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog';
-import type { InviteLink } from 'src/gql-types/graphql';
 import type { TableColumns, TableState } from 'src/types';
 
 import { useEffect, useState } from 'react';
 
 import {
     Box,
-    IconButton,
     Table,
-    TableCell,
     TableContainer,
     TableFooter,
     TablePagination,
@@ -16,14 +13,13 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Trash } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import { useDeleteInviteLink, useInviteLinks } from 'src/api/gql/inviteLinks';
-import CopyAccessLink from 'src/components/tables/cells/CopyAccessLink';
-import TimeStamp from 'src/components/tables/cells/TimeStamp';
+import { useInviteLinks } from 'src/api/gql/inviteLinks';
+import { Row } from 'src/components/tables/AccessGrants/AccessLinks/Row';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { TableStatuses } from 'src/types';
 
 const columns: TableColumns[] = [
@@ -53,91 +49,17 @@ const columns: TableColumns[] = [
     },
 ];
 
-function Row({
-    row,
-    setError,
-}: InviteErrorProps & {
-    row: InviteLink;
-}) {
-    const intl = useIntl();
-    const [{ fetching }, deleteInviteLink] = useDeleteInviteLink();
-
-    const handleDelete = async () => {
-        const result = await deleteInviteLink({ token: row.token });
-
-        setError(result.error ?? null);
-    };
-
-    return (
-        <TableRow hover>
-            <TableCell>
-                <Typography>{row.catalogPrefix}</Typography>
-            </TableCell>
-
-            <TableCell>
-                <Typography>{row.capability}</Typography>
-            </TableCell>
-
-            <TableCell>
-                <Typography>
-                    {intl.formatMessage({
-                        id: row.singleUse
-                            ? 'accessGrants.table.accessLinks.label.type.singleUse'
-                            : 'accessGrants.table.accessLinks.label.type.multiUse',
-                    })}
-                </Typography>
-            </TableCell>
-
-            <CopyAccessLink token={row.token} />
-
-            <TimeStamp time={row.createdAt} />
-
-            <TableCell sx={{ width: 50 }}>
-                <IconButton
-                    onClick={handleDelete}
-                    disabled={fetching}
-                    size="small"
-                    sx={{ color: 'error.main' }}
-                    aria-label={intl.formatMessage({ id: 'cta.delete' })}
-                >
-                    <Trash />
-                </IconButton>
-            </TableCell>
-        </TableRow>
-    );
-}
-
 export function AccessLinksTable({ setError }: InviteErrorProps) {
     const intl = useIntl();
 
-    const [currentPage, setCurrentPage] = useState(0);
-    const [afterCursor, setAfterCursor] = useState<string | undefined>(
-        undefined
-    );
-    const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>(
-        []
-    );
+    const { currentPage, cursor, goToPage, onPageChange } =
+        useCursorPagination();
 
     const { inviteLinks, fetching, error, pageInfo, pageSize } =
-        useInviteLinks(afterCursor);
+        useInviteLinks(cursor);
 
     const handlePageChange = (_event: any, page: number) => {
-        if (page > currentPage) {
-            const endCursor = pageInfo?.endCursor;
-
-            if (endCursor) {
-                setAfterCursor(endCursor);
-                setCursorHistory((prev) => [...prev, endCursor]);
-            }
-        } else if (page < currentPage) {
-            if (page === 0) {
-                setAfterCursor(undefined);
-                setCursorHistory([]);
-            } else {
-                setAfterCursor(cursorHistory[page]);
-            }
-        }
-        setCurrentPage(page);
+        onPageChange(_event, page, pageInfo?.endCursor);
     };
 
     const [tableState, setTableState] = useState<TableState>({
@@ -167,17 +89,12 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
         // If current page is empty but we're not on page 1,
         // go back a page (e.g. after deleting the last item on a page)
         if (currentPage > 0) {
-            const prevPage = currentPage - 1;
-            setCurrentPage(prevPage);
-            setAfterCursor(
-                prevPage === 0 ? undefined : cursorHistory[prevPage]
-            );
-            setCursorHistory((prev) => prev.slice(0, prevPage + 1));
+            goToPage(currentPage - 1);
             return;
         }
 
         setTableState({ status: TableStatuses.NO_EXISTING_DATA });
-    }, [fetching, error, inviteLinks, currentPage, cursorHistory]);
+    }, [fetching, error, inviteLinks, currentPage, goToPage]);
 
     const hasData = Boolean(pageInfo);
 

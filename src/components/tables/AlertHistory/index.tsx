@@ -35,6 +35,7 @@ import { useDisplayTableColumns } from 'src/context/TableSettings';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { PAGE_INFO_REVERSE_FRAGMENT } from 'src/services/gql';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
@@ -106,14 +107,7 @@ function AlertHistoryTable({
 
     const { tableSettings } = useDisplayTableColumns();
 
-    const [currentPage, setCurrentPage] = useState(0);
-    const [maxPageSeen, setMaxPageSeen] = useState(0);
-    const [beforeCursor, setBeforeCursor] = useState<string | undefined>(
-        undefined
-    );
-    const [cursorHistory, setCursorHistory] = useState<(string | undefined)[]>(
-        []
-    );
+    const { currentPage, cursor, onPageChange } = useCursorPagination();
 
     const [{ fetching, data, error }] = useQuery({
         query: active ? activeAlertsQuery : alertHistoryQuery,
@@ -122,7 +116,7 @@ function AlertHistoryTable({
             ...(active
                 ? {}
                 : {
-                      before: beforeCursor,
+                      before: cursor,
                       last: PAGE_SIZE,
                   }),
         },
@@ -130,44 +124,10 @@ function AlertHistoryTable({
     });
 
     const loadMore = (_event: any, page: number) => {
-        if (page > currentPage) {
-            // Moving forward
-            const endCursor =
-                data?.liveSpecs?.edges?.[0]?.node?.alertHistory?.pageInfo
-                    ?.endCursor;
-
-            if (endCursor) {
-                setMaxPageSeen(Math.max(maxPageSeen, page));
-                setBeforeCursor(endCursor);
-
-                // Store cursor history for backward navigation that relies only on
-                //  `before` and `last` for `alertHistory` table
-                setCursorHistory((prev) => {
-                    const newHistory = [...prev];
-
-                    // Make sure there is a spot in the history
-                    while (newHistory.length <= page) {
-                        newHistory.push(undefined);
-                    }
-
-                    // Add the cursor
-                    newHistory[page] = endCursor;
-
-                    // Update state
-                    return newHistory;
-                });
-            }
-        } else if (page < currentPage) {
-            // Moving backward
-            if (page === 0) {
-                // Reset to initial state
-                setBeforeCursor(undefined);
-                setCursorHistory([]);
-            } else {
-                setBeforeCursor(cursorHistory[page]);
-            }
-        }
-        setCurrentPage(page);
+        const endCursor =
+            data?.liveSpecs?.edges?.[0]?.node?.alertHistory?.pageInfo
+                ?.endCursor;
+        onPageChange(_event, page, endCursor);
     };
 
     const columnsToShow = useMemo(
@@ -274,8 +234,6 @@ function AlertHistoryTable({
     const hasData =
         !failed && !loading && tableState.status === TableStatuses.DATA_FETCHED;
     const showFooter = !disableFooter && !active;
-    const isNextButtonDisabled =
-        currentPage < maxPageSeen ? false : !pageInfo?.hasPreviousPage;
 
     return (
         <>
@@ -370,7 +328,8 @@ function AlertHistoryTable({
                                                 disabled: currentPage === 0,
                                             },
                                             nextButton: {
-                                                disabled: isNextButtonDisabled,
+                                                disabled:
+                                                    !pageInfo?.hasPreviousPage,
                                             },
                                         },
                                     }}

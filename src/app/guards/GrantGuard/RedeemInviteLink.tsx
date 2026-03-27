@@ -4,8 +4,9 @@ import { Box, Button, LinearProgress, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
+import { useMutation } from 'urql';
 
-import { useRedeemInviteLink } from 'src/api/gql/inviteLinks';
+import { REDEEM_INVITE_LINK } from 'src/api/gql/inviteLinks';
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import { authenticatedRoutes } from 'src/app/routes';
 import MessageWithLink from 'src/components/content/MessageWithLink';
@@ -23,7 +24,7 @@ export function RedeemInviteLink({ grantToken }: Props) {
     const navigate = useNavigate();
 
     const [{ error: redeemError, data: redeemData }, redeemInviteLink] =
-        useRedeemInviteLink();
+        useMutation(REDEEM_INVITE_LINK);
     const mutate_userInfoSummary = useUserInfoSummaryStore(
         (state) => state.mutate
     );

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useMutation, useQuery } from 'urql';
+import { useQuery } from 'urql';
 
 import { graphql } from 'src/gql-types';
 
@@ -55,7 +55,7 @@ export function useInviteLinks(afterCursor?: string) {
     };
 }
 
-const CREATE_INVITE_LINK = graphql(`
+export const CREATE_INVITE_LINK = graphql(`
     mutation CreateInviteLink(
         $catalogPrefix: Prefix!
         $capability: Capability!
@@ -77,21 +77,14 @@ const CREATE_INVITE_LINK = graphql(`
         }
     }
 `);
-export function useCreateInviteLink() {
-    return useMutation(CREATE_INVITE_LINK);
-}
 
-const DELETE_INVITE_LINK = graphql(`
+export const DELETE_INVITE_LINK = graphql(`
     mutation DeleteInviteLink($token: UUID!) {
         deleteInviteLink(token: $token)
     }
 `);
 
-export function useDeleteInviteLink() {
-    return useMutation(DELETE_INVITE_LINK);
-}
-
-const REDEEM_INVITE_LINK = graphql(`
+export const REDEEM_INVITE_LINK = graphql(`
     mutation RedeemInviteLink($token: UUID!) {
         redeemInviteLink(token: $token) {
             capability
@@ -99,7 +92,3 @@ const REDEEM_INVITE_LINK = graphql(`
         }
     }
 `);
-
-export function useRedeemInviteLink() {
-    return useMutation(REDEEM_INVITE_LINK);
-}
