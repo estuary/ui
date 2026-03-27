@@ -268,9 +268,7 @@ const getInitialState = (
 
             const specHydrationResponse =
                 await hydrateSpecificationDependentState(
-                    // TODO (gql:connector) - need to add to the query
-                    // connectorTag?.default_capture_interval,
-                    null,
+                    connectorTag.defaultCaptureInterval,
                     entityType,
                     fallbackInterval,
                     get,

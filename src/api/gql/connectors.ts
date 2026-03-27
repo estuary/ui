@@ -14,6 +14,7 @@ const CONNECTOR_QUERY = graphql(`
             connectorTag(orDefault: true) {
                 id
                 disableBackfill
+                defaultCaptureInterval
                 documentationUrl
                 endpointSpecSchema
                 imageTag

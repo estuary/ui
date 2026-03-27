@@ -438,6 +438,12 @@ type ConnectorTag {
   """Time at which the ConnectorTag was created"""
   createdAt: DateTime!
 
+  """
+  The default interval between invocations of a capture using this connector tag.
+  Formatted as HH:MM:SS. Only applicable to non-streaming (polling) capture connectors.
+  """
+  defaultCaptureInterval: String
+
   """Whether the UI should hide the backfill button for this connector"""
   disableBackfill: Boolean!
 

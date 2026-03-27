@@ -1,3 +1,4 @@
+import type { SingleConnectorQueryQuery } from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
 
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -9,13 +10,24 @@ import { logRocketConsole } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
 
-const ConnectorTagContext = createContext<any | null>(null);
+export type ConnectorTagData = NonNullable<
+    NonNullable<SingleConnectorQueryQuery['connector']>['connectorTag']
+> & {
+    connector: Pick<
+        NonNullable<SingleConnectorQueryQuery['connector']>,
+        'id' | 'imageName' | 'logoUrl' | 'title'
+    >;
+};
+
+const ConnectorTagContext = createContext<ConnectorTagData | null>(null);
 
 export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
     const imageName = useGlobalSearchParams('connector_image');
     const getSingleConnectorTag = useGetSingleConnectorTag();
 
-    const [connectorTag, setConnectorTag] = useState<any | null>(null);
+    const [connectorTag, setConnectorTag] = useState<ConnectorTagData | null>(
+        null
+    );
     const [fetchError, setFetchError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -65,7 +77,7 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
     );
 };
 
-export const useConnectorTag = (): any => {
+export const useConnectorTag = (): ConnectorTagData => {
     const context = useContext(ConnectorTagContext);
 
     if (!context) {
