@@ -34,6 +34,9 @@ const UserStoreProvider = ({ children }: BaseComponentProps) => {
                     setInitialized(true);
                 }
 
+                // Single source of truth for signing the user out. Supabase
+                // fires this with a null session when the refresh token is
+                // rejected, revoked, or the user explicitly signs out.
                 if (!change_session) {
                     setSession(null);
                     setUser(null);
