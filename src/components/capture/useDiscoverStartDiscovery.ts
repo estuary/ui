@@ -13,6 +13,7 @@ import {
     useEditorStore_setId,
 } from 'src/components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useConnectorTag } from 'src/context/ConnectorTag';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -31,6 +32,8 @@ function useDiscoverStartDiscovery(entityType: Entity) {
     const setCatalogName = useEditorStore_setCatalogName();
 
     const setFormState = useFormStateStore_setFormState();
+
+    const connectorTag = useConnectorTag();
 
     const imageName = useDetailsFormStore(
         (state) => state.details.data.connectorImage.imageName
@@ -70,7 +73,7 @@ function useDiscoverStartDiscovery(entityType: Entity) {
 
             postHog.capture(CustomEvents.CAPTURE_DISCOVER, {
                 status: 'init',
-                imageName,
+                imageName: connectorTag.connector.imageName,
             });
 
             setCatalogName(processedEntityName);

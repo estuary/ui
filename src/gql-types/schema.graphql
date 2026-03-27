@@ -356,6 +356,9 @@ type Connector {
   """Link to an external site with more information about the endpoint"""
   externalUrl: String!
 
+  """Unique id of the connector"""
+  id: Id!
+
   """
   Name of the conector's OCI (Docker) Container image, for example "ghcr.io/estuary/source-postgres"
   """
@@ -429,6 +432,9 @@ type ConnectorStatus {
 }
 
 type ConnectorTag {
+  """The id of the connector this tag relates to."""
+  connectorId: Id!
+
   """Time at which the ConnectorTag was created"""
   createdAt: DateTime!
 
@@ -440,6 +446,9 @@ type ConnectorTag {
 
   """Endpoint specification JSON-Schema of the tagged connector"""
   endpointSpecSchema: JSON
+
+  """Unique id of the connector tag"""
+  id: Id!
 
   """The OCI Image tag value, including the leading `:`. For example `:v1`"""
   imageTag: String!
@@ -455,6 +464,9 @@ type ConnectorTag {
 }
 
 type ConnectorTagRef {
+  """The canonical id of this connector tag"""
+  id: Id!
+
   """The OCI image tag, includeing the leading `:`, for example `:v2`"""
   imageTag: String!
 
@@ -663,13 +675,6 @@ type InviteLink {
 
   """Whether this invite link can only be used once."""
   singleUse: Boolean!
-
-  """
-  The SSO provider ID for the invite's tenant, if any.
-  When present, the frontend should route the user directly into the SSO
-  flow using this provider ID (e.g. via `supabase.auth.signInWithSSO`).
-  """
-  ssoProviderId: UUID
 
   """The secret token for this invite link."""
   token: UUID!
@@ -1065,13 +1070,20 @@ type QueryRoot {
   """
   Returns information about a single connector, which may or may not have
   had a successful Spec RPC, and thus may or may not be usable in the
-  Estuary UI.
+  Estuary UI. At least one parameter must be provided. If multiple
+  parameters are provided, then the connector must match _both_ the image
+  name and id parameters in order to be returned.
   """
   connector(
     """
+    the id of the connector, with or without ':' separators, e.g. '1122334455aabbcc'
+    """
+    id: Id
+
+    """
     the OCI image name, without a version tag, e.g. 'ghcr.io/estuary/source-foo'
     """
-    imageName: String!
+    imageName: String
   ): Connector
 
   """
@@ -1086,7 +1098,12 @@ type QueryRoot {
     """
     the full OCI image name, including the version tag, e.g. 'ghcr.io/estuary/source-foo:v1'
     """
-    fullImageName: String!
+    fullImageName: String
+
+    """
+    the id of the connectorTag, with or without ':' separators, e.g. '1122334455aabbcc'
+    """
+    id: Id
   ): ConnectorTag
 
   """

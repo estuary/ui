@@ -112,6 +112,8 @@ const useHydrateEndpointConfigDependentState = () => {
 export const useEndpointConfigHydrator = () => {
     const connectorTag = useConnectorTag();
 
+    console.log('connectorTag', connectorTag);
+
     const draftId = useGlobalSearchParams(GlobalSearchParams.DRAFT_ID);
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
 

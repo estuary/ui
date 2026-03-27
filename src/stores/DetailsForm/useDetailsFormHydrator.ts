@@ -1,4 +1,3 @@
-import type { ConnectorTagGqlNode } from 'src/api/gql/connectors';
 import type { Details } from 'src/stores/DetailsForm/types';
 
 import { useCallback } from 'react';
@@ -17,7 +16,7 @@ import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 
 const buildConnectorImage = (
-    connectorTag: ConnectorTagGqlNode
+    connectorTag: any
 ): Details['data']['connectorImage'] => {
     const { imageTag, connector } = connectorTag;
 

@@ -1,48 +1,18 @@
 import { useCallback } from 'react';
 
-import { gql, useClient } from 'urql';
+import { useClient } from 'urql';
 
-// Manual response type for the full connector query.
-// The generated types in src/gql-types/graphql.ts are outdated and do not
-// reflect all fields fetched by CONNECTOR_QUERY.
-interface ConnectorQueryResponse {
-    connector?: {
-        imageName: string;
-        logoUrl?: string | null;
-        title?: string | null;
-        connectorTag?: {
-            disableBackfill: boolean;
-            documentationUrl?: string | null;
-            endpointSpecSchema?: any | null;
-            imageTag: string;
-            resourceSpecSchema?: any | null;
-        } | null;
-    } | null;
-}
+import { graphql } from 'src/gql-types';
 
-// The combined connectorTag + parent connector node used throughout the app.
-// Note: the GQL schema does not expose UUID `id` fields for Connector or
-// ConnectorTag — those are PostgREST-only identifiers.
-export interface ConnectorTagGqlNode {
-    disableBackfill: boolean;
-    documentationUrl?: string | null;
-    endpointSpecSchema?: any | null;
-    imageTag: string;
-    resourceSpecSchema?: any | null;
-    connector: {
-        imageName: string;
-        logoUrl?: string | null;
-        title?: string | null;
-    };
-}
-
-const CONNECTOR_QUERY = gql<ConnectorQueryResponse, { imageName: string }>`
+const CONNECTOR_QUERY = graphql(`
     query SingleConnectorQuery($imageName: String!) {
         connector(imageName: $imageName) {
+            id
             imageName
             logoUrl
             title
             connectorTag(orDefault: true) {
+                id
                 disableBackfill
                 documentationUrl
                 endpointSpecSchema
@@ -51,7 +21,7 @@ const CONNECTOR_QUERY = gql<ConnectorQueryResponse, { imageName: string }>`
             }
         }
     }
-`;
+`);
 
 export function useGetSingleConnectorTag() {
     const client = useClient();

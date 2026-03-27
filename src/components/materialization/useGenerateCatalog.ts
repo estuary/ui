@@ -18,6 +18,7 @@ import {
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useConnectorTag } from 'src/context/ConnectorTag';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useEntityNameSuffix from 'src/hooks/useEntityNameSuffix';
 import { logRocketEvent } from 'src/services/shared';
@@ -84,6 +85,8 @@ function useGenerateCatalog() {
     const entityNameChanged = useDetailsFormStore(
         (state) => state.entityNameChanged
     );
+
+    const connectorTag = useConnectorTag();
 
     // Draft Editor Store
     const resetEditorState = useEditorStore_resetState();
@@ -226,8 +229,8 @@ function useGenerateCatalog() {
                         : serverEndpointConfigData,
                     endpointSchema,
                     serverUpdateRequired,
-                    'imageConnectorId',
-                    'imageConnectorTagId',
+                    connectorTag.connector.id,
+                    connectorTag.id,
                     callFailed,
                     { overrideJsonFormDefaults: true }
                 );
@@ -345,6 +348,8 @@ function useGenerateCatalog() {
         [
             bindings,
             callFailed,
+            connectorTag.connector.id,
+            connectorTag.id,
             detailsFormsErrorsExist,
             endpointConfig,
             endpointConfigData,

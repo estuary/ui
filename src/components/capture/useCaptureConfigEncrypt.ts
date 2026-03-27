@@ -3,6 +3,7 @@ import type { Schema } from 'src/types';
 import { useCallback } from 'react';
 
 import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEntityWorkflowHelpers';
+import { useConnectorTag } from 'src/context/ConnectorTag';
 import {
     useEndpointConfig_serverUpdateRequired,
     useEndpointConfigStore_endpointSchema,
@@ -11,6 +12,7 @@ import { encryptEndpointConfig } from 'src/utils/sops-utils';
 
 function useDiscoverConfigEncrypt() {
     const { callFailed } = useEntityWorkflowHelpers();
+    const connectorTag = useConnectorTag();
 
     const endpointSchema = useEndpointConfigStore_endpointSchema();
     const serverUpdateRequired = useEndpointConfig_serverUpdateRequired();
@@ -21,8 +23,8 @@ function useDiscoverConfigEncrypt() {
                 selectedEndpointConfig,
                 endpointSchema,
                 serverUpdateRequired,
-                'imageConnectorId',
-                'imageConnectorTagId',
+                connectorTag.connector.id,
+                connectorTag.id,
                 callFailed,
                 { overrideJsonFormDefaults: true }
             );
@@ -40,7 +42,13 @@ function useDiscoverConfigEncrypt() {
 
             return encryptedEndpointConfig;
         },
-        [callFailed, endpointSchema, serverUpdateRequired]
+        [
+            callFailed,
+            connectorTag.connector.id,
+            connectorTag.id,
+            endpointSchema,
+            serverUpdateRequired,
+        ]
     );
 }
 

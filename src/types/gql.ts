@@ -127,9 +127,6 @@ export interface AuthRolesQueryResponse {
 }
 
 // CONNECTORS
-
-export type { ConnectorTagGqlNode } from 'src/api/gql/connectors';
-
 export interface ConnectorTagNode {
     imageTag: string;
     protocol: string;
