@@ -8,13 +8,9 @@ import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { Client, fetchExchange, Provider } from 'urql';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
-import useDataFetchErrorHandling from 'src/hooks/useDataFetchErrorHandling';
-import { logRocketEvent } from 'src/services/shared';
 import { getAuthHeader } from 'src/utils/misc-utils';
 
 function UrqlConfigProvider({ children }: BaseComponentProps) {
-    const { checkIfAuthInvalid } = useDataFetchErrorHandling();
-
     const accessToken = useUserStore((state) => state.session?.access_token);
 
     // Ref so the auth exchange always reads the latest token
@@ -66,31 +62,15 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             }
                             return operation;
                         },
-                        willAuthError() {
-                            return !accessTokenRef.current;
-                        },
-                        didAuthError(error) {
-                            const isAuthError =
-                                error.response?.status === 401 ||
-                                checkIfAuthInvalid(error.message) ||
-                                error.graphQLErrors.some(
-                                    (e) => e.extensions?.code === 'FORBIDDEN'
-                                );
-
-                            if (isAuthError) {
-                                logRocketEvent('Auth', {
-                                    gqlAuthError: true,
-                                    status: error.response?.status,
-                                    message: error.message,
-                                });
-                            }
-
-                            return isAuthError;
+                        didAuthError() {
+                            // Always false — Supabase handles token refresh.
+                            // Returning true would trigger refreshAuth (a no-op),
+                            // causing URQL to retry with the same stale token.
+                            return false;
                         },
                         async refreshAuth() {
-                            // No-op: Supabase handles token refresh automatically.
-                            // When it refreshes, onAuthStateChange updates the store,
-                            // and the ref picks up the new token immediately.
+                            // No-op — Supabase's onAuthStateChange updates the
+                            // store and the ref picks up the new token automatically.
                         },
                     };
                 }),
@@ -99,7 +79,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
         });
         // Client created once — auth exchange reads token from ref, not closure.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [checkIfAuthInvalid]);
+    }, []);
 
     return <Provider value={gqlClient}>{children}</Provider>;
 }
