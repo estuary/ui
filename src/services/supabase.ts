@@ -243,6 +243,8 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
                 logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
                     trigger: 'SupabaseRetry',
                 });
+                // this is calling signout on expired access tokens,
+                // maybe preempting supabase's built in refresh logic
                 await supabaseClient.auth.signOut();
                 return;
             }
