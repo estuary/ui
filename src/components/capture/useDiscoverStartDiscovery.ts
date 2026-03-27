@@ -16,7 +16,6 @@ import useEntityWorkflowHelpers from 'src/components/shared/Entity/hooks/useEnti
 import { useConnectorTag } from 'src/context/ConnectorTag';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useEndpointConfigStore_endpointConfig_data } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 
@@ -34,10 +33,6 @@ function useDiscoverStartDiscovery(entityType: Entity) {
     const setFormState = useFormStateStore_setFormState();
 
     const connectorTag = useConnectorTag();
-
-    const imageName = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.imageName
-    );
 
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
 
@@ -83,6 +78,7 @@ function useDiscoverStartDiscovery(entityType: Entity) {
             const discoverResponse = await discover(
                 processedEntityName,
                 encryptedEndpointConfigResponse,
+                connectorTag.id,
                 newDraftId,
                 updateOnly,
                 dataPlaneName
@@ -122,9 +118,10 @@ function useDiscoverStartDiscovery(entityType: Entity) {
         },
         [
             callFailed,
+            connectorTag?.connector?.imageName,
+            connectorTag?.id,
             createDiscoversSubscription,
             endpointConfigData,
-            imageName,
             persistedDraftId,
             postHog,
             setCatalogName,
