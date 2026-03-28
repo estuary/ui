@@ -8,9 +8,9 @@ import { useMutation } from 'urql';
 
 import { REDEEM_INVITE_LINK } from 'src/api/gql/inviteLinks';
 import FullPageWrapper from 'src/app/FullPageWrapper';
-import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { authenticatedRoutes } from 'src/app/routes';
 import MessageWithLink from 'src/components/content/MessageWithLink';
+import FullPageSpinner from 'src/components/fullPage/Spinner';
 import Error from 'src/components/shared/Error';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -43,10 +43,7 @@ export function RedeemInviteLink({ grantToken }: Props) {
                 try {
                     await mutate_userInfoSummary();
                 } catch (err) {
-                    logRocketEvent(
-                        'Invite:RefreshFailed',
-                        { error: err }
-                    );
+                    logRocketEvent('Invite:RefreshFailed', { error: err });
                 }
             }
         })();

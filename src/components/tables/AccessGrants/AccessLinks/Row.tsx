@@ -1,14 +1,15 @@
+import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog';
+import type { InviteLink } from 'src/gql-types/graphql';
+
 import { IconButton, TableCell, TableRow, Typography } from '@mui/material';
 
-import CopyAccessLink from '../../cells/CopyAccessLink';
-import TimeStamp from '../../cells/TimeStamp';
-import { InviteErrorProps } from './Dialog';
 import { Trash } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { useMutation } from 'urql';
 
 import { DELETE_INVITE_LINK } from 'src/api/gql/inviteLinks';
-import { InviteLink } from 'src/gql-types/graphql';
+import CopyAccessLink from 'src/components/tables/cells/CopyAccessLink';
+import TimeStamp from 'src/components/tables/cells/TimeStamp';
 
 export function Row({
     row,

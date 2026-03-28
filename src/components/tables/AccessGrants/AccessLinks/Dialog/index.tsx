@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
+import type { BaseDialogProps } from 'src/types';
 import type { CombinedError } from 'urql';
 
 import { useState } from 'react';
@@ -19,7 +20,6 @@ import { useIntl } from 'react-intl';
 import Error from 'src/components/shared/Error';
 import { AccessLinksTable } from 'src/components/tables/AccessGrants/AccessLinks';
 import { GenerateInvitation } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
-import { BaseDialogProps } from 'src/types';
 
 export interface InviteErrorProps {
     setError: Dispatch<SetStateAction<CombinedError | null>>;
