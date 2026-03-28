@@ -19,22 +19,15 @@ import { useIntl } from 'react-intl';
 import Error from 'src/components/shared/Error';
 import { AccessLinksTable } from 'src/components/tables/AccessGrants/AccessLinks';
 import { GenerateInvitation } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
+import { BaseDialogProps } from 'src/types';
 
 export interface InviteErrorProps {
     setError: Dispatch<SetStateAction<CombinedError | null>>;
 }
 
-interface PrefixInvitationDialogProps {
-    open: boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
 const TITLE_ID = 'share-prefix-dialog-title';
 
-function PrefixInvitationDialog({
-    open,
-    setOpen,
-}: PrefixInvitationDialogProps) {
+function PrefixInvitationDialog({ open, setOpen }: BaseDialogProps) {
     const intl = useIntl();
     const theme = useTheme();
 

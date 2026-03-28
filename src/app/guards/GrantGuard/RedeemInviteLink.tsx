@@ -11,7 +11,7 @@ import FullPageWrapper from 'src/app/FullPageWrapper';
 import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { authenticatedRoutes } from 'src/app/routes';
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import AlertBox from 'src/components/shared/AlertBox';
+import Error from 'src/components/shared/Error';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { logRocketEvent } from 'src/services/shared';
@@ -52,15 +52,13 @@ export function RedeemInviteLink({ grantToken }: Props) {
         })();
     }, [grantToken, mutate_userInfoSummary, redeemInviteLink]);
 
-    const serverError = redeemError?.message ?? null;
-
     const grantResult = redeemData?.redeemInviteLink ?? null;
 
     const handleContinue = () => {
         void navigate(authenticatedRoutes.home.path, { replace: true });
     };
 
-    if (serverError) {
+    if (redeemError) {
         return (
             <FullPageWrapper>
                 <Stack spacing={2}>
@@ -70,13 +68,7 @@ export function RedeemInviteLink({ grantToken }: Props) {
                         })}
                     </Typography>
 
-                    <AlertBox
-                        severity="error"
-                        short
-                        title={intl.formatMessage({ id: 'common.fail' })}
-                    >
-                        {serverError}
-                    </AlertBox>
+                    <Error error={redeemError} condensed />
 
                     <MessageWithLink messageID="tenant.grantDirective.error.message.help" />
                 </Stack>
