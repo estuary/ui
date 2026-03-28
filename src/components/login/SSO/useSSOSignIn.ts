@@ -39,7 +39,7 @@ export function useSSOSignIn(grantToken?: string) {
         navigate(redirectPath, { replace: true });
     };
 
-    const signIn = async (
+    const signInSSO = async (
         params: { providerId: string } | { domain: string }
     ) => {
         setSubmitError(null);
@@ -55,5 +55,5 @@ export function useSSOSignIn(grantToken?: string) {
         handleSSOResult(data, error, params);
     };
 
-    return { loading, submitError, signIn };
+    return { loading, submitError, signInSSO };
 }

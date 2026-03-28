@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl';
 import { useMutation } from 'urql';
 
 import { DELETE_INVITE_LINK } from 'src/api/gql/inviteLinks';
-import CopyAccessLink from 'src/components/tables/cells/CopyAccessLink';
+import { CopyAccessLink } from 'src/components/tables/cells/CopyAccessLink';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 
 export function Row({
@@ -46,7 +46,10 @@ export function Row({
                 </Typography>
             </TableCell>
 
-            <CopyAccessLink token={row.token} ssoProviderId={row.ssoProviderId} />
+            <CopyAccessLink
+                token={row.token}
+                ssoProviderId={row.ssoProviderId}
+            />
 
             <TimeStamp time={row.createdAt} />
 

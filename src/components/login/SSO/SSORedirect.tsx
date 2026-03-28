@@ -13,18 +13,10 @@ export const SSORedirect = ({
     grantToken,
     ssoProviderId,
 }: SSORedirectProps) => {
-    const { signIn } = useSSOSignIn(grantToken);
+    const { signInSSO } = useSSOSignIn(grantToken);
 
     useEffect(() => {
-        let cancelled = false;
-
-        if (!cancelled) {
-            void signIn({ providerId: ssoProviderId });
-        }
-
-        return () => {
-            cancelled = true;
-        };
+        void signInSSO({ providerId: ssoProviderId });
     }, [ssoProviderId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

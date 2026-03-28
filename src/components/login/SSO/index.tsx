@@ -21,7 +21,7 @@ import { hasLength } from 'src/utils/misc-utils';
 export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const intl = useIntl();
 
-    const { loading, submitError, signIn } = useSSOSignIn(grantToken);
+    const { loading, submitError, signInSSO } = useSSOSignIn(grantToken);
 
     const [showErrors, setShowErrors] = useState(false);
 
@@ -45,7 +45,7 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
 
             setShowErrors(false);
 
-            await signIn({ domain: submittedDomain });
+            await signInSSO({ domain: submittedDomain });
         },
     };
 
