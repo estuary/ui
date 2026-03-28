@@ -82,7 +82,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
     const postHog = usePostHog();
     const { palette } = useTheme();
 
-    const [{ fetching }, createInviteLink] = useMutation(CREATE_INVITE_LINK);
+    const [{ fetching }, createMutation] = useMutation(CREATE_INVITE_LINK);
 
     const {
         handlers: prefixHandlers,
@@ -113,13 +113,11 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
             ? prefix.slice(0, MAX_PREFIX_LENGTH) + elipsis
             : prefix;
 
-    async function generateInvitation(event: React.MouseEvent<HTMLElement>) {
-        event.preventDefault();
-
+    async function createInvite() {
         const objectRole = `${prefix}${limitedAccessScope ? name : ''}`;
         const catalogPrefix = appendWithForwardSlash(objectRole);
 
-        const result = await createInviteLink({
+        const result = await createMutation({
             catalogPrefix,
             capability,
             singleUse,
@@ -306,7 +304,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                         (limitedAccessScope &&
                             (hasLength(nameError) || !hasLength(name)))
                     }
-                    onClick={generateInvitation}
+                    onClick={createInvite}
                 >
                     {intl.formatMessage({
                         id: 'admin.users.prefixInvitation.cta.generateLink',

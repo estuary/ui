@@ -21,10 +21,7 @@ const INVITE_LINKS_QUERY = graphql(`
                 cursor
             }
             pageInfo {
-                hasNextPage
-                hasPreviousPage
-                startCursor
-                endCursor
+                ...PageInfoFields
             }
         }
     }

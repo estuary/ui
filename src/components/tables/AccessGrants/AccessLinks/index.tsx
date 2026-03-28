@@ -105,7 +105,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
                     id: 'accessGrants.table.accessLinks.title',
                 })}
             </Typography>
-            <TableContainer component={Box}>
+            <TableContainer>
                 <Table
                     size="small"
                     sx={{ minWidth: 350, borderCollapse: 'separate' }}
@@ -159,7 +159,8 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
                                     slotProps={{
                                         actions: {
                                             previousButton: {
-                                                disabled: currentPage === 0,
+                                                disabled:
+                                                    !pageInfo?.hasPreviousPage,
                                             },
                                             nextButton: {
                                                 disabled:

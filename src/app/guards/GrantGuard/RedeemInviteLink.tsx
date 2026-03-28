@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { Box, Button, LinearProgress, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
@@ -8,12 +8,13 @@ import { useMutation } from 'urql';
 
 import { REDEEM_INVITE_LINK } from 'src/api/gql/inviteLinks';
 import FullPageWrapper from 'src/app/FullPageWrapper';
+import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { authenticatedRoutes } from 'src/app/routes';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import { defaultOutline } from 'src/context/Theme';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import { logRocketConsole } from 'src/services/shared';
+import { logRocketEvent } from 'src/services/shared';
 
 interface Props {
     grantToken: string;
@@ -42,9 +43,9 @@ export function RedeemInviteLink({ grantToken }: Props) {
                 try {
                     await mutate_userInfoSummary();
                 } catch (err) {
-                    logRocketConsole(
-                        'userInfoSummary refresh failed after redeeming invite',
-                        err
+                    logRocketEvent(
+                        'Invite:RefreshFailed',
+                        { error: err }
                     );
                 }
             }
@@ -138,9 +139,5 @@ export function RedeemInviteLink({ grantToken }: Props) {
         );
     }
 
-    return (
-        <FullPageWrapper>
-            <LinearProgress variant="indeterminate" />
-        </FullPageWrapper>
-    );
+    return <FullPageSpinner />;
 }

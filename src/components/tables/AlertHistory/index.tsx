@@ -36,7 +36,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
-import { PAGE_INFO_REVERSE_FRAGMENT } from 'src/services/gql';
+import { PAGE_INFO_FRAGMENT } from 'src/services/gql';
 import { TableStatuses } from 'src/types';
 import { evaluateColumnsToShow } from 'src/utils/table-utils';
 
@@ -86,14 +86,14 @@ const alertHistoryQuery = gql<
                             }
                         }
                         pageInfo {
-                            ...PageInfoReverse
+                            ...PageInfoFields
                         }
                     }
                 }
             }
         }
     }
-    ${PAGE_INFO_REVERSE_FRAGMENT}
+    ${PAGE_INFO_FRAGMENT}
 `;
 
 function AlertHistoryTable({
