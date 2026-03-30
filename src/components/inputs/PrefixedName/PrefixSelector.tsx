@@ -43,6 +43,7 @@ function PrefixSelector({
                     {...params}
                     InputProps={{
                         ...InputProps,
+                        disableUnderline: variantString === 'standard',
                         sx: { borderRadius: 3 },
                     }}
                     label={label}
