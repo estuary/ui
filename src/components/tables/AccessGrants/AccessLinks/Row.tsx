@@ -1,9 +1,8 @@
 import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks';
 import type { InviteLink } from 'src/gql-types/graphql';
 
-import { IconButton, TableCell, TableRow, Typography } from '@mui/material';
+import { Button, TableCell, TableRow, Typography } from '@mui/material';
 
-import { Trash } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { useMutation } from 'urql';
 
@@ -54,15 +53,15 @@ export function Row({
             <TimeStamp time={row.createdAt} />
 
             <TableCell sx={{ width: 50 }}>
-                <IconButton
+                <Button
                     onClick={handleDelete}
                     disabled={fetching}
+                    variant="text"
                     size="small"
-                    sx={{ color: 'error.main' }}
                     aria-label={intl.formatMessage({ id: 'cta.delete' })}
                 >
-                    <Trash />
-                </IconButton>
+                    {intl.formatMessage({ id: 'cta.remove' })}
+                </Button>
             </TableCell>
         </TableRow>
     );
