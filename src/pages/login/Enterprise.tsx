@@ -1,4 +1,5 @@
-import SSOForm from 'src/components/login/SSO';
+import { SSOForm } from 'src/components/login/SSO';
+import { SSORedirect } from 'src/components/login/SSO/SSORedirect';
 import useLoginStateHandler from 'src/hooks/login/useLoginStateHandler';
 import useBrowserTitle from 'src/hooks/useBrowserTitle';
 import LoginWrapper from 'src/pages/login/Wrapper';
@@ -11,11 +12,19 @@ const EnterpriseLogin = () => {
         descriptionKey: ogDescriptionKey,
     });
 
-    const { grantToken, isRegister, tabIndex } = useLoginStateHandler(false);
+    const { grantToken, ssoProviderId, isRegister, tabIndex } =
+        useLoginStateHandler(false);
 
     return (
         <LoginWrapper tabIndex={tabIndex} isRegister={isRegister} showBack>
-            <SSOForm grantToken={grantToken} />
+            {ssoProviderId ? (
+                <SSORedirect
+                    grantToken={grantToken}
+                    ssoProviderId={ssoProviderId}
+                />
+            ) : (
+                <SSOForm grantToken={grantToken} />
+            )}
         </LoginWrapper>
     );
 };

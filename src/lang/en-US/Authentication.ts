@@ -124,7 +124,7 @@ export const Authentication: Record<string, string> = {
     'tenant.origin.radio.linkedIn.label': `LinkedIn`,
     'tenant.origin.radio.other.label': `Other`,
 
-    'tenant.grantDirective.message': `You're invited to receive {grantedCapability} access to the following tenant:`,
+    'tenant.grantDirective.message': `You now have {grantedCapability} access to the following tenant:`,
     'tenant.grantDirective.success.header': `Access Granted`,
     'tenant.grantDirective.success.cta': `Go to Dashboard`,
 
