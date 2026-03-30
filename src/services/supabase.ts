@@ -231,7 +231,7 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
                 error: authError,
             } = await supabaseClient.auth.getSession();
 
-            // If we got an error that needs to force the user out sign them out
+            // If we got an auth error, log and don't retry
             if (
                 tokenHasIssues(error?.message) &&
                 (Boolean(session?.user) || authError)
@@ -240,10 +240,7 @@ export const supabaseRetry = <T>(makeCall: Function, action: string) => {
                     CustomEvents.SUPABASE_CALL_UNAUTHENTICATED,
                     error?.message ?? authError?.message ?? 'no error'
                 );
-                logRocketEvent(CustomEvents.AUTH_SIGNOUT, {
-                    trigger: 'SupabaseRetry',
-                });
-                await supabaseClient.auth.signOut();
+
                 return;
             }
 

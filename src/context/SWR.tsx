@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import LRUMapWithDelete from 'mnemonist/lru-map-with-delete';
 import { SWRConfig, useSWRConfig } from 'swr';
 
-import useDataFetchErrorHandling from 'src/hooks/useDataFetchErrorHandling';
 import { AUTH_ERROR } from 'src/services/client';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -28,8 +27,6 @@ export const extendedPollSettings = {
 };
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const { onErrorRetry } = useSWRConfig();
-    const { forceUserToSignOut, checkIfAuthInvalid } =
-        useDataFetchErrorHandling();
 
     const provider = useCallback(() => {
         return new LRUMapWithDelete<string, any>(500);
@@ -80,14 +77,6 @@ const SwrConfigProvider = ({ children }: BaseComponentProps) => {
                             revalidateOpts
                         );
                     },
-                    onError: async (error, _key, _config) => {
-                        // This happens when a call to the server has returned a 401 but
-                        //      the UI thinks the User is still valid. So we need to log them out.
-                        if (checkIfAuthInvalid(error.message)) {
-                            await forceUserToSignOut('swr');
-                        }
-                    },
-
                     onLoadingSlow: (key) => {
                         logRocketEvent(CustomEvents.SWR_LOADING_SLOW, {
                             key,
