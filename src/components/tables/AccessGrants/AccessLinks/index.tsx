@@ -1,6 +1,8 @@
+import type { Dispatch, SetStateAction } from 'react';
 import type { TableColumns, TableState } from 'src/types';
+import type { CombinedError } from 'urql';
 
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Box,
@@ -13,7 +15,6 @@ import {
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import { CombinedError } from 'urql';
 
 import { useInviteLinks } from 'src/api/gql/inviteLinks';
 import { Row } from 'src/components/tables/AccessGrants/AccessLinks/Row';
