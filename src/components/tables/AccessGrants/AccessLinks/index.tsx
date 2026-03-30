@@ -1,7 +1,6 @@
-import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog';
 import type { TableColumns, TableState } from 'src/types';
 
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import {
     Box,
@@ -14,6 +13,7 @@ import {
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
+import { CombinedError } from 'urql';
 
 import { useInviteLinks } from 'src/api/gql/inviteLinks';
 import { Row } from 'src/components/tables/AccessGrants/AccessLinks/Row';
@@ -21,6 +21,10 @@ import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { TableStatuses } from 'src/types';
+
+export interface InviteErrorProps {
+    setError: Dispatch<SetStateAction<CombinedError | null>>;
+}
 
 const columns: TableColumns[] = [
     {
@@ -73,6 +77,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
         }
 
         if (error) {
+            setError(() => error);
             if (error.networkError) {
                 setTableState({ status: TableStatuses.NETWORK_FAILED });
             } else {
@@ -94,7 +99,7 @@ export function AccessLinksTable({ setError }: InviteErrorProps) {
         }
 
         setTableState({ status: TableStatuses.NO_EXISTING_DATA });
-    }, [fetching, error, inviteLinks, currentPage, goToPage]);
+    }, [fetching, error, inviteLinks, currentPage, goToPage, setError]);
 
     const hasData = Boolean(pageInfo);
 

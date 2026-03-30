@@ -1,4 +1,3 @@
-import type { Dispatch, SetStateAction } from 'react';
 import type { BaseDialogProps } from 'src/types';
 import type { CombinedError } from 'urql';
 
@@ -20,10 +19,6 @@ import { useIntl } from 'react-intl';
 import Error from 'src/components/shared/Error';
 import { AccessLinksTable } from 'src/components/tables/AccessGrants/AccessLinks';
 import { GenerateInvitation } from 'src/components/tables/AccessGrants/AccessLinks/Dialog/GenerateInvitation';
-
-export interface InviteErrorProps {
-    setError: Dispatch<SetStateAction<CombinedError | null>>;
-}
 
 const TITLE_ID = 'share-prefix-dialog-title';
 

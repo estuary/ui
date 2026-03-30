@@ -1,4 +1,4 @@
-import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks/Dialog';
+import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks';
 import type { InviteLink } from 'src/gql-types/graphql';
 
 import { IconButton, TableCell, TableRow, Typography } from '@mui/material';
