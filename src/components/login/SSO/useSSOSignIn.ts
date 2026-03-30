@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 
 import useRedirectPath from 'src/components/login/useRedirectPath';
 import { supabaseClient } from 'src/context/GlobalProviders';
+import { logRocketEvent } from 'src/services/shared';
 
 export function useSSOSignIn(grantToken?: string) {
     const redirectPath = useRedirectPath(grantToken);
@@ -44,6 +45,8 @@ export function useSSOSignIn(grantToken?: string) {
     ) => {
         setSubmitError(null);
         setLoading(true);
+
+        logRocketEvent('SSO:SignIn', params);
 
         const { data, error } = await supabaseClient.auth.signInWithSSO({
             ...params,
