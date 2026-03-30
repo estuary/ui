@@ -15,7 +15,7 @@ export function useCursorPagination() {
                 setCursor(undefined);
                 setCursorHistory([]);
             } else {
-                setCursor(cursorHistory[page]);
+                setCursor(cursorHistory[page - 1]);
             }
             setCurrentPage(page);
         },
