@@ -1,3 +1,5 @@
+import type { Cache } from '@urql/exchange-graphcache';
+import type { QueryRoot } from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
 
 import { useMemo, useRef } from 'react';
@@ -9,6 +11,16 @@ import { Client, fetchExchange, Provider } from 'urql';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { getAuthHeader } from 'src/utils/misc-utils';
+
+function invalidateQuery(
+    cache: Cache,
+    queryName: Exclude<keyof QueryRoot, '__typename'>
+) {
+    cache
+        .inspectFields('Query')
+        .filter((f) => f.fieldName === queryName)
+        .forEach((f) => cache.invalidate('Query', f.fieldName, f.arguments));
+}
 
 function UrqlConfigProvider({ children }: BaseComponentProps) {
     const accessToken = useUserStore((state) => state.session?.access_token);
@@ -44,10 +56,21 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         // TODO (gql caching)  - see GRAPHQL.md
                         Alert: (_data) => null,
                         AlertSubscription: (_data) => null,
+                        InviteLink: (data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
+                    },
+                    updates: {
+                        Mutation: {
+                            createInviteLink(_result, _args, cache) {
+                                invalidateQuery(cache, 'inviteLinks');
+                            },
+                            deleteInviteLink(_result, _args, cache) {
+                                invalidateQuery(cache, 'inviteLinks');
+                            },
+                        },
                     },
                 }),
                 authExchange(async (utils) => {

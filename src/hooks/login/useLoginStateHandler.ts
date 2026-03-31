@@ -9,6 +9,9 @@ import useGlobalSearchParams, {
 
 function useLoginStateHandler(showRegistration?: boolean) {
     const grantToken = useGlobalSearchParams(GlobalSearchParams.GRANT_TOKEN);
+    const ssoProviderId = useGlobalSearchParams(
+        GlobalSearchParams.SSO_PROVIDER_ID
+    );
     useEffectOnce(() => clearAuthorizationCache());
 
     const [tabIndex, setTabIndex] = useState(Boolean(showRegistration) ? 1 : 0);
@@ -23,11 +26,12 @@ function useLoginStateHandler(showRegistration?: boolean) {
     return useMemo(
         () => ({
             grantToken,
+            ssoProviderId,
             handleChange,
             isRegister,
             tabIndex,
         }),
-        [grantToken, handleChange, isRegister, tabIndex]
+        [grantToken, ssoProviderId, handleChange, isRegister, tabIndex]
     );
 }
 

@@ -55,7 +55,7 @@ export interface PageInfo {
 
 export type PageInfoReverse = Pick<
     PageInfo,
-    'hasPreviousPage' | 'startCursor' | 'endCursor'
+    'hasNextPage' | 'hasPreviousPage' | 'startCursor' | 'endCursor'
 >;
 
 // VARIABLES

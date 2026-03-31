@@ -124,8 +124,9 @@ export const Authentication: Record<string, string> = {
     'tenant.origin.radio.linkedIn.label': `LinkedIn`,
     'tenant.origin.radio.other.label': `Other`,
 
-    'tenant.grantDirective.header': `You've been invited to a ${CommonMessages['terms.tenant']}`,
-    'tenant.grantDirective.message': `You're invited to receive {grantedCapability} access to the following tenant:`,
+    'tenant.grantDirective.message': `You now have {grantedCapability} access to the following tenant:`,
+    'tenant.grantDirective.success.header': `Access Granted`,
+    'tenant.grantDirective.success.cta': `Go to Dashboard`,
 
     'tenant.grantDirective.error.header': `Unable to Provision Access`,
     'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,
