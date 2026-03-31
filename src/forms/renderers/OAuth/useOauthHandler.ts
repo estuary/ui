@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { useBeforeUnload } from 'react-use';
 
 import { accessToken, authURL } from 'src/api/oauth';
+import { useConnectorTag } from 'src/context/ConnectorTag';
 import { CREDENTIALS, INJECTED_VALUES } from 'src/forms/renderers/OAuth/shared';
 import { useOAuth2 } from 'src/hooks/forks/react-use-oauth2/components';
 import { logRocketEvent } from 'src/services/shared';
@@ -20,11 +21,8 @@ export const useOauthHandler = (
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const endpointConfigData = useEndpointConfigStore_endpointConfig_data();
 
-    // TODO (gql:connector) - need to plumb through id or update edge function
-    // const connectorId = useDetailsFormStore(
-    //     (state) => state.details.data.connectorImage.imageName
-    // );
-    const connectorId = 'foo';
+    const connectorTag = useConnectorTag();
+    const connectorId = connectorTag.connector.id;
 
     // handler for the useOauth stuff
     const onError = useCallback(
