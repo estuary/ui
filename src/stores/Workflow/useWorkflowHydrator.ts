@@ -1,23 +1,17 @@
 import { useCallback } from 'react';
 
-import { useGetSingleConnector } from 'src/api/gql/connectors';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
-import { logRocketConsole, logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
+import { useConnectorTag } from 'src/context/ConnectorTag';
+import { logRocketConsole } from 'src/services/shared';
 import { useDetailsFormHydrator } from 'src/stores/DetailsForm/useDetailsFormHydrator';
 import { useEndpointConfigHydrator } from 'src/stores/EndpointConfig/useEndpointConfigHydrator';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
-import { hasLength } from 'src/utils/misc-utils';
 
 export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const connectorTag = useConnectorTag();
 
     const { hydrateDetailsForm } = useDetailsFormHydrator();
     const { hydrateEndpointConfig } = useEndpointConfigHydrator();
-    const getSingleConnector = useGetSingleConnector();
 
     const baseCatalogPrefix = useEntitiesStore((state) => {
         const storageMappingPrefixes = Object.keys(state.storageMappings);
@@ -40,39 +34,15 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
     );
 
     const hydrateWorkflow = useCallback(async () => {
-        const { data: connectorMetadata, error: connectorError } =
-            await getSingleConnector(connectorId);
-
-        if (
-            !hasLength(connectorId) ||
-            connectorError ||
-            !connectorMetadata ||
-            connectorMetadata.length === 0
-        ) {
-            logRocketEvent(CustomEvents.CONNECTOR_VERSION_MISSING);
-
-            return Promise.reject(
-                connectorError ?? 'Connector information not found'
-            );
-        }
-
-        setConnectorMetadata(connectorMetadata);
+        setConnectorMetadata(connectorTag);
 
         const baseEntityName = expressWorkflow
             ? catalogName
             : baseCatalogPrefix;
 
         try {
-            const { connectorTagId } = await hydrateDetailsForm(
-                connectorId,
-                connectorMetadata[0],
-                baseEntityName
-            );
-
-            await hydrateEndpointConfig(
-                connectorTagId,
-                connectorMetadata[0].connector_tags
-            );
+            await hydrateDetailsForm(baseEntityName);
+            await hydrateEndpointConfig();
         } catch (error: unknown) {
             return Promise.reject(error);
         }
@@ -81,9 +51,8 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
     }, [
         baseCatalogPrefix,
         catalogName,
-        connectorId,
+        connectorTag,
         expressWorkflow,
-        getSingleConnector,
         hydrateDetailsForm,
         hydrateEndpointConfig,
         setConnectorMetadata,

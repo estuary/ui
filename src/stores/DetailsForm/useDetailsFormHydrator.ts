@@ -1,10 +1,9 @@
-import type { ConnectorWithTagQuery } from 'src/api/types';
 import type { Details } from 'src/stores/DetailsForm/types';
-import type { ConnectorVersionEvaluationOptions } from 'src/utils/connector-utils';
 
 import { useCallback } from 'react';
 
 import { getLiveSpecs_detailsForm } from 'src/api/liveSpecsExt';
+import { useConnectorTag } from 'src/context/ConnectorTag';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useEvaluateDataPlaneOptions } from 'src/hooks/dataPlanes/useEvaluateDataPlaneOptions';
 import useGetDataPlane from 'src/hooks/dataPlanes/useGetDataPlane';
@@ -13,20 +12,33 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { initialDetails } from 'src/stores/DetailsForm/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { getConnectorMetadata } from 'src/utils/connector-utils';
 
-const getConnectorImage = async (
-    connectorId: string,
-    connectorMetadata: ConnectorWithTagQuery,
-    existingImageTag?: ConnectorVersionEvaluationOptions['existingImageTag']
-): Promise<Details['data']['connectorImage'] | null> => {
-    const options: ConnectorVersionEvaluationOptions | undefined =
-        existingImageTag ? { connectorId, existingImageTag } : undefined;
+const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 
-    return getConnectorMetadata(connectorMetadata, options);
+const buildConnectorImage = (
+    connectorTag: ReturnType<typeof useConnectorTag>
+): Details['data']['connectorImage'] => {
+    const { id, connectorId, imageTag, connector } = connectorTag;
+
+    const base = {
+        connectorId,
+        iconPath: connector.logoUrl ?? '',
+        id,
+        imageName: connector.imageName,
+        imageTag,
+    };
+
+    return connector.imageName.startsWith(DEKAF_IMAGE_PREFIX)
+        ? {
+              ...base,
+              variant: connector.imageName.substring(DEKAF_IMAGE_PREFIX.length),
+          }
+        : { ...base, imagePath: `${connector.imageName}${imageTag}` };
 };
 
 export const useDetailsFormHydrator = () => {
+    const connectorTag = useConnectorTag();
+
     const dataPlaneId = useGlobalSearchParams(GlobalSearchParams.DATA_PLANE_ID);
     const liveSpecId = useGlobalSearchParams(GlobalSearchParams.LIVE_SPEC_ID);
 
@@ -44,19 +56,12 @@ export const useDetailsFormHydrator = () => {
     const setPreviousDetails = useDetailsFormStore(
         (state) => state.setPreviousDetails
     );
-    const setUnsupportedConnectorVersion = useDetailsFormStore(
-        (state) => state.setUnsupportedConnectorVersion
-    );
 
     const evaluateDataPlaneOptions = useEvaluateDataPlaneOptions();
     const getDataPlane = useGetDataPlane();
 
     const hydrateDetailsForm = useCallback(
-        async (
-            connectorId: string,
-            connectorMetadata: ConnectorWithTagQuery,
-            baseEntityName?: string
-        ) => {
+        async (baseEntityName?: string) => {
             setActive(true);
 
             const createWorkflow =
@@ -64,20 +69,11 @@ export const useDetailsFormHydrator = () => {
                 workflow === 'materialization_create';
 
             if (createWorkflow) {
-                const connectorImage = await getConnectorImage(
-                    connectorId,
-                    connectorMetadata
-                );
+                const connectorImage = buildConnectorImage(connectorTag);
                 const dataPlaneOptions =
                     await evaluateDataPlaneOptions(baseEntityName);
 
                 const dataPlane = getDataPlane(dataPlaneOptions, dataPlaneId);
-
-                if (!connectorImage) {
-                    setHydrationErrorsExist(true);
-
-                    return Promise.reject({ connectorTagId: null });
-                }
 
                 setDetails_connector(connectorImage);
 
@@ -96,9 +92,7 @@ export const useDetailsFormHydrator = () => {
 
                 setHydrated(true);
 
-                return Promise.resolve({
-                    connectorTagId: hydratedDetails.data.connectorImage.id,
-                });
+                return Promise.resolve();
             }
 
             if (liveSpecId) {
@@ -108,23 +102,17 @@ export const useDetailsFormHydrator = () => {
                 if (error || !data || data.length === 0) {
                     setHydrationErrorsExist(true);
 
-                    return Promise.reject({ connectorTagId: null });
+                    return Promise.reject();
                 }
 
                 const {
                     catalog_name,
-                    connector_image_tag,
-                    connector_tag_id,
                     data_plane_id,
                     data_plane_name,
                     reactor_address,
                 } = data[0];
 
-                const connectorImage = await getConnectorImage(
-                    connectorId,
-                    connectorMetadata,
-                    connector_image_tag
-                );
+                const connectorImage = buildConnectorImage(connectorTag);
 
                 const dataPlaneOptions = await evaluateDataPlaneOptions(
                     catalog_name,
@@ -136,12 +124,6 @@ export const useDetailsFormHydrator = () => {
                 );
                 const dataPlane = getDataPlane(dataPlaneOptions, data_plane_id);
 
-                if (!connectorImage) {
-                    setHydrationErrorsExist(true);
-
-                    return Promise.reject({ connectorTagId: null });
-                }
-
                 const hydratedDetails: Details = {
                     data: {
                         entityName: catalog_name,
@@ -150,41 +132,40 @@ export const useDetailsFormHydrator = () => {
                     },
                 };
 
-                setUnsupportedConnectorVersion(
-                    connectorImage.id,
-                    connector_tag_id
-                );
+                // TODO (gql:connector) - connector tag UUID not available via GQL;
+                //   setUnsupportedConnectorVersion cannot be called accurately.
+                //   Previously compared connectorImage.id against connector_tag_id
+                //   from live_specs.
 
                 setDetails(hydratedDetails);
                 setPreviousDetails(hydratedDetails);
 
                 setHydrated(true);
 
-                return Promise.resolve({
-                    connectorTagId: hydratedDetails.data.connectorImage.id,
-                });
+                return Promise.resolve();
             }
 
             if (workflow === 'test_json_forms') {
                 setDetails_connector({
-                    id: connectorId,
+                    connectorId: '',
                     iconPath: '',
+                    id: '',
                     imageName: '',
                     imagePath: '',
                     imageTag: '',
-                    connectorId,
                 });
 
                 setHydrationErrorsExist(true);
 
                 setHydrated(true);
 
-                return Promise.resolve({ connectorTagId: connectorId });
+                return Promise.resolve();
             }
 
-            return Promise.resolve({ connectorTagId: null });
+            return Promise.resolve();
         },
         [
+            connectorTag,
             dataPlaneId,
             evaluateDataPlaneOptions,
             getDataPlane,
@@ -195,7 +176,6 @@ export const useDetailsFormHydrator = () => {
             setHydrated,
             setHydrationErrorsExist,
             setPreviousDetails,
-            setUnsupportedConnectorVersion,
             workflow,
         ]
     );

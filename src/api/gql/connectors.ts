@@ -43,7 +43,7 @@ export const CONNECTORS_QUERY = graphql(`
     }
 `);
 
-const CONNECTOR_BY_ID_QUERY = graphql(`
+export const CONNECTOR_BY_ID_QUERY = graphql(`
     query SingleConnector($id: Id!) {
         connector(id: $id) {
             id
@@ -56,8 +56,11 @@ const CONNECTOR_BY_ID_QUERY = graphql(`
                 id
                 connectorId
                 imageTag
+                defaultCaptureInterval
+                disableBackfill
                 documentationUrl
                 endpointSpecSchema
+                resourceSpecSchema
                 protocol
             }
         }
