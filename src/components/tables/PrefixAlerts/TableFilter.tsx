@@ -19,9 +19,8 @@ const TableFilter = ({
     const filterTable = debounce(
         (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             const filterQuery = event.target.value;
-            const hasQuery = Boolean(filterQuery && filterQuery.length > 0);
 
-            setSearchQuery(hasQuery ? filterQuery : '');
+            setSearchQuery(filterQuery ?? '');
         },
         750
     );
