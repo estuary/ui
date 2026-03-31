@@ -7,7 +7,6 @@ import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
-    useEditorStore_setId,
 } from 'src/components/editor/Store/hooks';
 import EntityCreate from 'src/components/shared/Entity/Create';
 import EntityToolbar from 'src/components/shared/Entity/Header';
@@ -31,16 +30,12 @@ function CaptureCreate() {
     const hasConnectors = useValidConnectorsExist(entityType);
 
     // Details Form Store
-    const imageTag = useDetailsFormStore(
-        (state) => state.details.data.connectorImage
-    );
     const entityNameChanged = useDetailsFormStore(
         (state) => state.entityNameChanged
     );
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
-    const setDraftId = useEditorStore_setId();
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Endpoint Config Store
@@ -62,11 +57,13 @@ function CaptureCreate() {
         }
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
+    // TODO (GQL:connector) - we do not allow changing I think we're good to remove this
     // Reset the catalog if the connector changes
-    useEffect(() => {
-        setDraftId(null);
-        setInitiateDiscovery(true);
-    }, [setDraftId, setInitiateDiscovery, imageTag]);
+    // useEffect(() => {
+    //     console.log('sup >>>>> ');
+    //     setDraftId(null);
+    //     setInitiateDiscovery(true);
+    // }, [setDraftId, setInitiateDiscovery, imageTag]);
 
     // If the name changed we need to make sure we run discovery again
     useEffect(() => {

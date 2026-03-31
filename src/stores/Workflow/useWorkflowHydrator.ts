@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { getSingleConnectorWithTag } from 'src/api/connectors';
+import { useGetSingleConnector } from 'src/api/gql/connectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -17,6 +17,7 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
 
     const { hydrateDetailsForm } = useDetailsFormHydrator();
     const { hydrateEndpointConfig } = useEndpointConfigHydrator();
+    const getSingleConnector = useGetSingleConnector();
 
     const baseCatalogPrefix = useEntitiesStore((state) => {
         const storageMappingPrefixes = Object.keys(state.storageMappings);
@@ -40,7 +41,7 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
 
     const hydrateWorkflow = useCallback(async () => {
         const { data: connectorMetadata, error: connectorError } =
-            await getSingleConnectorWithTag(connectorId);
+            await getSingleConnector(connectorId);
 
         if (
             !hasLength(connectorId) ||
@@ -82,6 +83,7 @@ export const useWorkflowHydrator = (expressWorkflow: boolean | undefined) => {
         catalogName,
         connectorId,
         expressWorkflow,
+        getSingleConnector,
         hydrateDetailsForm,
         hydrateEndpointConfig,
         setConnectorMetadata,

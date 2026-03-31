@@ -20,7 +20,7 @@ import {
     getConnectorMetadata,
 } from 'src/utils/connector-utils';
 import { hasLength } from 'src/utils/misc-utils';
-import { MAC_ADDR_RE } from 'src/validation';
+import { MAC_ADDR_LIKE_RE } from 'src/validation';
 
 export default function useConnectorField(
     entityType: EntityWithCreateWorkflow
@@ -127,7 +127,7 @@ export default function useConnectorField(
             const selectedConnectorId = details.data.connectorImage.connectorId;
 
             if (
-                MAC_ADDR_RE.test(selectedConnectorId) &&
+                MAC_ADDR_LIKE_RE.test(selectedConnectorId) &&
                 selectedConnectorId !== originalConnectorImage.connectorId
             ) {
                 if (selectedConnectorId === connectorId) {

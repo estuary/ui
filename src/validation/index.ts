@@ -29,7 +29,7 @@ export const DATE_TIME_RE = new RegExp(
     /^([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z)$/
 );
 
-export const MAC_ADDR_RE = new RegExp(/^([0-9A-F]{2}:){7}([0-9A-F]{2})$/i);
+export const MAC_ADDR_LIKE_RE = new RegExp(/^([0-9A-F]{2}){7}([0-9A-F]{2})$/i);
 
 export const validateCatalogName = (
     value: string,
