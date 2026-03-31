@@ -6,14 +6,12 @@ import type {
 import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { ReactElement, ReactNode } from 'react';
 import type { BaseGrant, Grant_UserExt } from 'src/types';
-import type { AlertTypeDef, ExpandedAlertTypeDef } from 'src/types/gql';
 
 import { isEmpty, isObject } from 'lodash';
 import { createSearchParams } from 'react-router-dom';
 
 import { logRocketConsole } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { UNDERSCORE_RE } from 'src/validation';
 
 export const ESTUARY_SUPPORT_ROLE = 'estuary_support/';
 export const DEMO_TENANT = 'demo/';
@@ -279,24 +277,4 @@ export const hasOwnProperty = (
         typeof property === 'string' ? property : property.toString();
 
     return Object.keys(value).includes(stringifiedProperty);
-};
-
-export const expandAlertTypeDef = ({
-    description,
-    name,
-}: AlertTypeDef): ExpandedAlertTypeDef => {
-    const systemAlertNames = [
-        'free_trial',
-        'free_trial_ending',
-        'free_trial_stalled',
-        'missing_payment_method',
-    ];
-
-    return {
-        description,
-        id: name,
-        isDefault: false,
-        isSystemAlert: systemAlertNames.includes(name),
-        name: name.replace(UNDERSCORE_RE, ' '),
-    };
 };

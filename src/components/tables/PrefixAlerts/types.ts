@@ -1,16 +1,16 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { ReducedAlertSubscription } from 'src/api/types';
-import type { ExpandedAlertTypeDef } from 'src/types/gql';
+import type { AlertTypeDef } from 'src/types/gql';
 import type { UseQueryExecute } from 'urql';
 
 export interface RowProps {
-    alertTypeDefs: ExpandedAlertTypeDef[];
+    alertTypeDefs: AlertTypeDef[];
     executeQuery: UseQueryExecute;
     row: ReducedAlertSubscription;
 }
 
 export interface RowsProps {
-    alertTypeDefs: ExpandedAlertTypeDef[];
+    alertTypeDefs: AlertTypeDef[];
     data: ReducedAlertSubscription[];
     executeQuery: UseQueryExecute;
 }

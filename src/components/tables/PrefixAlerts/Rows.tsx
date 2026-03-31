@@ -2,16 +2,19 @@ import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/PrefixAlerts/types';
-import type { ExpandedAlertTypeDef } from 'src/types/gql';
+import type { AlertTypeDef } from 'src/types/gql';
 
 import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
+import { sortByAlertType } from 'src/components/tables/PrefixAlerts/shared';
 
 function Row({ alertTypeDefs, executeQuery, row }: RowProps) {
-    const evaluatedAlertTypes: ExpandedAlertTypeDef[] = row.alertTypes
-        .map((id) => alertTypeDefs.find((def) => def.id === id))
+    const evaluatedAlertTypes: AlertTypeDef[] = row.alertTypes
+        .map((alertType) =>
+            alertTypeDefs.find((def) => def.alertType === alertType)
+        )
         .filter((def) => typeof def !== 'undefined');
 
     return (
@@ -19,12 +22,26 @@ function Row({ alertTypeDefs, executeQuery, row }: RowProps) {
             <TableCell>{row.catalogPrefix}</TableCell>
 
             <ChipListCell
-                maxChips={1}
+                maxChips={3}
                 stripPath={false}
-                values={evaluatedAlertTypes.map(({ name, isSystemAlert }) => ({
-                    display: name,
-                    diminishedText: isSystemAlert,
-                }))}
+                values={evaluatedAlertTypes
+                    .sort((first, second) =>
+                        sortByAlertType(
+                            {
+                                isSystemAlert: first.isSystemAlert,
+                                value: first.displayName,
+                            },
+                            {
+                                isSystemAlert: second.isSystemAlert,
+                                value: second.displayName,
+                            },
+                            'asc'
+                        )
+                    )
+                    .map(({ alertType: name, isSystemAlert }) => ({
+                        display: name,
+                        diminishedText: isSystemAlert,
+                    }))}
             />
 
             <TableCell>{row.email}</TableCell>

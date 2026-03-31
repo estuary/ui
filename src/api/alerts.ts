@@ -97,11 +97,12 @@ const AlertSubscriptionUpdateMutation = gql<
 
 const AlertTypeQuery = gql<AlertTypeQueryResponse>`
     query {
-        __type(name: "AlertType") {
-            enumValues {
-                description
-                name
-            }
+        alertTypes {
+            alertType
+            description
+            displayName
+            isDefault
+            isSystemAlert
         }
     }
 `;

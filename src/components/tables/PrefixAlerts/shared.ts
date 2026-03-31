@@ -1,6 +1,10 @@
-import type { TableColumns } from 'src/types';
+import type { SortDirection, TableColumns } from 'src/types';
 
 import { SelectTableStoreNames } from 'src/stores/names';
+import {
+    basicSort_string,
+    compareInitialCharacterType,
+} from 'src/utils/misc-utils';
 
 export const TABLE_HEADER_HEIGHT = 40;
 export const TABLE_ROW_HEIGHT = 50;
@@ -30,3 +34,27 @@ export const columns: TableColumns[] = [
 ];
 
 export const selectableTableStoreName = SelectTableStoreNames.PREFIX_ALERTS;
+
+export const sortByAlertType = (
+    a: { isSystemAlert: boolean; value: string },
+    b: { isSystemAlert: boolean; value: string },
+    sortDirection: SortDirection
+) => {
+    // If a is not a system alert and b is then return <0 to put a first
+    if (!a.isSystemAlert && b.isSystemAlert) {
+        return -1;
+    }
+
+    // If a is a system alert and b is not then return >0 to put b first
+    if (a.isSystemAlert && !b.isSystemAlert) {
+        return 1;
+    }
+
+    const sortResult = compareInitialCharacterType(a.value, b.value);
+
+    if (typeof sortResult === 'number') {
+        return sortResult;
+    }
+
+    return basicSort_string(a.value, b.value, sortDirection);
+};

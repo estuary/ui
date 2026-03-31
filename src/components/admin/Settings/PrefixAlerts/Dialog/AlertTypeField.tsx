@@ -9,7 +9,6 @@ import { useQuery } from 'urql';
 import { AlertTypeQuery } from 'src/api/alerts';
 import AlertTypeSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/AlertTypeSelector';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { expandAlertTypeDef } from 'src/utils/misc-utils';
 
 const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
     const [{ fetching, data, error }] = useQuery({ query: AlertTypeQuery });
@@ -23,17 +22,17 @@ const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
     );
 
     useEffect(() => {
-        if (!fetching && existingAlertTypes && data?.__type.enumValues) {
+        if (!fetching && existingAlertTypes && data?.alertTypes) {
             const existingAlertTypeDefs =
-                data.__type.enumValues
-                    .filter(({ name }) => existingAlertTypes.includes(name))
-                    .map(expandAlertTypeDef) ?? [];
+                data.alertTypes.filter(({ alertType }) =>
+                    existingAlertTypes.includes(alertType)
+                ) ?? [];
 
             if (existingAlertTypeDefs && existingAlertTypeDefs.length > 0) {
                 setAlertTypes(existingAlertTypeDefs);
             }
         }
-    }, [data?.__type.enumValues, existingAlertTypes, fetching, setAlertTypes]);
+    }, [data?.alertTypes, existingAlertTypes, fetching, setAlertTypes]);
 
     useEffect(() => {
         if (error) {
@@ -54,11 +53,7 @@ const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
             {fetching || !data ? (
                 <Skeleton height={38} width={490} />
             ) : (
-                <AlertTypeSelector
-                    options={
-                        data.__type.enumValues.map(expandAlertTypeDef) ?? []
-                    }
-                />
+                <AlertTypeSelector options={data.alertTypes ?? []} />
             )}
         </Grid>
     );

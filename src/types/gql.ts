@@ -146,14 +146,16 @@ export interface AlertSubscriptionsBy {
 }
 
 export interface AlertTypeDef {
+    alertType: string;
     description: string;
-    name: string;
+    displayName: string;
+    isDefault: boolean;
+    isSystemAlert: boolean;
+    __typename: string;
 }
 
 export interface AlertTypeQueryResponse {
-    __type: {
-        enumValues: AlertTypeDef[];
-    };
+    alertTypes: AlertTypeDef[];
 }
 
 export interface BaseAlertSubscriptionMutationInput {
@@ -165,10 +167,4 @@ interface BaseFields {
     createdAt: Date;
     detail: string | null;
     updatedAt: Date;
-}
-
-export interface ExpandedAlertTypeDef extends AlertTypeDef {
-    id: string;
-    isDefault: boolean;
-    isSystemAlert: boolean;
 }

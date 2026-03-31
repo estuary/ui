@@ -1,6 +1,6 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { AlertTypeSelectorProps } from 'src/components/admin/Settings/PrefixAlerts/types';
-import type { ExpandedAlertTypeDef } from 'src/types/gql';
+import type { AlertTypeDef } from 'src/types/gql';
 
 import { useMemo } from 'react';
 
@@ -34,8 +34,8 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
         (state) => state.setAlertTypes
     );
 
-    const values: ExpandedAlertTypeDef[] = useMemo(
-        () => options.filter(({ name }) => alertTypes.includes(name)),
+    const values: AlertTypeDef[] = useMemo(
+        () => options.filter(({ alertType }) => alertTypes.includes(alertType)),
         [options, alertTypes]
     );
 
@@ -44,9 +44,9 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
             <Autocomplete
                 disableCloseOnSelect
                 disabled={Boolean(serverError)}
-                getOptionLabel={({ name }) => name}
+                getOptionLabel={({ alertType: name }) => name}
                 isOptionEqualToValue={(option, value) =>
-                    option.name === value.name
+                    option.alertType === value.alertType
                 }
                 multiple
                 onChange={(_event, values) => {
@@ -71,7 +71,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                     />
                 )}
                 renderOption={(renderOptionProps, option, state) => {
-                    const { description, name } = option;
+                    const { description, displayName } = option;
 
                     return (
                         <SelectableAutocompleteOption
@@ -84,7 +84,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                                             textTransform: 'capitalize',
                                         }}
                                     >
-                                        {name}
+                                        {displayName}
                                     </Typography>
 
                                     {description ? (
@@ -106,20 +106,22 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                     );
                 }}
                 renderTags={(values, getTagProps) => {
-                    return values.map(({ name, isSystemAlert }, index) => {
-                        const tagProps = getTagProps({ index });
+                    return values.map(
+                        ({ alertType, displayName, isSystemAlert }, index) => {
+                            const tagProps = getTagProps({ index });
 
-                        return (
-                            <OutlinedChip
-                                {...tagProps}
-                                diminishedText={isSystemAlert}
-                                key={`alert_type-tag-${name}-${index}`}
-                                label={name}
-                                size="small"
-                                variant="outlined"
-                            />
-                        );
-                    });
+                            return (
+                                <OutlinedChip
+                                    {...tagProps}
+                                    diminishedText={isSystemAlert}
+                                    key={`alert_type-tag-${alertType}-${index}`}
+                                    label={displayName}
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            );
+                        }
+                    );
                 }}
                 value={values}
             />

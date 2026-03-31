@@ -1,6 +1,6 @@
 import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
 import type { TableState } from 'src/types';
-import type { ExpandedAlertTypeDef } from 'src/types/gql';
+import type { AlertTypeDef } from 'src/types/gql';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -24,7 +24,6 @@ import {
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { TableStatuses } from 'src/types';
-import { expandAlertTypeDef } from 'src/utils/misc-utils';
 
 function PrefixAlertTable() {
     const [{ data, error, fetching }, executeQuery] =
@@ -56,12 +55,12 @@ function PrefixAlertTable() {
                 : data.alertSubscriptions;
         }, [data, searchQuery]);
 
-    const alertTypeDefs: ExpandedAlertTypeDef[] = useMemo(() => {
+    const alertTypeDefs: AlertTypeDef[] = useMemo(() => {
         if (!alertTypeResponse.data) {
             return [];
         }
 
-        return alertTypeResponse.data.__type.enumValues.map(expandAlertTypeDef);
+        return alertTypeResponse.data.alertTypes;
     }, [alertTypeResponse.data]);
 
     const displayLoadingState = useRef(
