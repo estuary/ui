@@ -26,8 +26,7 @@ import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { TableStatuses } from 'src/types';
 
 function PrefixAlertTable() {
-    const [{ data, error, fetching }, executeQuery] =
-        useGetAlertSubscriptions();
+    const [{ data, error, fetching }] = useGetAlertSubscriptions();
 
     const [alertTypeResponse] = useQuery({ query: AlertTypeQuery });
 
@@ -115,7 +114,7 @@ function PrefixAlertTable() {
                     my: 2,
                 }}
             >
-                <AlertGenerateButton executeQuery={executeQuery} />
+                <AlertGenerateButton />
 
                 <TableFilter
                     disabled={loading}
@@ -155,7 +154,6 @@ function PrefixAlertTable() {
                                 <Rows
                                     alertTypeDefs={alertTypeDefs}
                                     data={processedData}
-                                    executeQuery={executeQuery}
                                 />
                             ) : null
                         }

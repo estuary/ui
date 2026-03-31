@@ -12,7 +12,6 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 function AlertEditButton({
     alertTypes,
     email,
-    executeQuery,
     prefix,
     ...props
 }: EditButtonProps) {
@@ -39,7 +38,6 @@ function AlertEditButton({
             <AlertSubscriptionDialog
                 descriptionId="alerts.config.dialog.update.description"
                 enableDeletion
-                executeQuery={executeQuery}
                 existingAlertTypes={alertTypes}
                 headerId="alerts.config.dialog.update.header"
                 open={open}

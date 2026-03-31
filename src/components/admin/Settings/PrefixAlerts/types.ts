@@ -5,14 +5,12 @@ import type {
     AlertTypeDef,
     BaseAlertSubscriptionMutationInput,
 } from 'src/types/gql';
-import type { UseQueryExecute } from 'urql';
 
 export interface AlertSubscriptionDialogProps
     extends AlertTypeFieldProps,
         EmailListFieldProps,
         PrefixFieldProps {
     descriptionId: string;
-    executeQuery: UseQueryExecute;
     headerId: string;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
@@ -34,15 +32,11 @@ export interface AlertTypeSelectorProps {
     options: AlertTypeDef[];
 }
 
-export interface BaseButtonProps {
-    executeQuery: UseQueryExecute;
-}
-
 export interface DialogActionProps {
     closeDialog: () => void;
 }
 
-export interface EditButtonProps extends BaseButtonProps, TableCellProps {
+export interface EditButtonProps extends TableCellProps {
     alertTypes: ReducedAlertSubscription['alertTypes'];
     email: string;
     prefix: string;

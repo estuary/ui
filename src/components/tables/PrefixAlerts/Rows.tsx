@@ -10,7 +10,7 @@ import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
 import { sortByAlertType } from 'src/components/tables/PrefixAlerts/shared';
 
-function Row({ alertTypeDefs, executeQuery, row }: RowProps) {
+function Row({ alertTypeDefs, row }: RowProps) {
     const evaluatedAlertTypes: AlertTypeDef[] = row.alertTypes
         .map((alertType) =>
             alertTypeDefs.find((def) => def.alertType === alertType)
@@ -49,20 +49,18 @@ function Row({ alertTypeDefs, executeQuery, row }: RowProps) {
             <AlertEditButton
                 alertTypes={row.alertTypes}
                 email={row.email}
-                executeQuery={executeQuery}
                 prefix={row.catalogPrefix}
             />
         </TableRow>
     );
 }
 
-function Rows({ alertTypeDefs, data, executeQuery }: RowsProps) {
+function Rows({ alertTypeDefs, data }: RowsProps) {
     return (
         <>
             {data.map((datum) => (
                 <Row
                     alertTypeDefs={alertTypeDefs}
-                    executeQuery={executeQuery}
                     key={`${datum.catalogPrefix}-${datum.email}`}
                     row={datum}
                 />

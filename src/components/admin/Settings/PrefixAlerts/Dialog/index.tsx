@@ -23,13 +23,13 @@ import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/Prefi
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
 const AlertSubscriptionDialog = ({
     descriptionId,
     enableDeletion,
-    executeQuery,
     existingAlertTypes,
     headerId,
     open,
@@ -39,6 +39,8 @@ const AlertSubscriptionDialog = ({
 }: AlertSubscriptionDialogProps) => {
     const intl = useIntl();
     const theme = useTheme();
+
+    const [_response, executeQuery] = useGetAlertSubscriptions();
 
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
