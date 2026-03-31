@@ -1,6 +1,7 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 import type { ProtocolLabel } from 'data-plane-gateway/types/gen/consumer/protocol/consumer';
 import type { LiveSpecsExtQuery_GroupedUpdates } from 'src/api/types';
+import type { LiveSpecRefConnection } from 'src/gql-types/graphql';
 import type { SortingProps } from 'src/services/supabase';
 import type {
     CatalogStats,
@@ -12,6 +13,7 @@ import type {
 
 import { DateTime } from 'luxon';
 import pLimit from 'p-limit';
+import { gql } from 'urql';
 
 import { CONNECTOR_IMAGE, CONNECTOR_TITLE } from 'src/api/shared';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -560,15 +562,55 @@ export interface LiveSpecsExt_Related {
 //     return errors[0] ?? response[0];
 // };
 
+const LiveSpecsQuery = gql<LiveSpecRefConnection>`
+    query LiveSpecs(
+        $by: LiveSpecsBy!
+        $after: String
+        $before: String
+        $first: Int
+        $last: Int
+    ) {
+        liveSpecs(
+            by: $by
+            after: $after
+            before: $before
+            first: $first
+            last: $last
+        ) {
+            edges {
+                node {
+                    catalogName
+                    status {
+                        type
+                        summary
+                        controller {
+                            error
+                            failures
+                            nextRun
+                            updatedAt
+                            activation {
+                                lastActivated
+                                shardStatus {
+                                    count
+                                    firstTs
+                                    lastTs
+                                    status
+                                }
+                            }
+                        }
+                        connector {
+                            ts
+                            message
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
+
 export {
     getLatestLiveSpecByName,
-    getLiveSpecShards,
-    getLiveSpecSpec,
-    getLiveSpecsByCatalogName,
-    getLiveSpecsByCatalogNames,
-    getLiveSpecsByConnectorId,
-    getLiveSpecsByLiveSpecId,
-    getLiveSpecsForGroupedUpdates,
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_dataPlaneAuthReq,
@@ -576,5 +618,13 @@ export {
     getLiveSpecs_entitySelector,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
+    getLiveSpecsByCatalogName,
+    getLiveSpecsByCatalogNames,
+    getLiveSpecsByConnectorId,
+    getLiveSpecsByLiveSpecId,
+    getLiveSpecsForGroupedUpdates,
+    getLiveSpecShards,
+    getLiveSpecSpec,
     getTrialCollections,
+    LiveSpecsQuery,
 };

@@ -1,9 +1,13 @@
 import type { FetcherArgs } from 'src/hooks/entityStatus/types';
 
+import { useEffect } from 'react';
+
 import { DateTime } from 'luxon';
 import useSWR from 'swr';
+import { useQuery } from 'urql';
 
 import { getEntityStatus } from 'src/api/entityStatus';
+import { LiveSpecsQuery } from 'src/api/liveSpecsExt';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -21,6 +25,12 @@ const statusFetcher = async ({
 };
 
 export default function useEntityStatus(catalogName: string) {
+    const [{ data: resData, error: resError, fetching }] = useQuery({
+        pause: !catalogName,
+        query: LiveSpecsQuery,
+        variables: { by: { names: [catalogName] } },
+    });
+
     const session = useUserStore((state) => state.session);
 
     const grants = useEntitiesStore_capabilities_readable();
@@ -40,6 +50,39 @@ export default function useEntityStatus(catalogName: string) {
             catalogName,
         });
     }
+
+    useEffect(() => {
+        if (fetching) return;
+
+        if (resError) {
+            storeResponses(undefined);
+            storeError(resError);
+
+            logRocketEvent(`${CustomEvents.ENTITY_STATUS}:CallFailed`, {
+                catalogName,
+                error: resError,
+            });
+
+            return;
+        }
+
+        if (
+            resData?.edges &&
+            resData.edges.length > 0 &&
+            resData.edges.some(({ node }) => node.catalogName === catalogName)
+        ) {
+            setLastUpdated(DateTime.now());
+            storeError(null);
+        }
+    }, [
+        catalogName,
+        resData?.edges,
+        resError,
+        fetching,
+        setLastUpdated,
+        storeError,
+        storeResponses,
+    ]);
 
     const { data, error, mutate } = useSWR(
         session?.access_token && authorizedPrefix
