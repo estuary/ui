@@ -1,7 +1,5 @@
 import type { DialogActionProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
-import { useMemo } from 'react';
-
 import { FormattedMessage } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -19,20 +17,14 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
         (state) => state.subscription
     );
 
-    const disabled = useMemo(
-        () =>
-            Boolean(
-                prefixErrorsExist ||
-                    subscription.catalogPrefix.length === 0 ||
-                    subscription.email.length === 0
-            ),
-        [prefixErrorsExist, subscription.catalogPrefix, subscription.email]
-    );
-
     return (
         <SafeLoadingButton
             color="error"
-            disabled={disabled}
+            disabled={Boolean(
+                prefixErrorsExist ||
+                    subscription.catalogPrefix.length === 0 ||
+                    subscription.email.length === 0
+            )}
             loading={loading}
             onClick={onClick}
             size="small"
