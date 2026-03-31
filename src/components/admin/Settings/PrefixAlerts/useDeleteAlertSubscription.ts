@@ -7,7 +7,6 @@ import { useMutation } from 'urql';
 
 import { AlertSubscriptionDeleteMutation } from 'src/api/alerts';
 import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
 
 export function useDeleteAlertSubscription() {
     const [deleteSubscriptionResult, mutateSubscription] = useMutation(
@@ -24,7 +23,7 @@ export function useDeleteAlertSubscription() {
                     const uuid = crypto.randomUUID();
 
                     if (response?.error) {
-                        logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                        logRocketEvent('AlertSubscription', {
                             errorResponse: response.error,
                             operation: 'delete',
                             variables: response.operation.variables,
@@ -42,7 +41,7 @@ export function useDeleteAlertSubscription() {
                     }
 
                     if (!response || !response?.data) {
-                        logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                        logRocketEvent('AlertSubscription', {
                             missingResponseData: !response.data,
                             operation: 'delete',
                             variables: response.operation.variables,
@@ -67,7 +66,7 @@ export function useDeleteAlertSubscription() {
                     });
                 },
                 (err) => {
-                    logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                    logRocketEvent('AlertSubscription', {
                         operation: 'delete',
                         promiseRejected: 'explicit',
                         errorResponse: err,

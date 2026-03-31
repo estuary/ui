@@ -1,6 +1,7 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 
 export type KnownEvents =
+    | 'AlertSubscription'
     | 'Auth'
     | 'Confirmation'
     | 'DataPlaneGateway'
@@ -21,7 +22,6 @@ export type KnownEvents =
 // TODO (enums) - please do not add more to the CustomEvents enum. Instead - use the
 //  KnownEvents type
 export enum CustomEvents {
-    ALERT_SUBSCRIPTION = 'AlertSubscription',
     AUTHORIZE_TASK = 'AuthorizeTask',
     AUTH_SIGNOUT = 'Auth_Signout',
     BINDINGS_EXPECTED_MISSING = 'Bindings_Expected_Missing',

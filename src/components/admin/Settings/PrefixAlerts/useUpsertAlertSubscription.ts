@@ -12,7 +12,6 @@ import {
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { logRocketEvent } from 'src/services/shared';
-import { CustomEvents } from 'src/services/types';
 import { hasLength } from 'src/utils/misc-utils';
 
 export function useUpsertAlertSubscription() {
@@ -47,7 +46,7 @@ export function useUpsertAlertSubscription() {
                     const uuid = crypto.randomUUID();
 
                     if (response?.error) {
-                        logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                        logRocketEvent('AlertSubscription', {
                             errorResponse: response.error,
                             operation: 'upsert',
                             variables: response.operation.variables,
@@ -65,7 +64,7 @@ export function useUpsertAlertSubscription() {
                     }
 
                     if (!response || !response?.data) {
-                        logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                        logRocketEvent('AlertSubscription', {
                             missingResponseData: !response.data,
                             operation: 'upsert',
                             variables: response.operation.variables,
@@ -90,7 +89,7 @@ export function useUpsertAlertSubscription() {
                     });
                 },
                 (err) => {
-                    logRocketEvent(CustomEvents.ALERT_SUBSCRIPTION, {
+                    logRocketEvent('AlertSubscription', {
                         operation: 'upsert',
                         promiseRejected: 'explicit',
                         errorResponse: err,
