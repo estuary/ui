@@ -28,6 +28,7 @@ import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
+import { formatOldUuidToGql } from 'src/utils/connector-utils';
 import { isTaskDisabled } from 'src/utils/entity-utils';
 
 interface SupabaseConfig {
@@ -254,7 +255,7 @@ function useInitializeTaskDraft() {
                             {
                                 [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
                                 [GlobalSearchParams.CONNECTOR_ID]:
-                                    task.connector_id,
+                                    formatOldUuidToGql(task.connector_id),
                                 [GlobalSearchParams.LAST_PUB_ID]:
                                     task.last_pub_id,
                             },

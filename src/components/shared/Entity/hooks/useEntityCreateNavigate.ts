@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
+import { formatOldUuidToGql } from 'src/utils/connector-utils';
 import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 
 export interface HookEntityCreateNavigateProps {
@@ -34,7 +35,8 @@ export default function useEntityCreateNavigate() {
             const searchParamConfig: { [param: string]: any } = {};
 
             if (hasLength(id)) {
-                searchParamConfig[GlobalSearchParams.CONNECTOR_ID] = id;
+                searchParamConfig[GlobalSearchParams.CONNECTOR_ID] =
+                    formatOldUuidToGql(id);
             }
 
             if (typeof dataPlaneId !== 'undefined') {

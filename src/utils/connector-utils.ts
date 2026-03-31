@@ -118,3 +118,13 @@ export const requiredConnectorColumnsExist = <Response>(
             null
         );
 };
+
+// TODO (GQL:live specs) - once we get live specs fetched with GQL we don't need to worry about this
+export function formatOldUuidToGql(id: string): string;
+export function formatOldUuidToGql(id: null | undefined): null | undefined;
+export function formatOldUuidToGql(
+    id: string | null | undefined
+): string | null | undefined;
+export function formatOldUuidToGql(id: string | null | undefined) {
+    return typeof id === 'string' ? id.replaceAll(':', '') : id;
+}
