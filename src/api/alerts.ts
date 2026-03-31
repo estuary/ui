@@ -27,9 +27,9 @@ const AlertSubscriptionCreateMutation = gql<
     AlertSubscriptionMutationInput
 >`
     mutation CreateAlertSubscriptionMutation(
-        $prefix: String!
+        $prefix: Prefix!
         $email: String!
-        $alertTypes: [String!]
+        $alertTypes: [AlertType!]
         $detail: String
     ) {
         createAlertSubscription(
@@ -49,7 +49,7 @@ const AlertSubscriptionDeleteMutation = gql<
     AlertSubscriptionMutationInput
 >`
     mutation DeleteAlertSubscriptionMutation(
-        $prefix: String!
+        $prefix: Prefix!
         $email: String!
     ) {
         deleteAlertSubscription(prefix: $prefix, email: $email) {
@@ -63,7 +63,7 @@ const AlertSubscriptionQuery = gql<
     ReducedAlertSubscriptionQueryResponse,
     AlertSubscriptionsBy
 >`
-    query AlertSubscriptions($prefix: String!) {
+    query AlertSubscriptions($prefix: Prefix!) {
         alertSubscriptions(by: { prefix: $prefix }) {
             alertTypes
             catalogPrefix
@@ -78,9 +78,9 @@ const AlertSubscriptionUpdateMutation = gql<
     AlertSubscriptionMutationInput
 >`
     mutation UpdateAlertSubscriptionMutation(
-        $prefix: String!
+        $prefix: Prefix!
         $email: String!
-        $alertTypes: [String!]
+        $alertTypes: [AlertType!]
         $detail: String
     ) {
         updateAlertSubscription(
