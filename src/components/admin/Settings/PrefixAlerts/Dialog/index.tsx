@@ -47,12 +47,12 @@ const AlertSubscriptionDialog = ({
     );
 
     const closeDialog = (queryTrigger?: boolean) => {
-        setOpen(false);
-        resetSubscriptionState();
-
         if (queryTrigger) {
             executeQuery({ requestPolicy: 'network-only' });
         }
+
+        setOpen(false);
+        resetSubscriptionState();
     };
 
     return (
