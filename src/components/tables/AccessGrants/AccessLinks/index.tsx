@@ -1,37 +1,51 @@
-import type { TableColumns } from 'src/types';
+import type { Dispatch, SetStateAction } from 'react';
+import type { TableColumns, TableState } from 'src/types';
+import type { CombinedError } from 'urql';
 
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Box } from '@mui/material';
+import {
+    Box,
+    Table,
+    TableContainer,
+    TableFooter,
+    TablePagination,
+    TableRow,
+    Typography,
+} from '@mui/material';
 
-import { getDirectivesByType } from 'src/api/directives';
-import Rows from 'src/components/tables/AccessGrants/AccessLinks/Rows';
-import EntityTable from 'src/components/tables/EntityTable';
-import RowSelector from 'src/components/tables/RowActions/AccessLinks/RowSelector';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { useTableState } from 'src/stores/Tables/hooks';
-import TableHydrator from 'src/stores/Tables/Hydrator';
+import { useIntl } from 'react-intl';
 
-export const columns: TableColumns[] = [
+import { useInviteLinks } from 'src/api/gql/inviteLinks';
+import { Row } from 'src/components/tables/AccessGrants/AccessLinks/Row';
+import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
+import { useCursorPagination } from 'src/hooks/useCursorPagination';
+import { TableStatuses } from 'src/types';
+
+export interface InviteErrorProps {
+    setError: Dispatch<SetStateAction<CombinedError | null>>;
+}
+
+const columns: TableColumns[] = [
     {
-        field: null,
-        headerIntlKey: '',
-    },
-    {
-        field: 'provisioning_prefix',
-        headerIntlKey:
-            'accessGrants.table.accessLinks.label.provisioningPrefix',
-    },
-    {
-        field: 'granted_prefix',
-        headerIntlKey: 'accessGrants.table.accessLinks.label.grantedPrefix',
+        field: 'catalogPrefix',
+        headerIntlKey: 'accessGrants.table.accessLinks.label.prefix',
     },
     {
         field: 'capability',
         headerIntlKey: 'accessGrants.table.accessLinks.label.capability',
     },
     {
-        field: 'updated_at',
+        field: 'singleUse',
+        headerIntlKey: 'accessGrants.table.accessLinks.label.type',
+    },
+    {
+        field: null,
+        headerIntlKey: '',
+    },
+    {
+        field: 'createdAt',
         headerIntlKey: 'accessGrants.table.accessLinks.label.lastUpdated',
     },
     {
@@ -40,69 +54,132 @@ export const columns: TableColumns[] = [
     },
 ];
 
-const selectableTableStoreName = SelectTableStoreNames.ACCESS_GRANTS_LINKS;
+export function AccessLinksTable({ setError }: InviteErrorProps) {
+    const intl = useIntl();
 
-function AccessLinksTable() {
-    const {
-        pagination,
-        setPagination,
-        rowsPerPage,
-        setRowsPerPage,
-        searchQuery,
-        setSearchQuery,
-        sortDirection,
-        setSortDirection,
-        columnToSort,
-        setColumnToSort,
-    } = useTableState('ali', 'updated_at', 'desc');
+    const { currentPage, cursor, goToPage, onPageChange } =
+        useCursorPagination();
 
-    const query = useMemo(() => {
-        return getDirectivesByType('grant', pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, pagination, searchQuery, sortDirection]);
+    const { inviteLinks, fetching, error, pageInfo, pageSize } =
+        useInviteLinks(cursor);
 
-    const headerKey = 'accessGrants.table.accessLinks.title';
-    const filterKey = 'accessGrants.table.accessLinks.label.filter';
+    const handlePageChange = (_event: any, page: number) => {
+        onPageChange(_event, page, pageInfo?.endCursor);
+    };
+
+    const [tableState, setTableState] = useState<TableState>({
+        status: TableStatuses.LOADING,
+    });
+
+    useEffect(() => {
+        if (fetching) {
+            setTableState({ status: TableStatuses.LOADING });
+            return;
+        }
+
+        if (error) {
+            setError(() => error);
+            if (error.networkError) {
+                setTableState({ status: TableStatuses.NETWORK_FAILED });
+            } else {
+                setTableState({ status: TableStatuses.TECHNICAL_DIFFICULTIES });
+            }
+            return;
+        }
+
+        if (inviteLinks.length > 0) {
+            setTableState({ status: TableStatuses.DATA_FETCHED });
+            return;
+        }
+
+        // If current page is empty but we're not on page 1,
+        // go back a page (e.g. after deleting the last item on a page)
+        if (currentPage > 0) {
+            goToPage(currentPage - 1);
+            return;
+        }
+
+        setTableState({ status: TableStatuses.NO_EXISTING_DATA });
+    }, [fetching, error, inviteLinks, currentPage, goToPage, setError]);
+
+    const hasData = Boolean(pageInfo);
 
     return (
         <Box>
-            <TableHydrator
-                disableQueryParamHack
-                query={query}
-                selectableTableStoreName={selectableTableStoreName}
-            >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'accessGrants.table.accessLinks.header.noData',
-                        message:
-                            'accessGrants.table.accessLinks.message.noData',
-                        disableDoclink: true,
-                    }}
-                    columns={columns}
-                    renderTableRows={(data) => <Rows data={data} />}
-                    rowsPerPage={rowsPerPage}
-                    setRowsPerPage={setRowsPerPage}
-                    pagination={pagination}
-                    setPagination={setPagination}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header={headerKey}
-                    filterLabel={filterKey}
-                    selectableTableStoreName={selectableTableStoreName}
-                    showToolbar
-                    toolbar={<RowSelector />}
-                />
-            </TableHydrator>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                {intl.formatMessage({
+                    id: 'accessGrants.table.accessLinks.title',
+                })}
+            </Typography>
+            <TableContainer>
+                <Table
+                    size="small"
+                    sx={{ minWidth: 350, borderCollapse: 'separate' }}
+                    aria-label={intl.formatMessage({
+                        id: 'accessGrants.table.accessLinks.title',
+                    })}
+                >
+                    <EntityTableHeader columns={columns} />
+
+                    <EntityTableBody
+                        columns={columns}
+                        noExistingDataContentIds={{
+                            header: 'accessGrants.table.accessLinks.header.noData',
+                            message:
+                                'accessGrants.table.accessLinks.message.noData',
+                            disableDoclink: true,
+                        }}
+                        tableState={tableState}
+                        loading={fetching}
+                        rows={
+                            hasData && inviteLinks.length > 0 ? (
+                                <>
+                                    {inviteLinks.map((link) => (
+                                        <Row
+                                            key={link.token}
+                                            row={link}
+                                            setError={setError}
+                                        />
+                                    ))}
+                                </>
+                            ) : null
+                        }
+                    />
+                    {hasData ? (
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    count={-1}
+                                    page={currentPage}
+                                    rowsPerPage={pageSize}
+                                    rowsPerPageOptions={[
+                                        // one value here overrides the default options and hides the rows-per-page selector
+                                        pageSize,
+                                    ]}
+                                    onPageChange={handlePageChange}
+                                    labelDisplayedRows={({ from }) => {
+                                        const to =
+                                            from + inviteLinks.length - 1;
+                                        return `${from}–${to}`;
+                                    }}
+                                    slotProps={{
+                                        actions: {
+                                            previousButton: {
+                                                disabled:
+                                                    !pageInfo?.hasPreviousPage,
+                                            },
+                                            nextButton: {
+                                                disabled:
+                                                    !pageInfo?.hasNextPage,
+                                            },
+                                        },
+                                    }}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    ) : null}
+                </Table>
+            </TableContainer>
         </Box>
     );
 }
-
-export default AccessLinksTable;
