@@ -54,13 +54,11 @@ function PrefixAlertTable() {
                 : data.alertSubscriptions;
         }, [data, searchQuery]);
 
-    const alertTypeDefs: AlertTypeDef[] = useMemo(() => {
-        if (!alertTypeResponse.data) {
-            return [];
-        }
-
-        return alertTypeResponse.data.alertTypes;
-    }, [alertTypeResponse.data]);
+    const alertTypeDefs: AlertTypeDef[] = useMemo(
+        () =>
+            !alertTypeResponse.data ? [] : alertTypeResponse.data.alertTypes,
+        [alertTypeResponse.data]
+    );
 
     const displayLoadingState = useRef(
         debounce(() => setTableState({ status: TableStatuses.LOADING }), 750)
