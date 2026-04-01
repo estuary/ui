@@ -19,7 +19,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
 import { diminishedTextColor } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
-import { sortByAlertType } from 'src/utils/misc-utils';
+import { basicSort_string, sortByAlertType } from 'src/utils/misc-utils';
 
 const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
     const intl = useIntl();
@@ -53,7 +53,15 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                 onChange={(_event, values) => {
                     setAlertTypes(values);
                 }}
-                options={options.filter(({ isSystemAlert }) => !isSystemAlert)}
+                options={options
+                    .filter(({ isSystemAlert }) => !isSystemAlert)
+                    .sort((first, second) =>
+                        basicSort_string(
+                            first.displayName,
+                            second.displayName,
+                            'asc'
+                        )
+                    )}
                 renderInput={({
                     InputProps,
                     ...params
