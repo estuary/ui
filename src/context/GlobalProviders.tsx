@@ -3,8 +3,8 @@ import type { BaseComponentProps } from 'src/types';
 import { createClient } from '@supabase/supabase-js';
 import { enableMapSet, setAutoFreeze } from 'immer';
 
-import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { unauthenticatedRoutes } from 'src/app/routes';
+import FullPageSpinner from 'src/components/fullPage/Spinner';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { initLogRocket } from 'src/services/logrocket';
 import { logRocketConsole } from 'src/services/shared';
