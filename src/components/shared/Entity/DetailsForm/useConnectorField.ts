@@ -1,33 +1,18 @@
-import type { Details } from 'src/stores/DetailsForm/types';
 import type { EntityWithCreateWorkflow } from 'src/types';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { useIntl } from 'react-intl';
 
-import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntityCreateNavigate';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
-import { hasLength } from 'src/utils/misc-utils';
 
 const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 
 export default function useConnectorField(
     entityType: EntityWithCreateWorkflow
 ) {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
     const intl = useIntl();
-
-    const navigateToCreate = useEntityCreateNavigate();
-
-    const setEntityNameChanged = useDetailsFormStore(
-        (state) => state.setEntityNameChanged
-    );
 
     const connectorTag = useWorkflowStore((state) => state.connectorMetadata);
 
@@ -92,29 +77,5 @@ export default function useConnectorField(
         },
     };
 
-    const setConnector = useCallback(
-        (details: Details, selectedDataPlaneId: string | undefined) => {
-            console.log('setConnector >>>>>', {
-                connectorId,
-                details,
-                selectedDataPlaneId,
-            });
-
-            if (!hasLength(connectorId)) {
-                return;
-            }
-
-            setEntityNameChanged(details.data.entityName);
-
-            // TODO (GQL:connectors) - this is breaking edit
-            navigateToCreate(entityType, {
-                id: connectorId,
-                advanceToForm: true,
-                dataPlaneId: selectedDataPlaneId ?? null,
-            });
-        },
-        [connectorId, entityType, navigateToCreate, setEntityNameChanged]
-    );
-
-    return { connectorSchema, connectorUISchema, setConnector };
+    return { connectorSchema, connectorUISchema };
 }

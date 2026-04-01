@@ -31,7 +31,7 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
 
     const { evaluateStorageMapping } = useEvaluateStorageMapping();
 
-    const { connectorSchema, connectorUISchema, setConnector } =
+    const { connectorSchema, connectorUISchema } =
         useConnectorField(entityType);
 
     const { dataPlaneSchema, dataPlaneUISchema, setDataPlane } =
@@ -87,7 +87,6 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
         setDetails(details);
 
         setDataPlane(details, dataPlaneOption);
-        setConnector(details, dataPlaneOption?.id);
 
         setCatalogName({
             root: details.data.entityName.substring(tenant.length),
