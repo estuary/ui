@@ -38,8 +38,8 @@ function Row({ alertTypeDefs, row }: RowProps) {
                             'asc'
                         )
                     )
-                    .map(({ alertType: name, isSystemAlert }) => ({
-                        display: name,
+                    .map(({ displayName, isSystemAlert }) => ({
+                        display: displayName,
                         diminishedText: isSystemAlert,
                     }))}
             />
