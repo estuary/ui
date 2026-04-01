@@ -8,7 +8,7 @@ import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
-import { sortByAlertType } from 'src/components/tables/PrefixAlerts/shared';
+import { sortByAlertType } from 'src/utils/misc-utils';
 
 function Row({ alertTypeDefs, row }: RowProps) {
     const evaluatedAlertTypes: AlertTypeDef[] = row.alertTypes

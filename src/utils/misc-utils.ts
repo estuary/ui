@@ -231,6 +231,30 @@ export const basicSort_string = (
     return b.localeCompare(a);
 };
 
+export const sortByAlertType = (
+    a: { isSystemAlert: boolean; value: string },
+    b: { isSystemAlert: boolean; value: string },
+    sortDirection: SortDirection
+) => {
+    // If a is not a system alert and b is then return <0 to put a first
+    if (!a.isSystemAlert && b.isSystemAlert) {
+        return -1;
+    }
+
+    // If a is a system alert and b is not then return >0 to put b first
+    if (a.isSystemAlert && !b.isSystemAlert) {
+        return 1;
+    }
+
+    const sortResult = compareInitialCharacterType(a.value, b.value);
+
+    if (typeof sortResult === 'number') {
+        return sortResult;
+    }
+
+    return basicSort_string(a.value, b.value, sortDirection);
+};
+
 export const configCanBeEmpty = (schema: any) => {
     if (!schema) {
         return false;

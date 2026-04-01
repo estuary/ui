@@ -19,6 +19,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
 import { diminishedTextColor } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
+import { sortByAlertType } from 'src/utils/misc-utils';
 
 const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
     const intl = useIntl();
@@ -106,27 +107,44 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                     );
                 }}
                 renderTags={(values, getTagProps) => {
-                    return values.map(
-                        ({ alertType, displayName, isSystemAlert }, index) => {
-                            const { onDelete, ...tagProps } = getTagProps({
-                                index,
-                            });
+                    return values
+                        .sort((first, second) =>
+                            sortByAlertType(
+                                {
+                                    isSystemAlert: first.isSystemAlert,
+                                    value: first.displayName,
+                                },
+                                {
+                                    isSystemAlert: second.isSystemAlert,
+                                    value: second.displayName,
+                                },
+                                'asc'
+                            )
+                        )
+                        .map(
+                            (
+                                { alertType, displayName, isSystemAlert },
+                                index
+                            ) => {
+                                const { onDelete, ...tagProps } = getTagProps({
+                                    index,
+                                });
 
-                            return (
-                                <OutlinedChip
-                                    {...tagProps}
-                                    diminishedText={isSystemAlert}
-                                    key={`alert_type-tag-${alertType}-${index}`}
-                                    label={displayName}
-                                    onDelete={
-                                        isSystemAlert ? undefined : onDelete
-                                    }
-                                    size="small"
-                                    variant="outlined"
-                                />
-                            );
-                        }
-                    );
+                                return (
+                                    <OutlinedChip
+                                        {...tagProps}
+                                        diminishedText={isSystemAlert}
+                                        key={`alert_type-tag-${alertType}-${index}`}
+                                        label={displayName}
+                                        onDelete={
+                                            isSystemAlert ? undefined : onDelete
+                                        }
+                                        size="small"
+                                        variant="outlined"
+                                    />
+                                );
+                            }
+                        );
                 }}
                 value={values}
             />
