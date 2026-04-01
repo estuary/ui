@@ -60,9 +60,18 @@ export function useModifyAlertSubscription(
             response?.invalid && !response?.error
                 ? {
                       ...BASE_ERROR,
-                      message: intl.formatMessage({
-                          id: 'alerts.config.dialog.error.generic',
-                      }),
+                      message: intl.formatMessage(
+                          {
+                              id: 'alerts.config.dialog.error.generic',
+                          },
+                          {
+                              operation: intl.formatMessage({
+                                  id: deletionTrigger
+                                      ? 'alerts.config.dialog.error.term.delete'
+                                      : 'alerts.config.dialog.error.term.modify',
+                              }),
+                          }
+                      ),
                   }
                 : response?.error;
 

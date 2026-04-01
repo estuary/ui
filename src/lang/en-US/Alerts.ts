@@ -5,7 +5,9 @@ export const Alerts: Record<string, string> = {
     'alerts.config.cta.addAlertMethod': `Configure Notifications`,
 
     'alerts.config.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
-    'alerts.config.dialog.error.generic': `An issue was encountered creating, updating, or deleting an alert subscription.`,
+    'alerts.config.dialog.error.generic': `An issue was encountered {operation} an alert subscription.`,
+    'alerts.config.dialog.error.term.delete': `deleting`,
+    'alerts.config.dialog.error.term.modify': `creating or updating`,
     'alerts.config.dialog.generate.description': `Choose where you'd like notifications to be sent. To add an email address, select from the list of admin user emails or enter a custom email address.`,
     'alerts.config.dialog.generate.header': `Configure Notification Methods`,
     'alerts.config.dialog.update.description': `Choose the notifications you'd like to receive.`,
