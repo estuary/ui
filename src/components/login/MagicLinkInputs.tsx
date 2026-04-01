@@ -67,6 +67,7 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
 
             if (error) {
                 if (handleSsoRequired(error.message)) {
+                    // handleSsoRequired redirects to SSO flow
                     return;
                 }
 

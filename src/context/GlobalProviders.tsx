@@ -51,6 +51,7 @@ const ssoCheckingFetch: typeof fetch = async (input, init) => {
             const message =
                 body?.error_description ?? body?.message ?? body?.error;
             if (typeof message === 'string') {
+                // handleSsoRequired redirects to SSO flow
                 handleSsoRequired(message);
             }
         } catch {

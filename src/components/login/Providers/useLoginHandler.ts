@@ -70,6 +70,7 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
                 });
                 if (error) {
                     if (handleSsoRequired(error.message)) {
+                        // handleSsoRequired redirects to SSO flow
                         return;
                     }
                     loginFailed(provider);
