@@ -36,18 +36,24 @@ export default function useConnectorField(
             return [];
         }
 
-        const { id, connectorId: tagConnectorId, imageTag, connector } =
-            connectorTag;
+        const {
+            id,
+            connectorId: connectorTagId,
+            imageTag,
+            connector,
+        } = connectorTag;
 
         const base = {
-            connectorId: tagConnectorId,
+            connectorId: connectorTagId,
             iconPath: connector.logoUrl ?? '',
             id,
             imageName: connector.imageName,
             imageTag,
         };
 
-        const connectorImage = connector.imageName.startsWith(DEKAF_IMAGE_PREFIX)
+        const connectorImage = connector.imageName.startsWith(
+            DEKAF_IMAGE_PREFIX
+        )
             ? {
                   ...base,
                   variant: connector.imageName.substring(
@@ -56,7 +62,12 @@ export default function useConnectorField(
               }
             : { ...base, imagePath: `${connector.imageName}${imageTag}` };
 
-        return [{ const: connectorImage, title: connector.title ?? connector.imageName }];
+        return [
+            {
+                const: connectorImage,
+                title: connector.title ?? connector.imageName,
+            },
+        ];
     }, [connectorTag]);
 
     const connectorSchema = useMemo(
@@ -83,12 +94,19 @@ export default function useConnectorField(
 
     const setConnector = useCallback(
         (details: Details, selectedDataPlaneId: string | undefined) => {
+            console.log('setConnector >>>>>', {
+                connectorId,
+                details,
+                selectedDataPlaneId,
+            });
+
             if (!hasLength(connectorId)) {
                 return;
             }
 
             setEntityNameChanged(details.data.entityName);
 
+            // TODO (GQL:connectors) - this is breaking edit
             navigateToCreate(entityType, {
                 id: connectorId,
                 advanceToForm: true,
