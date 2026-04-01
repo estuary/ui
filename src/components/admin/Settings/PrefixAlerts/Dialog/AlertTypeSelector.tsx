@@ -108,7 +108,9 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                 renderTags={(values, getTagProps) => {
                     return values.map(
                         ({ alertType, displayName, isSystemAlert }, index) => {
-                            const tagProps = getTagProps({ index });
+                            const { onDelete, ...tagProps } = getTagProps({
+                                index,
+                            });
 
                             return (
                                 <OutlinedChip
@@ -116,6 +118,9 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                                     diminishedText={isSystemAlert}
                                     key={`alert_type-tag-${alertType}-${index}`}
                                     label={displayName}
+                                    onDelete={
+                                        isSystemAlert ? undefined : onDelete
+                                    }
                                     size="small"
                                     variant="outlined"
                                 />
