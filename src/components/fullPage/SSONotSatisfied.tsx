@@ -43,7 +43,11 @@ export function FullPageSSONotSatisfied() {
             });
 
         if (ssoError) {
-            logRocketEvent('Auth:SSONotSatisfiedFailed', { ssoError });
+            console.log('SSO login failed', {
+                ssoError,
+                message: ssoError.message,
+            });
+            logRocketEvent('Auth:SSORedirectFailed', { ssoError });
             setError(ssoError.message);
             setLoading(false);
             return;
@@ -56,6 +60,7 @@ export function FullPageSSONotSatisfied() {
 
     return (
         <FullPageWrapper>
+            {error}
             <Error error={error} condensed={true} hideTitle={true} />
             <Stack
                 spacing={3}
