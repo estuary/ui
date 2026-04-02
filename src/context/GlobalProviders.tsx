@@ -45,6 +45,7 @@ const ssoCheckingFetch: typeof fetch = async (input, init) => {
 
     if (!response.ok) {
         try {
+            // clone here so we can pass the original response back to the caller unmodified
             const body = await response.clone().json();
             const message =
                 body?.error_description ?? body?.message ?? body?.error;

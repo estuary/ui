@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import AlertBox from 'src/components/shared/AlertBox';
-import { handleSsoRequired } from 'src/services/shared';
 
 interface Props {
     onSubmit: Function;
@@ -66,11 +65,6 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
             const { error } = await onSubmit(formData);
 
             if (error) {
-                if (handleSsoRequired(error.message)) {
-                    // handleSsoRequired redirects to SSO flow
-                    return;
-                }
-
                 setSubmitError(error);
                 setLoading(false);
                 return;

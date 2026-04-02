@@ -10,7 +10,6 @@ import { unauthenticatedRoutes } from 'src/app/routes';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useLoginRedirectPath from 'src/hooks/searchParams/useLoginRedirectPath';
-import { handleSsoRequired } from 'src/services/shared';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 // TODO (routes) This is hardcoded because unauthenticated routes... (same as MagicLink)
@@ -69,10 +68,6 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
                     },
                 });
                 if (error) {
-                    if (handleSsoRequired(error.message)) {
-                        // handleSsoRequired redirects to SSO flowu
-                        return;
-                    }
                     loginFailed(provider);
                 }
             } catch (error: unknown) {
