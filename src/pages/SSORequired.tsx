@@ -8,8 +8,8 @@ import HeaderMessage from './login/HeaderMessage';
 import { useIntl } from 'react-intl';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
-import FullPageWrapper from 'src/app/FullPageWrapper';
 import { unauthenticatedRoutes } from 'src/app/routes';
+import FullPageDialog from 'src/components/fullPage/Dialog';
 import { redirectToBase } from 'src/components/login/useRedirectPath';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import Error from 'src/components/shared/Error';
@@ -60,7 +60,7 @@ export function SSORequired() {
     };
 
     return (
-        <FullPageWrapper>
+        <FullPageDialog>
             <Error error={error} condensed={true} hideTitle={true} />
             <Stack
                 spacing={3}
@@ -88,6 +88,6 @@ export function SSORequired() {
                     })}
                 </SafeLoadingButton>
             </Stack>
-        </FullPageWrapper>
+        </FullPageDialog>
     );
 }
