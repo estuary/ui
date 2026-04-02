@@ -62,6 +62,11 @@ const ssoCheckingFetch: typeof fetch = async (input, init) => {
                 logRocketEvent('Auth:SSORequired', { domain });
                 const params = new URLSearchParams({ domain });
                 window.location.href = `${unauthenticatedRoutes.ssoRequired.path}?${params}`;
+
+                // Never resolve — we're navigating away, so prevent
+                // downstream code from processing the error response
+                // and flashing an error message before the redirect happens
+                return new Promise<Response>(() => {});
             }
         } catch {
             // Non-JSON response, skip
