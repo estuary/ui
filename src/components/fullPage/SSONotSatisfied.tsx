@@ -2,13 +2,13 @@ import { useState } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
-import Error from '../shared/Error';
 import { useIntl } from 'react-intl';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
+import Error from 'src/components/shared/Error';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { logRocketEvent } from 'src/services/shared';
 
