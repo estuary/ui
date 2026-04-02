@@ -62,7 +62,7 @@ const SSO_REQUIRED_PREFIX = 'sso_required:';
 export const handleSsoRequired = (message: string): boolean => {
     if (message.startsWith(SSO_REQUIRED_PREFIX)) {
         const domain = message.slice(SSO_REQUIRED_PREFIX.length);
-        logRocketConsole('Auth:SSORequired', domain);
+        logRocketEvent('Auth:SSORequired', { domain });
         useUserStore.getState().setSsoNotSatisfied(domain);
         return true;
     }

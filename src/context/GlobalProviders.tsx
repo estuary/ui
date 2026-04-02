@@ -40,8 +40,6 @@ const supabaseSettings = {
 };
 
 // Intercepts token refresh responses from Supabase to detect SSO requirements.
-// Login flows handle SSO inline; this covers the background auto-refresh case
-// where there is no other intercept point.
 const ssoCheckingFetch: typeof fetch = async (input, init) => {
     const response = await fetch(input, init);
 
@@ -79,6 +77,8 @@ function GlobalProviders({ children }: BaseComponentProps) {
     if (ssoNotSatisfied) {
         const params = new URLSearchParams({ domain: ssoNotSatisfied });
         window.location.href = `${unauthenticatedRoutes.ssoRequired.path}?${params}`;
+
+        // show spinner momentarily while redirecting
         return <FullPageSpinner />;
     }
 

@@ -30,15 +30,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
     const accessTokenRef = useRef(accessToken);
     accessTokenRef.current = accessToken;
 
-    // Tracks whether a refresh attempt has already failed for the current
-    // session values. Prevents willAuthError → refreshAuth from looping when
-    // refresh cannot succeed (e.g. SSO required). Resets automatically when
-    // the session changes because the useMemo re-runs with new deps.
-    const refreshFailed = useRef(false);
-
     const gqlClient = useMemo(() => {
-        refreshFailed.current = false;
-
         return new Client({
             url: import.meta.env.VITE_GQL_URL,
             preferGetMethod: false,
