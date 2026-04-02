@@ -35,6 +35,27 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    schema-check:
+        name: GraphQL Schema Check
+        needs: setup
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
+
+            - name: Get Deps
+              run: npm ci
+
+            - name: GraphQL Schema Check
+              run: npm run codegen:check
+
     quality:
         name: Check Quality
         needs: setup
@@ -59,9 +80,6 @@ jobs:
             - name: Licenses
               run: npm run licenses
 
-            - name: GraphQL Schema Check
-              run: npm run codegen:check
-
             - name: Typecheck
               run: npm run typecheck
 
@@ -82,7 +100,7 @@ jobs:
         name: Deploy
         env:
             NODE_OPTIONS: '--max_old_space_size=4096'
-        needs: quality
+        needs: [quality, schema-check]
         runs-on: ubuntu-latest
         if: ${{ github.ref == 'refs/heads/main' }}
 
