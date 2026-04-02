@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
+import HeaderMessage from './login/HeaderMessage';
 import { useIntl } from 'react-intl';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
@@ -52,6 +53,9 @@ export function SSORequired() {
 
         if (data?.url) {
             window.location.href = data.url;
+        } else {
+            // Fallback if no redirect URL was returned — don't leave the button stuck
+            window.location.href = '/';
         }
     };
 
@@ -63,11 +67,10 @@ export function SSORequired() {
                 alignItems="center"
                 sx={{ textAlign: 'center', minWidth: 400, p: 4 }}
             >
-                <Typography variant="h5">
-                    {intl.formatMessage({
-                        id: 'login.sso.required.title',
-                    })}
-                </Typography>
+                <HeaderMessage
+                    headerMessageId="login.sso.required.title"
+                    isRegister={false}
+                />
 
                 <Typography>
                     {intl.formatMessage({
