@@ -161,71 +161,33 @@ export type AlertSubscriptionsBy = {
 };
 
 export type AlertType =
-  /**
-   * Triggers when the automated background discovery process fails. If this
-   * alert is firing, it means that the Capture may be unable to respond to
-   * schema changes in the source system.
-   */
   | 'auto_discover_failed'
-  /**
-   * Triggers when an automated background process needs to publish a spec,
-   * but is unable to because of publication errors. Background publications
-   * are peformed on all specs for a variety of reasons. For example,
-   * updating inferred schemas, or updating materialization bindings to match
-   * the source capture. When these publications fail, tasks are likely to
-   * stop functioning correctly until the issue can be addressed.
-   */
   | 'background_publication_failed'
-  /**
-   * Triggers when there has been no data successfully processed by the task during
-   * the configured alert interval.
-   */
   | 'data_movement_stalled'
-  /**
-   * Triggers automatically for every tenant that begins a free
-   * trial, and resolves when the trial period ends.
-   */
   | 'free_trial'
-  /** Triggers when the free trial is getting close to expiring. */
   | 'free_trial_ending'
-  /**
-   * Triggers after the free trial period has expired, and still no payment info
-   * has been added.
-   */
   | 'free_trial_stalled'
-  /**
-   * Triggers for any tenants that do not have a payment method, and resolves when
-   * a payment method is added.
-   */
   | 'missing_payment_method'
-  /**
-   * Triggers after repeated task failures have been observed. The task may or may not
-   * continue to make progress in between failures, but at a minimum, performance will
-   * be degraded. And in many scenarios, the task will be unable to process data at all.
-   */
   | 'shard_failed'
-  /**
-   * The task was automatically disabled because its shards have been
-   * failing continuously for an extended period without any user intervention.
-   */
   | 'task_auto_disabled_failing'
-  /**
-   * The task was automatically disabled because it had not processed any
-   * data for an extended period and had not been modified recently.
-   */
   | 'task_auto_disabled_idle'
-  /**
-   * Warning that a task has been unable to run for an extended period. It will
-   * be automatically disabled unless the issue is addressed or a new version
-   * of the spec is published.
-   */
   | 'task_chronically_failing'
-  /**
-   * Warning that a task has not processed any data for an extended period
-   * and has not been modified recently. It will be automatically disabled
-   * unless a new version of the spec is published.
-   */
   | 'task_idle';
+
+/** Describes an alert type with user-facing metadata. */
+export type AlertTypeInfo = {
+  __typename?: 'AlertTypeInfo';
+  /** The alert type identifier. */
+  alertType: AlertType;
+  /** A user-facing description of what this alert type means. */
+  description: Scalars['String']['output'];
+  /** A short, user-facing alert type name. */
+  displayName: Scalars['String']['output'];
+  /** An indication of whether the alert type is subscribed to by default. */
+  isDefault: Scalars['Boolean']['output'];
+  /** An indication of whether the alert type is considered to be a system alert. */
+  isSystem: Scalars['Boolean']['output'];
+};
 
 export type AlertsBy = {
   /**
@@ -944,6 +906,8 @@ export type QueryRoot = {
   __typename?: 'QueryRoot';
   /** Returns a complete list of alert subscriptions. */
   alertSubscriptions: Array<AlertSubscription>;
+  /** Returns all possible alert types with their user-facing metadata. */
+  alertTypes: Array<AlertTypeInfo>;
   /**
    * Returns a list of alerts that are currently active for the given catalog
    * prefixes.
