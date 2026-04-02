@@ -54,17 +54,6 @@ const useUserStore = create<UserStore>()(
                     'setUserDetails'
                 );
             },
-            ssoNotSatisfied: null,
-            setSsoNotSatisfied: (newVal) => {
-                set(
-                    (state) => ({
-                        ...state,
-                        ssoNotSatisfied: newVal,
-                    }),
-                    false,
-                    'setSsoNotSatisfied'
-                );
-            },
         };
     }, devtoolsOptions(name))
 );

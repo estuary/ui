@@ -39,11 +39,12 @@ const supabaseSettings = {
     anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 };
 
+// "sso_required:" is a special error message prefix defined in the `public.check_sso_requirement` SQL function
+// that is configured in supabase as a custom Access Token (JWT) Claims hook
 const SSO_REQUIRED_PREFIX = 'sso_required:';
 
 // Intercepts Supabase responses to detect SSO requirements.
-// When detected, sets ssoNotSatisfied in the user store which triggers
-// a redirect to the SSO flow (see the guard below in GlobalProviders).
+// When detected, redirects immediately to the SSO required page.
 const ssoCheckingFetch: typeof fetch = async (input, init) => {
     const response = await fetch(input, init);
 
@@ -59,7 +60,8 @@ const ssoCheckingFetch: typeof fetch = async (input, init) => {
             ) {
                 const domain = message.slice(SSO_REQUIRED_PREFIX.length);
                 logRocketEvent('Auth:SSORequired', { domain });
-                useUserStore.getState().setSsoNotSatisfied(domain);
+                const params = new URLSearchParams({ domain });
+                window.location.href = `${unauthenticatedRoutes.ssoRequired.path}?${params}`;
             }
         } catch {
             // Non-JSON response, skip
@@ -77,17 +79,8 @@ export const supabaseClient = createClient(
 
 function GlobalProviders({ children }: BaseComponentProps) {
     const initialized = useUserStore((state) => state.initialized);
-    const ssoNotSatisfied = useUserStore((state) => state.ssoNotSatisfied);
 
     if (!initialized) {
-        return <FullPageSpinner />;
-    }
-
-    if (ssoNotSatisfied) {
-        const params = new URLSearchParams({ domain: ssoNotSatisfied });
-        window.location.href = `${unauthenticatedRoutes.ssoRequired.path}?${params}`;
-
-        // show spinner momentarily while redirecting
         return <FullPageSpinner />;
     }
 

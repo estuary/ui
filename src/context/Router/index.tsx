@@ -15,7 +15,6 @@ import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
 import AdminConnectors from 'src/components/admin/Connectors';
 import AdminSettings from 'src/components/admin/Settings';
-import { SSORequired } from 'src/pages/SSORequired';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
 import { DashboardWelcomeProvider } from 'src/context/DashboardWelcome';
@@ -39,6 +38,7 @@ import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import { SSORequired } from 'src/pages/SSORequired';
 import { isProduction } from 'src/utils/env-utils';
 
 // Capture
