@@ -5,7 +5,6 @@ import type { UserDetails } from 'src/types';
 import { isEmpty } from 'lodash';
 import LogRocket from 'logrocket';
 
-import { useUserStore } from 'src/context/User/useUserContextStore';
 import { isProduction } from 'src/utils/env-utils';
 
 export const DEFAULT_FILTER = '__unknown__';
@@ -50,23 +49,6 @@ export const logRocketConsole = (message: string, ...props: any[]) => {
     if (!isProduction) {
         console.log(message, props);
     }
-};
-
-const SSO_REQUIRED_PREFIX = 'sso_required:';
-
-/**
- * Checks if an error message indicates SSO is required, and if so,
- * extracts the domain and triggers the SSO redirect flow.
- * Returns true if SSO was required (caller should stop processing).
- */
-export const handleSsoRequired = (message: string): boolean => {
-    if (message.startsWith(SSO_REQUIRED_PREFIX)) {
-        const domain = message.slice(SSO_REQUIRED_PREFIX.length);
-        logRocketEvent('Auth:SSORequired', { domain });
-        useUserStore.getState().setSsoNotSatisfied(domain);
-        return true;
-    }
-    return false;
 };
 
 export const logRocketEvent = (

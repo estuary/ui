@@ -67,9 +67,7 @@ function useLoginHandler(grantToken?: string, isRegister?: boolean) {
                         // shouldCreateUser: isRegister,
                     },
                 });
-                if (error) {
-                    loginFailed(provider);
-                }
+                if (error) loginFailed(provider);
             } catch (error: unknown) {
                 loginFailed(provider);
             }

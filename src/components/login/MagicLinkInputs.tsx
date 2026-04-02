@@ -22,6 +22,7 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const intl = useIntl();
+
     const [showErrors, setShowErrors] = useState(false);
     const [loading, setLoading] = useState(false);
 
