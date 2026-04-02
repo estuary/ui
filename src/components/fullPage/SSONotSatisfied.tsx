@@ -7,6 +7,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import { unauthenticatedRoutes } from 'src/app/routes';
+import { redirectToBase } from 'src/components/login/useRedirectPath';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import Error from 'src/components/shared/Error';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -16,8 +17,6 @@ import { logRocketEvent } from 'src/services/shared';
 // Invite redemption is handled by the GQL mutation which independently checks SSO
 // status — if the user isn't SSO-authenticated the mutation rejects and directs
 // them to the normal SSO login page, where the grant token is preserved in the URL.
-
-const redirectToBase = `${window.location.origin}/auth`;
 
 export function FullPageSSONotSatisfied() {
     const intl = useIntl();
@@ -43,10 +42,6 @@ export function FullPageSSONotSatisfied() {
             });
 
         if (ssoError) {
-            console.log('SSO login failed', {
-                ssoError,
-                message: ssoError.message,
-            });
             logRocketEvent('Auth:SSORedirectFailed', { ssoError });
             setError(ssoError.message);
             setLoading(false);
@@ -60,7 +55,6 @@ export function FullPageSSONotSatisfied() {
 
     return (
         <FullPageWrapper>
-            {error}
             <Error error={error} condensed={true} hideTitle={true} />
             <Stack
                 spacing={3}
