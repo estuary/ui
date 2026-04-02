@@ -1,3 +1,5 @@
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+
 import { useState } from 'react';
 
 import { Stack, Typography } from '@mui/material';
@@ -18,12 +20,12 @@ import { logRocketEvent } from 'src/services/shared';
 // status — if the user isn't SSO-authenticated the mutation rejects and directs
 // them to the normal SSO login page, where the grant token is preserved in the URL.
 
-export function FullPageSSONotSatisfied() {
+export function SSORequired() {
     const intl = useIntl();
     const [searchParams] = useSearchParams();
     const domain = searchParams.get('domain');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<ErrorDetails>(null);
 
     if (!domain) {
         return <Navigate to={unauthenticatedRoutes.login.path} replace />;
@@ -43,7 +45,7 @@ export function FullPageSSONotSatisfied() {
 
         if (ssoError) {
             logRocketEvent('Auth:SSORedirectFailed', { ssoError });
-            setError(ssoError.message);
+            setError(ssoError);
             setLoading(false);
             return;
         }

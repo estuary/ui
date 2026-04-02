@@ -15,7 +15,7 @@ import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
 import AdminConnectors from 'src/components/admin/Connectors';
 import AdminSettings from 'src/components/admin/Settings';
-import { FullPageSSONotSatisfied } from 'src/components/fullPage/SSONotSatisfied';
+import { SSORequired } from 'src/pages/SSORequired';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
 import { DashboardWelcomeProvider } from 'src/context/DashboardWelcome';
@@ -128,7 +128,7 @@ const router = createBrowserRouter(
 
             <Route
                 path={unauthenticatedRoutes.ssoRequired.path}
-                element={<FullPageSSONotSatisfied />}
+                element={<SSORequired />}
             />
 
             <Route path={unauthenticatedRoutes.auth.path} element={<Auth />} />
