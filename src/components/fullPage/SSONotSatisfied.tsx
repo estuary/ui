@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
+import Error from '../shared/Error';
 import { useIntl } from 'react-intl';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
@@ -54,7 +55,8 @@ export function FullPageSSONotSatisfied() {
     };
 
     return (
-        <FullPageWrapper error={error}>
+        <FullPageWrapper>
+            <Error error={error} condensed={true} hideTitle={true} />
             <Stack
                 spacing={3}
                 alignItems="center"
