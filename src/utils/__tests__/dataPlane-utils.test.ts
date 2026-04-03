@@ -163,7 +163,7 @@ describe('parseDataPlaneName', () => {
         ).toStrictEqual({
             cluster: 'c2',
             prefix: 'melk/',
-            provider: 'aws',
+            provider: 'AWS',
             region: 'eu-west-1',
             whole: 'ops/dp/private/melk/aws-eu-west-1-c2',
         });
@@ -173,7 +173,7 @@ describe('parseDataPlaneName', () => {
         ).toStrictEqual({
             cluster: '',
             prefix: 'melk/',
-            provider: 'local',
+            provider: 'LOCAL',
             region: 'cluster',
             whole: 'ops/dp/private/melk/local-cluster',
         });
@@ -188,7 +188,7 @@ describe('parseDataPlaneName', () => {
         ).toStrictEqual({
             cluster: 'c2',
             prefix: 'melk/',
-            provider: 'aws',
+            provider: 'AWS',
             region: 'eu-west-1',
             whole: 'ops/dp/private/melk/aws-eu-west-1-c2',
         });
@@ -198,7 +198,7 @@ describe('parseDataPlaneName', () => {
         ).toStrictEqual({
             cluster: 'c2',
             prefix: '',
-            provider: 'aws',
+            provider: 'AWS',
             region: 'eu-west-1',
             whole: 'ops/dp/public/aws-eu-west-1-c2',
         });
@@ -208,7 +208,7 @@ describe('parseDataPlaneName', () => {
         ).toStrictEqual({
             cluster: 'c1',
             prefix: '',
-            provider: 'gcp',
+            provider: 'GCP',
             region: 'us-central1',
             whole: 'ops/dp/public/gcp-us-central1-c1',
         });
@@ -221,7 +221,7 @@ describe('parseDataPlaneName', () => {
         ).toStrictEqual({
             cluster: 'c1',
             prefix: 'melk/',
-            provider: 'az',
+            provider: 'AZ',
             region: 'australiaeast',
             whole: 'ops/dp/private/melk/az-australiaeast-c1',
         });
@@ -234,7 +234,7 @@ describe('parseDataPlaneName', () => {
         ).toStrictEqual({
             cluster: 'c1',
             prefix: 'melk/',
-            provider: 'azure',
+            provider: 'AZURE',
             region: 'centralus',
             whole: 'ops/dp/private/melk/azure-centralus-c1',
         });
@@ -244,7 +244,7 @@ describe('parseDataPlaneName', () => {
         ).toStrictEqual({
             cluster: 'c1',
             prefix: '',
-            provider: 'local',
+            provider: 'LOCAL',
             region: 'some_region',
             whole: 'ops/dp/public/local-some_region-c1',
         });
