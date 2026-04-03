@@ -128,7 +128,6 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.dialog.internalId': `Internal ID`,
     'admin.dataPlanes.dialog.description': `Data plane details and configuration`,
     'admin.dataPlanes.dialog.ips': `IPs`,
-    'admin.dataPlanes.dialog.notAvailable': `not available`,
 
     // There are dynamically generated in src/components/tables/DataPlanes/index.tsx
     'admin.dataPlanes.private.table.noContent.header': `No private data planes found`,
