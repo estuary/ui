@@ -8,9 +8,7 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
-import { useQuery } from 'urql';
 
-import { AlertTypeQuery } from 'src/api/alerts';
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -23,12 +21,12 @@ import {
 } from 'src/components/tables/PrefixAlerts/shared';
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
+import { useGetAlertTypes } from 'src/context/AlertType';
 import { TableStatuses } from 'src/types';
 
 function PrefixAlertTable() {
     const [{ data, error, fetching }] = useGetAlertSubscriptions();
-
-    const [alertTypeResponse] = useQuery({ query: AlertTypeQuery });
+    const [alertTypeResponse] = useGetAlertTypes();
 
     const setInitializationError = useAlertSubscriptionsStore(
         (state) => state.setInitializationError

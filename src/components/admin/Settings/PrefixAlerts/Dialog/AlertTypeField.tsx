@@ -4,14 +4,12 @@ import { useEffect } from 'react';
 
 import { Grid, Skeleton } from '@mui/material';
 
-import { useQuery } from 'urql';
-
-import { AlertTypeQuery } from 'src/api/alerts';
 import AlertTypeSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/AlertTypeSelector';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { useGetAlertTypes } from 'src/context/AlertType';
 
 const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
-    const [{ fetching, data, error }] = useQuery({ query: AlertTypeQuery });
+    const [{ fetching, data, error }] = useGetAlertTypes();
 
     const setServerError = useAlertSubscriptionsStore(
         (state) => state.setSaveErrors

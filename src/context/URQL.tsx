@@ -56,7 +56,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         // TODO (gql caching)  - see GRAPHQL.md
                         Alert: (_data) => null,
                         AlertSubscription: (_data) => null,
-                        AlertTypes: (_data) => null,
+                        AlertTypeInfo: (_data) => null,
                         InviteLink: (data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,

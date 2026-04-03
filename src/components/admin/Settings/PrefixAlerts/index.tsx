@@ -1,13 +1,16 @@
 import StandAloneTableTitle from 'src/components/tables/EntityTable/StandAloneTableTitle';
 import PrefixAlertTable from 'src/components/tables/PrefixAlerts';
 import { AlertSubscriptionsProvider } from 'src/context/AlertSubscriptions';
+import { AlertTypeProvider } from 'src/context/AlertType';
 
 function PrefixAlerts() {
     return (
-        <AlertSubscriptionsProvider>
-            <StandAloneTableTitle titleIntlKey="alerts.config.header" />
-            <PrefixAlertTable />
-        </AlertSubscriptionsProvider>
+        <AlertTypeProvider>
+            <AlertSubscriptionsProvider>
+                <StandAloneTableTitle titleIntlKey="alerts.config.header" />
+                <PrefixAlertTable />
+            </AlertSubscriptionsProvider>
+        </AlertTypeProvider>
     );
 }
 
