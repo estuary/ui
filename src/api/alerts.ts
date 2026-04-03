@@ -96,7 +96,7 @@ const AlertSubscriptionUpdateMutation = gql<
 `;
 
 const AlertTypeQuery = gql<AlertTypeQueryResponse>`
-    query {
+    query AlertType {
         alertTypes {
             alertType
             description
