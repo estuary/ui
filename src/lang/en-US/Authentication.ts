@@ -43,6 +43,10 @@ export const Authentication: Record<string, string> = {
     'login.sso.back': `Back to Sign In`,
     'login.sso.header': `Enter your company email to access ${CommonMessages.productName} via Single Sign-On.`,
 
+    'login.sso.required.title': `SSO Required`,
+    'login.sso.required.message': `Your organization requires SSO.`,
+    'login.sso.required.cta': `Continue to SSO Login`,
+
     'login.sso.separator': `Or to register with Single Sign-On`,
 
     'login.sso.register.message.help': `${CTAs['cta.contactUs']}`,
