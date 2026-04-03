@@ -59,6 +59,9 @@ export function SSORequired() {
             window.location.href = data.url;
         } else {
             // Fallback if no redirect URL was returned — don't leave the button stuck
+            logRocketEvent('Auth:SSORedirectFailed', {
+                ssoError: 'No redirect URL returned',
+            });
             window.location.href = '/';
         }
     };
