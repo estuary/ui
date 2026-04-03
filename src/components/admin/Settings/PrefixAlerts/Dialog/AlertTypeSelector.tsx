@@ -54,7 +54,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                     setAlertTypes(values);
                 }}
                 options={options
-                    .filter(({ isSystemAlert }) => !isSystemAlert)
+                    .filter(({ isSystem }) => !isSystem)
                     .sort((first, second) =>
                         basicSort_string(
                             first.displayName,
@@ -119,40 +119,33 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                         .sort((first, second) =>
                             sortByAlertType(
                                 {
-                                    isSystemAlert: first.isSystemAlert,
+                                    isSystemAlert: first.isSystem,
                                     value: first.displayName,
                                 },
                                 {
-                                    isSystemAlert: second.isSystemAlert,
+                                    isSystemAlert: second.isSystem,
                                     value: second.displayName,
                                 },
                                 'asc'
                             )
                         )
-                        .map(
-                            (
-                                { alertType, displayName, isSystemAlert },
-                                index
-                            ) => {
-                                const { onDelete, ...tagProps } = getTagProps({
-                                    index,
-                                });
+                        .map(({ alertType, displayName, isSystem }, index) => {
+                            const { onDelete, ...tagProps } = getTagProps({
+                                index,
+                            });
 
-                                return (
-                                    <OutlinedChip
-                                        {...tagProps}
-                                        diminishedText={isSystemAlert}
-                                        key={`alert_type-tag-${alertType}-${index}`}
-                                        label={displayName}
-                                        onDelete={
-                                            isSystemAlert ? undefined : onDelete
-                                        }
-                                        size="small"
-                                        variant="outlined"
-                                    />
-                                );
-                            }
-                        );
+                            return (
+                                <OutlinedChip
+                                    {...tagProps}
+                                    diminishedText={isSystem}
+                                    key={`alert_type-tag-${alertType}-${index}`}
+                                    label={displayName}
+                                    onDelete={isSystem ? undefined : onDelete}
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            );
+                        });
                 }}
                 value={values}
             />

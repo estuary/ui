@@ -150,7 +150,7 @@ export interface AlertTypeDef {
     description: string;
     displayName: string;
     isDefault: boolean;
-    isSystemAlert: boolean;
+    isSystem: boolean;
     __typename: string;
 }
 

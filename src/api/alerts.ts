@@ -102,7 +102,7 @@ const AlertTypeQuery = gql<AlertTypeQueryResponse>`
             description
             displayName
             isDefault
-            isSystemAlert
+            isSystem
         }
     }
 `;

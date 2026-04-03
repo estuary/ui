@@ -28,19 +28,19 @@ function Row({ alertTypeDefs, row }: RowProps) {
                     .sort((first, second) =>
                         sortByAlertType(
                             {
-                                isSystemAlert: first.isSystemAlert,
+                                isSystemAlert: first.isSystem,
                                 value: first.displayName,
                             },
                             {
-                                isSystemAlert: second.isSystemAlert,
+                                isSystemAlert: second.isSystem,
                                 value: second.displayName,
                             },
                             'asc'
                         )
                     )
-                    .map(({ displayName, isSystemAlert }) => ({
+                    .map(({ displayName, isSystem }) => ({
                         display: displayName,
-                        diminishedText: isSystemAlert,
+                        diminishedText: isSystem,
                     }))}
             />
 
