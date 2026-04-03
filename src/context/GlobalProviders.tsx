@@ -39,11 +39,6 @@ const supabaseSettings = {
     anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 };
 
-// Supabase stores the session at this key in localStorage.
-// Mirrors the key built in @supabase/supabase-js SupabaseClient constructor
-// (not exported, so we reproduce it here).
-const supabaseStorageKey = `sb-${new URL(supabaseSettings.url).hostname.split('.')[0]}-auth-token`;
-
 // "sso_required:" is a special error message prefix defined in the `public.check_sso_requirement` SQL function
 // that is configured in supabase as a custom Access Token (JWT) Claims hook
 const SSO_REQUIRED_PREFIX = 'sso_required:';
@@ -55,10 +50,10 @@ const ssoCheckingFetch: typeof fetch = async (input, init) => {
 
     if (!response.ok) {
         try {
-            // clone so the original response is returned unmodified
+            // clone so we don't consume the original body stream with json(),
+            // preserving it for downstream code that expects to read the response body
             const body = await response.clone().json();
-            const message =
-                body?.error_description ?? body?.message ?? body?.error;
+            const message = body?.message;
             if (
                 typeof message === 'string' &&
                 message.startsWith(SSO_REQUIRED_PREFIX)
@@ -66,13 +61,6 @@ const ssoCheckingFetch: typeof fetch = async (input, init) => {
                 const domain = message.slice(SSO_REQUIRED_PREFIX.length);
                 logRocketEvent('Auth:SSORequired', { domain });
                 const params = new URLSearchParams({ domain });
-
-                // Remove the session directly from localStorage.
-                // We can't use supabaseClient.auth.signOut() here
-                // because the token refresh that triggered this
-                // interceptor holds Supabase's internal session
-                // lock, so calling signOut deadlocks and hangs.
-                localStorage.removeItem(supabaseStorageKey);
 
                 window.location.href = `${unauthenticatedRoutes.ssoRequired.path}?${params}`;
 

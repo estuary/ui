@@ -1,6 +1,6 @@
 import type { ErrorDetails } from 'src/components/shared/Error/types';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
@@ -27,6 +27,10 @@ export function SSORequired() {
     const domain = searchParams.get('domain');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<ErrorDetails>(null);
+
+    useEffect(() => {
+        void supabaseClient.auth.signOut();
+    }, []);
 
     if (!domain) {
         return <Navigate to={unauthenticatedRoutes.login.path} replace />;
