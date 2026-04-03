@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 
-import HeaderMessage from './login/HeaderMessage';
 import { useIntl } from 'react-intl';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
@@ -14,6 +13,7 @@ import { redirectToBase } from 'src/components/login/useRedirectPath';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import Error from 'src/components/shared/Error';
 import { supabaseClient } from 'src/context/GlobalProviders';
+import HeaderMessage from 'src/pages/login/HeaderMessage';
 import { logRocketEvent } from 'src/services/shared';
 
 // Note: this component intentionally does not handle grant tokens (invite links).
