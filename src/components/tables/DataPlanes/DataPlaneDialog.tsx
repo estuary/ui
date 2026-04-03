@@ -80,7 +80,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             })}
                             value={
                                 PROVIDER_LABELS[
-                                    dataPlaneName.provider.toUpperCase() as CloudProvider
+                                    dataPlaneName.provider as CloudProvider
                                 ]
                             }
                             showCopyButton={false}
@@ -92,7 +92,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                                 id: 'admin.dataPlanes.column.header.region',
                             })}
                             value={getRegionDisplayName(
-                                dataPlaneName.provider.toUpperCase() as CloudProvider,
+                                dataPlaneName.provider as CloudProvider,
                                 dataPlaneName.region
                             )}
                             showCopyButton={false}

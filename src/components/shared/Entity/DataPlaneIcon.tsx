@@ -17,11 +17,13 @@ const getProviderIconPath = (
     provider: string | undefined,
     colorMode: PaletteMode
 ) => {
-    if (provider === 'aws') {
+    const normalized = provider?.toUpperCase();
+
+    if (normalized === 'AWS') {
         return colorMode === 'light' ? awsLogo : awsLogoWhite;
     }
 
-    if (provider === 'gcp') {
+    if (normalized === 'GCP') {
         return gcpLogo;
     }
 
@@ -29,7 +31,7 @@ const getProviderIconPath = (
     //  One day we may be able to work with MS and get an agreement
     //  worked out to show the proper Azure logo. Until then we will
     //  use a placeholder.
-    if (provider === 'azure' || provider === 'az') {
+    if (normalized === 'AZURE' || normalized === 'AZ') {
         return azurePlaceholder;
     }
 
