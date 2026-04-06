@@ -3,6 +3,7 @@ import type { BaseComponentProps } from 'src/types';
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
+import { useIntl } from 'react-intl';
 import { useClient } from 'urql';
 
 import { CONNECTOR_BY_ID_QUERY } from 'src/api/gql/connectors';
@@ -28,6 +29,7 @@ const ConnectorTagContext = createContext<ConnectorTagData | null>(null);
 export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
     const client = useClient();
+    const intl = useIntl();
 
     const [connectorTag, setConnectorTag] = useState<ConnectorTagData | null>(
         null
@@ -72,11 +74,17 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
         return (
             <ErrorComponent
                 condensed
-                error={{ ...BASE_ERROR, message: fetchError }}
+                error={{
+                    ...BASE_ERROR,
+                    message: intl.formatMessage({
+                        id: 'workflow.connectorTag.error.message',
+                    }),
+                }}
             />
         );
     }
 
+    // While loading we don't want to show anything
     if (!connectorTag) {
         return null;
     }

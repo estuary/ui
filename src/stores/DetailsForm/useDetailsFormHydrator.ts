@@ -56,9 +56,6 @@ export const useDetailsFormHydrator = () => {
     const setPreviousDetails = useDetailsFormStore(
         (state) => state.setPreviousDetails
     );
-    const setUnsupportedConnectorVersion = useDetailsFormStore(
-        (state) => state.setUnsupportedConnectorVersion
-    );
 
     const evaluateDataPlaneOptions = useEvaluateDataPlaneOptions();
     const getDataPlane = useGetDataPlane();
@@ -110,7 +107,6 @@ export const useDetailsFormHydrator = () => {
 
                 const {
                     catalog_name,
-                    connector_tag_id,
                     data_plane_id,
                     data_plane_name,
                     reactor_address,
@@ -135,11 +131,6 @@ export const useDetailsFormHydrator = () => {
                         dataPlane: dataPlane ?? undefined,
                     },
                 };
-
-                setUnsupportedConnectorVersion(
-                    connectorImage.id,
-                    connector_tag_id
-                );
 
                 setDetails(hydratedDetails);
                 setPreviousDetails(hydratedDetails);
@@ -180,7 +171,6 @@ export const useDetailsFormHydrator = () => {
             setHydrated,
             setHydrationErrorsExist,
             setPreviousDetails,
-            setUnsupportedConnectorVersion,
             workflow,
         ]
     );

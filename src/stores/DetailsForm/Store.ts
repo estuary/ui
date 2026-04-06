@@ -115,7 +115,6 @@ const getInitialStateData = (): Pick<
     | 'draftedEntityName'
     | 'entityNameChanged'
     | 'previousDetails'
-    | 'unsupportedConnectorVersion'
 > => ({
     connectors: [],
 
@@ -124,7 +123,6 @@ const getInitialStateData = (): Pick<
 
     details: initialDetails,
     errorsExist: true,
-    unsupportedConnectorVersion: false,
 
     draftedEntityName: '',
     entityNameChanged: false,
@@ -234,25 +232,6 @@ export const getInitialState = (
         );
     },
 
-    setUnsupportedConnectorVersion: (evaluatedId, existingId) => {
-        set(
-            produce((state: DetailsFormState) => {
-                const unsupported = evaluatedId !== existingId;
-
-                if (unsupported) {
-                    logRocketEvent(CustomEvents.CONNECTOR_VERSION_UNSUPPORTED, {
-                        evaluatedId,
-                        existingId,
-                    });
-                }
-
-                state.unsupportedConnectorVersion = unsupported;
-            }),
-            false,
-            'Unsupported Connector Version Flag Changed'
-        );
-    },
-
     setDraftedEntityName: (value) => {
         set(
             produce((state: DetailsFormState) => {
@@ -357,7 +336,6 @@ export const getInitialState = (
                     const {
                         catalog_name,
                         connector_image_tag,
-                        connector_tag_id,
                         data_plane_id,
                     } = data[0];
 
@@ -379,11 +357,6 @@ export const getInitialState = (
                                 dataPlane,
                             },
                         };
-
-                        get().setUnsupportedConnectorVersion(
-                            connectorImage.id,
-                            connector_tag_id
-                        );
 
                         get().setDetails(hydratedDetails);
                         get().setPreviousDetails(hydratedDetails);
