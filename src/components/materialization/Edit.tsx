@@ -11,7 +11,6 @@ import EntityEdit from 'src/components/shared/Entity/Edit';
 import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -27,9 +26,6 @@ function MaterializationEdit() {
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
 
     const entityType = 'materialization';
-
-    // Supabase
-    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -59,16 +55,13 @@ function MaterializationEdit() {
                         toolbar={
                             <EntityToolbar
                                 GenerateButton={
-                                    <MaterializeGenerateButton
-                                        disabled={!hasConnectors}
-                                    />
+                                    <MaterializeGenerateButton />
                                 }
                                 primaryButtonProps={{
                                     disabled: !draftId,
                                     logEvent: CustomEvents.MATERIALIZATION_EDIT,
                                 }}
                                 secondaryButtonProps={{
-                                    disabled: !hasConnectors,
                                     logEvent: CustomEvents.MATERIALIZATION_TEST,
                                 }}
                             />

@@ -11,7 +11,6 @@ import {
 import EntityCreate from 'src/components/shared/Entity/Create';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
@@ -26,8 +25,6 @@ function CaptureCreate() {
         headerLink:
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });
-
-    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Details Form Store
     const entityNameChanged = useDetailsFormStore(
@@ -88,13 +85,11 @@ function CaptureCreate() {
                                 logEvent: CustomEvents.CAPTURE_CREATE,
                             }}
                             secondaryButtonProps={{
-                                disabled: !hasConnectors,
                                 logEvent: CustomEvents.CAPTURE_TEST,
                             }}
                             GenerateButton={
                                 <CaptureGenerateButton
                                     entityType={entityType}
-                                    disabled={!hasConnectors}
                                     createWorkflowMetadata={{
                                         initiateDiscovery,
                                         setInitiateDiscovery,
@@ -104,10 +99,7 @@ function CaptureCreate() {
                         />
                     }
                     RediscoverButton={
-                        <RediscoverButton
-                            entityType={entityType}
-                            disabled={!hasConnectors}
-                        />
+                        <RediscoverButton entityType={entityType} />
                     }
                 />
             </MutateDraftSpecProvider>

@@ -11,7 +11,6 @@ import MaterializeGenerateButton from 'src/components/materialization/GenerateBu
 import EntityCreate from 'src/components/shared/Entity/Create';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
@@ -26,9 +25,6 @@ function MaterializationCreate() {
     });
 
     const entityType = 'materialization';
-
-    // Supabase
-    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Details Form Store
     const imageTag = useDetailsFormStore(
@@ -67,16 +63,13 @@ function MaterializationCreate() {
                     Toolbar={
                         <EntityToolbar
                             GenerateButton={
-                                <MaterializeGenerateButton
-                                    disabled={!hasConnectors}
-                                />
+                                <MaterializeGenerateButton />
                             }
                             primaryButtonProps={{
                                 disabled: !draftId,
                                 logEvent: CustomEvents.MATERIALIZATION_CREATE,
                             }}
                             secondaryButtonProps={{
-                                disabled: !hasConnectors,
                                 logEvent: CustomEvents.MATERIALIZATION_TEST,
                             }}
                         />
