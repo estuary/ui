@@ -54,14 +54,6 @@ function CaptureCreate() {
         }
     }, [mutateDraftSpecs, mutate_advancedEditor]);
 
-    // TODO (GQL:connector) - we do not allow changing I think we're good to remove this
-    // Reset the catalog if the connector changes
-    // useEffect(() => {
-    //     console.log('sup >>>>> ');
-    //     setDraftId(null);
-    //     setInitiateDiscovery(true);
-    // }, [setDraftId, setInitiateDiscovery, imageTag]);
-
     // If the name changed we need to make sure we run discovery again
     useEffect(() => {
         if (entityNameChanged) {
