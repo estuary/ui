@@ -230,7 +230,7 @@ const getInitialState = (
     hydrateState: async (
         editWorkflow,
         entityType,
-        connectorTagId,
+        connectorTag,
         getTrialOnlyPrefixes,
         rehydrating
     ) => {
@@ -248,13 +248,13 @@ const getInitialState = (
         get().resetState(materializationRehydrating);
 
         const connectorTagResponse = await hydrateConnectorTagDependentState(
-            connectorTagId,
+            connectorTag,
             get
         );
 
         const fallbackInterval =
             entityType === 'capture' &&
-            typeof connectorTagResponse?.default_capture_interval === 'string'
+            typeof connectorTagResponse?.defaultCaptureInterval === 'string'
                 ? ''
                 : null;
 
@@ -273,7 +273,7 @@ const getInitialState = (
 
             const specHydrationResponse =
                 await hydrateSpecificationDependentState(
-                    connectorTagResponse?.default_capture_interval,
+                    connectorTagResponse?.defaultCaptureInterval,
                     entityType,
                     fallbackInterval,
                     get,
@@ -305,7 +305,7 @@ const getInitialState = (
         } else {
             get().setCaptureInterval(
                 fallbackInterval,
-                connectorTagResponse?.default_capture_interval
+                connectorTagResponse?.defaultCaptureInterval
             );
         }
 
