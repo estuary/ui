@@ -286,7 +286,13 @@ export const parseDataPlaneName = (
         }
     }
 
-    return { cluster, prefix, provider, region, whole: dataPlaneName };
+    return {
+        cluster,
+        prefix,
+        provider: provider.toUpperCase(),
+        region,
+        whole: dataPlaneName,
+    };
 };
 /** @deprecated use toPresentableName(dataPlane: DataPlaneNode) */
 export const formatDataPlaneName = (dataPlaneName: DataPlaneName) => {

@@ -1,12 +1,8 @@
 import type { PostgrestSingleResponse } from '@supabase/postgrest-js';
 import type { UserClaims } from 'src/directives/types';
-import type { CallSupabaseResponse, SortingProps } from 'src/services/supabase';
 import type {
     AppliedDirective,
     Directive,
-    GrantDirective,
-    GrantDirective_AccessLinks,
-    GrantDirectiveSpec,
     JoinedAppliedDirective,
     Schema,
 } from 'src/types';
@@ -15,21 +11,11 @@ import { supabaseClient } from 'src/context/GlobalProviders';
 import { DIRECTIVES } from 'src/directives/shared';
 import { logRocketConsole } from 'src/services/shared';
 import {
-    defaultTableFilter,
-    handleFailure,
-    handleSuccess,
-    insertSupabase,
     RPCS,
     supabaseRetry,
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
-
-interface GrantDirective_CreateMatchData {
-    catalog_prefix: string;
-    spec: GrantDirectiveSpec;
-    uses_remaining?: number | null;
-}
 
 export interface ExchangeResponse {
     directive: Directive | null; // Only null so we can "fake" this response below
@@ -133,78 +119,4 @@ const getAppliedDirectives = (
         .returns<JoinedAppliedDirective[]>();
 };
 
-const generateGrantDirective = (
-    prefix: string,
-    capability: string,
-    singleUse?: boolean
-): PromiseLike<CallSupabaseResponse<GrantDirective[]>> => {
-    let data: GrantDirective_CreateMatchData = {
-        catalog_prefix: prefix,
-        spec: {
-            type: 'grant',
-            grantedPrefix: prefix,
-            capability,
-        },
-    };
-
-    if (singleUse) {
-        data = { ...data, uses_remaining: 1 };
-    }
-    return insertSupabase(TABLES.DIRECTIVES, data);
-};
-
-const getDirectiveByToken = async (token: string) => {
-    const data = await supabaseRetry(
-        () =>
-            supabaseClient
-                .from(TABLES.DIRECTIVES)
-                .select(`spec,token`)
-                .eq('token', token),
-        'getDirectiveByToken'
-    ).then(
-        handleSuccess<Pick<GrantDirective, 'spec' | 'token'>[]>,
-        handleFailure
-    );
-
-    return data;
-};
-
-// Used in table hydrator which handles the retrying
-const getDirectivesByType = (
-    directiveType: keyof typeof DIRECTIVES,
-    pagination: any,
-    searchQuery: any,
-    sorting: SortingProps<any>[]
-) => {
-    return defaultTableFilter<GrantDirective_AccessLinks[]>(
-        supabaseClient
-            .from(TABLES.DIRECTIVES)
-            .select(`id,catalog_prefix,uses_remaining,spec,token,updated_at`, {
-                count: 'exact',
-            })
-            .eq('spec->>type', directiveType)
-            .or(`uses_remaining.gt.0,uses_remaining.is.null`),
-        ['catalog_prefix', `spec->>capability`, `spec->>grantedPrefix`],
-        searchQuery,
-        sorting,
-        pagination
-    );
-};
-
-const disableDirective = (directiveId: string) => {
-    return updateSupabase(
-        TABLES.DIRECTIVES,
-        { uses_remaining: 0 },
-        { id: directiveId }
-    );
-};
-
-export {
-    disableDirective,
-    exchangeBearerToken,
-    generateGrantDirective,
-    getAppliedDirectives,
-    getDirectivesByType,
-    getDirectiveByToken,
-    submitDirective,
-};
+export { exchangeBearerToken, getAppliedDirectives, submitDirective };

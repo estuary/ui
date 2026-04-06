@@ -1,4 +1,3 @@
-import type { VariantType } from 'notistack';
 import type { DefaultLoginProps } from 'src/components/login/types';
 
 import React, { useState } from 'react';
@@ -12,42 +11,19 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
-import { useNavigate } from 'react-router';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
-import useRedirectPath from 'src/components/login/useRedirectPath';
+import { useSSOSignIn } from 'src/components/login/SSO/useSSOSignIn';
 import AlertBox from 'src/components/shared/AlertBox';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import { hasLength } from 'src/utils/misc-utils';
 
-const SSOForm = ({ grantToken }: DefaultLoginProps) => {
-    const redirectPath = useRedirectPath(grantToken);
-
+export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
     const intl = useIntl();
-    const navigate = useNavigate();
-    const { enqueueSnackbar } = useSnackbar();
+
+    const { loading, submitError, signInSSO } = useSSOSignIn(grantToken);
 
     const [showErrors, setShowErrors] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const [submitError, setSubmitError] = useState<string | null>(null);
-
-    const displayNotification = (id: string, variant: VariantType) => {
-        enqueueSnackbar(
-            intl.formatMessage({
-                id,
-            }),
-            {
-                anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'center',
-                },
-                variant,
-            }
-        );
-    };
 
     const handlers = {
         submit: async (event: React.FormEvent<HTMLFormElement>) => {
@@ -68,45 +44,8 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             }
 
             setShowErrors(false);
-            setSubmitError(null);
-            setLoading(true);
 
-            const { data, error } = await supabaseClient.auth.signInWithSSO({
-                domain: submittedDomain,
-                options: {
-                    redirectTo: redirectPath,
-                },
-            });
-
-            if (error) {
-                // Saw these messages but no clue how to handle them right now
-                // sso_provider_not_found
-
-                // The errors returned by this call are kind of weird so overriding
-                //  and setting a common message.
-                setSubmitError(
-                    intl.formatMessage(
-                        { id: 'login.signinFailed.message.default' },
-                        {
-                            domain: submittedDomain,
-                        }
-                    )
-                );
-                setLoading(false);
-                return;
-            }
-
-            if (data.url) {
-                // redirect the user to the identity provider's authentication flow
-                window.location.href = data.url;
-                return;
-            }
-
-            displayNotification('login.sso', 'success');
-            setLoading(false);
-            navigate(redirectPath, {
-                replace: true,
-            });
+            await signInSSO({ domain: submittedDomain });
         },
     };
 
@@ -176,5 +115,3 @@ const SSOForm = ({ grantToken }: DefaultLoginProps) => {
         </Stack>
     );
 };
-
-export default SSOForm;
