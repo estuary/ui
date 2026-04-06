@@ -1,6 +1,6 @@
 import type { ConnectorCardsProps } from 'src/components/connectors/Grid/types';
 import type { ConnectorProto } from 'src/gql-types/graphql';
-import type { TableState } from 'src/types';
+import type { EntityWithCreateWorkflow, TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -57,8 +57,13 @@ export default function ConnectorCards({
     const selectData = useMemo(() => {
         const nodes = (queryData?.connectors.edges ?? [])
             .map((edge) => edge.node)
-            // TODO (gql:connector) - I think we can remove this
-            .filter((node) => node.connectorTag !== null);
+            .filter(
+                (
+                    node
+                ): node is typeof node & {
+                    connectorTag: NonNullable<typeof node.connectorTag>;
+                } => node.connectorTag !== null
+            );
 
         if (!searchQuery) return nodes;
 
@@ -76,7 +81,10 @@ export default function ConnectorCards({
         <ConnectorRequestCard key="connector-tile-request" />
     );
 
-    const primaryCtaClick = (entityType: any, connectorId: string) => {
+    const primaryCtaClick = (
+        entityType: EntityWithCreateWorkflow,
+        connectorId: string
+    ) => {
         navigateToCreate(entityType, {
             id: connectorId,
             advanceToForm: true,
@@ -137,14 +145,14 @@ export default function ConnectorCards({
         <>
             {selectData
                 .map((node) => {
-                    // TODO (gql:connector) - doubt we need this
-                    if (!node.connectorTag) {
+                    const { connectorTag } = node;
+                    const ConnectorCard = condensed ? Card : LegacyCard;
+                    const entityType = connectorTag.protocol;
+
+                    // TODO (GQL:connector) how to better handle with typing?
+                    if (!entityType) {
                         return null;
                     }
-
-                    const ConnectorCard = condensed ? Card : LegacyCard;
-
-                    const entityType = node.connectorTag?.protocol ?? 'capture';
 
                     return (
                         <ConnectorCard
@@ -152,10 +160,10 @@ export default function ConnectorCards({
                             clickHandler={() =>
                                 primaryCtaClick(
                                     entityType,
-                                    node.connectorTag?.connectorId
+                                    connectorTag.connectorId
                                 )
                             }
-                            docsUrl={node.connectorTag?.documentationUrl ?? ''}
+                            docsUrl={connectorTag.documentationUrl ?? ''}
                             entityType={entityType}
                             recommended={node.recommended}
                             Detail={
