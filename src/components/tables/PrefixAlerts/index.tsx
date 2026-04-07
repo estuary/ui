@@ -1,6 +1,6 @@
 import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
+import type { AlertTypeInfo } from 'src/gql-types/graphql';
 import type { TableState } from 'src/types';
-import type { AlertTypeDef } from 'src/types/gql';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -52,7 +52,7 @@ function PrefixAlertTable() {
                 : data.alertSubscriptions;
         }, [data, searchQuery]);
 
-    const alertTypeDefs: AlertTypeDef[] = useMemo(
+    const alertTypeDefs: AlertTypeInfo[] = useMemo(
         () =>
             !alertTypeResponse.data ? [] : alertTypeResponse.data.alertTypes,
         [alertTypeResponse.data]

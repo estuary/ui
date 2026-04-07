@@ -1,6 +1,6 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { AlertTypeSelectorProps } from 'src/components/admin/Settings/PrefixAlerts/types';
-import type { AlertTypeDef } from 'src/types/gql';
+import type { AlertTypeInfo } from 'src/gql-types/graphql';
 
 import { useMemo } from 'react';
 
@@ -35,7 +35,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
         (state) => state.setAlertTypes
     );
 
-    const values: AlertTypeDef[] = useMemo(
+    const values: AlertTypeInfo[] = useMemo(
         () => options.filter(({ alertType }) => alertTypes.includes(alertType)),
         [options, alertTypes]
     );

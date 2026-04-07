@@ -1,3 +1,4 @@
+import type { AlertTypeInfo } from 'src/gql-types/graphql';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
 export type AlertType =
@@ -145,17 +146,8 @@ export interface AlertSubscriptionsBy {
     prefix: string;
 }
 
-export interface AlertTypeDef {
-    alertType: string;
-    description: string;
-    displayName: string;
-    isDefault: boolean;
-    isSystem: boolean;
-    __typename: string;
-}
-
 export interface AlertTypeQueryResponse {
-    alertTypes: AlertTypeDef[];
+    alertTypes: AlertTypeInfo[];
 }
 
 export interface BaseAlertSubscriptionMutationInput {

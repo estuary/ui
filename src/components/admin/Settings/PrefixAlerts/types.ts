@@ -1,10 +1,8 @@
 import type { TableCellProps } from '@mui/material';
 import type { Dispatch, SetStateAction } from 'react';
 import type { ReducedAlertSubscription } from 'src/api/types';
-import type {
-    AlertTypeDef,
-    BaseAlertSubscriptionMutationInput,
-} from 'src/types/gql';
+import type { AlertTypeInfo } from 'src/gql-types/graphql';
+import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
 
 export interface AlertSubscriptionDialogProps
     extends AlertTypeFieldProps,
@@ -29,7 +27,7 @@ export interface AlertTypeFieldProps {
 }
 
 export interface AlertTypeSelectorProps {
-    options: AlertTypeDef[];
+    options: AlertTypeInfo[];
 }
 
 export interface DialogActionProps {

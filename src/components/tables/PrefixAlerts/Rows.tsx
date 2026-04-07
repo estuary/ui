@@ -2,7 +2,7 @@ import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/PrefixAlerts/types';
-import type { AlertTypeDef } from 'src/types/gql';
+import type { AlertTypeInfo } from 'src/gql-types/graphql';
 
 import { TableCell, TableRow } from '@mui/material';
 
@@ -11,7 +11,7 @@ import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton
 import { sortByAlertType } from 'src/utils/misc-utils';
 
 function Row({ alertTypeDefs, row }: RowProps) {
-    const evaluatedAlertTypes: AlertTypeDef[] = row.alertTypes
+    const evaluatedAlertTypes: AlertTypeInfo[] = row.alertTypes
         .map((alertType) =>
             alertTypeDefs.find((def) => def.alertType === alertType)
         )
