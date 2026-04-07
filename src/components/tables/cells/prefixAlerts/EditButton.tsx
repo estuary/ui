@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Button, TableCell } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -15,6 +15,8 @@ function AlertEditButton({
     prefix,
     ...props
 }: EditButtonProps) {
+    const intl = useIntl();
+
     const [open, setOpen] = useState(false);
 
     const setSubscribedEmail = useAlertSubscriptionsStore(
@@ -32,7 +34,7 @@ function AlertEditButton({
                     setOpen(true);
                 }}
             >
-                <FormattedMessage id="cta.edit" />
+                {intl.formatMessage({ id: 'cta.edit' })}
             </Button>
 
             <AlertSubscriptionDialog
