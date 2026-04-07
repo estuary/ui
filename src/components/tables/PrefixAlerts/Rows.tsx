@@ -64,10 +64,10 @@ function Row({ alertTypeDefs, row }: RowProps) {
 function Rows({ alertTypeDefs, data }: RowsProps) {
     return (
         <>
-            {data.map((datum) => (
+            {data.map((datum, index) => (
                 <Row
                     alertTypeDefs={alertTypeDefs}
-                    key={`${datum.catalogPrefix}-${datum.email}`}
+                    key={`${datum.catalogPrefix}-${datum.email}-{index}`}
                     row={datum}
                 />
             ))}
