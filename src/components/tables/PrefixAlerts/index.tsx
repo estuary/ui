@@ -94,7 +94,6 @@ function PrefixAlertTable() {
         }
     }, [
         alertTypeResponse.fetching,
-        displayLoadingState,
         fetching,
         processedData.length,
         searchQuery,
