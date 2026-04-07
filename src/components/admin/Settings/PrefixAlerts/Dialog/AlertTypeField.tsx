@@ -20,15 +20,18 @@ const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
     );
 
     useEffect(() => {
-        if (!fetching && existingAlertTypes && data?.alertTypes) {
-            const existingAlertTypeDefs =
-                data.alertTypes.filter(({ alertType }) =>
-                    existingAlertTypes.includes(alertType)
-                ) ?? [];
+        if (!fetching && data?.alertTypes) {
+            const existingAlertTypeDefs = existingAlertTypes
+                ? data.alertTypes.filter(({ alertType }) =>
+                      existingAlertTypes.includes(alertType)
+                  )
+                : null;
 
-            if (existingAlertTypeDefs && existingAlertTypeDefs.length > 0) {
-                setAlertTypes(existingAlertTypeDefs);
-            }
+            setAlertTypes(
+                existingAlertTypeDefs === null
+                    ? data.alertTypes.filter(({ isSystem }) => isSystem)
+                    : existingAlertTypeDefs
+            );
         }
     }, [data?.alertTypes, existingAlertTypes, fetching, setAlertTypes]);
 

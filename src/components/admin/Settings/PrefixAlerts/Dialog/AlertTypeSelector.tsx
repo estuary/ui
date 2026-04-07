@@ -35,6 +35,11 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
         (state) => state.setAlertTypes
     );
 
+    const systemAlerts: AlertTypeInfo[] = useMemo(
+        () => options.filter(({ isSystem }) => isSystem),
+        [options]
+    );
+
     const values: AlertTypeInfo[] = useMemo(
         () => options.filter(({ alertType }) => alertTypes.includes(alertType)),
         [options, alertTypes]
@@ -51,7 +56,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                 }
                 multiple
                 onChange={(_event, values) => {
-                    setAlertTypes(values);
+                    setAlertTypes(values.length > 0 ? values : systemAlerts);
                 }}
                 options={options.sort((first, second) =>
                     basicSort_string(
