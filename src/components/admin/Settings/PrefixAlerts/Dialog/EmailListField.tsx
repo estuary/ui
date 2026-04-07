@@ -25,6 +25,7 @@ const EmailListField = ({ staticEmail }: EmailListFieldProps) => {
                     InputProps={{
                         sx: { borderRadius: 3 },
                     }}
+                    disabled
                     fullWidth
                     label={intl.formatMessage({
                         id: 'data.email',

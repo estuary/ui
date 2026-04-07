@@ -28,6 +28,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
                     InputProps={{
                         sx: { borderRadius: 3 },
                     }}
+                    disabled
                     fullWidth
                     label={intl.formatMessage({
                         id: 'common.tenant',
