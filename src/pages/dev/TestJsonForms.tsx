@@ -12,28 +12,35 @@ import {
     Select,
     Stack,
     StyledEngineProvider,
+    Typography,
 } from '@mui/material';
 
 import { JsonForms } from '@jsonforms/react';
 
 import Editor from '@monaco-editor/react';
+import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { useUnmount } from 'react-use';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import PageContainer from 'src/components/shared/PageContainer';
+import { supabaseClient } from 'src/context/GlobalProviders';
 import { jsonFormsPadding } from 'src/context/Theme';
 import { WorkflowContextProvider } from 'src/context/Workflow';
-import useConnectors from 'src/hooks/connectors/useConnectors';
 import {
     custom_generateDefaultUISchema,
     getDereffedSchema,
 } from 'src/services/jsonforms';
 import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
+import { TABLES } from 'src/services/supabase';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 const TestJsonForms = () => {
-    const { connectors } = useConnectors();
+    const { data } = useQuery(
+        supabaseClient.from(TABLES.CONNECTORS).select(`id, title, image_name`)
+    );
+    const connectors = data ?? [];
+
     const [connectorId, setConnectorId] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [schemaInput, setSchemaInput] = useState<string | undefined>('');
@@ -152,7 +159,25 @@ const TestJsonForms = () => {
                                     key={connector.id}
                                     value={connector.id}
                                 >
-                                    {connector.title['en-US']} ({connector.id})
+                                    <Stack direction="row" spacing={1}>
+                                        <Typography fontWeight="700">
+                                            {connector.title['en-US']}
+                                        </Typography>
+                                        <Divider
+                                            orientation="vertical"
+                                            flexItem
+                                        />
+                                        <Typography>
+                                            {connector.image_name}
+                                        </Typography>
+                                        <Divider
+                                            orientation="vertical"
+                                            flexItem
+                                        />
+                                        <Typography>
+                                            ({connector.id})
+                                        </Typography>
+                                    </Stack>
                                 </MenuItem>
                             ))}
                         </Select>
