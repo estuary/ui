@@ -45,7 +45,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
             <Autocomplete
                 disableCloseOnSelect
                 disabled={Boolean(serverError)}
-                getOptionLabel={({ alertType: name }) => name}
+                getOptionLabel={({ alertType }) => alertType}
                 isOptionEqualToValue={(option, value) =>
                     option.alertType === value.alertType
                 }
@@ -53,15 +53,13 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                 onChange={(_event, values) => {
                     setAlertTypes(values);
                 }}
-                options={options
-                    .filter(({ isSystem }) => !isSystem)
-                    .sort((first, second) =>
-                        basicSort_string(
-                            first.displayName,
-                            second.displayName,
-                            'asc'
-                        )
-                    )}
+                options={options.sort((first, second) =>
+                    basicSort_string(
+                        first.displayName,
+                        second.displayName,
+                        'asc'
+                    )
+                )}
                 renderInput={({
                     InputProps,
                     ...params
@@ -80,9 +78,9 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                     />
                 )}
                 renderOption={(renderOptionProps, option, state) => {
-                    const { description, displayName } = option;
+                    const { description, displayName, isSystem } = option;
 
-                    return (
+                    return isSystem ? null : (
                         <SelectableAutocompleteOption
                             Content={
                                 <Stack>
