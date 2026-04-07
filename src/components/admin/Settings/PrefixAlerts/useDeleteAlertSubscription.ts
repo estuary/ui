@@ -65,11 +65,10 @@ export function useDeleteAlertSubscription() {
                         id: uuid,
                     });
                 },
-                (err) => {
+                () => {
                     logRocketEvent('AlertSubscription', {
                         operation: 'delete',
                         promiseRejected: 'explicit',
-                        errorResponse: err,
                     });
 
                     return Promise.reject();
