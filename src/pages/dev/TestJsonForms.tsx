@@ -1,9 +1,15 @@
-import { useMemo, useState } from 'react';
+import type { SelectChangeEvent } from '@mui/material';
+
+import { useState } from 'react';
 
 import {
     Box,
     Button,
     Divider,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
     Stack,
     StyledEngineProvider,
 } from '@mui/material';
@@ -11,7 +17,6 @@ import {
 import { JsonForms } from '@jsonforms/react';
 
 import Editor from '@monaco-editor/react';
-import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -19,76 +24,40 @@ import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import PageContainer from 'src/components/shared/PageContainer';
 import { jsonFormsPadding } from 'src/context/Theme';
 import { WorkflowContextProvider } from 'src/context/Workflow';
-import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import useConnectors from 'src/hooks/connectors/useConnectors';
-import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import {
     custom_generateDefaultUISchema,
     getDereffedSchema,
 } from 'src/services/jsonforms';
 import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
-import { DetailsFormHydrator } from 'src/stores/DetailsForm/Hydrator';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 const TestJsonForms = () => {
-    const intl = useIntl();
     const { connectors } = useConnectors();
+    const [connectorId, setConnectorId] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [schemaInput, setSchemaInput] = useState<string | undefined>('');
     const [schema, setSchema] = useState<any | null>(null);
     const [uiSchema, setUiSchema] = useState<any | null>(null);
     const [formData, setFormData] = useState({});
 
+    const setDetails_connector = useDetailsFormStore(
+        (state) => state.setDetails_connector
+    );
+    const setHydrated = useDetailsFormStore((state) => state.setHydrated);
     const resetDetailsForm = useDetailsFormStore((state) => state.resetState);
 
-    const connectorsOneOf = useMemo(() => {
-        const response = [] as { title: string; const: Object }[];
-
-        if (connectors.length > 0) {
-            connectors.forEach((connector) => {
-                response.push({
-                    const: { id: connector.id },
-                    title: connector.title['en-US'],
-                });
-            });
-        }
-
-        return response;
-    }, [connectors]);
-
-    const topSchema = useMemo(() => {
-        return {
-            properties: {
-                [CONNECTOR_IMAGE_SCOPE]: {
-                    description: intl.formatMessage({
-                        id: 'connector.description',
-                    }),
-                    oneOf: connectorsOneOf,
-                    type: 'object',
-                },
-            },
-            required: [CONNECTOR_IMAGE_SCOPE],
-            type: 'object',
-        };
-    }, [connectorsOneOf, intl]);
-    console.log(connectorsOneOf);
-
-    const topUiSchema = {
-        elements: [
-            {
-                elements: [
-                    {
-                        label: intl.formatMessage({
-                            id: 'entityCreate.connector.label',
-                        }),
-                        scope: `#/properties/${CONNECTOR_IMAGE_SCOPE}`,
-                        type: 'Control',
-                    },
-                ],
-                type: 'HorizontalLayout',
-            },
-        ],
-        type: 'VerticalLayout',
+    const applyConnectorId = (id: string) => {
+        setConnectorId(id);
+        setDetails_connector({
+            id,
+            iconPath: '',
+            imageName: '',
+            imagePath: '',
+            imageTag: '',
+            connectorId: id,
+        });
+        setHydrated(true);
     };
 
     const failed = () =>
@@ -128,8 +97,6 @@ const TestJsonForms = () => {
         }
     };
 
-    const searchParams = new URLSearchParams(window.location.search);
-
     useUnmount(() => {
         resetDetailsForm();
     });
@@ -151,9 +118,10 @@ const TestJsonForms = () => {
 
                     <AlertBox severity="info" short title="Instructions">
                         <Box>
-                            1. Select a connector in the dropdown. This does not
-                            load in anything - just sets a property in the URL
-                            and sets some stuff behind the scenes.
+                            1. TESTING OAUTH - Select a connector in the
+                            dropdown. This will be the connector that is looked
+                            up in the DB for the <code>authURL</code> and{' '}
+                            <code>accessToken</code>.
                         </Box>
                         <Box>
                             2. Paste a JSONSchema into the text area below and
@@ -170,39 +138,25 @@ const TestJsonForms = () => {
                         </Box>
                     </AlertBox>
 
-                    <JsonForms
-                        {...jsonFormsDefaults}
-                        schema={topSchema}
-                        uischema={topUiSchema}
-                        data={{
-                            connectorImage: {
-                                id: searchParams.get(
-                                    GlobalSearchParams.CONNECTOR_ID
-                                ),
-                            },
-                        }}
-                        validationMode="ValidateAndShow"
-                        onChange={(state) => {
-                            console.log(
-                                'This is the new state of the form',
-                                state
-                            );
-                            const connectorId = state.data?.connectorImage?.id;
-                            if (
-                                connectorId &&
-                                searchParams.get(
-                                    GlobalSearchParams.CONNECTOR_ID
-                                ) !== connectorId
-                            ) {
-                                searchParams.set(
-                                    GlobalSearchParams.CONNECTOR_ID,
-                                    connectorId
-                                );
-                                window.location.search =
-                                    searchParams.toString();
-                            }
-                        }}
-                    />
+                    <FormControl fullWidth>
+                        <InputLabel>Connector</InputLabel>
+                        <Select
+                            label="Connector"
+                            value={connectorId}
+                            onChange={(e: SelectChangeEvent) => {
+                                applyConnectorId(e.target.value);
+                            }}
+                        >
+                            {connectors.map((connector) => (
+                                <MenuItem
+                                    key={connector.id}
+                                    value={connector.id}
+                                >
+                                    {connector.title['en-US']} ({connector.id})
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
                     <Editor
                         height="500px"
@@ -223,28 +177,26 @@ const TestJsonForms = () => {
                                 ...jsonFormsPadding,
                             }}
                         >
-                            <DetailsFormHydrator>
-                                {schema !== null && uiSchema !== null ? (
-                                    <JsonForms
-                                        {...jsonFormsDefaults}
-                                        schema={schema}
-                                        uischema={uiSchema}
-                                        data={formData}
-                                        validationMode="ValidateAndShow"
-                                        onChange={(state) => {
-                                            console.log(
-                                                'This is the new state of the form',
-                                                state
-                                            );
-                                        }}
-                                    />
-                                ) : (
-                                    <>
-                                        To render form enter a schema above and
-                                        click the Render button
-                                    </>
-                                )}
-                            </DetailsFormHydrator>
+                            {schema !== null && uiSchema !== null ? (
+                                <JsonForms
+                                    {...jsonFormsDefaults}
+                                    schema={schema}
+                                    uischema={uiSchema}
+                                    data={formData}
+                                    validationMode="ValidateAndShow"
+                                    onChange={(state) => {
+                                        console.log(
+                                            'This is the new state of the form',
+                                            state
+                                        );
+                                    }}
+                                />
+                            ) : (
+                                <>
+                                    To render form enter a schema above and
+                                    click the Render button
+                                </>
+                            )}
                         </Box>
                     </StyledEngineProvider>
                 </WrapperWithHeader>
