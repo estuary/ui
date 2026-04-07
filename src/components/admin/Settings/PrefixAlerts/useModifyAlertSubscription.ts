@@ -37,8 +37,7 @@ export function useModifyAlertSubscription(
 
     const [loading, setLoading] = useState(false);
 
-    const onClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
+    const onClick = async (_event: React.MouseEvent<HTMLButtonElement>) => {
         setLoading(true);
         setServerError([]);
 
