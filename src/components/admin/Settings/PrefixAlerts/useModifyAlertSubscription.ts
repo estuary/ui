@@ -37,7 +37,7 @@ export function useModifyAlertSubscription(
 
     const [loading, setLoading] = useState(false);
 
-    const onClick = async (_event: React.MouseEvent<HTMLButtonElement>) => {
+    const onClick = async () => {
         setLoading(true);
         setServerError([]);
 
@@ -86,5 +86,10 @@ export function useModifyAlertSubscription(
         debounceDialogClosure.current?.cancel();
     });
 
-    return { loading, onClick };
+    return {
+        loading,
+        onClick: debounce(() => {
+            onClick();
+        }, DEFAULT_DEBOUNCE_WAIT),
+    };
 }
