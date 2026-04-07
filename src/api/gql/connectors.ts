@@ -37,15 +37,13 @@ export const CONNECTORS_QUERY = graphql(`
 `);
 
 export const CONNECTOR_BY_ID_QUERY = graphql(`
-    query SingleConnector($id: Id!) {
+    query SingleConnector($id: Id!, $imageTag: String) {
         connector(id: $id) {
             id
             imageName
             logoUrl
             title
-            recommended
-            shortDescription
-            connectorTag(orDefault: true) {
+            connectorTag(imageTag: $imageTag, orDefault: true) {
                 id
                 connectorId
                 imageTag

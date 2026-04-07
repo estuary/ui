@@ -28,6 +28,9 @@ const ConnectorTagContext = createContext<ConnectorTagData | null>(null);
 
 export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
     const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const imageTag = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_IMAGE_TAG
+    );
     const client = useClient();
     const intl = useIntl();
 
@@ -44,7 +47,7 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
         client
             .query(
                 CONNECTOR_BY_ID_QUERY,
-                { id: connectorId },
+                { id: connectorId, imageTag },
                 { requestPolicy: 'network-only' }
             )
             .toPromise()
@@ -68,7 +71,7 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
                     },
                 });
             });
-    }, [client, connectorId]);
+    }, [client, connectorId, imageTag]);
 
     if (fetchError) {
         return (

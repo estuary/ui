@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_ID = 'connectorId',
+    CONNECTOR_IMAGE_TAG = 'connectorImageTag',
     DATA_PLANE_ID = 'dataPlaneId',
     DIFF_VIEW_ORIGINAL = 'diff_o',
     DIFF_VIEW_MODIFIED = 'diff_m',
