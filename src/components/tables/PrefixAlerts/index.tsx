@@ -58,6 +58,8 @@ function PrefixAlertTable() {
         [alertTypeResponse.data]
     );
 
+    // TODO: Create a hook that encapsulates this logic since it is used for the
+    //   field selection table as well.
     const displayLoadingState = useRef(
         debounce(() => setTableState({ status: TableStatuses.LOADING }), 750)
     );
