@@ -122,12 +122,10 @@ function PrefixAlertTable() {
 
             <TableContainer
                 style={{
-                    height:
-                        processedData.length > 10
-                            ? 10 * TABLE_ROW_HEIGHT +
-                              TABLE_HEADER_HEIGHT +
-                              TABLE_ROW_HEIGHT / 2.5
-                            : undefined,
+                    maxHeight:
+                        10 * TABLE_ROW_HEIGHT +
+                        TABLE_HEADER_HEIGHT +
+                        TABLE_ROW_HEIGHT / 2.5,
                 }}
             >
                 <Table
