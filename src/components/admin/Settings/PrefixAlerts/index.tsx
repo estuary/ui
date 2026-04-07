@@ -3,11 +3,16 @@ import PrefixAlertTable from 'src/components/tables/PrefixAlerts';
 import { AlertSubscriptionsProvider } from 'src/context/AlertSubscriptions';
 import { AlertTypeProvider } from 'src/context/AlertType';
 
+const docsUrl = 'https://docs.estuary.dev/reference/notifications/';
+
 function PrefixAlerts() {
     return (
         <AlertTypeProvider>
             <AlertSubscriptionsProvider>
-                <StandAloneTableTitle titleIntlKey="alerts.config.header" />
+                <StandAloneTableTitle
+                    docsUrl={docsUrl}
+                    titleIntlKey="alerts.config.header"
+                />
                 <PrefixAlertTable />
             </AlertSubscriptionsProvider>
         </AlertTypeProvider>
