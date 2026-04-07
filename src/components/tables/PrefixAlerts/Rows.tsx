@@ -4,6 +4,8 @@ import type {
 } from 'src/components/tables/PrefixAlerts/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
 
+import { useMemo } from 'react';
+
 import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
@@ -11,11 +13,15 @@ import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton
 import { sortByAlertType } from 'src/utils/misc-utils';
 
 function Row({ alertTypeDefs, row }: RowProps) {
-    const evaluatedAlertTypes: AlertTypeInfo[] = row.alertTypes
-        .map((alertType) =>
-            alertTypeDefs.find((def) => def.alertType === alertType)
-        )
-        .filter((def) => typeof def !== 'undefined');
+    const evaluatedAlertTypes: AlertTypeInfo[] = useMemo(
+        () =>
+            row.alertTypes
+                .map((alertType) =>
+                    alertTypeDefs.find((def) => def.alertType === alertType)
+                )
+                .filter((def) => typeof def !== 'undefined'),
+        [alertTypeDefs, row.alertTypes]
+    );
 
     return (
         <TableRow>
