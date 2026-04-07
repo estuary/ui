@@ -1,7 +1,7 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { Grant_UserExt } from 'src/types';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     Autocomplete,
@@ -35,11 +35,12 @@ function EmailSelector() {
     const serverError = useAlertSubscriptionsStore(
         (state) => state.initializationError
     );
-    const [prefix, subscribedEmail, setSubscribedEmail] =
+    const [prefix, subscribedEmail, setSubscribedEmail, setEmailErrorsExist] =
         useAlertSubscriptionsStore((state) => [
             state.subscription.catalogPrefix,
             state.subscription.email,
             state.setSubscribedEmail,
+            state.setEmailErrorsExist,
         ]);
 
     const [inputValue, setInputValue] = useState(subscribedEmail);
@@ -58,6 +59,10 @@ function EmailSelector() {
         () => inputValue.length > 0 && !BASIC_EMAIL_RE.test(inputValue),
         [inputValue]
     );
+
+    useEffect(() => {
+        setEmailErrorsExist(inputErrorExists);
+    }, [inputErrorExists, setEmailErrorsExist]);
 
     return (
         <FormControl fullWidth>

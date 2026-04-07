@@ -12,6 +12,7 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface AlertSubscriptionState {
     alertTypes: AlertTypeInfo[];
+    emailErrorsExist: boolean;
     initializationError: CombinedError | PostgrestError | null | undefined;
     prefixErrorsExist: boolean;
     saveErrors: (CombinedError | PostgrestError | null | undefined)[];
@@ -21,6 +22,9 @@ interface AlertSubscriptionState {
     >;
     resetState: () => void;
     setAlertTypes: (values: AlertTypeInfo[], initialize?: boolean) => void;
+    setEmailErrorsExist: (
+        value: AlertSubscriptionState['emailErrorsExist']
+    ) => void;
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
     ) => void;
@@ -32,12 +36,14 @@ interface AlertSubscriptionState {
 const getInitialState = (): Pick<
     AlertSubscriptionState,
     | 'alertTypes'
+    | 'emailErrorsExist'
     | 'initializationError'
     | 'prefixErrorsExist'
     | 'saveErrors'
     | 'subscription'
 > => ({
     alertTypes: [],
+    emailErrorsExist: false,
     initializationError: null,
     prefixErrorsExist: false,
     saveErrors: [],
@@ -66,6 +72,15 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     }),
                     false,
                     'alert types set'
+                ),
+
+            setEmailErrorsExist: (value) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.emailErrorsExist = value;
+                    }),
+                    false,
+                    'email errors exist set'
                 ),
 
             setInitializationError: (value) =>

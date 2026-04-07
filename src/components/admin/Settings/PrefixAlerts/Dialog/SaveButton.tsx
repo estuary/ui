@@ -11,8 +11,8 @@ import SafeLoadingButton from 'src/components/SafeLoadingButton';
 const SaveButton = ({ closeDialog }: DialogActionProps) => {
     const { loading, onClick } = useModifyAlertSubscription(closeDialog);
 
-    const prefixErrorsExist = useAlertSubscriptionsStore(
-        (state) => state.prefixErrorsExist
+    const errorsExist = useAlertSubscriptionsStore(
+        (state) => state.emailErrorsExist || state.prefixErrorsExist
     );
 
     const subscription = useAlertSubscriptionsStore(
@@ -22,11 +22,11 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
     const disabled = useMemo(
         () =>
             Boolean(
-                prefixErrorsExist ||
+                errorsExist ||
                     subscription.catalogPrefix.length === 0 ||
                     subscription.email.length === 0
             ),
-        [prefixErrorsExist, subscription.catalogPrefix, subscription.email]
+        [errorsExist, subscription.catalogPrefix, subscription.email]
     );
 
     return (
