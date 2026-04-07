@@ -67,7 +67,7 @@ function Rows({ alertTypeDefs, data }: RowsProps) {
             {data.map((datum, index) => (
                 <Row
                     alertTypeDefs={alertTypeDefs}
-                    key={`${datum.catalogPrefix}-${datum.email}-{index}`}
+                    key={`${datum.catalogPrefix}-${datum.email}-${index}`}
                     row={datum}
                 />
             ))}
