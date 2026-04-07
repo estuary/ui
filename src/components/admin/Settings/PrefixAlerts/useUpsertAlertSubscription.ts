@@ -1,7 +1,7 @@
 import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { AlertSubscriptionMutationInput } from 'src/types/gql';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useMutation } from 'urql';
 
@@ -21,13 +21,23 @@ export function useUpsertAlertSubscription() {
         (state) => state.subscription
     );
 
-    const query = data?.alertSubscriptions.find(
-        ({ catalogPrefix, email }) =>
-            subscription.catalogPrefix === catalogPrefix &&
-            subscription.email === email
-    )
-        ? AlertSubscriptionUpdateMutation
-        : AlertSubscriptionCreateMutation;
+    const query = useMemo(() => {
+        if (!subscription.catalogPrefix || !subscription.email) {
+            return AlertSubscriptionCreateMutation;
+        }
+
+        return data?.alertSubscriptions.find(
+            ({ catalogPrefix, email }) =>
+                subscription.catalogPrefix === catalogPrefix &&
+                subscription.email === email
+        )
+            ? AlertSubscriptionUpdateMutation
+            : AlertSubscriptionCreateMutation;
+    }, [
+        data?.alertSubscriptions,
+        subscription.catalogPrefix,
+        subscription.email,
+    ]);
 
     const [upsertSubscriptionResult, mutateSubscription] = useMutation(query);
 
