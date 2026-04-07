@@ -36,7 +36,7 @@ import { TABLES } from 'src/services/supabase';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 
 const TestJsonForms = () => {
-    const { data } = useQuery(
+    const { data, error: serverError } = useQuery(
         supabaseClient.from(TABLES.CONNECTORS).select(`id, title, image_name`)
     );
     const connectors = data ?? [];
@@ -68,9 +68,7 @@ const TestJsonForms = () => {
     };
 
     const failed = () =>
-        setError(
-            'Failed to parse input. Make sure it is valid JSON and then click button again'
-        );
+        setError('Make sure it is valid JSON and then click `Render` again');
 
     const parseSchema = async () => {
         if (!schemaInput) {
@@ -81,6 +79,7 @@ const TestJsonForms = () => {
         try {
             setFormData({});
             setSchema(null);
+            setError(null);
             const parsedSchema = JSON.parse(schemaInput);
 
             const resolved = await getDereffedSchema(parsedSchema);
@@ -117,8 +116,22 @@ const TestJsonForms = () => {
                         justifyContent: 'center',
                     }}
                 >
+                    {serverError ? (
+                        <AlertBox
+                            short
+                            severity="error"
+                            title="Failed to fetch list of connectors"
+                        >
+                            {serverError.message}
+                        </AlertBox>
+                    ) : null}
+
                     {error !== null ? (
-                        <AlertBox short={false} severity="error">
+                        <AlertBox
+                            short
+                            severity="error"
+                            title="Failed to parse input"
+                        >
                             {error}
                         </AlertBox>
                     ) : null}
