@@ -85,7 +85,7 @@ function ChipWrapper({
                 variant="outlined"
             />
         );
-    }, [disabled, displayValue, onClick, val?.diminishedText, val.link]);
+    }, [disabled, displayValue, onClick, val?.diminishedText, val?.link]);
 
     const wrappedChip = useMemo(() => {
         if (val.link) {
