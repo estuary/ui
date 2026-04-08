@@ -13,6 +13,7 @@ import {
     useTheme,
 } from '@mui/material';
 
+import { union } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -56,7 +57,9 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                 }
                 multiple
                 onChange={(_event, values) => {
-                    setAlertTypes(values.length > 0 ? values : systemAlerts);
+                    const evaluatedValues = union(values, systemAlerts);
+
+                    setAlertTypes(evaluatedValues);
                 }}
                 options={options.sort((first, second) =>
                     basicSort_string(
