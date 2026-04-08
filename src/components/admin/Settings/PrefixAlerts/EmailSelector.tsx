@@ -92,6 +92,8 @@ function EmailSelector() {
                 inputValue={inputValue}
                 onChange={(_event, value, reason) => {
                     if (!value) {
+                        setSubscribedEmail('');
+
                         return;
                     }
 
@@ -113,10 +115,7 @@ function EmailSelector() {
                 }}
                 onInputChange={(_event, value) => {
                     setInputValue(value);
-
-                    if (value.length > 0 && BASIC_EMAIL_RE.test(value)) {
-                        setSubscribedEmail(sanitizeEmail(value));
-                    }
+                    setSubscribedEmail(sanitizeEmail(value));
                 }}
                 options={userInfo as Option[]}
                 renderInput={({
