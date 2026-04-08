@@ -11,6 +11,7 @@ import {
     ListItemText,
     TextField,
     Typography,
+    useTheme,
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -31,6 +32,7 @@ const sanitizeEmail = (value: string) => {
 
 function EmailSelector() {
     const intl = useIntl();
+    const theme = useTheme();
 
     const serverError = useAlertSubscriptionsStore(
         (state) => state.initializationError
@@ -138,33 +140,54 @@ function EmailSelector() {
                     />
                 )}
                 renderOption={(renderOptionProps, option) => {
-                    return typeof option === 'string' ? (
-                        <Typography>{option}</Typography>
-                    ) : (
-                        <ListItem {...renderOptionProps} key={option.user_id}>
-                            <UserAvatar
-                                userName={option.user_full_name}
-                                avatarUrl={option.user_avatar_url}
-                                userEmail={option.user_email}
-                            />
+                    const inputMatchesOption =
+                        (typeof option === 'string' && option === inputValue) ||
+                        (typeof option !== 'string' &&
+                            option.user_email === inputValue);
 
-                            <ListItemText
-                                primary={option.user_full_name}
-                                secondary={option.user_email}
-                                primaryTypographyProps={{
-                                    sx: {
-                                        fontWeight: 500,
-                                        fontSize: 16,
-                                    },
-                                }}
-                                secondaryTypographyProps={{
-                                    sx: {
-                                        color: (theme) =>
-                                            theme.palette.text.primary,
-                                    },
-                                }}
-                                sx={{ ml: 2 }}
-                            />
+                    return (
+                        <ListItem
+                            {...renderOptionProps}
+                            key={
+                                typeof option === 'string'
+                                    ? option
+                                    : option.user_id
+                            }
+                            style={{
+                                backgroundColor: inputMatchesOption
+                                    ? theme.palette.primary.alpha_08
+                                    : undefined,
+                            }}
+                        >
+                            {typeof option === 'string' ? (
+                                <Typography>{option}</Typography>
+                            ) : (
+                                <>
+                                    <UserAvatar
+                                        userName={option.user_full_name}
+                                        avatarUrl={option.user_avatar_url}
+                                        userEmail={option.user_email}
+                                    />
+
+                                    <ListItemText
+                                        primary={option.user_full_name}
+                                        secondary={option.user_email}
+                                        primaryTypographyProps={{
+                                            sx: {
+                                                fontWeight: 500,
+                                                fontSize: 16,
+                                            },
+                                        }}
+                                        secondaryTypographyProps={{
+                                            sx: {
+                                                color: (theme) =>
+                                                    theme.palette.text.primary,
+                                            },
+                                        }}
+                                        sx={{ ml: 2 }}
+                                    />
+                                </>
+                            )}
                         </ListItem>
                     );
                 }}
