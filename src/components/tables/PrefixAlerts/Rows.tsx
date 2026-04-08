@@ -1,8 +1,8 @@
+import type { ChipDisplay } from 'src/components/shared/ChipList/types';
 import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/PrefixAlerts/types';
-import type { AlertTypeInfo } from 'src/gql-types/graphql';
 
 import { useMemo } from 'react';
 
@@ -13,13 +13,30 @@ import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton
 import { sortByAlertType } from 'src/utils/misc-utils';
 
 function Row({ alertTypeDefs, row }: RowProps) {
-    const evaluatedAlertTypes: AlertTypeInfo[] = useMemo(
+    const evaluatedAlertTypes: ChipDisplay[] = useMemo(
         () =>
             row.alertTypes
                 .map((alertType) =>
                     alertTypeDefs.find((def) => def.alertType === alertType)
                 )
-                .filter((def) => typeof def !== 'undefined'),
+                .filter((def) => typeof def !== 'undefined')
+                .sort((first, second) =>
+                    sortByAlertType(
+                        {
+                            isSystemAlert: first.isSystem,
+                            value: first.displayName,
+                        },
+                        {
+                            isSystemAlert: second.isSystem,
+                            value: second.displayName,
+                        },
+                        'asc'
+                    )
+                )
+                .map(({ displayName, isSystem }) => ({
+                    display: displayName,
+                    diminishedText: isSystem,
+                })),
         [alertTypeDefs, row.alertTypes]
     );
 
@@ -30,24 +47,7 @@ function Row({ alertTypeDefs, row }: RowProps) {
             <ChipListCell
                 maxChips={3}
                 stripPath={false}
-                values={evaluatedAlertTypes
-                    .sort((first, second) =>
-                        sortByAlertType(
-                            {
-                                isSystemAlert: first.isSystem,
-                                value: first.displayName,
-                            },
-                            {
-                                isSystemAlert: second.isSystem,
-                                value: second.displayName,
-                            },
-                            'asc'
-                        )
-                    )
-                    .map(({ displayName, isSystem }) => ({
-                        display: displayName,
-                        diminishedText: isSystem,
-                    }))}
+                values={evaluatedAlertTypes}
             />
 
             <TableCell>{row.email}</TableCell>
