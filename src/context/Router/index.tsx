@@ -753,23 +753,23 @@ const router = createBrowserRouter(
                         />
                     </Route>
 
-                    {!isProduction ? (
-                        <>
-                            <Route
-                                path="test/jsonforms"
-                                element={
-                                    <ErrorBoundary
-                                        FallbackComponent={ErrorImporting}
-                                    >
-                                        <EntityContextProvider value="capture">
-                                            <TestJsonForms />
-                                        </EntityContextProvider>
-                                    </ErrorBoundary>
-                                }
-                            />
+                    <Route path="test">
+                        <Route
+                            path="jsonforms"
+                            element={
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <EntityContextProvider value="capture">
+                                        <TestJsonForms />
+                                    </EntityContextProvider>
+                                </ErrorBoundary>
+                            }
+                        />
 
+                        {!isProduction ? (
                             <Route
-                                path="test/gql"
+                                path="gql"
                                 element={
                                     <ErrorBoundary
                                         FallbackComponent={ErrorImporting}
@@ -778,8 +778,8 @@ const router = createBrowserRouter(
                                     </ErrorBoundary>
                                 }
                             />
-                        </>
-                    ) : null}
+                        ) : null}
+                    </Route>
 
                     <Route
                         path={authenticatedRoutes.pageNotFound.path}
