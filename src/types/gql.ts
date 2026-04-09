@@ -1,14 +1,5 @@
+import type { AlertType } from 'src/gql-types/graphql';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
-
-export type AlertType =
-    | 'auto_discover_failed'
-    | 'background_publication_failed'
-    | 'shard_failed'
-    | 'data_movement_stalled'
-    | 'free_trial'
-    | 'free_trial_ending'
-    | 'free_trial_stalled'
-    | 'missing_payment_method';
 
 export interface AlertDetailsRecipients {
     email: string;

@@ -1,5 +1,5 @@
 import type { AlertSetting } from 'src/settings/types';
-import type { AlertType } from 'src/types/gql';
+import type { AlertType } from 'src/gql-types/graphql';
 
 export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
     auto_discover_failed: {
@@ -53,5 +53,32 @@ export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
             'https://docs.estuary.dev/reference/notifications/#billing-alerts',
         humanReadableIntlKey:
             'alerts.alertType.humanReadable.missing_payment_method',
+    },
+    task_auto_disabled_failing: {
+        detailKey: null,
+        docLink:
+            'https://docs.estuary.dev/reference/notifications/#task-failure-alerts',
+        humanReadableIntlKey:
+            'alerts.alertType.humanReadable.task_auto_disabled_failing',
+    },
+    task_chronically_failing: {
+        detailKey: null,
+        docLink:
+            'https://docs.estuary.dev/reference/notifications/#task-failure-alerts',
+        humanReadableIntlKey:
+            'alerts.alertType.humanReadable.task_chronically_failing',
+    },
+    task_auto_disabled_idle: {
+        detailKey: null,
+        docLink:
+            'https://docs.estuary.dev/reference/notifications/#task-failure-alerts',
+        humanReadableIntlKey:
+            'alerts.alertType.humanReadable.task_auto_disabled_idle',
+    },
+    task_idle: {
+        detailKey: null,
+        docLink:
+            'https://docs.estuary.dev/reference/notifications/#task-failure-alerts',
+        humanReadableIntlKey: 'alerts.alertType.humanReadable.task_idle',
     },
 };
