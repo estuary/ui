@@ -24,7 +24,6 @@ import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/Prefi
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
@@ -41,17 +40,11 @@ const AlertSubscriptionDialog = ({
     const intl = useIntl();
     const theme = useTheme();
 
-    const [_response, executeQuery] = useGetAlertSubscriptions();
-
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
     );
 
-    const closeDialog = (queryTrigger?: boolean) => {
-        if (queryTrigger) {
-            executeQuery({ requestPolicy: 'network-only' });
-        }
-
+    const closeDialog = () => {
         setOpen(false);
         resetSubscriptionState();
     };
@@ -122,7 +115,7 @@ const AlertSubscriptionDialog = ({
                 }}
             >
                 {enableDeletion ? (
-                    <DeleteButton closeDialog={() => closeDialog(true)} />
+                    <DeleteButton closeDialog={() => closeDialog()} />
                 ) : null}
 
                 <Stack direction="row" spacing={1}>
@@ -134,7 +127,7 @@ const AlertSubscriptionDialog = ({
                         {intl.formatMessage({ id: 'cta.cancel' })}
                     </Button>
 
-                    <SaveButton closeDialog={() => closeDialog(true)} />
+                    <SaveButton closeDialog={() => closeDialog()} />
                 </Stack>
             </DialogActions>
         </Dialog>
