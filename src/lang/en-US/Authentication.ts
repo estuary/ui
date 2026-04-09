@@ -43,6 +43,10 @@ export const Authentication: Record<string, string> = {
     'login.sso.back': `Back to Sign In`,
     'login.sso.header': `Enter your company email to access ${CommonMessages.productName} via Single Sign-On.`,
 
+    'login.sso.required.title': `SSO Required`,
+    'login.sso.required.message': `Your organization requires SSO.`,
+    'login.sso.required.cta': `Continue to SSO Login`,
+
     'login.sso.separator': `Or to register with Single Sign-On`,
 
     'login.sso.register.message.help': `${CTAs['cta.contactUs']}`,
@@ -124,8 +128,9 @@ export const Authentication: Record<string, string> = {
     'tenant.origin.radio.linkedIn.label': `LinkedIn`,
     'tenant.origin.radio.other.label': `Other`,
 
-    'tenant.grantDirective.header': `You've been invited to a ${CommonMessages['terms.tenant']}`,
-    'tenant.grantDirective.message': `You're invited to receive {grantedCapability} access to the following tenant:`,
+    'tenant.grantDirective.message': `You now have {grantedCapability} access to the following tenant:`,
+    'tenant.grantDirective.success.header': `Access Granted`,
+    'tenant.grantDirective.success.cta': `Go to Dashboard`,
 
     'tenant.grantDirective.error.header': `Unable to Provision Access`,
     'tenant.grantDirective.error.message': `A problem was encountered provisioning access to the requested tenant. The access link could have been single-use or revoked by an administrator of the tenant.`,

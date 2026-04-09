@@ -463,7 +463,7 @@ const getLatestLiveSpecByName = async (catalogName: string) => {
                 .select(`spec, id, last_pub_id`)
                 .eq('catalog_name', catalogName)
                 .single(),
-        'getNotificationSubscriptionForUser'
+        'getLatestLiveSpecByName'
     ).then(handleSuccess<LiveSpecsExtQuery_Latest>, handleFailure);
 
     return data;

@@ -38,6 +38,7 @@ import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import { SSORequired } from 'src/pages/SSORequired';
 import { isProduction } from 'src/utils/env-utils';
 
 // Capture
@@ -123,6 +124,11 @@ const router = createBrowserRouter(
                         <EnterpriseLogin />
                     </RequireAuth>
                 }
+            />
+
+            <Route
+                path={unauthenticatedRoutes.ssoRequired.path}
+                element={<SSORequired />}
             />
 
             <Route path={unauthenticatedRoutes.auth.path} element={<Auth />} />

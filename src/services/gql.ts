@@ -1,12 +1,13 @@
-import { gql } from 'urql';
+import { graphql } from 'src/gql-types';
 
-export const PAGE_INFO_REVERSE_FRAGMENT = gql`
-    fragment PageInfoReverse on PageInfo {
+export const PAGE_INFO_FRAGMENT = graphql(`
+    fragment PageInfoFields on PageInfo {
+        hasNextPage
         hasPreviousPage
         startCursor
         endCursor
     }
-`;
+`);
 
 export const ERROR_MESSAGES = {
     unauthorized: '[Network] Unauthorized',

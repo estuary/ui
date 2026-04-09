@@ -1,6 +1,7 @@
 import type { SxProps, Theme } from '@mui/material';
+import type { CustomChipProps } from 'src/styledComponents/chips/OutlinedChip';
 
-export interface ChipDisplay {
+export interface ChipDisplay extends CustomChipProps {
     display: string;
     link?: string;
     newWindow?: boolean;

@@ -105,37 +105,6 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         value={dataPlane.data_plane_name}
                     />
                     <ToggleField
-                        label={intl.formatMessage({
-                            id: 'admin.dataPlanes.dialog.serviceAccountIdentity',
-                        })}
-                        options={
-                            [
-                                {
-                                    key: 'aws',
-                                    label: 'AWS',
-                                    value:
-                                        dataPlane.aws_iam_user_arn ??
-                                        intl.formatMessage({
-                                            id: 'admin.dataPlanes.dialog.notAvailable',
-                                        }),
-                                },
-                                {
-                                    key: 'gcp',
-                                    label: 'GCP',
-                                    value:
-                                        dataPlane.gcp_service_account_email ??
-                                        intl.formatMessage({
-                                            id: 'admin.dataPlanes.dialog.notAvailable',
-                                        }),
-                                },
-                            ] satisfies {
-                                key: string;
-                                label: CloudProvider;
-                                value: string;
-                            }[]
-                        }
-                    />
-                    <ToggleField
                         lowercaseButton
                         label={intl.formatMessage({
                             id: 'admin.dataPlanes.dialog.ips',

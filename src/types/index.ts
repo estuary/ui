@@ -107,38 +107,6 @@ export interface JoinedAppliedDirective extends AppliedDirective<any> {
     ['directives.spec->>type']: undefined;
 }
 
-export interface GrantDirectiveSpec {
-    type: string;
-    capability: string;
-    grantedPrefix: string;
-}
-
-export interface GrantDirective {
-    created_at: string;
-    detail: string | null;
-    id: string;
-    updated_at: string;
-    catalog_prefix: string;
-    uses_remaining: number | null;
-    spec: GrantDirectiveSpec;
-    token: string;
-}
-
-export interface GrantDirective_AccessLinks {
-    id: string;
-    updated_at: string;
-    catalog_prefix: string;
-    uses_remaining: number | null;
-    spec: {
-        type: string;
-        capability: string;
-        grantedPrefix: string;
-    };
-    token: string;
-    ['spec->>capability']: undefined;
-    ['spec->>grantedPrefix']: undefined;
-}
-
 interface StorageMapping {
     stores: StorageMappingStore[];
     data_planes: string[];
@@ -403,6 +371,7 @@ export interface AlertSubscription {
     updated_at: Date;
     catalog_prefix: string;
     email: string;
+    include_alert_types: string[];
 }
 
 export interface DataProcessingAlert {
