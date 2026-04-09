@@ -1,28 +1,19 @@
 import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
 import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
 import { BASE_ERROR } from 'src/services/supabase';
-import { DEFAULT_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 export function useModifyAlertSubscription(
     closeDialog: () => void,
     deletionTrigger?: boolean
 ) {
     const intl = useIntl();
-
-    const debounceDialogClosure = useRef(
-        debounce(() => {
-            closeDialog();
-        }, DEFAULT_DEBOUNCE_WAIT)
-    );
 
     const { upsertSubscription } = useUpsertAlertSubscription();
     const { deleteSubscription } = useDeleteAlertSubscription();
@@ -75,21 +66,15 @@ export function useModifyAlertSubscription(
                 : response?.error;
 
         if (!error) {
-            debounceDialogClosure.current();
+            closeDialog();
         }
 
         setServerError([error]);
         setLoading(false);
     };
 
-    useUnmount(() => {
-        debounceDialogClosure.current?.cancel();
-    });
-
     return {
         loading,
-        onClick: debounce(() => {
-            onClick();
-        }, DEFAULT_DEBOUNCE_WAIT),
+        onClick,
     };
 }

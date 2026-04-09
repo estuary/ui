@@ -98,11 +98,10 @@ export function useUpsertAlertSubscription() {
                         prefix: catalogPrefix,
                     });
                 },
-                (err) => {
+                () => {
                     logRocketEvent('AlertSubscription', {
                         operation: 'upsert',
                         promiseRejected: 'explicit',
-                        errorResponse: err,
                     });
 
                     return Promise.reject();
