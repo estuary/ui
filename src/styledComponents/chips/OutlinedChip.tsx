@@ -38,7 +38,7 @@ export const OutlinedChip = styled(Chip, {
 
     return {
         'border': border,
-        'cursor': 'default',
+        'cursor': 'pointer',
         'height': 'auto',
         'minHeight': 23,
         '&:hover': {
@@ -59,7 +59,6 @@ export const OutlinedChip = styled(Chip, {
                     : theme.palette[colorKey].alpha_50,
             '&:hover': {
                 color: theme.palette.error.main,
-                cursor: 'pointer',
             },
         },
         '& .MuiChip-deleteIconSmall': {
