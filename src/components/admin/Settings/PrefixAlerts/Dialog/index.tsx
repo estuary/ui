@@ -15,6 +15,7 @@ import {
 
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+import { useUnmount } from 'react-use';
 
 import AlertTypeField from 'src/components/admin/Settings/PrefixAlerts/Dialog/AlertTypeField';
 import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
@@ -52,8 +53,11 @@ const AlertSubscriptionDialog = ({
         }
 
         setOpen(false);
-        resetSubscriptionState();
     };
+
+    useUnmount(() => {
+        resetSubscriptionState();
+    });
 
     return (
         <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
