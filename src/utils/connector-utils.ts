@@ -1,8 +1,3 @@
-// TODO (Typing)
-// Since the typing looks at columns it was a pain to make this
-//  truly reusable. So marking the query as `any` even thogh
-//  it is PostgrestFilterBuilder<ConnectorTag |ConnectorWithTagDetailQuery>
-
 import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import type { ConnectorConfig } from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
@@ -65,7 +60,10 @@ export const buildConnectorImageFromTag = (
     };
 
     return connector.imageName.startsWith(DEKAF_IMAGE_PREFIX)
-        ? { ...base, variant: connector.imageName.substring(DEKAF_IMAGE_PREFIX.length) }
+        ? {
+              ...base,
+              variant: connector.imageName.substring(DEKAF_IMAGE_PREFIX.length),
+          }
         : { ...base, imagePath: `${connector.imageName}${imageTag}` };
 };
 
