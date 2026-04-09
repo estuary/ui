@@ -1,5 +1,6 @@
 import type { CONNECTOR_NAME } from 'src/api/shared';
 import type { Entity, EntityWithCreateWorkflow, Schema } from 'src/types';
+import type { AlertSubscription } from 'src/types/gql';
 
 export interface BaseConnectorTag {
     id: string;
@@ -98,4 +99,13 @@ export interface MassCreateDraftSpecsData {
 export interface LiveSpecsExtQuery_GroupedUpdates {
     catalog_name: string;
     id: string;
+}
+
+export type ReducedAlertSubscription = Pick<
+    AlertSubscription,
+    'alertTypes' | 'catalogPrefix' | 'email' | 'updatedAt'
+>;
+
+export interface ReducedAlertSubscriptionQueryResponse {
+    alertSubscriptions: ReducedAlertSubscription[];
 }

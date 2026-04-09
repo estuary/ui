@@ -16,11 +16,11 @@ import {
 
 function EntityTableBody({
     columns,
+    enableDivRendering,
     loading,
     noExistingDataContentIds,
     rows,
     tableState,
-    enableDivRendering,
 }: EntityTableBodyProps) {
     const intl = useIntl();
 

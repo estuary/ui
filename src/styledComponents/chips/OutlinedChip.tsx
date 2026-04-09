@@ -9,15 +9,17 @@ import {
     diminishedTextColor,
 } from 'src/context/Theme';
 
+export interface CustomChipProps {
+    diminishedText?: boolean;
+}
+
+export type OutlinedChipProps = ChipProps & CustomChipProps;
+
 export const OutlinedChip = styled(Chip, {
     // TODO (typing): Consider creating a typed, utility function for property forwarding
     //   that is able to handle an array of properties.
     shouldForwardProp: (props) => props !== 'diminishedText',
-})<
-    ChipProps & {
-        diminishedText?: boolean;
-    }
->(({ color, diminishedText, style, theme }) => {
+})<OutlinedChipProps>(({ color, diminishedText, style, theme }) => {
     const colorKey = color ?? 'default';
 
     const background =
