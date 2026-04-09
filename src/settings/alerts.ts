@@ -1,5 +1,5 @@
-import type { AlertSetting } from 'src/settings/types';
 import type { AlertType } from 'src/gql-types/graphql';
+import type { AlertSetting } from 'src/settings/types';
 
 export const ALERT_SETTING: { [k in AlertType]: AlertSetting } = {
     auto_discover_failed: {
