@@ -343,6 +343,8 @@ export const hydrateConnectorTagDependentState = async (
     if (connectorTag.resourceSpecSchema) {
         const schema = connectorTag.resourceSpecSchema as unknown as Schema;
         await get().setResourceSchema(schema);
+    } else {
+        get().setHydrationErrorsExist(true);
     }
 
     get().setBackfillSupported(!Boolean(connectorTag.disableBackfill));

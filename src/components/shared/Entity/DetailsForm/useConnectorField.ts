@@ -6,8 +6,7 @@ import { useIntl } from 'react-intl';
 
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
-
-const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
+import { buildConnectorImageFromTag } from 'src/utils/connector-utils';
 
 export default function useConnectorField(
     entityType: EntityWithCreateWorkflow
@@ -21,36 +20,10 @@ export default function useConnectorField(
             return [];
         }
 
-        const {
-            id,
-            connectorId: connectorTagId,
-            imageTag,
-            connector,
-        } = connectorTag;
-
-        const base = {
-            connectorId: connectorTagId,
-            iconPath: connector.logoUrl ?? '',
-            id,
-            imageName: connector.imageName,
-            imageTag,
-        };
-
-        const connectorImage = connector.imageName.startsWith(
-            DEKAF_IMAGE_PREFIX
-        )
-            ? {
-                  ...base,
-                  variant: connector.imageName.substring(
-                      DEKAF_IMAGE_PREFIX.length
-                  ),
-              }
-            : { ...base, imagePath: `${connector.imageName}${imageTag}` };
-
         return [
             {
-                const: connectorImage,
-                title: connector.title ?? connector.imageName,
+                const: buildConnectorImageFromTag(connectorTag),
+                title: connectorTag.connector.title ?? connectorTag.connector.imageName,
             },
         ];
     }, [connectorTag]);

@@ -6,23 +6,15 @@
 import type { PostgrestFilterBuilder } from '@supabase/postgrest-js';
 import type { ConnectorConfig } from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByDraftId } from 'src/api/draftSpecs';
-import type {
-    BaseConnectorTag,
-    ConnectorsQuery_DetailsForm,
-    ConnectorWithTagQuery,
-} from 'src/api/types';
+import type { ConnectorTagData } from 'src/context/ConnectorTag';
 import type { LiveSpecsExtQuery } from 'src/hooks/useLiveSpecsExt';
 import type {
-    ConnectorMetadata,
     DekafConnectorMetadata,
-    Details,
     StandardConnectorMetadata,
 } from 'src/stores/DetailsForm/types';
 import type { DekafConfig } from 'src/types';
 
-import { hasLength } from 'src/utils/misc-utils';
-
-const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
+export const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 const DEKAF_VARIANT_PROPERTY = 'variant';
 
 export const isDekafConnector = (
@@ -32,66 +24,6 @@ export const isDekafConnector = (
 export const isDekafEndpointConfig = (
     value: ConnectorConfig | DekafConfig
 ): value is DekafConfig => DEKAF_VARIANT_PROPERTY in value;
-
-export interface ConnectorVersionEvaluationOptions {
-    connectorId: string;
-    existingImageTag: string;
-}
-
-export function evaluateConnectorVersions(
-    connector: ConnectorWithTagQuery | ConnectorsQuery_DetailsForm,
-    options?: ConnectorVersionEvaluationOptions
-): BaseConnectorTag {
-    // Return the version of the connector that is used by the existing task in an edit workflow.
-    if (options && options.connectorId === connector.id) {
-        const connectorsInUse = connector.connector_tags.filter(
-            (version) => version.image_tag === options.existingImageTag
-        );
-
-        if (hasLength(connectorsInUse)) {
-            return connectorsInUse[0];
-        }
-    }
-
-    // Return the latest version of a given connector.
-    const { connector_id, id, image_tag } = connector.connector_tags.sort(
-        (a, b) => b.image_tag.localeCompare(a.image_tag)
-    )[0];
-
-    return { connector_id, id, image_tag };
-}
-
-// TODO (typing): Align `connectors` and `connector_tags` query interfaces.
-//   Renamed table columns need to be given the same name to avoid type conflicts.
-export function getConnectorMetadata(
-    connector: ConnectorsQuery_DetailsForm | ConnectorWithTagQuery,
-    options?: ConnectorVersionEvaluationOptions
-): Details['data']['connectorImage'] {
-    const { id: connectorTagId, image_tag } = evaluateConnectorVersions(
-        connector,
-        options
-    );
-
-    const { id: connectorId, image: iconPath, image_name } = connector;
-
-    const connectorMetadata: ConnectorMetadata = {
-        connectorId,
-        iconPath,
-        id: connectorTagId,
-        imageName: image_name,
-        imageTag: image_tag,
-    };
-
-    return image_name.startsWith(DEKAF_IMAGE_PREFIX)
-        ? {
-              ...connectorMetadata,
-              variant: image_name.substring(DEKAF_IMAGE_PREFIX.length),
-          }
-        : {
-              ...connectorMetadata,
-              imagePath: `${image_name}${image_tag}`,
-          };
-}
 
 export const getEndpointConfig = (
     data: DraftSpecsExtQuery_ByDraftId[] | LiveSpecsExtQuery[]
@@ -117,6 +49,24 @@ export const requiredConnectorColumnsExist = <Response>(
             'is',
             null
         );
+};
+
+export const buildConnectorImageFromTag = (
+    connectorTag: ConnectorTagData
+): StandardConnectorMetadata | DekafConnectorMetadata => {
+    const { id, connectorId, imageTag, connector } = connectorTag;
+
+    const base = {
+        connectorId,
+        iconPath: connector.logoUrl ?? '',
+        id,
+        imageName: connector.imageName,
+        imageTag,
+    };
+
+    return connector.imageName.startsWith(DEKAF_IMAGE_PREFIX)
+        ? { ...base, variant: connector.imageName.substring(DEKAF_IMAGE_PREFIX.length) }
+        : { ...base, imagePath: `${connector.imageName}${imageTag}` };
 };
 
 // TODO (GQL:live specs) - once we get live specs fetched with GQL we don't need to worry about this

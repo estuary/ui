@@ -12,29 +12,7 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { initialDetails } from 'src/stores/DetailsForm/shared';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-
-const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
-
-const buildConnectorImage = (
-    connectorTag: ReturnType<typeof useConnectorTag>
-): Details['data']['connectorImage'] => {
-    const { id, connectorId, imageTag, connector } = connectorTag;
-
-    const base = {
-        connectorId,
-        iconPath: connector.logoUrl ?? '',
-        id,
-        imageName: connector.imageName,
-        imageTag,
-    };
-
-    return connector.imageName.startsWith(DEKAF_IMAGE_PREFIX)
-        ? {
-              ...base,
-              variant: connector.imageName.substring(DEKAF_IMAGE_PREFIX.length),
-          }
-        : { ...base, imagePath: `${connector.imageName}${imageTag}` };
-};
+import { buildConnectorImageFromTag } from 'src/utils/connector-utils';
 
 export const useDetailsFormHydrator = () => {
     const connectorTag = useConnectorTag();
@@ -69,7 +47,7 @@ export const useDetailsFormHydrator = () => {
                 workflow === 'materialization_create';
 
             if (createWorkflow) {
-                const connectorImage = buildConnectorImage(connectorTag);
+                const connectorImage = buildConnectorImageFromTag(connectorTag);
                 const dataPlaneOptions =
                     await evaluateDataPlaneOptions(baseEntityName);
 
@@ -112,7 +90,7 @@ export const useDetailsFormHydrator = () => {
                     reactor_address,
                 } = data[0];
 
-                const connectorImage = buildConnectorImage(connectorTag);
+                const connectorImage = buildConnectorImageFromTag(connectorTag);
 
                 const dataPlaneOptions = await evaluateDataPlaneOptions(
                     catalog_name,
