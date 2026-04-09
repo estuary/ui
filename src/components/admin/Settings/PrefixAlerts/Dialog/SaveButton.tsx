@@ -23,10 +23,11 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
         () =>
             Boolean(
                 errorsExist ||
+                    loading ||
                     subscription.catalogPrefix.length === 0 ||
                     subscription.email.length === 0
             ),
-        [errorsExist, subscription.catalogPrefix, subscription.email]
+        [errorsExist, loading, subscription.catalogPrefix, subscription.email]
     );
 
     return (

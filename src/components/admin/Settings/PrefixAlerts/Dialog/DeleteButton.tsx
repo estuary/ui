@@ -24,6 +24,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
             color="error"
             disabled={Boolean(
                 prefixErrorsExist ||
+                    loading ||
                     subscription.catalogPrefix.length === 0 ||
                     subscription.email.length === 0
             )}
