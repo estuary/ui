@@ -1,46 +1,41 @@
 import type { DialogActionProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
-import { useMemo } from 'react';
-
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
 import SafeLoadingButton from 'src/components/SafeLoadingButton';
 
-const SaveButton = ({ closeDialog }: DialogActionProps) => {
-    const { loading, onClick } = useModifyAlertSubscription(closeDialog);
+const DeleteButton = ({ closeDialog }: DialogActionProps) => {
+    const intl = useIntl();
 
-    const errorsExist = useAlertSubscriptionsStore(
-        (state) => state.emailErrorsExist || state.prefixErrorsExist
+    const { loading, onClick } = useModifyAlertSubscription(closeDialog, true);
+
+    const prefixErrorsExist = useAlertSubscriptionsStore(
+        (state) => state.prefixErrorsExist
     );
 
     const subscription = useAlertSubscriptionsStore(
         (state) => state.subscription
     );
 
-    const disabled = useMemo(
-        () =>
-            Boolean(
-                errorsExist ||
+    return (
+        <SafeLoadingButton
+            color="error"
+            disabled={Boolean(
+                prefixErrorsExist ||
                     loading ||
                     subscription.catalogPrefix.length === 0 ||
                     subscription.email.length === 0
-            ),
-        [errorsExist, loading, subscription.catalogPrefix, subscription.email]
-    );
-
-    return (
-        <SafeLoadingButton
-            variant="contained"
-            size="small"
-            disabled={disabled}
+            )}
             loading={loading}
             onClick={onClick}
+            size="small"
+            variant="outlined"
         >
-            <FormattedMessage id="cta.save" />
+            {intl.formatMessage({ id: 'cta.delete' })}
         </SafeLoadingButton>
     );
 };
 
-export default SaveButton;
+export default DeleteButton;

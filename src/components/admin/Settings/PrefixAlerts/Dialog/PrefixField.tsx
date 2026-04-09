@@ -1,33 +1,34 @@
-import { Grid, Skeleton, TextField } from '@mui/material';
+import type { PrefixFieldProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+
+import { Grid, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
+import { useMount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 
-interface Props {
-    staticPrefix?: string;
-}
-
-export default function PrefixField({ staticPrefix }: Props) {
+export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     const intl = useIntl();
 
-    const subscriptions = useAlertSubscriptionsStore(
-        (state) => state.subscriptions
+    const setSubscribedPrefix = useAlertSubscriptionsStore(
+        (state) => state.setSubscribedPrefix
     );
-    const updatePrefix = useAlertSubscriptionsStore(
-        (state) => state.updatePrefix
-    );
+
+    useMount(() => {
+        if (staticPrefix && staticPrefix.length > 0) {
+            setSubscribedPrefix(staticPrefix, null);
+        }
+    });
 
     return (
         <Grid item xs={12} md={5} sx={{ display: 'flex' }}>
-            {subscriptions === undefined ? (
-                <Skeleton height={38} width={345} />
-            ) : staticPrefix ? (
+            {staticPrefix ? (
                 <TextField
                     InputProps={{
                         sx: { borderRadius: 3 },
                     }}
+                    disabled
                     fullWidth
                     label={intl.formatMessage({
                         id: 'common.tenant',
@@ -42,7 +43,7 @@ export default function PrefixField({ staticPrefix }: Props) {
                     label={intl.formatMessage({
                         id: 'common.tenant',
                     })}
-                    onChange={updatePrefix}
+                    onChange={setSubscribedPrefix}
                     prefixOnly
                     required
                     size="small"

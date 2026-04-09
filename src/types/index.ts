@@ -371,6 +371,7 @@ export interface AlertSubscription {
     updated_at: Date;
     catalog_prefix: string;
     email: string;
+    include_alert_types: string[];
 }
 
 export interface DataProcessingAlert {

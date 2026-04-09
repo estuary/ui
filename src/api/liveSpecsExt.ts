@@ -461,7 +461,7 @@ const getLatestLiveSpecByName = async (catalogName: string) => {
                 .select(`spec, id, last_pub_id`)
                 .eq('catalog_name', catalogName)
                 .single(),
-        'getNotificationSubscriptionForUser'
+        'getLatestLiveSpecByName'
     ).then(handleSuccess<LiveSpecsExtQuery_Latest>, handleFailure);
 
     return data;
@@ -562,13 +562,6 @@ export interface LiveSpecsExt_Related {
 
 export {
     getLatestLiveSpecByName,
-    getLiveSpecShards,
-    getLiveSpecSpec,
-    getLiveSpecsByCatalogName,
-    getLiveSpecsByCatalogNames,
-    getLiveSpecsByConnectorId,
-    getLiveSpecsByLiveSpecId,
-    getLiveSpecsForGroupedUpdates,
     getLiveSpecs_captures,
     getLiveSpecs_collections,
     getLiveSpecs_dataPlaneAuthReq,
@@ -576,5 +569,12 @@ export {
     getLiveSpecs_entitySelector,
     getLiveSpecs_existingTasks,
     getLiveSpecs_materializations,
+    getLiveSpecsByCatalogName,
+    getLiveSpecsByCatalogNames,
+    getLiveSpecsByConnectorId,
+    getLiveSpecsByLiveSpecId,
+    getLiveSpecsForGroupedUpdates,
+    getLiveSpecShards,
+    getLiveSpecSpec,
     getTrialCollections,
 };

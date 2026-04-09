@@ -1,6 +1,7 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 
 export type KnownEvents =
+    | 'AlertSubscription'
     | 'Auth'
     | 'Confirmation'
     | 'DataPlaneGateway'

@@ -1,4 +1,4 @@
-import type { AlertType } from 'src/gql-types/graphql';
+import type { AlertType, AlertTypeInfo } from 'src/gql-types/graphql';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
 export interface AlertDetailsRecipients {
@@ -115,4 +115,37 @@ export interface AuthRolesQueryResponse {
         }[];
         pageInfo?: Pick<PageInfo, 'hasNextPage' | 'endCursor'>;
     };
+}
+
+export interface AlertSubscription extends BaseFields {
+    alertTypes: string[];
+    catalogPrefix: string;
+    destination: string;
+    email: string;
+}
+
+// This interface is used for create and update alert subscription mutations.
+export interface AlertSubscriptionMutationInput
+    extends BaseAlertSubscriptionMutationInput {
+    alertTypes?: string[];
+    detail?: string;
+}
+
+export interface AlertSubscriptionsBy {
+    prefix: string;
+}
+
+export interface AlertTypeQueryResponse {
+    alertTypes: AlertTypeInfo[];
+}
+
+export interface BaseAlertSubscriptionMutationInput {
+    email: string;
+    prefix: string;
+}
+
+interface BaseFields {
+    createdAt: Date;
+    detail: string | null;
+    updatedAt: Date;
 }
