@@ -53,6 +53,7 @@ const AlertSubscriptionDialog = ({
         }
 
         setOpen(false);
+        resetSubscriptionState();
     };
 
     useUnmount(() => {
