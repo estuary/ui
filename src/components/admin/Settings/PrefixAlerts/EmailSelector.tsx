@@ -11,7 +11,6 @@ import {
     ListItemText,
     TextField,
     Typography,
-    useTheme,
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -32,7 +31,6 @@ const sanitizeEmail = (value: string) => {
 
 function EmailSelector() {
     const intl = useIntl();
-    const theme = useTheme();
 
     const serverError = useAlertSubscriptionsStore(
         (state) => state.initializationError
@@ -92,6 +90,17 @@ function EmailSelector() {
                 }
                 handleHomeEndKeys
                 inputValue={inputValue}
+                isOptionEqualToValue={(option, value) => {
+                    if (typeof option === 'string') {
+                        return typeof value === 'string'
+                            ? value === option
+                            : value.user_email === option;
+                    }
+
+                    return typeof value === 'string'
+                        ? value === option.user_email
+                        : value.user_email === option.user_email;
+                }}
                 onChange={(_event, value, reason) => {
                     if (!value) {
                         setSubscribedEmail('');
@@ -140,11 +149,6 @@ function EmailSelector() {
                     />
                 )}
                 renderOption={(renderOptionProps, option) => {
-                    const inputMatchesOption =
-                        (typeof option === 'string' && option === inputValue) ||
-                        (typeof option !== 'string' &&
-                            option.user_email === inputValue);
-
                     return (
                         <ListItem
                             {...renderOptionProps}
@@ -153,11 +157,6 @@ function EmailSelector() {
                                     ? option
                                     : option.user_id
                             }
-                            style={{
-                                backgroundColor: inputMatchesOption
-                                    ? theme.palette.primary.alpha_08
-                                    : undefined,
-                            }}
                         >
                             {typeof option === 'string' ? (
                                 <Typography>{option}</Typography>
