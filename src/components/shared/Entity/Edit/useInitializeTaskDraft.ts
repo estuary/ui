@@ -256,6 +256,8 @@ function useInitializeTaskDraft() {
                                 [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
                                 [GlobalSearchParams.CONNECTOR_ID]:
                                     formatOldUuidToGql(task.connector_id),
+                                [GlobalSearchParams.CONNECTOR_IMAGE_TAG]:
+                                    task.connector_image_tag,
                                 [GlobalSearchParams.LAST_PUB_ID]:
                                     task.last_pub_id,
                             },
