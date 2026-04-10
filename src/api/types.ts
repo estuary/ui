@@ -1,4 +1,5 @@
 import type { Entity } from 'src/types';
+import type { AlertSubscription } from 'src/types/gql';
 
 export interface DraftSpecData {
     spec: any;
@@ -51,4 +52,13 @@ export interface MassCreateDraftSpecsData {
 export interface LiveSpecsExtQuery_GroupedUpdates {
     catalog_name: string;
     id: string;
+}
+
+export type ReducedAlertSubscription = Pick<
+    AlertSubscription,
+    'alertTypes' | 'catalogPrefix' | 'email' | 'updatedAt'
+>;
+
+export interface ReducedAlertSubscriptionQueryResponse {
+    alertSubscriptions: ReducedAlertSubscription[];
 }

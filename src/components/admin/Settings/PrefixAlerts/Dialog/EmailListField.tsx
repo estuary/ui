@@ -1,45 +1,13 @@
-import { useEffect } from 'react';
+import type { EmailListFieldProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
-import { Grid, Skeleton } from '@mui/material';
+import { Grid, TextField } from '@mui/material';
+
+import { useIntl } from 'react-intl';
 
 import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/EmailSelector';
-import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
-interface Props {
-    open: boolean;
-}
-
-export default function EmailListField({ open }: Props) {
-    const subscriptions = useAlertSubscriptionsStore(
-        (state) => state.subscriptions
-    );
-
-    const serverError = useAlertSubscriptionsStore(
-        (state) => state.initializationError
-    );
-
-    const prefix = useAlertSubscriptionsStore((state) => state.prefix);
-
-    const existingEmails = useAlertSubscriptionsStore(
-        (state) => state.existingEmails
-    );
-    const [updatedEmails, setUpdatedEmails] = useAlertSubscriptionsStore(
-        (state) => [state.updatedEmails, state.setUpdatedEmails]
-    );
-
-    useEffect(() => {
-        if (
-            open &&
-            prefix &&
-            Object.hasOwn(existingEmails, prefix) &&
-            !Object.hasOwn(updatedEmails, prefix)
-        ) {
-            setUpdatedEmails({
-                ...updatedEmails,
-                [prefix]: existingEmails[prefix],
-            });
-        }
-    }, [open, prefix, existingEmails, setUpdatedEmails, updatedEmails]);
+const EmailListField = ({ staticEmail }: EmailListFieldProps) => {
+    const intl = useIntl();
 
     return (
         <Grid
@@ -52,16 +20,26 @@ export default function EmailListField({ open }: Props) {
                 display: 'flex',
             }}
         >
-            {subscriptions === undefined ? (
-                <Skeleton height={38} width={490} />
-            ) : (
-                <EmailSelector
-                    disabled={!!serverError}
-                    emailsByPrefix={updatedEmails}
-                    prefix={prefix}
-                    setEmailsByPrefix={setUpdatedEmails}
+            {staticEmail ? (
+                <TextField
+                    InputProps={{
+                        sx: { borderRadius: 3 },
+                    }}
+                    disabled
+                    fullWidth
+                    label={intl.formatMessage({
+                        id: 'data.email',
+                    })}
+                    required
+                    size="small"
+                    value={staticEmail}
+                    variant="outlined"
                 />
+            ) : (
+                <EmailSelector />
             )}
         </Grid>
     );
-}
+};
+
+export default EmailListField;

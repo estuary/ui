@@ -280,70 +280,6 @@ export type ConnectionHealthTestResult = {
   results: Array<StorageHealthItem>;
 };
 
-export type Connector = {
-  __typename?: 'Connector';
-  /** Returns the ConnectorTag object for the given image tag, which must begin with a `:`. */
-  connectorTag?: Maybe<ConnectorTag>;
-  /** Timestamp of when the connector was first created */
-  createdAt: Scalars['DateTime']['output'];
-  /**
-   * Returns the default `ConnectorTag` for this connector. This is the one
-   * that should be used by default when publishing new tasks for this
-   * connector. There will only be a default image tag if at least one tag
-   * has successfully completed the connector Spec RPC.
-   */
-  defaultImageTag?: Maybe<Scalars['String']['output']>;
-  /** Link to an external site with more information about the endpoint */
-  externalUrl: Scalars['String']['output'];
-  /** Unique id of the connector */
-  id: Scalars['Id']['output'];
-  /** Name of the conector's OCI (Docker) Container image, for example "ghcr.io/estuary/source-postgres" */
-  imageName: Scalars['String']['output'];
-  /** The connector's logo image, represented as a URL per locale */
-  logoUrl?: Maybe<Scalars['String']['output']>;
-  /** A longform description of this connector */
-  longDescription?: Maybe<Scalars['String']['output']>;
-  /** Does Estuary's marketing team want this one to appear at the top of the results? */
-  recommended: Scalars['Boolean']['output'];
-  /** Brief human readable description, at most a few sentences */
-  shortDescription?: Maybe<Scalars['String']['output']>;
-  /** All the tags that are available for this connector. */
-  tags: Array<ConnectorTagRef>;
-  /** The title, a few words at most */
-  title?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type ConnectorConnectorTagArgs = {
-  imageTag?: InputMaybe<Scalars['String']['input']>;
-  orDefault: Scalars['Boolean']['input'];
-};
-
-export type ConnectorConnection = {
-  __typename?: 'ConnectorConnection';
-  /** A list of edges. */
-  edges: Array<ConnectorEdge>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ConnectorEdge = {
-  __typename?: 'ConnectorEdge';
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: Connector;
-};
-
-/**
- * The type of task that the connector is used for. Note that derivation
- * connectors do exist, but aren't yet represented in `connector_tags`.
- */
-export type ConnectorProto =
-  | 'capture'
-  | 'materialization';
-
 /** The shape of a connector status, which matches that of an ops::Log. */
 export type ConnectorStatus = {
   __typename?: 'ConnectorStatus';
@@ -358,56 +294,6 @@ export type ConnectorStatus = {
   shard: ShardRef;
   /** The time at which the status was last updated */
   ts: Scalars['DateTime']['output'];
-};
-
-export type ConnectorTag = {
-  __typename?: 'ConnectorTag';
-  /** The id of the connector this tag relates to. */
-  connectorId: Scalars['Id']['output'];
-  /** Time at which the ConnectorTag was created */
-  createdAt: Scalars['DateTime']['output'];
-  /**
-   * The default interval between invocations of a capture using this connector tag.
-   * Formatted as HH:MM:SS. Only applicable to non-streaming (polling) capture connectors.
-   */
-  defaultCaptureInterval?: Maybe<Scalars['String']['output']>;
-  /** Whether the UI should hide the backfill button for this connector */
-  disableBackfill: Scalars['Boolean']['output'];
-  /** URL pointing to the documentation page for this connector */
-  documentationUrl?: Maybe<Scalars['String']['output']>;
-  /** Endpoint specification JSON-Schema of the tagged connector */
-  endpointSpecSchema?: Maybe<Scalars['JSON']['output']>;
-  /** Unique id of the connector tag */
-  id: Scalars['Id']['output'];
-  /** The OCI Image tag value, including the leading `:`. For example `:v1` */
-  imageTag: Scalars['String']['output'];
-  /** The protocol of the connector with this tag value */
-  protocol?: Maybe<ConnectorProto>;
-  /** Resource specification JSON-Schema of the tagged connector */
-  resourceSpecSchema?: Maybe<Scalars['JSON']['output']>;
-  /** Time at which the ConnectorTag was last updated */
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type ConnectorTagRef = {
-  __typename?: 'ConnectorTagRef';
-  /** The canonical id of this connector tag */
-  id: Scalars['Id']['output'];
-  /** The OCI image tag, includeing the leading `:`, for example `:v2` */
-  imageTag: Scalars['String']['output'];
-  /** The protocol of this connector tag, if known */
-  protocol?: Maybe<ConnectorProto>;
-  /**
-   * Returns whether a connector Spec RPC has ever been successful for this tag.
-   * Concretely, this is used to determine whether the tag could be used by the
-   * UI or flowctl for publishing tasks, because the Spec RPC populates the
-   * `endpointSpecSchema`, `resourceSpecSchema`, `protocol`, etc.
-   */
-  specSucceeded: Scalars['Boolean']['output'];
-};
-
-export type ConnectorsFilter = {
-  protocol?: InputMaybe<ProtocolFilter>;
 };
 
 /** Status info related to the controller */
@@ -956,10 +842,6 @@ export type PrefixesBy = {
   minCapability: Capability;
 };
 
-export type ProtocolFilter = {
-  eq: ConnectorProto;
-};
-
 /** Summary of a publication that was attempted by a controller. */
 export type PublicationInfo = {
   __typename?: 'PublicationInfo';
@@ -1032,31 +914,6 @@ export type QueryRoot = {
    */
   alerts: AlertConnection;
   /**
-   * Returns information about a single connector, which may or may not have
-   * had a successful Spec RPC, and thus may or may not be usable in the
-   * Estuary UI. At least one parameter must be provided. If multiple
-   * parameters are provided, then the connector must match _both_ the image
-   * name and id parameters in order to be returned.
-   */
-  connector?: Maybe<Connector>;
-  /**
-   * Returns the ConnectorTag for a given full (including the version) OCI
-   * image name. The returned tag may be different from the version in the
-   * image name. This would happen if there is no connector spec for the
-   * given tag, but one exists for a different tag. The return value will be
-   * null if either the connector image is unkown, or if there has not been a
-   * successful Spec for any version of that image.
-   */
-  connectorTag?: Maybe<ConnectorTag>;
-  /**
-   * Returns a paginated list of connectors. This query only returns
-   * connectors that have at least one `ConnectorTag` that has had a
-   * successful Spec RPC. Connectors that have not had at least one
-   * successful Spec RPC cannot be used by the Estuary UI, and so are
-   * excluded here.
-   */
-  connectors: ConnectorConnection;
-  /**
    * Returns data planes accessible to the current user.
    *
    * Results are paginated and sorted by data_plane_name.
@@ -1101,27 +958,6 @@ export type QueryRootAlertsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   by: AlertsBy;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
-export type QueryRootConnectorArgs = {
-  id?: InputMaybe<Scalars['Id']['input']>;
-  imageName?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryRootConnectorTagArgs = {
-  fullImageName?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['Id']['input']>;
-};
-
-
-export type QueryRootConnectorsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<ConnectorsFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -1457,21 +1293,45 @@ export type UpdateStorageMappingResult = {
   republish: Scalars['Boolean']['output'];
 };
 
-export type ConnectorsGridQueryVariables = Exact<{
-  filter?: InputMaybe<ConnectorsFilter>;
-  after?: InputMaybe<Scalars['String']['input']>;
+export type CreateAlertSubscriptionMutationMutationVariables = Exact<{
+  prefix: Scalars['Prefix']['input'];
+  email: Scalars['String']['input'];
+  alertTypes?: InputMaybe<Array<AlertType> | AlertType>;
+  detail?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type ConnectorsGridQuery = { __typename?: 'QueryRoot', connectors: { __typename?: 'ConnectorConnection', edges: Array<{ __typename?: 'ConnectorEdge', cursor: string, node: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null, recommended: boolean, shortDescription?: string | null, connectorTag?: { __typename?: 'ConnectorTag', id: any, connectorId: any, imageTag: string, documentationUrl?: string | null, protocol?: ConnectorProto | null } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type CreateAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', createAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: any, email?: string | null } };
 
-export type SingleConnectorQueryVariables = Exact<{
-  id: Scalars['Id']['input'];
-  imageTag?: InputMaybe<Scalars['String']['input']>;
+export type DeleteAlertSubscriptionMutationMutationVariables = Exact<{
+  prefix: Scalars['Prefix']['input'];
+  email: Scalars['String']['input'];
 }>;
 
 
-export type SingleConnectorQuery = { __typename?: 'QueryRoot', connector?: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null, connectorTag?: { __typename?: 'ConnectorTag', id: any, connectorId: any, imageTag: string, defaultCaptureInterval?: string | null, disableBackfill: boolean, documentationUrl?: string | null, endpointSpecSchema?: any | null, resourceSpecSchema?: any | null, protocol?: ConnectorProto | null } | null } | null };
+export type DeleteAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', deleteAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: any, email?: string | null } };
+
+export type AlertSubscriptionsQueryVariables = Exact<{
+  prefix: Scalars['Prefix']['input'];
+}>;
+
+
+export type AlertSubscriptionsQuery = { __typename?: 'QueryRoot', alertSubscriptions: Array<{ __typename?: 'AlertSubscription', alertTypes: Array<AlertType>, catalogPrefix: any, email?: string | null, updatedAt: any }> };
+
+export type UpdateAlertSubscriptionMutationMutationVariables = Exact<{
+  prefix: Scalars['Prefix']['input'];
+  email: Scalars['String']['input'];
+  alertTypes?: InputMaybe<Array<AlertType> | AlertType>;
+  detail?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type UpdateAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', updateAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: any, email?: string | null } };
+
+export type AlertTypeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AlertTypeQuery = { __typename?: 'QueryRoot', alertTypes: Array<{ __typename?: 'AlertTypeInfo', alertType: AlertType, description: string, displayName: string, isDefault: boolean, isSystem: boolean }> };
 
 export type DataPlanesQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;
@@ -1594,8 +1454,11 @@ export type AuthRolesQueryQueryVariables = Exact<{
 export type AuthRolesQueryQuery = { __typename?: 'QueryRoot', prefixes: { __typename?: 'PrefixRefConnection', edges: Array<{ __typename?: 'PrefixRefEdge', node: { __typename?: 'PrefixRef', prefix: any, userCapability: Capability } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export const PageInfoFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<PageInfoFieldsFragment, unknown>;
-export const ConnectorsGridDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorsGrid"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ConnectorsFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connectors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"500"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"recommended"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"connectorTag"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"orDefault"},"value":{"kind":"BooleanValue","value":true}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"connectorId"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<ConnectorsGridQuery, ConnectorsGridQueryVariables>;
-export const SingleConnectorDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SingleConnector"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageTag"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connector"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"connectorTag"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"imageTag"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageTag"}}},{"kind":"Argument","name":{"kind":"Name","value":"orDefault"},"value":{"kind":"BooleanValue","value":true}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"connectorId"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"defaultCaptureInterval"}},{"kind":"Field","name":{"kind":"Name","value":"disableBackfill"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"endpointSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"resourceSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]}}]} as unknown as DocumentNode<SingleConnectorQuery, SingleConnectorQueryVariables>;
+export const CreateAlertSubscriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateAlertSubscriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AlertType"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createAlertSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"alertTypes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<CreateAlertSubscriptionMutationMutation, CreateAlertSubscriptionMutationMutationVariables>;
+export const DeleteAlertSubscriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteAlertSubscriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteAlertSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<DeleteAlertSubscriptionMutationMutation, DeleteAlertSubscriptionMutationMutationVariables>;
+export const AlertSubscriptionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertSubscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertSubscriptions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertTypes"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<AlertSubscriptionsQuery, AlertSubscriptionsQueryVariables>;
+export const UpdateAlertSubscriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAlertSubscriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AlertType"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAlertSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"alertTypes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<UpdateAlertSubscriptionMutationMutation, UpdateAlertSubscriptionMutationMutationVariables>;
+export const AlertTypeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}}]}}]}}]} as unknown as DocumentNode<AlertTypeQuery, AlertTypeQueryVariables>;
 export const DataPlanesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DataPlanes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dataPlanes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"cloudProvider"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"fqdn"}},{"kind":"Field","name":{"kind":"Name","value":"cidrBlocks"}},{"kind":"Field","name":{"kind":"Name","value":"awsIamUserArn"}},{"kind":"Field","name":{"kind":"Name","value":"gcpServiceAccountEmail"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationClientId"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationName"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<DataPlanesQuery, DataPlanesQueryVariables>;
 export const InviteLinksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"InviteLinks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"inviteLinks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"ssoProviderId"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<InviteLinksQuery, InviteLinksQueryVariables>;
 export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"capability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Capability"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"capability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"capability"}}},{"kind":"Argument","name":{"kind":"Name","value":"singleUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateInviteLinkMutation, CreateInviteLinkMutationVariables>;

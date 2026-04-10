@@ -20,7 +20,7 @@ interface Props {
 function NotificationSettings({ taskName }: Props) {
     const intl = useIntl();
 
-    const { createSubscription, getNotificationSubscription } =
+    const { createAlertSubscription, getNotificationSubscription } =
         useInitializeTaskNotification(taskName);
 
     const [subscriptionExists, setSubscriptionExists] = useState<
@@ -77,7 +77,7 @@ function NotificationSettings({ taskName }: Props) {
                         <MessageWithButton
                             messageId="details.settings.notifications.alert.userNotSubscribed.message"
                             clickHandler={() => {
-                                createSubscription().then(
+                                createAlertSubscription().then(
                                     (response) => {
                                         if (
                                             response.data &&

@@ -83,9 +83,9 @@ export interface EntityTableProps {
 
 export interface EntityTableBodyProps {
     columns: ColumnProps[];
-    noExistingDataContentIds: TableIntlConfig;
-    tableState: TableState;
     loading: boolean;
+    noExistingDataContentIds: TableIntlConfig;
     rows: any;
+    tableState: TableState;
     enableDivRendering?: boolean;
 }

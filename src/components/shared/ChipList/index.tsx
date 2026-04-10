@@ -9,12 +9,12 @@ import { ExpandListChip } from 'src/styledComponents/chips/ExpandListChip';
 import { useCollapsableList } from 'src/styledComponents/chips/useCollapsableList';
 
 function ChipList({
-    values,
     disabled,
     forceTooltip,
     maxChips,
     stripPath,
     sx,
+    values,
 }: ChipListProps) {
     const theme = useTheme();
 
