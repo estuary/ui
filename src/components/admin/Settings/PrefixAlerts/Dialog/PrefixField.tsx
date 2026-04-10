@@ -22,7 +22,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     });
 
     return (
-        <Grid item size={{ xs: 12, md: 5 }} sx={{ display: 'flex' }}>
+        <Grid size={{ xs: 12, md: 5 }} sx={{ display: 'flex' }}>
             {staticPrefix ? (
                 <TextField
                     InputProps={{

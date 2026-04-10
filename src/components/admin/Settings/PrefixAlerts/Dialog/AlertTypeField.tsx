@@ -43,14 +43,12 @@ const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
 
     return (
         <Grid
-            item
-            xs={12}
             sx={{
                 maxHeight: 250,
                 overflow: 'auto',
                 display: 'flex',
             }}
-        >
+            size={12}>
             {fetching || !data ? (
                 <Skeleton height={38} width={490} />
             ) : (
