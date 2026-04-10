@@ -119,17 +119,6 @@ export const useDetailsFormHydrator = () => {
             }
 
             if (workflow === 'test_json_forms') {
-                setDetails_connector({
-                    connectorId: '',
-                    iconPath: '',
-                    id: '',
-                    imageName: '',
-                    imagePath: '',
-                    imageTag: '',
-                });
-
-                setHydrationErrorsExist(true);
-
                 setHydrated(true);
 
                 return Promise.resolve();
