@@ -28,7 +28,7 @@ function EntityAlerts() {
                 sx={{ flexDirection: 'row-reverse' }}
             >
                 {!isCollection && catalogName ? (
-                    <Grid item xs={12} md={12} lg={4}>
+                    <Grid item size={{ xs: 12, md: 12, lg: 4 }}>
                         <AlertSubscriptionsProvider>
                             <NotificationSettings taskName={catalogName} />
                         </AlertSubscriptionsProvider>
