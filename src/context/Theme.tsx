@@ -58,6 +58,7 @@ import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 declare module '@mui/material/styles' {
     interface PaletteColor {
         alpha_05?: string;
+        alpha_08?: string;
         alpha_12?: string;
         alpha_26?: string;
         alpha_50?: string;
@@ -65,6 +66,7 @@ declare module '@mui/material/styles' {
 
     interface SimplePaletteColorOptions {
         alpha_05?: string;
+        alpha_08?: string;
         alpha_12?: string;
         alpha_26?: string;
         alpha_50?: string;
@@ -206,6 +208,7 @@ const lightMode: PaletteOptions = {
     contrastThreshold,
     error: {
         alpha_05: `rgba(${rgbTranslations.light.error.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.light.error.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.light.error.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.light.error.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.light.error.main}, 0.50)`,
@@ -213,6 +216,7 @@ const lightMode: PaletteOptions = {
     },
     info: {
         alpha_05: `rgba(${rgbTranslations.light.info.dark}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.light.info.dark}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.light.info.dark}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.light.info.dark}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.light.info.dark}, 0.50)`,
@@ -222,6 +226,7 @@ const lightMode: PaletteOptions = {
     mode: 'light',
     primary: {
         alpha_05: `rgba(${rgbTranslations.light.primary.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.light.primary.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.light.primary.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.light.primary.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.light.primary.main}, 0.50)`,
@@ -229,6 +234,7 @@ const lightMode: PaletteOptions = {
     },
     secondary: {
         alpha_05: `rgba(${rgbTranslations.light.secondary.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.light.secondary.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.light.secondary.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.light.secondary.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.light.secondary.main}, 0.50)`,
@@ -236,6 +242,7 @@ const lightMode: PaletteOptions = {
     },
     success: {
         alpha_05: `rgba(${rgbTranslations.light.success.dark}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.light.success.dark}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.light.success.dark}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.light.success.dark}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.light.success.dark}, 0.50)`,
@@ -249,6 +256,7 @@ const lightMode: PaletteOptions = {
     tonalOffset,
     warning: {
         alpha_05: `rgba(${rgbTranslations.light.warning.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.light.warning.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.light.warning.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.light.warning.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.light.warning.main}, 0.50)`,
@@ -264,6 +272,7 @@ const darkMode: PaletteOptions = {
     mode: 'dark',
     error: {
         alpha_05: `rgba(${rgbTranslations.dark.error.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.dark.error.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.dark.error.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.dark.error.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.dark.error.main}, 0.50)`,
@@ -271,6 +280,7 @@ const darkMode: PaletteOptions = {
     },
     info: {
         alpha_05: `rgba(${rgbTranslations.dark.info.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.dark.info.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.dark.info.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.dark.info.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.dark.info.main}, 0.50)`,
@@ -278,6 +288,7 @@ const darkMode: PaletteOptions = {
     },
     primary: {
         alpha_05: `rgba(${rgbTranslations.dark.primary.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.dark.primary.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.dark.primary.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.dark.primary.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.dark.primary.main}, 0.50)`,
@@ -285,6 +296,7 @@ const darkMode: PaletteOptions = {
     },
     secondary: {
         alpha_05: `rgba(${rgbTranslations.dark.secondary.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.dark.secondary.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.dark.secondary.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.dark.secondary.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.dark.secondary.main}, 0.50)`,
@@ -292,6 +304,7 @@ const darkMode: PaletteOptions = {
     },
     success: {
         alpha_05: `rgba(${rgbTranslations.dark.success.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.dark.success.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.dark.success.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.dark.success.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.dark.success.main}, 0.50)`,
@@ -304,6 +317,7 @@ const darkMode: PaletteOptions = {
     tonalOffset,
     warning: {
         alpha_05: `rgba(${rgbTranslations.dark.warning.main}, 0.05)`,
+        alpha_08: `rgba(${rgbTranslations.dark.warning.main}, 0.08)`,
         alpha_12: `rgba(${rgbTranslations.dark.warning.main}, 0.12)`,
         alpha_26: `rgba(${rgbTranslations.dark.warning.main}, 0.26)`,
         alpha_50: `rgba(${rgbTranslations.dark.warning.main}, 0.50)`,

@@ -55,6 +55,8 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     keys: {
                         // TODO (gql caching)  - see GRAPHQL.md
                         Alert: (_data) => null,
+                        AlertSubscription: (_data) => null,
+                        AlertTypeInfo: (_data) => null,
                         InviteLink: (data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
@@ -68,6 +70,15 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             deleteInviteLink(_result, _args, cache) {
                                 invalidateQuery(cache, 'inviteLinks');
+                            },
+                            createAlertSubscription(_result, _args, cache) {
+                                invalidateQuery(cache, 'alertSubscriptions');
+                            },
+                            deleteAlertSubscription(_result, _args, cache) {
+                                invalidateQuery(cache, 'alertSubscriptions');
+                            },
+                            updateAlertSubscription(_result, _args, cache) {
+                                invalidateQuery(cache, 'alertSubscriptions');
                             },
                         },
                     },

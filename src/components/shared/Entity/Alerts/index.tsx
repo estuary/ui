@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import AlertHistoryTable from 'src/components/tables/AlertHistory';
+import { AlertSubscriptionsProvider } from 'src/context/AlertSubscriptions';
 import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -27,12 +28,14 @@ function EntityAlerts() {
                 sx={{ flexDirection: 'row-reverse' }}
             >
                 {!isCollection && catalogName ? (
-                    <Grid size={{ xs: 12, md: 12, lg: 4 }}>
-                        <NotificationSettings taskName={catalogName} />
+                    <Grid item xs={12} md={12} lg={4}>
+                        <AlertSubscriptionsProvider>
+                            <NotificationSettings taskName={catalogName} />
+                        </AlertSubscriptionsProvider>
                     </Grid>
                 ) : null}
 
-                <Grid size={{ xs: 12, md: 12, lg: !isCollection ? 8 : 12 }}>
+                <Grid item xs={12} md={12} lg={!isCollection ? 8 : 12}>
                     <CardWrapper
                         message={intl.formatMessage({
                             id: 'alerts.history.title.active',
@@ -46,7 +49,7 @@ function EntityAlerts() {
                     </CardWrapper>
                 </Grid>
 
-                <Grid size={{ xs: 12 }}>
+                <Grid item xs={12}>
                     <CardWrapper
                         message={intl.formatMessage({
                             id: 'alerts.history.title.resolved',

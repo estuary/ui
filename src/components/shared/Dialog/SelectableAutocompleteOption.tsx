@@ -33,13 +33,14 @@ const SelectableAutocompleteOption = ({
                 <Check
                     style={{
                         color: theme.palette.primary.main,
+                        flexShrink: 0,
                         fontSize: 12,
                         marginRight: 4,
                         marginTop: 2,
                     }}
                 />
             ) : (
-                <Box style={{ width: 18, marginRight: 4 }} />
+                <Box style={{ flexShrink: 0, marginRight: 4, width: 18 }} />
             )}
 
             <Stack>{Content}</Stack>

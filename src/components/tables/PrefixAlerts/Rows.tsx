@@ -1,42 +1,75 @@
-import type { PrefixSubscription } from 'src/utils/notification-utils';
+import type { ChipDisplay } from 'src/components/shared/ChipList/types';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/PrefixAlerts/types';
+
+import { useMemo } from 'react';
 
 import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
+import { sortByAlertType } from 'src/utils/misc-utils';
 
-interface RowsProps {
-    data: [string, PrefixSubscription][];
-}
-
-interface RowProps {
-    row: [string, PrefixSubscription];
-}
-
-function Row({ row }: RowProps) {
-    const prefix = row[0];
-    const data = row[1];
+function Row({ alertTypeDefs, row }: RowProps) {
+    const evaluatedAlertTypes: ChipDisplay[] = useMemo(
+        () =>
+            row.alertTypes
+                .map((alertType) =>
+                    alertTypeDefs.find((def) => def.alertType === alertType)
+                )
+                .filter((def) => typeof def !== 'undefined')
+                .sort((first, second) =>
+                    sortByAlertType(
+                        {
+                            isSystemAlert: first.isSystem,
+                            value: first.displayName,
+                        },
+                        {
+                            isSystemAlert: second.isSystem,
+                            value: second.displayName,
+                        },
+                        'asc'
+                    )
+                )
+                .map(({ displayName, isSystem }) => ({
+                    display: displayName,
+                    diminishedText: isSystem,
+                })),
+        [alertTypeDefs, row.alertTypes]
+    );
 
     return (
         <TableRow>
-            <TableCell>{prefix}</TableCell>
+            <TableCell>{row.catalogPrefix}</TableCell>
 
             <ChipListCell
-                values={data.userSubscriptions.map(({ email }) => email)}
-                stripPath={false}
                 maxChips={3}
+                stripPath={false}
+                values={evaluatedAlertTypes}
             />
 
-            <AlertEditButton prefix={prefix} />
+            <TableCell>{row.email}</TableCell>
+
+            <AlertEditButton
+                alertTypes={row.alertTypes}
+                email={row.email}
+                prefix={row.catalogPrefix}
+            />
         </TableRow>
     );
 }
 
-function Rows({ data }: RowsProps) {
+function Rows({ alertTypeDefs, data }: RowsProps) {
     return (
         <>
-            {data.map((row) => (
-                <Row key={row[0]} row={row} />
+            {data.map((datum, index) => (
+                <Row
+                    alertTypeDefs={alertTypeDefs}
+                    key={`${datum.catalogPrefix}-${datum.email}-${index}`}
+                    row={datum}
+                />
             ))}
         </>
     );
