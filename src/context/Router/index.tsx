@@ -16,6 +16,7 @@ import AdminBilling from 'src/components/admin/Billing';
 import AdminConnectors from 'src/components/admin/Connectors';
 import AdminSettings from 'src/components/admin/Settings';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
+import HasSupportRoleGuard from 'src/components/shared/guards/SupportRole';
 import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
 import { DashboardWelcomeProvider } from 'src/context/DashboardWelcome';
 import { EntityContextProvider } from 'src/context/EntityContext';
@@ -760,9 +761,11 @@ const router = createBrowserRouter(
                                 <ErrorBoundary
                                     FallbackComponent={ErrorImporting}
                                 >
-                                    <EntityContextProvider value="capture">
-                                        <TestJsonForms />
-                                    </EntityContextProvider>
+                                    <HasSupportRoleGuard>
+                                        <EntityContextProvider value="capture">
+                                            <TestJsonForms />
+                                        </EntityContextProvider>
+                                    </HasSupportRoleGuard>
                                 </ErrorBoundary>
                             }
                         />
