@@ -11,7 +11,7 @@ import ErrorComponent from 'src/components/shared/Error';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { logRocketConsole } from 'src/services/shared';
+import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -37,7 +37,7 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
     const [connectorTag, setConnectorTag] = useState<ConnectorTagData | null>(
         null
     );
-    const [fetchError, setFetchError] = useState<string | null>(null);
+    const [fetchError, setFetchError] = useState<boolean | null>(false);
 
     useEffect(() => {
         if (!hasLength(connectorId)) {
@@ -56,8 +56,12 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
                 const connectorTagData = connector?.connectorTag;
 
                 if (error || !connector || !connectorTagData) {
-                    logRocketConsole('Failed to fetch connector tag', error);
-                    setFetchError('Failed to load connector information');
+                    logRocketEvent('Connectors:fetch', {
+                        noConnectors: !connector,
+                        noConnectorTags: !connectorTagData,
+                        status: 'failure',
+                    });
+                    setFetchError(true);
                     return;
                 }
 
@@ -70,6 +74,12 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
                         title: connector.title,
                     },
                 });
+            })
+            .catch((e) => {
+                logRocketEvent('Connectors:fetch', {
+                    status: 'exception',
+                });
+                setFetchError(true);
             });
     }, [client, connectorId, imageTag]);
 
