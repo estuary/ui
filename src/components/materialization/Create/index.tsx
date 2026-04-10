@@ -62,9 +62,7 @@ function MaterializationCreate() {
                     draftSpecMetadata={draftSpecsMetadata}
                     Toolbar={
                         <EntityToolbar
-                            GenerateButton={
-                                <MaterializeGenerateButton />
-                            }
+                            GenerateButton={<MaterializeGenerateButton />}
                             primaryButtonProps={{
                                 disabled: !draftId,
                                 logEvent: CustomEvents.MATERIALIZATION_CREATE,

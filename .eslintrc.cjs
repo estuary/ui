@@ -11,6 +11,7 @@ module.exports = {
         '__mocks__',
         'playwright-tests/',
         'src/gql-types/',
+        'storybook-static/',
     ],
     plugins: ['formatjs', 'unused-imports', 'no-relative-import-paths'],
     parserOptions: {

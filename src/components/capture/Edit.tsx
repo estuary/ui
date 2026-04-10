@@ -74,9 +74,7 @@ function CaptureEdit() {
                             />
                         }
                         RediscoverButton={
-                            <RediscoverButton
-                                entityType={entityType}
-                            />
+                            <RediscoverButton entityType={entityType} />
                         }
                     />
                 </MutateDraftSpecProvider>

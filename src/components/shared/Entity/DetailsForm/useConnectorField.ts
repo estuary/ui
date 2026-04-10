@@ -23,7 +23,9 @@ export default function useConnectorField(
         return [
             {
                 const: buildConnectorImageFromTag(connectorTag),
-                title: connectorTag.connector.title ?? connectorTag.connector.imageName,
+                title:
+                    connectorTag.connector.title ??
+                    connectorTag.connector.imageName,
             },
         ];
     }, [connectorTag]);
