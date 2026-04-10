@@ -85,8 +85,5 @@ export const isInsideArray = (path: string): boolean => {
         return false;
     }
 
-    return (
-        hasLength(path) &&
-        path.split('.').some((segment: string) => /^\d+$/.test(segment))
-    );
+    return (hasLength(path) && path.split('.').some((segment: string) => /^\d+$/.test(segment)));
 };
