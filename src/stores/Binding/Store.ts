@@ -470,7 +470,7 @@ const getInitialState = (
         };
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit, sourceCapture) => {
+    prefillResourceConfigs: (targetCollections, disableOmit, sourceCapture, rootTargetNaming) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
@@ -514,7 +514,8 @@ const getInitialState = (
                         prefilledData = generateMaterializationResourceSpec(
                             sourceCapture,
                             state.resourceConfigPointers,
-                            collectionName
+                            collectionName,
+                            rootTargetNaming
                         );
                     }
 

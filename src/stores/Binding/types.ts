@@ -14,6 +14,7 @@ import type {
     JsonFormsData,
     Schema,
     SourceCaptureDef,
+    TargetNamingStrategy,
 } from 'src/types';
 
 export interface CollectionMetadata {
@@ -172,7 +173,8 @@ export interface BindingState
     prefillResourceConfigs: (
         targetCollections: string[],
         disableOmit?: boolean,
-        sourceCapture?: SourceCaptureDef
+        sourceCapture?: SourceCaptureDef,
+        rootTargetNaming?: TargetNamingStrategy
     ) => void;
 
     // The combination of resource config store actions, `updateResourceConfig` and

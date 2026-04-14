@@ -28,6 +28,7 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
+import { useTargetNamingHydrator } from 'src/stores/TargetNaming/useTargetNamingHydrator';
 import { EditorStoreNames } from 'src/stores/names';
 
 interface Props {
@@ -46,6 +47,7 @@ function BindingsMultiEditor({
     // This keeps an eye on resource config and updates if there is a need
     useServerUpdateRequiredMonitor(draftSpecs);
     useValidateFieldSelection();
+    useTargetNamingHydrator();
 
     const intl = useIntl();
     const theme = useTheme();

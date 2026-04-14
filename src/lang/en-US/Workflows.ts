@@ -296,6 +296,31 @@ export const Workflows: Record<string, string> = {
     'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
+    // Destination Layout dialog (new targetNaming model)
+    'destinationLayout.dialog.title': `Destination Layout`,
+    'destinationLayout.dialog.subtitle': `How should source schemas map to your destination? This applies to newly added bindings. You can override individual bindings later.`,
+    'destinationLayout.dialog.schema.label': `Schema`,
+    'destinationLayout.dialog.schema.useTemplate': `Use prefix/suffix template`,
+    'destinationLayout.dialog.schema.useFixed': `Use fixed schema name`,
+    'destinationLayout.dialog.schema.prefix.label': `Prefix`,
+    'destinationLayout.dialog.schema.suffix.label': `Suffix`,
+    'destinationLayout.dialog.skipCommonDefaults.label': `Skip common defaults (public, dbo...)`,
+    'destinationLayout.dialog.cta.addBindings': `Add Bindings`,
+
+    'destinationLayout.strategy.matchSourceStructure.label': `Match source structure`,
+    'destinationLayout.strategy.matchSourceStructure.description': `Preserve the original table and schema names. Tables keep their original names.`,
+
+    'destinationLayout.strategy.singleSchema.label': `All tables in one schema`,
+    'destinationLayout.strategy.singleSchema.description': `Place all your tables in one schema. Only the table name is used.`,
+
+    'destinationLayout.strategy.prefixTableNames.label': `Prefix table names`,
+    'destinationLayout.strategy.prefixTableNames.description': `The schema name is added as a table name prefix.`,
+
+    'destinationLayout.example.collection': `acmeCo/mySchema/orders`,
+    'destinationLayout.example.collection.public': `acmeCo/public/orders`,
+    'destinationLayout.example.schema.label': `Schema:`,
+    'destinationLayout.example.table.label': `Table:`,
+
     // Schema Mode
     'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the non-default second-to-last part of the collection name.`,
     'schemaMode.input.label': `Default Naming Convention`,

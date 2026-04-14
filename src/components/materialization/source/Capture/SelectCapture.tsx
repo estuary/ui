@@ -9,10 +9,18 @@ import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import AddSourceCaptureToSpecButton from 'src/components/materialization/source/Capture/AddSourceCaptureToSpecButton';
+import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
+import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import {
+    useTargetNaming_model,
+    useTargetNaming_setStrategy,
+    useTargetNaming_strategy,
+} from 'src/stores/TargetNaming/hooks';
 import { readSourceCaptureDefinitionFromSpec } from 'src/utils/entity-utils';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
@@ -36,8 +44,30 @@ function SelectCapture() {
         );
 
     const [open, setOpen] = useState<boolean>(false);
+    const [namingDialogOpen, setNamingDialogOpen] = useState(false);
+
     const toggleDialog = (args: any) =>
         setOpen(typeof args === 'boolean' ? args : !open);
+
+    const { sourceCaptureTargetSchemaSupported } =
+        useBinding_sourceCaptureFlags();
+    const targetNamingModel = useTargetNaming_model();
+    const targetNamingStrategy = useTargetNaming_strategy();
+    const setStrategy = useTargetNaming_setStrategy();
+    const writeRootTargetNaming = useWriteRootTargetNaming();
+
+    const needsNamingDialog =
+        sourceCaptureTargetSchemaSupported &&
+        targetNamingModel === 'rootTargetNaming' &&
+        targetNamingStrategy === null;
+
+    const handleModifyClick = () => {
+        if (needsNamingDialog) {
+            setNamingDialogOpen(true);
+        } else {
+            toggleDialog(true);
+        }
+    };
 
     const existingSourceCaptureDefinition = useMemo(
         () =>
@@ -94,13 +124,31 @@ function SelectCapture() {
 
     return (
         <>
-            <Button disabled={showLoading || formActive} onClick={toggleDialog}>
+            <Button
+                disabled={showLoading || formActive}
+                onClick={handleModifyClick}
+            >
                 {intl.formatMessage({
                     id: showLoading
                         ? 'workflows.sourceCapture.cta.loading'
                         : 'cta.modify',
                 })}
             </Button>
+
+            {namingDialogOpen ? (
+                <DestinationLayoutDialog
+                    open={namingDialogOpen}
+                    initialStrategy={targetNamingStrategy}
+                    onCancel={() => setNamingDialogOpen(false)}
+                    onConfirm={(strategy) => {
+                        setStrategy(strategy);
+                        writeRootTargetNaming(strategy);
+                        setNamingDialogOpen(false);
+                        toggleDialog(true);
+                    }}
+                />
+            ) : null}
+
             <AddDialog
                 entity="capture"
                 id={DIALOG_ID}

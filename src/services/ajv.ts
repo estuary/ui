@@ -1,4 +1,9 @@
-import type { DefaultAjvResponse, Schema, SourceCaptureDef } from 'src/types';
+import type {
+    DefaultAjvResponse,
+    Schema,
+    SourceCaptureDef,
+    TargetNamingStrategy,
+} from 'src/types';
 
 import { createAjv } from '@jsonforms/core';
 
@@ -172,16 +177,20 @@ export const getResourceConfigPointers = (
 export const generateMaterializationResourceSpec = (
     sourceCapture: SourceCaptureDef,
     resourceSpecPointers: ResourceConfigPointers,
-    collectionName: string
+    collectionName: string,
+    // For rootTargetNaming model specs, pass the strategy here instead of
+    // inside sourceCapture. For sourceTargetNaming (old model) leave undefined.
+    rootTargetNaming?: TargetNamingStrategy
 ) => {
     try {
-        // TODO (web flow wasm - source capture)
-        // We need to do some better error handling here
         const response = update_materialization_resource_spec({
             resourceSpecPointers,
             collectionName,
             resourceSpec: {},
             sourceCapture: prepareSourceCaptureForServer(sourceCapture),
+            // The updated WASM accepts targetNaming at the top level; when present
+            // it takes precedence over source.targetNaming for naming logic.
+            ...(rootTargetNaming ? { targetNaming: rootTargetNaming } : {}),
         });
 
         if (!response) {

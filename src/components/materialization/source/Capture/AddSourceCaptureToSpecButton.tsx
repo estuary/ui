@@ -9,7 +9,9 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
+import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
 import invariableStores from 'src/context/Zustand/invariableStores';
+import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
 import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
@@ -18,9 +20,15 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import {
+    useTargetNaming_model,
+    useTargetNaming_setStrategy,
+    useTargetNaming_strategy,
+} from 'src/stores/TargetNaming/hooks';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);
+    const [namingDialogOpen, setNamingDialogOpen] = useState(false);
 
     const [selected] = useStore(
         invariableStores['Entity-Selector-Table'],
@@ -48,10 +56,20 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             state.targetSchema,
         ]);
 
+    const targetNamingModel = useTargetNaming_model();
+    const targetNamingStrategy = useTargetNaming_strategy();
+    const setStrategy = useTargetNaming_setStrategy();
+    const writeRootTargetNaming = useWriteRootTargetNaming();
+
+    const needsNamingDialog =
+        sourceCaptureTargetSchemaSupported &&
+        targetNamingModel === 'rootTargetNaming' &&
+        targetNamingStrategy === null;
+
     // Binding Store
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
 
-    const close = async () => {
+    const applySourceCapture = async () => {
         setUpdating(true);
 
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
@@ -59,32 +77,27 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             ? selectedRow.catalog_name
             : null;
 
-        // We need to know if the name or settings changed so that we can control
-        //  what name is used in the call to update the source capture setting
         const nameUpdated = Boolean(
             updatedSourceCaptureName &&
                 sourceCapture !== updatedSourceCaptureName
         );
 
-        // Only update draft is something in the settings changed
         if (nameUpdated) {
             const updatedSourceCapture: SourceCaptureDef = {
                 capture: nameUpdated ? updatedSourceCaptureName : sourceCapture,
             };
 
-            // Make sure these are support by the connector before
-            //  adding to the config
             if (sourceCaptureDeltaUpdatesSupported) {
                 updatedSourceCapture.deltaUpdates = deltaUpdates;
             }
-            if (sourceCaptureTargetSchemaSupported) {
+            // For sourceTargetNaming model, keep passing targetNaming on the source object
+            if (
+                sourceCaptureTargetSchemaSupported &&
+                targetNamingModel === 'sourceTargetNaming'
+            ) {
                 updatedSourceCapture.targetNaming = targetSchema;
             }
 
-            // Check the name since the optional settings may
-            //  have changed but not the name. Also, we have
-            //  already saved the new optional settings in the
-            //  store so we do not need to update that here
             if (nameUpdated) {
                 setSourceCapture(updatedSourceCapture.capture);
 
@@ -95,7 +108,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                     prefillResourceConfigs(
                         selectedRow.writes_to,
                         true,
-                        updatedSourceCapture
+                        updatedSourceCapture,
+                        targetNamingModel === 'rootTargetNaming'
+                            ? (targetNamingStrategy ?? undefined)
+                            : undefined
                     );
 
                     const trialCollectionResponse =
@@ -117,10 +133,38 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         toggle(false);
     };
 
+    const handleContinue = () => {
+        if (needsNamingDialog) {
+            setNamingDialogOpen(true);
+        } else {
+            applySourceCapture();
+        }
+    };
+
     return (
-        <Button variant="contained" onClick={close} disabled={updating}>
-            <FormattedMessage id="cta.continue" />
-        </Button>
+        <>
+            <Button
+                variant="contained"
+                onClick={handleContinue}
+                disabled={updating}
+            >
+                <FormattedMessage id="cta.continue" />
+            </Button>
+
+            {namingDialogOpen ? (
+                <DestinationLayoutDialog
+                    open={namingDialogOpen}
+                    initialStrategy={targetNamingStrategy}
+                    onCancel={() => setNamingDialogOpen(false)}
+                    onConfirm={(strategy) => {
+                        setStrategy(strategy);
+                        writeRootTargetNaming(strategy);
+                        setNamingDialogOpen(false);
+                        applySourceCapture();
+                    }}
+                />
+            ) : null}
+        </>
     );
 }
 

@@ -19,6 +19,7 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { useTargetNaming_model, useTargetNaming_strategy } from 'src/stores/TargetNaming/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
@@ -47,6 +48,9 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         state.targetSchema,
     ]);
 
+    const targetNamingModel = useTargetNaming_model();
+    const targetNamingStrategy = useTargetNaming_strategy();
+
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
     const discoveredCollections = useBinding_discoveredCollections();
 
@@ -72,13 +76,25 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             sourceCaptureSettings.deltaUpdates = deltaUpdates;
         }
 
-        if (sourceCaptureTargetSchemaSupported) {
+        // Only pass targetNaming on the sourceCapture object for the old model.
+        // For rootTargetNaming the strategy is passed directly to WASM (handled in generateMaterializationResourceSpec).
+        if (
+            sourceCaptureTargetSchemaSupported &&
+            targetNamingModel === 'sourceTargetNaming'
+        ) {
             sourceCaptureSettings.targetNaming = targetSchema;
         }
 
         const collections = value.map(({ name }) => name);
 
-        prefillResourceConfigs(collections, true, sourceCaptureSettings);
+        prefillResourceConfigs(
+            collections,
+            true,
+            sourceCaptureSettings,
+            targetNamingModel === 'rootTargetNaming'
+                ? (targetNamingStrategy ?? undefined)
+                : undefined
+        );
 
         evaluateTrialCollections(collections).then(
             (response) => {
