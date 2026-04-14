@@ -1,6 +1,7 @@
 import type { AlertSubscriptionDialogProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -24,6 +25,7 @@ import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/Prefi
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import MessageWithLink from 'src/components/content/MessageWithLink';
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
@@ -86,9 +88,9 @@ const AlertSubscriptionDialog = ({
             <DialogContent sx={{ mt: 1 }}>
                 <ServerErrors />
 
-                <Typography sx={{ mb: 2 }}>
-                    {intl.formatMessage({ id: descriptionId })}
-                </Typography>
+                <Box style={{ marginBottom: 16 }}>
+                    <MessageWithLink messageID={descriptionId} />
+                </Box>
 
                 <Grid
                     container
