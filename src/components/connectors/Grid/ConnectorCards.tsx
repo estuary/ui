@@ -22,6 +22,7 @@ import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntit
 import { semiTransparentBackground } from 'src/context/Theme';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
 import { TableStatuses } from 'src/types';
+import { buildConnectorImagePath } from 'src/utils/connector-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import {
     getEmptyTableHeader,
@@ -158,7 +159,7 @@ export default function ConnectorCards({
                         <ConnectorCard
                             key={`connector-card-${node.id}`}
                             clickHandler={() =>
-                                primaryCtaClick(entityType, `${node.imageName}${defaultSpec.imageTag}`)
+                                primaryCtaClick(entityType, buildConnectorImagePath(node.imageName, defaultSpec.imageTag))
                             }
                             docsUrl={defaultSpec.documentationUrl ?? ''}
                             entityType={entityType}

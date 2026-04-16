@@ -48,6 +48,7 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
             return;
         }
 
+        // ALWAYS used within ConnectorSelectedGuard to ensure we have valid values in URL
         const lastColon = connectorImagePath.lastIndexOf(':');
         const imageName = connectorImagePath.substring(0, lastColon);
         const requestedTag = connectorImagePath.substring(lastColon);

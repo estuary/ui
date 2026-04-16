@@ -9,6 +9,11 @@ import type {
 import type { DekafConfig } from 'src/types';
 
 export const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
+
+export const buildConnectorImagePath = (
+    imageName: string,
+    imageTag: string
+): string => `${imageName}${imageTag}`;
 const DEKAF_VARIANT_PROPERTY = 'variant';
 
 export const isDekafConnector = (
@@ -44,5 +49,5 @@ export const buildConnectorImageFromTag = (
               ...base,
               variant: connector.imageName.substring(DEKAF_IMAGE_PREFIX.length),
           }
-        : { ...base, imagePath: `${connector.imageName}${imageTag}` };
+        : { ...base, imagePath: buildConnectorImagePath(connector.imageName, imageTag) };
 };
