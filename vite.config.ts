@@ -58,27 +58,33 @@ const writeVersionToFile: () => Plugin = () => ({
             // Store off when we did the build (not used right now)
             const builtAt = new Date();
 
-            // Get the output ready
-            const output = JSON.stringify({
-                builtAt,
-                commitId,
-            });
-
-            // Make sure the file is there
-            const file = './public/meta.json';
-            await fs
-                .access(path.dirname(file))
-                .catch(() => fs.mkdir(path.dirname(file), { recursive: true }));
-
-            // Write content to file
-            await fs
-                .writeFile(file, output)
-                .then(() => {
-                    console.log(`Wrote ${output} to ${file}`);
-                })
-                .catch((err) => {
-                    console.error(err);
+            // Skip writing meta.json under Vitest — each test run would overwrite the
+            // file with the current HEAD, causing the dev server's compiled-in
+            // __ESTUARY_UI_COMMIT_ID__ to diverge from meta.json and falsely trigger
+            // the update banner.
+            if (!process.env['VITEST']) {
+                // Get the output ready
+                const output = JSON.stringify({
+                    builtAt,
+                    commitId,
                 });
+
+                // Make sure the file is there
+                const file = './public/meta.json';
+                await fs
+                    .access(path.dirname(file))
+                    .catch(() => fs.mkdir(path.dirname(file), { recursive: true }));
+
+                // Write content to file
+                await fs
+                    .writeFile(file, output)
+                    .then(() => {
+                        console.log(`Wrote ${output} to ${file}`);
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
+            }
 
             // Return back so the app can access this property
             return {
