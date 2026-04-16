@@ -30,8 +30,9 @@ export const DATE_TIME_RE = new RegExp(
 );
 
 // Validates a full OCI image name: must be a ghcr.io/estuary/ connector image with a tag
-export const FULL_IMAGE_NAME_RE =
-    /^ghcr\.io\/estuary\/(?:source-|dekaf-|materialize-).+:.+$/;
+export const FULL_IMAGE_NAME_RE = new RegExp(
+    /^ghcr\.io\/estuary\/(source|dekaf|materialize){1}-.+:.+$/
+);
 
 export const UNDERSCORE_RE = new RegExp(/_+/g);
 
