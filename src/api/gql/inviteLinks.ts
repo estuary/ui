@@ -4,6 +4,8 @@ import { useQuery } from 'urql';
 
 import { graphql } from 'src/gql-types';
 
+const DEFAULT_LINKS: any[] = [];
+
 export const INVITE_LINKS_PAGE_SIZE = 10;
 
 const INVITE_LINKS_QUERY = graphql(`
@@ -38,7 +40,8 @@ export function useInviteLinks(afterCursor?: string) {
     });
 
     const inviteLinks = useMemo(
-        () => data?.inviteLinks?.edges?.map((edge) => edge.node) ?? [],
+        () =>
+            data?.inviteLinks?.edges?.map((edge) => edge.node) ?? DEFAULT_LINKS,
         [data]
     );
 

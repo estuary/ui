@@ -10,13 +10,7 @@ const EmailListField = ({ staticEmail }: EmailListFieldProps) => {
     const intl = useIntl();
 
     return (
-        <Grid
-            size={{ xs: 12, md: 7 }}
-            sx={{
-                maxHeight: 250,
-                overflow: 'auto',
-                display: 'flex',
-            }}>
+        <Grid size={{ xs: 12, md: 7 }}>
             {staticEmail ? (
                 <TextField
                     InputProps={{

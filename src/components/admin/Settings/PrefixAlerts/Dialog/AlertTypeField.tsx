@@ -1,4 +1,5 @@
 import type { AlertTypeFieldProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { AlertTypeInfo } from 'src/gql-types/graphql';
 
 import { useEffect } from 'react';
 
@@ -8,6 +9,7 @@ import AlertTypeSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useGetAlertTypes } from 'src/context/AlertType';
 
+const DEFAULT_OPTIONS: AlertTypeInfo[] = [];
 const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
     const [{ fetching, data, error }] = useGetAlertTypes();
 
@@ -42,17 +44,13 @@ const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
     }, [error, setServerError]);
 
     return (
-        <Grid
-            sx={{
-                maxHeight: 250,
-                overflow: 'auto',
-                display: 'flex',
-            }}
-            size={12}>
+        <Grid size={12}>
             {fetching || !data ? (
                 <Skeleton height={38} width={490} />
             ) : (
-                <AlertTypeSelector options={data.alertTypes ?? []} />
+                <AlertTypeSelector
+                    options={data.alertTypes ?? DEFAULT_OPTIONS}
+                />
             )}
         </Grid>
     );

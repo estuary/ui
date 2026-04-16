@@ -39,8 +39,9 @@ function EntityAlerts() {
                     size={{
                         xs: 12,
                         md: 12,
-                        lg: !isCollection ? 8 : 12
-                    }}>
+                        lg: !isCollection ? 8 : 12,
+                    }}
+                >
                     <CardWrapper
                         message={intl.formatMessage({
                             id: 'alerts.history.title.active',

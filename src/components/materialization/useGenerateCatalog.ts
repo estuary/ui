@@ -230,11 +230,9 @@ function useGenerateCatalog() {
                     { overrideJsonFormDefaults: true }
                 );
 
-                endpointConfig.config = encryptedEndpointConfig.data;
-
                 const draftSpec = generateTaskSpec(
                     ENTITY_TYPE,
-                    endpointConfig,
+                    { ...endpointConfig, config: encryptedEndpointConfig.data },
                     resourceConfigs,
                     resourceConfigServerUpdateRequired,
                     bindings,
