@@ -8,12 +8,26 @@ import type {
 } from 'src/stores/DetailsForm/types';
 import type { DekafConfig } from 'src/types';
 
+import { FULL_IMAGE_NAME_RE } from 'src/validation';
+
 export const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 
 export const buildConnectorImagePath = (
     imageName: string,
     imageTag: string
 ): string => `${imageName}${imageTag}`;
+
+export const parseConnectorImagePath = (
+    imagePath: string
+): { imageName: string; imageTag: string } | null => {
+    if (!FULL_IMAGE_NAME_RE.test(imagePath)) return null;
+    const lastColon = imagePath.lastIndexOf(':');
+    return {
+        imageName: imagePath.substring(0, lastColon),
+        imageTag: imagePath.substring(lastColon),
+    };
+};
+
 const DEKAF_VARIANT_PROPERTY = 'variant';
 
 export const isDekafConnector = (

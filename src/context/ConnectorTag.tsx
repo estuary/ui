@@ -13,6 +13,7 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
+import { parseConnectorImagePath } from 'src/utils/connector-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 export type ConnectorTagData = NonNullable<
@@ -48,10 +49,19 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
             return;
         }
 
-        // ALWAYS used within ConnectorSelectedGuard to ensure we have valid values in URL
-        const lastColon = connectorImagePath.lastIndexOf(':');
-        const imageName = connectorImagePath.substring(0, lastColon);
-        const requestedTag = connectorImagePath.substring(lastColon);
+        // We check the parsing to be extra safe. The wrapper ConnectorSelectedGuard also
+        //  makes sure the format is good.
+        const parsed = parseConnectorImagePath(connectorImagePath);
+        if (!parsed) {
+            logRocketEvent('Connectors:fetch', {
+                connectorImagePath,
+                invalidImagePath: true,
+                status: 'invalid',
+            });
+            setFetchError(true);
+            return;
+        }
+        const { imageName, imageTag: requestedTag } = parsed;
 
         client
             .query(
