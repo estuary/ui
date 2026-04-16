@@ -13,6 +13,8 @@ import {
     Typography,
 } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -36,12 +38,14 @@ function EmailSelector() {
         (state) => state.initializationError
     );
     const [prefix, subscribedEmail, setSubscribedEmail, setEmailErrorsExist] =
-        useAlertSubscriptionsStore((state) => [
-            state.subscription.catalogPrefix,
-            state.subscription.email,
-            state.setSubscribedEmail,
-            state.setEmailErrorsExist,
-        ]);
+        useAlertSubscriptionsStore(
+            useShallow((state) => [
+                state.subscription.catalogPrefix,
+                state.subscription.email,
+                state.setSubscribedEmail,
+                state.setEmailErrorsExist,
+            ])
+        );
 
     const [inputValue, setInputValue] = useState(subscribedEmail);
 
