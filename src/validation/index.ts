@@ -29,7 +29,9 @@ export const DATE_TIME_RE = new RegExp(
     /^([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z)$/
 );
 
-export const MAC_ADDR_LIKE_RE = new RegExp(/^([0-9A-F]{2}){7}([0-9A-F]{2})$/i);
+// Validates a full OCI image name: must be a ghcr.io/estuary/ connector image with a tag
+export const FULL_IMAGE_NAME_RE =
+    /^ghcr\.io\/estuary\/(?:source-|dekaf-|materialize-).+:.+$/;
 
 export const UNDERSCORE_RE = new RegExp(/_+/g);
 

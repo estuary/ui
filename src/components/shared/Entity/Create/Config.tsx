@@ -16,21 +16,23 @@ function EntityCreateConfig({
     condensed,
     entityType,
 }: EntityCreateConfigProps) {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const connectorImagePath = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_IMAGE_PATH
+    );
 
     const navigateToCreate = useEntityCreateNavigate();
 
     useEffect(() => {
-        if (connectorId) {
+        if (connectorImagePath) {
             navigateToCreate(entityType, {
-                id: connectorId,
+                imagePath: connectorImagePath,
                 advanceToForm: true,
             });
         }
-    }, [navigateToCreate, connectorId, entityType]);
+    }, [navigateToCreate, connectorImagePath, entityType]);
 
     return (
-        <Collapse in={!connectorId} unmountOnExit>
+        <Collapse in={!connectorImagePath} unmountOnExit>
             <Typography sx={{ mb: 2 }}>
                 <FormattedMessage id="entityCreate.instructions" />
             </Typography>

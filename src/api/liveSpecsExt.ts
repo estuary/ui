@@ -422,6 +422,7 @@ export interface LiveSpecsExtQuery_ByLiveSpecId {
     last_pub_id: string;
     spec: any;
     connector_id: string;
+    connector_image_name: string;
     connector_image_tag: string;
 }
 
@@ -431,7 +432,7 @@ const getLiveSpecsByLiveSpecId = async (liveSpecId: string) => {
             supabaseClient
                 .from(TABLES.LIVE_SPECS_EXT)
                 .select(
-                    'built_spec,catalog_name,id,spec_type,last_pub_id,spec,connector_id,connector_image_tag'
+                    'built_spec,catalog_name,id,spec_type,last_pub_id,spec,connector_id,connector_image_name,connector_image_tag'
                 )
                 .eq('id', liveSpecId),
         'getLiveSpecsByLiveSpecId'

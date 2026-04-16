@@ -19,9 +19,8 @@ export const CONNECTORS_QUERY = graphql(`
                     title
                     recommended
                     shortDescription
-                    connectorTag(orDefault: true) {
+                    defaultSpec {
                         id
-                        connectorId
                         imageTag
                         documentationUrl
                         protocol
@@ -36,24 +35,23 @@ export const CONNECTORS_QUERY = graphql(`
     }
 `);
 
-export const CONNECTOR_BY_ID_QUERY = graphql(`
-    query SingleConnector($id: Id!, $imageTag: String) {
-        connector(id: $id) {
+export const CONNECTOR_TAG_QUERY = graphql(`
+    query ConnectorTagData($imageName: String!, $fullImageName: String!) {
+        connector(imageName: $imageName) {
             id
             imageName
             logoUrl
             title
-            connectorTag(imageTag: $imageTag, orDefault: true) {
-                id
-                connectorId
-                imageTag
-                defaultCaptureInterval
-                disableBackfill
-                documentationUrl
-                endpointSpecSchema
-                resourceSpecSchema
-                protocol
-            }
+        }
+        connectorSpec(fullImageName: $fullImageName) {
+            id
+            imageTag
+            defaultCaptureInterval
+            disableBackfill
+            documentationUrl
+            endpointSpecSchema
+            resourceSpecSchema
+            protocol
         }
     }
 `);

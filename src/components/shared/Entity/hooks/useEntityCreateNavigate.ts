@@ -8,14 +8,13 @@ import { useNavigate } from 'react-router';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
-import { formatOldUuidToGql } from 'src/utils/connector-utils';
 import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 
 export interface HookEntityCreateNavigateProps {
     advanceToForm?: boolean;
     dataPlaneId?: string | null;
     expressWorkflow?: boolean;
-    id?: string | null | undefined;
+    imagePath?: string | null | undefined;
 }
 
 export default function useEntityCreateNavigate() {
@@ -26,7 +25,7 @@ export default function useEntityCreateNavigate() {
         (
             entity: EntityWithCreateWorkflow,
             {
-                id,
+                imagePath,
                 advanceToForm,
                 dataPlaneId,
                 expressWorkflow,
@@ -34,9 +33,9 @@ export default function useEntityCreateNavigate() {
         ) => {
             const searchParamConfig: { [param: string]: any } = {};
 
-            if (hasLength(id)) {
-                searchParamConfig[GlobalSearchParams.CONNECTOR_ID] =
-                    formatOldUuidToGql(id);
+            if (hasLength(imagePath)) {
+                searchParamConfig[GlobalSearchParams.CONNECTOR_IMAGE_PATH] =
+                    imagePath;
             }
 
             if (typeof dataPlaneId !== 'undefined') {

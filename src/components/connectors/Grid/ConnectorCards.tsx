@@ -61,8 +61,8 @@ export default function ConnectorCards({
                 (
                     node
                 ): node is typeof node & {
-                    connectorTag: NonNullable<typeof node.connectorTag>;
-                } => node.connectorTag !== null
+                    defaultSpec: NonNullable<typeof node.defaultSpec>;
+                } => node.defaultSpec !== null
             );
 
         if (!searchQuery) return nodes;
@@ -83,10 +83,10 @@ export default function ConnectorCards({
 
     const primaryCtaClick = (
         entityType: EntityWithCreateWorkflow,
-        connectorId: string
+        imagePath: string
     ) => {
         navigateToCreate(entityType, {
-            id: connectorId,
+            imagePath,
             advanceToForm: true,
             expressWorkflow: condensed,
         });
@@ -145,9 +145,9 @@ export default function ConnectorCards({
         <>
             {selectData
                 .map((node) => {
-                    const { connectorTag } = node;
+                    const { defaultSpec } = node;
                     const ConnectorCard = condensed ? Card : LegacyCard;
-                    const entityType = connectorTag.protocol;
+                    const entityType = defaultSpec.protocol;
 
                     // TODO (GQL:connector) how to better handle with typing?
                     if (!entityType) {
@@ -158,12 +158,9 @@ export default function ConnectorCards({
                         <ConnectorCard
                             key={`connector-card-${node.id}`}
                             clickHandler={() =>
-                                primaryCtaClick(
-                                    entityType,
-                                    connectorTag.connectorId
-                                )
+                                primaryCtaClick(entityType, `${node.imageName}${defaultSpec.imageTag}`)
                             }
-                            docsUrl={connectorTag.documentationUrl ?? ''}
+                            docsUrl={defaultSpec.documentationUrl ?? ''}
                             entityType={entityType}
                             recommended={node.recommended}
                             Detail={

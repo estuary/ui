@@ -280,43 +280,58 @@ export type ConnectionHealthTestResult = {
   results: Array<StorageHealthItem>;
 };
 
+/**
+ * A connector from the Estuary connector catalog, identified by its OCI image
+ * name (e.g. "ghcr.io/estuary/source-postgres"). Use `defaultSpec` to get the
+ * configuration schemas for the blessed image tag, or `spec(imageTag)` for a
+ * specific version.
+ */
 export type Connector = {
   __typename?: 'Connector';
-  /** Returns the ConnectorTag object for the given image tag, which must begin with a `:`. */
-  connectorTag?: Maybe<ConnectorTag>;
   /** Timestamp of when the connector was first created */
   createdAt: Scalars['DateTime']['output'];
   /**
-   * Returns the default `ConnectorTag` for this connector. This is the one
-   * that should be used by default when publishing new tasks for this
-   * connector. There will only be a default image tag if at least one tag
-   * has successfully completed the connector Spec RPC.
+   * The blessed image tag for newly created tasks using this connector.
+   * Resolved as the lexicographically highest image tag (e.g. `:v2` wins
+   * over `:v1`, `:v1` wins over `:dev`).
    */
   defaultImageTag?: Maybe<Scalars['String']['output']>;
+  /**
+   * The spec for this connector's default (blessed) image tag. This is the
+   * spec that should be used when configuring newly created tasks.
+   */
+  defaultSpec?: Maybe<ConnectorSpec>;
   /** Link to an external site with more information about the endpoint */
   externalUrl: Scalars['String']['output'];
   /** Unique id of the connector */
   id: Scalars['Id']['output'];
-  /** Name of the conector's OCI (Docker) Container image, for example "ghcr.io/estuary/source-postgres" */
+  /** Name of the connector's OCI (Docker) container image, for example "ghcr.io/estuary/source-postgres" */
   imageName: Scalars['String']['output'];
   /** The connector's logo image, represented as a URL per locale */
   logoUrl?: Maybe<Scalars['String']['output']>;
   /** A longform description of this connector */
   longDescription?: Maybe<Scalars['String']['output']>;
-  /** Does Estuary's marketing team want this one to appear at the top of the results? */
+  /** The protocol of this connector (capture or materialization). */
+  protocol?: Maybe<ConnectorProto>;
+  /** Whether this connector should appear in a promoted position in connector listings */
   recommended: Scalars['Boolean']['output'];
   /** Brief human readable description, at most a few sentences */
   shortDescription?: Maybe<Scalars['String']['output']>;
-  /** All the tags that are available for this connector. */
-  tags: Array<ConnectorTagRef>;
+  /** Look up the spec for a specific image tag of this connector. */
+  spec?: Maybe<ConnectorSpec>;
   /** The title, a few words at most */
   title?: Maybe<Scalars['String']['output']>;
 };
 
 
-export type ConnectorConnectorTagArgs = {
-  imageTag?: InputMaybe<Scalars['String']['input']>;
-  orDefault: Scalars['Boolean']['input'];
+/**
+ * A connector from the Estuary connector catalog, identified by its OCI image
+ * name (e.g. "ghcr.io/estuary/source-postgres"). Use `defaultSpec` to get the
+ * configuration schemas for the blessed image tag, or `spec(imageTag)` for a
+ * specific version.
+ */
+export type ConnectorSpecArgs = {
+  imageTag: Scalars['String']['input'];
 };
 
 export type ConnectorConnection = {
@@ -337,12 +352,43 @@ export type ConnectorEdge = {
 };
 
 /**
- * The type of task that the connector is used for. Note that derivation
- * connectors do exist, but aren't yet represented in `connector_tags`.
+ * The type of task that the connector is used for. Derivation connectors
+ * exist but are not yet represented in this API.
  */
 export type ConnectorProto =
   | 'capture'
   | 'materialization';
+
+/**
+ * The resolved specification for a connector at a particular image tag.
+ * Includes the JSON schemas needed to configure the connector's endpoint
+ * and resources.
+ */
+export type ConnectorSpec = {
+  __typename?: 'ConnectorSpec';
+  /** The default interval between invocations of a capture using this connector. Formatted as HH:MM:SS. Only applicable to non-streaming (polling) capture connectors. */
+  defaultCaptureInterval?: Maybe<Scalars['String']['output']>;
+  /** Whether backfill should be disabled for this connector */
+  disableBackfill: Scalars['Boolean']['output'];
+  /** URL pointing to the documentation page for this connector */
+  documentationUrl?: Maybe<Scalars['String']['output']>;
+  /** Endpoint configuration JSON Schema. Returned as raw JSON because JSON Schema is a recursive format that cannot be meaningfully decomposed into GraphQL fields. */
+  endpointSpecSchema?: Maybe<Scalars['JSON']['output']>;
+  /**
+   * The database ID of the connector_tags row backing this spec.
+   * @deprecated Not intended to be part of the public API. To be removed once downstream components no longer depend on this field.
+   */
+  id: Scalars['Id']['output'];
+  /**
+   * The OCI Image tag this spec was resolved from, including the leading `:`. For example `:v1`.
+   * This may differ from the requested tag if the request fell back to the default.
+   */
+  imageTag: Scalars['String']['output'];
+  /** The protocol of the connector (capture or materialization) */
+  protocol?: Maybe<ConnectorProto>;
+  /** Resource configuration JSON Schema. Returned as raw JSON because JSON Schema is a recursive format that cannot be meaningfully decomposed into GraphQL fields. */
+  resourceSpecSchema?: Maybe<Scalars['JSON']['output']>;
+};
 
 /** The shape of a connector status, which matches that of an ops::Log. */
 export type ConnectorStatus = {
@@ -360,53 +406,9 @@ export type ConnectorStatus = {
   ts: Scalars['DateTime']['output'];
 };
 
-export type ConnectorTag = {
-  __typename?: 'ConnectorTag';
-  /** The id of the connector this tag relates to. */
-  connectorId: Scalars['Id']['output'];
-  /** Time at which the ConnectorTag was created */
-  createdAt: Scalars['DateTime']['output'];
-  /**
-   * The default interval between invocations of a capture using this connector tag.
-   * Formatted as HH:MM:SS. Only applicable to non-streaming (polling) capture connectors.
-   */
-  defaultCaptureInterval?: Maybe<Scalars['String']['output']>;
-  /** Whether the UI should hide the backfill button for this connector */
-  disableBackfill: Scalars['Boolean']['output'];
-  /** URL pointing to the documentation page for this connector */
-  documentationUrl?: Maybe<Scalars['String']['output']>;
-  /** Endpoint specification JSON-Schema of the tagged connector */
-  endpointSpecSchema?: Maybe<Scalars['JSON']['output']>;
-  /** Unique id of the connector tag */
-  id: Scalars['Id']['output'];
-  /** The OCI Image tag value, including the leading `:`. For example `:v1` */
-  imageTag: Scalars['String']['output'];
-  /** The protocol of the connector with this tag value */
-  protocol?: Maybe<ConnectorProto>;
-  /** Resource specification JSON-Schema of the tagged connector */
-  resourceSpecSchema?: Maybe<Scalars['JSON']['output']>;
-  /** Time at which the ConnectorTag was last updated */
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type ConnectorTagRef = {
-  __typename?: 'ConnectorTagRef';
-  /** The canonical id of this connector tag */
-  id: Scalars['Id']['output'];
-  /** The OCI image tag, includeing the leading `:`, for example `:v2` */
-  imageTag: Scalars['String']['output'];
-  /** The protocol of this connector tag, if known */
-  protocol?: Maybe<ConnectorProto>;
-  /**
-   * Returns whether a connector Spec RPC has ever been successful for this tag.
-   * Concretely, this is used to determine whether the tag could be used by the
-   * UI or flowctl for publishing tasks, because the Spec RPC populates the
-   * `endpointSpecSchema`, `resourceSpecSchema`, `protocol`, etc.
-   */
-  specSucceeded: Scalars['Boolean']['output'];
-};
-
+/** Filters for the paginated `connectors` query. */
 export type ConnectorsFilter = {
+  /** Filter by connector protocol. Only connectors with at least one version matching this protocol will be returned. */
   protocol?: InputMaybe<ProtocolFilter>;
 };
 
@@ -956,7 +958,9 @@ export type PrefixesBy = {
   minCapability: Capability;
 };
 
+/** Filter connectors by their protocol (capture or materialization). */
 export type ProtocolFilter = {
+  /** Match connectors that have at least one version with this protocol. */
   eq: ConnectorProto;
 };
 
@@ -1032,29 +1036,19 @@ export type QueryRoot = {
    */
   alerts: AlertConnection;
   /**
-   * Returns information about a single connector, which may or may not have
-   * had a successful Spec RPC, and thus may or may not be usable in the
-   * Estuary UI. At least one parameter must be provided. If multiple
-   * parameters are provided, then the connector must match _both_ the image
-   * name and id parameters in order to be returned.
+   * Returns information about a single connector. At least one parameter
+   * must be provided. If both are provided, the connector must match both
+   * the image name and id in order to be returned.
    */
   connector?: Maybe<Connector>;
   /**
-   * Returns the ConnectorTag for a given full (including the version) OCI
-   * image name. The returned tag may be different from the version in the
-   * image name. This would happen if there is no connector spec for the
-   * given tag, but one exists for a different tag. The return value will be
-   * null if either the connector image is unkown, or if there has not been a
-   * successful Spec for any version of that image.
+   * Resolve the spec for a full OCI image name (e.g.
+   * "ghcr.io/estuary/source-postgres:v1"). If the requested tag is not
+   * available, falls back to the default tag. Check the returned `imageTag`
+   * field to see which tag was actually resolved.
    */
-  connectorTag?: Maybe<ConnectorTag>;
-  /**
-   * Returns a paginated list of connectors. This query only returns
-   * connectors that have at least one `ConnectorTag` that has had a
-   * successful Spec RPC. Connectors that have not had at least one
-   * successful Spec RPC cannot be used by the Estuary UI, and so are
-   * excluded here.
-   */
+  connectorSpec?: Maybe<ConnectorSpec>;
+  /** Returns a paginated list of connectors, optionally filtered by protocol. */
   connectors: ConnectorConnection;
   /**
    * Returns data planes accessible to the current user.
@@ -1112,9 +1106,8 @@ export type QueryRootConnectorArgs = {
 };
 
 
-export type QueryRootConnectorTagArgs = {
-  fullImageName?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['Id']['input']>;
+export type QueryRootConnectorSpecArgs = {
+  fullImageName: Scalars['String']['input'];
 };
 
 
@@ -1503,15 +1496,15 @@ export type ConnectorsGridQueryVariables = Exact<{
 }>;
 
 
-export type ConnectorsGridQuery = { __typename?: 'QueryRoot', connectors: { __typename?: 'ConnectorConnection', edges: Array<{ __typename?: 'ConnectorEdge', cursor: string, node: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null, recommended: boolean, shortDescription?: string | null, connectorTag?: { __typename?: 'ConnectorTag', id: any, connectorId: any, imageTag: string, documentationUrl?: string | null, protocol?: ConnectorProto | null } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type ConnectorsGridQuery = { __typename?: 'QueryRoot', connectors: { __typename?: 'ConnectorConnection', edges: Array<{ __typename?: 'ConnectorEdge', cursor: string, node: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null, recommended: boolean, shortDescription?: string | null, defaultSpec?: { __typename?: 'ConnectorSpec', id: any, imageTag: string, documentationUrl?: string | null, protocol?: ConnectorProto | null } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
-export type SingleConnectorQueryVariables = Exact<{
-  id: Scalars['Id']['input'];
-  imageTag?: InputMaybe<Scalars['String']['input']>;
+export type ConnectorTagDataQueryVariables = Exact<{
+  imageName: Scalars['String']['input'];
+  fullImageName: Scalars['String']['input'];
 }>;
 
 
-export type SingleConnectorQuery = { __typename?: 'QueryRoot', connector?: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null, connectorTag?: { __typename?: 'ConnectorTag', id: any, connectorId: any, imageTag: string, defaultCaptureInterval?: string | null, disableBackfill: boolean, documentationUrl?: string | null, endpointSpecSchema?: any | null, resourceSpecSchema?: any | null, protocol?: ConnectorProto | null } | null } | null };
+export type ConnectorTagDataQuery = { __typename?: 'QueryRoot', connector?: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null } | null, connectorSpec?: { __typename?: 'ConnectorSpec', id: any, imageTag: string, defaultCaptureInterval?: string | null, disableBackfill: boolean, documentationUrl?: string | null, endpointSpecSchema?: any | null, resourceSpecSchema?: any | null, protocol?: ConnectorProto | null } | null };
 
 export type DataPlanesQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;
@@ -1639,8 +1632,8 @@ export const DeleteAlertSubscriptionMutationDocument = {"kind":"Document","defin
 export const AlertSubscriptionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertSubscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertSubscriptions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertTypes"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<AlertSubscriptionsQuery, AlertSubscriptionsQueryVariables>;
 export const UpdateAlertSubscriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAlertSubscriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AlertType"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAlertSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"alertTypes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<UpdateAlertSubscriptionMutationMutation, UpdateAlertSubscriptionMutationMutationVariables>;
 export const AlertTypeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}}]}}]}}]} as unknown as DocumentNode<AlertTypeQuery, AlertTypeQueryVariables>;
-export const ConnectorsGridDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorsGrid"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ConnectorsFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connectors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"500"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"recommended"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"connectorTag"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"orDefault"},"value":{"kind":"BooleanValue","value":true}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"connectorId"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<ConnectorsGridQuery, ConnectorsGridQueryVariables>;
-export const SingleConnectorDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SingleConnector"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageTag"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connector"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"connectorTag"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"imageTag"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageTag"}}},{"kind":"Argument","name":{"kind":"Name","value":"orDefault"},"value":{"kind":"BooleanValue","value":true}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"connectorId"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"defaultCaptureInterval"}},{"kind":"Field","name":{"kind":"Name","value":"disableBackfill"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"endpointSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"resourceSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]}}]} as unknown as DocumentNode<SingleConnectorQuery, SingleConnectorQueryVariables>;
+export const ConnectorsGridDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorsGrid"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ConnectorsFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connectors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"500"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"recommended"}},{"kind":"Field","name":{"kind":"Name","value":"shortDescription"}},{"kind":"Field","name":{"kind":"Name","value":"defaultSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<ConnectorsGridQuery, ConnectorsGridQueryVariables>;
+export const ConnectorTagDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorTagData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fullImageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connector"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"imageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"connectorSpec"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fullImageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fullImageName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"defaultCaptureInterval"}},{"kind":"Field","name":{"kind":"Name","value":"disableBackfill"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"endpointSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"resourceSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]} as unknown as DocumentNode<ConnectorTagDataQuery, ConnectorTagDataQueryVariables>;
 export const DataPlanesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DataPlanes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dataPlanes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"cloudProvider"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"fqdn"}},{"kind":"Field","name":{"kind":"Name","value":"cidrBlocks"}},{"kind":"Field","name":{"kind":"Name","value":"awsIamUserArn"}},{"kind":"Field","name":{"kind":"Name","value":"gcpServiceAccountEmail"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationClientId"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationName"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<DataPlanesQuery, DataPlanesQueryVariables>;
 export const InviteLinksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"InviteLinks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"inviteLinks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"ssoProviderId"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<InviteLinksQuery, InviteLinksQueryVariables>;
 export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"capability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Capability"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"capability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"capability"}}},{"kind":"Argument","name":{"kind":"Name","value":"singleUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateInviteLinkMutation, CreateInviteLinkMutationVariables>;

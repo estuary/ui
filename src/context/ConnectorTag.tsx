@@ -1,4 +1,4 @@
-import type { SingleConnectorQuery } from 'src/gql-types/graphql';
+import type { ConnectorTagDataQuery } from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
 
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -6,7 +6,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useClient } from 'urql';
 
-import { CONNECTOR_BY_ID_QUERY } from 'src/api/gql/connectors';
+import { CONNECTOR_TAG_QUERY } from 'src/api/gql/connectors';
 import ErrorComponent from 'src/components/shared/Error';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -16,20 +16,20 @@ import { BASE_ERROR } from 'src/services/supabase';
 import { hasLength } from 'src/utils/misc-utils';
 
 export type ConnectorTagData = NonNullable<
-    NonNullable<SingleConnectorQuery['connector']>['connectorTag']
+    ConnectorTagDataQuery['connectorSpec']
 > & {
     connector: Pick<
-        NonNullable<SingleConnectorQuery['connector']>,
+        NonNullable<ConnectorTagDataQuery['connector']>,
         'id' | 'imageName' | 'logoUrl' | 'title'
     >;
 };
 
 const ConnectorTagContext = createContext<ConnectorTagData | null>(null);
 
+// ALWAYS used within ConnectorSelectedGuard to ensure we have valid values in URL
 export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-    const imageTag = useGlobalSearchParams(
-        GlobalSearchParams.CONNECTOR_IMAGE_TAG
+    const connectorImagePath = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_IMAGE_PATH
     );
     const client = useClient();
     const intl = useIntl();
@@ -40,33 +40,49 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
     const [fetchError, setFetchError] = useState<boolean | null>(false);
 
     useEffect(() => {
-        if (!hasLength(connectorId)) {
+        if (!hasLength(connectorImagePath)) {
+            logRocketEvent('Connectors:fetch', {
+                noImagePath: true,
+                status: 'unknown',
+            });
             return;
         }
 
+        const lastColon = connectorImagePath.lastIndexOf(':');
+        const imageName = connectorImagePath.substring(0, lastColon);
+        const requestedTag = connectorImagePath.substring(lastColon);
+
         client
             .query(
-                CONNECTOR_BY_ID_QUERY,
-                { id: connectorId, imageTag },
+                CONNECTOR_TAG_QUERY,
+                { imageName, fullImageName: connectorImagePath },
                 { requestPolicy: 'network-only' }
             )
             .toPromise()
             .then(({ data, error }) => {
                 const connector = data?.connector;
-                const connectorTagData = connector?.connectorTag;
+                const spec = data?.connectorSpec;
 
-                if (error || !connector || !connectorTagData) {
+                if (error || !connector || !spec) {
                     logRocketEvent('Connectors:fetch', {
-                        noConnectors: !connector,
-                        noConnectorTags: !connectorTagData,
+                        noConnector: !connector,
+                        noSpec: !spec,
                         status: 'failure',
                     });
                     setFetchError(true);
                     return;
                 }
 
+                if (spec.imageTag !== requestedTag) {
+                    logRocketEvent('Connectors:fetch', {
+                        requestedTag,
+                        resolvedTag: spec.imageTag,
+                        status: 'tag_fallback',
+                    });
+                }
+
                 setConnectorTag({
-                    ...connectorTagData,
+                    ...spec,
                     connector: {
                         id: connector.id,
                         imageName: connector.imageName,
@@ -75,13 +91,13 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
                     },
                 });
             })
-            .catch((e) => {
+            .catch(() => {
                 logRocketEvent('Connectors:fetch', {
                     status: 'exception',
                 });
                 setFetchError(true);
             });
-    }, [client, connectorId, imageTag]);
+    }, [client, connectorImagePath]);
 
     if (fetchError) {
         return (
