@@ -1,4 +1,6 @@
-import type { FieldOutcome } from 'src/types/wasm';
+import type { FieldOutcome, RejectOutput, SelectOutput } from 'src/types/wasm';
+
+import { RejectReason, SelectReason } from 'src/types/wasm';
 
 import {
     DEFAULT_RECOMMENDED_FLAG,
@@ -12,12 +14,20 @@ import {
     mapRecommendedValueToAlgorithm,
 } from 'src/utils/fieldSelection-utils';
 
+const makeSelect = (reason = SelectReason.USER_DEFINED): SelectOutput => ({
+    detail: '',
+    reason: { type: reason },
+});
+
+const makeReject = (reason = RejectReason.USER_EXCLUDES): RejectOutput => ({
+    detail: '',
+    reason: { type: reason },
+});
+
 const makeOutcome = (overrides: Partial<FieldOutcome> = {}): FieldOutcome => ({
     field: 'test_field',
-    select: false,
-    reject: false,
     ...overrides,
-} as FieldOutcome);
+});
 
 // ----------------------------------------------------------------------------
 // isSelectedField
@@ -25,11 +35,11 @@ const makeOutcome = (overrides: Partial<FieldOutcome> = {}): FieldOutcome => ({
 
 describe('isSelectedField', () => {
     test('returns true when select is set and reject is not', () => {
-        expect(isSelectedField(makeOutcome({ select: true, reject: false }))).toBe(true);
+        expect(isSelectedField(makeOutcome({ select: makeSelect() }))).toBe(true);
     });
 
     test('returns false when both select and reject are set', () => {
-        expect(isSelectedField(makeOutcome({ select: true, reject: true }))).toBe(false);
+        expect(isSelectedField(makeOutcome({ select: makeSelect(), reject: makeReject() }))).toBe(false);
     });
 
     test('returns false when neither is set', () => {
@@ -37,7 +47,7 @@ describe('isSelectedField', () => {
     });
 
     test('returns false when only reject is set', () => {
-        expect(isSelectedField(makeOutcome({ reject: true }))).toBe(false);
+        expect(isSelectedField(makeOutcome({ reject: makeReject() }))).toBe(false);
     });
 });
 
@@ -47,11 +57,11 @@ describe('isSelectedField', () => {
 
 describe('isUnselectedField', () => {
     test('returns true when reject is set and select is not', () => {
-        expect(isUnselectedField(makeOutcome({ reject: true, select: false }))).toBe(true);
+        expect(isUnselectedField(makeOutcome({ reject: makeReject() }))).toBe(true);
     });
 
     test('returns false when both are set', () => {
-        expect(isUnselectedField(makeOutcome({ select: true, reject: true }))).toBe(false);
+        expect(isUnselectedField(makeOutcome({ select: makeSelect(), reject: makeReject() }))).toBe(false);
     });
 
     test('returns false when neither is set', () => {
@@ -65,12 +75,12 @@ describe('isUnselectedField', () => {
 
 describe('hasFieldConflict', () => {
     test('returns true when both select and reject are set', () => {
-        expect(hasFieldConflict(makeOutcome({ select: true, reject: true }))).toBe(true);
+        expect(hasFieldConflict(makeOutcome({ select: makeSelect(), reject: makeReject() }))).toBe(true);
     });
 
     test('returns false when only one is set', () => {
-        expect(hasFieldConflict(makeOutcome({ select: true }))).toBe(false);
-        expect(hasFieldConflict(makeOutcome({ reject: true }))).toBe(false);
+        expect(hasFieldConflict(makeOutcome({ select: makeSelect() }))).toBe(false);
+        expect(hasFieldConflict(makeOutcome({ reject: makeReject() }))).toBe(false);
     });
 
     test('returns false when neither is set', () => {
@@ -106,7 +116,7 @@ describe('isFieldSelectionType', () => {
 // ----------------------------------------------------------------------------
 
 describe('getFieldSelection', () => {
-    const outcome = makeOutcome({ field: 'col_a', select: true });
+    const outcome = makeOutcome({ field: 'col_a', select: makeSelect() });
 
     test('assigns mode "default" for a selected field with no fieldsStanza', () => {
         const result = getFieldSelection([outcome]);
@@ -114,20 +124,20 @@ describe('getFieldSelection', () => {
     });
 
     test('assigns mode null for an unselected field with no fieldsStanza', () => {
-        const unselected = makeOutcome({ field: 'col_b', select: false, reject: false });
+        const unselected = makeOutcome({ field: 'col_b' });
         const result = getFieldSelection([unselected]);
         expect(result['col_b'].mode).toBeNull();
     });
 
     test('assigns mode "exclude" when field is in fieldsStanza.exclude', () => {
-        const result = getFieldSelection([outcome], { exclude: ['col_a'] });
+        const result = getFieldSelection([outcome], { recommended: true, exclude: ['col_a'] });
         expect(result['col_a'].mode).toBe('exclude');
     });
 
     test('assigns mode "require" for a field in modern fieldsStanza.require', () => {
         const result = getFieldSelection(
             [outcome],
-            { require: { col_a: {} }, exclude: [] }
+            { recommended: true, require: { col_a: {} }, exclude: [] }
         );
         expect(result['col_a'].mode).toBe('require');
         expect(result['col_a'].meta).toEqual({});
@@ -136,7 +146,7 @@ describe('getFieldSelection', () => {
     test('assigns mode "require" for a field in legacy fieldsStanza.include', () => {
         const result = getFieldSelection(
             [outcome],
-            { include: { col_a: { value: 1 } }, exclude: [] }
+            { recommended: true, include: { col_a: { value: 1 } }, exclude: [] }
         );
         expect(result['col_a'].mode).toBe('require');
         expect(result['col_a'].meta).toEqual({ value: 1 });
@@ -145,7 +155,7 @@ describe('getFieldSelection', () => {
     test('exclude takes priority over require', () => {
         const result = getFieldSelection(
             [outcome],
-            { require: { col_a: {} }, exclude: ['col_a'] }
+            { recommended: true, require: { col_a: {} }, exclude: ['col_a'] }
         );
         expect(result['col_a'].mode).toBe('exclude');
     });
@@ -169,7 +179,7 @@ describe('getExpandedFieldSelection', () => {
     test('marks a field as isGroupByKey when in explicit list', () => {
         const selections = {
             value: {
-                col_a: { field: 'col_a', mode: 'default', outcome: makeOutcome({ field: 'col_a' }) },
+                col_a: { field: 'col_a', mode: 'default', outcome: makeOutcome({ field: 'col_a', select: makeSelect() }) },
             },
             groupBy: { value: { explicit: ['col_a'], implicit: [] } },
         } as any;
@@ -180,7 +190,7 @@ describe('getExpandedFieldSelection', () => {
     test('falls back to implicit list when explicit is empty', () => {
         const selections = {
             value: {
-                col_a: { field: 'col_a', mode: 'default', outcome: makeOutcome({ field: 'col_a' }) },
+                col_a: { field: 'col_a', mode: 'default', outcome: makeOutcome({ field: 'col_a', select: makeSelect() }) },
             },
             groupBy: { value: { explicit: [], implicit: ['col_a'] } },
         } as any;
