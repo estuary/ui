@@ -5,8 +5,6 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
-export type fake = 'fake';
-
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
     CAPTURE_EDIT = 'captureEdit',
