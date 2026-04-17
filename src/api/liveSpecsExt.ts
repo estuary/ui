@@ -522,14 +522,6 @@ const getTrialCollections = async (
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
-const liveSpecsExtRelatedColumns = ['catalog_name', 'reads_from', 'id'];
-export const liveSpecsExtRelatedQuery = liveSpecsExtRelatedColumns.join(',');
-export interface LiveSpecsExt_Related {
-    catalog_name: string;
-    reads_from: string[];
-    id: string;
-}
-
 export {
     getLatestLiveSpecByName,
     getLiveSpecs_captures,

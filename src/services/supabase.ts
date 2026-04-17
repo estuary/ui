@@ -20,11 +20,8 @@ import { CustomEvents } from 'src/services/types';
 export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const SHARDS_DISABLE = `spec->shards->disable`;
-export const TASK_STATS = `task_stats:flow_document->taskStats`;
 
 export const SHARD_LABELS = `shard_labels:built_spec->shardTemplate->labels->labels`;
-
-export const ENABLED_SHARDS = `spec->shards->disable.is.null`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
@@ -411,20 +408,11 @@ export const DEFAULT_POLLER_ERROR = {
     },
 };
 
-export const handlePollerError = (failedResponse: any) => {
-    return failedResponse.error === JOB_STATUS_POLLER_ERROR
-        ? DEFAULT_POLLER_ERROR.error
-        : failedResponse.error
-          ? failedResponse
-          : null;
-};
-
 export const JOB_TYPE_EMPTY = 'emptyDraft';
 export const JOB_TYPE_FAILURE = 'buildFailed';
 export const JOB_TYPE_SUCCESS = 'success';
 
 // These columns are not always what you want... but okay for a "default" constant
-export const JOB_STATUS_FAILURE = [JOB_TYPE_FAILURE];
 export const JOB_STATUS_SUCCESS = [JOB_TYPE_EMPTY, JOB_TYPE_SUCCESS];
 export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;
 // END: Poller

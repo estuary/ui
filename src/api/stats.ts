@@ -38,20 +38,6 @@ export type StatsFilter =
     | 'thisMonth'
     | 'allTime';
 
-export interface DefaultStats {
-    catalog_name: string;
-    grain: string;
-    ts: string;
-    bytes_written_by_me: number;
-    docs_written_by_me: number;
-    bytes_read_by_me: number;
-    docs_read_by_me: number;
-    bytes_written_to_me: number;
-    docs_written_to_me: number;
-    bytes_read_from_me: number;
-    docs_read_from_me: number;
-}
-
 const BASE_QUERY = `
     catalog_name,
     grain,

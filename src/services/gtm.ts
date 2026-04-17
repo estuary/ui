@@ -23,10 +23,3 @@ export const fireGtmEvent = (event: EVENTS, data: Schema | undefined = {}) => {
         });
     }
 };
-
-export const setGtmData = (data?: Schema) => {
-    if (allowedToRun) {
-        window.dataLayer = window.dataLayer ?? [];
-        window.dataLayer.push(data);
-    }
-};

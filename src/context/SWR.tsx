@@ -19,12 +19,6 @@ export const singleCallSettings = {
     revalidateOnReconnect: false,
 };
 
-export const extendedPollSettings = {
-    errorRetryCount: DEFAULT_RETRY_COUNT,
-    errorRetryInterval: EXTENDED_POLL_INTERVAL / 2,
-    refreshInterval: EXTENDED_POLL_INTERVAL,
-    revalidateOnFocus: false,
-};
 const SwrConfigProvider = ({ children }: BaseComponentProps) => {
     const { onErrorRetry } = useSWRConfig();
 
