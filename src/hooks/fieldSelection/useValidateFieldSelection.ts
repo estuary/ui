@@ -75,7 +75,7 @@ const evaluateFieldSelection = async (input: FieldSelectionInput_Skim) => {
     } catch (error: unknown) {
         logRocketEvent('evaluate_field_selection', {
             failed: true,
-            error,
+            error: String(error),
         });
     }
 
@@ -180,7 +180,7 @@ export default function useValidateFieldSelection() {
             } catch (error: unknown) {
                 logRocketEvent('evaluate_field_selection', {
                     failed: true,
-                    error,
+                    error: String(error),
                 });
             }
 
@@ -353,14 +353,14 @@ export default function useValidateFieldSelection() {
                             );
                         } else {
                             logRocketEvent(CustomEvents.FIELD_SELECTION, {
-                                validationError: response,
+                                validationError: String(response),
                             });
                         }
                     });
                 },
                 (error) => {
                     logRocketEvent(CustomEvents.FIELD_SELECTION, {
-                        validationError: error,
+                        validationError: String(error),
                     });
                 }
             )
