@@ -4,8 +4,7 @@ import {
 } from 'src/utils/mui-utils';
 
 describe('detectRemoveOptionWithBackspace', () => {
-    const makeEvent = (type: string, key: string) =>
-        ({ type, key }) as any;
+    const makeEvent = (type: string, key: string) => ({ type, key }) as any;
 
     test('returns true when keydown + Backspace + removeOption', () => {
         expect(

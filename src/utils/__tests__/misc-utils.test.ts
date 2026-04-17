@@ -2,13 +2,13 @@ import {
     appendWithForwardSlash,
     getPathWithParams,
     hasLength,
+    JOURNAL_READ_ERRORS,
+    JOURNAL_READ_WARNINGS,
     journalStatusIsError,
     journalStatusIsWarning,
     replaceWhitespacesWithUnderscores,
     splitPathAndName,
     stripPathing,
-    JOURNAL_READ_ERRORS,
-    JOURNAL_READ_WARNINGS,
 } from 'src/utils/misc-utils';
 
 describe('stripPathing', () => {
@@ -38,7 +38,10 @@ describe('splitPathAndName', () => {
     });
 
     test('splits a single-segment path', () => {
-        expect(splitPathAndName('acme/my-capture')).toEqual(['acme/', 'my-capture']);
+        expect(splitPathAndName('acme/my-capture')).toEqual([
+            'acme/',
+            'my-capture',
+        ]);
     });
 
     test('returns empty array for empty string', () => {
@@ -88,7 +91,9 @@ describe('appendWithForwardSlash', () => {
 
 describe('replaceWhitespacesWithUnderscores', () => {
     test('replaces spaces with underscores', () => {
-        expect(replaceWhitespacesWithUnderscores('hello world')).toBe('hello_world');
+        expect(replaceWhitespacesWithUnderscores('hello world')).toBe(
+            'hello_world'
+        );
     });
 
     test('replaces multiple whitespace characters', () => {
@@ -106,7 +111,10 @@ describe('replaceWhitespacesWithUnderscores', () => {
 
 describe('getPathWithParams', () => {
     test('appends an object of params as a query string', () => {
-        const result = getPathWithParams('/api/data', { page: '1', limit: '10' });
+        const result = getPathWithParams('/api/data', {
+            page: '1',
+            limit: '10',
+        });
         expect(result).toContain('/api/data?');
         expect(result).toContain('page=1');
         expect(result).toContain('limit=10');
@@ -114,7 +122,9 @@ describe('getPathWithParams', () => {
 
     test('accepts a URLSearchParams instance', () => {
         const params = new URLSearchParams({ foo: 'bar' });
-        expect(getPathWithParams('/api/data', params)).toBe('/api/data?foo=bar');
+        expect(getPathWithParams('/api/data', params)).toBe(
+            '/api/data?foo=bar'
+        );
     });
 });
 

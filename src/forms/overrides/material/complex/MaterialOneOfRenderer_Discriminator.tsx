@@ -237,7 +237,11 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     //  handleChange directly in the render body updates JsonFormsStateProvider while
     //  this component is still rendering.
     useEffect(() => {
-        if (defaultDiscriminator.current && required && !hasOwnProperty(data, discriminatorProperty)) {
+        if (
+            defaultDiscriminator.current &&
+            required &&
+            !hasOwnProperty(data, discriminatorProperty)
+        ) {
             const defaultVal = getDiscriminatorDefaultValue(
                 possibleSchemas?.[selectedIndex]?.properties,
                 discriminatorProperty
@@ -255,7 +259,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 [discriminatorProperty]: defaultVal?.[discriminatorProperty],
             });
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const singleOption = oneOfRenderInfos.length === 1;

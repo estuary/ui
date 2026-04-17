@@ -9,11 +9,15 @@ import {
 
 describe('getEditorTotalHeight', () => {
     test('uses defaults when no arguments are provided', () => {
-        expect(getEditorTotalHeight()).toBe(DEFAULT_HEIGHT + DEFAULT_TOOLBAR_HEIGHT + 2);
+        expect(getEditorTotalHeight()).toBe(
+            DEFAULT_HEIGHT + DEFAULT_TOOLBAR_HEIGHT + 2
+        );
     });
 
     test('uses provided editor height and default toolbar height', () => {
-        expect(getEditorTotalHeight(400)).toBe(400 + DEFAULT_TOOLBAR_HEIGHT + 2);
+        expect(getEditorTotalHeight(400)).toBe(
+            400 + DEFAULT_TOOLBAR_HEIGHT + 2
+        );
     });
 
     test('uses provided values for both heights', () => {
@@ -36,11 +40,15 @@ describe('getEditorEventReason', () => {
     });
 
     test('returns reason.message when present', () => {
-        expect(getEditorEventReason({ reason: { message: 'Canceled' } })).toBe('Canceled');
+        expect(getEditorEventReason({ reason: { message: 'Canceled' } })).toBe(
+            'Canceled'
+        );
     });
 
     test('falls back to reason.name when message is absent', () => {
-        expect(getEditorEventReason({ reason: { name: 'AbortError' } })).toBe('AbortError');
+        expect(getEditorEventReason({ reason: { name: 'AbortError' } })).toBe(
+            'AbortError'
+        );
     });
 
     test('returns null when reason has neither message nor name', () => {
@@ -50,11 +58,15 @@ describe('getEditorEventReason', () => {
 
 describe('ignorableEditorException', () => {
     test('returns true for a Canceled event', () => {
-        expect(ignorableEditorException({ reason: { message: CANCEL_EXCEPTION } })).toBe(true);
+        expect(
+            ignorableEditorException({ reason: { message: CANCEL_EXCEPTION } })
+        ).toBe(true);
     });
 
     test('returns false for other event types', () => {
-        expect(ignorableEditorException({ reason: { message: 'SomeOtherError' } })).toBe(false);
+        expect(
+            ignorableEditorException({ reason: { message: 'SomeOtherError' } })
+        ).toBe(false);
     });
 
     test('returns false for null input', () => {
