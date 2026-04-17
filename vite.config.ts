@@ -73,7 +73,9 @@ const writeVersionToFile: () => Plugin = () => ({
                 const file = './public/meta.json';
                 await fs
                     .access(path.dirname(file))
-                    .catch(() => fs.mkdir(path.dirname(file), { recursive: true }));
+                    .catch(() =>
+                        fs.mkdir(path.dirname(file), { recursive: true })
+                    );
 
                 // Write content to file
                 await fs
@@ -122,7 +124,8 @@ export default defineConfig({
 
     optimizeDeps: {
         include: ['@estuary/flow-web'],
-        // exclude: ['@estuary/flow-web'],
+        exclude: ['storybook-static/*'],
+        entries: ['index.html'],
     },
 
     preview: { port: 3000, strictPort: true },
