@@ -34,7 +34,7 @@ import type {
     RankedTester,
 } from '@jsonforms/core';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
     Button,
@@ -233,8 +233,11 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     //  the source-shopify-native connector as it can contain multiple discriminators
     //  in the stores array. If we do not set this on edit then the user cannot add
     //  new stores.
-    if (defaultDiscriminator.current) {
-        if (required && !hasOwnProperty(data, discriminatorProperty)) {
+    // NOTE: Must run in useEffect to avoid "setState during render" warning — calling
+    //  handleChange directly in the render body updates JsonFormsStateProvider while
+    //  this component is still rendering.
+    useEffect(() => {
+        if (defaultDiscriminator.current && required && !hasOwnProperty(data, discriminatorProperty)) {
             const defaultVal = getDiscriminatorDefaultValue(
                 possibleSchemas?.[selectedIndex]?.properties,
                 discriminatorProperty
@@ -252,7 +255,8 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                 [discriminatorProperty]: defaultVal?.[discriminatorProperty],
             });
         }
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const singleOption = oneOfRenderInfos.length === 1;
 
