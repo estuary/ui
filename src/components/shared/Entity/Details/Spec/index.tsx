@@ -105,11 +105,7 @@ function Spec() {
                         {entityType === 'collection' ? (
                             <CollectionSpecViews presentation={presentation} />
                         ) : (
-                            <LiveSpecEditor
-                                localZustandScope
-                                singleSpec
-                                height={HEIGHT}
-                            />
+                            <LiveSpecEditor localZustandScope height={HEIGHT} />
                         )}
                     </Stack>
                 </Grid>
