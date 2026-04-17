@@ -115,6 +115,7 @@ See `CLAUDE.md` for the full Zustand architecture. Key React-specific patterns:
     ```
 - **Pre-made hooks** — complex derived state still uses named hooks (e.g., `useBinding_sourceCaptureFlags`) to keep selector logic out of components.
 - **Local Zustand** — `src/context/LocalZustand.tsx` and `src/context/Zustand/provider.tsx` provide per-subtree Zustand stores via React context, used for scoped state that does not need to be global.
+- **Selector stability** — `useShallow` selectors that return arrays of object literals (e.g., `.map(() => ({ ... }))`) cause infinite render loops because `Object.is` fails on new object references. See [`INFINITE_LOOP_PATTERNS.md`](./INFINITE_LOOP_PATTERNS.md) for the failure mode, safe patterns, and the fix.
 
 ---
 
