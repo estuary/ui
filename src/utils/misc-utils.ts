@@ -4,7 +4,6 @@ import type {
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
 import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
-import type { ReactElement, ReactNode } from 'react';
 import type { BaseGrant, Grant_UserExt } from 'src/types';
 
 import { isEmpty, isObject } from 'lodash';
@@ -262,9 +261,6 @@ export const configCanBeEmpty = (schema: any) => {
 
     return Boolean(!schema.properties || isEmpty(schema.properties));
 };
-
-export const isReactElement = (value: ReactNode): value is ReactElement =>
-    isObject(value) && 'props' in value;
 
 export const isPostgrestFetcher = (
     value:
