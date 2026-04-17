@@ -118,7 +118,7 @@ function EntityCreate({
             entityNameChanged,
             endpointConfigServerUpdateRequired,
             resourceConfigServerUpdateRequired,
-            newValue,
+            newValue: newValue ?? 'null',
             component: 'EntityCreate',
         });
 
