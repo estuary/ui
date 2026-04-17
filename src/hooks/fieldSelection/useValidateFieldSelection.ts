@@ -200,14 +200,14 @@ export default function useValidateFieldSelection() {
     );
 
     useEffect(() => {
+        const targetBindingUUIDs = Object.keys(targetBindingContext);
+
         if (
             entityType !== 'materialization' ||
-            targetBindingContext.length === 0
+            targetBindingUUIDs.length === 0
         ) {
             return;
         }
-
-        const targetBindingUUIDs = targetBindingContext.map(({ uuid }) => uuid);
 
         const draftSpecsRow =
             draftSpecsRows.length !== 0 ? draftSpecsRows[0] : undefined;
@@ -247,9 +247,7 @@ export default function useValidateFieldSelection() {
                 // This is counting how many attempts have _happened_ so starts
                 //  at 0 and not 1
                 const validationAttempts =
-                    targetBindingContext.find(
-                        (context) => context.uuid === uuid
-                    )?.validationAttempts ??
+                    targetBindingContext[uuid] ??
                     MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS;
 
                 trackValidationAttempt(uuid);
@@ -367,13 +365,11 @@ export default function useValidateFieldSelection() {
                 }
             )
             .finally(() => {
-                const rejectedRequests = pendingRequests.filter(({ uuid }) =>
-                    targetBindingContext.find(
-                        (context) =>
-                            context.uuid === uuid &&
-                            context.validationAttempts >=
-                                MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
-                    )
+                const rejectedRequests = pendingRequests.filter(
+                    ({ uuid }) =>
+                        (targetBindingContext[uuid] ??
+                            MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS) >=
+                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
                 );
 
                 pendingRequests = differenceBy(

@@ -432,17 +432,25 @@ export const useBinding_groupBy = (bindingUUID: string) =>
         )
     );
 
-export const useBinding_fieldSelectionValidationContext = () => {
+// Returns { [uuid]: validationAttempts } for bindings with VALIDATION_REQUESTED status.
+// Using a Record of primitives so useShallow can stabilize via Object.is comparison.
+export const useBinding_fieldSelectionValidationContext = (): Record<
+    string,
+    number
+> => {
     return useBindingStore(
         useShallow((state) =>
-            Object.entries(state.selections)
-                .filter(
-                    ([_uuid, { status }]) => status === 'VALIDATION_REQUESTED'
-                )
-                .map(([uuid, { validationAttempts }]) => ({
-                    uuid,
-                    validationAttempts,
-                }))
+            Object.fromEntries(
+                Object.entries(state.selections)
+                    .filter(
+                        ([_uuid, { status }]) =>
+                            status === 'VALIDATION_REQUESTED'
+                    )
+                    .map(([uuid, { validationAttempts }]) => [
+                        uuid,
+                        validationAttempts,
+                    ])
+            )
         )
     );
 };
