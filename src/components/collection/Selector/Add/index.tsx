@@ -6,7 +6,7 @@ import { Button, Tooltip } from '@mui/material';
 
 import { useStore } from 'zustand';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
@@ -106,7 +106,7 @@ function BindingsEditorAdd({
                     sx={{ borderRadius: 0 }}
                     variant="text"
                 >
-                    <FormattedMessage id="cta.add" />
+                    {intl.formatMessage({ id: 'cta.add' })}
                 </Button>
             </Tooltip>
 
