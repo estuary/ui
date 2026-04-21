@@ -26,7 +26,7 @@ export default function BackfillDescription({ allBindings }: Props) {
             {entityType === 'materialization' ? (
                 <AlertBox severity="warning" short>
                     {intl.formatMessage({
-                        id: `workflows.collectionSelector.manualBackfill.message.materialization.allBindings.warning`,
+                        id: `workflows.collectionSelector.manualBackfill.message.${entityType}${suffix}.warning`,
                     })}
                 </AlertBox>
             ) : null}
