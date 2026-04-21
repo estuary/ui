@@ -19,78 +19,20 @@ import {
 import { useIntl } from 'react-intl';
 
 import { SchemaInput } from 'src/components/materialization/targetNaming/SchemaInput';
+import {
+    buildExample,
+    hasSchemaTemplate,
+    parseSchemaTemplate,
+} from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 
 interface Props {
     open: boolean;
-    // Initial strategy to pre-populate the form (used when re-opening to change).
-    initialStrategy?: TargetNamingStrategy | null;
     onCancel: () => void;
     onConfirm: (strategy: TargetNamingStrategy) => void;
-}
-
-function hasSchemaTemplate(
-    s: TargetNamingStrategy | null | undefined
-): s is Extract<TargetNamingStrategy, { schemaTemplate?: string }> & {
-    schemaTemplate: string;
-} {
-    return (
-        !!s &&
-        s.strategy !== 'matchSourceStructure' &&
-        'schemaTemplate' in s &&
-        typeof s.schemaTemplate === 'string' &&
-        s.schemaTemplate.length > 0
-    );
-}
-
-function parseSchemaTemplate(template: string): {
-    prefix: string;
-    suffix: string;
-} {
-    const parts = template.split('{{schema}}');
-    return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
-}
-
-// Derives example schema/table names from a strategy, user-entered schema, and a source schema name.
-function buildExample(
-    strategyKey: StrategyKey,
-    schema: string,
-    schemaTemplate: string | undefined,
-    skipCommonDefaults: boolean,
-    srcSchema: string = 'mySchema'
-): { schema: string; table: string; tablePrefix: string } {
-    const srcTable = 'orders';
-
-    const resolveSchema = (fallback: string) =>
-        schemaTemplate
-            ? schemaTemplate.replace('{{schema}}', srcSchema)
-            : fallback || '...';
-
-    switch (strategyKey) {
-        case 'matchSourceStructure':
-            return {
-                schema: srcSchema,
-                table: srcTable,
-                tablePrefix: srcSchema,
-            };
-        case 'singleSchema':
-            return {
-                schema: resolveSchema(schema),
-                table: srcTable,
-                tablePrefix: srcSchema,
-            };
-        case 'prefixTableNames': {
-            const isDefault = ['public', 'dbo'].includes(srcSchema);
-            const prefix =
-                skipCommonDefaults && isDefault ? '' : `${srcSchema}_`;
-            return {
-                schema: resolveSchema(schema),
-                table: `${prefix}${srcTable}`,
-                tablePrefix: srcSchema,
-            };
-        }
-    }
+    confirmIntlKey: string;
+    initialStrategy?: TargetNamingStrategy | null;
 }
 
 export default function DestinationLayoutDialog({
@@ -98,6 +40,7 @@ export default function DestinationLayoutDialog({
     initialStrategy,
     onCancel,
     onConfirm,
+    confirmIntlKey,
 }: Props) {
     const intl = useIntl();
 
@@ -288,7 +231,7 @@ export default function DestinationLayoutDialog({
                     disabled={!canConfirm}
                 >
                     {intl.formatMessage({
-                        id: 'destinationLayout.dialog.cta.addBindings',
+                        id: confirmIntlKey,
                     })}
                 </Button>
             </DialogActions>

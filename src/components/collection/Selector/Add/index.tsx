@@ -112,6 +112,7 @@ function BindingsEditorAdd({
 
             {needsNamingDialog || namingDialogOpen ? (
                 <DestinationLayoutDialog
+                    confirmIntlKey="destinationLayout.dialog.cta.addBindings"
                     open={namingDialogOpen}
                     initialStrategy={targetNamingStrategy}
                     onCancel={() => setNamingDialogOpen(false)}

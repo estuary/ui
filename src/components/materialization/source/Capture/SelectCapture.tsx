@@ -137,6 +137,7 @@ function SelectCapture() {
 
             {namingDialogOpen ? (
                 <DestinationLayoutDialog
+                    confirmIntlKey="destinationLayout.dialog.cta.sourceCapture"
                     open={namingDialogOpen}
                     initialStrategy={targetNamingStrategy}
                     onCancel={() => setNamingDialogOpen(false)}

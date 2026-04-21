@@ -28,7 +28,7 @@ export default function TargetNamingUpdateWrapper() {
     const writeRootTargetNaming = useWriteRootTargetNaming();
 
     const currentLabel = strategy
-        ? STRATEGY_LABELS[strategy.strategy] ?? strategy.strategy
+        ? (STRATEGY_LABELS[strategy.strategy] ?? strategy.strategy)
         : intl.formatMessage({ id: 'destinationLayout.dialog.title' });
 
     return (
@@ -54,6 +54,7 @@ export default function TargetNamingUpdateWrapper() {
             </Stack>
 
             <DestinationLayoutDialog
+                confirmIntlKey="cta.save"
                 open={dialogOpen}
                 initialStrategy={strategy}
                 onCancel={() => setDialogOpen(false)}
