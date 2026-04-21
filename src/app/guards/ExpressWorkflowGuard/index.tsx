@@ -15,7 +15,9 @@ export const ExpressWorkflowGuard = ({
     authenticating,
     children,
 }: ExpressWorkflowGuardProps) => {
-    const connectorImagePath = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_IMAGE_PATH);
+    const connectorImagePath = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_IMAGE_PATH
+    );
 
     const { getExpressWorkflowAuth } = useExpressWorkflowAuth();
 
@@ -61,7 +63,11 @@ export const ExpressWorkflowGuard = ({
     ]);
 
     if (authenticating && stateEmpty) {
-        return connectorImagePath ? <FormSkeleton /> : <ConnectorGridSkeleton />;
+        return connectorImagePath ? (
+            <FormSkeleton />
+        ) : (
+            <ConnectorGridSkeleton />
+        );
     }
 
     // eslint-disable-next-line react/jsx-no-useless-fragment

@@ -159,7 +159,13 @@ export default function ConnectorCards({
                         <ConnectorCard
                             key={`connector-card-${node.id}`}
                             clickHandler={() =>
-                                primaryCtaClick(entityType, buildConnectorImagePath(node.imageName, defaultSpec.imageTag))
+                                primaryCtaClick(
+                                    entityType,
+                                    buildConnectorImagePath(
+                                        node.imageName,
+                                        defaultSpec.imageTag
+                                    )
+                                )
                             }
                             docsUrl={defaultSpec.documentationUrl ?? ''}
                             entityType={entityType}

@@ -63,5 +63,8 @@ export const buildConnectorImageFromTag = (
               ...base,
               variant: connector.imageName.substring(DEKAF_IMAGE_PREFIX.length),
           }
-        : { ...base, imagePath: buildConnectorImagePath(connector.imageName, imageTag) };
+        : {
+              ...base,
+              imagePath: buildConnectorImagePath(connector.imageName, imageTag),
+          };
 };
