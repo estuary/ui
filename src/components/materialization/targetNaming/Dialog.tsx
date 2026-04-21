@@ -219,7 +219,8 @@ export default function DestinationLayoutDialog({
                             {strategyKey === 'singleSchema' ? (
                                 <Box onClick={(e) => e.stopPropagation()}>
                                     <SchemaInput
-                                        mode={schemaMode}
+                                        disableTemplate
+                                        mode="fixed"
                                         onModeChange={setSchemaMode}
                                         value={schema}
                                         onChange={setSchema}

@@ -11,6 +11,7 @@ export interface SchemaInputProps {
     onPrefixChange: (v: string) => void;
     suffix: string;
     onSuffixChange: (v: string) => void;
+    disableTemplate?: boolean;
 }
 
 export function SchemaInput({
@@ -22,12 +23,13 @@ export function SchemaInput({
     onPrefixChange,
     suffix,
     onSuffixChange,
+    disableTemplate,
 }: SchemaInputProps) {
     const intl = useIntl();
 
     return (
         <Stack spacing={0.5}>
-            {mode === 'fixed' ? (
+            {mode === 'fixed' || disableTemplate ? (
                 <TextField
                     size="small"
                     label={intl.formatMessage({
@@ -64,23 +66,27 @@ export function SchemaInput({
                     />
                 </Stack>
             )}
-            <Box>
-                <Link
-                    component="button"
-                    variant="caption"
-                    onClick={() =>
-                        onModeChange(mode === 'fixed' ? 'template' : 'fixed')
-                    }
-                >
-                    {mode === 'fixed'
-                        ? intl.formatMessage({
-                              id: 'destinationLayout.dialog.schema.useTemplate',
-                          })
-                        : intl.formatMessage({
-                              id: 'destinationLayout.dialog.schema.useFixed',
-                          })}
-                </Link>
-            </Box>
+            {disableTemplate ? null : (
+                <Box>
+                    <Link
+                        component="button"
+                        variant="caption"
+                        onClick={() =>
+                            onModeChange(
+                                mode === 'fixed' ? 'template' : 'fixed'
+                            )
+                        }
+                    >
+                        {mode === 'fixed'
+                            ? intl.formatMessage({
+                                  id: 'destinationLayout.dialog.schema.useTemplate',
+                              })
+                            : intl.formatMessage({
+                                  id: 'destinationLayout.dialog.schema.useFixed',
+                              })}
+                    </Link>
+                </Box>
+            )}
         </Stack>
     );
 }
