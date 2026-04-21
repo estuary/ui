@@ -332,8 +332,6 @@ export const Workflows: Record<string, string> = {
     'fieldsRecommended.cta.selectAlgorithm': `Default Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
-    'schemaMode.data.table': `Table:`,
-    'schemaMode.data.schema': `Schema:`,
     'schemaMode.example.base': `acmeco/{tablePrefix}/orders`,
     'schemaMode.example.tablePrefix': `anvils`,
     'schemaMode.example.public.tablePrefix': `public`,
