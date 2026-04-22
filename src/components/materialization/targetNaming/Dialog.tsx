@@ -69,7 +69,7 @@ export default function DestinationLayoutDialog({
     const [schemaSuffix, setSchemaSuffix] = useState(parsedTemplate.suffix);
 
     const schemaTemplate =
-        strategyKey === 'prefixTableNames' && schemaMode === 'template'
+        schemaMode === 'template'
             ? `${schemaPrefix}{{schema}}${schemaSuffix}`
             : undefined;
 
@@ -162,8 +162,7 @@ export default function DestinationLayoutDialog({
                             {strategyKey === 'singleSchema' ? (
                                 <Box onClick={(e) => e.stopPropagation()}>
                                     <SchemaInput
-                                        disableTemplate
-                                        mode="fixed"
+                                        mode={schemaMode}
                                         onModeChange={setSchemaMode}
                                         value={schema}
                                         onChange={setSchema}
