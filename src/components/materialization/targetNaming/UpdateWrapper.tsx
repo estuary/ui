@@ -1,15 +1,9 @@
-import { useState } from 'react';
-
 import { Button, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
-import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
-import {
-    useTargetNaming_setStrategy,
-    useTargetNaming_strategy,
-} from 'src/stores/TargetNaming/hooks';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 
 const STRATEGY_LABELS: Record<string, string> = {
     matchSourceStructure: 'Match source structure',
@@ -21,11 +15,8 @@ const STRATEGY_LABELS: Record<string, string> = {
 // Lets the user re-open the Destination Layout dialog to change their selection.
 export default function TargetNamingUpdateWrapper() {
     const intl = useIntl();
-    const [dialogOpen, setDialogOpen] = useState(false);
-
-    const strategy = useTargetNaming_strategy();
-    const setStrategy = useTargetNaming_setStrategy();
-    const writeRootTargetNaming = useWriteRootTargetNaming();
+    const { strategy, updateStrategy, dialogOpen, openDialog, closeDialog } =
+        useTargetNaming();
 
     const currentLabel = strategy
         ? (STRATEGY_LABELS[strategy.strategy] ?? strategy.strategy)
@@ -47,7 +38,7 @@ export default function TargetNamingUpdateWrapper() {
                 <Button
                     size="small"
                     variant="outlined"
-                    onClick={() => setDialogOpen(true)}
+                    onClick={openDialog}
                 >
                     {intl.formatMessage({ id: 'cta.edit' })}
                 </Button>
@@ -57,11 +48,9 @@ export default function TargetNamingUpdateWrapper() {
                 confirmIntlKey="cta.save"
                 open={dialogOpen}
                 initialStrategy={strategy}
-                onCancel={() => setDialogOpen(false)}
+                onCancel={closeDialog}
                 onConfirm={(newStrategy) => {
-                    setStrategy(newStrategy);
-                    writeRootTargetNaming(newStrategy);
-                    setDialogOpen(false);
+                    updateStrategy(newStrategy).then(closeDialog);
                 }}
             />
         </>

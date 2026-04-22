@@ -10,10 +10,11 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialStateData = (): Pick<
     TargetNamingState,
-    'model' | 'strategy'
+    'model' | 'strategy' | 'saving'
 > => ({
     model: null,
     strategy: null,
+    saving: false,
 });
 
 const getInitialState = (
@@ -38,6 +39,16 @@ const getInitialState = (
             }),
             false,
             'Target Naming Strategy Set'
+        );
+    },
+
+    setSaving: (value) => {
+        set(
+            produce((state: TargetNamingState) => {
+                state.saving = value;
+            }),
+            false,
+            'Target Naming Saving Set'
         );
     },
 

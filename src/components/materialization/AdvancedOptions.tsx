@@ -9,7 +9,6 @@ import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useTargetNaming_model } from 'src/stores/TargetNaming/hooks';
 
 export default function AdvancedOptions() {
@@ -21,8 +20,6 @@ export default function AdvancedOptions() {
         (state) => state.onIncompatibleSchemaChangeErrorExists.spec
     );
 
-    const { sourceCaptureTargetSchemaSupported } =
-        useBinding_sourceCaptureFlags();
     const targetNamingModel = useTargetNaming_model();
 
     if (entityType !== 'materialization') {
@@ -47,8 +44,7 @@ export default function AdvancedOptions() {
                     <OnIncompatibleSchemaChange />
                 </ErrorBoundryWrapper>
 
-                {sourceCaptureTargetSchemaSupported &&
-                targetNamingModel === 'rootTargetNaming' ? (
+                {targetNamingModel === 'rootTargetNaming' ? (
                     <ErrorBoundryWrapper>
                         <TargetNamingUpdateWrapper />
                     </ErrorBoundryWrapper>

@@ -12,5 +12,8 @@ export interface TargetNamingState {
     strategy: TargetNamingStrategy | null;
     setStrategy: (strategy: TargetNamingState['strategy']) => void;
 
+    saving: boolean;
+    setSaving: (saving: boolean) => void;
+
     resetState: () => void;
 }

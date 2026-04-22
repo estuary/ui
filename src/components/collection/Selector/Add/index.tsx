@@ -12,13 +12,7 @@ import DestinationLayoutDialog from 'src/components/materialization/targetNaming
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityType } from 'src/context/EntityContext';
 import invariableStores from 'src/context/Zustand/invariableStores';
-import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
-import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
-import {
-    useTargetNaming_model,
-    useTargetNaming_setStrategy,
-    useTargetNaming_strategy,
-} from 'src/stores/TargetNaming/hooks';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 
 const DIALOG_ID = 'add-collection-search-dialog';
 
@@ -31,7 +25,6 @@ function BindingsEditorAdd({
     const entityType = useEntityType();
 
     const [open, setOpen] = useState<boolean>(false);
-    const [namingDialogOpen, setNamingDialogOpen] = useState<boolean>(false);
 
     const resetSelected = useStore(
         invariableStores['Entity-Selector-Table'],
@@ -40,21 +33,14 @@ function BindingsEditorAdd({
         }
     );
 
-    const { sourceCaptureTargetSchemaSupported } =
-        useBinding_sourceCaptureFlags();
-    const targetNamingModel = useTargetNaming_model();
-    const targetNamingStrategy = useTargetNaming_strategy();
-    const setStrategy = useTargetNaming_setStrategy();
-    const writeRootTargetNaming = useWriteRootTargetNaming();
-
-    // Show the destination layout dialog if:
-    // - this is a materialization with schema support
-    // - rootTargetNaming model (new model; create always, edit of new-model spec)
-    // - no strategy chosen yet
-    const needsNamingDialog =
-        sourceCaptureTargetSchemaSupported &&
-        targetNamingModel === 'rootTargetNaming' &&
-        targetNamingStrategy === null;
+    const {
+        strategy: targetNamingStrategy,
+        needsNamingDialog,
+        updateStrategy,
+        dialogOpen: namingDialogOpen,
+        openDialog: openNamingDialog,
+        closeDialog: closeNamingDialog,
+    } = useTargetNaming();
 
     // Captures can only disable/enable bindings in the UI. The user can
     //   actually remove items from the list via the CLI and we are okay
@@ -88,7 +74,7 @@ function BindingsEditorAdd({
 
     const handleAddClick = () => {
         if (needsNamingDialog) {
-            setNamingDialogOpen(true);
+            openNamingDialog();
         } else {
             toggleDialog(true);
         }
@@ -110,17 +96,17 @@ function BindingsEditorAdd({
                 </Button>
             </Tooltip>
 
-            {needsNamingDialog || namingDialogOpen ? (
+            {namingDialogOpen ? (
                 <DestinationLayoutDialog
                     confirmIntlKey="destinationLayout.dialog.cta.addBindings"
                     open={namingDialogOpen}
                     initialStrategy={targetNamingStrategy}
-                    onCancel={() => setNamingDialogOpen(false)}
+                    onCancel={closeNamingDialog}
                     onConfirm={(strategy) => {
-                        setStrategy(strategy);
-                        writeRootTargetNaming(strategy);
-                        setNamingDialogOpen(false);
-                        toggleDialog(true);
+                        updateStrategy(strategy).then(() => {
+                            closeNamingDialog();
+                            toggleDialog(true);
+                        });
                     }}
                 />
             ) : null}

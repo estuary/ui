@@ -12,15 +12,9 @@ import AddSourceCaptureToSpecButton from 'src/components/materialization/source/
 import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
-import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import {
-    useTargetNaming_model,
-    useTargetNaming_setStrategy,
-    useTargetNaming_strategy,
-} from 'src/stores/TargetNaming/hooks';
 import { readSourceCaptureDefinitionFromSpec } from 'src/utils/entity-utils';
 
 const DIALOG_ID = 'add-source-capture-search-dialog';
@@ -44,26 +38,22 @@ function SelectCapture() {
         );
 
     const [open, setOpen] = useState<boolean>(false);
-    const [namingDialogOpen, setNamingDialogOpen] = useState(false);
 
     const toggleDialog = (args: any) =>
         setOpen(typeof args === 'boolean' ? args : !open);
 
-    const { sourceCaptureTargetSchemaSupported } =
-        useBinding_sourceCaptureFlags();
-    const targetNamingModel = useTargetNaming_model();
-    const targetNamingStrategy = useTargetNaming_strategy();
-    const setStrategy = useTargetNaming_setStrategy();
-    const writeRootTargetNaming = useWriteRootTargetNaming();
-
-    const needsNamingDialog =
-        sourceCaptureTargetSchemaSupported &&
-        targetNamingModel === 'rootTargetNaming' &&
-        targetNamingStrategy === null;
+    const {
+        strategy: targetNamingStrategy,
+        needsNamingDialog,
+        updateStrategy,
+        dialogOpen: namingDialogOpen,
+        openDialog: openNamingDialog,
+        closeDialog: closeNamingDialog,
+    } = useTargetNaming();
 
     const handleModifyClick = () => {
         if (needsNamingDialog) {
-            setNamingDialogOpen(true);
+            openNamingDialog();
         } else {
             toggleDialog(true);
         }
@@ -140,12 +130,12 @@ function SelectCapture() {
                     confirmIntlKey="destinationLayout.dialog.cta.sourceCapture"
                     open={namingDialogOpen}
                     initialStrategy={targetNamingStrategy}
-                    onCancel={() => setNamingDialogOpen(false)}
+                    onCancel={closeNamingDialog}
                     onConfirm={(strategy) => {
-                        setStrategy(strategy);
-                        writeRootTargetNaming(strategy);
-                        setNamingDialogOpen(false);
-                        toggleDialog(true);
+                        updateStrategy(strategy).then(() => {
+                            closeNamingDialog();
+                            toggleDialog(true);
+                        });
                     }}
                 />
             ) : null}

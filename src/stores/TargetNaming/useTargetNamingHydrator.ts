@@ -29,14 +29,17 @@ export function useTargetNamingHydrator() {
 
     useEffect(() => {
         if (hydrated.current) return;
-        if (!sourceCaptureTargetSchemaSupported) return;
 
+        // Create: always rootTargetNaming regardless of connector support
         if (workflow === 'materialization_create') {
             setModel('rootTargetNaming');
             // strategy stays null — user must pick via dialog before adding bindings
             hydrated.current = true;
             return;
         }
+
+        // Edit: only hydrate if connector supports x_schema_name
+        if (!sourceCaptureTargetSchemaSupported) return;
 
         // Edit: wait until draft spec is loaded
         if (!draftSpecs || draftSpecs.length === 0 || !draftSpecs[0].spec) {

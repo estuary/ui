@@ -11,7 +11,7 @@ import { FormattedMessage } from 'react-intl';
 
 import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
 import invariableStores from 'src/context/Zustand/invariableStores';
-import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
@@ -20,15 +20,9 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import {
-    useTargetNaming_model,
-    useTargetNaming_setStrategy,
-    useTargetNaming_strategy,
-} from 'src/stores/TargetNaming/hooks';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);
-    const [namingDialogOpen, setNamingDialogOpen] = useState(false);
 
     const [selected] = useStore(
         invariableStores['Entity-Selector-Table'],
@@ -56,15 +50,15 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             state.targetSchema,
         ]);
 
-    const targetNamingModel = useTargetNaming_model();
-    const targetNamingStrategy = useTargetNaming_strategy();
-    const setStrategy = useTargetNaming_setStrategy();
-    const writeRootTargetNaming = useWriteRootTargetNaming();
-
-    const needsNamingDialog =
-        sourceCaptureTargetSchemaSupported &&
-        targetNamingModel === 'rootTargetNaming' &&
-        targetNamingStrategy === null;
+    const {
+        model: targetNamingModel,
+        strategy: targetNamingStrategy,
+        needsNamingDialog,
+        updateStrategy,
+        dialogOpen: namingDialogOpen,
+        openDialog: openNamingDialog,
+        closeDialog: closeNamingDialog,
+    } = useTargetNaming();
 
     // Binding Store
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
@@ -135,7 +129,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const handleContinue = () => {
         if (needsNamingDialog) {
-            setNamingDialogOpen(true);
+            openNamingDialog();
         } else {
             applySourceCapture();
         }
@@ -156,12 +150,12 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                     confirmIntlKey="destinationLayout.dialog.cta.sourceCapture"
                     open={namingDialogOpen}
                     initialStrategy={targetNamingStrategy}
-                    onCancel={() => setNamingDialogOpen(false)}
+                    onCancel={closeNamingDialog}
                     onConfirm={(strategy) => {
-                        setStrategy(strategy);
-                        writeRootTargetNaming(strategy);
-                        setNamingDialogOpen(false);
-                        applySourceCapture();
+                        updateStrategy(strategy).then(() => {
+                            closeNamingDialog();
+                            applySourceCapture();
+                        });
                     }}
                 />
             ) : null}

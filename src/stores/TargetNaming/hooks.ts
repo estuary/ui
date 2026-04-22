@@ -12,5 +12,11 @@ export const useTargetNaming_strategy = () =>
 export const useTargetNaming_setStrategy = () =>
     useTargetNamingStore((state) => state.setStrategy);
 
+export const useTargetNaming_saving = () =>
+    useTargetNamingStore((state) => state.saving);
+
+export const useTargetNaming_setSaving = () =>
+    useTargetNamingStore((state) => state.setSaving);
+
 export const useTargetNaming_resetState = () =>
     useTargetNamingStore((state) => state.resetState);
