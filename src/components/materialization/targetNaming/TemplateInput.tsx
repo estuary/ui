@@ -2,7 +2,8 @@ import { Box, Link, Stack, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-export interface SchemaInputProps {
+export interface TemplateInputProps {
+    field?: 'schema' | 'table';
     mode: 'fixed' | 'template';
     onModeChange: (mode: 'fixed' | 'template') => void;
     value: string;
@@ -11,9 +12,26 @@ export interface SchemaInputProps {
     onPrefixChange: (v: string) => void;
     suffix: string;
     onSuffixChange: (v: string) => void;
+    disableTemplate?: boolean;
 }
 
-export function SchemaInput({
+const FIELD_KEYS = {
+    schema: {
+        label: 'destinationLayout.dialog.schema.label',
+        token: 'schema',
+        useTemplate: 'destinationLayout.dialog.schema.useTemplate',
+        useFixed: 'destinationLayout.dialog.schema.useFixed',
+    },
+    table: {
+        label: 'destinationLayout.dialog.table.label',
+        token: 'table',
+        useTemplate: 'destinationLayout.dialog.table.useTemplate',
+        useFixed: 'destinationLayout.dialog.table.useFixed',
+    },
+} as const;
+
+export function TemplateInput({
+    field = 'schema',
     mode,
     onModeChange,
     value,
@@ -22,17 +40,17 @@ export function SchemaInput({
     onPrefixChange,
     suffix,
     onSuffixChange,
-}: SchemaInputProps) {
+    disableTemplate,
+}: TemplateInputProps) {
     const intl = useIntl();
+    const keys = FIELD_KEYS[field];
 
     return (
         <Stack spacing={0.5}>
-            {mode === 'fixed' ? (
+            {mode === 'fixed' || disableTemplate ? (
                 <TextField
                     size="small"
-                    label={intl.formatMessage({
-                        id: 'destinationLayout.dialog.schema.label',
-                    })}
+                    label={intl.formatMessage({ id: keys.label })}
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder="prod"
@@ -44,7 +62,7 @@ export function SchemaInput({
                     <TextField
                         size="small"
                         label={intl.formatMessage({
-                            id: 'destinationLayout.dialog.schema.prefix.label',
+                            id: 'destinationLayout.dialog.field.prefix.label',
                         })}
                         value={prefix}
                         onChange={(e) => onPrefixChange(e.target.value)}
@@ -54,38 +72,39 @@ export function SchemaInput({
                         size="small"
                         disabled
                         label=" "
-                        value="schema"
-                        onChange={(e) => onPrefixChange(e.target.value)}
+                        value={keys.token}
                         sx={{ maxWidth: 80 }}
-                        autoFocus
                     />
                     <TextField
                         size="small"
                         label={intl.formatMessage({
-                            id: 'destinationLayout.dialog.schema.suffix.label',
+                            id: 'destinationLayout.dialog.field.suffix.label',
                         })}
                         value={suffix}
                         onChange={(e) => onSuffixChange(e.target.value)}
                     />
                 </Stack>
             )}
-            <Box>
-                <Link
-                    component="button"
-                    variant="caption"
-                    onClick={() =>
-                        onModeChange(mode === 'fixed' ? 'template' : 'fixed')
-                    }
-                >
-                    {mode === 'fixed'
-                        ? intl.formatMessage({
-                              id: 'destinationLayout.dialog.schema.useTemplate',
-                          })
-                        : intl.formatMessage({
-                              id: 'destinationLayout.dialog.schema.useFixed',
-                          })}
-                </Link>
-            </Box>
+            {disableTemplate ? null : (
+                <Box>
+                    <Link
+                        component="button"
+                        variant="caption"
+                        onClick={() =>
+                            onModeChange(
+                                mode === 'fixed' ? 'template' : 'fixed'
+                            )
+                        }
+                    >
+                        {intl.formatMessage({
+                            id:
+                                mode === 'fixed'
+                                    ? keys.useTemplate
+                                    : keys.useFixed,
+                        })}
+                    </Link>
+                </Box>
+            )}
         </Stack>
     );
 }

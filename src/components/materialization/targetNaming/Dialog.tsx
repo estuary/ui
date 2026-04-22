@@ -18,13 +18,15 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import { SchemaInput } from 'src/components/materialization/targetNaming/SchemaInput';
 import {
     buildExample,
     hasSchemaTemplate,
+    hasTableTemplate,
     parseSchemaTemplate,
+    parseTableTemplate,
 } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
+import { TemplateInput } from 'src/components/materialization/targetNaming/TemplateInput';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 
 interface Props {
@@ -58,19 +60,34 @@ export default function DestinationLayoutDialog({
             : true
     );
 
-    // Template mode state
+    // Schema template state
     const [schemaMode, setSchemaMode] = useState<'fixed' | 'template'>(
         hasSchemaTemplate(initialStrategy) ? 'template' : 'fixed'
     );
-    const parsedTemplate = hasSchemaTemplate(initialStrategy)
+    const parsedSchemaTemplate = hasSchemaTemplate(initialStrategy)
         ? parseSchemaTemplate(initialStrategy.schemaTemplate)
         : { prefix: '', suffix: '' };
-    const [schemaPrefix, setSchemaPrefix] = useState(parsedTemplate.prefix);
-    const [schemaSuffix, setSchemaSuffix] = useState(parsedTemplate.suffix);
+    const [schemaPrefix, setSchemaPrefix] = useState(parsedSchemaTemplate.prefix);
+    const [schemaSuffix, setSchemaSuffix] = useState(parsedSchemaTemplate.suffix);
 
     const schemaTemplate =
         schemaMode === 'template'
             ? `${schemaPrefix}{{schema}}${schemaSuffix}`
+            : undefined;
+
+    // Table template state
+    const [tableMode, setTableMode] = useState<'fixed' | 'template'>(
+        hasTableTemplate(initialStrategy) ? 'template' : 'fixed'
+    );
+    const parsedTableTemplate = hasTableTemplate(initialStrategy)
+        ? parseTableTemplate(initialStrategy.tableTemplate)
+        : { prefix: '', suffix: '' };
+    const [tablePrefix, setTablePrefix] = useState(parsedTableTemplate.prefix);
+    const [tableSuffix, setTableSuffix] = useState(parsedTableTemplate.suffix);
+
+    const tableTemplate =
+        tableMode === 'template'
+            ? `${tablePrefix}{{table}}${tableSuffix}`
             : undefined;
 
     const schemaRequired = strategyKey !== 'matchSourceStructure';
@@ -83,23 +100,16 @@ export default function DestinationLayoutDialog({
 
         let strategy: TargetNamingStrategy;
         if (strategyKey === 'matchSourceStructure') {
-            strategy = { strategy: 'matchSourceStructure' };
+            strategy = { strategy: 'matchSourceStructure', schemaTemplate, tableTemplate };
         } else if (strategyKey === 'singleSchema') {
-            strategy = schemaTemplate
-                ? { strategy: 'singleSchema', schemaTemplate }
-                : { strategy: 'singleSchema', schema: schema.trim() };
+            strategy = { strategy: 'singleSchema', schema: schema.trim(), tableTemplate };
         } else {
-            strategy = schemaTemplate
-                ? {
-                      strategy: 'prefixTableNames',
-                      schemaTemplate,
-                      skipCommonDefaults,
-                  }
-                : {
-                      strategy: 'prefixTableNames',
-                      schema: schema.trim(),
-                      skipCommonDefaults,
-                  };
+            strategy = {
+                strategy: 'prefixTableNames',
+                schema: schema.trim(),
+                skipCommonDefaults,
+                tableTemplate,
+            };
         }
 
         onConfirm(strategy);
@@ -109,12 +119,14 @@ export default function DestinationLayoutDialog({
         strategyKey,
         schema,
         schemaTemplate,
+        tableTemplate,
         skipCommonDefaults
     );
     const publicExample = buildExample(
         strategyKey,
         schema,
         schemaTemplate,
+        tableTemplate,
         skipCommonDefaults,
         'public'
     );
@@ -150,7 +162,35 @@ export default function DestinationLayoutDialog({
                             }
                             example={example}
                             publicExample={publicExample}
-                        />
+                        >
+                            {strategyKey === 'matchSourceStructure' ? (
+                                <Box onClick={(e) => e.stopPropagation()}>
+                                    <Stack>
+                                        <TemplateInput
+                                            mode={schemaMode}
+                                            onModeChange={setSchemaMode}
+                                            value={schema}
+                                            onChange={setSchema}
+                                            prefix={schemaPrefix}
+                                            onPrefixChange={setSchemaPrefix}
+                                            suffix={schemaSuffix}
+                                            onSuffixChange={setSchemaSuffix}
+                                        />
+                                        <TemplateInput
+                                            field="table"
+                                            mode={tableMode}
+                                            onModeChange={setTableMode}
+                                            value=""
+                                            onChange={() => {}}
+                                            prefix={tablePrefix}
+                                            onPrefixChange={setTablePrefix}
+                                            suffix={tableSuffix}
+                                            onSuffixChange={setTableSuffix}
+                                        />
+                                    </Stack>
+                                </Box>
+                            ) : null}
+                        </StrategyOption>
 
                         <StrategyOption
                             value="singleSchema"
@@ -161,8 +201,9 @@ export default function DestinationLayoutDialog({
                         >
                             {strategyKey === 'singleSchema' ? (
                                 <Box onClick={(e) => e.stopPropagation()}>
-                                    <SchemaInput
-                                        mode={schemaMode}
+                                    <TemplateInput
+                                        disableTemplate
+                                        mode="fixed"
                                         onModeChange={setSchemaMode}
                                         value={schema}
                                         onChange={setSchema}
@@ -187,8 +228,9 @@ export default function DestinationLayoutDialog({
                                     spacing={1}
                                     onClick={(e) => e.stopPropagation()}
                                 >
-                                    <SchemaInput
-                                        mode={schemaMode}
+                                    <TemplateInput
+                                        disableTemplate
+                                        mode="fixed"
                                         onModeChange={setSchemaMode}
                                         value={schema}
                                         onChange={setSchema}

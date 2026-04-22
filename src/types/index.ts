@@ -446,13 +446,11 @@ export type TargetNamingStrategy =
     | {
           strategy: 'singleSchema';
           schema?: string;
-          schemaTemplate?: string;
           tableTemplate?: string;
       }
     | {
           strategy: 'prefixTableNames';
           schema?: string;
-          schemaTemplate?: string;
           skipCommonDefaults?: boolean;
           tableTemplate?: string;
       };
