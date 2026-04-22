@@ -1,48 +1,85 @@
-import { Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
+import { truncateTextSx } from 'src/context/Theme';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
+import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
-const STRATEGY_LABELS: Record<string, string> = {
-    matchSourceStructure: 'Match source structure',
-    singleSchema: 'All tables in one schema',
-    prefixTableNames: 'Prefix table names',
+const STRATEGY_INTL_KEYS: Record<string, string> = {
+    matchSourceStructure:
+        'destinationLayout.strategy.matchSourceStructure.label',
+    singleSchema: 'destinationLayout.strategy.singleSchema.label',
+    prefixTableNames: 'destinationLayout.strategy.prefixTableNames.label',
 };
 
 // Shown in Advanced Options for rootTargetNaming specs.
 // Lets the user re-open the Destination Layout dialog to change their selection.
 export default function TargetNamingUpdateWrapper() {
     const intl = useIntl();
+    const formActive = useFormStateStore_isActive();
+
     const {
         strategy,
+        saving,
         updateStrategy,
+        clearStrategy,
         namingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
     } = useTargetNaming();
 
-    const currentLabel = strategy
-        ? (STRATEGY_LABELS[strategy.strategy] ?? strategy.strategy)
-        : intl.formatMessage({ id: 'destinationLayout.dialog.title' });
+    const strategyIntlKey = strategy
+        ? (STRATEGY_INTL_KEYS[strategy.strategy] ?? null)
+        : null;
+
+    const label = strategyIntlKey
+        ? intl.formatMessage({ id: strategyIntlKey })
+        : (strategy?.strategy ??
+          intl.formatMessage({ id: 'destinationLayout.selected.none' }));
 
     return (
-        <>
-            <Stack direction="row" spacing={2} alignItems="center">
-                <Typography variant="formSectionHeader">
+        <Stack spacing={1}>
+            <Stack spacing={1} sx={{ mb: 2 }}>
+                <Typography style={{ fontWeight: 500 }}>
                     {intl.formatMessage({
                         id: 'destinationLayout.dialog.title',
                     })}
                 </Typography>
 
-                <Typography variant="body2" color="text.secondary">
-                    {currentLabel}
+                <Typography>
+                    {intl.formatMessage({
+                        id: 'destinationLayout.dialog.message',
+                    })}
                 </Typography>
+            </Stack>
+
+            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                <OutlinedChip
+                    color={strategy ? 'success' : 'info'}
+                    disabled={saving || formActive}
+                    label={
+                        <Box sx={{ ...truncateTextSx, minWidth: 100, p: 1 }}>
+                            {label}
+                        </Box>
+                    }
+                    onDelete={
+                        strategy
+                            ? () => {
+                                  void clearStrategy();
+                              }
+                            : undefined
+                    }
+                    style={{ maxWidth: '50%', minHeight: 40 }}
+                    variant="outlined"
+                />
 
                 <Button
                     size="small"
                     variant="outlined"
+                    disabled={saving || formActive}
                     onClick={openNamingDialog}
                 >
                     {intl.formatMessage({ id: 'cta.modify' })}
@@ -60,6 +97,6 @@ export default function TargetNamingUpdateWrapper() {
                     }}
                 />
             ) : null}
-        </>
+        </Stack>
     );
 }

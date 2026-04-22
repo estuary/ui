@@ -92,12 +92,32 @@ function useTargetNaming() {
         ]
     );
 
+    const clearStrategy = useCallback((): Promise<void> => {
+        setFormState({ status: FormStatus.UPDATING, error: null });
+        setSaving(true);
+
+        return writeRootTargetNaming(undefined)
+            .then(() => {
+                setStrategy(null);
+                setFormState({ status: FormStatus.UPDATED });
+            })
+            .catch(() => {
+                enqueueSnackbar(
+                    intl.formatMessage({ id: 'specPropEditor.update.error' }),
+                    { ...snackbarSettings, variant: 'error' }
+                );
+                setFormState({ status: FormStatus.FAILED });
+            })
+            .finally(() => setSaving(false));
+    }, [enqueueSnackbar, intl, setFormState, setSaving, setStrategy, writeRootTargetNaming]);
+
     return {
         strategy,
         model,
         saving,
         needsNamingDialog,
         updateStrategy,
+        clearStrategy,
         namingDialogOpen,
         openNamingDialog,
         closeNamingDialog,

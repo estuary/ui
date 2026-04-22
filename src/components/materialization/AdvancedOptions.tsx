@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -40,17 +40,19 @@ export default function AdvancedOptions() {
                 hideBorder
                 mountClosed
             >
-                <ErrorBoundryWrapper>
-                    <OnIncompatibleSchemaChange />
-                </ErrorBoundryWrapper>
-
-                {targetNamingModel === 'rootTargetNaming' ? (
+                <Stack spacing={2}>
                     <ErrorBoundryWrapper>
-                        <TargetNamingUpdateWrapper />
+                        <OnIncompatibleSchemaChange />
                     </ErrorBoundryWrapper>
-                ) : null}
 
-                <Backfill />
+                    {targetNamingModel === 'rootTargetNaming' ? (
+                        <ErrorBoundryWrapper>
+                            <TargetNamingUpdateWrapper />
+                        </ErrorBoundryWrapper>
+                    ) : null}
+
+                    <Backfill />
+                </Stack>
             </WrapperWithHeader>
         </Box>
     );

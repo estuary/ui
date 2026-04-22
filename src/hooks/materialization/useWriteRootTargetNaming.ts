@@ -4,16 +4,20 @@ import { useCallback } from 'react';
 
 import useDraftUpdater from 'src/hooks/useDraftUpdater';
 
-// Writes spec.targetNaming to the root of the materialization draft spec.
-// Only call this for rootTargetNaming model specs.
+// Writes or removes spec.targetNaming on the root of the materialization draft spec.
+// Pass undefined to remove the setting. Only call this for rootTargetNaming model specs.
 export function useWriteRootTargetNaming() {
     const draftUpdater = useDraftUpdater();
 
     return useCallback(
-        (strategy: TargetNamingStrategy) => {
+        (strategy: TargetNamingStrategy | undefined) => {
             return draftUpdater(
                 (spec) => {
-                    spec.targetNaming = strategy;
+                    if (strategy === undefined) {
+                        delete spec.targetNaming;
+                    } else {
+                        spec.targetNaming = strategy;
+                    }
                     return spec;
                 },
                 { spec_type: 'materialization' }

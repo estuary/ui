@@ -298,6 +298,7 @@ export const Workflows: Record<string, string> = {
 
     // Destination Layout dialog (new targetNaming model)
     'destinationLayout.dialog.title': `Destination Layout`,
+    'destinationLayout.dialog.message': `Controls how collection names are mapped to destination tables and schemas when bindings are added.`,
     'destinationLayout.dialog.subtitle': `How should source schemas map to your destination? This applies to newly added bindings. You can override individual bindings later.`,
     'destinationLayout.dialog.schema.label': `Schema`,
     'destinationLayout.dialog.schema.useTemplate': `Use prefix/suffix template`,
@@ -307,6 +308,7 @@ export const Workflows: Record<string, string> = {
     'destinationLayout.dialog.skipCommonDefaults.label': `Skip common defaults (public, dbo...)`,
     'destinationLayout.dialog.cta.addBindings': `Add Collections`,
     'destinationLayout.dialog.cta.sourceCapture': `Select Source Capture`,
+    'destinationLayout.selected.none': `no layout set`,
 
     'destinationLayout.strategy.matchSourceStructure.label': `Match source structure`,
     'destinationLayout.strategy.matchSourceStructure.description': `Preserve the original table and schema names. Tables keep their original names.`,
