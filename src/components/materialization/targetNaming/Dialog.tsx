@@ -115,18 +115,23 @@ export default function DestinationLayoutDialog({
         onConfirm(strategy);
     };
 
+    // Only pass templates when matchSourceStructure is active — template state
+    // from that option must not bleed into singleSchema / prefixTableNames examples.
+    const exampleSchemaTemplate = strategyKey === 'matchSourceStructure' ? schemaTemplate : undefined;
+    const exampleTableTemplate = strategyKey === 'matchSourceStructure' ? tableTemplate : undefined;
+
     const example = buildExample(
         strategyKey,
         schema,
-        schemaTemplate,
-        tableTemplate,
+        exampleSchemaTemplate,
+        exampleTableTemplate,
         skipCommonDefaults
     );
     const publicExample = buildExample(
         strategyKey,
         schema,
-        schemaTemplate,
-        tableTemplate,
+        exampleSchemaTemplate,
+        exampleTableTemplate,
         skipCommonDefaults,
         'public'
     );
