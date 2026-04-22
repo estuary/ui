@@ -99,15 +99,14 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
     'workflows.collectionSelector.manualBackfill.header': `Backfill`,
-    'workflows.collectionSelector.manualBackfill.notSupported.title': `This {entityType} doesn’t support backfills.`,
+    'workflows.collectionSelector.manualBackfill.notSupported.title': `This {entityType} doesn't support backfills.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message': `Please {docLink} for help with a backfill.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docLink': `${CTAs['cta.support']}`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docPath': `${CommonMessages['support.email']}`,
 
     'workflows.collectionSelector.manualBackfill.message.capture': `Trigger a backfill of this collection from the source when published.`,
     'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all collections from the source when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
-    'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger a backfill from the source collection to its materialized resource when published.`,
-    'workflows.collectionSelector.manualBackfill.message.materialization.warning': `If you need to backfill, we recommend doing so from the Source since it's faster and uses less data.`,
+    'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger deletion of the destination dataset then replaying of the collection data into it when published.`,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger a backfill from all source collections to the destination when published. `,
     'workflows.collectionSelector.manualBackfill.message.materialization.allBindings.warning': `If you need to backfill, we recommend doing so from the Sources tab and selecting "Dataflow Reset" since it's faster and uses less data.`,
     'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
