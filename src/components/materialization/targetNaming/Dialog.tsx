@@ -69,7 +69,7 @@ export default function DestinationLayoutDialog({
     const [schemaSuffix, setSchemaSuffix] = useState(parsedTemplate.suffix);
 
     const schemaTemplate =
-        schemaMode === 'template'
+        strategyKey === 'prefixTableNames' && schemaMode === 'template'
             ? `${schemaPrefix}{{schema}}${schemaSuffix}`
             : undefined;
 

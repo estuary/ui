@@ -28,7 +28,7 @@ export function buildExample(
     schema: string,
     schemaTemplate: string | undefined,
     skipCommonDefaults: boolean,
-    srcSchema: string = 'mySchema'
+    srcSchema: string = 'anvils'
 ): { schema: string; table: string; tablePrefix: string } {
     const srcTable = 'orders';
 
@@ -52,8 +52,10 @@ export function buildExample(
             };
         case 'prefixTableNames': {
             const isDefault = ['public', 'dbo'].includes(srcSchema);
+
             const prefix =
                 skipCommonDefaults && isDefault ? '' : `${srcSchema}_`;
+
             return {
                 schema: resolveSchema(schema),
                 table: `${prefix}${srcTable}`,
