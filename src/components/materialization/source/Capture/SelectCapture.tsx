@@ -45,7 +45,7 @@ function SelectCapture() {
     const {
         strategy: targetNamingStrategy,
         needsNamingDialog,
-        updateStrategy,
+        handleConfirm,
         namingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
@@ -131,12 +131,9 @@ function SelectCapture() {
                     open={namingDialogOpen}
                     initialStrategy={targetNamingStrategy}
                     onCancel={closeNamingDialog}
-                    onConfirm={(strategy) => {
-                        updateStrategy(strategy).then(() => {
-                            closeNamingDialog();
-                            toggleDialog(true);
-                        });
-                    }}
+                    onConfirm={(strategy) =>
+                        handleConfirm(strategy, () => toggleDialog(true))
+                    }
                 />
             ) : null}
 

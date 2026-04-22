@@ -24,7 +24,7 @@ export default function TargetNamingUpdateWrapper() {
     const {
         strategy,
         saving,
-        updateStrategy,
+        handleConfirm,
         clearStrategy,
         namingDialogOpen,
         openNamingDialog,
@@ -92,9 +92,7 @@ export default function TargetNamingUpdateWrapper() {
                     open={namingDialogOpen}
                     initialStrategy={strategy}
                     onCancel={closeNamingDialog}
-                    onConfirm={(newStrategy) => {
-                        updateStrategy(newStrategy).then(closeNamingDialog);
-                    }}
+                    onConfirm={handleConfirm}
                 />
             ) : null}
         </Stack>

@@ -54,7 +54,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         model: targetNamingModel,
         strategy: targetNamingStrategy,
         needsNamingDialog,
-        updateStrategy,
+        handleConfirm,
         namingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
@@ -151,12 +151,9 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                     open={namingDialogOpen}
                     initialStrategy={targetNamingStrategy}
                     onCancel={closeNamingDialog}
-                    onConfirm={(strategy) => {
-                        updateStrategy(strategy).then(() => {
-                            closeNamingDialog();
-                            applySourceCapture();
-                        });
-                    }}
+                    onConfirm={(strategy) =>
+                        handleConfirm(strategy, applySourceCapture)
+                    }
                 />
             ) : null}
         </>

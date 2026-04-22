@@ -92,6 +92,16 @@ function useTargetNaming() {
         ]
     );
 
+    const handleConfirm = useCallback(
+        (newStrategy: TargetNamingStrategy, onSuccess?: () => void): Promise<void> => {
+            return updateStrategy(newStrategy).then(() => {
+                closeNamingDialog();
+                onSuccess?.();
+            });
+        },
+        [closeNamingDialog, updateStrategy]
+    );
+
     const clearStrategy = useCallback((): Promise<void> => {
         setFormState({ status: FormStatus.UPDATING, error: null });
         setSaving(true);
@@ -116,7 +126,7 @@ function useTargetNaming() {
         model,
         saving,
         needsNamingDialog,
-        updateStrategy,
+        handleConfirm,
         clearStrategy,
         namingDialogOpen,
         openNamingDialog,
