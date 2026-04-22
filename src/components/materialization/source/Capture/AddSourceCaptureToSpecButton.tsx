@@ -55,9 +55,9 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         strategy: targetNamingStrategy,
         needsNamingDialog,
         updateStrategy,
-        dialogOpen: namingDialogOpen,
-        openDialog: openNamingDialog,
-        closeDialog: closeNamingDialog,
+        namingDialogOpen,
+        openNamingDialog,
+        closeNamingDialog,
     } = useTargetNaming();
 
     // Binding Store

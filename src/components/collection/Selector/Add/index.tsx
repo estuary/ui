@@ -37,9 +37,9 @@ function BindingsEditorAdd({
         strategy: targetNamingStrategy,
         needsNamingDialog,
         updateStrategy,
-        dialogOpen: namingDialogOpen,
-        openDialog: openNamingDialog,
-        closeDialog: closeNamingDialog,
+        namingDialogOpen,
+        openNamingDialog,
+        closeNamingDialog,
     } = useTargetNaming();
 
     // Captures can only disable/enable bindings in the UI. The user can

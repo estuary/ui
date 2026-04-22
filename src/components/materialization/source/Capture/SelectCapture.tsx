@@ -46,9 +46,9 @@ function SelectCapture() {
         strategy: targetNamingStrategy,
         needsNamingDialog,
         updateStrategy,
-        dialogOpen: namingDialogOpen,
-        openDialog: openNamingDialog,
-        closeDialog: closeNamingDialog,
+        namingDialogOpen,
+        openNamingDialog,
+        closeNamingDialog,
     } = useTargetNaming();
 
     const handleModifyClick = () => {
@@ -89,7 +89,7 @@ function SelectCapture() {
 
     useEffect(() => {
         // First see if there is a value and then use the prefill if it exists. That way a user does not
-        //  accidently override their existing setting without noticing
+        //  accidentally override their existing setting without noticing
         if (
             !defaultedOnce.current &&
             isString(existingSourceCaptureDefinition?.capture)

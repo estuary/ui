@@ -1,10 +1,11 @@
 import type { TargetNamingStrategy } from 'src/types';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { useShallow } from 'zustand/react/shallow';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
-import { useShallow } from 'zustand/react/shallow';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
@@ -19,7 +20,7 @@ function useTargetNaming() {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [model, setStrategy, setSaving, storeStrategy, saving] =
+    const [model, setStrategy, setSaving, strategy, saving] =
         useTargetNamingStore(
             useShallow((state) => [
                 state.model,
@@ -34,9 +35,9 @@ function useTargetNaming() {
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
-    // Read strategy from the live spec so advanced editor changes are reflected
-    // immediately. Fall back to the store value during in-flight writes (before
-    // the spec reloads) and on create before the first strategy is written.
+    // Derive strategy from the live spec so advanced-editor changes propagate to
+    // the store. The store stays authoritative for rendering; this effect keeps
+    // it in sync when the spec is modified outside the normal dialog flow.
     const specStrategy = useMemo<TargetNamingStrategy | null>(() => {
         const spec = draftSpecs[0]?.spec;
         if (spec?.targetNaming && typeof spec.targetNaming === 'object') {
@@ -45,16 +46,20 @@ function useTargetNaming() {
         return null;
     }, [draftSpecs]);
 
-    const strategy = specStrategy ?? storeStrategy;
+    useEffect(() => {
+        if (specStrategy !== null) {
+            setStrategy(specStrategy);
+        }
+    }, [specStrategy, setStrategy]);
 
     // needsNamingDialog is fully controlled by the hydrator:
     //   create → model is always 'rootTargetNaming'
     //   edit   → model is 'rootTargetNaming' only for new-model specs
     const needsNamingDialog = model === 'rootTargetNaming' && strategy === null;
 
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const openDialog = useCallback(() => setDialogOpen(true), []);
-    const closeDialog = useCallback(() => setDialogOpen(false), []);
+    const [namingDialogOpen, setNamingDialogOpen] = useState(false);
+    const openNamingDialog = useCallback(() => setNamingDialogOpen(true), []);
+    const closeNamingDialog = useCallback(() => setNamingDialogOpen(false), []);
 
     const updateStrategy = useCallback(
         (newStrategy: TargetNamingStrategy): Promise<void> => {
@@ -68,7 +73,9 @@ function useTargetNaming() {
                 })
                 .catch(() => {
                     enqueueSnackbar(
-                        intl.formatMessage({ id: 'specPropEditor.update.error' }),
+                        intl.formatMessage({
+                            id: 'specPropEditor.update.error',
+                        }),
                         { ...snackbarSettings, variant: 'error' }
                     );
                     setFormState({ status: FormStatus.FAILED });
@@ -91,9 +98,9 @@ function useTargetNaming() {
         saving,
         needsNamingDialog,
         updateStrategy,
-        dialogOpen,
-        openDialog,
-        closeDialog,
+        namingDialogOpen,
+        openNamingDialog,
+        closeNamingDialog,
     };
 }
 

@@ -15,8 +15,13 @@ const STRATEGY_LABELS: Record<string, string> = {
 // Lets the user re-open the Destination Layout dialog to change their selection.
 export default function TargetNamingUpdateWrapper() {
     const intl = useIntl();
-    const { strategy, updateStrategy, dialogOpen, openDialog, closeDialog } =
-        useTargetNaming();
+    const {
+        strategy,
+        updateStrategy,
+        namingDialogOpen,
+        openNamingDialog,
+        closeNamingDialog,
+    } = useTargetNaming();
 
     const currentLabel = strategy
         ? (STRATEGY_LABELS[strategy.strategy] ?? strategy.strategy)
@@ -38,21 +43,23 @@ export default function TargetNamingUpdateWrapper() {
                 <Button
                     size="small"
                     variant="outlined"
-                    onClick={openDialog}
+                    onClick={openNamingDialog}
                 >
-                    {intl.formatMessage({ id: 'cta.edit' })}
+                    {intl.formatMessage({ id: 'cta.modify' })}
                 </Button>
             </Stack>
 
-            <DestinationLayoutDialog
-                confirmIntlKey="cta.save"
-                open={dialogOpen}
-                initialStrategy={strategy}
-                onCancel={closeDialog}
-                onConfirm={(newStrategy) => {
-                    updateStrategy(newStrategy).then(closeDialog);
-                }}
-            />
+            {namingDialogOpen ? (
+                <DestinationLayoutDialog
+                    confirmIntlKey="cta.save"
+                    open={namingDialogOpen}
+                    initialStrategy={strategy}
+                    onCancel={closeNamingDialog}
+                    onConfirm={(newStrategy) => {
+                        updateStrategy(newStrategy).then(closeNamingDialog);
+                    }}
+                />
+            ) : null}
         </>
     );
 }
