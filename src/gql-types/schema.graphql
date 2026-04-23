@@ -307,6 +307,11 @@ type Connector {
   """
   defaultSpec: ConnectorSpec
 
+  """
+  A string that contains a list of connector details (latency, batch, etc.)
+  """
+  detail: String
+
   """Link to an external site with more information about the endpoint"""
   externalUrl: String!
 

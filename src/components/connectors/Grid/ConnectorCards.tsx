@@ -72,7 +72,7 @@ export default function ConnectorCards({
         return nodes.filter(
             (node) =>
                 node.title?.toLowerCase().includes(q) ||
-                node.shortDescription?.toLowerCase().includes(q)
+                node.detail?.toLowerCase().includes(q)
         );
     }, [queryData, searchQuery]);
 
@@ -170,9 +170,7 @@ export default function ConnectorCards({
                             docsUrl={defaultSpec.documentationUrl ?? ''}
                             entityType={entityType}
                             recommended={node.recommended}
-                            Detail={
-                                <Detail content={node.shortDescription ?? ''} />
-                            }
+                            Detail={<Detail content={node.detail ?? ''} />}
                             Logo={
                                 <Logo
                                     imageSrc={node.logoUrl ?? ''}

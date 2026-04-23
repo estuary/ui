@@ -18,7 +18,7 @@ export const CONNECTORS_QUERY = graphql(`
                     logoUrl
                     title
                     recommended
-                    shortDescription
+                    detail
                     defaultSpec {
                         id
                         imageTag
