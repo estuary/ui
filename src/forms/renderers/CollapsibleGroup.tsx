@@ -86,7 +86,7 @@ const CollapsibleGroupRenderer = ({
                     backgroundColor: jsonFormsGroupHeaders[theme.palette.mode],
                 }}
             >
-                <Typography sx={{ fontWeight: 500 }}>
+                <Typography component="span" sx={{ fontWeight: 500 }}>
                     {uischema.label}
                 </Typography>
             </AccordionSummary>

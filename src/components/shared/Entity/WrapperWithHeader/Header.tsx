@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 interface Props extends BaseComponentProps {
     expanded: boolean;
@@ -18,6 +18,7 @@ interface Props extends BaseComponentProps {
 }
 
 function Header({ children, disableClose, expanded, readOnly }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
 
     return (
@@ -40,10 +41,10 @@ function Header({ children, disableClose, expanded, readOnly }: Props) {
             {children}
 
             <Fade in={!expanded}>
-                <Typography sx={{ ml: 'auto', mr: 1 }}>
-                    <FormattedMessage
-                        id={readOnly ? 'cta.expandToView' : 'cta.expandToEdit'}
-                    />
+                <Typography component="span" sx={{ ml: 'auto', mr: 1 }}>
+                    {intl.formatMessage({
+                        id: readOnly ? 'cta.expandToView' : 'cta.expandToEdit',
+                    })}
                 </Typography>
             </Fade>
         </AccordionSummary>

@@ -35,7 +35,7 @@ function EndpointConfigHeader() {
                 />
             ) : null}
 
-            <Typography variant="subtitle1">
+            <Typography component="span" variant="subtitle1">
                 {intl.formatMessage({
                     id: 'entityCreate.endpointConfig.heading',
                 })}

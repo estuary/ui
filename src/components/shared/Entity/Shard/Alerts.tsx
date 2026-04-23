@@ -81,7 +81,9 @@ function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
                                         />
                                     }
                                 >
-                                    <Typography>{shardDetails.id}</Typography>
+                                    <Typography component="span">
+                                        {shardDetails.id}
+                                    </Typography>
                                 </AccordionSummary>
 
                                 <AccordionDetails>
