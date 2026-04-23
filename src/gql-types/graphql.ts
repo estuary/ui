@@ -292,8 +292,8 @@ export type Connector = {
   createdAt: Scalars['DateTime']['output'];
   /**
    * The blessed image tag for newly created tasks using this connector.
-   * Resolved as the lexicographically highest image tag (e.g. `:v2` wins
-   * over `:v1`, `:v1` wins over `:dev`).
+   * Resolved as the lexicographically highest image tag among tags with
+   * a complete spec, e.g. `:v2` wins over `:v1`, `:v1` wins over `:dev`.
    */
   defaultImageTag?: Maybe<Scalars['String']['output']>;
   /**
@@ -410,6 +410,8 @@ export type ConnectorStatus = {
 export type ConnectorsFilter = {
   /** Filter by connector protocol. Only connectors with at least one version matching this protocol will be returned. */
   protocol?: InputMaybe<ProtocolFilter>;
+  /** Filter by whether the connector is recommended. */
+  recommended?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** Status info related to the controller */

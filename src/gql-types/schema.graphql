@@ -296,8 +296,8 @@ type Connector {
 
   """
   The blessed image tag for newly created tasks using this connector.
-  Resolved as the lexicographically highest image tag (e.g. `:v2` wins
-  over `:v1`, `:v1` wins over `:dev`).
+  Resolved as the lexicographically highest image tag among tags with
+  a complete spec, e.g. `:v2` wins over `:v1`, `:v1` wins over `:dev`.
   """
   defaultImageTag: String
 
@@ -437,6 +437,9 @@ input ConnectorsFilter {
   Filter by connector protocol. Only connectors with at least one version matching this protocol will be returned.
   """
   protocol: ProtocolFilter
+
+  """Filter by whether the connector is recommended."""
+  recommended: Boolean
 }
 
 """Status info related to the controller"""
