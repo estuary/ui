@@ -326,9 +326,6 @@ type Connector {
   """The connector's logo image, represented as a URL per locale"""
   logoUrl: String
 
-  """A longform description of this connector"""
-  longDescription: String
-
   """The protocol of this connector (capture or materialization)."""
   protocol: ConnectorProto
 
@@ -336,9 +333,6 @@ type Connector {
   Whether this connector should appear in a promoted position in connector listings
   """
   recommended: Boolean!
-
-  """Brief human readable description, at most a few sentences"""
-  shortDescription: String
 
   """Look up the spec for a specific image tag of this connector."""
   spec(

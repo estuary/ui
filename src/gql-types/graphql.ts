@@ -311,14 +311,10 @@ export type Connector = {
   imageName: Scalars['String']['output'];
   /** The connector's logo image, represented as a URL per locale */
   logoUrl?: Maybe<Scalars['String']['output']>;
-  /** A longform description of this connector */
-  longDescription?: Maybe<Scalars['String']['output']>;
   /** The protocol of this connector (capture or materialization). */
   protocol?: Maybe<ConnectorProto>;
   /** Whether this connector should appear in a promoted position in connector listings */
   recommended: Scalars['Boolean']['output'];
-  /** Brief human readable description, at most a few sentences */
-  shortDescription?: Maybe<Scalars['String']['output']>;
   /** Look up the spec for a specific image tag of this connector. */
   spec?: Maybe<ConnectorSpec>;
   /** The title, a few words at most */
