@@ -284,6 +284,133 @@ type ConnectionHealthTestResult {
   results: [StorageHealthItem!]!
 }
 
+"""
+A connector from the Estuary connector catalog, identified by its OCI image
+name (e.g. "ghcr.io/estuary/source-postgres"). Use `defaultSpec` to get the
+configuration schemas for the blessed image tag, or `spec(imageTag)` for a
+specific version.
+"""
+type Connector {
+  """Timestamp of when the connector was first created"""
+  createdAt: DateTime!
+
+  """
+  The blessed image tag for newly created tasks using this connector.
+  Resolved as the lexicographically highest image tag among tags with
+  a complete spec, e.g. `:v2` wins over `:v1`, `:v1` wins over `:dev`.
+  """
+  defaultImageTag: String
+
+  """
+  The spec for this connector's default (blessed) image tag. This is the
+  spec that should be used when configuring newly created tasks.
+  """
+  defaultSpec: ConnectorSpec
+
+  """Link to an external site with more information about the endpoint"""
+  externalUrl: String!
+
+  """Unique id of the connector"""
+  id: Id!
+
+  """
+  Name of the connector's OCI (Docker) container image, for example "ghcr.io/estuary/source-postgres"
+  """
+  imageName: String!
+
+  """The connector's logo image, represented as a URL per locale"""
+  logoUrl: String
+
+  """A longform description of this connector"""
+  longDescription: String
+
+  """The protocol of this connector (capture or materialization)."""
+  protocol: ConnectorProto
+
+  """
+  Whether this connector should appear in a promoted position in connector listings
+  """
+  recommended: Boolean!
+
+  """Brief human readable description, at most a few sentences"""
+  shortDescription: String
+
+  """Look up the spec for a specific image tag of this connector."""
+  spec(
+    """the OCI Image tag, including the leading ':', e.g. ':v1'"""
+    imageTag: String!
+  ): ConnectorSpec
+
+  """The title, a few words at most"""
+  title: String
+}
+
+type ConnectorConnection {
+  """A list of edges."""
+  edges: [ConnectorEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type ConnectorEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Connector!
+}
+
+"""
+The type of task that the connector is used for. Derivation connectors
+exist but are not yet represented in this API.
+"""
+enum ConnectorProto {
+  capture
+  materialization
+}
+
+"""
+The resolved specification for a connector at a particular image tag.
+Includes the JSON schemas needed to configure the connector's endpoint
+and resources.
+"""
+type ConnectorSpec {
+  """
+  The default interval between invocations of a capture using this connector. Formatted as HH:MM:SS. Only applicable to non-streaming (polling) capture connectors.
+  """
+  defaultCaptureInterval: String
+
+  """Whether backfill should be disabled for this connector"""
+  disableBackfill: Boolean!
+
+  """URL pointing to the documentation page for this connector"""
+  documentationUrl: String
+
+  """
+  Endpoint configuration JSON Schema. Returned as raw JSON because JSON Schema is a recursive format that cannot be meaningfully decomposed into GraphQL fields.
+  """
+  endpointSpecSchema: JSON
+
+  """The database ID of the connector_tags row backing this spec."""
+  id: Id! @deprecated(reason: "Not intended to be part of the public API. To be removed once downstream components no longer depend on this field.")
+
+  """
+  The OCI Image tag this spec was resolved from, including the leading `:`. For example `:v1`.
+  This may differ from the requested tag if the request fell back to the default.
+  """
+  imageTag: String!
+
+  """The protocol of the connector (capture or materialization)"""
+  protocol: ConnectorProto
+
+  """
+  Resource configuration JSON Schema. Returned as raw JSON because JSON Schema is a recursive format that cannot be meaningfully decomposed into GraphQL fields.
+  """
+  resourceSpecSchema: JSON
+}
+
 """The shape of a connector status, which matches that of an ops::Log."""
 type ConnectorStatus {
   """
@@ -302,6 +429,17 @@ type ConnectorStatus {
 
   """The time at which the status was last updated"""
   ts: DateTime!
+}
+
+"""Filters for the paginated `connectors` query."""
+input ConnectorsFilter {
+  """
+  Filter by connector protocol. Only connectors with at least one version matching this protocol will be returned.
+  """
+  protocol: ProtocolFilter
+
+  """Filter by whether the connector is recommended."""
+  recommended: Boolean
 }
 
 """Status info related to the controller"""
@@ -811,6 +949,12 @@ input PrefixesBy {
   minCapability: Capability!
 }
 
+"""Filter connectors by their protocol (capture or materialization)."""
+input ProtocolFilter {
+  """Match connectors that have at least one version with this protocol."""
+  eq: ConnectorProto!
+}
+
 """Summary of a publication that was attempted by a controller."""
 type PublicationInfo {
   """Time at which the publication was completed"""
@@ -890,6 +1034,41 @@ type QueryRoot {
   prefixes.
   """
   alerts(after: String, before: String, by: AlertsBy!, first: Int, last: Int): AlertConnection!
+
+  """
+  Returns information about a single connector. At least one parameter
+  must be provided. If both are provided, the connector must match both
+  the image name and id in order to be returned.
+  """
+  connector(
+    """
+    the id of the connector, with or without ':' separators, e.g. '1122334455aabbcc'
+    """
+    id: Id
+
+    """
+    the OCI image name, without a version tag, e.g. 'ghcr.io/estuary/source-foo'
+    """
+    imageName: String
+  ): Connector
+
+  """
+  Resolve the spec for a full OCI image name (e.g.
+  "ghcr.io/estuary/source-postgres:v1"). If the requested tag is not
+  available, falls back to the default tag. Check the returned `imageTag`
+  field to see which tag was actually resolved.
+  """
+  connectorSpec(
+    """
+    the full OCI image name, including the version tag, e.g. 'ghcr.io/estuary/source-foo:v1'
+    """
+    fullImageName: String!
+  ): ConnectorSpec
+
+  """
+  Returns a paginated list of connectors, optionally filtered by protocol.
+  """
+  connectors(after: String, before: String, filter: ConnectorsFilter, first: Int, last: Int): ConnectorConnection!
 
   """
   Returns data planes accessible to the current user.
