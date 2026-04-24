@@ -8,6 +8,7 @@ import Backfill from 'src/components/shared/Entity/Backfill';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
+import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useTargetNaming_model } from 'src/stores/TargetNaming/hooks';
 
@@ -21,6 +22,7 @@ export default function AdvancedOptions() {
     );
 
     const targetNamingModel = useTargetNaming_model();
+    const { sourceCaptureTargetSchemaSupported } = useBinding_sourceCaptureFlags();
 
     if (entityType !== 'materialization') {
         return null;
@@ -45,7 +47,8 @@ export default function AdvancedOptions() {
                         <OnIncompatibleSchemaChange />
                     </ErrorBoundryWrapper>
 
-                    {targetNamingModel === 'rootTargetNaming' ? (
+                    {sourceCaptureTargetSchemaSupported &&
+                    targetNamingModel === 'rootTargetNaming' ? (
                         <ErrorBoundryWrapper>
                             <TargetNamingUpdateWrapper />
                         </ErrorBoundryWrapper>

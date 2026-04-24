@@ -90,8 +90,8 @@ export default function TargetNamingDialog({
     const [tableSuffix, setTableSuffix] = useState(parsedTableTemplate.suffix);
     const [tableValue, setTableValue] = useState<string>(
         !hasTableTemplate(initialStrategy) &&
-        initialStrategy?.strategy === 'matchSourceStructure' &&
-        initialStrategy.tableTemplate
+            initialStrategy?.strategy === 'matchSourceStructure' &&
+            initialStrategy.tableTemplate
             ? initialStrategy.tableTemplate
             : ''
     );
@@ -183,9 +183,11 @@ export default function TargetNamingDialog({
                         <StrategyOption
                             value="matchSourceStructure"
                             selected={strategyKey === 'matchSourceStructure'}
-                            onSelect={() =>
-                                setStrategyKey('matchSourceStructure')
-                            }
+                            onSelect={() => {
+                                setTableMode('template');
+                                setSchemaMode('template');
+                                setStrategyKey('matchSourceStructure');
+                            }}
                             example={example}
                             publicExample={publicExample}
                         >
@@ -193,8 +195,7 @@ export default function TargetNamingDialog({
                                 <Box onClick={(e) => e.stopPropagation()}>
                                     <Stack>
                                         <TemplateInput
-                                            mode={schemaMode}
-                                            onModeChange={setSchemaMode}
+                                            mode="template"
                                             value={schema}
                                             onChange={setSchema}
                                             prefix={schemaPrefix}
@@ -204,8 +205,7 @@ export default function TargetNamingDialog({
                                         />
                                         <TemplateInput
                                             field="table"
-                                            mode={tableMode}
-                                            onModeChange={setTableMode}
+                                            mode="template"
                                             value={tableValue}
                                             onChange={setTableValue}
                                             prefix={tablePrefix}
@@ -221,16 +221,18 @@ export default function TargetNamingDialog({
                         <StrategyOption
                             value="singleSchema"
                             selected={strategyKey === 'singleSchema'}
-                            onSelect={() => setStrategyKey('singleSchema')}
+                            onSelect={() => {
+                                setTableMode('fixed');
+                                setSchemaMode('fixed');
+                                setStrategyKey('singleSchema');
+                            }}
                             example={example}
                             publicExample={publicExample}
                         >
                             {strategyKey === 'singleSchema' ? (
                                 <Box onClick={(e) => e.stopPropagation()}>
                                     <TemplateInput
-                                        disableTemplate
                                         mode="fixed"
-                                        onModeChange={setSchemaMode}
                                         value={schema}
                                         onChange={setSchema}
                                         prefix={schemaPrefix}
@@ -245,7 +247,11 @@ export default function TargetNamingDialog({
                         <StrategyOption
                             value="prefixTableNames"
                             selected={strategyKey === 'prefixTableNames'}
-                            onSelect={() => setStrategyKey('prefixTableNames')}
+                            onSelect={() => {
+                                setTableMode('fixed');
+                                setSchemaMode('fixed');
+                                setStrategyKey('prefixTableNames');
+                            }}
                             example={example}
                             publicExample={publicExample}
                         >
@@ -255,9 +261,7 @@ export default function TargetNamingDialog({
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     <TemplateInput
-                                        disableTemplate
                                         mode="fixed"
-                                        onModeChange={setSchemaMode}
                                         value={schema}
                                         onChange={setSchema}
                                         prefix={schemaPrefix}

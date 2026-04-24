@@ -1,18 +1,16 @@
-import { Box, Link, Stack, TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 export interface TemplateInputProps {
     field?: 'schema' | 'table';
     mode: 'fixed' | 'template';
-    onModeChange: (mode: 'fixed' | 'template') => void;
     value: string;
     onChange: (value: string) => void;
     prefix: string;
     onPrefixChange: (v: string) => void;
     suffix: string;
     onSuffixChange: (v: string) => void;
-    disableTemplate?: boolean;
 }
 
 const FIELD_KEYS = {
@@ -33,21 +31,19 @@ const FIELD_KEYS = {
 export function TemplateInput({
     field = 'schema',
     mode,
-    onModeChange,
     value,
     onChange,
     prefix,
     onPrefixChange,
     suffix,
     onSuffixChange,
-    disableTemplate,
 }: TemplateInputProps) {
     const intl = useIntl();
     const keys = FIELD_KEYS[field];
 
     return (
         <Stack spacing={0.5}>
-            {mode === 'fixed' || disableTemplate ? (
+            {mode === 'fixed' ? (
                 <TextField
                     size="small"
                     label={intl.formatMessage({ id: keys.label })}
@@ -84,26 +80,6 @@ export function TemplateInput({
                         onChange={(e) => onSuffixChange(e.target.value)}
                     />
                 </Stack>
-            )}
-            {disableTemplate ? null : (
-                <Box>
-                    <Link
-                        component="button"
-                        variant="caption"
-                        onClick={() =>
-                            onModeChange(
-                                mode === 'fixed' ? 'template' : 'fixed'
-                            )
-                        }
-                    >
-                        {intl.formatMessage({
-                            id:
-                                mode === 'fixed'
-                                    ? keys.useTemplate
-                                    : keys.useFixed,
-                        })}
-                    </Link>
-                </Box>
             )}
         </Stack>
     );

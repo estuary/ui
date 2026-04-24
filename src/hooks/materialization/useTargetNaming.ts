@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
+import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useTargetNamingStore } from 'src/stores/TargetNaming/Store';
@@ -33,6 +34,8 @@ function useTargetNaming() {
 
     const writeRootTargetNaming = useWriteRootTargetNaming();
 
+    const { sourceCaptureTargetSchemaSupported } = useBinding_sourceCaptureFlags();
+
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
     // Derive strategy from the live spec so advanced-editor changes propagate to
@@ -56,7 +59,9 @@ function useTargetNaming() {
     //   create → model is always 'rootTargetNaming'
     //   edit   → model is 'rootTargetNaming' only for new-model specs
     const needsNamingDialog =
-        model === 'rootTargetNaming' && targetNamingStrategy === null;
+        sourceCaptureTargetSchemaSupported &&
+        model === 'rootTargetNaming' &&
+        targetNamingStrategy === null;
 
     const [targetNamingDialogOpen, setTargetNamingDialogOpen] = useState(false);
     const openNamingDialog = useCallback(
