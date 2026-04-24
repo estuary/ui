@@ -20,7 +20,7 @@ export const AdminPage: Record<string, string> = {
     'admin.cli_api.refreshToken.table.filterLabel': `Filter by Description`,
     'admin.cli_api.refreshToken.table.label.uses': `Used {count} {count, plural, one {time} other {times}}`,
     'admin.cli_api.refreshToken.dialog.header': `Generate Refresh Token`,
-    'admin.cli_api.refreshToken.dialog.label': `What’s this token for?`,
+    'admin.cli_api.refreshToken.dialog.label': `What's this token for?`,
     'admin.cli_api.refreshToken.dialog.alert.copyToken': `Make sure to copy your refresh token now. You won't be able to see it again!`,
     'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed': `An issue was encountered displaying your token. Please generate a new token.`,
 
@@ -80,7 +80,7 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.tooltip.invoice_paid': `Invoice Paid`,
 
     'admin.billing.paymentMethods.header': `Payment Information`,
-    'admin.billing.paymentMethods.description': `Enter your payment information. You won’t be charged until your account usage exceeds free tier limits.`,
+    'admin.billing.paymentMethods.description': `Enter your payment information. You won't be charged until your account usage exceeds free tier limits.`,
     'admin.billing.paymentMethods.cta.addPaymentMethod': `Add Payment Method`,
     'admin.billing.paymentMethods.cta.addPaymentMethod.error': `There was an issue attempting to get a token from Stripe. You cannot currently add a payment method. ${Errors['error.tryAgain']}`,
     'admin.billing.paymentMethods.table.label.cardType': `Type`,

@@ -44,8 +44,10 @@ export const Alerts: Record<string, string> = {
     'alerts.table.data.details': `Details`,
     'alerts.table.label': `List of all alerts for tenant`,
     'alerts.table.empty.header': `No alerts found`,
-    'alerts.table.empty.message': `No resolved alerts`,
     'alerts.table.error.message': `There was an error attempting to fetch resolved alerts.`,
+    // dynamically built in ui/src/components/tables/AlertHistory/index.tsx
+    'alerts.table.empty.message.active': `No active alerts`,
+    'alerts.table.empty.message.resolved': `No resolved alerts`,
 
     'alerts.table.reduced': `Showing {count} of {total} total alerts.`,
 
