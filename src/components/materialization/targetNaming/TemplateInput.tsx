@@ -1,10 +1,12 @@
-import { Stack, TextField } from '@mui/material';
+import { Checkbox, FormControlLabel, Stack, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 export interface TemplateInputProps {
     field?: 'schema' | 'table';
     mode: 'fixed' | 'template';
+    onModeChange?: (mode: 'fixed' | 'template') => void;
+    hideWhenFixed?: boolean;
     required?: boolean;
     value: string;
     onChange: (value: string) => void;
@@ -19,19 +21,19 @@ const FIELD_KEYS = {
         label: 'destinationLayout.dialog.schema.label',
         token: 'schema',
         useTemplate: 'destinationLayout.dialog.schema.useTemplate',
-        useFixed: 'destinationLayout.dialog.schema.useFixed',
     },
     table: {
         label: 'destinationLayout.dialog.table.label',
         token: 'table',
         useTemplate: 'destinationLayout.dialog.table.useTemplate',
-        useFixed: 'destinationLayout.dialog.table.useFixed',
     },
 } as const;
 
 export function TemplateInput({
     field = 'schema',
     mode,
+    onModeChange,
+    hideWhenFixed,
     required,
     value,
     onChange,
@@ -43,21 +45,25 @@ export function TemplateInput({
     const intl = useIntl();
     const keys = FIELD_KEYS[field];
 
+    const handleToggle = (checked: boolean) => {
+        onModeChange?.(checked ? 'template' : 'fixed');
+    };
+
     return (
         <Stack spacing={0.5}>
-            {mode === 'fixed' ? (
-                <TextField
-                    size="small"
-                    label={intl.formatMessage({ id: keys.label })}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder="prod"
-                    sx={{ maxWidth: 200 }}
-                    autoFocus
-                    required={required}
-                    error={required && !value.trim()}
+            {!onModeChange ? null : (
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            size="small"
+                            checked={mode === 'template'}
+                            onChange={(e) => handleToggle(e.target.checked)}
+                        />
+                    }
+                    label={intl.formatMessage({ id: keys.useTemplate })}
                 />
-            ) : (
+            )}
+            {mode === 'template' ? (
                 <Stack direction="row" spacing={0.5} alignItems="center">
                     <TextField
                         size="small"
@@ -84,6 +90,18 @@ export function TemplateInput({
                         onChange={(e) => onSuffixChange(e.target.value)}
                     />
                 </Stack>
+            ) : hideWhenFixed ? null : (
+                <TextField
+                    size="small"
+                    label={intl.formatMessage({ id: keys.label })}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder="prod"
+                    sx={{ maxWidth: 200 }}
+                    autoFocus
+                    required={required}
+                    error={Boolean(required && !value.trim())}
+                />
             )}
         </Stack>
     );

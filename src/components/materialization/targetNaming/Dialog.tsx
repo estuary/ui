@@ -184,8 +184,8 @@ export default function TargetNamingDialog({
                             value="matchSourceStructure"
                             selected={strategyKey === 'matchSourceStructure'}
                             onSelect={() => {
-                                setTableMode('template');
-                                setSchemaMode('template');
+                                setTableMode('fixed');
+                                setSchemaMode('fixed');
                                 setStrategyKey('matchSourceStructure');
                             }}
                             example={example}
@@ -195,7 +195,9 @@ export default function TargetNamingDialog({
                                 <Box onClick={(e) => e.stopPropagation()}>
                                     <Stack>
                                         <TemplateInput
-                                            mode="template"
+                                            hideWhenFixed
+                                            mode={schemaMode}
+                                            onModeChange={setSchemaMode}
                                             value={schema}
                                             onChange={setSchema}
                                             prefix={schemaPrefix}
@@ -204,8 +206,10 @@ export default function TargetNamingDialog({
                                             onSuffixChange={setSchemaSuffix}
                                         />
                                         <TemplateInput
+                                            hideWhenFixed
                                             field="table"
-                                            mode="template"
+                                            mode={tableMode}
+                                            onModeChange={setTableMode}
                                             value={tableValue}
                                             onChange={setTableValue}
                                             prefix={tablePrefix}
@@ -222,7 +226,7 @@ export default function TargetNamingDialog({
                             value="singleSchema"
                             selected={strategyKey === 'singleSchema'}
                             onSelect={() => {
-                                setTableMode('template');
+                                setTableMode('fixed');
                                 setSchemaMode('fixed');
                                 setStrategyKey('singleSchema');
                             }}
@@ -242,8 +246,10 @@ export default function TargetNamingDialog({
                                         onSuffixChange={setSchemaSuffix}
                                     />
                                     <TemplateInput
+                                        hideWhenFixed
                                         field="table"
-                                        mode="template"
+                                        mode={tableMode}
+                                        onModeChange={setTableMode}
                                         value={tableValue}
                                         onChange={setTableValue}
                                         prefix={tablePrefix}
@@ -259,7 +265,7 @@ export default function TargetNamingDialog({
                             value="prefixTableNames"
                             selected={strategyKey === 'prefixTableNames'}
                             onSelect={() => {
-                                setTableMode('template');
+                                setTableMode('fixed');
                                 setSchemaMode('fixed');
                                 setStrategyKey('prefixTableNames');
                             }}
@@ -272,7 +278,9 @@ export default function TargetNamingDialog({
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     <TemplateInput
-                                        mode="fixed"
+                                        hideWhenFixed
+                                        mode={schemaMode}
+                                        onModeChange={setSchemaMode}
                                         required
                                         value={schema}
                                         onChange={setSchema}
@@ -282,8 +290,10 @@ export default function TargetNamingDialog({
                                         onSuffixChange={setSchemaSuffix}
                                     />
                                     <TemplateInput
+                                        hideWhenFixed
                                         field="table"
-                                        mode="template"
+                                        mode={tableMode}
+                                        onModeChange={setTableMode}
                                         value={tableValue}
                                         onChange={setTableValue}
                                         prefix={tablePrefix}
