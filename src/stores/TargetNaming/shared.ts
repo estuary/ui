@@ -1,5 +1,5 @@
-import type { TargetNamingModel, TargetNamingStrategy } from 'src/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
+import type { TargetNamingModel, TargetNamingStrategy } from 'src/types';
 
 // Detect which model version is present in a raw draft spec object.
 // Returns null when the connector does not support x_schema_name (caller
@@ -26,15 +26,27 @@ export const oldStringToStrategy = (
         case 'fromSourceName': // legacy alias
             return { strategy: 'matchSourceStructure' };
         case 'prefixNonDefaultSchema':
-            return { strategy: 'prefixTableNames', schema: defaultSchema, skipCommonDefaults: true };
+            return {
+                strategy: 'prefixTableNames',
+                schema: defaultSchema,
+                skipCommonDefaults: true,
+            };
         case 'prefixSchema':
-            return { strategy: 'prefixTableNames', schema: defaultSchema, skipCommonDefaults: false };
+            return {
+                strategy: 'prefixTableNames',
+                schema: defaultSchema,
+                skipCommonDefaults: false,
+            };
         case 'noSchema':
         case 'leaveEmpty': // legacy alias
             return { strategy: 'singleSchema', schema: defaultSchema };
         default:
             // prefixNonDefaultSchema was the backend default
-            return { strategy: 'prefixTableNames', schema: defaultSchema, skipCommonDefaults: true };
+            return {
+                strategy: 'prefixTableNames',
+                schema: defaultSchema,
+                skipCommonDefaults: true,
+            };
     }
 };
 

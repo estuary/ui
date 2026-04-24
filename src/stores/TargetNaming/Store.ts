@@ -53,17 +53,10 @@ const getInitialState = (
     },
 
     resetState: () => {
-        set(
-            { ...getInitialStateData() },
-            false,
-            'Target Naming Reset'
-        );
+        set({ ...getInitialStateData() }, false, 'Target Naming Reset');
     },
 });
 
 export const useTargetNamingStore = create<TargetNamingState>()(
-    devtools(
-        (set) => getInitialState(set),
-        devtoolsOptions('target-naming')
-    )
+    devtools((set) => getInitialState(set), devtoolsOptions('target-naming'))
 );

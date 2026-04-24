@@ -28,8 +28,8 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
-import { useTargetNamingHydrator } from 'src/stores/TargetNaming/useTargetNamingHydrator';
 import { EditorStoreNames } from 'src/stores/names';
+import { useTargetNamingHydrator } from 'src/stores/TargetNaming/useTargetNamingHydrator';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];

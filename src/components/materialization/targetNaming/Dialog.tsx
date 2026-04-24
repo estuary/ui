@@ -67,8 +67,12 @@ export default function DestinationLayoutDialog({
     const parsedSchemaTemplate = hasSchemaTemplate(initialStrategy)
         ? parseSchemaTemplate(initialStrategy.schemaTemplate)
         : { prefix: '', suffix: '' };
-    const [schemaPrefix, setSchemaPrefix] = useState(parsedSchemaTemplate.prefix);
-    const [schemaSuffix, setSchemaSuffix] = useState(parsedSchemaTemplate.suffix);
+    const [schemaPrefix, setSchemaPrefix] = useState(
+        parsedSchemaTemplate.prefix
+    );
+    const [schemaSuffix, setSchemaSuffix] = useState(
+        parsedSchemaTemplate.suffix
+    );
 
     const schemaTemplate =
         schemaMode === 'template'
@@ -100,9 +104,17 @@ export default function DestinationLayoutDialog({
 
         let strategy: TargetNamingStrategy;
         if (strategyKey === 'matchSourceStructure') {
-            strategy = { strategy: 'matchSourceStructure', schemaTemplate, tableTemplate };
+            strategy = {
+                strategy: 'matchSourceStructure',
+                schemaTemplate,
+                tableTemplate,
+            };
         } else if (strategyKey === 'singleSchema') {
-            strategy = { strategy: 'singleSchema', schema: schema.trim(), tableTemplate };
+            strategy = {
+                strategy: 'singleSchema',
+                schema: schema.trim(),
+                tableTemplate,
+            };
         } else {
             strategy = {
                 strategy: 'prefixTableNames',
@@ -117,8 +129,10 @@ export default function DestinationLayoutDialog({
 
     // Only pass templates when matchSourceStructure is active — template state
     // from that option must not bleed into singleSchema / prefixTableNames examples.
-    const exampleSchemaTemplate = strategyKey === 'matchSourceStructure' ? schemaTemplate : undefined;
-    const exampleTableTemplate = strategyKey === 'matchSourceStructure' ? tableTemplate : undefined;
+    const exampleSchemaTemplate =
+        strategyKey === 'matchSourceStructure' ? schemaTemplate : undefined;
+    const exampleTableTemplate =
+        strategyKey === 'matchSourceStructure' ? tableTemplate : undefined;
 
     const example = buildExample(
         strategyKey,

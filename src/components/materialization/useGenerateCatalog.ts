@@ -139,7 +139,9 @@ function useGenerateCatalog() {
     const sourceCaptureDefinition =
         useSourceCaptureStore_sourceCaptureDefinition();
 
-    const targetNamingStrategy = useTargetNamingStore((state) => state.strategy);
+    const targetNamingStrategy = useTargetNamingStore(
+        (state) => state.strategy
+    );
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)

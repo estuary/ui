@@ -3,11 +3,11 @@ import { useEffect, useRef } from 'react';
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
-import { detectTargetNamingModel } from 'src/stores/TargetNaming/shared';
 import {
     useTargetNaming_setModel,
     useTargetNaming_setStrategy,
 } from 'src/stores/TargetNaming/hooks';
+import { detectTargetNamingModel } from 'src/stores/TargetNaming/shared';
 
 // Detects which targetNaming model the spec uses and seeds the TargetNamingStore.
 // Must be called from a component that renders after the binding store has hydrated

@@ -93,7 +93,10 @@ function useTargetNaming() {
     );
 
     const handleConfirm = useCallback(
-        (newStrategy: TargetNamingStrategy, onSuccess?: () => void): Promise<void> => {
+        (
+            newStrategy: TargetNamingStrategy,
+            onSuccess?: () => void
+        ): Promise<void> => {
             return updateStrategy(newStrategy).then(() => {
                 closeNamingDialog();
                 onSuccess?.();
@@ -119,7 +122,14 @@ function useTargetNaming() {
                 setFormState({ status: FormStatus.FAILED });
             })
             .finally(() => setSaving(false));
-    }, [enqueueSnackbar, intl, setFormState, setSaving, setStrategy, writeRootTargetNaming]);
+    }, [
+        enqueueSnackbar,
+        intl,
+        setFormState,
+        setSaving,
+        setStrategy,
+        writeRootTargetNaming,
+    ]);
 
     return {
         strategy,

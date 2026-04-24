@@ -19,7 +19,10 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { useTargetNaming_model, useTargetNaming_strategy } from 'src/stores/TargetNaming/hooks';
+import {
+    useTargetNaming_model,
+    useTargetNaming_strategy,
+} from 'src/stores/TargetNaming/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {

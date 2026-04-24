@@ -470,7 +470,12 @@ const getInitialState = (
         };
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit, sourceCapture, rootTargetNaming) => {
+    prefillResourceConfigs: (
+        targetCollections,
+        disableOmit,
+        sourceCapture,
+        rootTargetNaming
+    ) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
