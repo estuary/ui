@@ -43,7 +43,7 @@ function SelectCapture() {
         setOpen(typeof args === 'boolean' ? args : !open);
 
     const {
-        strategy: targetNamingStrategy,
+        targetNamingStrategy,
         needsNamingDialog,
         handleConfirm,
         targetNamingDialogOpen,

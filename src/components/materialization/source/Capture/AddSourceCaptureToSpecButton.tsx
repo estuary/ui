@@ -52,7 +52,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const {
         model: targetNamingModel,
-        strategy: targetNamingStrategy,
+        targetNamingStrategy,
         needsNamingDialog,
         handleConfirm,
         targetNamingDialogOpen,

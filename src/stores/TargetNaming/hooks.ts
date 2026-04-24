@@ -7,10 +7,10 @@ export const useTargetNaming_setModel = () =>
     useTargetNamingStore((state) => state.setModel);
 
 export const useTargetNaming_strategy = () =>
-    useTargetNamingStore((state) => state.strategy);
+    useTargetNamingStore((state) => state.targetNamingStrategy);
 
 export const useTargetNaming_setStrategy = () =>
-    useTargetNamingStore((state) => state.setStrategy);
+    useTargetNamingStore((state) => state.setTargetNamingStrategy);
 
 export const useTargetNaming_saving = () =>
     useTargetNamingStore((state) => state.saving);

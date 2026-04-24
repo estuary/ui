@@ -140,7 +140,7 @@ function useGenerateCatalog() {
         useSourceCaptureStore_sourceCaptureDefinition();
 
     const targetNamingStrategy = useTargetNamingStore(
-        (state) => state.strategy
+        (state) => state.targetNamingStrategy
     );
 
     // After the first generation we already have a name with the

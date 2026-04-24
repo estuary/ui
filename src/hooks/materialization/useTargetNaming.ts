@@ -20,13 +20,13 @@ function useTargetNaming() {
 
     const setFormState = useFormStateStore_setFormState();
 
-    const [model, setStrategy, setSaving, strategy, saving] =
+    const [model, setStrategy, setSaving, targetNamingStrategy, saving] =
         useTargetNamingStore(
             useShallow((state) => [
                 state.model,
-                state.setStrategy,
+                state.setTargetNamingStrategy,
                 state.setSaving,
-                state.strategy,
+                state.targetNamingStrategy,
                 state.saving,
             ])
         );
@@ -55,11 +55,18 @@ function useTargetNaming() {
     // needsNamingDialog is fully controlled by the hydrator:
     //   create → model is always 'rootTargetNaming'
     //   edit   → model is 'rootTargetNaming' only for new-model specs
-    const needsNamingDialog = model === 'rootTargetNaming' && strategy === null;
+    const needsNamingDialog =
+        model === 'rootTargetNaming' && targetNamingStrategy === null;
 
     const [targetNamingDialogOpen, setTargetNamingDialogOpen] = useState(false);
-    const openNamingDialog = useCallback(() => setTargetNamingDialogOpen(true), []);
-    const closeNamingDialog = useCallback(() => setTargetNamingDialogOpen(false), []);
+    const openNamingDialog = useCallback(
+        () => setTargetNamingDialogOpen(true),
+        []
+    );
+    const closeNamingDialog = useCallback(
+        () => setTargetNamingDialogOpen(false),
+        []
+    );
 
     const updateStrategy = useCallback(
         (newStrategy: TargetNamingStrategy): Promise<void> => {
@@ -132,7 +139,7 @@ function useTargetNaming() {
     ]);
 
     return {
-        strategy,
+        targetNamingStrategy,
         model,
         saving,
         needsNamingDialog,

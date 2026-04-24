@@ -22,7 +22,7 @@ export default function TargetNamingUpdateWrapper() {
     const formActive = useFormStateStore_isActive();
 
     const {
-        strategy,
+        targetNamingStrategy,
         saving,
         handleConfirm,
         clearStrategy,
@@ -31,13 +31,13 @@ export default function TargetNamingUpdateWrapper() {
         closeNamingDialog,
     } = useTargetNaming();
 
-    const strategyIntlKey = strategy
-        ? (STRATEGY_INTL_KEYS[strategy.strategy] ?? null)
+    const strategyIntlKey = targetNamingStrategy
+        ? (STRATEGY_INTL_KEYS[targetNamingStrategy.strategy] ?? null)
         : null;
 
     const label = strategyIntlKey
         ? intl.formatMessage({ id: strategyIntlKey })
-        : (strategy?.strategy ??
+        : (targetNamingStrategy?.strategy ??
           intl.formatMessage({ id: 'destinationLayout.selected.none' }));
 
     return (
@@ -58,7 +58,7 @@ export default function TargetNamingUpdateWrapper() {
 
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                 <OutlinedChip
-                    color={strategy ? 'success' : 'info'}
+                    color={targetNamingStrategy ? 'success' : 'info'}
                     disabled={saving || formActive}
                     label={
                         <Box sx={{ ...truncateTextSx, minWidth: 100, p: 1 }}>
@@ -66,7 +66,7 @@ export default function TargetNamingUpdateWrapper() {
                         </Box>
                     }
                     onDelete={
-                        strategy
+                        targetNamingStrategy
                             ? () => {
                                   void clearStrategy();
                               }
@@ -90,7 +90,7 @@ export default function TargetNamingUpdateWrapper() {
                 <TargetNamingDialog
                     confirmIntlKey="cta.save"
                     open={targetNamingDialogOpen}
-                    initialStrategy={strategy}
+                    initialStrategy={targetNamingStrategy}
                     onCancel={closeNamingDialog}
                     onConfirm={handleConfirm}
                 />

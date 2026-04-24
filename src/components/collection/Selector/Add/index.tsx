@@ -34,7 +34,7 @@ function BindingsEditorAdd({
     );
 
     const {
-        strategy: targetNamingStrategy,
+        targetNamingStrategy,
         needsNamingDialog,
         handleConfirm,
         targetNamingDialogOpen,

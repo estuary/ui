@@ -9,8 +9,10 @@ export interface TargetNamingState {
     // The current strategy value.
     // For rootTargetNaming: a TargetNamingStrategy object (or null if not yet set).
     // For sourceTargetNaming: null (the old string value stays in SourceCaptureStore).
-    strategy: TargetNamingStrategy | null;
-    setStrategy: (strategy: TargetNamingState['strategy']) => void;
+    targetNamingStrategy: TargetNamingStrategy | null;
+    setTargetNamingStrategy: (
+        strategy: TargetNamingState['targetNamingStrategy']
+    ) => void;
 
     saving: boolean;
     setSaving: (saving: boolean) => void;

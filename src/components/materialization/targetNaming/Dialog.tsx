@@ -88,11 +88,18 @@ export default function TargetNamingDialog({
         : { prefix: '', suffix: '' };
     const [tablePrefix, setTablePrefix] = useState(parsedTableTemplate.prefix);
     const [tableSuffix, setTableSuffix] = useState(parsedTableTemplate.suffix);
+    const [tableValue, setTableValue] = useState<string>(
+        !hasTableTemplate(initialStrategy) &&
+        initialStrategy?.strategy === 'matchSourceStructure' &&
+        initialStrategy.tableTemplate
+            ? initialStrategy.tableTemplate
+            : ''
+    );
 
     const tableTemplate =
         tableMode === 'template'
             ? `${tablePrefix}{{table}}${tableSuffix}`
-            : undefined;
+            : tableValue.trim() || undefined;
 
     const schemaRequired = strategyKey !== 'matchSourceStructure';
     const schemaProvided =
@@ -199,8 +206,8 @@ export default function TargetNamingDialog({
                                             field="table"
                                             mode={tableMode}
                                             onModeChange={setTableMode}
-                                            value=""
-                                            onChange={() => {}}
+                                            value={tableValue}
+                                            onChange={setTableValue}
                                             prefix={tablePrefix}
                                             onPrefixChange={setTablePrefix}
                                             suffix={tableSuffix}

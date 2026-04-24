@@ -40,8 +40,7 @@ function SourceConfiguration() {
                     <DeltaUpdatesUpdateWrapper />
                 ) : null}
 
-                {sourceCaptureTargetSchemaSupported &&
-                targetNamingModel !== 'rootTargetNaming' ? (
+                {targetNamingModel === 'sourceTargetNaming' ? (
                     <TargetSchemaUpdateWrapper />
                 ) : null}
 
