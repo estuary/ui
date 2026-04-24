@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 
 import { Stack, Typography, useTheme } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AutoDiscoverySettings from 'src/components/capture/AutoDiscoverySettings';
 import CaptureInterval from 'src/components/capture/Interval';
@@ -117,9 +117,9 @@ function BindingsMultiEditor({
             </Stack>
 
             <Typography sx={{ mb: 2 }}>
-                <FormattedMessage
-                    id={`${messagePrefix}.collectionSelector.instructions`}
-                />
+                {intl.formatMessage({
+                    id: `${messagePrefix}.collectionSelector.instructions`,
+                })}
             </Typography>
 
             <ListAndDetails
