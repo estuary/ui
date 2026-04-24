@@ -280,6 +280,116 @@ export type ConnectionHealthTestResult = {
   results: Array<StorageHealthItem>;
 };
 
+/**
+ * A connector from the Estuary connector catalog, identified by its OCI image
+ * name (e.g. "ghcr.io/estuary/source-postgres"). Use `defaultSpec` to get the
+ * configuration schemas for the blessed image tag, or `spec(imageTag)` for a
+ * specific version.
+ */
+export type Connector = {
+  __typename?: 'Connector';
+  /** Timestamp of when the connector was first created */
+  createdAt: Scalars['DateTime']['output'];
+  /**
+   * The blessed image tag for newly created tasks using this connector.
+   * Resolved as the lexicographically highest image tag among tags with
+   * a complete spec, e.g. `:v2` wins over `:v1`, `:v1` wins over `:dev`.
+   */
+  defaultImageTag?: Maybe<Scalars['String']['output']>;
+  /**
+   * The spec for this connector's default (blessed) image tag. This is the
+   * spec that should be used when configuring newly created tasks.
+   */
+  defaultSpec?: Maybe<ConnectorSpec>;
+  /** Link to an external site with more information about the endpoint */
+  externalUrl: Scalars['String']['output'];
+  /** Unique id of the connector */
+  id: Scalars['Id']['output'];
+  /** Name of the connector's OCI (Docker) container image, for example "ghcr.io/estuary/source-postgres" */
+  imageName: Scalars['String']['output'];
+  /** The connector's logo image, represented as a URL per locale */
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  /** A longform description of this connector */
+  longDescription?: Maybe<Scalars['String']['output']>;
+  /** The protocol of this connector (capture or materialization). */
+  protocol?: Maybe<ConnectorProto>;
+  /** Whether this connector should appear in a promoted position in connector listings */
+  recommended: Scalars['Boolean']['output'];
+  /** Brief human readable description, at most a few sentences */
+  shortDescription?: Maybe<Scalars['String']['output']>;
+  /** Look up the spec for a specific image tag of this connector. */
+  spec?: Maybe<ConnectorSpec>;
+  /** The title, a few words at most */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+
+/**
+ * A connector from the Estuary connector catalog, identified by its OCI image
+ * name (e.g. "ghcr.io/estuary/source-postgres"). Use `defaultSpec` to get the
+ * configuration schemas for the blessed image tag, or `spec(imageTag)` for a
+ * specific version.
+ */
+export type ConnectorSpecArgs = {
+  imageTag: Scalars['String']['input'];
+};
+
+export type ConnectorConnection = {
+  __typename?: 'ConnectorConnection';
+  /** A list of edges. */
+  edges: Array<ConnectorEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type ConnectorEdge = {
+  __typename?: 'ConnectorEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: Connector;
+};
+
+/**
+ * The type of task that the connector is used for. Derivation connectors
+ * exist but are not yet represented in this API.
+ */
+export type ConnectorProto =
+  | 'capture'
+  | 'materialization';
+
+/**
+ * The resolved specification for a connector at a particular image tag.
+ * Includes the JSON schemas needed to configure the connector's endpoint
+ * and resources.
+ */
+export type ConnectorSpec = {
+  __typename?: 'ConnectorSpec';
+  /** The default interval between invocations of a capture using this connector. Formatted as HH:MM:SS. Only applicable to non-streaming (polling) capture connectors. */
+  defaultCaptureInterval?: Maybe<Scalars['String']['output']>;
+  /** Whether backfill should be disabled for this connector */
+  disableBackfill: Scalars['Boolean']['output'];
+  /** URL pointing to the documentation page for this connector */
+  documentationUrl?: Maybe<Scalars['String']['output']>;
+  /** Endpoint configuration JSON Schema. Returned as raw JSON because JSON Schema is a recursive format that cannot be meaningfully decomposed into GraphQL fields. */
+  endpointSpecSchema?: Maybe<Scalars['JSON']['output']>;
+  /**
+   * The database ID of the connector_tags row backing this spec.
+   * @deprecated Not intended to be part of the public API. To be removed once downstream components no longer depend on this field.
+   */
+  id: Scalars['Id']['output'];
+  /**
+   * The OCI Image tag this spec was resolved from, including the leading `:`. For example `:v1`.
+   * This may differ from the requested tag if the request fell back to the default.
+   */
+  imageTag: Scalars['String']['output'];
+  /** The protocol of the connector (capture or materialization) */
+  protocol?: Maybe<ConnectorProto>;
+  /** Resource configuration JSON Schema. Returned as raw JSON because JSON Schema is a recursive format that cannot be meaningfully decomposed into GraphQL fields. */
+  resourceSpecSchema?: Maybe<Scalars['JSON']['output']>;
+};
+
 /** The shape of a connector status, which matches that of an ops::Log. */
 export type ConnectorStatus = {
   __typename?: 'ConnectorStatus';
@@ -294,6 +404,14 @@ export type ConnectorStatus = {
   shard: ShardRef;
   /** The time at which the status was last updated */
   ts: Scalars['DateTime']['output'];
+};
+
+/** Filters for the paginated `connectors` query. */
+export type ConnectorsFilter = {
+  /** Filter by connector protocol. Only connectors with at least one version matching this protocol will be returned. */
+  protocol?: InputMaybe<ProtocolFilter>;
+  /** Filter by whether the connector is recommended. */
+  recommended?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** Status info related to the controller */
@@ -842,6 +960,12 @@ export type PrefixesBy = {
   minCapability: Capability;
 };
 
+/** Filter connectors by their protocol (capture or materialization). */
+export type ProtocolFilter = {
+  /** Match connectors that have at least one version with this protocol. */
+  eq: ConnectorProto;
+};
+
 /** Summary of a publication that was attempted by a controller. */
 export type PublicationInfo = {
   __typename?: 'PublicationInfo';
@@ -914,6 +1038,21 @@ export type QueryRoot = {
    */
   alerts: AlertConnection;
   /**
+   * Returns information about a single connector. At least one parameter
+   * must be provided. If both are provided, the connector must match both
+   * the image name and id in order to be returned.
+   */
+  connector?: Maybe<Connector>;
+  /**
+   * Resolve the spec for a full OCI image name (e.g.
+   * "ghcr.io/estuary/source-postgres:v1"). If the requested tag is not
+   * available, falls back to the default tag. Check the returned `imageTag`
+   * field to see which tag was actually resolved.
+   */
+  connectorSpec?: Maybe<ConnectorSpec>;
+  /** Returns a paginated list of connectors, optionally filtered by protocol. */
+  connectors: ConnectorConnection;
+  /**
    * Returns data planes accessible to the current user.
    *
    * Results are paginated and sorted by data_plane_name.
@@ -958,6 +1097,26 @@ export type QueryRootAlertsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   by: AlertsBy;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootConnectorArgs = {
+  id?: InputMaybe<Scalars['Id']['input']>;
+  imageName?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryRootConnectorSpecArgs = {
+  fullImageName: Scalars['String']['input'];
+};
+
+
+export type QueryRootConnectorsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<ConnectorsFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
 };
