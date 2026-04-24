@@ -1,4 +1,10 @@
-import { Checkbox, FormControlLabel, Stack, TextField } from '@mui/material';
+import {
+    Box,
+    Checkbox,
+    FormControlLabel,
+    Stack,
+    TextField,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -63,46 +69,48 @@ export function TemplateInput({
                     label={intl.formatMessage({ id: keys.useTemplate })}
                 />
             )}
-            {mode === 'template' ? (
-                <Stack direction="row" spacing={0.5} alignItems="center">
+            <Box sx={{ pl: 3 }}>
+                {mode === 'template' ? (
+                    <Stack direction="row" spacing={0.5} alignItems="center">
+                        <TextField
+                            size="small"
+                            label={intl.formatMessage({
+                                id: 'destinationLayout.dialog.field.prefix.label',
+                            })}
+                            value={prefix}
+                            onChange={(e) => onPrefixChange(e.target.value)}
+                            autoFocus
+                        />
+                        <TextField
+                            size="small"
+                            disabled
+                            label=" "
+                            value={keys.token}
+                            sx={{ maxWidth: 80 }}
+                        />
+                        <TextField
+                            size="small"
+                            label={intl.formatMessage({
+                                id: 'destinationLayout.dialog.field.suffix.label',
+                            })}
+                            value={suffix}
+                            onChange={(e) => onSuffixChange(e.target.value)}
+                        />
+                    </Stack>
+                ) : hideWhenFixed ? null : (
                     <TextField
                         size="small"
-                        label={intl.formatMessage({
-                            id: 'destinationLayout.dialog.field.prefix.label',
-                        })}
-                        value={prefix}
-                        onChange={(e) => onPrefixChange(e.target.value)}
+                        label={intl.formatMessage({ id: keys.label })}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        placeholder="prod"
+                        sx={{ maxWidth: 200 }}
                         autoFocus
+                        required={required}
+                        error={Boolean(required && !value.trim())}
                     />
-                    <TextField
-                        size="small"
-                        disabled
-                        label=" "
-                        value={keys.token}
-                        sx={{ maxWidth: 80 }}
-                    />
-                    <TextField
-                        size="small"
-                        label={intl.formatMessage({
-                            id: 'destinationLayout.dialog.field.suffix.label',
-                        })}
-                        value={suffix}
-                        onChange={(e) => onSuffixChange(e.target.value)}
-                    />
-                </Stack>
-            ) : hideWhenFixed ? null : (
-                <TextField
-                    size="small"
-                    label={intl.formatMessage({ id: keys.label })}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder="prod"
-                    sx={{ maxWidth: 200 }}
-                    autoFocus
-                    required={required}
-                    error={Boolean(required && !value.trim())}
-                />
-            )}
+                )}
+            </Box>
         </Stack>
     );
 }

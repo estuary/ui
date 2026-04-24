@@ -1,12 +1,8 @@
-import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/source/targetSchema/types';
 import type { TargetNamingStrategy } from 'src/types';
 
-import { Box, FormControlLabel, Radio, Stack, Typography } from '@mui/material';
+import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-
-import OptionExample from 'src/components/materialization/source/targetSchema/OptionExample';
-import PreformattedBlock from 'src/components/shared/PreformattedBlock';
 
 export type StrategyKey = TargetNamingStrategy['strategy'];
 
@@ -14,18 +10,12 @@ export interface StrategyOptionProps {
     value: StrategyKey;
     selected: boolean;
     onSelect: () => void;
-    example: AutoCompleteOptionForTargetSchemaExample;
-    publicExample: AutoCompleteOptionForTargetSchemaExample;
-    children?: React.ReactNode;
 }
 
 export function StrategyOption({
     value,
     selected,
     onSelect,
-    example,
-    publicExample,
-    children,
 }: StrategyOptionProps) {
     const intl = useIntl();
     return (
@@ -52,38 +42,11 @@ export function StrategyOption({
                 sx={{ mb: 0.5, pointerEvents: 'none' }}
             />
             <Box sx={{ pl: 4 }}>
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 1 }}
-                >
+                <Typography variant="body2" color="text.secondary">
                     {intl.formatMessage({
                         id: `destinationLayout.strategy.${value}.description`,
                     })}
                 </Typography>
-
-                {children}
-
-                {selected ? (
-                    <PreformattedBlock>
-                        <Stack spacing={0.5}>
-                            <Typography>
-                                {intl.formatMessage({ id: 'common.examples' })}
-                            </Typography>
-
-                            <OptionExample
-                                example={example}
-                                baseTableMessageID="schemaMode.example.base"
-                            />
-                            {publicExample ? (
-                                <OptionExample
-                                    example={publicExample}
-                                    baseTableMessageID="schemaMode.example.base"
-                                />
-                            ) : null}
-                        </Stack>
-                    </PreformattedBlock>
-                ) : null}
             </Box>
         </Box>
     );
