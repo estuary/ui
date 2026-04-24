@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 export interface TemplateInputProps {
     field?: 'schema' | 'table';
     mode: 'fixed' | 'template';
+    required?: boolean;
     value: string;
     onChange: (value: string) => void;
     prefix: string;
@@ -31,6 +32,7 @@ const FIELD_KEYS = {
 export function TemplateInput({
     field = 'schema',
     mode,
+    required,
     value,
     onChange,
     prefix,
@@ -52,6 +54,8 @@ export function TemplateInput({
                     placeholder="prod"
                     sx={{ maxWidth: 200 }}
                     autoFocus
+                    required={required}
+                    error={required && !value.trim()}
                 />
             ) : (
                 <Stack direction="row" spacing={0.5} alignItems="center">

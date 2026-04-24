@@ -222,7 +222,7 @@ export default function TargetNamingDialog({
                             value="singleSchema"
                             selected={strategyKey === 'singleSchema'}
                             onSelect={() => {
-                                setTableMode('fixed');
+                                setTableMode('template');
                                 setSchemaMode('fixed');
                                 setStrategyKey('singleSchema');
                             }}
@@ -233,12 +233,23 @@ export default function TargetNamingDialog({
                                 <Box onClick={(e) => e.stopPropagation()}>
                                     <TemplateInput
                                         mode="fixed"
+                                        required
                                         value={schema}
                                         onChange={setSchema}
                                         prefix={schemaPrefix}
                                         onPrefixChange={setSchemaPrefix}
                                         suffix={schemaSuffix}
                                         onSuffixChange={setSchemaSuffix}
+                                    />
+                                    <TemplateInput
+                                        field="table"
+                                        mode="template"
+                                        value={tableValue}
+                                        onChange={setTableValue}
+                                        prefix={tablePrefix}
+                                        onPrefixChange={setTablePrefix}
+                                        suffix={tableSuffix}
+                                        onSuffixChange={setTableSuffix}
                                     />
                                 </Box>
                             ) : null}
@@ -248,7 +259,7 @@ export default function TargetNamingDialog({
                             value="prefixTableNames"
                             selected={strategyKey === 'prefixTableNames'}
                             onSelect={() => {
-                                setTableMode('fixed');
+                                setTableMode('template');
                                 setSchemaMode('fixed');
                                 setStrategyKey('prefixTableNames');
                             }}
@@ -262,12 +273,23 @@ export default function TargetNamingDialog({
                                 >
                                     <TemplateInput
                                         mode="fixed"
+                                        required
                                         value={schema}
                                         onChange={setSchema}
                                         prefix={schemaPrefix}
                                         onPrefixChange={setSchemaPrefix}
                                         suffix={schemaSuffix}
                                         onSuffixChange={setSchemaSuffix}
+                                    />
+                                    <TemplateInput
+                                        field="table"
+                                        mode="template"
+                                        value={tableValue}
+                                        onChange={setTableValue}
+                                        prefix={tablePrefix}
+                                        onPrefixChange={setTablePrefix}
+                                        suffix={tableSuffix}
+                                        onSuffixChange={setTableSuffix}
                                     />
                                     <FormControlLabel
                                         control={
