@@ -57,9 +57,9 @@ function useTargetNaming() {
     //   edit   → model is 'rootTargetNaming' only for new-model specs
     const needsNamingDialog = model === 'rootTargetNaming' && strategy === null;
 
-    const [namingDialogOpen, setNamingDialogOpen] = useState(false);
-    const openNamingDialog = useCallback(() => setNamingDialogOpen(true), []);
-    const closeNamingDialog = useCallback(() => setNamingDialogOpen(false), []);
+    const [targetNamingDialogOpen, setTargetNamingDialogOpen] = useState(false);
+    const openNamingDialog = useCallback(() => setTargetNamingDialogOpen(true), []);
+    const closeNamingDialog = useCallback(() => setTargetNamingDialogOpen(false), []);
 
     const updateStrategy = useCallback(
         (newStrategy: TargetNamingStrategy): Promise<void> => {
@@ -138,7 +138,7 @@ function useTargetNaming() {
         needsNamingDialog,
         handleConfirm,
         clearStrategy,
-        namingDialogOpen,
+        targetNamingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
     };

@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import AddSourceCaptureToSpecButton from 'src/components/materialization/source/Capture/AddSourceCaptureToSpecButton';
-import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
+import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
@@ -46,7 +46,7 @@ function SelectCapture() {
         strategy: targetNamingStrategy,
         needsNamingDialog,
         handleConfirm,
-        namingDialogOpen,
+        targetNamingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
     } = useTargetNaming();
@@ -125,10 +125,10 @@ function SelectCapture() {
                 })}
             </Button>
 
-            {namingDialogOpen ? (
-                <DestinationLayoutDialog
+            {targetNamingDialogOpen ? (
+                <TargetNamingDialog
                     confirmIntlKey="destinationLayout.dialog.cta.sourceCapture"
-                    open={namingDialogOpen}
+                    open={targetNamingDialogOpen}
                     initialStrategy={targetNamingStrategy}
                     onCancel={closeNamingDialog}
                     onConfirm={(strategy) =>

@@ -8,7 +8,7 @@ import { useStore } from 'zustand';
 
 import { useIntl } from 'react-intl';
 
-import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
+import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityType } from 'src/context/EntityContext';
 import invariableStores from 'src/context/Zustand/invariableStores';
@@ -37,7 +37,7 @@ function BindingsEditorAdd({
         strategy: targetNamingStrategy,
         needsNamingDialog,
         handleConfirm,
-        namingDialogOpen,
+        targetNamingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
     } = useTargetNaming();
@@ -96,10 +96,10 @@ function BindingsEditorAdd({
                 </Button>
             </Tooltip>
 
-            {namingDialogOpen ? (
-                <DestinationLayoutDialog
+            {targetNamingDialogOpen ? (
+                <TargetNamingDialog
                     confirmIntlKey="destinationLayout.dialog.cta.addBindings"
-                    open={namingDialogOpen}
+                    open={targetNamingDialogOpen}
                     initialStrategy={targetNamingStrategy}
                     onCancel={closeNamingDialog}
                     onConfirm={(strategy) =>

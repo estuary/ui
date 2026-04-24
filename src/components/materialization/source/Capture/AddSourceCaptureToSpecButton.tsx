@@ -9,7 +9,7 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
-import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
+import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
@@ -55,7 +55,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         strategy: targetNamingStrategy,
         needsNamingDialog,
         handleConfirm,
-        namingDialogOpen,
+        targetNamingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
     } = useTargetNaming();
@@ -145,10 +145,10 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                 <FormattedMessage id="cta.continue" />
             </Button>
 
-            {namingDialogOpen ? (
-                <DestinationLayoutDialog
+            {targetNamingDialogOpen ? (
+                <TargetNamingDialog
                     confirmIntlKey="destinationLayout.dialog.cta.sourceCapture"
-                    open={namingDialogOpen}
+                    open={targetNamingDialogOpen}
                     initialStrategy={targetNamingStrategy}
                     onCancel={closeNamingDialog}
                     onConfirm={(strategy) =>

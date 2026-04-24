@@ -37,7 +37,7 @@ interface Props {
     initialStrategy?: TargetNamingStrategy | null;
 }
 
-export default function DestinationLayoutDialog({
+export default function TargetNamingDialog({
     open,
     initialStrategy,
     onCancel,

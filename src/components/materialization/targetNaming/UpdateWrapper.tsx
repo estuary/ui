@@ -2,7 +2,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import DestinationLayoutDialog from 'src/components/materialization/targetNaming/Dialog';
+import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import { truncateTextSx } from 'src/context/Theme';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -26,7 +26,7 @@ export default function TargetNamingUpdateWrapper() {
         saving,
         handleConfirm,
         clearStrategy,
-        namingDialogOpen,
+        targetNamingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
     } = useTargetNaming();
@@ -86,10 +86,10 @@ export default function TargetNamingUpdateWrapper() {
                 </Button>
             </Stack>
 
-            {namingDialogOpen ? (
-                <DestinationLayoutDialog
+            {targetNamingDialogOpen ? (
+                <TargetNamingDialog
                     confirmIntlKey="cta.save"
-                    open={namingDialogOpen}
+                    open={targetNamingDialogOpen}
                     initialStrategy={strategy}
                     onCancel={closeNamingDialog}
                     onConfirm={handleConfirm}
