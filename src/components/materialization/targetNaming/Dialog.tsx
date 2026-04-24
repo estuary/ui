@@ -18,7 +18,6 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import OptionExample from 'src/components/materialization/source/targetSchema/OptionExample';
 import {
     buildExample,
     hasSchemaTemplate,
@@ -29,7 +28,6 @@ import {
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import { TemplateInput } from 'src/components/materialization/targetNaming/TemplateInput';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
-import PreformattedBlock from 'src/components/shared/PreformattedBlock';
 
 interface Props {
     open: boolean;
@@ -136,6 +134,8 @@ export default function TargetNamingDialog({
         onConfirm(strategy);
     };
 
+    // Only pass templates when matchSourceStructure is active — template state
+    // from that option must not bleed into singleSchema / prefixTableNames examples.
     const exampleSchemaTemplate =
         strategyKey === 'matchSourceStructure' ? schemaTemplate : undefined;
     const exampleTableTemplate =
@@ -184,109 +184,144 @@ export default function TargetNamingDialog({
                             value="matchSourceStructure"
                             selected={strategyKey === 'matchSourceStructure'}
                             onSelect={() => {
+                                setTableMode('template');
                                 setSchemaMode('fixed');
-                                setTableMode('fixed');
                                 setStrategyKey('matchSourceStructure');
                             }}
-                        />
+                            example={example}
+                            publicExample={publicExample}
+                        >
+                            {strategyKey === 'matchSourceStructure' ? (
+                                <Box onClick={(e) => e.stopPropagation()}>
+                                    <Stack>
+                                        <TemplateInput
+                                            hideWhenFixed
+                                            mode={schemaMode}
+                                            onModeChange={setSchemaMode}
+                                            value={schema}
+                                            onChange={setSchema}
+                                            prefix={schemaPrefix}
+                                            onPrefixChange={setSchemaPrefix}
+                                            suffix={schemaSuffix}
+                                            onSuffixChange={setSchemaSuffix}
+                                        />
+                                        <TemplateInput
+                                            hideWhenFixed
+                                            field="table"
+                                            mode={tableMode}
+                                            onModeChange={setTableMode}
+                                            value={tableValue}
+                                            onChange={setTableValue}
+                                            prefix={tablePrefix}
+                                            onPrefixChange={setTablePrefix}
+                                            suffix={tableSuffix}
+                                            onSuffixChange={setTableSuffix}
+                                        />
+                                    </Stack>
+                                </Box>
+                            ) : null}
+                        </StrategyOption>
+
                         <StrategyOption
                             value="singleSchema"
                             selected={strategyKey === 'singleSchema'}
                             onSelect={() => {
-                                setSchemaMode('fixed');
                                 setTableMode('fixed');
+                                setSchemaMode('fixed');
                                 setStrategyKey('singleSchema');
                             }}
-                        />
+                            example={example}
+                            publicExample={publicExample}
+                        >
+                            {strategyKey === 'singleSchema' ? (
+                                <Box onClick={(e) => e.stopPropagation()}>
+                                    <TemplateInput
+                                        mode="fixed"
+                                        required
+                                        value={schema}
+                                        onChange={setSchema}
+                                        prefix={schemaPrefix}
+                                        onPrefixChange={setSchemaPrefix}
+                                        suffix={schemaSuffix}
+                                        onSuffixChange={setSchemaSuffix}
+                                    />
+                                    <TemplateInput
+                                        hideWhenFixed
+                                        field="table"
+                                        mode={tableMode}
+                                        onModeChange={setTableMode}
+                                        value={tableValue}
+                                        onChange={setTableValue}
+                                        prefix={tablePrefix}
+                                        onPrefixChange={setTablePrefix}
+                                        suffix={tableSuffix}
+                                        onSuffixChange={setTableSuffix}
+                                    />
+                                </Box>
+                            ) : null}
+                        </StrategyOption>
+
                         <StrategyOption
                             value="prefixTableNames"
                             selected={strategyKey === 'prefixTableNames'}
                             onSelect={() => {
+                                setTableMode('template');
                                 setSchemaMode('fixed');
-                                setTableMode('fixed');
                                 setStrategyKey('prefixTableNames');
                             }}
-                        />
+                            example={example}
+                            publicExample={publicExample}
+                        >
+                            {strategyKey === 'prefixTableNames' ? (
+                                <Stack
+                                    spacing={1}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <TemplateInput
+                                        hideWhenFixed
+                                        mode={schemaMode}
+                                        onModeChange={setSchemaMode}
+                                        required
+                                        value={schema}
+                                        onChange={setSchema}
+                                        prefix={schemaPrefix}
+                                        onPrefixChange={setSchemaPrefix}
+                                        suffix={schemaSuffix}
+                                        onSuffixChange={setSchemaSuffix}
+                                    />
+                                    <TemplateInput
+                                        hideWhenFixed
+                                        field="table"
+                                        mode={tableMode}
+                                        onModeChange={setTableMode}
+                                        value={tableValue}
+                                        onChange={setTableValue}
+                                        prefix={tablePrefix}
+                                        onPrefixChange={setTablePrefix}
+                                        suffix={tableSuffix}
+                                        onSuffixChange={setTableSuffix}
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={skipCommonDefaults}
+                                                onChange={(e) =>
+                                                    setSkipCommonDefaults(
+                                                        e.target.checked
+                                                    )
+                                                }
+                                                size="small"
+                                            />
+                                        }
+                                        label={intl.formatMessage({
+                                            id: 'destinationLayout.dialog.skipCommonDefaults.label',
+                                        })}
+                                    />
+                                </Stack>
+                            ) : null}
+                        </StrategyOption>
                     </Stack>
                 </RadioGroup>
-
-                <Box
-                    sx={{
-                        border: (theme) => `1px solid ${theme.palette.divider}`,
-                        borderRadius: 1,
-                        p: 1.5,
-                        mt: 2,
-                    }}
-                >
-                    <Stack spacing={2} sx={{ mt: 3 }}>
-                        <TemplateInput
-                            hideWhenFixed={
-                                strategyKey !== 'matchSourceStructure'
-                            }
-                            mode={schemaMode}
-                            onModeChange={setSchemaMode}
-                            required={schemaRequired}
-                            value={schema}
-                            onChange={setSchema}
-                            prefix={schemaPrefix}
-                            onPrefixChange={setSchemaPrefix}
-                            suffix={schemaSuffix}
-                            onSuffixChange={setSchemaSuffix}
-                        />
-
-                        <TemplateInput
-                            hideWhenFixed
-                            field="table"
-                            mode={tableMode}
-                            onModeChange={setTableMode}
-                            value={tableValue}
-                            onChange={setTableValue}
-                            prefix={tablePrefix}
-                            onPrefixChange={setTablePrefix}
-                            suffix={tableSuffix}
-                            onSuffixChange={setTableSuffix}
-                        />
-
-                        {strategyKey === 'prefixTableNames' ? (
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={skipCommonDefaults}
-                                        onChange={(e) =>
-                                            setSkipCommonDefaults(
-                                                e.target.checked
-                                            )
-                                        }
-                                        size="small"
-                                    />
-                                }
-                                label={intl.formatMessage({
-                                    id: 'destinationLayout.dialog.skipCommonDefaults.label',
-                                })}
-                            />
-                        ) : null}
-                    </Stack>
-                </Box>
-
-                <PreformattedBlock>
-                    <Stack spacing={0.5}>
-                        <Typography>
-                            {intl.formatMessage({
-                                id: 'common.examples',
-                            })}
-                        </Typography>
-                        <OptionExample
-                            example={example}
-                            baseTableMessageID="schemaMode.example.base"
-                        />
-                        {publicExample ? (
-                            <OptionExample
-                                example={publicExample}
-                                baseTableMessageID="schemaMode.example.base"
-                            />
-                        ) : null}
-                    </Stack>
-                </PreformattedBlock>
             </DialogContent>
 
             <DialogActions>
@@ -298,7 +333,9 @@ export default function TargetNamingDialog({
                     onClick={handleConfirm}
                     disabled={!canConfirm}
                 >
-                    {intl.formatMessage({ id: confirmIntlKey })}
+                    {intl.formatMessage({
+                        id: confirmIntlKey,
+                    })}
                 </Button>
             </DialogActions>
         </Dialog>
