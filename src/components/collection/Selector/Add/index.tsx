@@ -8,11 +8,9 @@ import { useStore } from 'zustand';
 
 import { useIntl } from 'react-intl';
 
-import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityType } from 'src/context/EntityContext';
 import invariableStores from 'src/context/Zustand/invariableStores';
-import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 
 const DIALOG_ID = 'add-collection-search-dialog';
 
@@ -32,15 +30,6 @@ function BindingsEditorAdd({
             return state.resetSelected;
         }
     );
-
-    const {
-        targetNamingStrategy,
-        needsNamingDialog,
-        handleConfirm,
-        targetNamingDialogOpen,
-        openNamingDialog,
-        closeNamingDialog,
-    } = useTargetNaming();
 
     // Captures can only disable/enable bindings in the UI. The user can
     //   actually remove items from the list via the CLI and we are okay
@@ -73,11 +62,7 @@ function BindingsEditorAdd({
     };
 
     const handleAddClick = () => {
-        if (needsNamingDialog) {
-            openNamingDialog();
-        } else {
-            toggleDialog(true);
-        }
+        toggleDialog(true);
     };
 
     return (
@@ -95,18 +80,6 @@ function BindingsEditorAdd({
                     {intl.formatMessage({ id: 'cta.add' })}
                 </Button>
             </Tooltip>
-
-            {targetNamingDialogOpen ? (
-                <TargetNamingDialog
-                    confirmIntlKey="destinationLayout.dialog.cta.addBindings"
-                    open={targetNamingDialogOpen}
-                    initialStrategy={targetNamingStrategy}
-                    onCancel={closeNamingDialog}
-                    onConfirm={(strategy) =>
-                        handleConfirm(strategy, () => toggleDialog(true))
-                    }
-                />
-            ) : null}
 
             <AddDialog
                 entity="collection"

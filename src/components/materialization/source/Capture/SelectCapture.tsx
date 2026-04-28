@@ -9,10 +9,8 @@ import { useIntl } from 'react-intl';
 
 import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import AddSourceCaptureToSpecButton from 'src/components/materialization/source/Capture/AddSourceCaptureToSpecButton';
-import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { readSourceCaptureDefinitionFromSpec } from 'src/utils/entity-utils';
@@ -42,21 +40,8 @@ function SelectCapture() {
     const toggleDialog = (args: any) =>
         setOpen(typeof args === 'boolean' ? args : !open);
 
-    const {
-        targetNamingStrategy,
-        needsNamingDialog,
-        handleConfirm,
-        targetNamingDialogOpen,
-        openNamingDialog,
-        closeNamingDialog,
-    } = useTargetNaming();
-
     const handleModifyClick = () => {
-        if (needsNamingDialog) {
-            openNamingDialog();
-        } else {
-            toggleDialog(true);
-        }
+        toggleDialog(true);
     };
 
     const existingSourceCaptureDefinition = useMemo(
@@ -124,18 +109,6 @@ function SelectCapture() {
                         : 'cta.modify',
                 })}
             </Button>
-
-            {targetNamingDialogOpen ? (
-                <TargetNamingDialog
-                    confirmIntlKey="destinationLayout.dialog.cta.sourceCapture"
-                    open={targetNamingDialogOpen}
-                    initialStrategy={targetNamingStrategy}
-                    onCancel={closeNamingDialog}
-                    onConfirm={(strategy) =>
-                        handleConfirm(strategy, () => toggleDialog(true))
-                    }
-                />
-            ) : null}
 
             <AddDialog
                 entity="capture"

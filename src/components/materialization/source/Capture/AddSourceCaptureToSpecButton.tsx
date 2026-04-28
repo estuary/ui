@@ -1,5 +1,5 @@
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
-import type { SourceCaptureDef } from 'src/types';
+import type { SourceCaptureDef, TargetNamingStrategy } from 'src/types';
 
 import { useState } from 'react';
 
@@ -9,7 +9,8 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
-import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
+import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
@@ -50,20 +51,23 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             state.targetSchema,
         ]);
 
+    const confirmationContext = useConfirmationModalContext();
+
     const {
         model: targetNamingModel,
         targetNamingStrategy,
         needsNamingDialog,
         handleConfirm,
-        targetNamingDialogOpen,
-        openNamingDialog,
-        closeNamingDialog,
     } = useTargetNaming();
 
     // Binding Store
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
 
-    const applySourceCapture = async () => {
+    // appliedStrategy is passed explicitly when the naming dialog was just confirmed
+    // so we don't rely on a stale store closure.
+    const applySourceCapture = async (
+        appliedStrategy?: TargetNamingStrategy | null
+    ) => {
         setUpdating(true);
 
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
@@ -104,7 +108,9 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                         true,
                         updatedSourceCapture,
                         targetNamingModel === 'rootTargetNaming'
-                            ? (targetNamingStrategy ?? undefined)
+                            ? (appliedStrategy ??
+                                  targetNamingStrategy ??
+                                  undefined)
                             : undefined
                     );
 
@@ -127,36 +133,58 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         toggle(false);
     };
 
-    const handleContinue = () => {
+    const handleContinue = async () => {
         if (needsNamingDialog) {
-            openNamingDialog();
-        } else {
-            applySourceCapture();
+            let pendingStrategy: Parameters<typeof handleConfirm>[0] = {
+                strategy: 'matchSourceStructure',
+                // schemaTemplate: '{{schema}}',
+                // tableTemplate: '{{template}}',
+            };
+
+            const selectedRow = Array.from(selected).map(
+                ([_key, row]) => row
+            )[0];
+            const exampleCollections =
+                (selectedRow?.writes_to as string[] | undefined) ?? [];
+
+            const confirmed = await confirmationContext?.showConfirmation(
+                {
+                    title: 'destinationLayout.dialog.title',
+                    confirmText: 'destinationLayout.dialog.cta.sourceCapture',
+                    dialogProps: {
+                        maxWidth: 'md',
+                    },
+                    message: (
+                        <TargetNamingFormContent
+                            initialStrategy={targetNamingStrategy}
+                            exampleCollections={exampleCollections}
+                            onChange={(strategy, isValid) => {
+                                pendingStrategy = strategy;
+                                confirmationContext.setContinueAllowed(isValid);
+                            }}
+                        />
+                    ),
+                },
+                true
+            );
+
+            if (!confirmed) return;
+            await handleConfirm(pendingStrategy, () =>
+                applySourceCapture(pendingStrategy)
+            );
+            return;
         }
+        await applySourceCapture();
     };
 
     return (
-        <>
-            <Button
-                variant="contained"
-                onClick={handleContinue}
-                disabled={updating}
-            >
-                <FormattedMessage id="cta.continue" />
-            </Button>
-
-            {targetNamingDialogOpen ? (
-                <TargetNamingDialog
-                    confirmIntlKey="destinationLayout.dialog.cta.sourceCapture"
-                    open={targetNamingDialogOpen}
-                    initialStrategy={targetNamingStrategy}
-                    onCancel={closeNamingDialog}
-                    onConfirm={(strategy) =>
-                        handleConfirm(strategy, applySourceCapture)
-                    }
-                />
-            ) : null}
-        </>
+        <Button
+            variant="contained"
+            onClick={handleContinue}
+            disabled={updating}
+        >
+            <FormattedMessage id="cta.continue" />
+        </Button>
     );
 }
 

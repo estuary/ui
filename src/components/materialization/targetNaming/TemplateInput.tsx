@@ -91,7 +91,6 @@ export function TemplateInput({
                     })}
                     value={prefix}
                     onChange={(e) => onPrefixChange(e.target.value)}
-                    autoFocus
                     sx={{ flex: 1 }}
                 />
                 <TextField

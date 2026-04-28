@@ -25,7 +25,11 @@ function ExampleRow({
             sx={{ fontSize: 12 }}
         >
             <code>
-                acmeco/<b>{example.tablePrefix}</b>/orders
+                {example.sourceName ?? (
+                    <>
+                        acmeco/<b>{example.tablePrefix}</b>/orders
+                    </>
+                )}
             </code>
             <ArrowRight width={14} height={14} />
             <span>

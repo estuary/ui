@@ -47,10 +47,10 @@ export function buildExample(
     schemaTemplate: string | undefined,
     tableTemplate: string | undefined,
     skipCommonDefaults: boolean,
-    srcSchema: string = 'anvils'
-): { schema: string; table: string; tablePrefix: string } {
-    const srcTable = 'orders';
-
+    srcSchema: string = 'anvils',
+    srcTable: string = 'orders',
+    sourceName?: string
+): { schema: string; table: string; tablePrefix: string; sourceName?: string } {
     const resolveSchema = (fallback: string) =>
         schemaTemplate
             ? schemaTemplate.replace('{{schema}}', srcSchema)
@@ -65,12 +65,14 @@ export function buildExample(
                 schema: resolveSchema(srcSchema),
                 table: resolveTable(srcTable),
                 tablePrefix: srcSchema,
+                sourceName,
             };
         case 'singleSchema':
             return {
                 schema: resolveSchema(schema),
                 table: resolveTable(srcTable),
                 tablePrefix: srcSchema,
+                sourceName,
             };
         case 'prefixTableNames': {
             const isDefault = ['public', 'dbo'].includes(srcSchema);
@@ -81,6 +83,7 @@ export function buildExample(
                 schema: resolveSchema(schema),
                 table: resolveTable(`${prefix}${srcTable}`),
                 tablePrefix: srcSchema,
+                sourceName,
             };
         }
     }

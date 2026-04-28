@@ -1,5 +1,5 @@
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
-import type { SourceCaptureDef } from 'src/types';
+import type { SourceCaptureDef, TargetNamingStrategy } from 'src/types';
 
 import { useState } from 'react';
 
@@ -9,7 +9,10 @@ import { useStore } from 'zustand';
 
 import { FormattedMessage } from 'react-intl';
 
+import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
 import invariableStores from 'src/context/Zustand/invariableStores';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
     useBinding_discoveredCollections,
@@ -19,14 +22,12 @@ import {
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import {
-    useTargetNaming_model,
-    useTargetNaming_strategy,
-} from 'src/stores/TargetNaming/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);
+
+    const confirmationContext = useConfirmationModalContext();
 
     const [selected] = useStore(
         invariableStores['Entity-Selector-Table'],
@@ -51,8 +52,12 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         state.targetSchema,
     ]);
 
-    const targetNamingModel = useTargetNaming_model();
-    const targetNamingStrategy = useTargetNaming_strategy();
+    const {
+        model: targetNamingModel,
+        targetNamingStrategy,
+        needsNamingDialog,
+        handleConfirm,
+    } = useTargetNaming();
 
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
     const discoveredCollections = useBinding_discoveredCollections();
@@ -60,7 +65,11 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const setRestrictedDiscoveredCollections =
         useBinding_setRestrictedDiscoveredCollections();
 
-    const close = () => {
+    // Pass appliedStrategy explicitly so the caller can provide the just-confirmed
+    // value without relying on a stale store closure.
+    const close = (
+        appliedStrategy: TargetNamingStrategy | null | undefined
+    ) => {
         setUpdating(true);
 
         const value = Array.from(selected).map(([_id, row]) => {
@@ -95,7 +104,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             true,
             sourceCaptureSettings,
             targetNamingModel === 'rootTargetNaming'
-                ? (targetNamingStrategy ?? undefined)
+                ? (appliedStrategy ?? undefined)
                 : undefined
         );
 
@@ -118,11 +127,51 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         toggle(false);
     };
 
+    const handleContinue = async () => {
+        if (needsNamingDialog) {
+            let defaultStrategy: TargetNamingStrategy = {
+                strategy: 'matchSourceStructure',
+                // schemaTemplate: '{{schema}}',
+                // tableTemplate: '{{template}}',
+            };
+
+            const exampleCollections = Array.from(selected).map(
+                ([_id, row]) => row.catalog_name
+            );
+
+            const confirmed = await confirmationContext?.showConfirmation(
+                {
+                    title: 'destinationLayout.dialog.title',
+                    confirmText: 'destinationLayout.dialog.cta.addBindings',
+                    dialogProps: {
+                        maxWidth: 'md',
+                    },
+                    message: (
+                        <TargetNamingFormContent
+                            initialStrategy={targetNamingStrategy}
+                            exampleCollections={exampleCollections}
+                            onChange={(strategy, isValid) => {
+                                defaultStrategy = strategy;
+                                confirmationContext.setContinueAllowed(isValid);
+                            }}
+                        />
+                    ),
+                },
+                true
+            );
+
+            if (!confirmed) return;
+            await handleConfirm(defaultStrategy, () => close(defaultStrategy));
+            return;
+        }
+        close(targetNamingStrategy);
+    };
+
     return (
         <Button
             variant="contained"
             disabled={selected.size < 1 || updating}
-            onClick={close}
+            onClick={handleContinue}
         >
             <FormattedMessage id="cta.continue" />
         </Button>
