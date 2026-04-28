@@ -10,22 +10,40 @@ import PreformattedBlock from 'src/components/shared/PreformattedBlock';
 
 export type StrategyKey = TargetNamingStrategy['strategy'];
 
-function ExampleRow({ example }: { example: AutoCompleteOptionForTargetSchemaExample }) {
+function ExampleRow({
+    example,
+}: {
+    example: AutoCompleteOptionForTargetSchemaExample;
+}) {
     const intl = useIntl();
     return (
-        <Stack component="span" direction="row" spacing={1} alignItems="center" sx={{ fontSize: 12 }}>
+        <Stack
+            component="span"
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            sx={{ fontSize: 12 }}
+        >
             <code>
                 acmeco/<b>{example.tablePrefix}</b>/orders
             </code>
             <ArrowRight width={14} height={14} />
             <span>
-                {intl.formatMessage({ id: 'destinationLayout.dialog.table.label' })}
+                {intl.formatMessage({
+                    id: 'destinationLayout.dialog.table.label',
+                })}
                 {': '}
-                <code><b>{example.table}</b></code>
+                <code>
+                    <b>{example.table}</b>
+                </code>
                 {' | '}
-                {intl.formatMessage({ id: 'destinationLayout.dialog.schema.label' })}
+                {intl.formatMessage({
+                    id: 'destinationLayout.dialog.schema.label',
+                })}
                 {': '}
-                <code><b>{example.schema}</b></code>
+                <code>
+                    <b>{example.schema}</b>
+                </code>
             </span>
         </Stack>
     );

@@ -22,7 +22,8 @@ export default function AdvancedOptions() {
     );
 
     const targetNamingModel = useTargetNaming_model();
-    const { sourceCaptureTargetSchemaSupported } = useBinding_sourceCaptureFlags();
+    const { sourceCaptureTargetSchemaSupported } =
+        useBinding_sourceCaptureFlags();
 
     if (entityType !== 'materialization') {
         return null;

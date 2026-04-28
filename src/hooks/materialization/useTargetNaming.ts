@@ -34,7 +34,8 @@ function useTargetNaming() {
 
     const writeRootTargetNaming = useWriteRootTargetNaming();
 
-    const { sourceCaptureTargetSchemaSupported } = useBinding_sourceCaptureFlags();
+    const { sourceCaptureTargetSchemaSupported } =
+        useBinding_sourceCaptureFlags();
 
     const draftSpecs = useEditorStore_queryResponse_draftSpecs();
 
