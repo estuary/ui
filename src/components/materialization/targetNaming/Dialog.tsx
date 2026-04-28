@@ -4,7 +4,6 @@ import type { TargetNamingStrategy } from 'src/types';
 import { useState } from 'react';
 
 import {
-    Box,
     Button,
     Checkbox,
     Dialog,
@@ -60,9 +59,18 @@ export default function TargetNamingDialog({
             : true
     );
 
+    // Only show prefix/suffix inputs for matchSourceStructure if the initial
+    // strategy already had a non-trivial template, or the user enables it.
+    const [showMatchNaming, setShowMatchNaming] = useState(
+        initialStrategy?.strategy === 'matchSourceStructure' &&
+            (hasSchemaTemplate(initialStrategy) ||
+                (hasTableTemplate(initialStrategy) &&
+                    initialStrategy.tableTemplate !== '{{table}}'))
+    );
+
     // Schema template state
     const [schemaMode, setSchemaMode] = useState<'fixed' | 'template'>(
-        hasSchemaTemplate(initialStrategy) ? 'template' : 'fixed'
+        'template'
     );
     const parsedSchemaTemplate = hasSchemaTemplate(initialStrategy)
         ? parseSchemaTemplate(initialStrategy.schemaTemplate)
@@ -81,7 +89,7 @@ export default function TargetNamingDialog({
 
     // Table template state
     const [tableMode, setTableMode] = useState<'fixed' | 'template'>(
-        hasTableTemplate(initialStrategy) ? 'template' : 'fixed'
+        'template'
     );
     const parsedTableTemplate = hasTableTemplate(initialStrategy)
         ? parseTableTemplate(initialStrategy.tableTemplate)
@@ -113,8 +121,8 @@ export default function TargetNamingDialog({
         if (strategyKey === 'matchSourceStructure') {
             strategy = {
                 strategy: 'matchSourceStructure',
-                schemaTemplate,
-                tableTemplate,
+                schemaTemplate: showMatchNaming ? schemaTemplate : '{{schema}}',
+                tableTemplate: showMatchNaming ? tableTemplate : '{{template}}',
             };
         } else if (strategyKey === 'singleSchema') {
             strategy = {
@@ -134,12 +142,14 @@ export default function TargetNamingDialog({
         onConfirm(strategy);
     };
 
-    // Only pass templates when matchSourceStructure is active — template state
-    // from that option must not bleed into singleSchema / prefixTableNames examples.
     const exampleSchemaTemplate =
-        strategyKey === 'matchSourceStructure' ? schemaTemplate : undefined;
+        strategyKey !== 'matchSourceStructure' || showMatchNaming
+            ? schemaTemplate
+            : undefined;
     const exampleTableTemplate =
-        strategyKey === 'matchSourceStructure' ? tableTemplate : undefined;
+        strategyKey !== 'matchSourceStructure' || showMatchNaming
+            ? tableTemplate
+            : undefined;
 
     const example = buildExample(
         strategyKey,
@@ -184,41 +194,62 @@ export default function TargetNamingDialog({
                             value="matchSourceStructure"
                             selected={strategyKey === 'matchSourceStructure'}
                             onSelect={() => {
+                                if (strategyKey === 'matchSourceStructure') {
+                                    return;
+                                }
+
                                 setTableMode('template');
-                                setSchemaMode('fixed');
+                                setSchemaMode('template');
                                 setStrategyKey('matchSourceStructure');
                             }}
                             example={example}
                             publicExample={publicExample}
                         >
                             {strategyKey === 'matchSourceStructure' ? (
-                                <Box onClick={(e) => e.stopPropagation()}>
-                                    <Stack>
-                                        <TemplateInput
-                                            hideWhenFixed
-                                            mode={schemaMode}
-                                            onModeChange={setSchemaMode}
-                                            value={schema}
-                                            onChange={setSchema}
-                                            prefix={schemaPrefix}
-                                            onPrefixChange={setSchemaPrefix}
-                                            suffix={schemaSuffix}
-                                            onSuffixChange={setSchemaSuffix}
-                                        />
-                                        <TemplateInput
-                                            hideWhenFixed
-                                            field="table"
-                                            mode={tableMode}
-                                            onModeChange={setTableMode}
-                                            value={tableValue}
-                                            onChange={setTableValue}
-                                            prefix={tablePrefix}
-                                            onPrefixChange={setTablePrefix}
-                                            suffix={tableSuffix}
-                                            onSuffixChange={setTableSuffix}
-                                        />
-                                    </Stack>
-                                </Box>
+                                <Stack
+                                    spacing={1}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                size="small"
+                                                checked={showMatchNaming}
+                                                onChange={(e) =>
+                                                    setShowMatchNaming(
+                                                        e.target.checked
+                                                    )
+                                                }
+                                            />
+                                        }
+                                        label={intl.formatMessage({
+                                            id: 'destinationLayout.dialog.matchSourceStructure.customize',
+                                        })}
+                                    />
+                                    {showMatchNaming ? (
+                                        <Stack spacing={1}>
+                                            <TemplateInput
+                                                mode={schemaMode}
+                                                value={schema}
+                                                onChange={setSchema}
+                                                prefix={schemaPrefix}
+                                                onPrefixChange={setSchemaPrefix}
+                                                suffix={schemaSuffix}
+                                                onSuffixChange={setSchemaSuffix}
+                                            />
+                                            <TemplateInput
+                                                field="table"
+                                                mode={tableMode}
+                                                value={tableValue}
+                                                onChange={setTableValue}
+                                                prefix={tablePrefix}
+                                                onPrefixChange={setTablePrefix}
+                                                suffix={tableSuffix}
+                                                onSuffixChange={setTableSuffix}
+                                            />
+                                        </Stack>
+                                    ) : null}
+                                </Stack>
                             ) : null}
                         </StrategyOption>
 
@@ -226,7 +257,11 @@ export default function TargetNamingDialog({
                             value="singleSchema"
                             selected={strategyKey === 'singleSchema'}
                             onSelect={() => {
-                                setTableMode('fixed');
+                                if (strategyKey === 'singleSchema') {
+                                    return;
+                                }
+
+                                setTableMode('template');
                                 setSchemaMode('fixed');
                                 setStrategyKey('singleSchema');
                             }}
@@ -234,7 +269,10 @@ export default function TargetNamingDialog({
                             publicExample={publicExample}
                         >
                             {strategyKey === 'singleSchema' ? (
-                                <Box onClick={(e) => e.stopPropagation()}>
+                                <Stack
+                                    spacing={1}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
                                     <TemplateInput
                                         mode="fixed"
                                         required
@@ -249,7 +287,6 @@ export default function TargetNamingDialog({
                                         hideWhenFixed
                                         field="table"
                                         mode={tableMode}
-                                        onModeChange={setTableMode}
                                         value={tableValue}
                                         onChange={setTableValue}
                                         prefix={tablePrefix}
@@ -257,7 +294,7 @@ export default function TargetNamingDialog({
                                         suffix={tableSuffix}
                                         onSuffixChange={setTableSuffix}
                                     />
-                                </Box>
+                                </Stack>
                             ) : null}
                         </StrategyOption>
 
@@ -265,8 +302,12 @@ export default function TargetNamingDialog({
                             value="prefixTableNames"
                             selected={strategyKey === 'prefixTableNames'}
                             onSelect={() => {
-                                setTableMode('template');
+                                if (strategyKey === 'prefixTableNames') {
+                                    return;
+                                }
+
                                 setSchemaMode('fixed');
+                                setTableMode('template');
                                 setStrategyKey('prefixTableNames');
                             }}
                             example={example}
@@ -278,9 +319,7 @@ export default function TargetNamingDialog({
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     <TemplateInput
-                                        hideWhenFixed
                                         mode={schemaMode}
-                                        onModeChange={setSchemaMode}
                                         required
                                         value={schema}
                                         onChange={setSchema}
@@ -293,7 +332,7 @@ export default function TargetNamingDialog({
                                         hideWhenFixed
                                         field="table"
                                         mode={tableMode}
-                                        onModeChange={setTableMode}
+                                        // onModeChange={setTableMode}
                                         value={tableValue}
                                         onChange={setTableValue}
                                         prefix={tablePrefix}

@@ -3,12 +3,33 @@ import type { BaseComponentProps, TargetNamingStrategy } from 'src/types';
 
 import { Box, FormControlLabel, Radio, Stack, Typography } from '@mui/material';
 
+import { ArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import OptionExample from 'src/components/materialization/source/targetSchema/OptionExample';
 import PreformattedBlock from 'src/components/shared/PreformattedBlock';
 
 export type StrategyKey = TargetNamingStrategy['strategy'];
+
+function ExampleRow({ example }: { example: AutoCompleteOptionForTargetSchemaExample }) {
+    const intl = useIntl();
+    return (
+        <Stack component="span" direction="row" spacing={1} alignItems="center" sx={{ fontSize: 12 }}>
+            <code>
+                acmeco/<b>{example.tablePrefix}</b>/orders
+            </code>
+            <ArrowRight width={14} height={14} />
+            <span>
+                {intl.formatMessage({ id: 'destinationLayout.dialog.table.label' })}
+                {': '}
+                <code><b>{example.table}</b></code>
+                {' | '}
+                {intl.formatMessage({ id: 'destinationLayout.dialog.schema.label' })}
+                {': '}
+                <code><b>{example.schema}</b></code>
+            </span>
+        </Stack>
+    );
+}
 
 export interface StrategyOptionProps extends BaseComponentProps {
     value: StrategyKey;
@@ -71,15 +92,9 @@ export function StrategyOption({
                             {intl.formatMessage({ id: 'common.examples' })}
                         </Typography>
 
-                        <OptionExample
-                            example={example}
-                            baseTableMessageID="schemaMode.example.base"
-                        />
+                        <ExampleRow example={example} />
                         {publicExample ? (
-                            <OptionExample
-                                example={publicExample}
-                                baseTableMessageID="schemaMode.example.base"
-                            />
+                            <ExampleRow example={publicExample} />
                         ) : null}
                     </Stack>
                 </PreformattedBlock>

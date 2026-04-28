@@ -57,7 +57,7 @@ export function buildExample(
             : fallback || '_';
 
     const resolveTable = (fallback: string) =>
-        tableTemplate ? tableTemplate.replace('{{table}}', srcTable) : fallback;
+        tableTemplate ? tableTemplate.replace('{{table}}', fallback) : fallback;
 
     switch (strategyKey) {
         case 'matchSourceStructure':

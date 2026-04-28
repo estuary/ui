@@ -1,11 +1,12 @@
 import {
-    Box,
-    Checkbox,
-    FormControlLabel,
+    IconButton,
+    InputAdornment,
     Stack,
     TextField,
+    Tooltip,
 } from '@mui/material';
 
+import { Code, InputField } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 export interface TemplateInputProps {
@@ -27,11 +28,13 @@ const FIELD_KEYS = {
         label: 'destinationLayout.dialog.schema.label',
         token: 'schema',
         useTemplate: 'destinationLayout.dialog.schema.useTemplate',
+        useFixed: 'destinationLayout.dialog.schema.useFixed',
     },
     table: {
         label: 'destinationLayout.dialog.table.label',
         token: 'table',
         useTemplate: 'destinationLayout.dialog.table.useTemplate',
+        useFixed: 'destinationLayout.dialog.table.useFixed',
     },
 } as const;
 
@@ -50,67 +53,80 @@ export function TemplateInput({
 }: TemplateInputProps) {
     const intl = useIntl();
     const keys = FIELD_KEYS[field];
+    const tokenString = `{{${keys.token}}}`;
 
-    const handleToggle = (checked: boolean) => {
-        onModeChange?.(checked ? 'template' : 'fixed');
-    };
+    const adornment = onModeChange ? (
+        <InputAdornment position="end">
+            <Tooltip
+                title={intl.formatMessage({
+                    id: mode === 'template' ? keys.useFixed : keys.useTemplate,
+                })}
+                placement="right"
+            >
+                <IconButton
+                    size="small"
+                    edge="end"
+                    onClick={() =>
+                        onModeChange(mode === 'template' ? 'fixed' : 'template')
+                    }
+                >
+                    {mode === 'template' ? <InputField /> : <Code />}
+                </IconButton>
+            </Tooltip>
+        </InputAdornment>
+    ) : undefined;
+
+    if (mode === 'template') {
+        return (
+            <Stack
+                direction="row"
+                spacing={0.5}
+                alignItems="center"
+                sx={{ width: '100%' }}
+            >
+                <TextField
+                    size="small"
+                    label={intl.formatMessage({
+                        id: 'destinationLayout.dialog.field.prefix.label',
+                    })}
+                    value={prefix}
+                    onChange={(e) => onPrefixChange(e.target.value)}
+                    autoFocus
+                    sx={{ flex: 1 }}
+                />
+                <TextField
+                    size="small"
+                    disabled
+                    label={intl.formatMessage({ id: keys.label })}
+                    value={tokenString}
+                    sx={{ maxWidth: 80, flexShrink: 0 }}
+                />
+                <TextField
+                    size="small"
+                    label={intl.formatMessage({
+                        id: 'destinationLayout.dialog.field.suffix.label',
+                    })}
+                    value={suffix}
+                    onChange={(e) => onSuffixChange(e.target.value)}
+                    InputProps={{ endAdornment: adornment }}
+                    sx={{ flex: 1 }}
+                />
+            </Stack>
+        );
+    }
 
     return (
-        <Stack spacing={0.5}>
-            {!onModeChange ? null : (
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            size="small"
-                            checked={mode === 'template'}
-                            onChange={(e) => handleToggle(e.target.checked)}
-                        />
-                    }
-                    label={intl.formatMessage({ id: keys.useTemplate })}
-                />
-            )}
-            <Box sx={{ pl: 3 }}>
-                {mode === 'template' ? (
-                    <Stack direction="row" spacing={0.5} alignItems="center">
-                        <TextField
-                            size="small"
-                            label={intl.formatMessage({
-                                id: 'destinationLayout.dialog.field.prefix.label',
-                            })}
-                            value={prefix}
-                            onChange={(e) => onPrefixChange(e.target.value)}
-                            autoFocus
-                        />
-                        <TextField
-                            size="small"
-                            disabled
-                            label=" "
-                            value={keys.token}
-                            sx={{ maxWidth: 80 }}
-                        />
-                        <TextField
-                            size="small"
-                            label={intl.formatMessage({
-                                id: 'destinationLayout.dialog.field.suffix.label',
-                            })}
-                            value={suffix}
-                            onChange={(e) => onSuffixChange(e.target.value)}
-                        />
-                    </Stack>
-                ) : hideWhenFixed ? null : (
-                    <TextField
-                        size="small"
-                        label={intl.formatMessage({ id: keys.label })}
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        placeholder="prod"
-                        sx={{ maxWidth: 200 }}
-                        autoFocus
-                        required={required}
-                        error={Boolean(required && !value.trim())}
-                    />
-                )}
-            </Box>
-        </Stack>
+        <TextField
+            size="small"
+            label={intl.formatMessage({ id: keys.label })}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="prod"
+            required={required}
+            error={Boolean(required && !value.trim())}
+            fullWidth
+            disabled={hideWhenFixed}
+            InputProps={{ endAdornment: adornment }}
+        />
     );
 }
