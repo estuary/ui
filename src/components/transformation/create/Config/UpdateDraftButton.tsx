@@ -4,6 +4,8 @@ import type { Transform } from 'src/types';
 
 import { useCallback } from 'react';
 
+import { Button } from '@mui/material';
+
 import { FormattedMessage } from 'react-intl';
 
 import { modifyDraftSpec } from 'src/api/draftSpecs';
@@ -14,7 +16,6 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
@@ -149,14 +150,14 @@ function UpdateDraftButton({ toggle }: AddCollectionDialogCTAProps) {
     ]);
 
     return (
-        <SafeLoadingButton
+        <Button
             variant="contained"
             loading={catalogUpdating}
             disabled={selected.size < 1 || catalogUpdating}
             onClick={updateDerivationSpec}
         >
             <FormattedMessage id="cta.continue" />
-        </SafeLoadingButton>
+        </Button>
     );
 }
 

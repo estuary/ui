@@ -61,6 +61,7 @@ const GroupByKeysForm = ({
                 );
             }}
             renderOption={(renderOptionProps, option, state) => {
+                const { key, ...restRenderOptionProps } = renderOptionProps;
                 const { field, projection } = option;
 
                 const fieldTypes: string[] =
@@ -77,6 +78,7 @@ const GroupByKeysForm = ({
 
                 return (
                     <SelectableAutocompleteOption
+                        key={key}
                         Content={
                             <>
                                 <Stack
@@ -121,12 +123,12 @@ const GroupByKeysForm = ({
                                 ) : null}
                             </>
                         }
-                        renderOptionProps={renderOptionProps}
+                        renderOptionProps={restRenderOptionProps}
                         state={state}
                     />
                 );
             }}
-            renderTags={(tagValues, getTagProps, ownerState) => {
+            renderValue={(tagValues, getTagProps, ownerState) => {
                 return (
                     <SortableTags
                         getTagProps={getTagProps}

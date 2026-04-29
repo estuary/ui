@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Button } from '@mui/material';
 
 import { useStore } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -25,11 +26,9 @@ import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);
 
-    const [selected] = useStore(
+    const selected = useStore(
         invariableStores['Entity-Selector-Table'],
-        (state) => {
-            return [state.selected];
-        }
+        (state) => state.selected
     );
 
     const { updateDraft } = useSourceCapture();
@@ -44,12 +43,14 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
     } = useBinding_sourceCaptureFlags();
 
     const [sourceCapture, setSourceCapture, deltaUpdates, targetSchema] =
-        useSourceCaptureStore((state) => [
-            state.sourceCapture,
-            state.setSourceCapture,
-            state.deltaUpdates,
-            state.targetSchema,
-        ]);
+        useSourceCaptureStore(
+            useShallow((state) => [
+                state.sourceCapture,
+                state.setSourceCapture,
+                state.deltaUpdates,
+                state.targetSchema,
+            ])
+        );
 
     const confirmationContext = useConfirmationModalContext();
 

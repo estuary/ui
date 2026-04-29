@@ -1,4 +1,7 @@
-import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
+import type {
+    AllowedScopes,
+    EditorChangeHandler,
+} from 'src/components/editor/MonacoEditor/types';
 import type { Schema } from 'src/types';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -24,6 +27,7 @@ import { useEntityType } from 'src/context/EntityContext';
 import { useProjectionsForSkim } from 'src/hooks/projections/useProjectionsForSkim';
 import useDisableSchemaEditing from 'src/hooks/useDisableSchemaEditing';
 import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
+import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
 
 export interface Props {
@@ -59,6 +63,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         useBindingsEditorStore_populateSkimProjectionResponse();
     const editModeEnabled = useBindingsEditorStore_editModeEnabled();
     const disableSchemaEditing = useDisableSchemaEditing();
+    const formActive = useFormStateStore_isActive();
 
     useEffect(() => {
         if (draftSpec?.spec && entityName) {
@@ -112,7 +117,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
     }, [mutate, collectionInitializationDone]);
 
     const onKeyChange = useCallback(
-        async (_event, keys) => {
+        async (_event: unknown, keys: any) => {
             if (entityName) {
                 await onChange(keys, entityName, 'collection', 'key');
             }
@@ -120,7 +125,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         [onChange, entityName]
     );
 
-    const onPropertiesViewerChange = useCallback(
+    const onPropertiesViewerChange = useCallback<EditorChangeHandler>(
         async (value: Schema, path, type, scope) => {
             await onChange(value, path, type, scope ?? 'schema');
         },
@@ -134,7 +139,7 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
         return (
             <Grid container rowGap={2}>
                 {entityType === 'collection' ? null : (
-                    <Grid item xs={12}>
+                    <Grid size={{ xs: 12 }}>
                         <Stack
                             sx={{
                                 alignItems: 'start',
@@ -156,11 +161,15 @@ function CollectionSchemaEditor({ entityName, localZustandScope }: Props) {
 
                 <KeyAutoComplete
                     value={draftSpec.spec.key}
-                    disabled={!editModeEnabled || disableSchemaEditing}
+                    disabled={
+                        !editModeEnabled || disableSchemaEditing || formActive
+                    }
                     onChange={onKeyChange}
                 />
                 <PropertiesViewer
-                    disabled={!editModeEnabled || disableSchemaEditing}
+                    disabled={
+                        !editModeEnabled || disableSchemaEditing || formActive
+                    }
                     editorProps={{
                         localZustandScope,
                         onChange: onPropertiesViewerChange,

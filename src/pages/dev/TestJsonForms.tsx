@@ -1,12 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import {
-    Box,
-    Button,
-    Divider,
-    Stack,
-    StyledEngineProvider,
-} from '@mui/material';
+import { Box, Button, Divider, Stack } from '@mui/material';
 
 import { JsonForms } from '@jsonforms/react';
 
@@ -217,36 +211,34 @@ const TestJsonForms = () => {
                     <Divider flexItem>Form will render below this line</Divider>
                 </Stack>
                 <WrapperWithHeader header={<>Fake Form Header</>}>
-                    <StyledEngineProvider injectFirst>
-                        <Box
-                            sx={{
-                                ...jsonFormsPadding,
-                            }}
-                        >
-                            <DetailsFormHydrator>
-                                {schema !== null && uiSchema !== null ? (
-                                    <JsonForms
-                                        {...jsonFormsDefaults}
-                                        schema={schema}
-                                        uischema={uiSchema}
-                                        data={formData}
-                                        validationMode="ValidateAndShow"
-                                        onChange={(state) => {
-                                            console.log(
-                                                'This is the new state of the form',
-                                                state
-                                            );
-                                        }}
-                                    />
-                                ) : (
-                                    <>
-                                        To render form enter a schema above and
-                                        click the Render button
-                                    </>
-                                )}
-                            </DetailsFormHydrator>
-                        </Box>
-                    </StyledEngineProvider>
+                    <Box
+                        sx={{
+                            ...jsonFormsPadding,
+                        }}
+                    >
+                        <DetailsFormHydrator>
+                            {schema !== null && uiSchema !== null ? (
+                                <JsonForms
+                                    {...jsonFormsDefaults}
+                                    schema={schema}
+                                    uischema={uiSchema}
+                                    data={formData}
+                                    validationMode="ValidateAndShow"
+                                    onChange={(state) => {
+                                        console.log(
+                                            'This is the new state of the form',
+                                            state
+                                        );
+                                    }}
+                                />
+                            ) : (
+                                <>
+                                    To render form enter a schema above and
+                                    click the Render button
+                                </>
+                            )}
+                        </DetailsFormHydrator>
+                    </Box>
                 </WrapperWithHeader>
             </WorkflowContextProvider>
         </PageContainer>

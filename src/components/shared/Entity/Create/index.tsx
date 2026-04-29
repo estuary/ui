@@ -118,7 +118,7 @@ function EntityCreate({
             entityNameChanged,
             endpointConfigServerUpdateRequired,
             resourceConfigServerUpdateRequired,
-            newValue,
+            newValue: newValue ?? 'null',
             component: 'EntityCreate',
         });
 
@@ -156,15 +156,23 @@ function EntityCreate({
 
     const storeHydrationComplete = useFormHydrationChecker();
 
-    return detailsHydrationError ? (
-        <Error
-            condensed
-            error={{
-                ...BASE_ERROR,
-                message: detailsHydrationError,
-            }}
-        />
-    ) : !storeHydrationComplete ? null : (
+    if (detailsHydrationError) {
+        return (
+            <Error
+                condensed
+                error={{
+                    ...BASE_ERROR,
+                    message: detailsHydrationError,
+                }}
+            />
+        );
+    }
+
+    if (!storeHydrationComplete) {
+        return null;
+    }
+
+    return (
         <DraftSpecEditorHydrator
             entityType={entityType}
             entityName={entityName}

@@ -45,11 +45,13 @@ function EntityTableFooter({
                         page={page}
                         onPageChange={onPageChange}
                         onRowsPerPageChange={onRowsPerPageChange}
-                        SelectProps={{
-                            // TODO (table filtering)
-                            // Same as the other one
-                            inputProps: {
-                                id: `table_pagination__${filterLabel}`,
+                        slotProps={{
+                            select: {
+                                // TODO (table filtering)
+                                // Same as the other one
+                                inputProps: {
+                                    id: `table_pagination__${filterLabel}`,
+                                },
                             },
                         }}
                     />

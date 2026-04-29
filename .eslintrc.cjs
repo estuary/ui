@@ -11,6 +11,7 @@ module.exports = {
         '__mocks__',
         'playwright-tests/',
         'src/gql-types/',
+        'storybook-static/',
     ],
     plugins: ['formatjs', 'unused-imports', 'no-relative-import-paths'],
     parserOptions: {
@@ -53,16 +54,8 @@ module.exports = {
         'react-hooks/exhaustive-deps': 'error',
 
         // --------------------------IMPORTS --------------------------
-        // Original LoadingButton can cause issues with Google Translate
-        //  https://github.com/mui/material-ui/issues/27853
-        //  https://github.com/facebook/react/issues/11538
         'no-restricted-imports': [
             'error',
-            {
-                name: '@mui/lab',
-                importNames: ['LoadingButton'],
-                message: 'Please use SafeLoadingButton instead.',
-            },
             {
                 name: '@emotion/react',
                 message: 'Do not access emotion directly. Load through MUI',

@@ -208,26 +208,6 @@ export const useTransformationCreate_setSchemaUnedited = () => {
     );
 };
 
-export const useTransformationCreate_previewActive = () => {
-    return useZustandStore<
-        TransformCreateState,
-        TransformCreateState['previewActive']
-    >(
-        TransformCreateStoreNames.TRANSFORM_CREATE,
-        (state) => state.previewActive
-    );
-};
-
-export const useTransformationCreate_setPreviewActive = () => {
-    return useZustandStore<
-        TransformCreateState,
-        TransformCreateState['setPreviewActive']
-    >(
-        TransformCreateStoreNames.TRANSFORM_CREATE,
-        (state) => state.setPreviewActive
-    );
-};
-
 export const useTransformationCreate_catalogUpdating = () => {
     return useZustandStore<
         TransformCreateState,

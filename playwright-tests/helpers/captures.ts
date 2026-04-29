@@ -23,7 +23,7 @@ export const discover_HelloWorld = async (
 
     // Select Hello World
     await page
-        .getByRole('button', { name: 'Docs Hello World Capture' })
+        .getByRole('button', { name: 'Docs Recommended Hello World' })
         .click();
 
     // Wait for things to load

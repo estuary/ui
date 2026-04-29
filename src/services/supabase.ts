@@ -20,11 +20,8 @@ import { CustomEvents } from 'src/services/types';
 export const QUERY_PARAM_CONNECTOR_TITLE = `connector_title->>en-US`;
 
 export const SHARDS_DISABLE = `spec->shards->disable`;
-export const TASK_STATS = `task_stats:flow_document->taskStats`;
 
 export const SHARD_LABELS = `shard_labels:built_spec->shardTemplate->labels->labels`;
-
-export const ENABLED_SHARDS = `spec->shards->disable.is.null`;
 
 export const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
@@ -61,34 +58,34 @@ export enum TABLES {
     CONNECTORS = 'connectors',
     DATA_PLANES = 'data_planes',
     DISCOVERS = 'discovers',
-    DIRECTIVES = 'directives',
+    // DIRECTIVES = 'directives',
     DRAFT_ERRORS = 'draft_errors',
     DRAFT_SPECS = 'draft_specs',
     DRAFT_SPECS_EXT = 'draft_specs_ext',
     DRAFTS = 'drafts',
     DRAFTS_EXT = 'drafts_ext',
     EVOLUTIONS = 'evolutions',
-    INFERRED_SCHEMAS = 'inferred_schemas',
+    // INFERRED_SCHEMAS = 'inferred_schemas',
     INVOICES_EXT = 'invoices_ext',
-    LIVE_SPEC_FLOWS = 'live_spec_flows',
-    LIVE_SPECS = 'live_specs',
+    // LIVE_SPEC_FLOWS = 'live_spec_flows',
+    // LIVE_SPECS = 'live_specs',
     LIVE_SPECS_EXT = 'live_specs_ext',
-    PUBLICATION_SPECS = 'publication_specs',
+    // PUBLICATION_SPECS = 'publication_specs',
     PUBLICATION_SPECS_EXT = 'publication_specs_ext',
     PUBLICATIONS = 'publications',
     REFRESH_TOKENS = 'refresh_tokens',
     ROLE_GRANTS = 'role_grants',
     STORAGE_MAPPINGS = 'storage_mappings',
     TASKS_BY_DAY = 'task_stats_by_day',
-    TASKS_BY_HOUR = 'task_stats_by_hour',
-    TASKS_BY_MINUTE = 'task_stats_by_minute',
+    // TASKS_BY_HOUR = 'task_stats_by_hour',
+    // TASKS_BY_MINUTE = 'task_stats_by_minute',
     TENANTS = 'tenants',
     USER_GRANTS = 'user_grants',
 }
 
 export enum RPCS {
     AUTH_ROLES = 'auth_roles',
-    BILLING_REPORT = 'billing_report_202308',
+    // BILLING_REPORT = 'billing_report_202308',
     CREATE_REFRESH_TOKEN = 'create_refresh_token',
     DRAFT_COLLECTIONS_ELIGIBLE_FOR_DELETION = 'draft_collections_eligible_for_deletion',
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
@@ -411,20 +408,11 @@ export const DEFAULT_POLLER_ERROR = {
     },
 };
 
-export const handlePollerError = (failedResponse: any) => {
-    return failedResponse.error === JOB_STATUS_POLLER_ERROR
-        ? DEFAULT_POLLER_ERROR.error
-        : failedResponse.error
-          ? failedResponse
-          : null;
-};
-
 export const JOB_TYPE_EMPTY = 'emptyDraft';
 export const JOB_TYPE_FAILURE = 'buildFailed';
 export const JOB_TYPE_SUCCESS = 'success';
 
 // These columns are not always what you want... but okay for a "default" constant
-export const JOB_STATUS_FAILURE = [JOB_TYPE_FAILURE];
 export const JOB_STATUS_SUCCESS = [JOB_TYPE_EMPTY, JOB_TYPE_SUCCESS];
 export const JOB_STATUS_COLUMNS = `job_status, logs_token, id`;
 // END: Poller

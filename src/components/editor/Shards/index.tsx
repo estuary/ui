@@ -31,7 +31,7 @@ function ShardsEditor({ renderOpen }: Props) {
             <WrapperWithHeader
                 forceOpen={Boolean(forcedToEnable || renderOpen)}
                 header={
-                    <Typography>
+                    <Typography component="span">
                         {intl.formatMessage({
                             id: 'workflows.advancedSettings.title',
                         })}

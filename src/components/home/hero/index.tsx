@@ -15,8 +15,7 @@ function HeroImageAndDescription() {
         <Box sx={{ mx: 'auto', pb: 3, maxWidth: 1000, p: 2 }}>
             <Grid container spacing={2}>
                 <Grid
-                    item
-                    xs={12}
+                    size={{ xs: 12 }}
                     sx={{
                         display: 'flex',
                         justifyContent: 'center',
@@ -26,8 +25,7 @@ function HeroImageAndDescription() {
                 </Grid>
 
                 <Grid
-                    item
-                    xs={12}
+                    size={{ xs: 12 }}
                     sx={{
                         display: 'flex',
                         alignContent: 'center',

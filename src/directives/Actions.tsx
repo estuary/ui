@@ -4,7 +4,6 @@ import { Button, Toolbar } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { supabaseClient } from 'src/context/GlobalProviders';
 
 const Actions = ({ primaryMessageId, saving }: ActionsProps) => {
@@ -27,7 +26,7 @@ const Actions = ({ primaryMessageId, saving }: ActionsProps) => {
             >
                 {intl.formatMessage({ id: 'cta.cancel' })}
             </Button>
-            <SafeLoadingButton
+            <Button
                 type="submit"
                 variant="contained"
                 loading={saving}
@@ -36,7 +35,7 @@ const Actions = ({ primaryMessageId, saving }: ActionsProps) => {
                 {intl.formatMessage({
                     id: primaryMessageId,
                 })}
-            </SafeLoadingButton>
+            </Button>
         </Toolbar>
     );
 };

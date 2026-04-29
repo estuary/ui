@@ -14,9 +14,6 @@ function RefreshTokenDescription() {
 
     return (
         <TextField
-            InputProps={{
-                sx: { borderRadius: 3 },
-            }}
             helperText={intl.formatMessage({
                 id: 'admin.cli_api.refreshToken.dialog.label',
             })}
@@ -29,6 +26,11 @@ function RefreshTokenDescription() {
             sx={{ flexGrow: 1 }}
             value={description}
             variant="outlined"
+            slotProps={{
+                input: {
+                    sx: { borderRadius: 3 },
+                },
+            }}
         />
     );
 }

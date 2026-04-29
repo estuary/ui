@@ -3,7 +3,7 @@ import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 import type { Entity } from 'src/types';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -24,19 +24,21 @@ interface SelectorParams {
     localScope?: boolean;
 }
 
-const storeName = (
+export const useStoreName = (
     entityType: Entity,
     localScope?: boolean
 ): EditorStoreNames => {
-    if (localScope) {
-        return EditorStoreNames.GENERAL;
-    } else if (entityType === 'capture') {
-        return EditorStoreNames.CAPTURE;
-    } else if (entityType === 'materialization') {
-        return EditorStoreNames.MATERIALIZATION;
-    } else {
-        return EditorStoreNames.DERIVATION;
-    }
+    return useMemo(() => {
+        if (localScope) {
+            return EditorStoreNames.GENERAL;
+        } else if (entityType === 'capture') {
+            return EditorStoreNames.CAPTURE;
+        } else if (entityType === 'materialization') {
+            return EditorStoreNames.MATERIALIZATION;
+        } else {
+            return EditorStoreNames.DERIVATION;
+        }
+    }, [entityType, localScope]);
 };
 
 export const useEditorStore_id = (params?: SelectorParams | undefined) => {
@@ -51,7 +53,7 @@ export const useEditorStore_id = (params?: SelectorParams | undefined) => {
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['id']
-    >(storeName(entityType, localScope), (state) => state.id);
+    >(useStoreName(entityType, localScope), (state) => state.id);
 };
 
 export const useEditorStore_setId = (params?: SelectorParams | undefined) => {
@@ -66,7 +68,7 @@ export const useEditorStore_setId = (params?: SelectorParams | undefined) => {
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setId']
-    >(storeName(entityType, localScope), (state) => state.setId);
+    >(useStoreName(entityType, localScope), (state) => state.setId);
 };
 
 export const useEditorStore_persistedDraftId = (
@@ -83,7 +85,7 @@ export const useEditorStore_persistedDraftId = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['persistedDraftId']
-    >(storeName(entityType, localScope), (state) => state.persistedDraftId);
+    >(useStoreName(entityType, localScope), (state) => state.persistedDraftId);
 };
 
 export const useEditorStore_setPersistedDraftId = (
@@ -100,7 +102,10 @@ export const useEditorStore_setPersistedDraftId = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setPersistedDraftId']
-    >(storeName(entityType, localScope), (state) => state.setPersistedDraftId);
+    >(
+        useStoreName(entityType, localScope),
+        (state) => state.setPersistedDraftId
+    );
 };
 
 export const useEditorStore_discoveredDraftId = (
@@ -117,7 +122,7 @@ export const useEditorStore_discoveredDraftId = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['discoveredDraftId']
-    >(storeName(entityType, localScope), (state) => state.discoveredDraftId);
+    >(useStoreName(entityType, localScope), (state) => state.discoveredDraftId);
 };
 
 export const useEditorStore_setDiscoveredDraftId = (
@@ -134,7 +139,10 @@ export const useEditorStore_setDiscoveredDraftId = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setDiscoveredDraftId']
-    >(storeName(entityType, localScope), (state) => state.setDiscoveredDraftId);
+    >(
+        useStoreName(entityType, localScope),
+        (state) => state.setDiscoveredDraftId
+    );
 };
 
 export const useEditorStore_pubId = (params?: SelectorParams | undefined) => {
@@ -149,7 +157,7 @@ export const useEditorStore_pubId = (params?: SelectorParams | undefined) => {
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['pubId']
-    >(storeName(entityType, localScope), (state) => state.pubId);
+    >(useStoreName(entityType, localScope), (state) => state.pubId);
 };
 
 export const useEditorStore_setPubId = (
@@ -166,7 +174,7 @@ export const useEditorStore_setPubId = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setPubId']
-    >(storeName(entityType, localScope), (state) => state.setPubId);
+    >(useStoreName(entityType, localScope), (state) => state.setPubId);
 };
 
 export const useEditorStore_currentCatalog = (
@@ -183,7 +191,7 @@ export const useEditorStore_currentCatalog = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['currentCatalog']
-    >(storeName(entityType, localScope), (state) => state.currentCatalog);
+    >(useStoreName(entityType, localScope), (state) => state.currentCatalog);
 };
 
 export const useEditorStore_catalogName = (
@@ -200,7 +208,7 @@ export const useEditorStore_catalogName = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['catalogName']
-    >(storeName(entityType, localScope), (state) => state.catalogName);
+    >(useStoreName(entityType, localScope), (state) => state.catalogName);
 };
 
 export const useEditorStore_setCatalogName = (
@@ -217,7 +225,7 @@ export const useEditorStore_setCatalogName = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setCatalogName']
-    >(storeName(entityType, localScope), (state) => state.setCatalogName);
+    >(useStoreName(entityType, localScope), (state) => state.setCatalogName);
 };
 
 export const useEditorStore_setCurrentCatalog = (
@@ -234,7 +242,7 @@ export const useEditorStore_setCurrentCatalog = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setCurrentCatalog']
-    >(storeName(entityType, localScope), (state) => state.setCurrentCatalog);
+    >(useStoreName(entityType, localScope), (state) => state.setCurrentCatalog);
 };
 
 export function useEditorStore_specs<
@@ -249,7 +257,7 @@ export function useEditorStore_specs<
     const entityType = useEntityType();
 
     return useZustandStore<EditorStoreState<T>, EditorStoreState<T>['specs']>(
-        storeName(entityType, localScope),
+        useStoreName(entityType, localScope),
         (state) => state.specs
     );
 }
@@ -268,7 +276,7 @@ export function useEditorStore_setSpecs<
     return useZustandStore<
         EditorStoreState<T>,
         EditorStoreState<T>['setSpecs']
-    >(storeName(entityType, localScope), (state) => state.setSpecs);
+    >(useStoreName(entityType, localScope), (state) => state.setSpecs);
 }
 
 export const useEditorStore_serverUpdate = (
@@ -285,7 +293,7 @@ export const useEditorStore_serverUpdate = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['serverUpdate']
-    >(storeName(entityType, localScope), (state) => state.serverUpdate);
+    >(useStoreName(entityType, localScope), (state) => state.serverUpdate);
 };
 
 export const useEditorStore_setServerUpdate = (
@@ -302,7 +310,7 @@ export const useEditorStore_setServerUpdate = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setServerUpdate']
-    >(storeName(entityType, localScope), (state) => state.setServerUpdate);
+    >(useStoreName(entityType, localScope), (state) => state.setServerUpdate);
 };
 
 export const useEditorStore_isSaving = (
@@ -319,7 +327,7 @@ export const useEditorStore_isSaving = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isSaving']
-    >(storeName(entityType, localScope), (state) => state.isSaving);
+    >(useStoreName(entityType, localScope), (state) => state.isSaving);
 };
 
 export const useEditorStore_isEditing = (
@@ -336,7 +344,7 @@ export const useEditorStore_isEditing = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['isEditing']
-    >(storeName(entityType, localScope), (state) => state.isEditing);
+    >(useStoreName(entityType, localScope), (state) => state.isEditing);
 };
 
 export const useEditorStore_statuses = (
@@ -353,7 +361,7 @@ export const useEditorStore_statuses = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['statuses']
-    >(storeName(entityType, localScope), (state) => state.statuses);
+    >(useStoreName(entityType, localScope), (state) => state.statuses);
 };
 
 export const useEditorStore_setStatus = (
@@ -370,7 +378,7 @@ export const useEditorStore_setStatus = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setStatus']
-    >(storeName(entityType, localScope), (state) => state.setStatus);
+    >(useStoreName(entityType, localScope), (state) => state.setStatus);
 };
 
 export const useEditorStore_invalidEditors = (
@@ -387,7 +395,7 @@ export const useEditorStore_invalidEditors = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['invalidEditors']
-    >(storeName(entityType, localScope), (state) => state.invalidEditors);
+    >(useStoreName(entityType, localScope), (state) => state.invalidEditors);
 };
 
 export const useEditorStore_removeStaleStatus = (
@@ -404,7 +412,7 @@ export const useEditorStore_removeStaleStatus = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['removeStaleStatus']
-    >(storeName(entityType, localScope), (state) => state.removeStaleStatus);
+    >(useStoreName(entityType, localScope), (state) => state.removeStaleStatus);
 };
 
 export const useEditorStore_draftInitializationError = (
@@ -422,7 +430,7 @@ export const useEditorStore_draftInitializationError = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['draftInitializationError']
     >(
-        storeName(entityType, localScope),
+        useStoreName(entityType, localScope),
         (state) => state.draftInitializationError
     );
 };
@@ -442,7 +450,7 @@ export const useEditorStore_setDraftInitializationError = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setDraftInitializationError']
     >(
-        storeName(entityType, localScope),
+        useStoreName(entityType, localScope),
         (state) => state.setDraftInitializationError
     );
 };
@@ -461,7 +469,7 @@ export const useEditorStore_queryResponse = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['queryResponse']
-    >(storeName(entityType, localScope), (state) => state.queryResponse);
+    >(useStoreName(entityType, localScope), (state) => state.queryResponse);
 };
 
 export const useEditorStore_setQueryResponse = (
@@ -478,7 +486,7 @@ export const useEditorStore_setQueryResponse = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setQueryResponse']
-    >(storeName(entityType, localScope), (state) => state.setQueryResponse);
+    >(useStoreName(entityType, localScope), (state) => state.setQueryResponse);
 };
 
 export const useEditorStore_queryResponse_draftSpecs = (
@@ -496,7 +504,7 @@ export const useEditorStore_queryResponse_draftSpecs = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['queryResponse']['draftSpecs']
     >(
-        storeName(entityType, localScope),
+        useStoreName(entityType, localScope),
         (state) => state.queryResponse.draftSpecs
     );
 };
@@ -515,7 +523,7 @@ export const useEditorStore_queryResponse_draftSpecs_schemaProp = (
     const entityType = useEntityType();
 
     return useZustandStore<EditorStoreState<DraftSpecQuery>, any>(
-        storeName(entityType, localScope),
+        useStoreName(entityType, localScope),
         useShallow((state) => {
             return bindingIndex > -1
                 ? state.queryResponse.draftSpecs[0]?.spec.bindings[
@@ -541,7 +549,7 @@ export const useEditorStore_queryResponse_isValidating = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['queryResponse']['isValidating']
     >(
-        storeName(entityType, localScope),
+        useStoreName(entityType, localScope),
         useShallow((state) => state.queryResponse.isValidating)
     );
 };
@@ -561,11 +569,12 @@ export const useEditorStore_queryResponse_mutate = (
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['queryResponse']['mutate']
     >(
-        storeName(entityType, localScope),
+        useStoreName(entityType, localScope),
         useShallow((state) => state.queryResponse.mutate)
     );
 };
 
+// TODO - look into this -1 response
 export const useEditorStore_queryResponse_draftedBindingIndex = (
     collection: string | null,
     targetBindingIndex: number
@@ -573,7 +582,7 @@ export const useEditorStore_queryResponse_draftedBindingIndex = (
     const entityType = useEntityType();
 
     return useGlobalZustandStore<EditorStoreState<DraftSpecQuery>, number>(
-        storeName(entityType),
+        useStoreName(entityType),
         useShallow((state) =>
             collection && hasLength(state.queryResponse.draftSpecs)
                 ? getBindingIndex(
@@ -600,7 +609,7 @@ export const useEditorStore_resetState = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['resetState']
-    >(storeName(entityType, localScope), (state) => state.resetState);
+    >(useStoreName(entityType, localScope), (state) => state.resetState);
 };
 
 export const useEditorStore_liveBuiltSpec = (
@@ -617,7 +626,7 @@ export const useEditorStore_liveBuiltSpec = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['liveBuiltSpec']
-    >(storeName(entityType, localScope), (state) => state.liveBuiltSpec);
+    >(useStoreName(entityType, localScope), (state) => state.liveBuiltSpec);
 };
 
 export const useEditorStore_setLiveBuiltSpec = (
@@ -634,7 +643,7 @@ export const useEditorStore_setLiveBuiltSpec = (
     return useZustandStore<
         EditorStoreState<DraftSpecQuery>,
         EditorStoreState<DraftSpecQuery>['setLiveBuiltSpec']
-    >(storeName(entityType, localScope), (state) => state.setLiveBuiltSpec);
+    >(useStoreName(entityType, localScope), (state) => state.setLiveBuiltSpec);
 };
 
 export const useHydrateEditorState = (

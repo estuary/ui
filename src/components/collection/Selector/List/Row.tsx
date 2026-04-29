@@ -26,9 +26,10 @@ function CollectionSelectorRow({
         <>
             <ListItemText
                 primary={collection}
-                primaryTypographyProps={{ ...typographyTruncation }}
+                slotProps={{
+                    primary: { ...typographyTruncation },
+                }}
             />
-
             <IconButton
                 disabled={disabled}
                 size="small"

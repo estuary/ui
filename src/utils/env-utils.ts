@@ -14,18 +14,6 @@ export const defaultDataPlaneSuffix = ((): string => {
     }
 })();
 
-export const getAuthPath = () => {
-    return window.Estuary?.auth_url
-        ? window.Estuary.auth_url
-        : import.meta.env.VITE_AUTH_BASE_URL;
-};
-
-export const getAPIPath = () => {
-    return window.Estuary?.api_endpoint
-        ? window.Estuary.api_endpoint
-        : import.meta.env.VITE_API_BASE_URL;
-};
-
 export const getLoginSettings = () => {
     const showEmail = import.meta.env.VITE_SHOW_EMAIL_LOGIN === ENABLED;
     const showSSO = import.meta.env.VITE_SHOW_SSO === ENABLED;
@@ -168,18 +156,6 @@ export const getCollectionAuthorizationSettings = () => {
     } else {
         throw new Error(
             'Missing endpoint to access data plane information for collections: VITE_COLLECTION_AUTHORIZATION_URL'
-        );
-    }
-};
-
-export const getSupabaseAnonymousKey = () => {
-    const supabaseAnonymousKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-    if (supabaseAnonymousKey) {
-        return { supabaseAnonymousKey };
-    } else {
-        throw new Error(
-            'Missing Supabase anonymous key: VITE_SUPABASE_ANON_KEY'
         );
     }
 };

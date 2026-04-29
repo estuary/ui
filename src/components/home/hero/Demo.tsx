@@ -18,15 +18,14 @@ function HeroDemo() {
                 <DemoStep step={3} />
             </Grid>
 
-            <Grid container>
+            <Grid container size="grow">
                 <DemoButton step={1} type="captures" />
                 <DemoButton step={2} type="collections" />
                 <DemoButton step={3} type="materializations" />
             </Grid>
 
             <Grid
-                item
-                xs={12}
+                size={{ xs: 12 }}
                 sx={{
                     display: 'flex',
                     alignContent: 'center',

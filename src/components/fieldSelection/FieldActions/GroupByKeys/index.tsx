@@ -20,7 +20,7 @@ import ExplicitKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/
 import GroupByKeysForm from 'src/components/fieldSelection/FieldActions/GroupByKeys/Form';
 import ImplicitKey from 'src/components/fieldSelection/FieldActions/GroupByKeys/ImplicitKey';
 import SaveButton from 'src/components/fieldSelection/FieldActions/GroupByKeys/SaveButton';
-import { useBindingStore } from 'src/stores/Binding/Store';
+import { useBinding_groupBy } from 'src/stores/Binding/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 const TITLE_ID = 'configure-groupBy-keys-title';
@@ -28,13 +28,7 @@ const TITLE_ID = 'configure-groupBy-keys-title';
 const GroupByKeys = ({ bindingUUID, loading, selections }: BaseButtonProps) => {
     const intl = useIntl();
 
-    const groupBy = useBindingStore(
-        (state) =>
-            state.selections?.[bindingUUID].groupBy.value ?? {
-                explicit: [],
-                implicit: [],
-            }
-    );
+    const groupBy = useBinding_groupBy(bindingUUID);
 
     const formActive = useFormStateStore_isActive();
 

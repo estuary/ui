@@ -40,10 +40,6 @@ export const useEndpointConfigStore_setCustomErrors = () => {
     return useEndpointConfigStore((state) => state.setCustomErrors);
 };
 
-export const useEndpointConfigStore_setEndpointSchema = () => {
-    return useEndpointConfigStore((state) => state.setEndpointSchema);
-};
-
 export const useEndpointConfigStore_encryptedEndpointConfig_data = () => {
     return useEndpointConfigStore(
         (state) => state.encryptedEndpointConfig.data
@@ -74,24 +70,8 @@ export const useEndpointConfig_hydrated = () => {
     return useEndpointConfigStore((state) => state.hydrated);
 };
 
-export const useEndpointConfig_setHydrated = () => {
-    return useEndpointConfigStore((state) => state.setHydrated);
-};
-
 export const useEndpointConfig_hydrationErrorsExist = () => {
     return useEndpointConfigStore((state) => state.hydrationErrorsExist);
-};
-
-export const useEndpointConfig_setHydrationErrorsExist = () => {
-    return useEndpointConfigStore((state) => state.setHydrationErrorsExist);
-};
-
-export const useEndpointConfig_hydrateState = () => {
-    return useEndpointConfigStore((state) => state.hydrateState);
-};
-
-export const useEndpointConfig_setActive = () => {
-    return useEndpointConfigStore((state) => state.setActive);
 };
 
 export const useEndpointConfig_serverUpdateRequired = () => {
@@ -104,8 +84,4 @@ export const useEndpointConfig_setServerUpdateRequired = () => {
 
 export const useEndpointConfig_endpointCanBeEmpty = () => {
     return useEndpointConfigStore((state) => state.endpointCanBeEmpty);
-};
-
-export const useEndpointConfig_setEndpointCanBeEmpty = () => {
-    return useEndpointConfigStore((state) => state.setEndpointCanBeEmpty);
 };

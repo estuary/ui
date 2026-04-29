@@ -146,7 +146,7 @@ const OAuthproviderRenderer = ({
             };
 
             logRocketEvent(CustomEvents.OAUTH_SUCCESS_HANDLER, {
-                discriminatorProperty,
+                discriminatorProperty: discriminatorProperty ?? 'null',
                 discriminatorExists: Boolean(
                     updatedCredentials[discriminatorProperty]
                 ),

@@ -64,7 +64,6 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                     </AlertBox>
                 </Box>
             ) : null}
-
             <Box>
                 <form
                     onSubmit={handlers.submit}
@@ -85,14 +84,16 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
                         helperText={intl.formatMessage({
                             id: 'login.companyEmail.description',
                         })}
-                        inputProps={{
-                            type: 'email',
-                        }}
                         label={intl.formatMessage({
                             id: 'login.companyEmail.label',
                         })}
                         name="email"
                         required
+                        slotProps={{
+                            htmlInput: {
+                                type: 'email',
+                            },
+                        }}
                     />
 
                     <Button

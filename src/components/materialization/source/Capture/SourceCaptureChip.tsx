@@ -14,9 +14,7 @@ function SourceCaptureChip() {
 
     const { updateDraft } = useSourceCapture();
 
-    const [sourceCapture] = useSourceCaptureStore((state) => [
-        state.sourceCapture,
-    ]);
+    const sourceCapture = useSourceCaptureStore((state) => state.sourceCapture);
 
     const saving = useSourceCaptureStore((state) => state.saving);
 

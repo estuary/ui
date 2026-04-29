@@ -43,7 +43,9 @@ export function RedeemInviteLink({ grantToken }: Props) {
                 try {
                     await mutate_userInfoSummary();
                 } catch (err) {
-                    logRocketEvent('Invite:RefreshFailed', { error: err });
+                    logRocketEvent('Invite:RefreshFailed', {
+                        error: String(err),
+                    });
                 }
             }
         })();
