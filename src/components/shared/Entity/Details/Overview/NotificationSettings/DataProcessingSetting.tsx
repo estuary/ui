@@ -186,16 +186,18 @@ function DataProcessingSetting({
                         }: AutocompleteRenderInputParams) => (
                             <TextField
                                 {...params}
-                                InputProps={{
-                                    ...InputProps,
-                                    sx: { borderRadius: 3 },
-                                }}
                                 label={intl.formatMessage({
                                     id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label',
                                 })}
                                 error={errored}
                                 size="small"
                                 variant="outlined"
+                                slotProps={{
+                                    input: {
+                                        ...InputProps,
+                                        sx: { borderRadius: 3 },
+                                    },
+                                }}
                             />
                         )}
                         sx={{ width: 150 }}

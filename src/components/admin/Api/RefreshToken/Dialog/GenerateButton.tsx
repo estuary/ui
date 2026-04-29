@@ -1,11 +1,12 @@
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
+import { Button } from '@mui/material';
+
 import { isEmpty } from 'lodash';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { createRefreshToken } from 'src/api/tokens';
 import { useRefreshTokenStore } from 'src/components/admin/Api/RefreshToken/Store/create';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
@@ -75,15 +76,17 @@ function GenerateButton() {
     };
 
     return (
-        <SafeLoadingButton
+        <Button
             disabled={!hasLength(description) || saving}
             loading={saving}
             onClick={onClick}
             sx={{ flexGrow: 1 }}
             variant="contained"
         >
-            <FormattedMessage id="admin.cli_api.refreshToken.cta.generate" />
-        </SafeLoadingButton>
+            {intl.formatMessage({
+                id: 'admin.cli_api.refreshToken.cta.generate',
+            })}
+        </Button>
     );
 }
 

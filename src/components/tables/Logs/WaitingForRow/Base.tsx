@@ -7,6 +7,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { WarningCircle } from 'iconoir-react';
 import { debounce } from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -49,11 +51,13 @@ function WaitingForRowBase({
     const messageKey = `ops.logsTable.waitingForLogs.${fetchOption}`;
 
     const [lastFetchFailed, fetchMoreLogs, fetchingMore] =
-        useJournalDataLogsStore((state) => [
-            state.lastFetchFailed,
-            state.fetchMoreLogs,
-            state.fetchingMore,
-        ]);
+        useJournalDataLogsStore(
+            useShallow((state) => [
+                state.lastFetchFailed,
+                state.fetchMoreLogs,
+                state.fetchingMore,
+            ])
+        );
 
     // Kinda hacky - but checking this flag here keeps the effect trigger
     //  as it is flipped back and forth

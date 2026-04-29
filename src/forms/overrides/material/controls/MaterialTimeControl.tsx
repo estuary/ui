@@ -27,7 +27,7 @@ import type { ControlProps, RankedTester } from '@jsonforms/core';
 
 import { useMemo, useState } from 'react';
 
-import { Hidden, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 
 import { isTimeControl, rankWith } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
@@ -80,29 +80,31 @@ export const CustomMaterialTimeControl = (props: ControlProps) => {
         return handleChange(path, formattedValue);
     };
 
+    if (!visible) {
+        return null;
+    }
+
     return (
-        <Hidden xsUp={!visible}>
-            <Stack
-                sx={{
-                    alignItems: 'top',
-                }}
-                direction="row"
-            >
-                <CustomMaterialInputControl
-                    inputEvents={events}
-                    input={CustomMuiInputText}
-                    {...props}
-                />
-                <TimePickerCTA
-                    enabled={enabled}
-                    label={label}
-                    buttonRef={buttonRef}
-                    state={state}
-                    value={timePickerValue}
-                    onChange={onChange}
-                />
-            </Stack>
-        </Hidden>
+        <Stack
+            sx={{
+                alignItems: 'top',
+            }}
+            direction="row"
+        >
+            <CustomMaterialInputControl
+                inputEvents={events}
+                input={CustomMuiInputText}
+                {...props}
+            />
+            <TimePickerCTA
+                enabled={enabled}
+                label={label}
+                buttonRef={buttonRef}
+                state={state}
+                value={timePickerValue}
+                onChange={onChange}
+            />
+        </Stack>
     );
 };
 

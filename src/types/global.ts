@@ -1,6 +1,8 @@
 import type { Environment } from 'monaco-editor';
 
 declare global {
+    var IS_REACT_ACT_ENVIRONMENT: boolean;
+
     interface Window {
         Estuary: {
             api_endpoint: string | null;

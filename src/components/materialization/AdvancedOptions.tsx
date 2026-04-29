@@ -27,7 +27,7 @@ export default function AdvancedOptions() {
             <WrapperWithHeader
                 forceOpen={onIncompatibleSchemaChangeErrorExists}
                 header={
-                    <Typography variant="formSectionHeader">
+                    <Typography component="span" variant="formSectionHeader">
                         {intl.formatMessage({
                             id: 'workflows.advancedSettings.title',
                         })}

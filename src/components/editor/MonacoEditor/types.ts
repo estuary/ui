@@ -3,7 +3,7 @@ import type { Entity } from 'src/types';
 // Only allowing scopes that have been tested to ensure they work
 export type AllowedScopes = 'key' | 'schema' | 'readSchema';
 
-type EditorChangeHandler = (
+export type EditorChangeHandler = (
     newVal: any,
     path: string,
     specType: Entity,

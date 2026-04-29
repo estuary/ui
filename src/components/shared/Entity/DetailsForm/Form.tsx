@@ -4,11 +4,12 @@ import { Box, Stack, Typography } from '@mui/material';
 
 import { JsonForms } from '@jsonforms/react';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useEditorStore_isSaving } from 'src/components/editor/Store/hooks';
 import AlertBox from 'src/components/shared/AlertBox';
 import useFormFields from 'src/components/shared/Entity/DetailsForm/useFormFields';
+import { jsonFormsPadding } from 'src/context/Theme';
 import { CONNECTOR_IMAGE_SCOPE } from 'src/forms/renderers/Connectors';
 import { jsonFormsDefaults } from 'src/services/jsonforms/defaults';
 import { showValidation } from 'src/services/jsonforms/shared';
@@ -58,25 +59,27 @@ function DetailsFormForm({ entityType, readOnly }: Props) {
             ) : null}
 
             <Typography sx={{ mb: 2 }}>
-                <FormattedMessage id={`${messagePrefix}.instructions`} />
+                {intl.formatMessage({ id: `${messagePrefix}.instructions` })}
             </Typography>
 
             <Stack direction="row" spacing={2}>
                 {schema.properties[CONNECTOR_IMAGE_SCOPE].oneOf.length > 0 ? (
-                    <JsonForms
-                        {...jsonFormsDefaults}
-                        schema={schema}
-                        uischema={uiSchema}
-                        data={formData}
-                        readonly={readOnly ?? (isSaving || isActive)}
-                        validationMode={showValidation(displayValidation)}
-                        onChange={updateDetails}
-                    />
+                    <Box sx={{ ...jsonFormsPadding, flexGrow: 1 }}>
+                        <JsonForms
+                            {...jsonFormsDefaults}
+                            schema={schema}
+                            uischema={uiSchema}
+                            data={formData}
+                            readonly={readOnly ?? (isSaving || isActive)}
+                            validationMode={showValidation(displayValidation)}
+                            onChange={updateDetails}
+                        />
+                    </Box>
                 ) : (
                     <AlertBox severity="warning" short>
-                        <FormattedMessage
-                            id={`${messagePrefix}.missingConnectors`}
-                        />
+                        {intl.formatMessage({
+                            id: `${messagePrefix}.missingConnectors`,
+                        })}
                     </AlertBox>
                 )}
             </Stack>

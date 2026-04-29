@@ -141,7 +141,7 @@ function EntityEdit({
             rediscoveryRequired,
             endpointConfigServerUpdateRequired,
             resourceConfigServerUpdateRequired,
-            newValue,
+            newValue: newValue ?? 'null',
             component: 'EntityEdit',
         });
 

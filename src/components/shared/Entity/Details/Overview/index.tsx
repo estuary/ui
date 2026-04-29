@@ -38,11 +38,11 @@ function Overview({ name }: DetailsOverviewProps) {
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={12} md={8} lg={9}>
+            <Grid size={{ xs: 12, md: 8, lg: 9 }}>
                 <Usage catalogName={entityName} />
             </Grid>
 
-            <Grid item xs={12} md={4} lg={3}>
+            <Grid size={{ xs: 12, md: 4, lg: 3 }}>
                 <DetailsSection
                     entityName={entityName}
                     latestLiveSpec={latestLiveSpec}
@@ -52,7 +52,7 @@ function Overview({ name }: DetailsOverviewProps) {
 
             {/* The grid item below exists when no children are present which creates 16 pixels of vertical padding. */}
             {!isCollection ? (
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <TaskEndpoints
                         reactorAddress={latestLiveSpec?.reactor_address}
                         taskName={catalogName}
@@ -61,7 +61,7 @@ function Overview({ name }: DetailsOverviewProps) {
             ) : null}
 
             {hasLength(taskTypes) ? (
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <ShardInformation
                         taskTypes={taskTypes}
                         taskName={entityName}
@@ -70,7 +70,7 @@ function Overview({ name }: DetailsOverviewProps) {
             ) : null}
 
             {isCollection && entityName ? (
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <JournalHydrator
                         catalogName={entityName}
                         isCollection={isCollection}

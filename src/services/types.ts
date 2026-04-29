@@ -1,5 +1,3 @@
-import type { PostgrestResponse } from '@supabase/postgrest-js';
-
 export type KnownEvents =
     | 'AlertSubscription'
     | 'Auth'
@@ -86,10 +84,3 @@ export enum CustomEvents {
 }
 
 export type CommonStatuses = 'success' | 'failed' | 'exception' | 'skipped';
-
-export type SuccessResponse<T> = Pick<
-    PostgrestResponse<T>,
-    'status' | 'statusText' | 'count'
-> & {
-    data: T[];
-};

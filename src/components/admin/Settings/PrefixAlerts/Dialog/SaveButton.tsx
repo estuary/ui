@@ -2,13 +2,15 @@ import type { DialogActionProps } from 'src/components/admin/Settings/PrefixAler
 
 import { useMemo } from 'react';
 
-import { FormattedMessage } from 'react-intl';
+import { Button } from '@mui/material';
+
+import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 
 const SaveButton = ({ closeDialog }: DialogActionProps) => {
+    const intl = useIntl();
     const { loading, onClick } = useModifyAlertSubscription(closeDialog);
 
     const errorsExist = useAlertSubscriptionsStore(
@@ -31,15 +33,15 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
     );
 
     return (
-        <SafeLoadingButton
+        <Button
             variant="contained"
             size="small"
             disabled={disabled}
             loading={loading}
             onClick={onClick}
         >
-            <FormattedMessage id="cta.save" />
-        </SafeLoadingButton>
+            {intl.formatMessage({ id: 'cta.save' })}
+        </Button>
     );
 };
 

@@ -34,7 +34,7 @@ function DerivationCatalogHeader() {
                 />
             ) : null}
 
-            <Typography variant="subtitle1">
+            <Typography component="span" variant="subtitle1">
                 <FormattedMessage id="newTransform.config.header" />
             </Typography>
         </>

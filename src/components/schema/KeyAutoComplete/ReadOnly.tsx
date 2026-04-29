@@ -34,7 +34,7 @@ function ReadOnly({ value }: Props) {
 
     if (!skimProjectionResponseDoneProcessing) {
         return (
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
                 <SchemaKeyHeader />
 
                 <Stack direction="row" spacing={1}>
@@ -47,7 +47,7 @@ function ReadOnly({ value }: Props) {
     }
 
     return (
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
             <SchemaKeyHeader />
 
             {valueEmpty ? (

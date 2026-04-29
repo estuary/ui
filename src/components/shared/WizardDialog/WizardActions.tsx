@@ -2,7 +2,6 @@ import { Button, DialogActions } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { useWizard } from 'src/components/shared/WizardDialog/context';
 
 // Renders Back/Next/Save buttons and error text for the current wizard step.
@@ -37,7 +36,7 @@ export function WizardActions() {
                 </Button>
             ) : null}
 
-            <SafeLoadingButton
+            <Button
                 variant="contained"
                 size="small"
                 onClick={advance}
@@ -49,7 +48,7 @@ export function WizardActions() {
                     (isLastStep
                         ? intl.formatMessage({ id: 'cta.save' })
                         : intl.formatMessage({ id: 'cta.next' }))}
-            </SafeLoadingButton>
+            </Button>
         </DialogActions>
     );
 }

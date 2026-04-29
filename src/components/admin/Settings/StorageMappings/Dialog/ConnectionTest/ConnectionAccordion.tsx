@@ -59,6 +59,7 @@ function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
 
     return (
         <Stack
+            component="span"
             direction="row"
             spacing={1}
             alignItems="center"
@@ -142,6 +143,7 @@ export function ConnectionAccordion({
                 }}
             >
                 <Stack
+                    component="span"
                     direction="row"
                     alignItems="center"
                     justifyContent="space-between"
@@ -152,7 +154,12 @@ export function ConnectionAccordion({
                         overflow: 'hidden',
                     }}
                 >
-                    <Typography fontWeight={600} noWrap sx={{ minWidth: 0 }}>
+                    <Typography
+                        component="span"
+                        fontWeight={600}
+                        noWrap
+                        sx={{ minWidth: 0 }}
+                    >
                         {toPresentableName(connection.dataPlane)} &rarr;{' '}
                         {getStoreId(connection.store)}
                     </Typography>

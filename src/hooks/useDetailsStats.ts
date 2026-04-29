@@ -18,7 +18,7 @@ import { hasLength } from 'src/utils/misc-utils';
 function useDetailsStats(catalogName: string) {
     const entityType = useEntityType();
 
-    const [range] = useDetailsUsageStore((store) => [store.range]);
+    const range = useDetailsUsageStore((state) => state.range);
     const { relativeUnit, timeUnit } = LUXON_GRAIN_SETTINGS[range.grain];
 
     const { data, error, isValidating } = useQuery(

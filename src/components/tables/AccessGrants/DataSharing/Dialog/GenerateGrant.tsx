@@ -140,7 +140,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
             spacing={2}
             sx={{ mb: 5, pt: 1, alignItems: 'flex-start' }}
         >
-            <Grid item xs={12} md={4} sx={{ display: 'flex' }}>
+            <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex' }}>
                 <PrefixedName
                     allowBlankName
                     allowEndSlash
@@ -153,26 +153,26 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     validateOnLoad
                 />
             </Grid>
-
-            <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
+            <Grid size={{ xs: 4, md: 3 }} sx={{ display: 'flex' }}>
                 <TextField
                     variant="outlined"
                     size="small"
                     label={intl.formatMessage({
                         id: 'admin.prefix.issueGrant.label.sharedWith',
                     })}
-                    InputProps={{
-                        sx: { borderRadius: 3 },
-                    }}
                     error={subjectMissing || subjectInvalid}
                     onChange={handlers.evaluateSubjectRole}
                     sx={{ flexGrow: 1 }}
                     required
                     value={subjectRole}
+                    slotProps={{
+                        input: {
+                            sx: { borderRadius: 3 },
+                        },
+                    }}
                 />
             </Grid>
-
-            <Grid item xs={4} md={2}>
+            <Grid size={{ xs: 4, md: 2 }}>
                 <AutocompletedField
                     label={intl.formatMessage({
                         id: 'admin.users.prefixInvitation.label.capability',
@@ -183,8 +183,7 @@ function GenerateGrant({ serverError, setServerError, setOpen }: Props) {
                     required
                 />
             </Grid>
-
-            <Grid item xs={4} md={3} sx={{ display: 'flex' }}>
+            <Grid size={{ xs: 4, md: 3 }} sx={{ display: 'flex' }}>
                 <Button
                     disabled={formInvalid}
                     onClick={handlers.generateRoleGrant}

@@ -45,6 +45,7 @@ export enum Annotations {
     deltaUpdates = 'x-delta-updates', // SourceCapture - Shows 'deltaUpdates' optional setting
     targetSchema = 'x-schema-name', // SourceCapture - Shows 'targetSchema' optional setting
     discriminator = 'discriminator', // Used to know what field in a complex oneOf should be unique (ex: parser)
+    iamAzureScope = 'x-iam-azure-scope', //
 }
 
 export enum CustomTypes {

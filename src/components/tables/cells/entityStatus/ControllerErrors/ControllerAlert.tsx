@@ -45,7 +45,7 @@ export default function ControllerAlert({
                     />
                 }
             >
-                <Typography>{error.scope}</Typography>
+                <Typography component="span">{error.scope}</Typography>
             </AccordionSummary>
 
             <AccordionDetails>

@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Button } from '@mui/material';
 
 import { useStore } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 
 import { FormattedMessage } from 'react-intl';
 
@@ -24,11 +25,9 @@ import { hasLength } from 'src/utils/misc-utils';
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);
 
-    const [selected] = useStore(
+    const selected = useStore(
         invariableStores['Entity-Selector-Table'],
-        (state) => {
-            return [state.selected];
-        }
+        (state) => state.selected
     );
 
     const evaluateTrialCollections = useTrialCollections();
@@ -42,10 +41,9 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         sourceCaptureTargetSchemaSupported,
     } = useBinding_sourceCaptureFlags();
 
-    const [deltaUpdates, targetSchema] = useSourceCaptureStore((state) => [
-        state.deltaUpdates,
-        state.targetSchema,
-    ]);
+    const [deltaUpdates, targetSchema] = useSourceCaptureStore(
+        useShallow((state) => [state.deltaUpdates, state.targetSchema])
+    );
 
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
     const discoveredCollections = useBinding_discoveredCollections();

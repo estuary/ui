@@ -16,6 +16,7 @@ import { createEditorStore } from 'src/components/editor/Store/create';
 import AdvancedOptions from 'src/components/materialization/AdvancedOptions';
 import SourceCapture from 'src/components/materialization/source/Capture';
 import Backfill from 'src/components/shared/Entity/Backfill';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'src/context/Theme';
@@ -130,7 +131,12 @@ function BindingsMultiEditor({
                     />
                 }
                 details={
-                    <BindingsEditor itemType={itemType} readOnly={readOnly} />
+                    <ErrorBoundryWrapper>
+                        <BindingsEditor
+                            itemType={itemType}
+                            readOnly={readOnly}
+                        />
+                    </ErrorBoundryWrapper>
                 }
                 backgroundColor={
                     alternativeReflexContainerBackground[theme.palette.mode]

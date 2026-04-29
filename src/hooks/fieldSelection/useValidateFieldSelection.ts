@@ -75,7 +75,7 @@ const evaluateFieldSelection = async (input: FieldSelectionInput_Skim) => {
     } catch (error: unknown) {
         logRocketEvent('evaluate_field_selection', {
             failed: true,
-            error,
+            error: String(error),
         });
     }
 
@@ -103,9 +103,7 @@ export default function useValidateFieldSelection() {
 
     const draftSpecsRows = useEditorStore_queryResponse_draftSpecs();
     const liveBuiltSpec = useEditorStore_liveBuiltSpec();
-    const collections = useWorkflowStore((state) => {
-        return state.collections;
-    });
+    const collections = useWorkflowStore((state) => state.collections);
     const formStatus = useFormStateStore_status();
 
     const fieldsRecommended = useSourceCaptureStore(
@@ -182,7 +180,7 @@ export default function useValidateFieldSelection() {
             } catch (error: unknown) {
                 logRocketEvent('evaluate_field_selection', {
                     failed: true,
-                    error,
+                    error: String(error),
                 });
             }
 
@@ -202,14 +200,14 @@ export default function useValidateFieldSelection() {
     );
 
     useEffect(() => {
+        const targetBindingUUIDs = Object.keys(targetBindingContext);
+
         if (
             entityType !== 'materialization' ||
-            targetBindingContext.length === 0
+            targetBindingUUIDs.length === 0
         ) {
             return;
         }
-
-        const targetBindingUUIDs = targetBindingContext.map(({ uuid }) => uuid);
 
         const draftSpecsRow =
             draftSpecsRows.length !== 0 ? draftSpecsRows[0] : undefined;
@@ -249,9 +247,7 @@ export default function useValidateFieldSelection() {
                 // This is counting how many attempts have _happened_ so starts
                 //  at 0 and not 1
                 const validationAttempts =
-                    targetBindingContext.find(
-                        (context) => context.uuid === uuid
-                    )?.validationAttempts ??
+                    targetBindingContext[uuid] ??
                     MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS;
 
                 trackValidationAttempt(uuid);
@@ -357,25 +353,23 @@ export default function useValidateFieldSelection() {
                             );
                         } else {
                             logRocketEvent(CustomEvents.FIELD_SELECTION, {
-                                validationError: response,
+                                validationError: String(response),
                             });
                         }
                     });
                 },
                 (error) => {
                     logRocketEvent(CustomEvents.FIELD_SELECTION, {
-                        validationError: error,
+                        validationError: String(error),
                     });
                 }
             )
             .finally(() => {
-                const rejectedRequests = pendingRequests.filter(({ uuid }) =>
-                    targetBindingContext.find(
-                        (context) =>
-                            context.uuid === uuid &&
-                            context.validationAttempts >=
-                                MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
-                    )
+                const rejectedRequests = pendingRequests.filter(
+                    ({ uuid }) =>
+                        (targetBindingContext[uuid] ??
+                            MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS) >=
+                        MAX_FIELD_SELECTION_VALIDATION_ATTEMPTS
                 );
 
                 pendingRequests = differenceBy(

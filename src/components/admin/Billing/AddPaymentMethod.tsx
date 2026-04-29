@@ -1,11 +1,11 @@
 import type { Stripe } from '@stripe/stripe-js';
 
-import { Box, Dialog, DialogTitle } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Plus } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { setTenantPrimaryPaymentMethod } from 'src/api/billing';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
@@ -13,7 +13,6 @@ import {
     INTENT_SECRET_ERROR,
     INTENT_SECRET_LOADING,
 } from 'src/components/admin/Billing/shared';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { fireGtmEvent } from 'src/services/gtm';
 
 interface Props {
@@ -33,6 +32,7 @@ function AddPaymentMethod({
     stripePromise,
     tenant,
 }: Props) {
+    const intl = useIntl();
     const postHog = usePostHog();
 
     const enable =
@@ -42,7 +42,7 @@ function AddPaymentMethod({
     return (
         <>
             <Box>
-                <SafeLoadingButton
+                <Button
                     loadingPosition="start"
                     disabled={!enable}
                     loading={setupIntentSecret === INTENT_SECRET_LOADING}
@@ -51,8 +51,10 @@ function AddPaymentMethod({
                     sx={{ whiteSpace: 'nowrap' }}
                     variant="contained"
                 >
-                    <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
-                </SafeLoadingButton>
+                    {intl.formatMessage({
+                        id: 'admin.billing.paymentMethods.cta.addPaymentMethod',
+                    })}
+                </Button>
             </Box>
 
             <Dialog
@@ -64,7 +66,9 @@ function AddPaymentMethod({
                 data-private
             >
                 <DialogTitle>
-                    <FormattedMessage id="admin.billing.addPaymentMethods.title" />
+                    {intl.formatMessage({
+                        id: 'admin.billing.addPaymentMethods.title',
+                    })}
                 </DialogTitle>
                 {enable ? (
                     <Elements

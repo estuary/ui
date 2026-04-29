@@ -524,44 +524,6 @@ const getTrialCollections = async (
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
-const liveSpecsExtRelatedColumns = ['catalog_name', 'reads_from', 'id'];
-export const liveSpecsExtRelatedQuery = liveSpecsExtRelatedColumns.join(',');
-export interface LiveSpecsExt_Related {
-    catalog_name: string;
-    reads_from: string[];
-    id: string;
-}
-// const getLiveSpecsRelatedToMaterialization = async (
-//     collectionNames: string[]
-// ) => {
-//     const limiter = pLimit(3);
-//     const promises = [];
-//     let index = 0;
-
-//     // TODO (retry) promise generator
-//     const promiseGenerator = (idx: number) => {
-//         return supabaseClient
-//             .from(TABLES.LIVE_SPECS_EXT)
-//             .select(liveSpecsExtRelatedQuery)
-//             .eq('spec_type', 'materialization')
-//             .overlaps(
-//                 'reads_from',
-//                 collectionNames.slice(idx, idx + CHUNK_SIZE)
-//             )
-//             .returns<LiveSpecsExt_Related[]>();
-//     };
-
-//     while (index < collectionNames.length) {
-//         const prom = promiseGenerator(index);
-//         promises.push(limiter(() => prom));
-//         index = index + CHUNK_SIZE;
-//     }
-
-//     const response = await Promise.all(promises);
-//     const errors = response.filter((r) => r.error);
-//     return errors[0] ?? response[0];
-// };
-
 export {
     getLatestLiveSpecByName,
     getLiveSpecs_captures,

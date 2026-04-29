@@ -1,7 +1,12 @@
 import type { DebouncedFunc } from 'lodash';
 import type { RefObject } from 'react';
 
-import { TextField, useMediaQuery, useTheme } from '@mui/material';
+import {
+    inputBaseClasses,
+    TextField,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 
 interface Props {
     label: string;
@@ -30,8 +35,8 @@ function EntityTableFilter({
                 onFilterChange(event.target.value);
             }}
             sx={{
-                'width': belowMd ? 'auto' : 350,
-                '& .MuiInputBase-root': { borderRadius: 3 },
+                width: belowMd ? 'auto' : 350,
+                [`& .${inputBaseClasses.root}`]: { borderRadius: 3 },
             }}
         />
     );

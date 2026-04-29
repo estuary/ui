@@ -4,7 +4,6 @@ import type {
     PostgrestTransformBuilder,
 } from '@supabase/postgrest-js';
 import type { ProtocolStatus } from 'data-plane-gateway/types/gen/broker/protocol/broker';
-import type { ReactElement, ReactNode } from 'react';
 import type { BaseGrant, Grant_UserExt } from 'src/types';
 
 import { isEmpty, isObject } from 'lodash';
@@ -145,15 +144,6 @@ export const incrementInterval = (
     max: number | undefined = INTERVAL_MAX
 ) => (interval < max ? interval + INTERVAL_INCREMENT : max);
 
-export const arrayToMatrix = (arr: any[], width: number) =>
-    arr.reduce(
-        (rows, key, index) =>
-            (index % width == 0
-                ? rows.push([key])
-                : rows[rows.length - 1].push(key)) && rows,
-        []
-    );
-
 export const unescapeString = (stringVal: string) => {
     return stringVal.replaceAll(/\\"/g, '"');
 };
@@ -263,17 +253,14 @@ export const configCanBeEmpty = (schema: any) => {
     return Boolean(!schema.properties || isEmpty(schema.properties));
 };
 
-export const isReactElement = (value: ReactNode): value is ReactElement =>
-    isObject(value) && 'props' in value;
-
-export const isPostgrestFetcher = <T = any>(
+export const isPostgrestFetcher = (
     value:
-        | PostgrestFilterBuilder<any, any, T, any, any>
-        | PostgrestTransformBuilder<any, any, T, any, any>
+        | PostgrestFilterBuilder<any, any, any, any, any>
+        | PostgrestTransformBuilder<any, any, any, any, any>
         | Function
 ): value is
-    | PostgrestFilterBuilder<any, any, T, any, any>
-    | PostgrestTransformBuilder<any, any, T, any, any> =>
+    | PostgrestFilterBuilder<any, any, any, any, any>
+    | PostgrestTransformBuilder<any, any, any, any, any> =>
     isObject(value) && 'throwOnError' in value;
 
 export const isGrant_UserExt = (

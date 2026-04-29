@@ -1,4 +1,5 @@
 import type { MaterializationQueryWithStats } from 'src/api/liveSpecsExt';
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 import type { StatsResponse } from 'src/stores/Tables/Store';
 
 import { TableRow, useTheme } from '@mui/material';
@@ -13,10 +14,11 @@ import Bytes from 'src/components/tables/cells/stats/Bytes';
 import Docs from 'src/components/tables/cells/stats/Docs';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import useRowsWithStatsState from 'src/components/tables/hooks/useRowsWithStatsState';
-import { useEntityType } from 'src/context/EntityContext';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'src/stores/names';
+
+const MATERIALIZATION_STATUS_TYPES: ShardEntityTypes[] = ['materialization'];
 
 interface RowsProps {
     data: MaterializationQueryWithStats[];
@@ -41,8 +43,6 @@ function Row({
     showEntityStatus,
 }: RowProps) {
     const theme = useTheme();
-    const entityType = useEntityType();
-
     const { generatePath } = useDetailsNavigator(
         authenticatedRoutes.materializations.details.overview.fullPath
     );
@@ -66,7 +66,7 @@ function Row({
                 name={row.catalog_name}
                 showEntityStatus={showEntityStatus}
                 detailsLink={generatePath(row)}
-                entityStatusTypes={[entityType]}
+                entityStatusTypes={MATERIALIZATION_STATUS_TYPES}
             />
 
             <Connector

@@ -37,7 +37,7 @@ function CatalogEditor({ messageId }: Props) {
         return (
             <WrapperWithHeader
                 header={
-                    <Typography variant="subtitle1">
+                    <Typography component="span" variant="subtitle1">
                         <FormattedMessage id="entityCreate.catalogEditor.heading" />
                     </Typography>
                 }
