@@ -52,7 +52,7 @@
         "@dnd-kit/utilities": "^3.2.1",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
-        "@estuary/flow-web": "file:__inline-deps__/estuary-flow-web-20260302-150718.tgz",
+        "@estuary/flow-web": "file:__inline-deps__/estuary-flow-web-20260429-110235.tgz",
         "@jsonforms/core": "^3.7.0",
         "@jsonforms/material-renderers": "^3.7.0",
         "@jsonforms/react": "^3.7.0",
