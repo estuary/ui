@@ -296,6 +296,40 @@ export const Workflows: Record<string, string> = {
     'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
+    // Destination Layout dialog (new targetNaming model)
+    'destinationLayout.dialog.title': `Destination Layout`,
+    'destinationLayout.dialog.message': `Controls how collection names are mapped to destination tables and schemas when bindings are added.`,
+    'destinationLayout.dialog.subtitle': `How should source schemas map to your destination? This applies to newly added bindings. You can override individual bindings later.`,
+    'destinationLayout.dialog.schema.label': `Schema`,
+    'destinationLayout.dialog.schema.useTemplate': `Use prefixed/suffixed schema name`,
+    'destinationLayout.dialog.schema.useFixed': `Use fixed schema name`,
+    'destinationLayout.dialog.table.label': `Table`,
+    'destinationLayout.dialog.table.useTemplate': `Use prefixed/suffixed table name`,
+    'destinationLayout.dialog.table.useFixed': `Use fixed table name`,
+    'destinationLayout.dialog.field.prefix.label': `Prefix`,
+    'destinationLayout.dialog.field.suffix.label': `Suffix`,
+    'destinationLayout.dialog.field.onlyFixed': `Only fixed is supported with this option`,
+    'destinationLayout.dialog.field.onlyTemplate': `Only template is supported with this option`,
+    'destinationLayout.dialog.matchSourceStructure.customize': `Add a prefix or suffix to table or schema names`,
+    'destinationLayout.dialog.skipCommonDefaults.label': `Skip common defaults (public, dbo...)`,
+    'destinationLayout.dialog.cta.addBindings': `Add Collections`,
+    'destinationLayout.dialog.cta.sourceCapture': `Select Source Capture`,
+    'destinationLayout.selected.none': `no layout set`,
+
+    'destinationLayout.strategy.matchSourceStructure.label': `Match source structure`,
+    'destinationLayout.strategy.matchSourceStructure.description': `Preserve the original table and schema names. Tables keep their original names.`,
+
+    'destinationLayout.strategy.singleSchema.label': `All tables in one schema`,
+    'destinationLayout.strategy.singleSchema.description': `Place all your tables in one schema. Only the table name is used.`,
+
+    'destinationLayout.strategy.prefixTableNames.label': `Prefix table names`,
+    'destinationLayout.strategy.prefixTableNames.description': `The schema name is added as a table name prefix.`,
+
+    'destinationLayout.example.collection': `acmeCo/mySchema/orders`,
+    'destinationLayout.example.collection.public': `acmeCo/public/orders`,
+    'destinationLayout.example.schema.label': `Schema:`,
+    'destinationLayout.example.table.label': `Table:`,
+
     // Schema Mode
     'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the non-default second-to-last part of the collection name.`,
     'schemaMode.input.label': `Default Naming Convention`,
@@ -307,8 +341,6 @@ export const Workflows: Record<string, string> = {
     'fieldsRecommended.cta.selectAlgorithm': `Default Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
-    'schemaMode.data.table': `Table:`,
-    'schemaMode.data.schema': `Schema:`,
     'schemaMode.example.base': `acmeco/{tablePrefix}/orders`,
     'schemaMode.example.tablePrefix': `anvils`,
     'schemaMode.example.public.tablePrefix': `public`,

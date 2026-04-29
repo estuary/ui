@@ -6,6 +6,7 @@ import DeltaUpdatesUpdateWrapper from 'src/components/materialization/source/del
 import FieldsRecommendedUpdateWrapper from 'src/components/materialization/source/fieldsRecommended/UpdateWrapper';
 import TargetSchemaUpdateWrapper from 'src/components/materialization/source/targetSchema/UpdateWrapper';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
+import { useTargetNaming_model } from 'src/stores/TargetNaming/hooks';
 
 function SourceConfiguration() {
     const intl = useIntl();
@@ -14,6 +15,8 @@ function SourceConfiguration() {
         sourceCaptureDeltaUpdatesSupported,
         sourceCaptureTargetSchemaSupported,
     } = useBinding_sourceCaptureFlags();
+
+    const targetNamingModel = useTargetNaming_model();
 
     return (
         <Stack spacing={1} sx={{ pb: 2, maxWidth: '50%' }}>
@@ -37,7 +40,7 @@ function SourceConfiguration() {
                     <DeltaUpdatesUpdateWrapper />
                 ) : null}
 
-                {sourceCaptureTargetSchemaSupported ? (
+                {targetNamingModel === 'sourceTargetNaming' ? (
                     <TargetSchemaUpdateWrapper />
                 ) : null}
 

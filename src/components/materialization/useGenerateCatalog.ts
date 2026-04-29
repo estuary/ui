@@ -50,6 +50,7 @@ import {
 } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore_sourceCaptureDefinition } from 'src/stores/SourceCapture/hooks';
+import { useTargetNamingStore } from 'src/stores/TargetNaming/Store';
 import { encryptEndpointConfig } from 'src/utils/sops-utils';
 import {
     generateTaskSpec,
@@ -129,6 +130,10 @@ function useGenerateCatalog() {
     // Fetch the entire definition for source capture so we have all the settings
     const sourceCaptureDefinition =
         useSourceCaptureStore_sourceCaptureDefinition();
+
+    const targetNamingStrategy = useTargetNamingStore(
+        (state) => state.targetNamingStrategy
+    );
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -242,6 +247,7 @@ function useGenerateCatalog() {
                         sourceCaptureDefinition,
                         specOnIncompatibleSchemaChange,
                         defaultFieldsRecommended: !isEdit,
+                        targetNamingStrategy,
                     }
                 );
 
@@ -371,6 +377,7 @@ function useGenerateCatalog() {
             setPreviousEndpointConfig,
             sourceCaptureDefinition,
             specOnIncompatibleSchemaChange,
+            targetNamingStrategy,
             updateFormStatus,
         ]
     );

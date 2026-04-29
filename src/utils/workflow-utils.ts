@@ -13,6 +13,7 @@ import type {
     EntityWithCreateWorkflow,
     Schema,
     SourceCaptureDef,
+    TargetNamingStrategy,
 } from 'src/types';
 import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
 
@@ -127,6 +128,7 @@ export const generateTaskSpec = (
         sourceCaptureDefinition: SourceCaptureDef | null;
         specOnIncompatibleSchemaChange?: string;
         defaultFieldsRecommended?: boolean;
+        targetNamingStrategy?: TargetNamingStrategy | null;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)
@@ -273,6 +275,10 @@ export const generateTaskSpec = (
             draftSpec,
             options.specOnIncompatibleSchemaChange
         );
+
+        if (options.targetNamingStrategy) {
+            draftSpec.targetNaming = options.targetNamingStrategy;
+        }
 
         if (options.defaultFieldsRecommended) {
             const targetSourceProperty = getSourceCapturePropKey(draftSpec);

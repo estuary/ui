@@ -1,13 +1,16 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import OnIncompatibleSchemaChange from 'src/components/materialization/OnIncompatibleSchemaChange';
+import TargetNamingUpdateWrapper from 'src/components/materialization/targetNaming/UpdateWrapper';
 import Backfill from 'src/components/shared/Entity/Backfill';
 import WrapperWithHeader from 'src/components/shared/Entity/WrapperWithHeader';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
+import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
+import { useTargetNaming_model } from 'src/stores/TargetNaming/hooks';
 
 export default function AdvancedOptions() {
     const intl = useIntl();
@@ -17,6 +20,10 @@ export default function AdvancedOptions() {
     const onIncompatibleSchemaChangeErrorExists = useBindingStore(
         (state) => state.onIncompatibleSchemaChangeErrorExists.spec
     );
+
+    const targetNamingModel = useTargetNaming_model();
+    const { sourceCaptureTargetSchemaSupported } =
+        useBinding_sourceCaptureFlags();
 
     if (entityType !== 'materialization') {
         return null;
@@ -36,11 +43,20 @@ export default function AdvancedOptions() {
                 hideBorder
                 mountClosed
             >
-                <ErrorBoundryWrapper>
-                    <OnIncompatibleSchemaChange />
-                </ErrorBoundryWrapper>
+                <Stack spacing={2}>
+                    <ErrorBoundryWrapper>
+                        <OnIncompatibleSchemaChange />
+                    </ErrorBoundryWrapper>
 
-                <Backfill />
+                    {sourceCaptureTargetSchemaSupported &&
+                    targetNamingModel === 'rootTargetNaming' ? (
+                        <ErrorBoundryWrapper>
+                            <TargetNamingUpdateWrapper />
+                        </ErrorBoundryWrapper>
+                    ) : null}
+
+                    <Backfill />
+                </Stack>
             </WrapperWithHeader>
         </Box>
     );

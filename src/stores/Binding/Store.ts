@@ -318,8 +318,6 @@ const getInitialState = (
             if (error) {
                 get().setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
-                get().addEmptyBindings(data, rehydrating);
-
                 return Promise.resolve(data);
             }
         } else if (materializationRehydrating) {
@@ -470,7 +468,12 @@ const getInitialState = (
         };
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit, sourceCapture) => {
+    prefillResourceConfigs: (
+        targetCollections,
+        disableOmit,
+        sourceCapture,
+        rootTargetNaming
+    ) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
@@ -514,7 +517,8 @@ const getInitialState = (
                         prefilledData = generateMaterializationResourceSpec(
                             sourceCapture,
                             state.resourceConfigPointers,
-                            collectionName
+                            collectionName,
+                            rootTargetNaming
                         );
                     }
 
