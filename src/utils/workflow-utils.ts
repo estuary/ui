@@ -2,10 +2,7 @@ import type { ConnectorConfig } from 'deps/flow/flow';
 import type { DraftSpecsExtQuery_ByCatalogName } from 'src/api/draftSpecs';
 import type { DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { CallSupabaseResponse } from 'src/services/supabase';
-import type {
-    FullSource,
-    FullSourceDictionary,
-} from 'src/stores/Binding/slices/TimeTravel';
+import type { FullSourceDictionary } from 'src/stores/Binding/slices/TimeTravel';
 import type {
     Bindings,
     ResourceConfigDictionary,
@@ -48,17 +45,6 @@ export const getSourceOrTarget = (binding: any) => {
         : Object.hasOwn(binding ?? {}, 'target')
           ? binding.target
           : binding;
-};
-
-export const getBindingAsFullSource = (binding: any) => {
-    const response = getSourceOrTarget(binding);
-    if (typeof response === 'string') {
-        return {
-            name: response,
-        };
-    }
-
-    return getSourceOrTarget(binding);
 };
 
 export const getCollectionNameProp = (entityType: Entity) => {
@@ -115,45 +101,6 @@ export const getDisableProps = (disable: boolean | undefined) => {
 //      only here because if we set something to null and then check for nulls
 //      we might end up overwritting a value a user specifically wants a null for.
 export const REMOVE_DURING_GENERATION = undefined;
-export const getFullSource = (
-    fullSource: FullSource | string | undefined,
-    filterOutName?: boolean,
-    filterOutRemovable?: boolean
-): {
-    fullSource?: FullSource;
-} => {
-    if (typeof fullSource === 'string' || fullSource === undefined) {
-        return {};
-    }
-
-    const response = {
-        fullSource: { ...fullSource },
-    };
-
-    if (filterOutName) {
-        delete response.fullSource.name;
-    }
-
-    if (filterOutRemovable) {
-        response.fullSource = (
-            Object.entries(response.fullSource) as [
-                keyof typeof response.fullSource,
-                any,
-            ][]
-        ).reduce(
-            (filtered, [key, val]) => {
-                if (val !== REMOVE_DURING_GENERATION) {
-                    filtered[key] = val;
-                }
-
-                return filtered;
-            },
-            {} as typeof response.fullSource
-        );
-    }
-
-    return response;
-};
 
 export const getFullSourceSetting = (
     fullSource: FullSourceDictionary | null,
@@ -166,8 +113,6 @@ export const getFullSourceSetting = (
         ? { ...fullSourceConfig, name: collectionName }
         : collectionName;
 };
-
-export const updateFullSource = () => {};
 
 // TODO (typing): Narrow the return type for this function.
 export const generateTaskSpec = (

@@ -1,6 +1,13 @@
 import type { EntityTableHeaderProps } from 'src/components/tables/EntityTable/types';
 
-import { TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
+import {
+    TableCell,
+    tableCellClasses,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+    tableSortLabelClasses,
+} from '@mui/material';
 
 import { ArrowDown } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
@@ -41,7 +48,7 @@ function EntityTableHeader({
                     height,
                     position: 'relative',
                     zIndex: zIndexIncrement,
-                    ['& .MuiTableCell-root']: {
+                    [`& .${tableCellClasses.root}`]: {
                         background: disableBackground
                             ? 'transparent'
                             : undefined,
@@ -141,7 +148,7 @@ function EntityTableHeader({
                                             : undefined
                                     }
                                     sx={{
-                                        '& .MuiTableSortLabel-icon': {
+                                        [`& .${tableSortLabelClasses.icon}`]: {
                                             fontSize: 10,
                                         },
                                     }}

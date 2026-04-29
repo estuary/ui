@@ -4,7 +4,7 @@ import type { MuiTabProps } from 'src/types';
 
 import { useMemo } from 'react';
 
-import { Box, Button, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -35,7 +35,6 @@ function BindingsTabs({ selectedTab, setSelectedTab }: BindingTabsProps) {
                     label={intl.formatMessage({
                         id: tabProp.label,
                     })}
-                    component={Button}
                     onClick={() => setSelectedTab(index)}
                     sx={{
                         '&:hover': {

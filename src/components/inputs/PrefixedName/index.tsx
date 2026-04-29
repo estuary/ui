@@ -3,12 +3,16 @@ import type { PrefixedNameProps } from 'src/components/inputs/PrefixedName/types
 import { useMemo } from 'react';
 
 import {
+    autocompleteClasses,
     FormControl,
     FormHelperText,
+    formHelperTextClasses,
     Input,
     InputAdornment,
+    inputAdornmentClasses,
     InputLabel,
     OutlinedInput,
+    outlinedInputClasses,
     TextField,
 } from '@mui/material';
 
@@ -159,9 +163,10 @@ function PrefixedName({
                 fullWidth
                 variant={variantString}
                 sx={{
-                    '& .MuiFormHelperText-root.Mui-error': {
-                        whiteSpace: 'break-spaces',
-                    },
+                    [`& .${formHelperTextClasses.root}.${formHelperTextClasses.error}`]:
+                        {
+                            whiteSpace: 'break-spaces',
+                        },
                 }}
             >
                 <PrefixSelector
@@ -191,9 +196,10 @@ function PrefixedName({
             fullWidth
             variant={variantString}
             sx={{
-                '& .MuiFormHelperText-root.Mui-error': {
-                    whiteSpace: 'break-spaces',
-                },
+                [`& .${formHelperTextClasses.root}.${formHelperTextClasses.error}`]:
+                    {
+                        whiteSpace: 'break-spaces',
+                    },
             }}
         >
             {label ? (
@@ -218,17 +224,18 @@ function PrefixedName({
                 value={name}
                 size={size ?? 'small'}
                 sx={{
-                    'borderRadius': 3,
+                    borderRadius: 3,
                     // If we allow a blankName we can give the `prefix` portion more room as the
                     //  name input is of less importance. Mainly for GenerateInvitation
-                    [`& .MuiInputAdornment-root,
-                      & .MuiInputAdornment-root .MuiAutocomplete-root `]: {
-                        width: allowBlankName ? '100%' : undefined,
-                    },
+                    [`& .${inputAdornmentClasses.root}, & .${inputAdornmentClasses.root} .${autocompleteClasses.root}`]:
+                        {
+                            width: allowBlankName ? '100%' : undefined,
+                        },
                     // Gross - but prevents the name input from showing a border while inside another border
-                    '& div > div > fieldset.MuiOutlinedInput-notchedOutline': {
-                        border: 'none',
-                    },
+                    [`& div > div > fieldset.${outlinedInputClasses.notchedOutline}`]:
+                        {
+                            border: 'none',
+                        },
                 }}
                 onChange={(event) => {
                     handlers.setName(event.target.value);

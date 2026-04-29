@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 
-import { TextField } from '@mui/material';
+import { inputBaseClasses, TextField } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
@@ -47,8 +47,8 @@ export default function FieldFilter({ disabled }: Props) {
             onChange={filterTable}
             size="small"
             sx={{
-                'width': 300,
-                '& .MuiInputBase-root': {
+                width: 300,
+                [`& .${inputBaseClasses.root}`]: {
                     borderRadius: 3,
                 },
             }}

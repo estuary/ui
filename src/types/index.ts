@@ -5,8 +5,6 @@ import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import type { LogLevels } from 'src/components/tables/Logs/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
-export type fake = 'fake';
-
 export enum MessagePrefixes {
     CAPTURE_CREATE = 'captureCreate',
     CAPTURE_EDIT = 'captureEdit',
@@ -34,44 +32,9 @@ export interface Schema {
     [key: string]: any;
 }
 
-export type StoreSelector<T> = Record<string, (state: T) => any>;
-
-export interface BaseHook<T> {
-    idle?: boolean;
-    loading: boolean;
-    error: string | null;
-    data: T;
-}
-
-export type BaseData = {
-    id: string;
-    type: string;
-    attributes: any;
-    links?: any;
-};
-
-export type BaseError = {
-    detail: string;
-    title: string;
-};
-
-export type BaseLinks = {
-    self: string;
-};
-
-export interface BaseResponse {
-    data: BaseData | BaseData[];
-    errors?: BaseError[];
-    links?: any;
-}
-
 export interface BaseComponentProps {
     children?: ReactNode;
 }
-
-export type InternationalizedString =
-    | { 'en-US': string }
-    | { [key: string]: string };
 
 export interface JobStatus {
     type: string;
@@ -133,19 +96,6 @@ export interface StorageMappingsQuery {
 
 // TODO (marketplace) we may expand these in the future
 export type TenantPaymentProviders = 'external' | 'stripe';
-
-export interface Tenants {
-    // collections_quota: number;
-    created_at: string;
-    detail: string;
-    id: string;
-    payment_provider: TenantPaymentProviders;
-    tasks_quota: number;
-    tenant: string;
-    trial_start: string;
-    updated_at: string;
-    gcm_account_id?: string | null;
-}
 
 export interface TenantPaymentDetails {
     gcm_account_id: string | null;
@@ -210,14 +160,6 @@ export interface Directive {
     token: string;
 }
 
-export interface UserGrants {
-    capability: string;
-    object_role: string;
-    user_id: string;
-    id: string;
-    detail: string | null;
-}
-
 export interface UserGrantsTenantGuard {
     id: string;
     // FILTERING TYPES HACK
@@ -236,11 +178,6 @@ export interface BaseGrant {
     capability: Capability;
     object_role: string;
     subject_role: string;
-}
-
-export interface Grants extends BaseGrant {
-    user_id: string;
-    id: string;
 }
 
 export interface Grant_UserExt extends BaseGrant {
@@ -278,11 +215,6 @@ export interface DefaultAjvResponse {
 export interface MarketPlaceVerifyResponse {
     data: any;
     error: any;
-}
-
-export enum CONNECTOR_TYPES {
-    CAPTURE = 'capture',
-    MATERIALIZATION = 'materialization',
 }
 
 export type Entity = 'capture' | 'materialization' | 'collection';
@@ -348,21 +280,7 @@ export interface ViewLogs_Line {
     token: string;
 }
 
-export type ParsedStream =
-    | 'build'
-    | 'persist'
-    | 'temp-data-plane'
-    | 'setup'
-    | 'test'
-    | 'cleanup'
-    | 'activate';
-
 export type FieldExistence = 'MAY' | 'MUST' | 'CANNOT' | 'IMPLICIT';
-
-export interface AutoDiscoverySettings {
-    addNewBindings: boolean;
-    evolveIncompatibleCollections: boolean;
-}
 
 export interface AlertSubscription {
     id: string;

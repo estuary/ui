@@ -2,12 +2,10 @@ import type { AllowedScopes } from 'src/components/editor/MonacoEditor/types';
 import type { Schema } from 'src/types';
 import type {
     BuiltProjection,
-    CollectionSchema,
     CollectionSchemaAnnotations,
     RedactionStrategy_Projection,
     RedactionStrategy_Schema,
 } from 'src/types/schemaModels';
-import type { WithRequiredProperty } from 'src/types/utils';
 import type {
     BasicCollectionDef,
     SkimProjectionResponse,
@@ -254,11 +252,6 @@ export {
     moveUpdatedSchemaToReadSchema,
     reduceBuiltProjections,
 };
-
-export const isCollectionSchemaWithProperties = (
-    value: WithRequiredProperty<CollectionSchema, 'properties'>
-): value is WithRequiredProperty<CollectionSchema, 'properties'> =>
-    'properties' in value;
 
 export const parsePointerEscapeCharacters = (value: string) =>
     value.replace(/~1/g, '/').replace(/~0/g, '~');

@@ -9,8 +9,6 @@ export const TOTAL_CARD_HEIGHT = 300;
 // Grid item height - 72 = graph canvas height
 export const CARD_AREA_HEIGHT = TOTAL_CARD_HEIGHT - 72;
 
-export const BYTES_PER_GB = 1073741824;
-
 export enum FREE_GB_BY_TIER {
     FREE = 20,
     PERSONAL = 10,

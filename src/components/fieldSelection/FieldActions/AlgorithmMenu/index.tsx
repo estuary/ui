@@ -3,7 +3,7 @@ import type { SelectionAlgorithm } from 'src/stores/Binding/slices/FieldSelectio
 
 import { useEffect, useState } from 'react';
 
-import { Button, Divider, Menu } from '@mui/material';
+import { Button, Divider, Menu, menuClasses } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -102,7 +102,7 @@ const AlgorithmMenu = ({
                         borderRadius: 3,
                     },
                 }}
-                sx={{ '& .MuiMenu-paper': { px: 2, borderRadius: 3 } }}
+                sx={{ [`& .${menuClasses.paper}`]: { px: 2, borderRadius: 3 } }}
             >
                 <MenuOptions
                     selectionAlgorithm={selectionAlgorithm}

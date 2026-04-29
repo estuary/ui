@@ -3,14 +3,6 @@ import type { BillingTableState } from 'src/stores/Tables/Billing/types';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { SelectTableStoreNames } from 'src/stores/names';
 
-// Selector Hooks
-export const useBillingTable_hydrateContinuously = () => {
-    return useZustandStore<
-        BillingTableState,
-        BillingTableState['hydrateContinuously']
-    >(SelectTableStoreNames.BILLING, (state) => state.hydrateContinuously);
-};
-
 export const useBillingTable_setHydrated = () => {
     return useZustandStore<BillingTableState, BillingTableState['setHydrated']>(
         SelectTableStoreNames.BILLING,

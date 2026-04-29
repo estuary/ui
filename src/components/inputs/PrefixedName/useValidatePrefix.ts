@@ -42,10 +42,10 @@ function useValidatePrefix({
     const singleOption = objectRoles.length === 1;
 
     // Fetch for the default value
-    // const [selectedTenant, setSelectedTenant] = useTenantStore((state) => [
+    // const [selectedTenant, setSelectedTenant] = useTenantStore(useShallow((state) => [
     //     state.selectedTenant,
     //     state.setSelectedTenant,
-    // ]);
+    // ]));
 
     // Local State for editing
     const [errors, setErrors] = useState<string | null>(null);

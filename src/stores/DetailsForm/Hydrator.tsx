@@ -1,5 +1,7 @@
 import type { BaseComponentProps } from 'src/types';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useEffectOnce } from 'react-use';
 
 import { useEntityType } from 'src/context/EntityContext';
@@ -17,7 +19,10 @@ export const DetailsFormHydrator = ({ children }: BaseComponentProps) => {
     const setHydrated = useDetailsFormStore((state) => state.setHydrated);
     const setActive = useDetailsFormStore((state) => state.setActive);
     const [setHydrationErrorsExist, dataPlaneOptions] = useDetailsFormStore(
-        (state) => [state.setHydrationErrorsExist, state.dataPlaneOptions]
+        useShallow((state) => [
+            state.setHydrationErrorsExist,
+            state.dataPlaneOptions,
+        ])
     );
 
     const hydrateState = useDetailsFormStore((state) => state.hydrateState);

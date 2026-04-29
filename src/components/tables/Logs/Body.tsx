@@ -6,6 +6,8 @@ import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { TableBody } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { isEmpty } from 'lodash';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { VariableSizeList } from 'react-window';
@@ -39,12 +41,14 @@ function LogsTableBody({ outerRef, tableScroller, virtualRows }: Props) {
     const expandedHeights = useRef<Map<string, number>>(new Map());
 
     const [hydrated, documents, networkFailed, noData] =
-        useJournalDataLogsStore((state) => [
-            state.hydrate,
-            state.documents,
-            state.networkFailed,
-            state.noData,
-        ]);
+        useJournalDataLogsStore(
+            useShallow((state) => [
+                state.hydrate,
+                state.documents,
+                state.networkFailed,
+                state.noData,
+            ])
+        );
 
     // Keeping this outside the store so we don't have to filter them out everytime
     //  we need to add new docs to the list

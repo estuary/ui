@@ -33,12 +33,6 @@ export const createPublication = (
     return insertSupabase(TABLES.PUBLICATIONS, data);
 };
 
-export interface PublicationJobStatus {
-    job_status: { type: string };
-    logs_token: string;
-    id: string;
-}
-
 export const getPublicationByIdQuery = (pubId: string) => {
     return supabaseClient
         .from(TABLES.PUBLICATIONS)

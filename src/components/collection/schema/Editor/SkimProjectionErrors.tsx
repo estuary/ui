@@ -49,8 +49,7 @@ function SkimProjectionErrors() {
 
     return (
         <Grid
-            item
-            xs={12}
+            size={{ xs: 12 }}
             sx={{
                 display: show ? undefined : 'none',
                 height: show ? undefined : 0,

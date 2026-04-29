@@ -73,7 +73,7 @@ function SchemaEvolution({ onFailure }: Props) {
     const mutate_advancedEditor = useEditorStore_queryResponse_mutate();
 
     const jobFailed = useCallback(
-        (error) => {
+        (error: any) => {
             setFormState({
                 error,
                 status: FormStatus.FAILED,
