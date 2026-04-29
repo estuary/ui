@@ -19,6 +19,7 @@ import {
     hasTableTemplate,
     parseSchemaTemplate,
     parseTableTemplate,
+    SCHEMA_TEMPLATE_STRING,
 } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import { TemplateInput } from 'src/components/materialization/targetNaming/TemplateInput';
@@ -52,8 +53,7 @@ export function TargetNamingFormContent({
     const [showMatchNaming, setShowMatchNaming] = useState(
         initialStrategy?.strategy === 'matchSourceStructure' &&
             (hasSchemaTemplate(initialStrategy) ||
-                (hasTableTemplate(initialStrategy) &&
-                    initialStrategy.tableTemplate !== '{{table}}'))
+                hasTableTemplate(initialStrategy))
     );
 
     const [schemaMode, setSchemaMode] = useState<'fixed' | 'template'>(
@@ -71,7 +71,7 @@ export function TargetNamingFormContent({
 
     const schemaTemplate =
         schemaMode === 'template'
-            ? `${schemaPrefix}{{schema}}${schemaSuffix}`
+            ? `${schemaPrefix}${SCHEMA_TEMPLATE_STRING}${schemaSuffix}`
             : undefined;
 
     const [tableMode, setTableMode] = useState<'fixed' | 'template'>(
@@ -149,22 +149,36 @@ export function TargetNamingFormContent({
         if (strategyKey === 'matchSourceStructure') {
             strategy = {
                 strategy: 'matchSourceStructure',
-                schemaTemplate: showMatchNaming ? schemaTemplate : '{{schema}}',
-                tableTemplate: showMatchNaming ? tableTemplate : '{{template}}',
             };
+
+            if (showMatchNaming) {
+                if (schemaTemplate) {
+                    strategy.schemaTemplate = schemaTemplate;
+                }
+
+                if (tableTemplate) {
+                    strategy.tableTemplate = tableTemplate;
+                }
+            }
         } else if (strategyKey === 'singleSchema') {
             strategy = {
                 strategy: 'singleSchema',
                 schema: schema.trim(),
-                tableTemplate,
             };
+
+            if (tableTemplate) {
+                strategy.tableTemplate = tableTemplate;
+            }
         } else {
             strategy = {
                 strategy: 'prefixTableNames',
                 schema: schema.trim(),
                 skipCommonDefaults,
-                tableTemplate,
             };
+
+            if (tableTemplate) {
+                strategy.tableTemplate = tableTemplate;
+            }
         }
         onChange(strategy, isValid);
         // onChange identity is intentionally excluded — callers should stabilise it

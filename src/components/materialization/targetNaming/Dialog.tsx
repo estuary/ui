@@ -28,8 +28,8 @@ export default function TargetNamingDialog({
 
     const strategyRef = useRef<TargetNamingStrategy>({
         strategy: 'matchSourceStructure',
-        schemaTemplate: '{{schema}}',
-        tableTemplate: '{{template}}',
+        // schemaTemplate: '{{schema}}',
+        // tableTemplate: '{{template}}',
     });
     const [canConfirm, setCanConfirm] = useState(true);
 

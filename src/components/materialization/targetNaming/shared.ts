@@ -1,6 +1,9 @@
 import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
 import type { TargetNamingStrategy } from 'src/types';
 
+export const SCHEMA_TEMPLATE_STRING = '{{schema}}';
+export const TABLE_TEMPLATE_STRING = '{{table}}';
+
 export function hasSchemaTemplate(
     s: TargetNamingStrategy | null | undefined
 ): s is Extract<TargetNamingStrategy, { schemaTemplate?: string }> & {
@@ -10,7 +13,8 @@ export function hasSchemaTemplate(
         !!s &&
         'schemaTemplate' in s &&
         typeof s.schemaTemplate === 'string' &&
-        s.schemaTemplate.length > 0
+        s.schemaTemplate.length > 0 &&
+        s.schemaTemplate !== SCHEMA_TEMPLATE_STRING
     );
 }
 
@@ -21,7 +25,8 @@ export function hasTableTemplate(
         !!s &&
         'tableTemplate' in s &&
         typeof s.tableTemplate === 'string' &&
-        s.tableTemplate.length > 0
+        s.tableTemplate.length > 0 &&
+        s.tableTemplate !== TABLE_TEMPLATE_STRING
     );
 }
 
@@ -29,7 +34,7 @@ export function parseSchemaTemplate(template: string): {
     prefix: string;
     suffix: string;
 } {
-    const parts = template.split('{{schema}}');
+    const parts = template.split(SCHEMA_TEMPLATE_STRING);
     return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
 }
 
@@ -37,7 +42,7 @@ export function parseTableTemplate(template: string): {
     prefix: string;
     suffix: string;
 } {
-    const parts = template.split('{{table}}');
+    const parts = template.split(TABLE_TEMPLATE_STRING);
     return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
 }
 
@@ -53,11 +58,13 @@ export function buildExample(
 ): { schema: string; table: string; tablePrefix: string; sourceName?: string } {
     const resolveSchema = (fallback: string) =>
         schemaTemplate
-            ? schemaTemplate.replace('{{schema}}', srcSchema)
+            ? schemaTemplate.replace(SCHEMA_TEMPLATE_STRING, srcSchema)
             : fallback || '_';
 
     const resolveTable = (fallback: string) =>
-        tableTemplate ? tableTemplate.replace('{{table}}', fallback) : fallback;
+        tableTemplate
+            ? tableTemplate.replace(TABLE_TEMPLATE_STRING, fallback)
+            : fallback;
 
     switch (strategyKey) {
         case 'matchSourceStructure':
