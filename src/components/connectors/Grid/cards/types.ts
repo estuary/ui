@@ -8,7 +8,7 @@ export interface CardProps {
     clickHandler?: () => void;
     CTA?: ReactNode;
     docsUrl?: string;
-    entityType?: string;
+    entityType?: string | null;
     externalLink?: TileProps['externalLink'];
     recommended?: boolean;
 }

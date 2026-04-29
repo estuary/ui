@@ -8,11 +8,7 @@ import { useMutateDraftSpec } from 'src/components/shared/Entity/MutateDraftSpec
 import { entityHeaderButtonSx } from 'src/context/Theme';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
-interface Props {
-    disabled: boolean;
-}
-
-function MaterializeGenerateButton({ disabled }: Props) {
+function MaterializeGenerateButton() {
     const intl = useIntl();
     const generateCatalog = useGenerateCatalog();
     const isSaving = useEditorStore_isSaving();
@@ -24,7 +20,7 @@ function MaterializeGenerateButton({ disabled }: Props) {
             onClick={() => {
                 void generateCatalog(mutateDraftSpecs);
             }}
-            disabled={disabled || isSaving || formActive}
+            disabled={isSaving || formActive}
             sx={entityHeaderButtonSx}
         >
             {intl.formatMessage({ id: 'cta.generateCatalog.materialization' })}

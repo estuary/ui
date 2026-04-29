@@ -17,18 +17,13 @@ import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {
     entityType: Entity;
-    disabled: boolean;
     createWorkflowMetadata?: {
         initiateDiscovery: boolean;
         setInitiateDiscovery: Dispatch<SetStateAction<boolean>>;
     };
 }
 
-function CaptureGenerateButton({
-    entityType,
-    disabled,
-    createWorkflowMetadata,
-}: Props) {
+function CaptureGenerateButton({ entityType, createWorkflowMetadata }: Props) {
     const isEdit = useEntityWorkflow_Editing();
     const rediscoveryRequired = useBinding_rediscoveryRequired();
 
@@ -84,7 +79,7 @@ function CaptureGenerateButton({
 
                 void generateCatalog();
             }}
-            disabled={disabled || isSaving || formActive}
+            disabled={isSaving || formActive}
             sx={entityHeaderButtonSx}
         >
             <FormattedMessage id="cta.generateCatalog.capture" />

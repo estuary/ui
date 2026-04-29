@@ -2,6 +2,7 @@ export type KnownEvents =
     | 'AlertSubscription'
     | 'Auth'
     | 'Confirmation'
+    | 'Connectors'
     | 'DataPlaneGateway'
     | 'Data_Flow_Reset'
     | 'EndpointConfig'
@@ -31,8 +32,6 @@ export enum CustomEvents {
     CAPTURE_TEST = 'Capture_Test',
     COLLECTION_CREATE = 'Collection_Create',
     COLLECTION_SCHEMA = 'CollectionSchema',
-    CONNECTOR_VERSION_MISSING = 'Connector_Version:Missing',
-    CONNECTOR_VERSION_UNSUPPORTED = 'Connector_Version:Unsupported',
     DATA_PLANE_SELECTOR = 'Data_Plane_Selector',
     DATE_TIME_PICKER_CHANGE = 'Date_Time_Picker:Change',
     DIRECTIVE = 'Directive',

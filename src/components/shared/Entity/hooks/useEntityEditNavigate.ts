@@ -11,7 +11,7 @@ import useSearchParamAppend from 'src/hooks/searchParams/useSearchParamAppend';
 import { getPathWithParams } from 'src/utils/misc-utils';
 
 interface BaseSearchParams {
-    [GlobalSearchParams.CONNECTOR_ID]: string;
+    [GlobalSearchParams.CONNECTOR_IMAGE_PATH]: string;
     [GlobalSearchParams.LIVE_SPEC_ID]: string;
     [GlobalSearchParams.LAST_PUB_ID]: string;
 }

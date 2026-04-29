@@ -2,6 +2,7 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useEffect, useRef } from 'react';
 
+import { useConnectorTag } from 'src/context/ConnectorTag';
 import { useEntityType } from 'src/context/EntityContext';
 import {
     useEntityWorkflow,
@@ -16,7 +17,6 @@ import {
     useBinding_setHydrated,
     useBinding_setHydrationErrorsExist,
 } from 'src/stores/Binding/hooks';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 export const BindingHydrator = ({ children }: BaseComponentProps) => {
@@ -30,9 +30,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
 
     const getTrialPrefixes = useTrialPrefixes();
 
-    const connectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
-    );
+    const connectorTag = useConnectorTag();
 
     const hydrated = useBinding_hydrated();
     const setHydrated = useBinding_setHydrated();
@@ -45,10 +43,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     );
 
     useEffect(() => {
-        if (
-            (workflow && connectorTagId.length > 0) ||
-            workflow === 'collection_create'
-        ) {
+        if ((workflow && connectorTag) || workflow === 'collection_create') {
             setActive(true);
 
             // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
@@ -57,7 +52,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
             hydrateState(
                 editWorkflow,
                 entityType,
-                connectorTagId,
+                connectorTag,
                 getTrialPrefixes,
                 rehydrating.current
             )
@@ -89,7 +84,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 });
         }
     }, [
-        connectorTagId,
+        connectorTag,
         editWorkflow,
         entityType,
         getTrialPrefixes,
