@@ -1,14 +1,18 @@
-import type { BaseComponentProps, SourceCaptureDef, TargetNamingStrategy } from 'src/types';
+import type {
+    BaseComponentProps,
+    SourceCaptureDef,
+    TargetNamingStrategy,
+} from 'src/types';
 
 import { useEffect, useRef } from 'react';
 
+import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { useEntityType } from 'src/context/EntityContext';
 import {
     useEntityWorkflow,
     useEntityWorkflow_Editing,
 } from 'src/context/Workflow';
-import { useConfirmationModalContext } from 'src/context/Confirmation';
-import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
@@ -56,7 +60,11 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     const { handleConfirm } = useTargetNaming();
     const { updateDraft } = useSourceCapture();
 
-    const callbacksRef = useRef({ confirmationContext, handleConfirm, updateDraft });
+    const callbacksRef = useRef({
+        confirmationContext,
+        handleConfirm,
+        updateDraft,
+    });
     callbacksRef.current = { confirmationContext, handleConfirm, updateDraft };
 
     useEffect(() => {
@@ -111,8 +119,11 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                             targetSchemaSupported &&
                             allCollections.length > 0
                         ) {
-                            const { confirmationContext: ctx, handleConfirm: confirm, updateDraft: writeDraft } =
-                                callbacksRef.current;
+                            const {
+                                confirmationContext: ctx,
+                                handleConfirm: confirm,
+                                updateDraft: writeDraft,
+                            } = callbacksRef.current;
 
                             let pendingStrategy: TargetNamingStrategy = {
                                 strategy: 'matchSourceStructure',
@@ -139,10 +150,11 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                             );
 
                             if (confirmed) {
-                                const sourceCaptureDef: SourceCaptureDef | undefined =
-                                    captureName
-                                        ? { capture: captureName }
-                                        : undefined;
+                                const sourceCaptureDef:
+                                    | SourceCaptureDef
+                                    | undefined = captureName
+                                    ? { capture: captureName }
+                                    : undefined;
 
                                 await confirm(pendingStrategy, () => {
                                     useBindingStore
@@ -164,7 +176,10 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                             // connectors without root target naming support.
                             useBindingStore
                                 .getState()
-                                .addEmptyBindings(response, rehydrating.current);
+                                .addEmptyBindings(
+                                    response,
+                                    rehydrating.current
+                                );
                             if (captureName && !editWorkflow) {
                                 setPrefilledCapture(captureName);
                             }

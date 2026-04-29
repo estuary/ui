@@ -139,7 +139,9 @@ export function TargetNamingFormContent({
         skipCommonDefaults,
         'public',
         srcTable,
-        sourceName ? sourceName.replace(`/${srcSchema}/`, '/public/') : undefined
+        sourceName
+            ? sourceName.replace(`/${srcSchema}/`, '/public/')
+            : undefined
     );
 
     useEffect(() => {

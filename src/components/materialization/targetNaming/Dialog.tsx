@@ -2,12 +2,7 @@ import type { TargetNamingStrategy } from 'src/types';
 
 import { useRef, useState } from 'react';
 
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
