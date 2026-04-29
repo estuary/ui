@@ -20,6 +20,7 @@ import {
     parseSchemaTemplate,
     parseTableTemplate,
     SCHEMA_TEMPLATE_STRING,
+    TABLE_TEMPLATE_STRING,
 } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import { TemplateInput } from 'src/components/materialization/targetNaming/TemplateInput';
@@ -92,7 +93,7 @@ export function TargetNamingFormContent({
 
     const tableTemplate =
         tableMode === 'template'
-            ? `${tablePrefix}{{table}}${tableSuffix}`
+            ? `${tablePrefix}${TABLE_TEMPLATE_STRING}${tableSuffix}`
             : tableValue.trim() || undefined;
 
     const schemaRequired = strategyKey !== 'matchSourceStructure';
@@ -247,6 +248,7 @@ export function TargetNamingFormContent({
                                 {showMatchNaming ? (
                                     <Stack spacing={1}>
                                         <TemplateInput
+                                            tokenString={example.schema}
                                             mode={schemaMode}
                                             value={schema}
                                             onChange={setSchema}
@@ -257,6 +259,7 @@ export function TargetNamingFormContent({
                                         />
                                         <TemplateInput
                                             field="table"
+                                            tokenString={example.table}
                                             mode={tableMode}
                                             value={tableValue}
                                             onChange={setTableValue}
@@ -301,6 +304,7 @@ export function TargetNamingFormContent({
                                 <TemplateInput
                                     hideWhenFixed
                                     field="table"
+                                    tokenString={example.table}
                                     mode={tableMode}
                                     value={tableValue}
                                     onChange={setTableValue}
@@ -343,6 +347,7 @@ export function TargetNamingFormContent({
                                 <TemplateInput
                                     hideWhenFixed
                                     field="table"
+                                    tokenString={example.table}
                                     mode={tableMode}
                                     value={tableValue}
                                     onChange={setTableValue}

@@ -10,17 +10,18 @@ import { Code, InputField } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 export interface TemplateInputProps {
-    field?: 'schema' | 'table';
     mode: 'fixed' | 'template';
-    onModeChange?: (mode: 'fixed' | 'template') => void;
-    hideWhenFixed?: boolean;
-    required?: boolean;
     value: string;
     onChange: (value: string) => void;
     prefix: string;
     onPrefixChange: (v: string) => void;
     suffix: string;
     onSuffixChange: (v: string) => void;
+    field?: 'schema' | 'table';
+    onModeChange?: (mode: 'fixed' | 'template') => void;
+    hideWhenFixed?: boolean;
+    required?: boolean;
+    tokenString?: string;
 }
 
 const FIELD_KEYS = {
@@ -50,11 +51,13 @@ export function TemplateInput({
     onPrefixChange,
     suffix,
     onSuffixChange,
+    tokenString,
 }: TemplateInputProps) {
     const intl = useIntl();
     const keys = FIELD_KEYS[field];
-    const tokenString = `{{${keys.token}}}`;
+    const tokenValue = tokenString ?? `{{${keys.token}}}`;
 
+    // TODO (target naming) - probably just remove this before merging
     const adornment = onModeChange ? (
         <InputAdornment position="end">
             <Tooltip
@@ -97,8 +100,12 @@ export function TemplateInput({
                     size="small"
                     disabled
                     label={intl.formatMessage({ id: keys.label })}
-                    value={tokenString}
-                    sx={{ maxWidth: 80, flexShrink: 0 }}
+                    value={tokenValue}
+                    sx={{
+                        minWidth: 'fit-content',
+                        maxWidth: 'fit-content',
+                        flexShrink: 0,
+                    }}
                 />
                 <TextField
                     size="small"
