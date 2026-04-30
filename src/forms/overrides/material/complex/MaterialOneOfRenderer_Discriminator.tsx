@@ -233,13 +233,13 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     //  the source-shopify-native connector as it can contain multiple discriminators
     //  in the stores array. If we do not set this on edit then the user cannot add
     //  new stores.
-    // NOTE: Must run in useEffect to avoid "setState during render" warning — calling
-    //  handleChange directly in the render body updates JsonFormsStateProvider while
-    //  this component is still rendering.
+    // We need to wait for data to exist so that we do not override any setting the user
+    //  is setting and spread out default value into the data
     useEffect(() => {
         if (
             defaultDiscriminator.current &&
             required &&
+            data &&
             !hasOwnProperty(data, discriminatorProperty)
         ) {
             const defaultVal = getDiscriminatorDefaultValue(
@@ -256,11 +256,14 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
             defaultDiscriminator.current = false;
 
             handleChange(path, {
+                ...data,
                 [discriminatorProperty]: defaultVal?.[discriminatorProperty],
             });
         }
+        // We really only care about data so that once that is "changed" and exists
+        //  then we can make sure the default discriminator is set on it
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [data]);
 
     const singleOption = oneOfRenderInfos.length === 1;
 
