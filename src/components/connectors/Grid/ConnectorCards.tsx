@@ -66,13 +66,25 @@ export default function ConnectorCards({
                 } => node.defaultSpec !== null
             );
 
-        if (!searchQuery) return nodes;
+        const groupRecommendedAlphaSort = (arr: typeof nodes) => {
+            return arr
+                .slice()
+                .sort(
+                    (a, b) =>
+                        (b.recommended ? 1 : 0) - (a.recommended ? 1 : 0) ||
+                        (a.title ?? '').localeCompare(b.title ?? '')
+                );
+        };
+
+        if (!searchQuery) return groupRecommendedAlphaSort(nodes);
 
         const q = searchQuery.toLowerCase();
-        return nodes.filter(
-            (node) =>
-                node.title?.toLowerCase().includes(q) ||
-                node.detail?.toLowerCase().includes(q)
+        return groupRecommendedAlphaSort(
+            nodes.filter(
+                (node) =>
+                    node.title?.toLowerCase().includes(q) ||
+                    node.detail?.toLowerCase().includes(q)
+            )
         );
     }, [queryData, searchQuery]);
 
