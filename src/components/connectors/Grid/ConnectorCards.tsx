@@ -40,13 +40,11 @@ type ConnectorNode = RawConnectorNode & {
 };
 
 const groupRecommendedAlphaSort = (arr: ConnectorNode[]): ConnectorNode[] => {
-    return arr
-        .slice()
-        .sort(
-            (a, b) =>
-                (b.recommended ? 1 : 0) - (a.recommended ? 1 : 0) ||
-                (a.title ?? '').localeCompare(b.title ?? '')
-        );
+    return arr.sort(
+        (a, b) =>
+            (b.recommended ? 1 : 0) - (a.recommended ? 1 : 0) ||
+            (a.title ?? '').localeCompare(b.title ?? '')
+    );
 };
 
 const getSortedNodes = (edges: RawConnectorEdges): ConnectorNode[] => {
