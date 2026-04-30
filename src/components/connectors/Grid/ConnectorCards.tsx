@@ -49,7 +49,7 @@ const groupRecommendedAlphaSort = (arr: ConnectorNode[]): ConnectorNode[] => {
         );
 };
 
-const getGroupedNodes = (edges: RawConnectorEdges): ConnectorNode[] => {
+const getSortedNodes = (edges: RawConnectorEdges): ConnectorNode[] => {
     const nodes = (edges ?? [])
         .map((edge) => edge.node)
         .filter(
@@ -90,7 +90,7 @@ export default function ConnectorCards({
     });
 
     const selectData = useMemo(() => {
-        const nodes = getGroupedNodes(queryData?.connectors.edges ?? []);
+        const nodes = getSortedNodes(queryData?.connectors.edges ?? []);
 
         if (!searchQuery) {
             return groupRecommendedAlphaSort(nodes);
