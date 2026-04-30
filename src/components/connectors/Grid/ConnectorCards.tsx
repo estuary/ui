@@ -91,16 +91,14 @@ export default function ConnectorCards({
         const nodes = getSortedNodes(queryData?.connectors.edges ?? []);
 
         if (!searchQuery) {
-            return groupRecommendedAlphaSort(nodes);
+            return nodes;
         }
 
         const q = searchQuery.toLowerCase();
-        return groupRecommendedAlphaSort(
-            nodes.filter(
-                (node) =>
-                    node.title?.toLowerCase().includes(q) ||
-                    node.detail?.toLowerCase().includes(q)
-            )
+        return nodes.filter(
+            (node) =>
+                node.title?.toLowerCase().includes(q) ||
+                node.detail?.toLowerCase().includes(q)
         );
     }, [queryData, searchQuery]);
 
