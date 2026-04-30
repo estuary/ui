@@ -41,7 +41,9 @@ function ValidationErrorSummary({
     const scrollToTarget = useRef<HTMLDivElement>(null);
     const scrollIntoView = useScrollIntoView(scrollToTarget);
 
-    const connectorID = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const connectorImagePath = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_IMAGE_PATH
+    );
 
     // Binding Store
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
@@ -99,7 +101,7 @@ function ValidationErrorSummary({
 
                 {ErrorComponent === false ? null : ErrorComponent ? (
                     <ErrorComponent />
-                ) : hasLength(connectorID) ? (
+                ) : hasLength(connectorImagePath) ? (
                     <>
                         <DetailsErrors />
 

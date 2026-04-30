@@ -3,27 +3,8 @@ import type { DekafConfig } from 'src/types';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { isDekafConnector } from 'src/utils/connector-utils';
-
-// Selector hooks
-export const useDetailsForm_changed_connectorId = () => {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
-    return useDetailsFormStore(
-        (state) =>
-            state.details.data.connectorImage.connectorId !==
-                state.previousDetails.data.connectorImage.connectorId ||
-            Boolean(
-                connectorId &&
-                    connectorId !==
-                        state.details.data.connectorImage.connectorId
-            )
-    );
-};
 
 const EMPTY_CONFIG = {};
 export const useDetailsForm_endpointConfig = ():

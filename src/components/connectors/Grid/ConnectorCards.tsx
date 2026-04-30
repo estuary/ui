@@ -1,15 +1,15 @@
-import type { ConnectorWithTagQuery } from 'src/api/types';
 import type { ConnectorCardsProps } from 'src/components/connectors/Grid/types';
-import type { TableState } from 'src/types';
+import type { ConnectorProto } from 'src/gql-types/graphql';
+import type { EntityWithCreateWorkflow, TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Grid, Paper, Typography } from '@mui/material';
 
-import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { FormattedMessage } from 'react-intl';
+import { useQuery } from 'urql';
 
-import { getConnectors } from 'src/api/connectors';
+import { CONNECTORS_QUERY } from 'src/api/gql/connectors';
 import Card from 'src/components/connectors/Grid/cards/Card';
 import ConnectorRequestCard from 'src/components/connectors/Grid/cards/ConnectorRequestCard';
 import Detail from 'src/components/connectors/Grid/cards/Detail';
@@ -22,6 +22,7 @@ import useEntityCreateNavigate from 'src/components/shared/Entity/hooks/useEntit
 import { semiTransparentBackground } from 'src/context/Theme';
 import { checkErrorMessage, FAILED_TO_FETCH } from 'src/services/shared';
 import { TableStatuses } from 'src/types';
+import { buildConnectorImagePath } from 'src/utils/connector-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import {
     getEmptyTableHeader,
@@ -40,13 +41,40 @@ export default function ConnectorCards({
         status: TableStatuses.LOADING,
     });
 
-    const query = useMemo(() => {
-        return getConnectors(searchQuery, 'asc', protocol);
-    }, [searchQuery, protocol]);
+    const variables = useMemo(
+        () => ({
+            filter: protocol
+                ? { protocol: { eq: protocol as ConnectorProto } }
+                : undefined,
+        }),
+        [protocol]
+    );
 
-    const { data: selectResponse, isValidating, error } = useQuery(query);
+    const [{ data: queryData, fetching, error }] = useQuery({
+        query: CONNECTORS_QUERY,
+        variables,
+    });
 
-    const selectData = useMemo(() => selectResponse ?? [], [selectResponse]);
+    const selectData = useMemo(() => {
+        const nodes = (queryData?.connectors.edges ?? [])
+            .map((edge) => edge.node)
+            .filter(
+                (
+                    node
+                ): node is typeof node & {
+                    defaultSpec: NonNullable<typeof node.defaultSpec>;
+                } => node.defaultSpec !== null
+            );
+
+        if (!searchQuery) return nodes;
+
+        const q = searchQuery.toLowerCase();
+        return nodes.filter(
+            (node) =>
+                node.title?.toLowerCase().includes(q) ||
+                node.detail?.toLowerCase().includes(q)
+        );
+    }, [queryData, searchQuery]);
 
     const RequestCard = condensed ? (
         <div key="connector-tile-request" />
@@ -54,9 +82,12 @@ export default function ConnectorCards({
         <ConnectorRequestCard key="connector-tile-request" />
     );
 
-    const primaryCtaClick = (row: ConnectorWithTagQuery) => {
-        navigateToCreate(row.connector_tags[0].protocol, {
-            id: row.connector_tags[0].connector_id,
+    const primaryCtaClick = (
+        entityType: EntityWithCreateWorkflow,
+        imagePath: string
+    ) => {
+        navigateToCreate(entityType, {
+            imagePath,
             advanceToForm: true,
             expressWorkflow: condensed,
         });
@@ -72,9 +103,9 @@ export default function ConnectorCards({
         } else {
             setTableState({ status: TableStatuses.NO_EXISTING_DATA });
         }
-    }, [selectData, isValidating, error?.message]);
+    }, [selectData, fetching, error?.message]);
 
-    if (isValidating || tableState.status === TableStatuses.LOADING) {
+    if (fetching || tableState.status === TableStatuses.LOADING) {
         return <ConnectorSkeleton condensed={condensed} />;
     }
 
@@ -114,26 +145,41 @@ export default function ConnectorCards({
     return (
         <>
             {selectData
-                .map((row) => {
+                .map((node) => {
+                    const { defaultSpec } = node;
                     const ConnectorCard = condensed ? Card : LegacyCard;
+                    const entityType = defaultSpec.protocol;
+
+                    // TODO (GQL:connector) how to better handle with typing?
+                    if (!entityType) {
+                        return null;
+                    }
 
                     return (
                         <ConnectorCard
-                            key={`connector-card-${row.id}`}
-                            docsUrl={row.connector_tags[0].documentation_url}
-                            clickHandler={() => primaryCtaClick(row)}
-                            Detail={<Detail content={row.detail} />}
-                            entityType={row.connector_tags[0].protocol}
+                            key={`connector-card-${node.id}`}
+                            clickHandler={() =>
+                                primaryCtaClick(
+                                    entityType,
+                                    buildConnectorImagePath(
+                                        node.imageName,
+                                        defaultSpec.imageTag
+                                    )
+                                )
+                            }
+                            docsUrl={defaultSpec.documentationUrl ?? ''}
+                            entityType={entityType}
+                            recommended={node.recommended}
+                            Detail={<Detail content={node.detail ?? ''} />}
                             Logo={
                                 <Logo
-                                    imageSrc={row.image}
+                                    imageSrc={node.logoUrl ?? ''}
                                     maxHeight={condensed ? '100%' : undefined}
                                 />
                             }
-                            recommended={row.recommended}
                             Title={
                                 <Title
-                                    content={row.title}
+                                    content={node.title ?? ''}
                                     marginBottom={condensed ? '4px' : undefined}
                                 />
                             }

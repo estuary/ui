@@ -31,7 +31,7 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
 
     const { evaluateStorageMapping } = useEvaluateStorageMapping();
 
-    const { connectorSchema, connectorUISchema, setConnector } =
+    const { connectorSchema, connectorUISchema } =
         useConnectorField(entityType);
 
     const { dataPlaneSchema, dataPlaneUISchema, setDataPlane } =
@@ -81,14 +81,10 @@ export default function useFormFields(entityType: EntityWithCreateWorkflow) {
             details.data.dataPlane
         );
 
-        // The field-specific functions below, `setDataPlane` and `setConnector`,
-        // set details form state that can be overridden by `setDetails`. Consequently,
-        // `setDetails` should always be called first.
+        // Some field specific functions `setDataPlane` and `setCatalogName`
+        //  are meant to be called _after_ the more general `setDetails`.
         setDetails(details);
-
         setDataPlane(details, dataPlaneOption);
-        setConnector(details, dataPlaneOption?.id);
-
         setCatalogName({
             root: details.data.entityName.substring(tenant.length),
             tenant,

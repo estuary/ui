@@ -12,7 +12,6 @@ import EntityEdit from 'src/components/shared/Entity/Edit';
 import DraftInitializer from 'src/components/shared/Entity/Edit/DraftInitializer';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -29,9 +28,6 @@ function CaptureEdit() {
     });
 
     const lastPubId = useGlobalSearchParams(GlobalSearchParams.LAST_PUB_ID);
-
-    // Supabase
-    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
@@ -68,22 +64,17 @@ function CaptureEdit() {
                                     logEvent: CustomEvents.CAPTURE_EDIT,
                                 }}
                                 secondaryButtonProps={{
-                                    disabled: !hasConnectors,
                                     logEvent: CustomEvents.CAPTURE_TEST,
                                 }}
                                 GenerateButton={
                                     <CaptureGenerateButton
                                         entityType={entityType}
-                                        disabled={!hasConnectors}
                                     />
                                 }
                             />
                         }
                         RediscoverButton={
-                            <RediscoverButton
-                                entityType={entityType}
-                                disabled={!hasConnectors}
-                            />
+                            <RediscoverButton entityType={entityType} />
                         }
                     />
                 </MutateDraftSpecProvider>

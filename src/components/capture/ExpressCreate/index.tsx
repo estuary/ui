@@ -11,7 +11,6 @@ import EntityCreateExpress from 'src/components/shared/Entity/Create/Express';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
 import { useEntityType } from 'src/context/EntityContext';
-import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'src/hooks/useDraftSpecs';
 import { CustomEvents } from 'src/services/types';
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -20,7 +19,6 @@ import { MAX_DISCOVER_TIME } from 'src/utils/misc-utils';
 
 export default function ExpressCaptureCreate() {
     const entityType = useEntityType();
-    const hasConnectors = useValidConnectorsExist(entityType);
 
     // Details Form Store
     const imageTag = useDetailsFormStore(
@@ -87,13 +85,11 @@ export default function ExpressCaptureCreate() {
                                 logEvent: CustomEvents.CAPTURE_CREATE,
                             }}
                             secondaryButtonProps={{
-                                disabled: !hasConnectors,
                                 logEvent: CustomEvents.CAPTURE_TEST,
                             }}
                             GenerateButton={
                                 <CaptureGenerateButton
                                     entityType={entityType}
-                                    disabled={!hasConnectors}
                                     createWorkflowMetadata={{
                                         initiateDiscovery,
                                         setInitiateDiscovery,

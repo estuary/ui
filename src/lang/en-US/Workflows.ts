@@ -502,4 +502,6 @@ export const Workflows: Record<string, string> = {
     'schemaManagement.options.manual.label': `Manually manage schemas`,
     'schemaManagement.options.auto.description': `Estuary infers the schema based on the data. With automatically handle changes.`,
     'schemaManagement.options.auto.label': `Let Estuary control schemas`,
+
+    'workflow.connectorTag.error.message': `Failed to fetch connector details`,
 };
