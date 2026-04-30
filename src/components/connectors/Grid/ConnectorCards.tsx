@@ -1,5 +1,8 @@
 import type { ConnectorCardsProps } from 'src/components/connectors/Grid/types';
-import type { ConnectorProto } from 'src/gql-types/graphql';
+import type {
+    ConnectorProto,
+    ConnectorsGridQuery,
+} from 'src/gql-types/graphql';
 import type { EntityWithCreateWorkflow, TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -29,6 +32,37 @@ import {
     getEmptyTableMessage,
 } from 'src/utils/table-utils';
 
+type RawConnectorEdges = ConnectorsGridQuery['connectors']['edges'];
+type RawConnectorNode = RawConnectorEdges[number]['node'];
+
+type ConnectorNode = RawConnectorNode & {
+    defaultSpec: NonNullable<RawConnectorNode['defaultSpec']>;
+};
+
+const groupRecommendedAlphaSort = (arr: ConnectorNode[]): ConnectorNode[] => {
+    return arr
+        .slice()
+        .sort(
+            (a, b) =>
+                (b.recommended ? 1 : 0) - (a.recommended ? 1 : 0) ||
+                (a.title ?? '').localeCompare(b.title ?? '')
+        );
+};
+
+const getGroupedNodes = (edges: RawConnectorEdges): ConnectorNode[] => {
+    const nodes = (edges ?? [])
+        .map((edge) => edge.node)
+        .filter(
+            (
+                node
+            ): node is typeof node & {
+                defaultSpec: NonNullable<typeof node.defaultSpec>;
+            } => node.defaultSpec !== null
+        );
+
+    return groupRecommendedAlphaSort(nodes);
+};
+
 export default function ConnectorCards({
     condensed,
     protocol,
@@ -56,27 +90,11 @@ export default function ConnectorCards({
     });
 
     const selectData = useMemo(() => {
-        const nodes = (queryData?.connectors.edges ?? [])
-            .map((edge) => edge.node)
-            .filter(
-                (
-                    node
-                ): node is typeof node & {
-                    defaultSpec: NonNullable<typeof node.defaultSpec>;
-                } => node.defaultSpec !== null
-            );
+        const nodes = getGroupedNodes(queryData?.connectors.edges ?? []);
 
-        const groupRecommendedAlphaSort = (arr: typeof nodes) => {
-            return arr
-                .slice()
-                .sort(
-                    (a, b) =>
-                        (b.recommended ? 1 : 0) - (a.recommended ? 1 : 0) ||
-                        (a.title ?? '').localeCompare(b.title ?? '')
-                );
-        };
-
-        if (!searchQuery) return groupRecommendedAlphaSort(nodes);
+        if (!searchQuery) {
+            return groupRecommendedAlphaSort(nodes);
+        }
 
         const q = searchQuery.toLowerCase();
         return groupRecommendedAlphaSort(
