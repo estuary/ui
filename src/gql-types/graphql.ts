@@ -112,6 +112,49 @@ export type Alert = {
   resolvedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
+/** A single row from `public.alert_configs`. */
+export type AlertConfigEntry = {
+  __typename?: 'AlertConfigEntry';
+  catalogPrefixOrName: Scalars['String']['output'];
+  config: Scalars['JSON']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  /**
+   * The fully-resolved effective config at this scope, merging all
+   * ancestor prefix layers and controller defaults.
+   */
+  effective: EffectiveAlertConfig;
+  id: Scalars['Id']['output'];
+  lastModifiedBy?: Maybe<Scalars['UUID']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AlertConfigEntryConnection = {
+  __typename?: 'AlertConfigEntryConnection';
+  /** A list of edges. */
+  edges: Array<AlertConfigEntryEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type AlertConfigEntryEdge = {
+  __typename?: 'AlertConfigEntryEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: AlertConfigEntry;
+};
+
+/**
+ * Optional filter for the `alertConfigs` query. When omitted, all accessible
+ * rows are returned.
+ */
+export type AlertConfigsFilter = {
+  /** Filter on the `catalog_prefix_or_name` column. */
+  catalogPrefixOrName?: InputMaybe<PrefixFilter>;
+};
+
 export type AlertConnection = {
   __typename?: 'AlertConnection';
   /** A list of edges. */
@@ -515,12 +558,24 @@ export type DiscoverChange = {
   target: Scalars['Collection']['output'];
 };
 
+export type EffectiveAlertConfig = {
+  __typename?: 'EffectiveAlertConfig';
+  config: Scalars['JSON']['output'];
+  provenance: Array<FieldProvenance>;
+};
+
 /** A generic error that can be associated with a particular draft spec for a given operation. */
 export type Error = {
   __typename?: 'Error';
   catalogName: Scalars['String']['output'];
   detail: Scalars['String']['output'];
   scope?: Maybe<Scalars['String']['output']>;
+};
+
+export type FieldProvenance = {
+  __typename?: 'FieldProvenance';
+  path: Scalars['String']['output'];
+  source?: Maybe<Scalars['String']['output']>;
 };
 
 /** Status of the inferred schema */
@@ -613,6 +668,11 @@ export type LiveSpec = {
   catalogType: CatalogType;
   createdAt: Scalars['DateTime']['output'];
   dataPlaneId: Scalars['Id']['output'];
+  /**
+   * The fully-resolved effective alert config for this task, merging all
+   * ancestor prefix layers and controller defaults.
+   */
+  effectiveAlertConfig: EffectiveAlertConfig;
   isDisabled: Scalars['Boolean']['output'];
   lastBuildId: Scalars['Id']['output'];
   lastPubId: Scalars['Id']['output'];
@@ -821,6 +881,22 @@ export type MutationRoot = {
    */
   testConnectionHealth: ConnectionHealthTestResult;
   /**
+   * Creates or replaces the alert config at `catalogPrefixOrName`.
+   *
+   * `catalogPrefixOrName` is either a catalog prefix ending in `/`
+   * (applies to all tasks under that prefix) or an exact catalog name
+   * with no trailing slash (applies to that single task). Exact catalog
+   * names must refer to a task that currently exists in `live_specs`;
+   * prefixes have no such constraint.
+   *
+   * To clear all configured overrides while keeping the row, pass an empty
+   * `{}` config.
+   *
+   * If `detail` is omitted or `null` on update, the existing `detail`
+   * value is preserved.
+   */
+  updateAlertConfig: UpdateAlertConfigResult;
+  /**
    * Updates the alert subscription for the given prefix and email, returning
    * the updated subscription.
    */
@@ -882,6 +958,13 @@ export type MutationRootRedeemInviteLinkArgs = {
 export type MutationRootTestConnectionHealthArgs = {
   catalogPrefix: Scalars['Prefix']['input'];
   spec: Scalars['JSON']['input'];
+};
+
+
+export type MutationRootUpdateAlertConfigArgs = {
+  catalogPrefixOrName: Scalars['String']['input'];
+  config: Scalars['JSON']['input'];
+  detail?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1026,6 +1109,15 @@ export type PublicationStatus = {
 
 export type QueryRoot = {
   __typename?: 'QueryRoot';
+  /**
+   * Lists alert-config rows visible to the caller.
+   *
+   * Results are limited to readable prefixes and sorted by
+   * `catalog_prefix_or_name`. `filter.catalogPrefixOrName.startsWith` can
+   * narrow the results further. Passing a full catalog name returns at
+   * most one exact-name row.
+   */
+  alertConfigs: AlertConfigEntryConnection;
   /** Returns a complete list of alert subscriptions. */
   alertSubscriptions: Array<AlertSubscription>;
   /** Returns all possible alert types with their user-facing metadata. */
@@ -1083,6 +1175,13 @@ export type QueryRoot = {
    * Results are paginated and sorted by catalog_prefix.
    */
   storageMappings: StorageMappingConnection;
+};
+
+
+export type QueryRootAlertConfigsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AlertConfigsFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -1439,6 +1538,14 @@ export type StorageMappingsBy = {
    * At least one of `exactPrefixes` or `underPrefix` must be provided.
    */
   underPrefix?: InputMaybe<Scalars['Prefix']['input']>;
+};
+
+/** Result of the `updateAlertConfig` mutation. */
+export type UpdateAlertConfigResult = {
+  __typename?: 'UpdateAlertConfigResult';
+  catalogPrefixOrName: Scalars['String']['output'];
+  created: Scalars['Boolean']['output'];
+  id: Scalars['Id']['output'];
 };
 
 /** Result of updating a storage mapping. */
