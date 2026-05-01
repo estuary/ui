@@ -134,6 +134,7 @@ function useGenerateCatalog() {
     const targetNamingStrategy = useTargetNamingStore(
         (state) => state.targetNamingStrategy
     );
+    const targetNamingModel = useTargetNamingStore((state) => state.model);
 
     // After the first generation we already have a name with the
     //  image name suffix (unless name changed)
@@ -247,6 +248,7 @@ function useGenerateCatalog() {
                         sourceCaptureDefinition,
                         specOnIncompatibleSchemaChange,
                         defaultFieldsRecommended: !isEdit,
+                        targetNamingModel,
                         targetNamingStrategy,
                     }
                 );

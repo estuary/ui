@@ -13,6 +13,7 @@ import type {
     EntityWithCreateWorkflow,
     Schema,
     SourceCaptureDef,
+    TargetNamingModel,
     TargetNamingStrategy,
 } from 'src/types';
 import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
@@ -128,6 +129,7 @@ export const generateTaskSpec = (
         sourceCaptureDefinition: SourceCaptureDef | null;
         specOnIncompatibleSchemaChange?: string;
         defaultFieldsRecommended?: boolean;
+        targetNamingModel?: TargetNamingModel;
         targetNamingStrategy?: TargetNamingStrategy | null;
     }
 ) => {
@@ -270,7 +272,15 @@ export const generateTaskSpec = (
 
     // Try adding at the end because these settings could be added/changed at any time
     if (entityType === 'materialization') {
-        addOrRemoveSourceCapture(draftSpec, options.sourceCaptureDefinition);
+        // rootTargetNaming uses spec.targetNaming at the root; source.targetNaming must never
+        // coexist with it. Strip targetNaming from the source capture def to enforce this.
+        const sourceCaptureDefinition =
+            options.targetNamingModel === 'rootTargetNaming' &&
+            options.sourceCaptureDefinition
+                ? omit(options.sourceCaptureDefinition, 'targetNaming')
+                : options.sourceCaptureDefinition;
+
+        addOrRemoveSourceCapture(draftSpec, sourceCaptureDefinition);
         addOrRemoveOnIncompatibleSchemaChange(
             draftSpec,
             options.specOnIncompatibleSchemaChange

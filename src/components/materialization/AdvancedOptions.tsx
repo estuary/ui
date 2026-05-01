@@ -43,7 +43,7 @@ export default function AdvancedOptions() {
                 hideBorder
                 mountClosed
             >
-                <Stack spacing={2}>
+                <Stack spacing={4}>
                     <ErrorBoundryWrapper>
                         <OnIncompatibleSchemaChange />
                     </ErrorBoundryWrapper>

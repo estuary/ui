@@ -10,7 +10,13 @@ export const detectTargetNamingModel = (
     if (spec?.targetNaming && typeof spec.targetNaming === 'object') {
         return 'rootTargetNaming';
     }
-    return 'sourceTargetNaming';
+    // Only use sourceTargetNaming when source.targetNaming is explicitly present.
+    // Specs with no targetNaming anywhere get the new rootTargetNaming UI.
+    const sourceKey = spec?.sourceCapture ? 'sourceCapture' : 'source';
+    if (spec?.[sourceKey]?.targetNaming) {
+        return 'sourceTargetNaming';
+    }
+    return 'rootTargetNaming';
 };
 
 // Map an old TargetSchemas string to the nearest TargetNamingStrategy.
