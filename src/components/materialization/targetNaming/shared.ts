@@ -1,5 +1,5 @@
-import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/source/targetSchema/types';
 import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
+import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/targetNaming/types';
 import type { TargetNamingStrategy } from 'src/types';
 
 export const SCHEMA_TEMPLATE_STRING = '{{schema}}';

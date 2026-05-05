@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react';
-import type {
-    AutoCompleteOptionForTargetSchema,
-    AutoCompleteOptionForTargetSchemaExample,
-} from 'src/components/materialization/source/targetSchema/types';
+import type { AutoCompleteOptionForTargetSchema } from 'src/components/materialization/source/targetSchema/types';
+import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/targetNaming/types';
 
 import { useMemo } from 'react';
 

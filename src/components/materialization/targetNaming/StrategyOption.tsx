@@ -1,4 +1,4 @@
-import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/source/targetSchema/types';
+import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/targetNaming/types';
 import type { BaseComponentProps, TargetNamingStrategy } from 'src/types';
 
 import { Box, FormControlLabel, Radio, Stack, Typography } from '@mui/material';
