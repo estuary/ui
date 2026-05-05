@@ -122,6 +122,28 @@ export function TargetNamingFormContent({
     const isKeyValid = isStrategyKeyValid(strategyKey);
     const canSubmitForm = isStrategyValid(strategyKey, schemaMode, schema);
 
+    // Most props are the same between options
+    const sharedSchemaInputProps = {
+        value: schema,
+        onChange: setSchema,
+        prefix: schemaPrefix,
+        onPrefixChange: setSchemaPrefix,
+        suffix: schemaSuffix,
+        onSuffixChange: setSchemaSuffix,
+    };
+
+    const sharedTableInputProps = {
+        field: 'table' as const,
+        tokenString: example.sourceTable,
+        mode: tableMode,
+        value: tableValue,
+        onChange: setTableValue,
+        prefix: tablePrefix,
+        onPrefixChange: setTablePrefix,
+        suffix: tableSuffix,
+        onSuffixChange: setTableSuffix,
+    };
+
     // Keeping everything updated
     useEffect(() => {
         const strategy = buildStrategyFromState(
@@ -175,7 +197,9 @@ export function TargetNamingFormContent({
                         value="matchSourceStructure"
                         selected={strategyKey === 'matchSourceStructure'}
                         onSelect={() => {
-                            if (strategyKey === 'matchSourceStructure') return;
+                            if (strategyKey === 'matchSourceStructure') {
+                                return;
+                            }
                             setTableMode('template');
                             setSchemaMode('template');
                             setStrategyKey('matchSourceStructure');
@@ -184,10 +208,7 @@ export function TargetNamingFormContent({
                         publicExample={publicExample}
                     >
                         {strategyKey === 'matchSourceStructure' ? (
-                            <Stack
-                                spacing={1}
-                                onClick={(e) => e.stopPropagation()}
-                            >
+                            <Stack spacing={1}>
                                 <FormControlLabel
                                     control={
                                         <Checkbox
@@ -195,11 +216,12 @@ export function TargetNamingFormContent({
                                             checked={
                                                 matchSourceTemplatesEnabled
                                             }
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                                e.stopPropagation();
                                                 setMatchSourceTemplatesEnabled(
                                                     e.target.checked
-                                                )
-                                            }
+                                                );
+                                            }}
                                         />
                                     }
                                     label={intl.formatMessage({
@@ -209,25 +231,12 @@ export function TargetNamingFormContent({
                                 {matchSourceTemplatesEnabled ? (
                                     <Stack spacing={1}>
                                         <TemplateInput
+                                            {...sharedSchemaInputProps}
                                             tokenString={example.sourceSchema}
                                             mode={schemaMode}
-                                            value={schema}
-                                            onChange={setSchema}
-                                            prefix={schemaPrefix}
-                                            onPrefixChange={setSchemaPrefix}
-                                            suffix={schemaSuffix}
-                                            onSuffixChange={setSchemaSuffix}
                                         />
                                         <TemplateInput
-                                            field="table"
-                                            tokenString={example.sourceTable}
-                                            mode={tableMode}
-                                            value={tableValue}
-                                            onChange={setTableValue}
-                                            prefix={tablePrefix}
-                                            onPrefixChange={setTablePrefix}
-                                            suffix={tableSuffix}
-                                            onSuffixChange={setTableSuffix}
+                                            {...sharedTableInputProps}
                                         />
                                     </Stack>
                                 ) : null}
@@ -239,7 +248,9 @@ export function TargetNamingFormContent({
                         value="singleSchema"
                         selected={strategyKey === 'singleSchema'}
                         onSelect={() => {
-                            if (strategyKey === 'singleSchema') return;
+                            if (strategyKey === 'singleSchema') {
+                                return;
+                            }
                             setTableMode('template');
                             setSchemaMode('fixed');
                             setStrategyKey('singleSchema');
@@ -253,26 +264,11 @@ export function TargetNamingFormContent({
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <TemplateInput
+                                    {...sharedSchemaInputProps}
                                     mode="fixed"
                                     required
-                                    value={schema}
-                                    onChange={setSchema}
-                                    prefix={schemaPrefix}
-                                    onPrefixChange={setSchemaPrefix}
-                                    suffix={schemaSuffix}
-                                    onSuffixChange={setSchemaSuffix}
                                 />
-                                <TemplateInput
-                                    field="table"
-                                    tokenString={example.sourceTable}
-                                    mode={tableMode}
-                                    value={tableValue}
-                                    onChange={setTableValue}
-                                    prefix={tablePrefix}
-                                    onPrefixChange={setTablePrefix}
-                                    suffix={tableSuffix}
-                                    onSuffixChange={setTableSuffix}
-                                />
+                                <TemplateInput {...sharedTableInputProps} />
                             </Stack>
                         ) : null}
                     </StrategyOption>
@@ -281,7 +277,9 @@ export function TargetNamingFormContent({
                         value="prefixTableNames"
                         selected={strategyKey === 'prefixTableNames'}
                         onSelect={() => {
-                            if (strategyKey === 'prefixTableNames') return;
+                            if (strategyKey === 'prefixTableNames') {
+                                return;
+                            }
                             setSchemaMode('fixed');
                             setTableMode('template');
                             setStrategyKey('prefixTableNames');
@@ -290,40 +288,23 @@ export function TargetNamingFormContent({
                         publicExample={publicExample}
                     >
                         {strategyKey === 'prefixTableNames' ? (
-                            <Stack
-                                spacing={1}
-                                onClick={(e) => e.stopPropagation()}
-                            >
+                            <Stack spacing={1}>
                                 <TemplateInput
+                                    {...sharedSchemaInputProps}
                                     mode={schemaMode}
                                     required
-                                    value={schema}
-                                    onChange={setSchema}
-                                    prefix={schemaPrefix}
-                                    onPrefixChange={setSchemaPrefix}
-                                    suffix={schemaSuffix}
-                                    onSuffixChange={setSchemaSuffix}
                                 />
-                                <TemplateInput
-                                    field="table"
-                                    tokenString={example.sourceTable}
-                                    mode={tableMode}
-                                    value={tableValue}
-                                    onChange={setTableValue}
-                                    prefix={tablePrefix}
-                                    onPrefixChange={setTablePrefix}
-                                    suffix={tableSuffix}
-                                    onSuffixChange={setTableSuffix}
-                                />
+                                <TemplateInput {...sharedTableInputProps} />
                                 <FormControlLabel
                                     control={
                                         <Checkbox
                                             checked={skipCommonDefaults}
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                                e.stopPropagation();
                                                 setSkipCommonDefaults(
                                                     e.target.checked
-                                                )
-                                            }
+                                                );
+                                            }}
                                             size="small"
                                         />
                                     }
