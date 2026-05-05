@@ -379,6 +379,7 @@ function useGenerateCatalog() {
             setPreviousEndpointConfig,
             sourceCaptureDefinition,
             specOnIncompatibleSchemaChange,
+            targetNamingModel,
             targetNamingStrategy,
             updateFormStatus,
         ]

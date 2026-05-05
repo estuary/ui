@@ -71,7 +71,9 @@ export function buildStrategyFromState(
     tableTemplate: string | undefined
 ): TargetNamingStrategy {
     if (strategyKey === 'matchSourceStructure') {
-        const strategy: TargetNamingStrategy = { strategy: 'matchSourceStructure' };
+        const strategy: TargetNamingStrategy = {
+            strategy: 'matchSourceStructure',
+        };
         if (showMatchNaming) {
             if (schemaTemplate) strategy.schemaTemplate = schemaTemplate;
             if (tableTemplate) strategy.tableTemplate = tableTemplate;
