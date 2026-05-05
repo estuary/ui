@@ -99,11 +99,8 @@ export function TemplateInput({
                     disabled
                     label={intl.formatMessage({ id: keys.label })}
                     value={tokenValue}
-                    sx={{
-                        minWidth: 'fit-content',
-                        maxWidth: 'fit-content',
-                        flexShrink: 0,
-                    }}
+                    inputProps={{ size: tokenValue.length }}
+                    sx={{ flexShrink: 0 }}
                 />
                 <TextField
                     size="small"

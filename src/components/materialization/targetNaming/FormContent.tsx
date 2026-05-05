@@ -1,7 +1,7 @@
 import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
 import type { TargetNamingStrategy } from 'src/types';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import {
     Checkbox,
@@ -13,21 +13,10 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import {
-    buildBothExamples,
-    buildStrategyFromState,
-    hasSchemaTemplate,
-    hasTableTemplate,
-    isStrategyKeyValid,
-    isStrategyValid,
-    parseExampleCollection,
-    parseSchemaTemplate,
-    parseTableTemplate,
-    SCHEMA_TEMPLATE_STRING,
-    TABLE_TEMPLATE_STRING,
-} from 'src/components/materialization/targetNaming/shared';
+import { buildStrategyFromState } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import { TemplateInput } from 'src/components/materialization/targetNaming/TemplateInput';
+import { useTargetNamingFormState } from 'src/components/materialization/targetNaming/useTargetNamingFormState';
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 
 export interface TargetNamingFormContentProps {
@@ -43,108 +32,33 @@ export function TargetNamingFormContent({
 }: TargetNamingFormContentProps) {
     const intl = useIntl();
 
-    // Option that is currently selected
-    const [strategyKey, setStrategyKey] = useState<StrategyKey>(
-        initialStrategy?.strategy ?? 'matchSourceStructure'
-    );
-
-    // The value of the schema input (template and fixed)
-    const [schema, setSchema] = useState<string>(
-        initialStrategy && initialStrategy.strategy !== 'matchSourceStructure'
-            ? (initialStrategy.schema ?? '')
-            : ''
-    );
-
-    // Checkbox just for "Prefix Table" options
-    const [skipCommonDefaults, setSkipCommonDefaults] = useState<boolean>(
-        initialStrategy?.strategy === 'prefixTableNames'
-            ? (initialStrategy.skipCommonDefaults ?? true)
-            : true
-    );
-
-    // Checkbox just for "Match source" options so both templates are behind a
-    //  single input. Showing each template individually felt weird to me.
-    const [matchSourceTemplatesEnabled, setMatchSourceTemplatesEnabled] =
-        useState(
-            initialStrategy?.strategy === 'matchSourceStructure' &&
-                (hasSchemaTemplate(initialStrategy) ||
-                    hasTableTemplate(initialStrategy))
-        );
-
-    // Handling the schema template stuff
-    const [schemaMode, setSchemaMode] = useState<'fixed' | 'template'>(
-        'template'
-    );
-    const parsedSchema = parseSchemaTemplate(initialStrategy);
-    const [schemaPrefix, setSchemaPrefix] = useState(parsedSchema.prefix);
-    const [schemaSuffix, setSchemaSuffix] = useState(parsedSchema.suffix);
-    const schemaTemplate =
-        schemaMode === 'template'
-            ? `${schemaPrefix}${SCHEMA_TEMPLATE_STRING}${schemaSuffix}`
-            : undefined;
-
-    // Handling the table template stuff
-    const [tableMode, setTableMode] = useState<'fixed' | 'template'>(
-        'template'
-    );
-    const parsedTable = parseTableTemplate(initialStrategy);
-    const [tablePrefix, setTablePrefix] = useState(parsedTable.prefix);
-    const [tableSuffix, setTableSuffix] = useState(parsedTable.suffix);
-    const [tableValue, setTableValue] = useState<string>(
-        !hasTableTemplate(initialStrategy) &&
-            initialStrategy?.strategy === 'matchSourceStructure' &&
-            initialStrategy.tableTemplate
-            ? initialStrategy.tableTemplate
-            : ''
-    );
-    const tableTemplate =
-        tableMode === 'template'
-            ? `${tablePrefix}${TABLE_TEMPLATE_STRING}${tableSuffix}`
-            : tableValue.trim() || undefined;
-
-    // Generate examples for each option
-    const { srcSchema, srcTable, sourceName } = parseExampleCollection(
-        exampleCollections?.[0]
-    );
-    const { example, publicExample } = buildBothExamples(
+    const {
         strategyKey,
+        setStrategyKey,
         schema,
+        skipCommonDefaults,
+        setSkipCommonDefaults,
+        matchSourceTemplatesEnabled,
+        setMatchSourceTemplatesEnabled,
+        schemaMode,
+        setSchemaMode,
+        schemaPrefix,
+        schemaSuffix,
+        tableMode,
+        setTableMode,
+        tablePrefix,
+        tableSuffix,
+        tableValue,
         schemaTemplate,
         tableTemplate,
-        skipCommonDefaults,
-        matchSourceTemplatesEnabled,
-        srcSchema,
-        srcTable,
-        sourceName
-    );
+        example,
+        publicExample,
+        isKeyValid,
+        canSubmitForm,
+        sharedSchemaInputProps,
+        sharedTableInputProps,
+    } = useTargetNamingFormState(initialStrategy, exampleCollections);
 
-    // Validation
-    const isKeyValid = isStrategyKeyValid(strategyKey);
-    const canSubmitForm = isStrategyValid(strategyKey, schemaMode, schema);
-
-    // Most props are the same between options
-    const sharedSchemaInputProps = {
-        value: schema,
-        onChange: setSchema,
-        prefix: schemaPrefix,
-        onPrefixChange: setSchemaPrefix,
-        suffix: schemaSuffix,
-        onSuffixChange: setSchemaSuffix,
-    };
-
-    const sharedTableInputProps = {
-        field: 'table' as const,
-        tokenString: example.sourceTable,
-        mode: tableMode,
-        value: tableValue,
-        onChange: setTableValue,
-        prefix: tablePrefix,
-        onPrefixChange: setTablePrefix,
-        suffix: tableSuffix,
-        onSuffixChange: setTableSuffix,
-    };
-
-    // Keeping everything updated
     useEffect(() => {
         const strategy = buildStrategyFromState(
             strategyKey,

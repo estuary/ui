@@ -228,7 +228,7 @@ export function buildExample(
     const resolveSchema = (fallback: string) =>
         schemaTemplate
             ? schemaTemplate.replace(SCHEMA_TEMPLATE_STRING, sourceSchema)
-            : fallback || '_';
+            : fallback || '...';
 
     const resolveTable = (fallback: string) =>
         tableTemplate

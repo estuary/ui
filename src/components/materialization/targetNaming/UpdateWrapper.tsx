@@ -5,11 +5,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
-import {
-    buildBothExamples,
-    extractStrategyFields,
-    VALID_STRATEGY_KEYS,
-} from 'src/components/materialization/targetNaming/shared';
+import { VALID_STRATEGY_KEYS } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
@@ -40,28 +36,28 @@ export default function TargetNamingUpdateWrapper() {
 
     const strategyKey = validStrategy?.strategy as StrategyKey | undefined;
 
-    const { schema, skipCommonDefaults, schemaTemplate, tableTemplate } =
-        validStrategy
-            ? extractStrategyFields(validStrategy)
-            : {
-                  schema: '',
-                  skipCommonDefaults: true,
-                  schemaTemplate: undefined,
-                  tableTemplate: undefined,
-              };
+    // const { schema, skipCommonDefaults, schemaTemplate, tableTemplate } =
+    //     validStrategy
+    //         ? extractStrategyFields(validStrategy)
+    //         : {
+    //               schema: '',
+    //               skipCommonDefaults: true,
+    //               schemaTemplate: undefined,
+    //               tableTemplate: undefined,
+    //           };
 
-    const hasCustomNaming = !!schemaTemplate || !!tableTemplate;
+    // const hasCustomNaming = !!schemaTemplate || !!tableTemplate;
 
-    const { example, publicExample } = strategyKey
-        ? buildBothExamples(
-              strategyKey,
-              schema,
-              schemaTemplate,
-              tableTemplate,
-              skipCommonDefaults,
-              hasCustomNaming
-          )
-        : { example: null, publicExample: null };
+    // const { example, publicExample } = strategyKey
+    //     ? buildBothExamples(
+    //           strategyKey,
+    //           schema,
+    //           schemaTemplate,
+    //           tableTemplate,
+    //           skipCommonDefaults,
+    //           hasCustomNaming
+    //       )
+    //     : { example: null, publicExample: null };
 
     return (
         <Stack spacing={1}>
@@ -88,7 +84,7 @@ export default function TargetNamingUpdateWrapper() {
             ) : null}
 
             <Stack direction="row" spacing={2} alignItems="center">
-                {validStrategy && strategyKey && example && publicExample ? (
+                {validStrategy && strategyKey ? (
                     <Box sx={{ maxWidth: 300 }}>
                         <StrategyOption
                             example={null}

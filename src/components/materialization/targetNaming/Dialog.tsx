@@ -47,7 +47,7 @@ export default function TargetNamingDialog({
     );
 
     return (
-        <Dialog open={open} fullWidth maxWidth="sm">
+        <Dialog open={open} fullWidth maxWidth="md">
             <DialogTitleWithClose
                 id="destination-layout-dialog-title"
                 onClose={onCancel}

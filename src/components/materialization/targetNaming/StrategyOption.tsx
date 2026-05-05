@@ -1,7 +1,7 @@
 import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/targetNaming/types';
 import type { BaseComponentProps, TargetNamingStrategy } from 'src/types';
 
-import { Box, FormControlLabel, Radio, Stack, Typography } from '@mui/material';
+import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -16,13 +16,18 @@ function ExampleRow({
     example: AutoCompleteOptionForTargetSchemaExample;
 }) {
     const intl = useIntl();
+
     return (
-        <Stack
+        <Box
             component="span"
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            sx={{ fontSize: 12 }}
+            sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                gap: 1,
+                fontSize: 12,
+                wordBreak: 'break-all',
+            }}
         >
             <code>
                 {example.sourceName ?? (
@@ -35,7 +40,12 @@ function ExampleRow({
                 )}
             </code>
             <ArrowRight width={14} height={14} />
-            <span>
+            <Box
+                sx={{
+                    maxHeight: 100,
+                    overflow: 'auto',
+                }}
+            >
                 {intl.formatMessage({
                     id: 'destinationLayout.dialog.table.label',
                 })}
@@ -51,8 +61,8 @@ function ExampleRow({
                 <code>
                     <b>{example.schema}</b>
                 </code>
-            </span>
-        </Stack>
+            </Box>
+        </Box>
     );
 }
 
@@ -118,22 +128,35 @@ export function StrategyOption({
                 </Typography>
 
                 {children}
+
+                {selected && example ? (
+                    <Box
+                        sx={{
+                            '& pre': { whiteSpace: 'pre-wrap' },
+                        }}
+                    >
+                        <PreformattedBlock>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 0.5,
+                                }}
+                            >
+                                <Typography>
+                                    {intl.formatMessage({
+                                        id: 'common.examples',
+                                    })}
+                                </Typography>
+                                <ExampleRow example={example} />
+                                {publicExample ? (
+                                    <ExampleRow example={publicExample} />
+                                ) : null}
+                            </Box>
+                        </PreformattedBlock>
+                    </Box>
+                ) : null}
             </Box>
-
-            {selected && example ? (
-                <PreformattedBlock>
-                    <Stack spacing={0.5}>
-                        <Typography>
-                            {intl.formatMessage({ id: 'common.examples' })}
-                        </Typography>
-
-                        <ExampleRow example={example} />
-                        {publicExample ? (
-                            <ExampleRow example={publicExample} />
-                        ) : null}
-                    </Stack>
-                </PreformattedBlock>
-            ) : null}
         </Box>
     );
 }
