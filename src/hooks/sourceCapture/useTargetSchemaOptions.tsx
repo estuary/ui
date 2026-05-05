@@ -15,10 +15,10 @@ function useTargetSchemaOptions(): AutoCompleteOptionForTargetSchema[] {
     const intl = useIntl();
 
     const publicTablePrefix = intl.formatMessage({
-        id: `schemaMode.example.public.tablePrefix`,
+        id: `defaults.public`,
     });
     const tablePrefix = intl.formatMessage({
-        id: `schemaMode.example.tablePrefix`,
+        id: `defaults.schema`,
     });
 
     return useMemo(

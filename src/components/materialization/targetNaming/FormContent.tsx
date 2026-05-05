@@ -18,6 +18,7 @@ import {
     buildStrategyFromState,
     hasSchemaTemplate,
     hasTableTemplate,
+    isStrategyKeyValid,
     isStrategyValid,
     parseExampleCollection,
     parseSchemaTemplate,
@@ -42,51 +43,53 @@ export function TargetNamingFormContent({
 }: TargetNamingFormContentProps) {
     const intl = useIntl();
 
+    // Option that is currently selected
     const [strategyKey, setStrategyKey] = useState<StrategyKey>(
         initialStrategy?.strategy ?? 'matchSourceStructure'
     );
+
+    // The value of the schema input (template and fixed)
     const [schema, setSchema] = useState<string>(
         initialStrategy && initialStrategy.strategy !== 'matchSourceStructure'
             ? (initialStrategy.schema ?? '')
             : ''
     );
+
+    // Checkbox just for "Prefix Table" options
     const [skipCommonDefaults, setSkipCommonDefaults] = useState<boolean>(
         initialStrategy?.strategy === 'prefixTableNames'
             ? (initialStrategy.skipCommonDefaults ?? true)
             : true
     );
-    const [showMatchNaming, setShowMatchNaming] = useState(
-        initialStrategy?.strategy === 'matchSourceStructure' &&
-            (hasSchemaTemplate(initialStrategy) ||
-                hasTableTemplate(initialStrategy))
-    );
 
+    // Checkbox just for "Match source" options so both templates are behind a
+    //  single input. Showing each template individually felt weird to me.
+    const [matchSourceTemplatesEnabled, setMatchSourceTemplatesEnabled] =
+        useState(
+            initialStrategy?.strategy === 'matchSourceStructure' &&
+                (hasSchemaTemplate(initialStrategy) ||
+                    hasTableTemplate(initialStrategy))
+        );
+
+    // Handling the schema template stuff
     const [schemaMode, setSchemaMode] = useState<'fixed' | 'template'>(
         'template'
     );
-    const parsedSchemaTemplate = hasSchemaTemplate(initialStrategy)
-        ? parseSchemaTemplate(initialStrategy.schemaTemplate)
-        : { prefix: '', suffix: '' };
-    const [schemaPrefix, setSchemaPrefix] = useState(
-        parsedSchemaTemplate.prefix
-    );
-    const [schemaSuffix, setSchemaSuffix] = useState(
-        parsedSchemaTemplate.suffix
-    );
-
+    const parsedSchema = parseSchemaTemplate(initialStrategy);
+    const [schemaPrefix, setSchemaPrefix] = useState(parsedSchema.prefix);
+    const [schemaSuffix, setSchemaSuffix] = useState(parsedSchema.suffix);
     const schemaTemplate =
         schemaMode === 'template'
             ? `${schemaPrefix}${SCHEMA_TEMPLATE_STRING}${schemaSuffix}`
             : undefined;
 
+    // Handling the table template stuff
     const [tableMode, setTableMode] = useState<'fixed' | 'template'>(
         'template'
     );
-    const parsedTableTemplate = hasTableTemplate(initialStrategy)
-        ? parseTableTemplate(initialStrategy.tableTemplate)
-        : { prefix: '', suffix: '' };
-    const [tablePrefix, setTablePrefix] = useState(parsedTableTemplate.prefix);
-    const [tableSuffix, setTableSuffix] = useState(parsedTableTemplate.suffix);
+    const parsedTable = parseTableTemplate(initialStrategy);
+    const [tablePrefix, setTablePrefix] = useState(parsedTable.prefix);
+    const [tableSuffix, setTableSuffix] = useState(parsedTable.suffix);
     const [tableValue, setTableValue] = useState<string>(
         !hasTableTemplate(initialStrategy) &&
             initialStrategy?.strategy === 'matchSourceStructure' &&
@@ -94,47 +97,47 @@ export function TargetNamingFormContent({
             ? initialStrategy.tableTemplate
             : ''
     );
-
-    const isValid = isStrategyValid(strategyKey, schemaMode, schema);
-
     const tableTemplate =
         tableMode === 'template'
             ? `${tablePrefix}${TABLE_TEMPLATE_STRING}${tableSuffix}`
             : tableValue.trim() || undefined;
 
+    // Generate examples for each option
     const { srcSchema, srcTable, sourceName } = parseExampleCollection(
         exampleCollections?.[0]
     );
-
     const { example, publicExample } = buildBothExamples(
         strategyKey,
         schema,
         schemaTemplate,
         tableTemplate,
         skipCommonDefaults,
-        showMatchNaming,
+        matchSourceTemplatesEnabled,
         srcSchema,
         srcTable,
         sourceName
     );
 
+    // Validation
+    const isKeyValid = isStrategyKeyValid(strategyKey);
+    const canSubmitForm = isStrategyValid(strategyKey, schemaMode, schema);
+
+    // Keeping everything updated
     useEffect(() => {
         const strategy = buildStrategyFromState(
             strategyKey,
             schema,
             skipCommonDefaults,
-            showMatchNaming,
+            matchSourceTemplatesEnabled,
             schemaTemplate,
             tableTemplate
         );
-        onChange(strategy, isValid);
-        // onChange identity is intentionally excluded — callers should stabilise it
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        onChange(strategy, canSubmitForm);
     }, [
         strategyKey,
         schema,
         skipCommonDefaults,
-        showMatchNaming,
+        matchSourceTemplatesEnabled,
         schemaMode,
         schemaPrefix,
         schemaSuffix,
@@ -142,7 +145,10 @@ export function TargetNamingFormContent({
         tablePrefix,
         tableSuffix,
         tableValue,
-        isValid,
+        canSubmitForm,
+        schemaTemplate,
+        tableTemplate,
+        onChange,
     ]);
 
     return (
@@ -153,7 +159,7 @@ export function TargetNamingFormContent({
                 })}
             </Typography>
 
-            {!isValid ? (
+            {!isKeyValid ? (
                 <SpecPropInvalidSetting
                     currentSetting={strategyKey}
                     invalidSettingsMessageId="specPropUpdater.error.message.withRemove"
@@ -186,9 +192,11 @@ export function TargetNamingFormContent({
                                     control={
                                         <Checkbox
                                             size="small"
-                                            checked={showMatchNaming}
+                                            checked={
+                                                matchSourceTemplatesEnabled
+                                            }
                                             onChange={(e) =>
-                                                setShowMatchNaming(
+                                                setMatchSourceTemplatesEnabled(
                                                     e.target.checked
                                                 )
                                             }
@@ -198,7 +206,7 @@ export function TargetNamingFormContent({
                                         id: 'destinationLayout.dialog.matchSourceStructure.customize',
                                     })}
                                 />
-                                {showMatchNaming ? (
+                                {matchSourceTemplatesEnabled ? (
                                     <Stack spacing={1}>
                                         <TemplateInput
                                             tokenString={example.sourceSchema}

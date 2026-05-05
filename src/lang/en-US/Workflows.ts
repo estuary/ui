@@ -341,9 +341,7 @@ export const Workflows: Record<string, string> = {
     'fieldsRecommended.cta.selectAlgorithm': `Default Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
-    'schemaMode.example.base': `acmeco/{tablePrefix}/orders`,
-    'schemaMode.example.tablePrefix': `anvils`,
-    'schemaMode.example.public.tablePrefix': `public`,
+    'schemaMode.example.base': `${CommonMessages['defaults.tenant']}/{tablePrefix}/${CommonMessages['defaults.table']}`,
 
     'schemaMode.options.prefixNonDefaultSchema.ignored1': `public`,
     'schemaMode.options.prefixNonDefaultSchema.ignored2': `dbo`,
@@ -351,24 +349,24 @@ export const Workflows: Record<string, string> = {
     'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,
     'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema} or {defaultSchema2}). The schema itself is left unspecified.`,
     'schemaMode.options.prefixNonDefaultSchema.description.highlight': `only if it's not the default schema`,
-    'schemaMode.options.prefixNonDefaultSchema.example.table': `{tablePrefix}orders`,
-    'schemaMode.options.prefixNonDefaultSchema.example.public.table': `orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.table': `{tablePrefix}${CommonMessages['defaults.table']}`,
+    'schemaMode.options.prefixNonDefaultSchema.example.public.table': `${CommonMessages['defaults.table']}`,
     'schemaMode.options.prefixNonDefaultSchema.example.schema': `default`,
 
     'schemaMode.options.prefixSchema.label': `Prefix Schema`,
     'schemaMode.options.prefixSchema.description': `Always prefixes the table name with the second-to-last part of the collection name, regardless of what the schema is. Schema field remains empty, default is used.`,
-    'schemaMode.options.prefixSchema.example.table': `{tablePrefix}orders`,
-    'schemaMode.options.prefixSchema.example.public.table': `{tablePrefix}orders`,
+    'schemaMode.options.prefixSchema.example.table': `{tablePrefix}${CommonMessages['defaults.table']}`,
+    'schemaMode.options.prefixSchema.example.public.table': `{tablePrefix}${CommonMessages['defaults.table']}`,
     'schemaMode.options.prefixSchema.example.schema': `default`,
 
     'schemaMode.options.withSchema.label': `Mirror Schemas`,
     'schemaMode.options.withSchema.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
-    'schemaMode.options.withSchema.example.table': `orders`,
+    'schemaMode.options.withSchema.example.table': `${CommonMessages['defaults.table']}`,
     'schemaMode.options.withSchema.example.schema': `{tablePrefix}`,
 
     'schemaMode.options.noSchema.label': `Use Table Name Only`,
     'schemaMode.options.noSchema.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,
-    'schemaMode.options.noSchema.example.table': `orders`,
+    'schemaMode.options.noSchema.example.table': `${CommonMessages['defaults.table']}`,
     'schemaMode.options.noSchema.example.schema': `default`,
 
     // Entities Create

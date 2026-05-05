@@ -88,7 +88,13 @@ export default function TargetNamingUpdateWrapper() {
             ) : null}
 
             {validStrategy && strategyKey && example && publicExample ? (
-                <StrategyOption readOnly selected value={strategyKey} />
+                <StrategyOption
+                    example={null}
+                    publicExample={null}
+                    readOnly
+                    selected
+                    value={strategyKey}
+                />
             ) : (
                 !strategyInvalid && (
                     <Typography color="text.secondary" variant="body2">

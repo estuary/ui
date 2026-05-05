@@ -27,7 +27,10 @@ function ExampleRow({
             <code>
                 {example.sourceName ?? (
                     <>
-                        acmeco/<b>{example.tablePrefix}</b>/orders
+                        {intl.formatMessage({ id: 'defaults.tenant' })}/
+                        <b>{example.tablePrefix}</b>/
+                        {example.sourceTable ??
+                            intl.formatMessage({ id: 'defaults.table' })}
                     </>
                 )}
             </code>

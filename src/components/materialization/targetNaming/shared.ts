@@ -5,19 +5,32 @@ import type { TargetNamingStrategy } from 'src/types';
 export const SCHEMA_TEMPLATE_STRING = '{{schema}}';
 export const TABLE_TEMPLATE_STRING = '{{table}}';
 
+// Match i18n keys defaults.schema / defaults.table in CommonMessages.ts
+export const EXAMPLE_SCHEMA_DEFAULT = 'anvils';
+export const EXAMPLE_TABLE_DEFAULT = 'orders';
+
 export const VALID_STRATEGY_KEYS: StrategyKey[] = [
     'matchSourceStructure',
     'singleSchema',
     'prefixTableNames',
 ];
 
+export function isStrategyKeyValid(strategyKey: StrategyKey): boolean {
+    return VALID_STRATEGY_KEYS.includes(strategyKey);
+}
+
 export function isStrategyValid(
     strategyKey: StrategyKey,
     schemaMode: 'fixed' | 'template',
     schema: string
 ): boolean {
-    if (!VALID_STRATEGY_KEYS.includes(strategyKey)) return false;
-    if (strategyKey === 'matchSourceStructure') return true;
+    // console.log('isStrategyValid', { strategyKey, schemaMode, schema });
+    if (!isStrategyKeyValid(strategyKey)) {
+        return false;
+    }
+    if (strategyKey === 'matchSourceStructure') {
+        return true;
+    }
     return schemaMode === 'template' || schema.trim().length > 0;
 }
 
@@ -47,27 +60,37 @@ export function hasTableTemplate(
     );
 }
 
-export function parseSchemaTemplate(template: string): {
+export function parseSchemaTemplate(
+    strategy: TargetNamingStrategy | null | undefined
+): {
     prefix: string;
     suffix: string;
 } {
-    const parts = template.split(SCHEMA_TEMPLATE_STRING);
-    return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
+    if (hasSchemaTemplate(strategy)) {
+        const parts = strategy.schemaTemplate.split(SCHEMA_TEMPLATE_STRING);
+        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
+    }
+    return { prefix: '', suffix: '' };
 }
 
-export function parseTableTemplate(template: string): {
+export function parseTableTemplate(
+    strategy: TargetNamingStrategy | null | undefined
+): {
     prefix: string;
     suffix: string;
 } {
-    const parts = template.split(TABLE_TEMPLATE_STRING);
-    return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
+    if (hasTableTemplate(strategy)) {
+        const parts = strategy.tableTemplate.split(TABLE_TEMPLATE_STRING);
+        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
+    }
+    return { prefix: '', suffix: '' };
 }
 
 export function buildStrategyFromState(
     strategyKey: StrategyKey,
     schema: string,
     skipCommonDefaults: boolean,
-    showMatchNaming: boolean,
+    templatesEnabled: boolean,
     schemaTemplate: string | undefined,
     tableTemplate: string | undefined
 ): TargetNamingStrategy {
@@ -75,7 +98,7 @@ export function buildStrategyFromState(
         const strategy: TargetNamingStrategy = {
             strategy: 'matchSourceStructure',
         };
-        if (showMatchNaming) {
+        if (templatesEnabled) {
             if (schemaTemplate) strategy.schemaTemplate = schemaTemplate;
             if (tableTemplate) strategy.tableTemplate = tableTemplate;
         }
@@ -109,12 +132,12 @@ export function parseExampleCollection(collection: string | undefined): {
     return {
         srcSchema:
             parts.length >= 2
-                ? (parts[parts.length - 2] ?? 'anvils')
-                : 'anvils',
+                ? (parts[parts.length - 2] ?? EXAMPLE_SCHEMA_DEFAULT)
+                : EXAMPLE_SCHEMA_DEFAULT,
         srcTable:
             parts.length >= 1
-                ? (parts[parts.length - 1] ?? 'orders')
-                : 'orders',
+                ? (parts[parts.length - 1] ?? EXAMPLE_TABLE_DEFAULT)
+                : EXAMPLE_TABLE_DEFAULT,
         sourceName: collection,
     };
 }
@@ -149,8 +172,8 @@ export function buildBothExamples(
     tableTemplate: string | undefined,
     skipCommonDefaults: boolean,
     applyCustomNaming: boolean,
-    srcSchema: string = 'anvils',
-    srcTable: string = 'orders',
+    srcSchema: string = EXAMPLE_SCHEMA_DEFAULT,
+    srcTable: string = EXAMPLE_TABLE_DEFAULT,
     sourceName?: string
 ): {
     example: ReturnType<typeof buildExample>;
@@ -198,8 +221,8 @@ export function buildExample(
     schemaTemplate: string | undefined,
     tableTemplate: string | undefined,
     skipCommonDefaults: boolean,
-    sourceSchema: string = 'anvils',
-    sourceTable: string = 'orders',
+    sourceSchema: string = EXAMPLE_SCHEMA_DEFAULT,
+    sourceTable: string = EXAMPLE_TABLE_DEFAULT,
     sourceName?: string
 ): AutoCompleteOptionForTargetSchemaExample {
     const resolveSchema = (fallback: string) =>
