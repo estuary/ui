@@ -335,7 +335,7 @@ export const Workflows: Record<string, string> = {
     'schemaMode.input.label': `Default Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
-    'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
+    'specPropUpdater.error.message.withRemove': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
 
     // Fields Recommended
     'fieldsRecommended.cta.selectAlgorithm': `Default Field Depth`,

@@ -15,8 +15,11 @@ import { useIntl } from 'react-intl';
 
 import {
     buildExample,
+    buildStrategyFromState,
     hasSchemaTemplate,
     hasTableTemplate,
+    isStrategyValid,
+    parseExampleCollection,
     parseSchemaTemplate,
     parseTableTemplate,
     SCHEMA_TEMPLATE_STRING,
@@ -24,6 +27,7 @@ import {
 } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import { TemplateInput } from 'src/components/materialization/targetNaming/TemplateInput';
+import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 
 export interface TargetNamingFormContentProps {
     initialStrategy?: TargetNamingStrategy | null;
@@ -91,36 +95,26 @@ export function TargetNamingFormContent({
             : ''
     );
 
+    const isValid = isStrategyValid(strategyKey, schemaMode, schema);
+
     const tableTemplate =
         tableMode === 'template'
             ? `${tablePrefix}${TABLE_TEMPLATE_STRING}${tableSuffix}`
             : tableValue.trim() || undefined;
 
-    const schemaRequired = strategyKey !== 'matchSourceStructure';
-    const schemaProvided =
-        schemaMode === 'template' ? true : schema.trim().length > 0;
-    const isValid = !schemaRequired || schemaProvided;
-
     const exampleSchemaTemplate =
         strategyKey !== 'matchSourceStructure' || showMatchNaming
             ? schemaTemplate
             : undefined;
+
     const exampleTableTemplate =
         strategyKey !== 'matchSourceStructure' || showMatchNaming
             ? tableTemplate
             : undefined;
 
-    const firstCollection = exampleCollections?.[0];
-    const collectionParts = firstCollection?.split('/') ?? [];
-    const srcSchema =
-        collectionParts.length >= 2
-            ? (collectionParts[collectionParts.length - 2] ?? 'anvils')
-            : 'anvils';
-    const srcTable =
-        collectionParts.length >= 1
-            ? (collectionParts[collectionParts.length - 1] ?? 'orders')
-            : 'orders';
-    const sourceName = firstCollection;
+    const { srcSchema, srcTable, sourceName } = parseExampleCollection(
+        exampleCollections?.[0]
+    );
 
     const example = buildExample(
         strategyKey,
@@ -146,41 +140,14 @@ export function TargetNamingFormContent({
     );
 
     useEffect(() => {
-        let strategy: TargetNamingStrategy;
-        if (strategyKey === 'matchSourceStructure') {
-            strategy = {
-                strategy: 'matchSourceStructure',
-            };
-
-            if (showMatchNaming) {
-                if (schemaTemplate) {
-                    strategy.schemaTemplate = schemaTemplate;
-                }
-
-                if (tableTemplate) {
-                    strategy.tableTemplate = tableTemplate;
-                }
-            }
-        } else if (strategyKey === 'singleSchema') {
-            strategy = {
-                strategy: 'singleSchema',
-                schema: schema.trim(),
-            };
-
-            if (tableTemplate) {
-                strategy.tableTemplate = tableTemplate;
-            }
-        } else {
-            strategy = {
-                strategy: 'prefixTableNames',
-                schema: schema.trim(),
-                skipCommonDefaults,
-            };
-
-            if (tableTemplate) {
-                strategy.tableTemplate = tableTemplate;
-            }
-        }
+        const strategy = buildStrategyFromState(
+            strategyKey,
+            schema,
+            skipCommonDefaults,
+            showMatchNaming,
+            schemaTemplate,
+            tableTemplate
+        );
         onChange(strategy, isValid);
         // onChange identity is intentionally excluded — callers should stabilise it
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -206,6 +173,13 @@ export function TargetNamingFormContent({
                     id: 'destinationLayout.dialog.subtitle',
                 })}
             </Typography>
+
+            {!isValid ? (
+                <SpecPropInvalidSetting
+                    currentSetting={strategyKey}
+                    invalidSettingsMessageId="specPropUpdater.error.message.withRemove"
+                />
+            ) : null}
 
             <RadioGroup
                 value={strategyKey}

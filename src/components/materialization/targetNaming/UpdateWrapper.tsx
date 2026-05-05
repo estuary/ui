@@ -3,6 +3,8 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
+import { VALID_STRATEGY_KEYS } from 'src/components/materialization/targetNaming/shared';
+import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import { truncateTextSx } from 'src/context/Theme';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -31,9 +33,14 @@ export default function TargetNamingUpdateWrapper() {
         closeNamingDialog,
     } = useTargetNaming();
 
-    const strategyIntlKey = targetNamingStrategy
-        ? (STRATEGY_INTL_KEYS[targetNamingStrategy.strategy] ?? null)
-        : null;
+    const strategyInvalid =
+        !!targetNamingStrategy &&
+        !VALID_STRATEGY_KEYS.includes(targetNamingStrategy.strategy);
+
+    const strategyIntlKey =
+        targetNamingStrategy && !strategyInvalid
+            ? (STRATEGY_INTL_KEYS[targetNamingStrategy.strategy] ?? null)
+            : null;
 
     const label = strategyIntlKey
         ? intl.formatMessage({ id: strategyIntlKey })
@@ -55,6 +62,14 @@ export default function TargetNamingUpdateWrapper() {
                     })}
                 </Typography>
             </Stack>
+
+            {strategyInvalid ? (
+                <SpecPropInvalidSetting
+                    currentSetting={targetNamingStrategy?.strategy}
+                    invalidSettingsMessageId="specPropUpdater.error.message"
+                    updateDraftedSetting={clearStrategy}
+                />
+            ) : null}
 
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
                 <OutlinedChip
