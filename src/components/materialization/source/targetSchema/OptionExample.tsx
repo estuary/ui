@@ -1,14 +1,17 @@
 import type { OptionExampleProps } from 'src/components/materialization/source/targetSchema/types';
 
-import { Stack, useTheme } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
+import { useIntl } from 'react-intl';
 
-import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
-import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import { TARGET_SCHEMA_HIGHLIGHT_CLASS } from 'src/components/materialization/source/targetSchema/shared';
 
+const labelStyling = { fontWeight: 500, fontSize: 12 };
+
+// TODO (target naming:post migration:remove)
 function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
+    const intl = useIntl();
     const theme = useTheme();
 
     return (
@@ -28,12 +31,12 @@ function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
             }}
         >
             <code>
-                <MessageWithEmphasis
-                    messageID={baseTableMessageID}
-                    emphasisContent={{
-                        tablePrefix: <b>{example.tablePrefix}</b>,
-                    }}
-                />
+                {intl.formatMessage(
+                    { id: baseTableMessageID },
+                    {
+                        tablePrefix: example.tablePrefix,
+                    }
+                )}
             </code>
             <ArrowRight
                 style={{
@@ -41,10 +44,24 @@ function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
                     fontSize: 9,
                 }}
             />
-
-            <TechnicalEmphasis>
-                <b>{example.schema}</b>.{example.table}
-            </TechnicalEmphasis>
+            <Stack
+                component="span"
+                direction="row"
+                spacing={1}
+                sx={{
+                    alignItems: 'center',
+                }}
+            >
+                <Typography component="span" sx={labelStyling}>
+                    {intl.formatMessage({ id: 'schemaMode.data.table' })}
+                </Typography>
+                <code>{example.table}</code>
+                <Typography component="span">|</Typography>
+                <Typography component="span" sx={labelStyling}>
+                    {intl.formatMessage({ id: 'schemaMode.data.schema' })}
+                </Typography>
+                <code>{example.schema}</code>
+            </Stack>
         </Stack>
     );
 }

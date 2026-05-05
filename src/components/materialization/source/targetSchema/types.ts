@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { BaseAutoCompleteOption } from 'src/components/shared/specPropEditor/types';
 import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
+// TODO (target naming:post migration:remove)
 export interface AutoCompleteOptionForTargetSchemaExample {
     schema: string | ReactNode;
     table: string | ReactNode;

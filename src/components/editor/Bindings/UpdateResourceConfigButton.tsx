@@ -85,6 +85,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             sourceCaptureSettings.deltaUpdates = deltaUpdates;
         }
 
+        // TODO (target naming:post migration:remove)
         // Only pass targetNaming on the sourceCapture object for the old model.
         // For rootTargetNaming the strategy is passed directly to WASM (handled in generateMaterializationResourceSpec).
         if (

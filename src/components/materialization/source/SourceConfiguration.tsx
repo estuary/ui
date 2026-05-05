@@ -40,6 +40,7 @@ function SourceConfiguration() {
                     <DeltaUpdatesUpdateWrapper />
                 ) : null}
 
+                {/* TODO (target naming:post migration:remove)*/}
                 {targetNamingModel === 'sourceTargetNaming' ? (
                     <TargetSchemaUpdateWrapper />
                 ) : null}

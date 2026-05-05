@@ -89,6 +89,8 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             if (sourceCaptureDeltaUpdatesSupported) {
                 updatedSourceCapture.deltaUpdates = deltaUpdates;
             }
+
+            // TODO (target naming:post migration:remove)
             // For sourceTargetNaming model, keep passing targetNaming on the source object
             if (
                 sourceCaptureTargetSchemaSupported &&

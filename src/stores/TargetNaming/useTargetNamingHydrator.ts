@@ -28,7 +28,14 @@ export function useTargetNamingHydrator() {
     const hydrated = useRef(false);
 
     useEffect(() => {
-        if (hydrated.current) return;
+        if (hydrated.current) {
+            return;
+        }
+
+        // only hydrate if connector supports x_schema_name
+        if (!sourceCaptureTargetSchemaSupported) {
+            return;
+        }
 
         // Create: always rootTargetNaming regardless of connector support
         if (workflow === 'materialization_create') {
@@ -37,9 +44,6 @@ export function useTargetNamingHydrator() {
             hydrated.current = true;
             return;
         }
-
-        // Edit: only hydrate if connector supports x_schema_name
-        if (!sourceCaptureTargetSchemaSupported) return;
 
         // Edit: wait until draft spec is loaded
         if (!draftSpecs || draftSpecs.length === 0 || !draftSpecs[0].spec) {
@@ -50,12 +54,12 @@ export function useTargetNamingHydrator() {
         const model = detectTargetNamingModel(spec);
         setModel(model);
 
+        // Read existing root targetNaming value if present
         if (model === 'rootTargetNaming') {
-            // Read existing root targetNaming value if present
             setStrategy(spec.targetNaming ?? null);
         }
         // For sourceTargetNaming: the old string value is handled by SourceCaptureStore
-        // via the existing useSourceSetting('targetNaming') path — no change needed.
+        // via the existing useSourceSetting('targetNaming').
 
         hydrated.current = true;
     }, [
