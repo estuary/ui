@@ -87,34 +87,38 @@ export default function TargetNamingUpdateWrapper() {
                 />
             ) : null}
 
-            {validStrategy && strategyKey && example && publicExample ? (
-                <StrategyOption
-                    example={null}
-                    publicExample={null}
-                    readOnly
-                    selected
-                    value={strategyKey}
-                />
-            ) : (
-                !strategyInvalid && (
-                    <Typography color="text.secondary" variant="body2">
-                        {intl.formatMessage({
-                            id: 'destinationLayout.selected.none',
-                        })}
-                    </Typography>
-                )
-            )}
+            <Stack direction="row" spacing={2} alignItems="center">
+                {validStrategy && strategyKey && example && publicExample ? (
+                    <Box sx={{ maxWidth: 300 }}>
+                        <StrategyOption
+                            example={null}
+                            publicExample={null}
+                            readOnly
+                            selected
+                            value={strategyKey}
+                        />
+                    </Box>
+                ) : (
+                    !strategyInvalid && (
+                        <Typography color="text.secondary" variant="body2">
+                            {intl.formatMessage({
+                                id: 'destinationLayout.selected.none',
+                            })}
+                        </Typography>
+                    )
+                )}
 
-            <Box>
-                <Button
-                    size="small"
-                    variant="outlined"
-                    disabled={saving || formActive}
-                    onClick={openNamingDialog}
-                >
-                    {intl.formatMessage({ id: 'cta.modify' })}
-                </Button>
-            </Box>
+                <Box>
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        disabled={saving || formActive}
+                        onClick={openNamingDialog}
+                    >
+                        {intl.formatMessage({ id: 'cta.modify' })}
+                    </Button>
+                </Box>
+            </Stack>
 
             {targetNamingDialogOpen ? (
                 <TargetNamingDialog

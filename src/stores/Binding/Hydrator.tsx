@@ -4,7 +4,7 @@ import type {
     TargetNamingStrategy,
 } from 'src/types';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
@@ -67,6 +67,19 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     });
     callbacksRef.current = { confirmationContext, handleConfirm, updateDraft };
 
+    const pendingStrategyRef = useRef<TargetNamingStrategy>({
+        strategy: 'matchSourceStructure',
+    });
+    const handleNamingChange = useCallback(
+        (strategy: TargetNamingStrategy, isValid: boolean) => {
+            pendingStrategyRef.current = strategy;
+            callbacksRef.current.confirmationContext?.setContinueAllowed(
+                isValid
+            );
+        },
+        []
+    );
+
     useEffect(() => {
         if (
             (workflow && connectorTagId.length > 0) ||
@@ -119,13 +132,17 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                             targetSchemaSupported &&
                             allCollections.length > 0
                         ) {
+                            // When prefilling we need to prompt the user to provide
+                            //  us with their targetNaming strategy before continuing
+                            //  so the prefilled bindings are populated correctly
+
                             const {
                                 confirmationContext: ctx,
                                 handleConfirm: confirm,
                                 updateDraft: writeDraft,
                             } = callbacksRef.current;
 
-                            let pendingStrategy: TargetNamingStrategy = {
+                            pendingStrategyRef.current = {
                                 strategy: 'matchSourceStructure',
                             };
 
@@ -139,10 +156,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                                         <TargetNamingFormContent
                                             initialStrategy={null}
                                             exampleCollections={allCollections}
-                                            onChange={(strategy, isValid) => {
-                                                pendingStrategy = strategy;
-                                                ctx.setContinueAllowed(isValid);
-                                            }}
+                                            onChange={handleNamingChange}
                                         />
                                     ),
                                 },
@@ -156,20 +170,23 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                                     ? { capture: captureName }
                                     : undefined;
 
-                                await confirm(pendingStrategy, () => {
-                                    useBindingStore
-                                        .getState()
-                                        .prefillResourceConfigs(
-                                            allCollections,
-                                            true,
-                                            sourceCaptureDef,
-                                            pendingStrategy
-                                        );
-                                    if (captureName) {
-                                        void writeDraft(captureName);
-                                        setPrefilledCapture(captureName);
+                                await confirm(
+                                    pendingStrategyRef.current,
+                                    () => {
+                                        useBindingStore
+                                            .getState()
+                                            .prefillResourceConfigs(
+                                                allCollections,
+                                                true,
+                                                sourceCaptureDef,
+                                                pendingStrategyRef.current
+                                            );
+                                        if (captureName) {
+                                            void writeDraft(captureName);
+                                            setPrefilledCapture(captureName);
+                                        }
                                     }
-                                });
+                                );
                             }
                         } else {
                             // Fallback: preserve old behavior for edit workflows or
@@ -206,6 +223,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         editWorkflow,
         entityType,
         getTrialPrefixes,
+        handleNamingChange,
         hydrateState,
         setActive,
         setHydrated,

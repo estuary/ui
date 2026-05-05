@@ -1,7 +1,7 @@
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import type { SourceCaptureDef, TargetNamingStrategy } from 'src/types';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Button } from '@mui/material';
 
@@ -29,6 +29,18 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);
 
     const confirmationContext = useConfirmationModalContext();
+
+    const defaultStrategyRef = useRef<TargetNamingStrategy>({
+        strategy: 'matchSourceStructure',
+    });
+    const handleNamingChange = useCallback(
+        (strategy: TargetNamingStrategy, isValid: boolean) => {
+            defaultStrategyRef.current = strategy;
+            confirmationContext?.setContinueAllowed(isValid);
+        },
+        [confirmationContext]
+    );
+
     const selected = useStore(
         invariableStores['Entity-Selector-Table'],
         (state) => state.selected
@@ -127,10 +139,8 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const handleContinue = async () => {
         if (needsNamingDialog) {
-            let defaultStrategy: TargetNamingStrategy = {
+            defaultStrategyRef.current = {
                 strategy: 'matchSourceStructure',
-                // schemaTemplate: '{{schema}}',
-                // tableTemplate: '{{template}}',
             };
 
             const exampleCollections = Array.from(selected).map(
@@ -148,10 +158,7 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
                         <TargetNamingFormContent
                             initialStrategy={targetNamingStrategy}
                             exampleCollections={exampleCollections}
-                            onChange={(strategy, isValid) => {
-                                defaultStrategy = strategy;
-                                confirmationContext.setContinueAllowed(isValid);
-                            }}
+                            onChange={handleNamingChange}
                         />
                     ),
                 },
@@ -159,7 +166,9 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             );
 
             if (!confirmed) return;
-            await handleConfirm(defaultStrategy, () => close(defaultStrategy));
+            await handleConfirm(defaultStrategyRef.current, () =>
+                close(defaultStrategyRef.current)
+            );
             return;
         }
         close(targetNamingStrategy);

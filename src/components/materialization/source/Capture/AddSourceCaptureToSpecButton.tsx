@@ -1,14 +1,14 @@
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
 import type { SourceCaptureDef, TargetNamingStrategy } from 'src/types';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Button } from '@mui/material';
 
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
@@ -24,6 +24,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
+    const intl = useIntl();
     const [updating, setUpdating] = useState(false);
 
     const selected = useStore(
@@ -60,6 +61,17 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         needsNamingDialog,
         handleConfirm,
     } = useTargetNaming();
+
+    const pendingStrategyRef = useRef<TargetNamingStrategy>({
+        strategy: 'matchSourceStructure',
+    });
+    const handleNamingChange = useCallback(
+        (strategy: TargetNamingStrategy, isValid: boolean) => {
+            pendingStrategyRef.current = strategy;
+            confirmationContext?.setContinueAllowed(isValid);
+        },
+        [confirmationContext]
+    );
 
     // Binding Store
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
@@ -138,10 +150,8 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
 
     const handleContinue = async () => {
         if (needsNamingDialog) {
-            let pendingStrategy: Parameters<typeof handleConfirm>[0] = {
+            pendingStrategyRef.current = {
                 strategy: 'matchSourceStructure',
-                // schemaTemplate: '{{schema}}',
-                // tableTemplate: '{{template}}',
             };
 
             const selectedRow = Array.from(selected).map(
@@ -161,10 +171,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                         <TargetNamingFormContent
                             initialStrategy={targetNamingStrategy}
                             exampleCollections={exampleCollections}
-                            onChange={(strategy, isValid) => {
-                                pendingStrategy = strategy;
-                                confirmationContext.setContinueAllowed(isValid);
-                            }}
+                            onChange={handleNamingChange}
                         />
                     ),
                 },
@@ -172,8 +179,8 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             );
 
             if (!confirmed) return;
-            await handleConfirm(pendingStrategy, () =>
-                applySourceCapture(pendingStrategy)
+            await handleConfirm(pendingStrategyRef.current, () =>
+                applySourceCapture(pendingStrategyRef.current)
             );
             return;
         }
@@ -186,7 +193,7 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             onClick={handleContinue}
             disabled={updating}
         >
-            <FormattedMessage id="cta.continue" />
+            {intl.formatMessage({ id: 'cta.continue' })}
         </Button>
     );
 }

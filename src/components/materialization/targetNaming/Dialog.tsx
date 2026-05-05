@@ -1,6 +1,6 @@
 import type { TargetNamingStrategy } from 'src/types';
 
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 
@@ -38,6 +38,14 @@ export default function TargetNamingDialog({
         onConfirm(strategyRef.current);
     };
 
+    const handleChange = useCallback(
+        (strategy: TargetNamingStrategy, isValid: boolean) => {
+            strategyRef.current = strategy;
+            setCanConfirm(isValid);
+        },
+        []
+    );
+
     return (
         <Dialog open={open} fullWidth maxWidth="sm">
             <DialogTitleWithClose
@@ -50,10 +58,7 @@ export default function TargetNamingDialog({
             <DialogContent>
                 <TargetNamingFormContent
                     initialStrategy={initialStrategy}
-                    onChange={(strategy, isValid) => {
-                        strategyRef.current = strategy;
-                        setCanConfirm(isValid);
-                    }}
+                    onChange={handleChange}
                 />
             </DialogContent>
 
