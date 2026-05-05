@@ -14,7 +14,7 @@ import {
 import { useIntl } from 'react-intl';
 
 import {
-    buildExample,
+    buildBothExamples,
     buildStrategyFromState,
     hasSchemaTemplate,
     hasTableTemplate,
@@ -102,41 +102,20 @@ export function TargetNamingFormContent({
             ? `${tablePrefix}${TABLE_TEMPLATE_STRING}${tableSuffix}`
             : tableValue.trim() || undefined;
 
-    const exampleSchemaTemplate =
-        strategyKey !== 'matchSourceStructure' || showMatchNaming
-            ? schemaTemplate
-            : undefined;
-
-    const exampleTableTemplate =
-        strategyKey !== 'matchSourceStructure' || showMatchNaming
-            ? tableTemplate
-            : undefined;
-
     const { srcSchema, srcTable, sourceName } = parseExampleCollection(
         exampleCollections?.[0]
     );
 
-    const example = buildExample(
+    const { example, publicExample } = buildBothExamples(
         strategyKey,
         schema,
-        exampleSchemaTemplate,
-        exampleTableTemplate,
+        schemaTemplate,
+        tableTemplate,
         skipCommonDefaults,
+        showMatchNaming,
         srcSchema,
         srcTable,
         sourceName
-    );
-    const publicExample = buildExample(
-        strategyKey,
-        schema,
-        exampleSchemaTemplate,
-        exampleTableTemplate,
-        skipCommonDefaults,
-        'public',
-        srcTable,
-        sourceName
-            ? sourceName.replace(`/${srcSchema}/`, '/public/')
-            : undefined
     );
 
     useEffect(() => {
@@ -222,7 +201,7 @@ export function TargetNamingFormContent({
                                 {showMatchNaming ? (
                                     <Stack spacing={1}>
                                         <TemplateInput
-                                            tokenString={example.schema}
+                                            tokenString={example.sourceSchema}
                                             mode={schemaMode}
                                             value={schema}
                                             onChange={setSchema}
@@ -233,7 +212,7 @@ export function TargetNamingFormContent({
                                         />
                                         <TemplateInput
                                             field="table"
-                                            tokenString={example.table}
+                                            tokenString={example.sourceTable}
                                             mode={tableMode}
                                             value={tableValue}
                                             onChange={setTableValue}
@@ -278,7 +257,7 @@ export function TargetNamingFormContent({
                                 <TemplateInput
                                     hideWhenFixed
                                     field="table"
-                                    tokenString={example.table}
+                                    tokenString={example.sourceTable}
                                     mode={tableMode}
                                     value={tableValue}
                                     onChange={setTableValue}
@@ -321,7 +300,7 @@ export function TargetNamingFormContent({
                                 <TemplateInput
                                     hideWhenFixed
                                     field="table"
-                                    tokenString={example.table}
+                                    tokenString={example.sourceTable}
                                     mode={tableMode}
                                     value={tableValue}
                                     onChange={setTableValue}

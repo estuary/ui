@@ -6,7 +6,9 @@ export interface AutoCompleteOptionForTargetSchemaExample {
     schema: string | ReactNode;
     table: string | ReactNode;
     tablePrefix: string | ReactNode;
+    sourceTable: string;
     sourceName?: string;
+    sourceSchema?: string;
 }
 
 export interface AutoCompleteOptionForTargetSchema

@@ -57,6 +57,22 @@ export function TemplateInput({
     const keys = FIELD_KEYS[field];
     const tokenValue = tokenString ?? `{{${keys.token}}}`;
 
+    console.log('object >>> ', {
+        mode,
+        onModeChange,
+        hideWhenFixed,
+        required,
+        value,
+        onChange,
+        prefix,
+        onPrefixChange,
+        suffix,
+        onSuffixChange,
+        tokenString,
+        tokenValue,
+        keys,
+    });
+
     // TODO (target naming) - probably just remove this before merging
     const adornment = onModeChange ? (
         <InputAdornment position="end">

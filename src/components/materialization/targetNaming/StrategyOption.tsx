@@ -56,9 +56,10 @@ function ExampleRow({
 export interface StrategyOptionProps extends BaseComponentProps {
     value: StrategyKey;
     selected: boolean;
-    onSelect: () => void;
-    example: AutoCompleteOptionForTargetSchemaExample;
-    publicExample: AutoCompleteOptionForTargetSchemaExample;
+    onSelect?: () => void;
+    example: AutoCompleteOptionForTargetSchemaExample | null;
+    publicExample: AutoCompleteOptionForTargetSchemaExample | null;
+    readOnly?: boolean;
 }
 
 export function StrategyOption({
@@ -68,32 +69,41 @@ export function StrategyOption({
     example,
     publicExample,
     children,
+    readOnly,
 }: StrategyOptionProps) {
     const intl = useIntl();
     return (
         <Box
-            onClick={onSelect}
+            onClick={readOnly ? undefined : onSelect}
             sx={{
                 border: (theme) =>
                     `1px solid ${selected ? theme.palette.primary.main : theme.palette.divider}`,
                 borderRadius: 1,
-                cursor: 'pointer',
+                cursor: readOnly ? 'default' : 'pointer',
                 p: 1.5,
             }}
         >
-            <FormControlLabel
-                value={value}
-                control={<Radio size="small" />}
-                label={
-                    <Typography fontWeight={500}>
-                        {intl.formatMessage({
-                            id: `destinationLayout.strategy.${value}.label`,
-                        })}
-                    </Typography>
-                }
-                sx={{ mb: 0.5, pointerEvents: 'none' }}
-            />
-            <Box sx={{ pl: 4 }}>
+            {readOnly ? (
+                <Typography fontWeight={500} sx={{ mb: 0.5 }}>
+                    {intl.formatMessage({
+                        id: `destinationLayout.strategy.${value}.label`,
+                    })}
+                </Typography>
+            ) : (
+                <FormControlLabel
+                    value={value}
+                    control={<Radio size="small" />}
+                    label={
+                        <Typography fontWeight={500}>
+                            {intl.formatMessage({
+                                id: `destinationLayout.strategy.${value}.label`,
+                            })}
+                        </Typography>
+                    }
+                    sx={{ mb: 0.5, pointerEvents: 'none' }}
+                />
+            )}
+            <Box sx={{ pl: readOnly ? 0 : 4 }}>
                 <Typography
                     variant="body2"
                     color="text.secondary"
@@ -107,7 +117,7 @@ export function StrategyOption({
                 {children}
             </Box>
 
-            {selected ? (
+            {selected && example ? (
                 <PreformattedBlock>
                     <Stack spacing={0.5}>
                         <Typography>

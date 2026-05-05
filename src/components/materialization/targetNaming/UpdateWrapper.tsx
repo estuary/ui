@@ -1,21 +1,19 @@
+import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
+
 import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
-import { VALID_STRATEGY_KEYS } from 'src/components/materialization/targetNaming/shared';
+import {
+    buildBothExamples,
+    extractStrategyFields,
+    VALID_STRATEGY_KEYS,
+} from 'src/components/materialization/targetNaming/shared';
+import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
-import { truncateTextSx } from 'src/context/Theme';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
-import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
-
-const STRATEGY_INTL_KEYS: Record<string, string> = {
-    matchSourceStructure:
-        'destinationLayout.strategy.matchSourceStructure.label',
-    singleSchema: 'destinationLayout.strategy.singleSchema.label',
-    prefixTableNames: 'destinationLayout.strategy.prefixTableNames.label',
-};
 
 // Shown in Advanced Options for rootTargetNaming specs.
 // Lets the user re-open the Destination Layout dialog to change their selection.
@@ -37,15 +35,33 @@ export default function TargetNamingUpdateWrapper() {
         !!targetNamingStrategy &&
         !VALID_STRATEGY_KEYS.includes(targetNamingStrategy.strategy);
 
-    const strategyIntlKey =
-        targetNamingStrategy && !strategyInvalid
-            ? (STRATEGY_INTL_KEYS[targetNamingStrategy.strategy] ?? null)
-            : null;
+    const validStrategy =
+        targetNamingStrategy && !strategyInvalid ? targetNamingStrategy : null;
 
-    const label = strategyIntlKey
-        ? intl.formatMessage({ id: strategyIntlKey })
-        : (targetNamingStrategy?.strategy ??
-          intl.formatMessage({ id: 'destinationLayout.selected.none' }));
+    const strategyKey = validStrategy?.strategy as StrategyKey | undefined;
+
+    const { schema, skipCommonDefaults, schemaTemplate, tableTemplate } =
+        validStrategy
+            ? extractStrategyFields(validStrategy)
+            : {
+                  schema: '',
+                  skipCommonDefaults: true,
+                  schemaTemplate: undefined,
+                  tableTemplate: undefined,
+              };
+
+    const hasCustomNaming = !!schemaTemplate || !!tableTemplate;
+
+    const { example, publicExample } = strategyKey
+        ? buildBothExamples(
+              strategyKey,
+              schema,
+              schemaTemplate,
+              tableTemplate,
+              skipCommonDefaults,
+              hasCustomNaming
+          )
+        : { example: null, publicExample: null };
 
     return (
         <Stack spacing={1}>
@@ -71,26 +87,19 @@ export default function TargetNamingUpdateWrapper() {
                 />
             ) : null}
 
-            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-                <OutlinedChip
-                    color={targetNamingStrategy ? 'success' : 'info'}
-                    disabled={saving || formActive}
-                    label={
-                        <Box sx={{ ...truncateTextSx, minWidth: 100, p: 1 }}>
-                            {label}
-                        </Box>
-                    }
-                    onDelete={
-                        targetNamingStrategy
-                            ? () => {
-                                  void clearStrategy();
-                              }
-                            : undefined
-                    }
-                    style={{ maxWidth: '50%', minHeight: 40 }}
-                    variant="outlined"
-                />
+            {validStrategy && strategyKey && example && publicExample ? (
+                <StrategyOption readOnly selected value={strategyKey} />
+            ) : (
+                !strategyInvalid && (
+                    <Typography color="text.secondary" variant="body2">
+                        {intl.formatMessage({
+                            id: 'destinationLayout.selected.none',
+                        })}
+                    </Typography>
+                )
+            )}
 
+            <Box>
                 <Button
                     size="small"
                     variant="outlined"
@@ -99,7 +108,7 @@ export default function TargetNamingUpdateWrapper() {
                 >
                     {intl.formatMessage({ id: 'cta.modify' })}
                 </Button>
-            </Stack>
+            </Box>
 
             {targetNamingDialogOpen ? (
                 <TargetNamingDialog

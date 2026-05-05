@@ -1,3 +1,4 @@
+import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/source/targetSchema/types';
 import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
 import type { TargetNamingStrategy } from 'src/types';
 
@@ -118,19 +119,92 @@ export function parseExampleCollection(collection: string | undefined): {
     };
 }
 
+export function extractStrategyFields(strategy: TargetNamingStrategy): {
+    schema: string;
+    skipCommonDefaults: boolean;
+    schemaTemplate: string | undefined;
+    tableTemplate: string | undefined;
+} {
+    return {
+        schema: 'schema' in strategy ? (strategy.schema ?? '') : '',
+        skipCommonDefaults:
+            'skipCommonDefaults' in strategy
+                ? (strategy.skipCommonDefaults ?? true)
+                : true,
+        schemaTemplate: hasSchemaTemplate(strategy)
+            ? strategy.schemaTemplate
+            : undefined,
+        tableTemplate:
+            'tableTemplate' in strategy &&
+            typeof strategy.tableTemplate === 'string'
+                ? strategy.tableTemplate
+                : undefined,
+    };
+}
+
+export function buildBothExamples(
+    strategyKey: StrategyKey,
+    schema: string,
+    schemaTemplate: string | undefined,
+    tableTemplate: string | undefined,
+    skipCommonDefaults: boolean,
+    applyCustomNaming: boolean,
+    srcSchema: string = 'anvils',
+    srcTable: string = 'orders',
+    sourceName?: string
+): {
+    example: ReturnType<typeof buildExample>;
+    publicExample: ReturnType<typeof buildExample>;
+} {
+    const exSchemaTemplate =
+        strategyKey !== 'matchSourceStructure' || applyCustomNaming
+            ? schemaTemplate
+            : undefined;
+    const exTableTemplate =
+        strategyKey !== 'matchSourceStructure' || applyCustomNaming
+            ? tableTemplate
+            : undefined;
+    const publicSourceName = sourceName
+        ? sourceName.replace(`/${srcSchema}/`, '/public/')
+        : undefined;
+
+    return {
+        example: buildExample(
+            strategyKey,
+            schema,
+            exSchemaTemplate,
+            exTableTemplate,
+            skipCommonDefaults,
+            srcSchema,
+            srcTable,
+            sourceName
+        ),
+        publicExample: buildExample(
+            strategyKey,
+            schema,
+            exSchemaTemplate,
+            exTableTemplate,
+            skipCommonDefaults,
+            'public',
+            srcTable,
+            publicSourceName
+        ),
+    };
+}
+
 export function buildExample(
     strategyKey: StrategyKey,
     schema: string,
     schemaTemplate: string | undefined,
     tableTemplate: string | undefined,
     skipCommonDefaults: boolean,
-    srcSchema: string = 'anvils',
-    srcTable: string = 'orders',
+    sourceSchema: string = 'anvils',
+    sourceTable: string = 'orders',
     sourceName?: string
-): { schema: string; table: string; tablePrefix: string; sourceName?: string } {
+): AutoCompleteOptionForTargetSchemaExample {
     const resolveSchema = (fallback: string) =>
         schemaTemplate
-            ? schemaTemplate.replace(SCHEMA_TEMPLATE_STRING, srcSchema)
+            ? schemaTemplate.replace(SCHEMA_TEMPLATE_STRING, sourceSchema)
             : fallback || '_';
 
     const resolveTable = (fallback: string) =>
@@ -138,31 +212,38 @@ export function buildExample(
             ? tableTemplate.replace(TABLE_TEMPLATE_STRING, fallback)
             : fallback;
 
+    // Pass back the original values to make plumbing them through easier.
+    const providedSettings = {
+        sourceName,
+        sourceTable,
+        sourceSchema,
+    };
+
     switch (strategyKey) {
         case 'matchSourceStructure':
             return {
-                schema: resolveSchema(srcSchema),
-                table: resolveTable(srcTable),
-                tablePrefix: srcSchema,
-                sourceName,
+                ...providedSettings,
+                schema: resolveSchema(sourceSchema),
+                table: resolveTable(sourceTable),
+                tablePrefix: sourceSchema,
             };
         case 'singleSchema':
             return {
+                ...providedSettings,
                 schema: resolveSchema(schema),
-                table: resolveTable(srcTable),
-                tablePrefix: srcSchema,
-                sourceName,
+                table: resolveTable(sourceTable),
+                tablePrefix: sourceSchema,
             };
         case 'prefixTableNames': {
-            const isDefault = ['public', 'dbo'].includes(srcSchema);
+            const isDefault = ['public', 'dbo'].includes(sourceSchema);
             const prefix =
-                skipCommonDefaults && isDefault ? '' : `${srcSchema}_`;
+                skipCommonDefaults && isDefault ? '' : `${sourceSchema}_`;
 
             return {
+                ...providedSettings,
                 schema: resolveSchema(schema),
-                table: resolveTable(`${prefix}${srcTable}`),
-                tablePrefix: srcSchema,
-                sourceName,
+                table: resolveTable(`${prefix}${sourceTable}`),
+                tablePrefix: sourceSchema,
             };
         }
     }
