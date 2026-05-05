@@ -263,7 +263,6 @@ export function TargetNamingFormContent({
                                     onSuffixChange={setSchemaSuffix}
                                 />
                                 <TemplateInput
-                                    hideWhenFixed
                                     field="table"
                                     tokenString={example.sourceTable}
                                     mode={tableMode}
@@ -306,7 +305,6 @@ export function TargetNamingFormContent({
                                     onSuffixChange={setSchemaSuffix}
                                 />
                                 <TemplateInput
-                                    hideWhenFixed
                                     field="table"
                                     tokenString={example.sourceTable}
                                     mode={tableMode}

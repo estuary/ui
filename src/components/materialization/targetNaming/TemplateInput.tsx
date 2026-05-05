@@ -19,7 +19,6 @@ export interface TemplateInputProps {
     onSuffixChange: (v: string) => void;
     field?: 'schema' | 'table';
     onModeChange?: (mode: 'fixed' | 'template') => void;
-    hideWhenFixed?: boolean;
     required?: boolean;
     tokenString?: string;
 }
@@ -43,7 +42,6 @@ export function TemplateInput({
     field = 'schema',
     mode,
     onModeChange,
-    hideWhenFixed,
     required,
     value,
     onChange,
@@ -131,7 +129,6 @@ export function TemplateInput({
             required={required}
             error={Boolean(required && !value.trim())}
             fullWidth
-            disabled={hideWhenFixed}
             InputProps={{ endAdornment: adornment }}
         />
     );
