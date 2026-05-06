@@ -144,7 +144,7 @@ export function buildStrategyFromState(
         };
         if (templatesEnabled) {
             if (schemaValue) {
-                strategy.schemaTemplate = schemaValue;
+                strategy.schemaTemplate = schemaValue.trim();
             }
             if (tableValue) {
                 strategy.tableTemplate = tableValue;
