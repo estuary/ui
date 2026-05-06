@@ -1,17 +1,9 @@
 import { Typography } from '@mui/material';
 
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useWorkflowStore_connectorMetadataProperty } from 'src/stores/Workflow/hooks';
+import { useConnectorTag } from 'src/context/ConnectorTag';
 
 export const ExpressHeaderText = () => {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const connectorTag = useConnectorTag();
 
-    const connectorTitle = useWorkflowStore_connectorMetadataProperty(
-        connectorId,
-        'title'
-    );
-
-    return <Typography variant="h6">{connectorTitle}</Typography>;
+    return <Typography variant="h6">{connectorTag.connector.title}</Typography>;
 };

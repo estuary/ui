@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
+import { useConnectorTag_nullable } from 'src/context/ConnectorTag';
 import { useEntityType } from 'src/context/EntityContext';
 import {
     useEntityWorkflow,
@@ -25,7 +26,6 @@ import {
     useBinding_setHydrationErrorsExist,
 } from 'src/stores/Binding/hooks';
 import { useBindingStore } from 'src/stores/Binding/Store';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -40,9 +40,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
 
     const getTrialPrefixes = useTrialPrefixes();
 
-    const connectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
-    );
+    const connectorTagState = useConnectorTag_nullable();
 
     const hydrated = useBinding_hydrated();
     const setHydrated = useBinding_setHydrated();
@@ -81,10 +79,11 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     );
 
     useEffect(() => {
-        if (
-            (workflow && connectorTagId.length > 0) ||
-            workflow === 'collection_create'
-        ) {
+        if (workflow && connectorTagState) {
+            const connectorTag = connectorTagState.applicable
+                ? connectorTagState.data
+                : null;
+
             setActive(true);
 
             // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
@@ -93,7 +92,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
             hydrateState(
                 editWorkflow,
                 entityType,
-                connectorTagId,
+                connectorTag,
                 getTrialPrefixes,
                 rehydrating.current
             )
@@ -219,7 +218,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 });
         }
     }, [
-        connectorTagId,
+        connectorTagState,
         editWorkflow,
         entityType,
         getTrialPrefixes,

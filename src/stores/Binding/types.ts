@@ -1,5 +1,6 @@
 import type { DurationObjectUnits } from 'luxon';
 import type { TrialCollectionQuery } from 'src/api/liveSpecsExt';
+import type { ConnectorTagData } from 'src/context/ConnectorTag';
 import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { ResourceConfigPointers } from 'src/services/ajv';
 import type { CallSupabaseResponse } from 'src/services/supabase';
@@ -212,7 +213,7 @@ export interface BindingState
     hydrateState: (
         editWorkflow: boolean,
         entityType: Entity,
-        connectorTagId: string,
+        connectorTag: ConnectorTagData | null,
         getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeOrTransform[] | null>;

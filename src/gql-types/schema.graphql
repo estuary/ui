@@ -83,6 +83,49 @@ type Alert {
   resolvedAt: DateTime
 }
 
+"""A single row from `public.alert_configs`."""
+type AlertConfigEntry {
+  catalogPrefixOrName: String!
+  config: JSON!
+  createdAt: DateTime!
+  detail: String
+
+  """
+  The fully-resolved effective config at this scope, merging all
+  ancestor prefix layers and controller defaults.
+  """
+  effective: EffectiveAlertConfig!
+  id: Id!
+  lastModifiedBy: UUID
+  updatedAt: DateTime!
+}
+
+type AlertConfigEntryConnection {
+  """A list of edges."""
+  edges: [AlertConfigEntryEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type AlertConfigEntryEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: AlertConfigEntry!
+}
+
+"""
+Optional filter for the `alertConfigs` query. When omitted, all accessible
+rows are returned.
+"""
+input AlertConfigsFilter {
+  """Filter on the `catalog_prefix_or_name` column."""
+  catalogPrefixOrName: PrefixFilter
+}
+
 type AlertConnection {
   """A list of edges."""
   edges: [AlertEdge!]!
@@ -307,6 +350,11 @@ type Connector {
   """
   defaultSpec: ConnectorSpec
 
+  """
+  A string that contains a list of connector details (latency, batch, etc.)
+  """
+  detail: String
+
   """Link to an external site with more information about the endpoint"""
   externalUrl: String!
 
@@ -321,9 +369,6 @@ type Connector {
   """The connector's logo image, represented as a URL per locale"""
   logoUrl: String
 
-  """A longform description of this connector"""
-  longDescription: String
-
   """The protocol of this connector (capture or materialization)."""
   protocol: ConnectorProto
 
@@ -331,9 +376,6 @@ type Connector {
   Whether this connector should appear in a promoted position in connector listings
   """
   recommended: Boolean!
-
-  """Brief human readable description, at most a few sentences"""
-  shortDescription: String
 
   """Look up the spec for a specific image tag of this connector."""
   spec(
@@ -571,6 +613,11 @@ type DiscoverChange {
   target: Collection!
 }
 
+type EffectiveAlertConfig {
+  config: JSON!
+  provenance: [FieldProvenance!]!
+}
+
 """
 A generic error that can be associated with a particular draft spec for a given operation.
 """
@@ -578,6 +625,11 @@ type Error {
   catalogName: String!
   detail: String!
   scope: String
+}
+
+type FieldProvenance {
+  path: String!
+  source: String
 }
 
 scalar Id
@@ -683,6 +735,12 @@ type LiveSpec {
   catalogType: CatalogType!
   createdAt: DateTime!
   dataPlaneId: Id!
+
+  """
+  The fully-resolved effective alert config for this task, merging all
+  ancestor prefix layers and controller defaults.
+  """
+  effectiveAlertConfig: EffectiveAlertConfig!
   isDisabled: Boolean!
   lastBuildId: Id!
   lastPubId: Id!
@@ -864,6 +922,23 @@ type MutationRoot {
   testConnectionHealth(catalogPrefix: Prefix!, spec: JSON!): ConnectionHealthTestResult!
 
   """
+  Creates or replaces the alert config at `catalogPrefixOrName`.
+  
+  `catalogPrefixOrName` is either a catalog prefix ending in `/`
+  (applies to all tasks under that prefix) or an exact catalog name
+  with no trailing slash (applies to that single task). Exact catalog
+  names must refer to a task that currently exists in `live_specs`;
+  prefixes have no such constraint.
+  
+  To clear all configured overrides while keeping the row, pass an empty
+  `{}` config.
+  
+  If `detail` is omitted or `null` on update, the existing `detail`
+  value is preserved.
+  """
+  updateAlertConfig(catalogPrefixOrName: String!, config: JSON!, detail: String): UpdateAlertConfigResult!
+
+  """
   Updates the alert subscription for the given prefix and email, returning
   the updated subscription.
   """
@@ -1023,6 +1098,16 @@ type PublicationStatus {
 }
 
 type QueryRoot {
+  """
+  Lists alert-config rows visible to the caller.
+  
+  Results are limited to readable prefixes and sorted by
+  `catalog_prefix_or_name`. `filter.catalogPrefixOrName.startsWith` can
+  narrow the results further. Passing a full catalog name returns at
+  most one exact-name row.
+  """
+  alertConfigs(after: String, filter: AlertConfigsFilter, first: Int): AlertConfigEntryConnection!
+
   """Returns a complete list of alert subscriptions."""
   alertSubscriptions(by: AlertSubscriptionsBy!): [AlertSubscription!]!
 
@@ -1444,6 +1529,13 @@ entities without requiring a central allocating authority.
 * [RFC4122: A Universally Unique Identifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
 """
 scalar UUID
+
+"""Result of the `updateAlertConfig` mutation."""
+type UpdateAlertConfigResult {
+  catalogPrefixOrName: String!
+  created: Boolean!
+  id: Id!
+}
 
 """Result of updating a storage mapping."""
 type UpdateStorageMappingResult {

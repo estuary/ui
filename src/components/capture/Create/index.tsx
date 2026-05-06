@@ -7,12 +7,10 @@ import {
     useEditorStore_id,
     useEditorStore_persistedDraftId,
     useEditorStore_queryResponse_mutate,
-    useEditorStore_setId,
 } from 'src/components/editor/Store/hooks';
 import EntityCreate from 'src/components/shared/Entity/Create';
 import EntityToolbar from 'src/components/shared/Entity/Header';
 import { MutateDraftSpecProvider } from 'src/components/shared/Entity/MutateDraftSpecContext';
-import useValidConnectorsExist from 'src/hooks/connectors/useHasConnectors';
 import useDraftSpecs from 'src/hooks/useDraftSpecs';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { CustomEvents } from 'src/services/types';
@@ -28,19 +26,13 @@ function CaptureCreate() {
             'https://docs.estuary.dev/guides/create-dataflow/#create-a-capture',
     });
 
-    const hasConnectors = useValidConnectorsExist(entityType);
-
     // Details Form Store
-    const imageTag = useDetailsFormStore(
-        (state) => state.details.data.connectorImage
-    );
     const entityNameChanged = useDetailsFormStore(
         (state) => state.entityNameChanged
     );
 
     // Draft Editor Store
     const draftId = useEditorStore_id();
-    const setDraftId = useEditorStore_setId();
     const persistedDraftId = useEditorStore_persistedDraftId();
 
     // Endpoint Config Store
@@ -61,12 +53,6 @@ function CaptureCreate() {
             await mutate_advancedEditor();
         }
     }, [mutateDraftSpecs, mutate_advancedEditor]);
-
-    // Reset the catalog if the connector changes
-    useEffect(() => {
-        setDraftId(null);
-        setInitiateDiscovery(true);
-    }, [setDraftId, setInitiateDiscovery, imageTag]);
 
     // If the name changed we need to make sure we run discovery again
     useEffect(() => {
@@ -91,13 +77,11 @@ function CaptureCreate() {
                                 logEvent: CustomEvents.CAPTURE_CREATE,
                             }}
                             secondaryButtonProps={{
-                                disabled: !hasConnectors,
                                 logEvent: CustomEvents.CAPTURE_TEST,
                             }}
                             GenerateButton={
                                 <CaptureGenerateButton
                                     entityType={entityType}
-                                    disabled={!hasConnectors}
                                     createWorkflowMetadata={{
                                         initiateDiscovery,
                                         setInitiateDiscovery,
@@ -107,10 +91,7 @@ function CaptureCreate() {
                         />
                     }
                     RediscoverButton={
-                        <RediscoverButton
-                            entityType={entityType}
-                            disabled={!hasConnectors}
-                        />
+                        <RediscoverButton entityType={entityType} />
                     }
                 />
             </MutateDraftSpecProvider>

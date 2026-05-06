@@ -55,10 +55,12 @@ export const LUXON_GRAIN_SETTINGS: {
         selectedLabelKey: 'detailsPanel.recentUsage.filter.label.year',
         longFormat: (val) =>
             val
+                .toUTC()
                 .setLocale(navigator.language ?? 'en-US')
                 .toLocaleString({ month: 'long', year: 'numeric' }),
         shortFormat: (val) =>
             val
+                .toUTC()
                 .setLocale(navigator.language ?? 'en-US')
                 .toLocaleString({ month: 'short' }),
     },
