@@ -8,6 +8,7 @@ import { useClient } from 'urql';
 
 import { CONNECTOR_TAG_QUERY } from 'src/api/gql/connectors';
 import ErrorComponent from 'src/components/shared/Error';
+import { useEntityWorkflow } from 'src/context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -25,22 +26,34 @@ export type ConnectorTagData = NonNullable<
     >;
 };
 
-const ConnectorTagContext = createContext<ConnectorTagData | null>(null);
+// `applicable: false` means the workflow does not use a connector (transformations).
+// `applicable: true` means the connector tag was fetched and is available.
+// `null` context means the fetch is still in progress.
+export type ConnectorTagState =
+    | { applicable: false }
+    | { applicable: true; data: ConnectorTagData };
 
-// ALWAYS used within ConnectorSelectedGuard to ensure we have valid values in URL
+const ConnectorTagContext = createContext<ConnectorTagState | null>(null);
+
+// When applicable - ALWAYS use within ConnectorSelectedGuard to ensure we have valid values in URL
 export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
     const connectorImagePath = useGlobalSearchParams(
         GlobalSearchParams.CONNECTOR_IMAGE_PATH
     );
     const client = useClient();
     const intl = useIntl();
+    const workflow = useEntityWorkflow();
 
-    const [connectorTag, setConnectorTag] = useState<ConnectorTagData | null>(
-        null
-    );
+    const [connectorTagState, setConnectorTagState] =
+        useState<ConnectorTagState | null>(null);
     const [fetchError, setFetchError] = useState<boolean | null>(false);
 
     useEffect(() => {
+        if (workflow === 'collection_create') {
+            setConnectorTagState({ applicable: false });
+            return;
+        }
+
         if (!hasLength(connectorImagePath)) {
             logRocketEvent('Connectors:fetch', {
                 noImagePath: true,
@@ -92,13 +105,16 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
                     });
                 }
 
-                setConnectorTag({
-                    ...spec,
-                    connector: {
-                        id: connector.id,
-                        imageName: connector.imageName,
-                        logoUrl: connector.logoUrl,
-                        title: connector.title,
+                setConnectorTagState({
+                    applicable: true,
+                    data: {
+                        ...spec,
+                        connector: {
+                            id: connector.id,
+                            imageName: connector.imageName,
+                            logoUrl: connector.logoUrl,
+                            title: connector.title,
+                        },
                     },
                 });
             })
@@ -108,7 +124,7 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
                 });
                 setFetchError(true);
             });
-    }, [client, connectorImagePath]);
+    }, [client, connectorImagePath, workflow]);
 
     if (fetchError) {
         return (
@@ -124,13 +140,12 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
         );
     }
 
-    // While loading we don't want to show anything
-    if (!connectorTag) {
+    if (!connectorTagState) {
         return null;
     }
 
     return (
-        <ConnectorTagContext.Provider value={connectorTag}>
+        <ConnectorTagContext.Provider value={connectorTagState}>
             {children}
         </ConnectorTagContext.Provider>
     );
@@ -139,11 +154,17 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
 export const useConnectorTag = (): ConnectorTagData => {
     const context = useContext(ConnectorTagContext);
 
-    if (!context) {
+    if (!context?.applicable) {
         throw new Error(
-            'useConnectorTag must be used within a ConnectorTagProvider'
+            'useConnectorTag must be used within a ConnectorTagProvider with an applicable connector'
         );
     }
 
-    return context;
+    return context.data;
+};
+
+// Use when the caller can safely skip the tag (BindingHydrator). This way we do not
+//  have to write a bunch of null safe code in the flows that will always require a connector.
+export const useConnectorTag_nullable = (): ConnectorTagState | null => {
+    return useContext(ConnectorTagContext);
 };
