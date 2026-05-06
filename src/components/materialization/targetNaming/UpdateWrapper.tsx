@@ -5,6 +5,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
+import { ExampleRow } from 'src/components/materialization/targetNaming/ExampleRow';
 import {
     buildBothExamples,
     extractStrategyFields,
@@ -101,18 +102,21 @@ export default function TargetNamingUpdateWrapper() {
                             value={strategyKey}
                         >
                             <Stack spacing={1}>
-                                <Box
-                                    sx={{
-                                        '& pre': { whiteSpace: 'pre-wrap' },
-                                    }}
-                                >
-                                    <PreformattedBlock>
-                                        <Stack>
-                                            <Box>Schema: {example?.schema}</Box>
-                                            <Box>Table: {example?.table}</Box>
-                                        </Stack>
-                                    </PreformattedBlock>
-                                </Box>
+                                {example ? (
+                                    <Box
+                                        sx={{
+                                            '& pre': { whiteSpace: 'pre-wrap' },
+                                        }}
+                                    >
+                                        <PreformattedBlock>
+                                            <ExampleRow
+                                                hideSourceName
+                                                outputLayout="column"
+                                                example={example}
+                                            />
+                                        </PreformattedBlock>
+                                    </Box>
+                                ) : null}
 
                                 <Box sx={{ alignSelf: 'end' }}>
                                     <Button

@@ -3,69 +3,13 @@ import type { BaseComponentProps, TargetNamingStrategy } from 'src/types';
 
 import { Box, FormControlLabel, Radio, Stack, Typography } from '@mui/material';
 
-import { ArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import { ExampleRow } from 'src/components/materialization/targetNaming/ExampleRow';
 import PreformattedBlock from 'src/components/shared/PreformattedBlock';
 import { defaultOutline, defaultOutline_hovered } from 'src/context/Theme';
 
 export type StrategyKey = TargetNamingStrategy['strategy'];
-
-function ExampleRow({
-    example,
-}: {
-    example: AutoCompleteOptionForTargetSchemaExample;
-}) {
-    const intl = useIntl();
-
-    return (
-        <Box
-            component="span"
-            sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                gap: 1,
-                fontSize: 12,
-                wordBreak: 'break-all',
-            }}
-        >
-            <code>
-                {example.sourceName ?? (
-                    <>
-                        {intl.formatMessage({ id: 'defaults.tenant' })}/
-                        <b>{example.tablePrefix}</b>/
-                        {example.sourceTable ??
-                            intl.formatMessage({ id: 'defaults.table' })}
-                    </>
-                )}
-            </code>
-            <ArrowRight width={14} height={14} />
-            <Box
-                sx={{
-                    maxHeight: 100,
-                    overflow: 'auto',
-                }}
-            >
-                {intl.formatMessage({
-                    id: 'destinationLayout.dialog.table.label',
-                })}
-                {': '}
-                <code>
-                    <b>{example.table}</b>
-                </code>
-                {' | '}
-                {intl.formatMessage({
-                    id: 'destinationLayout.dialog.schema.label',
-                })}
-                {': '}
-                <code>
-                    <b>{example.schema}</b>
-                </code>
-            </Box>
-        </Box>
-    );
-}
 
 export interface StrategyOptionProps extends BaseComponentProps {
     value: StrategyKey;
