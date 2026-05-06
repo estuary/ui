@@ -43,8 +43,7 @@ export function hasSchemaTemplate(
         !!s &&
         'schemaTemplate' in s &&
         typeof s.schemaTemplate === 'string' &&
-        s.schemaTemplate.length > SCHEMA_TEMPLATE_STRING.length &&
-        s.schemaTemplate.includes(SCHEMA_TEMPLATE_STRING)
+        s.schemaTemplate.length > 0
     );
 }
 
@@ -67,8 +66,7 @@ export function hasTableTemplate(
         !!s &&
         'tableTemplate' in s &&
         typeof s.tableTemplate === 'string' &&
-        s.tableTemplate.length > TABLE_TEMPLATE_STRING.length &&
-        s.tableTemplate.includes(TABLE_TEMPLATE_STRING)
+        s.tableTemplate.length > 0
     );
 }
 
@@ -164,12 +162,20 @@ export function parseExampleCollection(collection: string | undefined): {
     };
 }
 
-export function extractStrategyFields(strategy: TargetNamingStrategy): {
+export function extractStrategyFields(strategy: TargetNamingStrategy | null): {
     schema: string;
     skipCommonDefaults: boolean;
     schemaTemplate: string | undefined;
     tableTemplate: string | undefined;
 } {
+    if (!strategy) {
+        return {
+            schema: '',
+            schemaTemplate: undefined,
+            tableTemplate: undefined,
+            skipCommonDefaults: true,
+        };
+    }
     return {
         schema: 'schema' in strategy ? (strategy.schema ?? '') : '',
         skipCommonDefaults:
@@ -179,11 +185,9 @@ export function extractStrategyFields(strategy: TargetNamingStrategy): {
         schemaTemplate: hasSchemaTemplate(strategy)
             ? strategy.schemaTemplate
             : undefined,
-        tableTemplate:
-            'tableTemplate' in strategy &&
-            typeof strategy.tableTemplate === 'string'
-                ? strategy.tableTemplate
-                : undefined,
+        tableTemplate: hasTableTemplate(strategy)
+            ? strategy.tableTemplate
+            : undefined,
     };
 }
 

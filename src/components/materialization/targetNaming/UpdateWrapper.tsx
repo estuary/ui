@@ -41,19 +41,13 @@ export default function TargetNamingUpdateWrapper() {
 
     const strategyKey = validStrategy?.strategy as StrategyKey | undefined;
 
-    const { schema, schemaTemplate, tableTemplate } = validStrategy
-        ? extractStrategyFields(validStrategy)
-        : {
-              schema: '',
-              schemaTemplate: undefined,
-              tableTemplate: undefined,
-          };
+    const { schema, schemaTemplate, tableTemplate } =
+        extractStrategyFields(validStrategy);
 
     const hasCustomNaming = !!schema || !!schemaTemplate || !!tableTemplate;
 
-    console.log('validStrategy', validStrategy);
-
     console.log('>>>>>', {
+        validStrategy,
         schemaTemplate,
         schema,
         tableTemplate,
