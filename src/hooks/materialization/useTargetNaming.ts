@@ -110,6 +110,8 @@ function useTargetNaming() {
             newStrategy: TargetNamingStrategy,
             onSuccess?: () => void
         ): Promise<void> => {
+            console.log('newStrategy >>>>>> ', newStrategy);
+
             return updateStrategy(newStrategy).then(() => {
                 closeNamingDialog();
                 onSuccess?.();

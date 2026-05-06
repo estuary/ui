@@ -9,7 +9,7 @@ import { ExampleRow } from 'src/components/materialization/targetNaming/ExampleR
 import {
     buildBothExamples,
     extractStrategyFields,
-    VALID_STRATEGY_KEYS,
+    isStrategyKeyValid,
 } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import PreformattedBlock from 'src/components/shared/PreformattedBlock';
@@ -35,7 +35,7 @@ export default function TargetNamingUpdateWrapper() {
 
     const strategyInvalid =
         !!targetNamingStrategy &&
-        !VALID_STRATEGY_KEYS.includes(targetNamingStrategy.strategy);
+        !isStrategyKeyValid(targetNamingStrategy.strategy);
 
     const validStrategy =
         targetNamingStrategy && !strategyInvalid ? targetNamingStrategy : null;
@@ -65,7 +65,20 @@ export default function TargetNamingUpdateWrapper() {
           )
         : { example: null };
 
-    console.log('example', example);
+    const modifyButton = (
+        <Box sx={{ alignSelf: 'end' }}>
+            <Button
+                size="small"
+                variant="outlined"
+                disabled={saving || formActive}
+                onClick={openNamingDialog}
+            >
+                {intl.formatMessage({
+                    id: 'cta.modify',
+                })}
+            </Button>
+        </Box>
+    );
 
     return (
         <Stack spacing={1}>
@@ -118,28 +131,21 @@ export default function TargetNamingUpdateWrapper() {
                                     </Box>
                                 ) : null}
 
-                                <Box sx={{ alignSelf: 'end' }}>
-                                    <Button
-                                        size="small"
-                                        variant="outlined"
-                                        disabled={saving || formActive}
-                                        onClick={openNamingDialog}
-                                    >
-                                        {intl.formatMessage({
-                                            id: 'cta.modify',
-                                        })}
-                                    </Button>
-                                </Box>
+                                {modifyButton}
                             </Stack>
                         </StrategyOption>
                     </Box>
                 ) : (
                     !strategyInvalid && (
-                        <Typography color="text.secondary" variant="body2">
-                            {intl.formatMessage({
-                                id: 'destinationLayout.selected.none',
-                            })}
-                        </Typography>
+                        <>
+                            <Typography color="text.secondary" variant="body2">
+                                {intl.formatMessage({
+                                    id: 'destinationLayout.selected.none',
+                                })}
+                            </Typography>
+
+                            {modifyButton}
+                        </>
                     )
                 )}
             </Stack>

@@ -16,8 +16,8 @@ import { useIntl } from 'react-intl';
 import { buildStrategyFromState } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import { TemplateInput } from 'src/components/materialization/targetNaming/TemplateInput';
-import { useTargetNamingFormState } from 'src/components/materialization/targetNaming/useTargetNamingFormState';
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
+import { useTargetNamingFormState } from 'src/hooks/materialization/useTargetNamingFormState';
 
 export interface TargetNamingFormContentProps {
     initialStrategy?: TargetNamingStrategy | null;
