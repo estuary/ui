@@ -84,7 +84,12 @@ export function hasValidTableTemplate(
     );
 }
 
-const defaultResponse = { prefix: '', suffix: '', rawTemplate: null, invalid: false };
+const defaultResponse = {
+    prefix: '',
+    suffix: '',
+    rawTemplate: null,
+    invalid: false,
+};
 export function parseSchemaTemplate(
     strategy: TargetNamingStrategy | null | undefined
 ): ParseTemplateResponse {
@@ -96,7 +101,12 @@ export function parseSchemaTemplate(
 
     if (hasValidSchemaTemplate(strategy)) {
         const parts = rawTemplate.split(SCHEMA_TEMPLATE_STRING);
-        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '', rawTemplate, invalid: false };
+        return {
+            prefix: parts[0] ?? '',
+            suffix: parts[1] ?? '',
+            rawTemplate,
+            invalid: false,
+        };
     }
 
     return { ...defaultResponse, rawTemplate, invalid: true };
@@ -113,7 +123,12 @@ export function parseTableTemplate(
 
     if (hasValidTableTemplate(strategy)) {
         const parts = rawTemplate.split(TABLE_TEMPLATE_STRING);
-        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '', rawTemplate, invalid: false };
+        return {
+            prefix: parts[0] ?? '',
+            suffix: parts[1] ?? '',
+            rawTemplate,
+            invalid: false,
+        };
     }
 
     return { prefix: '', suffix: '', rawTemplate, invalid: true };
@@ -132,8 +147,12 @@ export function buildStrategyFromState(
             strategy: 'matchSourceStructure',
         };
         if (templatesEnabled) {
-            if (schemaTemplate) strategy.schemaTemplate = schemaTemplate;
-            if (tableTemplate) strategy.tableTemplate = tableTemplate;
+            if (schemaTemplate) {
+                strategy.schemaTemplate = schemaTemplate;
+            }
+            if (tableTemplate) {
+                strategy.tableTemplate = tableTemplate;
+            }
         }
         return strategy;
     }
@@ -143,7 +162,9 @@ export function buildStrategyFromState(
             strategy: 'singleSchema',
             schema: schema.trim(),
         };
-        if (tableTemplate) strategy.tableTemplate = tableTemplate;
+        if (tableTemplate) {
+            strategy.tableTemplate = tableTemplate;
+        }
         return strategy;
     }
 
@@ -152,7 +173,9 @@ export function buildStrategyFromState(
         schema: schema.trim(),
         skipCommonDefaults,
     };
-    if (tableTemplate) strategy.tableTemplate = tableTemplate;
+    if (tableTemplate) {
+        strategy.tableTemplate = tableTemplate;
+    }
     return strategy;
 }
 
