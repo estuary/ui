@@ -5,8 +5,13 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
-import { VALID_STRATEGY_KEYS } from 'src/components/materialization/targetNaming/shared';
+import {
+    buildBothExamples,
+    extractStrategyFields,
+    VALID_STRATEGY_KEYS,
+} from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
+import PreformattedBlock from 'src/components/shared/PreformattedBlock';
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
@@ -36,28 +41,30 @@ export default function TargetNamingUpdateWrapper() {
 
     const strategyKey = validStrategy?.strategy as StrategyKey | undefined;
 
-    // const { schema, skipCommonDefaults, schemaTemplate, tableTemplate } =
-    //     validStrategy
-    //         ? extractStrategyFields(validStrategy)
-    //         : {
-    //               schema: '',
-    //               skipCommonDefaults: true,
-    //               schemaTemplate: undefined,
-    //               tableTemplate: undefined,
-    //           };
+    const { schema, skipCommonDefaults, schemaTemplate, tableTemplate } =
+        validStrategy
+            ? extractStrategyFields(validStrategy)
+            : {
+                  schema: '',
+                  skipCommonDefaults: true,
+                  schemaTemplate: undefined,
+                  tableTemplate: undefined,
+              };
 
-    // const hasCustomNaming = !!schemaTemplate || !!tableTemplate;
+    const hasCustomNaming = !!schemaTemplate || !!tableTemplate;
 
-    // const { example, publicExample } = strategyKey
-    //     ? buildBothExamples(
-    //           strategyKey,
-    //           schema,
-    //           schemaTemplate,
-    //           tableTemplate,
-    //           skipCommonDefaults,
-    //           hasCustomNaming
-    //       )
-    //     : { example: null, publicExample: null };
+    const { example } = strategyKey
+        ? buildBothExamples(
+              strategyKey,
+              schema,
+              schemaTemplate,
+              tableTemplate,
+              skipCommonDefaults,
+              hasCustomNaming
+          )
+        : { example: null };
+
+    console.log('example', example);
 
     return (
         <Stack spacing={1}>
@@ -85,14 +92,42 @@ export default function TargetNamingUpdateWrapper() {
 
             <Stack direction="row" spacing={2} alignItems="center">
                 {validStrategy && strategyKey ? (
-                    <Box sx={{ maxWidth: 300 }}>
+                    <Box sx={{ maxWidth: 600 }}>
                         <StrategyOption
                             example={null}
                             publicExample={null}
                             readOnly
                             selected
                             value={strategyKey}
-                        />
+                        >
+                            <Stack spacing={1}>
+                                <Box
+                                    sx={{
+                                        '& pre': { whiteSpace: 'pre-wrap' },
+                                    }}
+                                >
+                                    <PreformattedBlock>
+                                        <Stack>
+                                            <Box>Schema: {example?.schema}</Box>
+                                            <Box>Table: {example?.table}</Box>
+                                        </Stack>
+                                    </PreformattedBlock>
+                                </Box>
+
+                                <Box sx={{ alignSelf: 'end' }}>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        disabled={saving || formActive}
+                                        onClick={openNamingDialog}
+                                    >
+                                        {intl.formatMessage({
+                                            id: 'cta.modify',
+                                        })}
+                                    </Button>
+                                </Box>
+                            </Stack>
+                        </StrategyOption>
                     </Box>
                 ) : (
                     !strategyInvalid && (
@@ -103,17 +138,6 @@ export default function TargetNamingUpdateWrapper() {
                         </Typography>
                     )
                 )}
-
-                <Box>
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        disabled={saving || formActive}
-                        onClick={openNamingDialog}
-                    >
-                        {intl.formatMessage({ id: 'cta.modify' })}
-                    </Button>
-                </Box>
             </Stack>
 
             {targetNamingDialogOpen ? (

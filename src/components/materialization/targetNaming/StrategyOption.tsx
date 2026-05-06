@@ -1,12 +1,13 @@
 import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/targetNaming/types';
 import type { BaseComponentProps, TargetNamingStrategy } from 'src/types';
 
-import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
+import { Box, FormControlLabel, Radio, Stack, Typography } from '@mui/material';
 
 import { ArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import PreformattedBlock from 'src/components/shared/PreformattedBlock';
+import { defaultOutline, defaultOutline_hovered } from 'src/context/Theme';
 
 export type StrategyKey = TargetNamingStrategy['strategy'];
 
@@ -89,11 +90,21 @@ export function StrategyOption({
         <Box
             onClick={readOnly ? undefined : onSelect}
             sx={{
-                border: (theme) =>
-                    `1px solid ${selected ? theme.palette.primary.main : theme.palette.divider}`,
-                borderRadius: 1,
-                cursor: readOnly ? 'default' : 'pointer',
-                p: 1.5,
+                'border': (theme) =>
+                    selected
+                        ? `1px solid ${theme.palette.primary.main}`
+                        : defaultOutline[theme.palette.mode],
+                'borderRadius': 1,
+                'cursor': readOnly ? 'default' : 'pointer',
+                'p': 1.5,
+                '&:hover': readOnly
+                    ? undefined
+                    : {
+                          border: (theme) =>
+                              selected
+                                  ? `1px solid ${theme.palette.primary.main}`
+                                  : defaultOutline_hovered[theme.palette.mode],
+                      },
             }}
         >
             {readOnly ? (
@@ -136,23 +147,19 @@ export function StrategyOption({
                         }}
                     >
                         <PreformattedBlock>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 0.5,
-                                }}
-                            >
+                            <Stack>
                                 <Typography>
                                     {intl.formatMessage({
                                         id: 'common.examples',
                                     })}
                                 </Typography>
-                                <ExampleRow example={example} />
-                                {publicExample ? (
-                                    <ExampleRow example={publicExample} />
-                                ) : null}
-                            </Box>
+                                <Stack sx={{ pl: 0.5 }}>
+                                    <ExampleRow example={example} />
+                                    {publicExample ? (
+                                        <ExampleRow example={publicExample} />
+                                    ) : null}
+                                </Stack>
+                            </Stack>
                         </PreformattedBlock>
                     </Box>
                 ) : null}
