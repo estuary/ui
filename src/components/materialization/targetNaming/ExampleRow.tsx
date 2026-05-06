@@ -19,10 +19,10 @@ export function ExampleRow({
     const intl = useIntl();
 
     const tableLabel = intl.formatMessage({
-        id: 'destinationLayout.dialog.table.label',
+        id: 'destinationLayout.example.table.label',
     });
     const schemaLabel = intl.formatMessage({
-        id: 'destinationLayout.dialog.schema.label',
+        id: 'destinationLayout.example.schema.label',
     });
 
     return (
@@ -32,9 +32,6 @@ export function ExampleRow({
                 display: 'flex',
                 flexWrap: 'wrap',
                 alignItems: 'center',
-                gap: 1,
-                fontSize: 12,
-                wordBreak: 'break-all',
             }}
         >
             {hideSourceName ? null : (
@@ -55,29 +52,23 @@ export function ExampleRow({
                 </>
             )}
             <Stack
+                useFlexGap
                 direction={outputLayout === 'column' ? 'column' : 'row'}
-                spacing={outputLayout === 'column' ? 0.5 : undefined}
-                sx={
-                    outputLayout === 'row'
-                        ? { maxHeight: 100, overflow: 'auto' }
-                        : undefined
-                }
+                spacing={0.5}
+                sx={{ flexWrap: 'wrap', overflow: 'auto' }}
             >
-                <span>
-                    {schemaLabel}
-                    {': '}
-                    <code>
+                <Stack direction="row" spacing={0.5} sx={{ flexShrink: 0 }}>
+                    <Box sx={{ whiteSpace: 'nowrap' }}>{schemaLabel}</Box>
+                    <code style={{ wordBreak: 'break-all' }}>
                         <b>{example.schema}</b>
                     </code>
-                </span>
-                {outputLayout === 'row' ? <span>{' | '}</span> : null}
-                <span>
-                    {tableLabel}
-                    {': '}
-                    <code>
+                </Stack>
+                <Stack direction="row" spacing={0.5} sx={{ flexShrink: 0 }}>
+                    <Box sx={{ whiteSpace: 'nowrap' }}>{tableLabel}</Box>
+                    <code style={{ wordBreak: 'break-all' }}>
                         <b>{example.table}</b>
                     </code>
-                </span>
+                </Stack>
             </Stack>
         </Box>
     );

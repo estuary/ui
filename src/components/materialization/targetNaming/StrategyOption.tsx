@@ -97,7 +97,7 @@ export function StrategyOption({
                                         id: 'common.examples',
                                     })}
                                 </Typography>
-                                <Stack sx={{ pl: 0.5 }}>
+                                <Stack sx={{ pl: 0.5 }} spacing={1}>
                                     <ExampleRow example={example} />
                                     {publicExample ? (
                                         <ExampleRow example={publicExample} />
