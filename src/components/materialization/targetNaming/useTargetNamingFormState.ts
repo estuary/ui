@@ -44,7 +44,10 @@ export function useTargetNamingFormState(
         );
 
     const [schemaMode, setSchemaMode] = useState<'fixed' | 'template'>(
-        'template'
+        initialStrategy?.strategy === 'prefixTableNames' ||
+            initialStrategy?.strategy === 'singleSchema'
+            ? 'fixed'
+            : 'template'
     );
     const parsedSchema = parseSchemaTemplate(initialStrategy);
     const [schemaPrefix, setSchemaPrefix] = useState(parsedSchema.prefix);
@@ -97,6 +100,7 @@ export function useTargetNamingFormState(
         onPrefixChange: setSchemaPrefix,
         suffix: schemaSuffix,
         onSuffixChange: setSchemaSuffix,
+        mode: schemaMode,
     };
 
     const sharedTableInputProps = {

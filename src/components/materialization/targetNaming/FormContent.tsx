@@ -147,7 +147,6 @@ export function TargetNamingFormContent({
                                         <TemplateInput
                                             {...sharedSchemaInputProps}
                                             tokenString={example.sourceSchema}
-                                            mode={schemaMode}
                                         />
                                         <TemplateInput
                                             {...sharedTableInputProps}
@@ -205,7 +204,6 @@ export function TargetNamingFormContent({
                             <Stack spacing={1}>
                                 <TemplateInput
                                     {...sharedSchemaInputProps}
-                                    mode={schemaMode}
                                     required
                                 />
                                 <TemplateInput {...sharedTableInputProps} />
