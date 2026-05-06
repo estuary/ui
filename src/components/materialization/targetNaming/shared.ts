@@ -48,6 +48,18 @@ export function hasSchemaTemplate(
     );
 }
 
+export function hasValidSchemaTemplate(
+    s: TargetNamingStrategy | null | undefined
+): s is Extract<TargetNamingStrategy, { schemaTemplate?: string }> & {
+    schemaTemplate: string;
+} {
+    return (
+        hasSchemaTemplate(s) &&
+        s.schemaTemplate.length > SCHEMA_TEMPLATE_STRING.length &&
+        s.schemaTemplate.includes(SCHEMA_TEMPLATE_STRING)
+    );
+}
+
 export function hasTableTemplate(
     s: TargetNamingStrategy | null | undefined
 ): s is TargetNamingStrategy & { tableTemplate: string } {
@@ -60,13 +72,23 @@ export function hasTableTemplate(
     );
 }
 
+export function hasValidTableTemplate(
+    s: TargetNamingStrategy | null | undefined
+): s is TargetNamingStrategy & { tableTemplate: string } {
+    return (
+        hasTableTemplate(s) &&
+        s.tableTemplate.length > TABLE_TEMPLATE_STRING.length &&
+        s.tableTemplate.includes(TABLE_TEMPLATE_STRING)
+    );
+}
+
 export function parseSchemaTemplate(
     strategy: TargetNamingStrategy | null | undefined
 ): {
     prefix: string;
     suffix: string;
 } {
-    if (hasSchemaTemplate(strategy)) {
+    if (hasValidSchemaTemplate(strategy)) {
         const parts = strategy.schemaTemplate.split(SCHEMA_TEMPLATE_STRING);
         return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
     }
@@ -79,7 +101,7 @@ export function parseTableTemplate(
     prefix: string;
     suffix: string;
 } {
-    if (hasTableTemplate(strategy)) {
+    if (hasValidTableTemplate(strategy)) {
         const parts = strategy.tableTemplate.split(TABLE_TEMPLATE_STRING);
         return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
     }
