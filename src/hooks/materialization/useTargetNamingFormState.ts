@@ -1,4 +1,5 @@
 import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
+import type { InputMode } from 'src/components/materialization/targetNaming/types';
 import type { TargetNamingStrategy } from 'src/types';
 
 import { useState } from 'react';
@@ -43,7 +44,7 @@ export function useTargetNamingFormState(
                     hasTableTemplate(initialStrategy))
         );
 
-    const [schemaMode, setSchemaMode] = useState<'fixed' | 'template'>(
+    const [schemaMode, setSchemaMode] = useState<InputMode>(
         initialStrategy?.strategy === 'prefixTableNames' ||
             initialStrategy?.strategy === 'singleSchema'
             ? 'fixed'
@@ -57,9 +58,7 @@ export function useTargetNamingFormState(
             ? `${schemaPrefix}${SCHEMA_TEMPLATE_STRING}${schemaSuffix}`
             : undefined;
 
-    const [tableMode, setTableMode] = useState<'fixed' | 'template'>(
-        'template'
-    );
+    const [tableMode, setTableMode] = useState<InputMode>('template');
     const parsedTable = parseTableTemplate(initialStrategy);
     const [tablePrefix, setTablePrefix] = useState(parsedTable.prefix);
     const [tableSuffix, setTableSuffix] = useState(parsedTable.suffix);

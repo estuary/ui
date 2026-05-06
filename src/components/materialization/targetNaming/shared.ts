@@ -1,5 +1,8 @@
 import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
-import type { AutoCompleteOptionForTargetSchemaExample } from 'src/components/materialization/targetNaming/types';
+import type {
+    AutoCompleteOptionForTargetSchemaExample,
+    InputMode,
+} from 'src/components/materialization/targetNaming/types';
 import type { TargetNamingStrategy } from 'src/types';
 
 export const SCHEMA_TEMPLATE_STRING = '{{schema}}';
@@ -21,7 +24,7 @@ export function isStrategyKeyValid(strategyKey: StrategyKey): boolean {
 
 export function isStrategyValid(
     strategyKey: StrategyKey,
-    schemaMode: 'fixed' | 'template',
+    schemaMode: InputMode,
     schema: string
 ): boolean {
     // console.log('isStrategyValid', { strategyKey, schemaMode, schema });

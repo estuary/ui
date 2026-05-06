@@ -1,16 +1,11 @@
-import {
-    IconButton,
-    InputAdornment,
-    Stack,
-    TextField,
-    Tooltip,
-} from '@mui/material';
+import type { InputMode } from 'src/components/materialization/targetNaming/types';
 
-import { Code, InputField } from 'iconoir-react';
+import { Stack, TextField } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 export interface TemplateInputProps {
-    mode: 'fixed' | 'template';
+    mode: InputMode;
     value: string;
     onChange: (value: string) => void;
     prefix: string;
@@ -18,7 +13,7 @@ export interface TemplateInputProps {
     suffix: string;
     onSuffixChange: (v: string) => void;
     field?: 'schema' | 'table';
-    onModeChange?: (mode: 'fixed' | 'template') => void;
+    onModeChange?: (mode: InputMode) => void;
     required?: boolean;
     tokenString?: string;
 }
@@ -56,26 +51,26 @@ export function TemplateInput({
     const tokenValue = tokenString ?? `{{${keys.token}}}`;
 
     // TODO (target naming) - probably just remove this before merging
-    const adornment = onModeChange ? (
-        <InputAdornment position="end">
-            <Tooltip
-                title={intl.formatMessage({
-                    id: mode === 'template' ? keys.useFixed : keys.useTemplate,
-                })}
-                placement="right"
-            >
-                <IconButton
-                    size="small"
-                    edge="end"
-                    onClick={() =>
-                        onModeChange(mode === 'template' ? 'fixed' : 'template')
-                    }
-                >
-                    {mode === 'template' ? <InputField /> : <Code />}
-                </IconButton>
-            </Tooltip>
-        </InputAdornment>
-    ) : undefined;
+    // const adornment = onModeChange ? (
+    //     <InputAdornment position="end">
+    //         <Tooltip
+    //             title={intl.formatMessage({
+    //                 id: mode === 'template' ? keys.useFixed : keys.useTemplate,
+    //             })}
+    //             placement="right"
+    //         >
+    //             <IconButton
+    //                 size="small"
+    //                 edge="end"
+    //                 onClick={() =>
+    //                     onModeChange(mode === 'template' ? 'fixed' : 'template')
+    //                 }
+    //             >
+    //                 {mode === 'template' ? <InputField /> : <Code />}
+    //             </IconButton>
+    //         </Tooltip>
+    //     </InputAdornment>
+    // ) : undefined;
 
     if (mode === 'template') {
         return (
@@ -109,7 +104,7 @@ export function TemplateInput({
                     })}
                     value={suffix}
                     onChange={(e) => onSuffixChange(e.target.value)}
-                    InputProps={{ endAdornment: adornment }}
+                    // InputProps={{ endAdornment: adornment }}
                     sx={{ flex: 1 }}
                 />
             </Stack>
@@ -126,7 +121,7 @@ export function TemplateInput({
             required={required}
             error={Boolean(required && !value.trim())}
             fullWidth
-            InputProps={{ endAdornment: adornment }}
+            // InputProps={{ endAdornment: adornment }}
         />
     );
 }

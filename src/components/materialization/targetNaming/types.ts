@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+export type InputMode = 'fixed' | 'template';
+
 // TODO (target naming:post migration:update) - we mainly just use these as strings
 //  in the new version - so remove the `ReactNode` typing
 // Also - this should be moved targetNaming directory

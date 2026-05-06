@@ -8,6 +8,8 @@ import TargetNamingDialog from 'src/components/materialization/targetNaming/Dial
 import { ExampleRow } from 'src/components/materialization/targetNaming/ExampleRow';
 import {
     extractStrategyFields,
+    hasSchemaTemplate,
+    hasTableTemplate,
     isStrategyKeyValid,
 } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
@@ -44,7 +46,11 @@ export default function TargetNamingUpdateWrapper() {
     const { schema, schemaTemplate, tableTemplate } =
         extractStrategyFields(validStrategy);
 
-    const hasCustomNaming = !!schema || !!schemaTemplate || !!tableTemplate;
+    // hasSchemaTemplate / hasTableTemplate require an actual prefix or suffix —
+    // bare tokens are treated the same as no template.
+    const hasCustomSchema = hasSchemaTemplate(validStrategy);
+    const hasCustomTable = hasTableTemplate(validStrategy);
+    const hasCustomNaming = !!schema || hasCustomSchema || hasCustomTable;
 
     const modifyButton = (
         <Box sx={{ alignSelf: 'end' }}>
@@ -107,11 +113,12 @@ export default function TargetNamingUpdateWrapper() {
                                                 hideSourceName
                                                 outputLayout="column"
                                                 example={{
-                                                    schema:
-                                                        schemaTemplate ??
-                                                        schema ??
-                                                        '',
-                                                    table: tableTemplate ?? '',
+                                                    schema: hasCustomSchema
+                                                        ? schemaTemplate
+                                                        : (schema ?? ''),
+                                                    table: hasCustomTable
+                                                        ? tableTemplate
+                                                        : '',
                                                 }}
                                             />
                                         </PreformattedBlock>
