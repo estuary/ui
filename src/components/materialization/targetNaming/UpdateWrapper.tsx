@@ -46,13 +46,6 @@ export default function TargetNamingUpdateWrapper() {
 
     const hasCustomNaming = !!schema || !!schemaTemplate || !!tableTemplate;
 
-    console.log('>>>>>', {
-        validStrategy,
-        schemaTemplate,
-        schema,
-        tableTemplate,
-    });
-
     const modifyButton = (
         <Box sx={{ alignSelf: 'end' }}>
             <Button
