@@ -2,7 +2,7 @@ import type { BaseComponentProps } from 'src/types';
 
 import { useEffect, useRef } from 'react';
 
-import { useConnectorTag } from 'src/context/ConnectorTag';
+import { useConnectorTag_nullable } from 'src/context/ConnectorTag';
 import { useEntityType } from 'src/context/EntityContext';
 import {
     useEntityWorkflow,
@@ -30,7 +30,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
 
     const getTrialPrefixes = useTrialPrefixes();
 
-    const connectorTag = useConnectorTag();
+    const connectorTagState = useConnectorTag_nullable();
 
     const hydrated = useBinding_hydrated();
     const setHydrated = useBinding_setHydrated();
@@ -43,7 +43,11 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     );
 
     useEffect(() => {
-        if ((workflow && connectorTag) || workflow === 'collection_create') {
+        if (workflow && connectorTagState) {
+            const connectorTag = connectorTagState.applicable
+                ? connectorTagState.data
+                : null;
+
             setActive(true);
 
             // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
@@ -84,7 +88,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 });
         }
     }, [
-        connectorTag,
+        connectorTagState,
         editWorkflow,
         entityType,
         getTrialPrefixes,
