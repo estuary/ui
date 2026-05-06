@@ -8,7 +8,6 @@ import { useClient } from 'urql';
 
 import { CONNECTOR_TAG_QUERY } from 'src/api/gql/connectors';
 import ErrorComponent from 'src/components/shared/Error';
-import { useEntityWorkflow } from 'src/context/Workflow';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -35,22 +34,29 @@ export type ConnectorTagState =
 
 const ConnectorTagContext = createContext<ConnectorTagState | null>(null);
 
+interface Props extends BaseComponentProps {
+    applicable?: boolean; // Pass `false` for workflows that do not use a connector (transformations).
+}
+
 // When applicable - ALWAYS use within ConnectorSelectedGuard to ensure we have valid values in URL
-export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
+export const ConnectorTagProvider = ({
+    applicable = true,
+    children,
+}: Props) => {
     const connectorImagePath = useGlobalSearchParams(
         GlobalSearchParams.CONNECTOR_IMAGE_PATH
     );
     const client = useClient();
     const intl = useIntl();
-    const workflow = useEntityWorkflow();
 
     const [connectorTagState, setConnectorTagState] =
-        useState<ConnectorTagState | null>(null);
+        useState<ConnectorTagState | null>(() =>
+            applicable ? null : { applicable: false }
+        );
     const [fetchError, setFetchError] = useState<boolean | null>(false);
 
     useEffect(() => {
-        if (workflow === 'collection_create') {
-            setConnectorTagState({ applicable: false });
+        if (!applicable) {
             return;
         }
 
@@ -106,7 +112,7 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
                 }
 
                 setConnectorTagState({
-                    applicable: true,
+                    applicable,
                     data: {
                         ...spec,
                         connector: {
@@ -124,7 +130,7 @@ export const ConnectorTagProvider = ({ children }: BaseComponentProps) => {
                 });
                 setFetchError(true);
             });
-    }, [client, connectorImagePath, workflow]);
+    }, [applicable, client, connectorImagePath]);
 
     if (fetchError) {
         return (

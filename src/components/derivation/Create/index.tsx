@@ -84,7 +84,7 @@ function DerivationCreate() {
                     </Collapse>
 
                     <Collapse in={!showConfirmation}>
-                        <ConnectorTagProvider>
+                        <ConnectorTagProvider applicable={false}>
                             <BindingHydrator>
                                 <TransformationCreate
                                     key={newCollectionKey}
