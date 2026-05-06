@@ -10,7 +10,6 @@ import {
     isStrategyKeyValid,
     isStrategyValid,
     parseExampleCollection,
-    SCHEMA_TEMPLATE_STRING,
 } from 'src/components/materialization/targetNaming/shared';
 
 function initialSchemaValue(strategy?: TargetNamingStrategy | null): string {
@@ -55,9 +54,7 @@ export function useTargetNamingFormState(
         initialTableValue(initialStrategy)
     );
 
-    const schemaTemplate = schemaValue.includes(SCHEMA_TEMPLATE_STRING)
-        ? schemaValue
-        : undefined;
+    const schemaTemplate = schemaValue || undefined;
     const tableTemplate = tableValue.trim() || undefined;
 
     const { srcSchema, srcTable, sourceName } = parseExampleCollection(

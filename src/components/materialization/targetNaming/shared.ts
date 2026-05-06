@@ -81,6 +81,18 @@ export function hasValidTableTemplate(
     );
 }
 
+export function splitAroundToken(
+    value: string,
+    token: string
+): { prefix: string; suffix: string } | null {
+    if (!value.includes(token)) return null;
+    const idx = value.indexOf(token);
+    return {
+        prefix: value.slice(0, idx),
+        suffix: value.slice(idx + token.length),
+    };
+}
+
 const defaultResponse = {
     prefix: '',
     suffix: '',
@@ -97,13 +109,9 @@ export function parseSchemaTemplate(
     const rawTemplate = strategy.schemaTemplate;
 
     if (hasValidSchemaTemplate(strategy)) {
-        const parts = rawTemplate.split(SCHEMA_TEMPLATE_STRING);
-        return {
-            prefix: parts[0] ?? '',
-            suffix: parts[1] ?? '',
-            rawTemplate,
-            invalid: false,
-        };
+        const { prefix = '', suffix = '' } =
+            splitAroundToken(rawTemplate, SCHEMA_TEMPLATE_STRING) ?? {};
+        return { prefix, suffix, rawTemplate, invalid: false };
     }
 
     return { ...defaultResponse, rawTemplate, invalid: true };
@@ -119,13 +127,9 @@ export function parseTableTemplate(
     const rawTemplate = strategy.tableTemplate;
 
     if (hasValidTableTemplate(strategy)) {
-        const parts = rawTemplate.split(TABLE_TEMPLATE_STRING);
-        return {
-            prefix: parts[0] ?? '',
-            suffix: parts[1] ?? '',
-            rawTemplate,
-            invalid: false,
-        };
+        const { prefix = '', suffix = '' } =
+            splitAroundToken(rawTemplate, TABLE_TEMPLATE_STRING) ?? {};
+        return { prefix, suffix, rawTemplate, invalid: false };
     }
 
     return { prefix: '', suffix: '', rawTemplate, invalid: true };
