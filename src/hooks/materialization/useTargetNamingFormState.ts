@@ -1,5 +1,4 @@
 import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
-import type { InputMode } from 'src/components/materialization/targetNaming/types';
 import type { TargetNamingStrategy } from 'src/types';
 
 import { useState } from 'react';
@@ -11,11 +10,21 @@ import {
     isStrategyKeyValid,
     isStrategyValid,
     parseExampleCollection,
-    parseSchemaTemplate,
-    parseTableTemplate,
     SCHEMA_TEMPLATE_STRING,
-    TABLE_TEMPLATE_STRING,
 } from 'src/components/materialization/targetNaming/shared';
+
+function initialSchemaValue(strategy?: TargetNamingStrategy | null): string {
+    if (!strategy) return '';
+    if (strategy.strategy === 'matchSourceStructure') {
+        return hasSchemaTemplate(strategy) ? strategy.schemaTemplate : '';
+    }
+    return 'schema' in strategy ? (strategy.schema ?? '') : '';
+}
+
+function initialTableValue(strategy?: TargetNamingStrategy | null): string {
+    if (!strategy) return '';
+    return hasTableTemplate(strategy) ? strategy.tableTemplate : '';
+}
 
 export function useTargetNamingFormState(
     initialStrategy?: TargetNamingStrategy | null,
@@ -25,10 +34,8 @@ export function useTargetNamingFormState(
         initialStrategy?.strategy ?? 'matchSourceStructure'
     );
 
-    const [schema, setSchema] = useState<string>(
-        initialStrategy && initialStrategy.strategy !== 'matchSourceStructure'
-            ? (initialStrategy.schema ?? '')
-            : ''
+    const [schemaValue, setSchemaValue] = useState<string>(() =>
+        initialSchemaValue(initialStrategy)
     );
 
     const [skipCommonDefaults, setSkipCommonDefaults] = useState<boolean>(
@@ -44,42 +51,21 @@ export function useTargetNamingFormState(
                     hasTableTemplate(initialStrategy))
         );
 
-    const [schemaMode, setSchemaMode] = useState<InputMode>(
-        initialStrategy?.strategy === 'prefixTableNames' ||
-            initialStrategy?.strategy === 'singleSchema'
-            ? 'fixed'
-            : 'template'
+    const [tableValue, setTableValue] = useState<string>(() =>
+        initialTableValue(initialStrategy)
     );
-    const parsedSchema = parseSchemaTemplate(initialStrategy);
-    const [schemaPrefix, setSchemaPrefix] = useState(parsedSchema.prefix);
-    const [schemaSuffix, setSchemaSuffix] = useState(parsedSchema.suffix);
-    const schemaTemplate =
-        schemaMode === 'template'
-            ? `${schemaPrefix}${SCHEMA_TEMPLATE_STRING}${schemaSuffix}`
-            : undefined;
 
-    const [tableMode, setTableMode] = useState<InputMode>('template');
-    const parsedTable = parseTableTemplate(initialStrategy);
-    const [tablePrefix, setTablePrefix] = useState(parsedTable.prefix);
-    const [tableSuffix, setTableSuffix] = useState(parsedTable.suffix);
-    const [tableValue, setTableValue] = useState<string>(
-        !hasTableTemplate(initialStrategy) &&
-            initialStrategy?.strategy === 'matchSourceStructure' &&
-            initialStrategy.tableTemplate
-            ? initialStrategy.tableTemplate
-            : ''
-    );
-    const tableTemplate =
-        tableMode === 'template'
-            ? `${tablePrefix}${TABLE_TEMPLATE_STRING}${tableSuffix}`
-            : tableValue.trim() || undefined;
+    const schemaTemplate = schemaValue.includes(SCHEMA_TEMPLATE_STRING)
+        ? schemaValue
+        : undefined;
+    const tableTemplate = tableValue.trim() || undefined;
 
     const { srcSchema, srcTable, sourceName } = parseExampleCollection(
         exampleCollections?.[0]
     );
     const { example, publicExample } = buildBothExamples(
         strategyKey,
-        schema,
+        schemaValue,
         schemaTemplate,
         tableTemplate,
         skipCommonDefaults,
@@ -90,47 +76,34 @@ export function useTargetNamingFormState(
     );
 
     const isKeyValid = isStrategyKeyValid(strategyKey);
-    const canSubmitForm = isStrategyValid(strategyKey, schemaMode, schema);
+    const canSubmitForm = isStrategyValid(strategyKey, schemaValue);
 
     const sharedSchemaInputProps = {
-        value: schema,
-        onChange: setSchema,
-        prefix: schemaPrefix,
-        onPrefixChange: setSchemaPrefix,
-        suffix: schemaSuffix,
-        onSuffixChange: setSchemaSuffix,
-        mode: schemaMode,
+        field: 'schema' as const,
+        value: schemaValue,
+        onChange: setSchemaValue,
+        templateAllowed: false,
     };
 
     const sharedTableInputProps = {
         field: 'table' as const,
         tokenString: example.sourceTable,
-        mode: tableMode,
         value: tableValue,
         onChange: setTableValue,
-        prefix: tablePrefix,
-        onPrefixChange: setTablePrefix,
-        suffix: tableSuffix,
-        onSuffixChange: setTableSuffix,
+        templateAllowed: true,
     };
 
     return {
         strategyKey,
         setStrategyKey,
-        schema,
+        schemaValue,
+        setSchemaValue,
         skipCommonDefaults,
         setSkipCommonDefaults,
         matchSourceTemplatesEnabled,
         setMatchSourceTemplatesEnabled,
-        schemaMode,
-        setSchemaMode,
-        schemaPrefix,
-        schemaSuffix,
-        tableMode,
-        setTableMode,
-        tablePrefix,
-        tableSuffix,
         tableValue,
+        setTableValue,
         schemaTemplate,
         tableTemplate,
         example,

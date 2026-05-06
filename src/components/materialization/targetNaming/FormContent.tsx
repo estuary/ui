@@ -13,7 +13,11 @@ import {
 
 import { useIntl } from 'react-intl';
 
-import { buildStrategyFromState } from 'src/components/materialization/targetNaming/shared';
+import {
+    buildStrategyFromState,
+    SCHEMA_TEMPLATE_STRING,
+    TABLE_TEMPLATE_STRING,
+} from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import { TemplateInput } from 'src/components/materialization/targetNaming/TemplateInput';
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
@@ -32,58 +36,55 @@ export function TargetNamingFormContent({
 }: TargetNamingFormContentProps) {
     const intl = useIntl();
 
+    const prefillTemplates = (
+        currentSchema: string,
+        setSchema: (v: string) => void,
+        currentTable: string,
+        setTable: (v: string) => void
+    ) => {
+        if (!currentSchema.includes(SCHEMA_TEMPLATE_STRING)) {
+            setSchema(SCHEMA_TEMPLATE_STRING);
+        }
+        if (!currentTable.includes(TABLE_TEMPLATE_STRING)) {
+            setTable(TABLE_TEMPLATE_STRING);
+        }
+    };
+
     const {
         canSubmitForm,
         example,
         isKeyValid,
         matchSourceTemplatesEnabled,
         publicExample,
-        schema,
-        schemaMode,
-        schemaPrefix,
-        schemaSuffix,
-        schemaTemplate,
+        schemaValue,
         setMatchSourceTemplatesEnabled,
-        setSchemaMode,
+        setSchemaValue,
         setSkipCommonDefaults,
         setStrategyKey,
-        setTableMode,
+        setTableValue,
         sharedSchemaInputProps,
         sharedTableInputProps,
         skipCommonDefaults,
         strategyKey,
-        tableMode,
-        tablePrefix,
-        tableSuffix,
-        tableTemplate,
         tableValue,
     } = useTargetNamingFormState(initialStrategy, exampleCollections);
 
     useEffect(() => {
         const strategy = buildStrategyFromState(
             strategyKey,
-            schema,
+            schemaValue,
+            tableValue,
             skipCommonDefaults,
-            matchSourceTemplatesEnabled,
-            schemaTemplate,
-            tableTemplate
+            matchSourceTemplatesEnabled
         );
         onChange(strategy, canSubmitForm);
     }, [
         strategyKey,
-        schema,
+        schemaValue,
+        tableValue,
         skipCommonDefaults,
         matchSourceTemplatesEnabled,
-        schemaMode,
-        schemaPrefix,
-        schemaSuffix,
-        tableMode,
-        tablePrefix,
-        tableSuffix,
-        tableValue,
         canSubmitForm,
-        schemaTemplate,
-        tableTemplate,
         onChange,
     ]);
 
@@ -114,8 +115,14 @@ export function TargetNamingFormContent({
                             if (strategyKey === 'matchSourceStructure') {
                                 return;
                             }
-                            setTableMode('template');
-                            setSchemaMode('template');
+                            if (matchSourceTemplatesEnabled) {
+                                prefillTemplates(
+                                    schemaValue,
+                                    setSchemaValue,
+                                    tableValue,
+                                    setTableValue
+                                );
+                            }
                             setStrategyKey('matchSourceStructure');
                         }}
                         example={example}
@@ -132,6 +139,14 @@ export function TargetNamingFormContent({
                                             }
                                             onChange={(e) => {
                                                 e.stopPropagation();
+                                                if (e.target.checked) {
+                                                    prefillTemplates(
+                                                        schemaValue,
+                                                        setSchemaValue,
+                                                        tableValue,
+                                                        setTableValue
+                                                    );
+                                                }
                                                 setMatchSourceTemplatesEnabled(
                                                     e.target.checked
                                                 );
@@ -146,6 +161,7 @@ export function TargetNamingFormContent({
                                     <Stack spacing={1}>
                                         <TemplateInput
                                             {...sharedSchemaInputProps}
+                                            templateAllowed={true}
                                             tokenString={example.sourceSchema}
                                         />
                                         <TemplateInput
@@ -164,8 +180,9 @@ export function TargetNamingFormContent({
                             if (strategyKey === 'singleSchema') {
                                 return;
                             }
-                            setTableMode('template');
-                            setSchemaMode('fixed');
+                            if (strategyKey === 'matchSourceStructure') {
+                                setSchemaValue('');
+                            }
                             setStrategyKey('singleSchema');
                         }}
                         example={example}
@@ -178,7 +195,7 @@ export function TargetNamingFormContent({
                             >
                                 <TemplateInput
                                     {...sharedSchemaInputProps}
-                                    mode="fixed"
+                                    templateAllowed={false}
                                     required
                                 />
                                 <TemplateInput {...sharedTableInputProps} />
@@ -193,8 +210,9 @@ export function TargetNamingFormContent({
                             if (strategyKey === 'prefixTableNames') {
                                 return;
                             }
-                            setSchemaMode('fixed');
-                            setTableMode('template');
+                            if (strategyKey === 'matchSourceStructure') {
+                                setSchemaValue('');
+                            }
                             setStrategyKey('prefixTableNames');
                         }}
                         example={example}
@@ -204,6 +222,7 @@ export function TargetNamingFormContent({
                             <Stack spacing={1}>
                                 <TemplateInput
                                     {...sharedSchemaInputProps}
+                                    templateAllowed={false}
                                     required
                                 />
                                 <TemplateInput {...sharedTableInputProps} />

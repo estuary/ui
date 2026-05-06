@@ -1,19 +1,17 @@
-import type { InputMode } from 'src/components/materialization/targetNaming/types';
-
 import { Stack, TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import {
+    SCHEMA_TEMPLATE_STRING,
+    TABLE_TEMPLATE_STRING,
+} from 'src/components/materialization/targetNaming/shared';
+
 export interface TemplateInputProps {
-    mode: InputMode;
+    field?: 'schema' | 'table';
     value: string;
     onChange: (value: string) => void;
-    prefix: string;
-    onPrefixChange: (v: string) => void;
-    suffix: string;
-    onSuffixChange: (v: string) => void;
-    field?: 'schema' | 'table';
-    onModeChange?: (mode: InputMode) => void;
+    templateAllowed?: boolean;
     required?: boolean;
     tokenString?: string;
 }
@@ -21,58 +19,29 @@ export interface TemplateInputProps {
 const FIELD_KEYS = {
     schema: {
         label: 'destinationLayout.dialog.schema.label',
-        token: 'schema',
-        useTemplate: 'destinationLayout.dialog.schema.useTemplate',
-        useFixed: 'destinationLayout.dialog.schema.useFixed',
+        token: SCHEMA_TEMPLATE_STRING,
     },
     table: {
         label: 'destinationLayout.dialog.table.label',
-        token: 'table',
-        useTemplate: 'destinationLayout.dialog.table.useTemplate',
-        useFixed: 'destinationLayout.dialog.table.useFixed',
+        token: TABLE_TEMPLATE_STRING,
     },
 } as const;
 
 export function TemplateInput({
     field = 'schema',
-    mode,
-    onModeChange,
+    templateAllowed = true,
     required,
     value,
     onChange,
-    prefix,
-    onPrefixChange,
-    suffix,
-    onSuffixChange,
     tokenString,
 }: TemplateInputProps) {
     const intl = useIntl();
     const keys = FIELD_KEYS[field];
-    const tokenValue = tokenString ?? `{{${keys.token}}}`;
+    const tokenValue = tokenString ?? keys.token;
+    const isTemplate = templateAllowed && value.includes(keys.token);
 
-    // TODO (target naming) - probably just remove this before merging
-    // const adornment = onModeChange ? (
-    //     <InputAdornment position="end">
-    //         <Tooltip
-    //             title={intl.formatMessage({
-    //                 id: mode === 'template' ? keys.useFixed : keys.useTemplate,
-    //             })}
-    //             placement="right"
-    //         >
-    //             <IconButton
-    //                 size="small"
-    //                 edge="end"
-    //                 onClick={() =>
-    //                     onModeChange(mode === 'template' ? 'fixed' : 'template')
-    //                 }
-    //             >
-    //                 {mode === 'template' ? <InputField /> : <Code />}
-    //             </IconButton>
-    //         </Tooltip>
-    //     </InputAdornment>
-    // ) : undefined;
-
-    if (mode === 'template') {
+    if (isTemplate) {
+        const [prefix = '', suffix = ''] = value.split(keys.token);
         return (
             <Stack
                 direction="row"
@@ -86,7 +55,9 @@ export function TemplateInput({
                         id: 'destinationLayout.dialog.field.prefix.label',
                     })}
                     value={prefix}
-                    onChange={(e) => onPrefixChange(e.target.value)}
+                    onChange={(e) =>
+                        onChange(`${e.target.value}${keys.token}${suffix}`)
+                    }
                     sx={{ flex: 1 }}
                 />
                 <TextField
@@ -103,8 +74,9 @@ export function TemplateInput({
                         id: 'destinationLayout.dialog.field.suffix.label',
                     })}
                     value={suffix}
-                    onChange={(e) => onSuffixChange(e.target.value)}
-                    // InputProps={{ endAdornment: adornment }}
+                    onChange={(e) =>
+                        onChange(`${prefix}${keys.token}${e.target.value}`)
+                    }
                     sx={{ flex: 1 }}
                 />
             </Stack>
@@ -121,7 +93,6 @@ export function TemplateInput({
             required={required}
             error={Boolean(required && !value.trim())}
             fullWidth
-            // InputProps={{ endAdornment: adornment }}
         />
     );
 }

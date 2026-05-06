@@ -1,7 +1,6 @@
 import type { StrategyKey } from 'src/components/materialization/targetNaming/StrategyOption';
 import type {
     AutoCompleteOptionForTargetSchemaExample,
-    InputMode,
     ParseTemplateResponse,
 } from 'src/components/materialization/targetNaming/types';
 import type { TargetNamingStrategy } from 'src/types';
@@ -25,17 +24,15 @@ export function isStrategyKeyValid(strategyKey: StrategyKey): boolean {
 
 export function isStrategyValid(
     strategyKey: StrategyKey,
-    schemaMode: InputMode,
-    schema: string
+    schemaValue: string
 ): boolean {
-    // console.log('isStrategyValid', { strategyKey, schemaMode, schema });
     if (!isStrategyKeyValid(strategyKey)) {
         return false;
     }
     if (strategyKey === 'matchSourceStructure') {
         return true;
     }
-    return schemaMode === 'template' || schema.trim().length > 0;
+    return schemaValue.trim().length > 0;
 }
 
 export function hasSchemaTemplate(
@@ -136,22 +133,21 @@ export function parseTableTemplate(
 
 export function buildStrategyFromState(
     strategyKey: StrategyKey,
-    schema: string,
+    schemaValue: string,
+    tableValue: string,
     skipCommonDefaults: boolean,
-    templatesEnabled: boolean,
-    schemaTemplate: string | undefined,
-    tableTemplate: string | undefined
+    templatesEnabled: boolean
 ): TargetNamingStrategy {
     if (strategyKey === 'matchSourceStructure') {
         const strategy: TargetNamingStrategy = {
             strategy: 'matchSourceStructure',
         };
         if (templatesEnabled) {
-            if (schemaTemplate) {
-                strategy.schemaTemplate = schemaTemplate;
+            if (schemaValue) {
+                strategy.schemaTemplate = schemaValue;
             }
-            if (tableTemplate) {
-                strategy.tableTemplate = tableTemplate;
+            if (tableValue) {
+                strategy.tableTemplate = tableValue;
             }
         }
         return strategy;
@@ -160,21 +156,21 @@ export function buildStrategyFromState(
     if (strategyKey === 'singleSchema') {
         const strategy: TargetNamingStrategy = {
             strategy: 'singleSchema',
-            schema: schema.trim(),
+            schema: schemaValue.trim(),
         };
-        if (tableTemplate) {
-            strategy.tableTemplate = tableTemplate;
+        if (tableValue) {
+            strategy.tableTemplate = tableValue;
         }
         return strategy;
     }
 
     const strategy: TargetNamingStrategy = {
         strategy: 'prefixTableNames',
-        schema: schema.trim(),
+        schema: schemaValue.trim(),
         skipCommonDefaults,
     };
-    if (tableTemplate) {
-        strategy.tableTemplate = tableTemplate;
+    if (tableValue) {
+        strategy.tableTemplate = tableValue;
     }
     return strategy;
 }
@@ -242,7 +238,7 @@ export function buildBothExamples(
     publicExample: ReturnType<typeof buildExample>;
 } {
     const exSchemaTemplate =
-        strategyKey !== 'matchSourceStructure' || applyCustomNaming
+        strategyKey === 'matchSourceStructure' && applyCustomNaming
             ? schemaTemplate
             : undefined;
     const exTableTemplate =
