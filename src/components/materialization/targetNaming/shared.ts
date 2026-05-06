@@ -2,6 +2,7 @@ import type { StrategyKey } from 'src/components/materialization/targetNaming/St
 import type {
     AutoCompleteOptionForTargetSchemaExample,
     InputMode,
+    ParseTemplateResponse,
 } from 'src/components/materialization/targetNaming/types';
 import type { TargetNamingStrategy } from 'src/types';
 
@@ -83,30 +84,39 @@ export function hasValidTableTemplate(
     );
 }
 
+const defaultResponse = { prefix: '', suffix: '', rawTemplate: null };
 export function parseSchemaTemplate(
     strategy: TargetNamingStrategy | null | undefined
-): {
-    prefix: string;
-    suffix: string;
-} {
-    if (hasValidSchemaTemplate(strategy)) {
-        const parts = strategy.schemaTemplate.split(SCHEMA_TEMPLATE_STRING);
-        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
+): ParseTemplateResponse {
+    if (!hasSchemaTemplate(strategy)) {
+        return defaultResponse;
     }
-    return { prefix: '', suffix: '' };
+
+    const rawTemplate = strategy.schemaTemplate;
+
+    if (hasValidSchemaTemplate(strategy)) {
+        const parts = rawTemplate.split(SCHEMA_TEMPLATE_STRING);
+        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '', rawTemplate };
+    }
+
+    return { ...defaultResponse, rawTemplate };
 }
 
 export function parseTableTemplate(
     strategy: TargetNamingStrategy | null | undefined
-): {
-    prefix: string;
-    suffix: string;
-} {
-    if (hasValidTableTemplate(strategy)) {
-        const parts = strategy.tableTemplate.split(TABLE_TEMPLATE_STRING);
-        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '' };
+): ParseTemplateResponse {
+    if (!hasTableTemplate(strategy)) {
+        return defaultResponse;
     }
-    return { prefix: '', suffix: '' };
+
+    const rawTemplate = strategy.tableTemplate;
+
+    if (hasValidTableTemplate(strategy)) {
+        const parts = rawTemplate.split(TABLE_TEMPLATE_STRING);
+        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '', rawTemplate };
+    }
+
+    return { prefix: '', suffix: '', rawTemplate };
 }
 
 export function buildStrategyFromState(
