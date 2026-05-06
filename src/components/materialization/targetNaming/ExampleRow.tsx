@@ -5,11 +5,22 @@ import { Box, Stack } from '@mui/material';
 import { ArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-interface Props {
-    example: AutoCompleteOptionForTargetSchemaExample;
-    hideSourceName?: boolean;
-    outputLayout?: 'row' | 'column';
-}
+type Props =
+    | {
+          example: AutoCompleteOptionForTargetSchemaExample;
+          hideSourceName?: false;
+          outputLayout?: 'row' | 'column';
+      }
+    | {
+          example: Omit<
+              AutoCompleteOptionForTargetSchemaExample,
+              'tablePrefix'
+          > & {
+              tablePrefix?: string;
+          };
+          hideSourceName: true;
+          outputLayout?: 'row' | 'column';
+      };
 
 export function ExampleRow({
     example,

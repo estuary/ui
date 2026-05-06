@@ -7,7 +7,6 @@ import { useIntl } from 'react-intl';
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import { ExampleRow } from 'src/components/materialization/targetNaming/ExampleRow';
 import {
-    buildBothExamples,
     extractStrategyFields,
     isStrategyKeyValid,
 } from 'src/components/materialization/targetNaming/shared';
@@ -42,28 +41,23 @@ export default function TargetNamingUpdateWrapper() {
 
     const strategyKey = validStrategy?.strategy as StrategyKey | undefined;
 
-    const { schema, skipCommonDefaults, schemaTemplate, tableTemplate } =
-        validStrategy
-            ? extractStrategyFields(validStrategy)
-            : {
-                  schema: '',
-                  skipCommonDefaults: true,
-                  schemaTemplate: undefined,
-                  tableTemplate: undefined,
-              };
+    const { schema, schemaTemplate, tableTemplate } = validStrategy
+        ? extractStrategyFields(validStrategy)
+        : {
+              schema: '',
+              schemaTemplate: undefined,
+              tableTemplate: undefined,
+          };
 
-    const hasCustomNaming = !!schemaTemplate || !!tableTemplate;
+    const hasCustomNaming = !!schema || !!schemaTemplate || !!tableTemplate;
 
-    const { example } = strategyKey
-        ? buildBothExamples(
-              strategyKey,
-              schema,
-              schemaTemplate,
-              tableTemplate,
-              skipCommonDefaults,
-              hasCustomNaming
-          )
-        : { example: null };
+    console.log('validStrategy', validStrategy);
+
+    console.log('>>>>>', {
+        schemaTemplate,
+        schema,
+        tableTemplate,
+    });
 
     const modifyButton = (
         <Box sx={{ alignSelf: 'end' }}>
@@ -115,7 +109,7 @@ export default function TargetNamingUpdateWrapper() {
                             value={strategyKey}
                         >
                             <Stack spacing={1}>
-                                {example ? (
+                                {hasCustomNaming ? (
                                     <Box
                                         sx={{
                                             '& pre': { whiteSpace: 'pre-wrap' },
@@ -125,7 +119,13 @@ export default function TargetNamingUpdateWrapper() {
                                             <ExampleRow
                                                 hideSourceName
                                                 outputLayout="column"
-                                                example={example}
+                                                example={{
+                                                    schema:
+                                                        schemaTemplate ??
+                                                        schema ??
+                                                        '',
+                                                    table: tableTemplate ?? '',
+                                                }}
                                             />
                                         </PreformattedBlock>
                                     </Box>
