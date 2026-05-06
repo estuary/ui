@@ -84,7 +84,7 @@ export function hasValidTableTemplate(
     );
 }
 
-const defaultResponse = { prefix: '', suffix: '', rawTemplate: null };
+const defaultResponse = { prefix: '', suffix: '', rawTemplate: null, invalid: false };
 export function parseSchemaTemplate(
     strategy: TargetNamingStrategy | null | undefined
 ): ParseTemplateResponse {
@@ -96,10 +96,10 @@ export function parseSchemaTemplate(
 
     if (hasValidSchemaTemplate(strategy)) {
         const parts = rawTemplate.split(SCHEMA_TEMPLATE_STRING);
-        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '', rawTemplate };
+        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '', rawTemplate, invalid: false };
     }
 
-    return { ...defaultResponse, rawTemplate };
+    return { ...defaultResponse, rawTemplate, invalid: true };
 }
 
 export function parseTableTemplate(
@@ -113,10 +113,10 @@ export function parseTableTemplate(
 
     if (hasValidTableTemplate(strategy)) {
         const parts = rawTemplate.split(TABLE_TEMPLATE_STRING);
-        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '', rawTemplate };
+        return { prefix: parts[0] ?? '', suffix: parts[1] ?? '', rawTemplate, invalid: false };
     }
 
-    return { prefix: '', suffix: '', rawTemplate };
+    return { prefix: '', suffix: '', rawTemplate, invalid: true };
 }
 
 export function buildStrategyFromState(

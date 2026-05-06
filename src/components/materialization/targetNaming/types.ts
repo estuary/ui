@@ -6,6 +6,7 @@ export interface ParseTemplateResponse {
     prefix: string;
     suffix: string;
     rawTemplate: string | null;
+    invalid: boolean;
 }
 
 // TODO (target naming:post migration:update) - should probably remove the ReactNode option
