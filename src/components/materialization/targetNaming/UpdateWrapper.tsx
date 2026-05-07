@@ -8,12 +8,12 @@ import TargetNamingDialog from 'src/components/materialization/targetNaming/Dial
 import { ExampleRow } from 'src/components/materialization/targetNaming/ExampleRow';
 import {
     buildExample,
-    EXAMPLE_SCHEMA_DEFAULT,
-    EXAMPLE_TABLE_DEFAULT,
     extractStrategyFields,
     hasSchemaTemplate,
     hasTableTemplate,
     isStrategyKeyValid,
+    SCHEMA_TEMPLATE_STRING,
+    TABLE_TEMPLATE_STRING,
 } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
 import PreformattedBlock from 'src/components/shared/PreformattedBlock';
@@ -56,12 +56,12 @@ export default function TargetNamingUpdateWrapper() {
         validStrategy && strategyKey
             ? buildExample(
                   strategyKey,
-                  schema,
-                  schemaTemplate,
-                  tableTemplate,
-                  skipCommonDefaults,
-                  EXAMPLE_SCHEMA_DEFAULT,
-                  EXAMPLE_TABLE_DEFAULT
+                  { value: schema, template: schemaTemplate },
+                  { template: tableTemplate, skipCommonDefaults },
+                  {
+                      schema: SCHEMA_TEMPLATE_STRING,
+                      table: TABLE_TEMPLATE_STRING,
+                  }
               )
             : null;
 

@@ -256,48 +256,55 @@ export function buildBothExamples(
     return {
         example: buildExample(
             strategyKey,
-            schema,
-            exSchemaTemplate,
-            exTableTemplate,
-            skipCommonDefaults,
-            srcSchema,
-            srcTable,
-            sourceName
+            { value: schema, template: exSchemaTemplate },
+            { template: exTableTemplate, skipCommonDefaults },
+            { schema: srcSchema, table: srcTable, name: sourceName }
         ),
         publicExample: buildExample(
             strategyKey,
-            schema,
-            exSchemaTemplate,
-            exTableTemplate,
-            skipCommonDefaults,
-            'public',
-            srcTable,
-            publicSourceName
+            { value: schema, template: exSchemaTemplate },
+            { template: exTableTemplate, skipCommonDefaults },
+            { schema: 'public', table: srcTable, name: publicSourceName }
         ),
     };
 }
 
+export interface ExampleSchemaConfig {
+    value: string;
+    template?: string;
+}
+
+export interface ExampleTableConfig {
+    template?: string;
+    skipCommonDefaults: boolean;
+}
+
+export interface ExampleSource {
+    schema?: string;
+    table?: string;
+    name?: string;
+}
+
 export function buildExample(
     strategyKey: StrategyKey,
-    schema: string,
-    schemaTemplate: string | undefined,
-    tableTemplate: string | undefined,
-    skipCommonDefaults: boolean,
-    sourceSchema: string = EXAMPLE_SCHEMA_DEFAULT,
-    sourceTable: string = EXAMPLE_TABLE_DEFAULT,
-    sourceName?: string
+    schema: ExampleSchemaConfig,
+    table: ExampleTableConfig,
+    source: ExampleSource = {}
 ): AutoCompleteOptionForTargetSchemaExample {
+    const sourceSchema = source.schema ?? EXAMPLE_SCHEMA_DEFAULT;
+    const sourceTable = source.table ?? EXAMPLE_TABLE_DEFAULT;
+    const sourceName = source.name;
+
     const resolveSchema = (fallback: string) =>
-        schemaTemplate
-            ? schemaTemplate.replace(SCHEMA_TEMPLATE_STRING, sourceSchema)
+        schema.template
+            ? schema.template.replace(SCHEMA_TEMPLATE_STRING, sourceSchema)
             : fallback || '...';
 
     const resolveTable = (fallback: string) =>
-        tableTemplate
-            ? tableTemplate.replace(TABLE_TEMPLATE_STRING, fallback)
+        table.template
+            ? table.template.replace(TABLE_TEMPLATE_STRING, fallback)
             : fallback;
 
-    // Pass back the original values to make plumbing them through easier.
     const providedSettings = {
         sourceName,
         sourceTable,
@@ -315,18 +322,18 @@ export function buildExample(
         case 'singleSchema':
             return {
                 ...providedSettings,
-                schema: resolveSchema(schema),
+                schema: resolveSchema(schema.value),
                 table: resolveTable(sourceTable),
                 tablePrefix: sourceSchema,
             };
         case 'prefixTableNames': {
             const isDefault = ['public', 'dbo'].includes(sourceSchema);
             const prefix =
-                skipCommonDefaults && isDefault ? '' : `${sourceSchema}_`;
+                table.skipCommonDefaults && isDefault ? '' : `${sourceSchema}_`;
 
             return {
                 ...providedSettings,
-                schema: resolveSchema(schema),
+                schema: resolveSchema(schema.value),
                 table: resolveTable(`${prefix}${sourceTable}`),
                 tablePrefix: sourceSchema,
             };
