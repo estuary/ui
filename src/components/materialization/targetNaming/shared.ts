@@ -295,10 +295,10 @@ export function buildExample(
     const sourceTable = source.table ?? EXAMPLE_TABLE_DEFAULT;
     const sourceName = source.name;
 
-    const resolveSchema = (fallback: string) =>
+    const resolveSchema = (fallback: string = '...') =>
         schema.template
             ? schema.template.replace(SCHEMA_TEMPLATE_STRING, sourceSchema)
-            : fallback || '...';
+            : fallback;
 
     const resolveTable = (fallback: string) =>
         table.template
