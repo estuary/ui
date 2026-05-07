@@ -300,22 +300,17 @@ export const Workflows: Record<string, string> = {
     'destinationLayout.dialog.title': `Destination Layout`,
     'destinationLayout.dialog.message': `Controls how collection names are mapped to destination tables and schemas when bindings are added.`,
     'destinationLayout.dialog.subtitle': `How should source schemas map to your destination? This applies to newly added bindings. You can override individual bindings later.`,
+    'destinationLayout.selected.none': `no layout set`,
     'destinationLayout.dialog.schema.label': `Schema`,
-    'destinationLayout.dialog.schema.useTemplate': `Use prefixed/suffixed schema name`,
-    'destinationLayout.dialog.schema.useFixed': `Use fixed schema name`,
     'destinationLayout.dialog.table.label': `Table`,
-    'destinationLayout.dialog.table.useTemplate': `Use prefixed/suffixed table name`,
-    'destinationLayout.dialog.table.useFixed': `Use fixed table name`,
     'destinationLayout.dialog.field.prefix.label': `Prefix`,
     'destinationLayout.dialog.field.suffix.label': `Suffix`,
-    'destinationLayout.dialog.field.onlyFixed': `Only fixed is supported with this option`,
-    'destinationLayout.dialog.field.onlyTemplate': `Only template is supported with this option`,
     'destinationLayout.dialog.matchSourceStructure.customize': `Add a prefix or suffix to table or schema names`,
     'destinationLayout.dialog.skipCommonDefaults.label': `Skip common defaults (public, dbo...)`,
     'destinationLayout.dialog.cta.addBindings': `Add Collections`,
     'destinationLayout.dialog.cta.sourceCapture': `Select Source Capture`,
-    'destinationLayout.selected.none': `no layout set`,
 
+    // Used dynamically in ui/src/components/materialization/targetNaming/StrategyOption.tsx
     'destinationLayout.strategy.matchSourceStructure.label': `Match source structure`,
     'destinationLayout.strategy.matchSourceStructure.description': `Preserve the original table and schema names. Tables keep their original names.`,
 
@@ -325,8 +320,6 @@ export const Workflows: Record<string, string> = {
     'destinationLayout.strategy.prefixTableNames.label': `Prefix table names`,
     'destinationLayout.strategy.prefixTableNames.description': `The schema name is added as a table name prefix.`,
 
-    'destinationLayout.example.collection': `acmeCo/mySchema/orders`,
-    'destinationLayout.example.collection.public': `acmeCo/public/orders`,
     'destinationLayout.example.schema.label': `Schema:`,
     'destinationLayout.example.table.label': `Table:`,
 
