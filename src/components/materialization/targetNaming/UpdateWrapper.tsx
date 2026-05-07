@@ -85,7 +85,7 @@ export default function TargetNamingUpdateWrapper() {
             <Stack spacing={1} sx={{ mb: 2 }}>
                 <Typography variant="formSectionHeader">
                     {intl.formatMessage({
-                        id: 'destinationLayout.dialog.title',
+                        id: 'destinationLayout.title',
                     })}
                 </Typography>
 
