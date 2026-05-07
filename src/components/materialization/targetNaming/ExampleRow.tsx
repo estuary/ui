@@ -41,7 +41,18 @@ function ChipLabel({
         split && (split.prefix || split.suffix)
             ? { ...split, middle: source as string }
             : null;
+
     if (!parts) {
+        if (typeof value === 'string' && source && value !== source) {
+            return (
+                <Box
+                    component="span"
+                    sx={{ color: 'primary.main', fontWeight: 700 }}
+                >
+                    {value}
+                </Box>
+            );
+        }
         return <>{value}</>;
     }
 
