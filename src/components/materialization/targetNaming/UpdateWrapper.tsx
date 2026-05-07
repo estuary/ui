@@ -7,6 +7,9 @@ import { useIntl } from 'react-intl';
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import { ExampleRow } from 'src/components/materialization/targetNaming/ExampleRow';
 import {
+    buildExample,
+    EXAMPLE_SCHEMA_DEFAULT,
+    EXAMPLE_TABLE_DEFAULT,
     extractStrategyFields,
     hasSchemaTemplate,
     hasTableTemplate,
@@ -43,14 +46,24 @@ export default function TargetNamingUpdateWrapper() {
 
     const strategyKey = validStrategy?.strategy as StrategyKey | undefined;
 
-    const { schema, schemaTemplate, tableTemplate } =
+    const { schema, schemaTemplate, tableTemplate, skipCommonDefaults } =
         extractStrategyFields(validStrategy);
 
-    // hasSchemaTemplate / hasTableTemplate require an actual prefix or suffix —
-    // bare tokens are treated the same as no template.
     const hasCustomSchema = hasSchemaTemplate(validStrategy);
     const hasCustomTable = hasTableTemplate(validStrategy);
     const hasCustomNaming = !!schema || hasCustomSchema || hasCustomTable;
+    const example =
+        validStrategy && strategyKey
+            ? buildExample(
+                  strategyKey,
+                  schema,
+                  schemaTemplate,
+                  tableTemplate,
+                  skipCommonDefaults,
+                  EXAMPLE_SCHEMA_DEFAULT,
+                  EXAMPLE_TABLE_DEFAULT
+              )
+            : null;
 
     const modifyButton = (
         <Box sx={{ alignSelf: 'end' }}>
@@ -102,27 +115,14 @@ export default function TargetNamingUpdateWrapper() {
                             value={strategyKey}
                         >
                             <Stack spacing={1}>
-                                {hasCustomNaming ? (
-                                    <Box
-                                        sx={{
-                                            '& pre': { whiteSpace: 'pre-wrap' },
-                                        }}
-                                    >
-                                        <PreformattedBlock>
-                                            <ExampleRow
-                                                hideSourceName
-                                                outputLayout="column"
-                                                example={{
-                                                    schema: hasCustomSchema
-                                                        ? schemaTemplate
-                                                        : (schema ?? ''),
-                                                    table: hasCustomTable
-                                                        ? tableTemplate
-                                                        : '',
-                                                }}
-                                            />
-                                        </PreformattedBlock>
-                                    </Box>
+                                {hasCustomNaming && example ? (
+                                    <PreformattedBlock>
+                                        <ExampleRow
+                                            hideSourceName
+                                            outputLayout="column"
+                                            example={example}
+                                        />
+                                    </PreformattedBlock>
                                 ) : null}
 
                                 {modifyButton}

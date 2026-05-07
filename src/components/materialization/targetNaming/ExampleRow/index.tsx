@@ -18,7 +18,7 @@ type Props =
               AutoCompleteOptionForTargetSchemaExample,
               'tablePrefix'
           > & {
-              tablePrefix?: string;
+              tablePrefix?: AutoCompleteOptionForTargetSchemaExample['tablePrefix'];
           };
           hideSourceName: true;
           outputLayout?: 'row' | 'column';
