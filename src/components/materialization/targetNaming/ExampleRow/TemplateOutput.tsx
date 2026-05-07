@@ -18,7 +18,7 @@ export function TemplateOutput({ value, source }: Props) {
 
     const parts =
         split && (split.prefix || split.suffix)
-            ? { ...split, middle: source as string }
+            ? { ...split, tokenReplaced: source as string }
             : null;
 
     if (!parts) {
@@ -33,9 +33,7 @@ export function TemplateOutput({ value, source }: Props) {
     return (
         <>
             <PrimarySpan>{parts.prefix.trim()}</PrimarySpan>
-            <Box component="span" sx={{ opacity: 0.8 }}>
-                {parts.middle}
-            </Box>
+            <Box component="span">{parts.tokenReplaced}</Box>
             <PrimarySpan>{parts.suffix.trim()}</PrimarySpan>
         </>
     );
