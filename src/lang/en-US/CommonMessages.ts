@@ -55,6 +55,7 @@ export const CommonMessages: Record<string, string> = {
     'common.pending': `Pending`,
     'common.upToDate': `Up-to-date`,
     'common.unknown': `Unknown`,
+    'common.examples': `Examples`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -148,4 +149,9 @@ export const CommonMessages: Record<string, string> = {
     // Leaves autocomplete validation
     'leavesAutocomplete.mustStartWith.single': `Must start with "{root}"`,
     'leavesAutocomplete.mustStartWith.multiple': `Must start with one of: {roots}`,
+
+    'defaults.tenant': `acmeCo`,
+    'defaults.schema': `anvils`,
+    'defaults.table': `orders`,
+    'defaults.public': `public`,
 };

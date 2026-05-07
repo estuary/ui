@@ -30,6 +30,7 @@ import {
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
 import { EditorStoreNames } from 'src/stores/names';
+import { useTargetNamingHydrator } from 'src/stores/TargetNaming/useTargetNamingHydrator';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -47,6 +48,7 @@ function BindingsMultiEditor({
     // This keeps an eye on resource config and updates if there is a need
     useServerUpdateRequiredMonitor(draftSpecs);
     useValidateFieldSelection();
+    useTargetNamingHydrator();
 
     const intl = useIntl();
     const theme = useTheme();

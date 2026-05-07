@@ -296,22 +296,46 @@ export const Workflows: Record<string, string> = {
     'deltaUpdates.message': `Default setting for the "Delta Updates" field of newly adding bindings.`,
     'deltaUpdates.input.label': `Default setting for the "Delta Updates" field of newly adding bindings.`,
 
+    // Destination Layout dialog (new targetNaming model)
+    'destinationLayout.title': `Default Naming Convention`,
+    'destinationLayout.dialog.title': `Destination Layout`,
+    'destinationLayout.dialog.message': `Controls how collection names are mapped to destination tables and schemas. Becomes the default setting for newly added bindings.`,
+    'destinationLayout.dialog.subtitle': `How should source schemas map to your destination? This applies to newly added bindings. You can override individual bindings later.`,
+    'destinationLayout.selected.none': `no layout set`,
+    'destinationLayout.dialog.schema.label': `Schema`,
+    'destinationLayout.dialog.table.label': `Table`,
+    'destinationLayout.dialog.field.prefix.label': `Prefix`,
+    'destinationLayout.dialog.field.suffix.label': `Suffix`,
+    'destinationLayout.dialog.matchSourceStructure.customize': `Add a prefix or suffix to table or schema names`,
+    'destinationLayout.dialog.skipCommonDefaults.label': `Skip common defaults (public, dbo)`,
+    'destinationLayout.dialog.cta.addBindings': `Add Collections`,
+    'destinationLayout.dialog.cta.sourceCapture': `Select Source Capture`,
+
+    // Used dynamically in ui/src/components/materialization/targetNaming/StrategyOption.tsx
+    'destinationLayout.strategy.matchSourceStructure.label': `Match source structure`,
+    'destinationLayout.strategy.matchSourceStructure.description': `Preserve the original table and schema names. Tables keep their original names.`,
+
+    'destinationLayout.strategy.singleSchema.label': `Set a default schema`,
+    'destinationLayout.strategy.singleSchema.description': `Place all your tables in one schema. Only the table name is used.`,
+
+    'destinationLayout.strategy.prefixTableNames.label': `Prefix table names`,
+    'destinationLayout.strategy.prefixTableNames.description': `The schema name is added as a table name prefix.`,
+
+    'destinationLayout.example.schema.label': `Schema:`,
+    'destinationLayout.example.table.label': `Table:`,
+
     // Schema Mode
     'schemaMode.message': `Default naming convention for how collections map to destination tables and schemas. If blank, prefixes the table name with the non-default second-to-last part of the collection name.`,
     'schemaMode.input.label': `Default Naming Convention`,
 
     'specPropUpdater.error.message': `The current setting "{currentSetting}" does not match a known option. Please update or remove.`,
-    'specPropUpdater.error.message.toggle': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
+    'specPropUpdater.error.message.withRemove': `Current setting "{currentSetting}" does not match a known option. Click to reset value.`,
 
     // Fields Recommended
     'fieldsRecommended.cta.selectAlgorithm': `Default Field Depth`,
 
     // These keys are dynamically build in - useSupportedOptions
-    'schemaMode.data.table': `Table:`,
-    'schemaMode.data.schema': `Schema:`,
-    'schemaMode.example.base': `acmeco/{tablePrefix}/orders`,
-    'schemaMode.example.tablePrefix': `anvils`,
-    'schemaMode.example.public.tablePrefix': `public`,
+    'schemaMode.example.base': `${CommonMessages['defaults.tenant']}/{tablePrefix}/${CommonMessages['defaults.table']}`,
 
     'schemaMode.options.prefixNonDefaultSchema.ignored1': `public`,
     'schemaMode.options.prefixNonDefaultSchema.ignored2': `dbo`,
@@ -319,24 +343,24 @@ export const Workflows: Record<string, string> = {
     'schemaMode.options.prefixNonDefaultSchema.label': `Prefix Non-Default Schema`,
     'schemaMode.options.prefixNonDefaultSchema.description': `Prefixes the table name with the second-to-last part of the collection name {highlight} (like {defaultSchema} or {defaultSchema2}). The schema itself is left unspecified.`,
     'schemaMode.options.prefixNonDefaultSchema.description.highlight': `only if it's not the default schema`,
-    'schemaMode.options.prefixNonDefaultSchema.example.table': `{tablePrefix}orders`,
-    'schemaMode.options.prefixNonDefaultSchema.example.public.table': `orders`,
+    'schemaMode.options.prefixNonDefaultSchema.example.table': `{tablePrefix}${CommonMessages['defaults.table']}`,
+    'schemaMode.options.prefixNonDefaultSchema.example.public.table': `${CommonMessages['defaults.table']}`,
     'schemaMode.options.prefixNonDefaultSchema.example.schema': `default`,
 
     'schemaMode.options.prefixSchema.label': `Prefix Schema`,
     'schemaMode.options.prefixSchema.description': `Always prefixes the table name with the second-to-last part of the collection name, regardless of what the schema is. Schema field remains empty, default is used.`,
-    'schemaMode.options.prefixSchema.example.table': `{tablePrefix}orders`,
-    'schemaMode.options.prefixSchema.example.public.table': `{tablePrefix}orders`,
+    'schemaMode.options.prefixSchema.example.table': `{tablePrefix}${CommonMessages['defaults.table']}`,
+    'schemaMode.options.prefixSchema.example.public.table': `{tablePrefix}${CommonMessages['defaults.table']}`,
     'schemaMode.options.prefixSchema.example.schema': `default`,
 
     'schemaMode.options.withSchema.label': `Mirror Schemas`,
     'schemaMode.options.withSchema.description': `Sets the schema name to the second-to-last part of the collection name, and uses the last part as the table name.`,
-    'schemaMode.options.withSchema.example.table': `orders`,
+    'schemaMode.options.withSchema.example.table': `${CommonMessages['defaults.table']}`,
     'schemaMode.options.withSchema.example.schema': `{tablePrefix}`,
 
     'schemaMode.options.noSchema.label': `Use Table Name Only`,
     'schemaMode.options.noSchema.description': `Only uses the last part of the collection name as the table name. Schema is left empty, default schema is used.`,
-    'schemaMode.options.noSchema.example.table': `orders`,
+    'schemaMode.options.noSchema.example.table': `${CommonMessages['defaults.table']}`,
     'schemaMode.options.noSchema.example.schema': `default`,
 
     // Entities Create

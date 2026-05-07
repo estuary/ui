@@ -1,16 +1,19 @@
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
-import type { SourceCaptureDef } from 'src/types';
+import type { SourceCaptureDef, TargetNamingStrategy } from 'src/types';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Button } from '@mui/material';
 
 import { useStore } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
+import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
 import invariableStores from 'src/context/Zustand/invariableStores';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
@@ -21,6 +24,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
 function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
+    const intl = useIntl();
     const [updating, setUpdating] = useState(false);
 
     const selected = useStore(
@@ -49,10 +53,34 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             ])
         );
 
+    const confirmationContext = useConfirmationModalContext();
+
+    const {
+        model: targetNamingModel,
+        targetNamingStrategy,
+        needsNamingDialog,
+        handleConfirm,
+    } = useTargetNaming();
+
+    const pendingStrategyRef = useRef<TargetNamingStrategy>({
+        strategy: 'matchSourceStructure',
+    });
+    const handleNamingChange = useCallback(
+        (strategy: TargetNamingStrategy, isValid: boolean) => {
+            pendingStrategyRef.current = strategy;
+            confirmationContext?.setContinueAllowed(isValid);
+        },
+        [confirmationContext]
+    );
+
     // Binding Store
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
 
-    const close = async () => {
+    // appliedStrategy is passed explicitly when the naming dialog was just confirmed
+    // so we don't rely on a stale store closure.
+    const applySourceCapture = async (
+        appliedStrategy?: TargetNamingStrategy | null
+    ) => {
         setUpdating(true);
 
         const selectedRow = Array.from(selected).map(([_key, row]) => row)[0];
@@ -60,32 +88,29 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
             ? selectedRow.catalog_name
             : null;
 
-        // We need to know if the name or settings changed so that we can control
-        //  what name is used in the call to update the source capture setting
         const nameUpdated = Boolean(
             updatedSourceCaptureName &&
                 sourceCapture !== updatedSourceCaptureName
         );
 
-        // Only update draft is something in the settings changed
         if (nameUpdated) {
             const updatedSourceCapture: SourceCaptureDef = {
                 capture: nameUpdated ? updatedSourceCaptureName : sourceCapture,
             };
 
-            // Make sure these are support by the connector before
-            //  adding to the config
             if (sourceCaptureDeltaUpdatesSupported) {
                 updatedSourceCapture.deltaUpdates = deltaUpdates;
             }
-            if (sourceCaptureTargetSchemaSupported) {
+
+            // TODO (target naming:post migration:remove)
+            // For sourceTargetNaming model, keep passing targetNaming on the source object
+            if (
+                sourceCaptureTargetSchemaSupported &&
+                targetNamingModel === 'sourceTargetNaming'
+            ) {
                 updatedSourceCapture.targetNaming = targetSchema;
             }
 
-            // Check the name since the optional settings may
-            //  have changed but not the name. Also, we have
-            //  already saved the new optional settings in the
-            //  store so we do not need to update that here
             if (nameUpdated) {
                 setSourceCapture(updatedSourceCapture.capture);
 
@@ -96,7 +121,12 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
                     prefillResourceConfigs(
                         selectedRow.writes_to,
                         true,
-                        updatedSourceCapture
+                        updatedSourceCapture,
+                        targetNamingModel === 'rootTargetNaming'
+                            ? (appliedStrategy ??
+                                  targetNamingStrategy ??
+                                  undefined)
+                            : undefined
                     );
 
                     const trialCollectionResponse =
@@ -118,9 +148,52 @@ function AddSourceCaptureToSpecButton({ toggle }: AddCollectionDialogCTAProps) {
         toggle(false);
     };
 
+    const handleContinue = async () => {
+        if (needsNamingDialog) {
+            pendingStrategyRef.current = {
+                strategy: 'matchSourceStructure',
+            };
+
+            const selectedRow = Array.from(selected).map(
+                ([_key, row]) => row
+            )[0];
+            const exampleCollections =
+                (selectedRow?.writes_to as string[] | undefined) ?? [];
+
+            const confirmed = await confirmationContext?.showConfirmation(
+                {
+                    title: 'destinationLayout.dialog.title',
+                    confirmText: 'destinationLayout.dialog.cta.sourceCapture',
+                    dialogProps: {
+                        maxWidth: 'md',
+                    },
+                    message: (
+                        <TargetNamingFormContent
+                            initialStrategy={targetNamingStrategy}
+                            exampleCollections={exampleCollections}
+                            onChange={handleNamingChange}
+                        />
+                    ),
+                },
+                true
+            );
+
+            if (!confirmed) return;
+            await handleConfirm(pendingStrategyRef.current, () =>
+                applySourceCapture(pendingStrategyRef.current)
+            );
+            return;
+        }
+        await applySourceCapture();
+    };
+
     return (
-        <Button variant="contained" onClick={close} disabled={updating}>
-            <FormattedMessage id="cta.continue" />
+        <Button
+            variant="contained"
+            onClick={handleContinue}
+            disabled={updating}
+        >
+            {intl.formatMessage({ id: 'cta.continue' })}
         </Button>
     );
 }

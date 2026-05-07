@@ -1,7 +1,7 @@
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
-import type { SourceCaptureDef } from 'src/types';
+import type { SourceCaptureDef, TargetNamingStrategy } from 'src/types';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Button } from '@mui/material';
 
@@ -10,7 +10,10 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { FormattedMessage } from 'react-intl';
 
+import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
 import invariableStores from 'src/context/Zustand/invariableStores';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
 import {
     useBinding_discoveredCollections,
@@ -24,6 +27,19 @@ import { hasLength } from 'src/utils/misc-utils';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);
+
+    const confirmationContext = useConfirmationModalContext();
+
+    const defaultStrategyRef = useRef<TargetNamingStrategy>({
+        strategy: 'matchSourceStructure',
+    });
+    const handleNamingChange = useCallback(
+        (strategy: TargetNamingStrategy, isValid: boolean) => {
+            defaultStrategyRef.current = strategy;
+            confirmationContext?.setContinueAllowed(isValid);
+        },
+        [confirmationContext]
+    );
 
     const selected = useStore(
         invariableStores['Entity-Selector-Table'],
@@ -45,13 +61,24 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         useShallow((state) => [state.deltaUpdates, state.targetSchema])
     );
 
+    const {
+        model: targetNamingModel,
+        targetNamingStrategy,
+        needsNamingDialog,
+        handleConfirm,
+    } = useTargetNaming();
+
     const prefillResourceConfigs = useBinding_prefillResourceConfigs();
     const discoveredCollections = useBinding_discoveredCollections();
 
     const setRestrictedDiscoveredCollections =
         useBinding_setRestrictedDiscoveredCollections();
 
-    const close = () => {
+    // Pass appliedStrategy explicitly so the caller can provide the just-confirmed
+    // value without relying on a stale store closure.
+    const close = (
+        appliedStrategy: TargetNamingStrategy | null | undefined
+    ) => {
         setUpdating(true);
 
         const value = Array.from(selected).map(([_id, row]) => {
@@ -70,13 +97,26 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
             sourceCaptureSettings.deltaUpdates = deltaUpdates;
         }
 
-        if (sourceCaptureTargetSchemaSupported) {
+        // TODO (target naming:post migration:remove)
+        // Only pass targetNaming on the sourceCapture object for the old model.
+        // For rootTargetNaming the strategy is passed directly to WASM (handled in generateMaterializationResourceSpec).
+        if (
+            sourceCaptureTargetSchemaSupported &&
+            targetNamingModel === 'sourceTargetNaming'
+        ) {
             sourceCaptureSettings.targetNaming = targetSchema;
         }
 
         const collections = value.map(({ name }) => name);
 
-        prefillResourceConfigs(collections, true, sourceCaptureSettings);
+        prefillResourceConfigs(
+            collections,
+            true,
+            sourceCaptureSettings,
+            targetNamingModel === 'rootTargetNaming'
+                ? (appliedStrategy ?? undefined)
+                : undefined
+        );
 
         evaluateTrialCollections(collections).then(
             (response) => {
@@ -97,11 +137,48 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         toggle(false);
     };
 
+    const handleContinue = async () => {
+        if (needsNamingDialog) {
+            defaultStrategyRef.current = {
+                strategy: 'matchSourceStructure',
+            };
+
+            const exampleCollections = Array.from(selected).map(
+                ([_id, row]) => row.catalog_name
+            );
+
+            const confirmed = await confirmationContext?.showConfirmation(
+                {
+                    title: 'destinationLayout.dialog.title',
+                    confirmText: 'destinationLayout.dialog.cta.addBindings',
+                    dialogProps: {
+                        maxWidth: 'md',
+                    },
+                    message: (
+                        <TargetNamingFormContent
+                            initialStrategy={targetNamingStrategy}
+                            exampleCollections={exampleCollections}
+                            onChange={handleNamingChange}
+                        />
+                    ),
+                },
+                true
+            );
+
+            if (!confirmed) return;
+            await handleConfirm(defaultStrategyRef.current, () =>
+                close(defaultStrategyRef.current)
+            );
+            return;
+        }
+        close(targetNamingStrategy);
+    };
+
     return (
         <Button
             variant="contained"
             disabled={selected.size < 1 || updating}
-            onClick={close}
+            onClick={handleContinue}
         >
             <FormattedMessage id="cta.continue" />
         </Button>

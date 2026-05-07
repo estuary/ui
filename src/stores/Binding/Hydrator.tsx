@@ -1,13 +1,21 @@
-import type { BaseComponentProps } from 'src/types';
+import type {
+    BaseComponentProps,
+    SourceCaptureDef,
+    TargetNamingStrategy,
+} from 'src/types';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
+import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
+import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { useConnectorTag_nullable } from 'src/context/ConnectorTag';
 import { useEntityType } from 'src/context/EntityContext';
 import {
     useEntityWorkflow,
     useEntityWorkflow_Editing,
 } from 'src/context/Workflow';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
+import useSourceCapture from 'src/hooks/sourceCapture/useSourceCapture';
 import useTrialPrefixes from 'src/hooks/trialStorage/useTrialPrefixes';
 import { logRocketConsole } from 'src/services/shared';
 import {
@@ -17,7 +25,9 @@ import {
     useBinding_setHydrated,
     useBinding_setHydrationErrorsExist,
 } from 'src/stores/Binding/hooks';
+import { useBindingStore } from 'src/stores/Binding/Store';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { hasLength } from 'src/utils/misc-utils';
 
 export const BindingHydrator = ({ children }: BaseComponentProps) => {
     // We want to manually control this in a REF to not fire extra effect calls
@@ -42,6 +52,32 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         (state) => state.setPrefilledCapture
     );
 
+    // These callbacks may change between renders; use a ref so the effect
+    // closure always calls the latest version without re-running the effect.
+    const confirmationContext = useConfirmationModalContext();
+    const { handleConfirm } = useTargetNaming();
+    const { updateDraft } = useSourceCapture();
+
+    const callbacksRef = useRef({
+        confirmationContext,
+        handleConfirm,
+        updateDraft,
+    });
+    callbacksRef.current = { confirmationContext, handleConfirm, updateDraft };
+
+    const pendingStrategyRef = useRef<TargetNamingStrategy>({
+        strategy: 'matchSourceStructure',
+    });
+    const handleNamingChange = useCallback(
+        (strategy: TargetNamingStrategy, isValid: boolean) => {
+            pendingStrategyRef.current = strategy;
+            callbacksRef.current.confirmationContext?.setContinueAllowed(
+                isValid
+            );
+        },
+        []
+    );
+
     useEffect(() => {
         if (workflow && connectorTagState) {
             const connectorTag = connectorTagState.applicable
@@ -61,14 +97,108 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 rehydrating.current
             )
                 .then(
-                    (response) => {
+                    async (response) => {
+                        if (!response || response.length === 0) return;
+
+                        // Build the collection list and find the source capture
+                        const allCollections: string[] = [];
+                        let captureName: string | null = null;
+
+                        for (const entry of response) {
+                            if (entry.spec_type === 'capture') {
+                                if (!captureName)
+                                    captureName = entry.catalog_name;
+                                for (const col of entry.writes_to ?? []) {
+                                    if (!allCollections.includes(col))
+                                        allCollections.push(col);
+                                }
+                            } else {
+                                if (
+                                    !allCollections.includes(entry.catalog_name)
+                                )
+                                    allCollections.push(entry.catalog_name);
+                            }
+                        }
+
+                        const { resourceConfigPointers } =
+                            useBindingStore.getState();
+                        const targetSchemaSupported = hasLength(
+                            resourceConfigPointers?.x_schema_name
+                        );
+
                         if (
-                            response &&
-                            response.length === 1 &&
-                            response[0].spec_type === 'capture' &&
-                            !editWorkflow
+                            !editWorkflow &&
+                            targetSchemaSupported &&
+                            allCollections.length > 0
                         ) {
-                            setPrefilledCapture(response[0].catalog_name);
+                            // When prefilling we need to prompt the user to provide
+                            //  us with their targetNaming strategy before continuing
+                            //  so the prefilled bindings are populated correctly
+
+                            const {
+                                confirmationContext: ctx,
+                                handleConfirm: confirm,
+                                updateDraft: writeDraft,
+                            } = callbacksRef.current;
+
+                            pendingStrategyRef.current = {
+                                strategy: 'matchSourceStructure',
+                            };
+
+                            const confirmed = await ctx?.showConfirmation(
+                                {
+                                    title: 'destinationLayout.dialog.title',
+                                    confirmText:
+                                        'destinationLayout.dialog.cta.addBindings',
+                                    dialogProps: { maxWidth: 'md' },
+                                    message: (
+                                        <TargetNamingFormContent
+                                            initialStrategy={null}
+                                            exampleCollections={allCollections}
+                                            onChange={handleNamingChange}
+                                        />
+                                    ),
+                                },
+                                true
+                            );
+
+                            if (confirmed) {
+                                const sourceCaptureDef:
+                                    | SourceCaptureDef
+                                    | undefined = captureName
+                                    ? { capture: captureName }
+                                    : undefined;
+
+                                await confirm(
+                                    pendingStrategyRef.current,
+                                    () => {
+                                        useBindingStore
+                                            .getState()
+                                            .prefillResourceConfigs(
+                                                allCollections,
+                                                true,
+                                                sourceCaptureDef,
+                                                pendingStrategyRef.current
+                                            );
+                                        if (captureName) {
+                                            void writeDraft(captureName);
+                                            setPrefilledCapture(captureName);
+                                        }
+                                    }
+                                );
+                            }
+                        } else {
+                            // Fallback: preserve old behavior for edit workflows or
+                            // connectors without root target naming support.
+                            useBindingStore
+                                .getState()
+                                .addEmptyBindings(
+                                    response,
+                                    rehydrating.current
+                                );
+                            if (captureName && !editWorkflow) {
+                                setPrefilledCapture(captureName);
+                            }
                         }
                     },
                     (error) => {
@@ -92,6 +222,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         editWorkflow,
         entityType,
         getTrialPrefixes,
+        handleNamingChange,
         hydrateState,
         setActive,
         setHydrated,

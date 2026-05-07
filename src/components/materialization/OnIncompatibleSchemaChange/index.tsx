@@ -10,7 +10,7 @@ function OnIncompatibleSchemaChange() {
     return (
         <Box>
             <Stack spacing={1} sx={{ mb: 2 }}>
-                <Typography style={{ fontWeight: 500 }}>
+                <Typography variant="formSectionHeader">
                     {intl.formatMessage({
                         id: 'incompatibleSchemaChange.header',
                     })}

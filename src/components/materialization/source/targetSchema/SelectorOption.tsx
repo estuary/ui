@@ -5,6 +5,7 @@ import { Stack, Typography } from '@mui/material';
 
 import OptionExample from 'src/components/materialization/source/targetSchema/OptionExample';
 
+// TODO (target naming:post migration:remove)
 function SelectorOption({
     option: { description, label, example, publicExample },
 }: SelectorOptionProps<AutoCompleteOptionForTargetSchema>) {

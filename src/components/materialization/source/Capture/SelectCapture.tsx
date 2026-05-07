@@ -36,8 +36,13 @@ function SelectCapture() {
         );
 
     const [open, setOpen] = useState<boolean>(false);
+
     const toggleDialog = (args: any) =>
         setOpen(typeof args === 'boolean' ? args : !open);
+
+    const handleModifyClick = () => {
+        toggleDialog(true);
+    };
 
     const existingSourceCaptureDefinition = useMemo(
         () =>
@@ -69,7 +74,7 @@ function SelectCapture() {
 
     useEffect(() => {
         // First see if there is a value and then use the prefill if it exists. That way a user does not
-        //  accidently override their existing setting without noticing
+        //  accidentally override their existing setting without noticing
         if (
             !defaultedOnce.current &&
             isString(existingSourceCaptureDefinition?.capture)
@@ -94,13 +99,17 @@ function SelectCapture() {
 
     return (
         <>
-            <Button disabled={showLoading || formActive} onClick={toggleDialog}>
+            <Button
+                disabled={showLoading || formActive}
+                onClick={handleModifyClick}
+            >
                 {intl.formatMessage({
                     id: showLoading
                         ? 'workflows.sourceCapture.cta.loading'
                         : 'cta.modify',
                 })}
             </Button>
+
             <AddDialog
                 entity="capture"
                 id={DIALOG_ID}
