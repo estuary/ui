@@ -298,7 +298,7 @@ export const Workflows: Record<string, string> = {
 
     // Destination Layout dialog (new targetNaming model)
     'destinationLayout.dialog.title': `Destination Layout`,
-    'destinationLayout.dialog.message': `Controls how collection names are mapped to destination tables and schemas when bindings are added.`,
+    'destinationLayout.dialog.message': `Controls how collection names are mapped to destination tables and schemas. Becomes the default setting for newly added bindings.`,
     'destinationLayout.dialog.subtitle': `How should source schemas map to your destination? This applies to newly added bindings. You can override individual bindings later.`,
     'destinationLayout.selected.none': `no layout set`,
     'destinationLayout.dialog.schema.label': `Schema`,
@@ -306,7 +306,7 @@ export const Workflows: Record<string, string> = {
     'destinationLayout.dialog.field.prefix.label': `Prefix`,
     'destinationLayout.dialog.field.suffix.label': `Suffix`,
     'destinationLayout.dialog.matchSourceStructure.customize': `Add a prefix or suffix to table or schema names`,
-    'destinationLayout.dialog.skipCommonDefaults.label': `Skip common defaults (public, dbo...)`,
+    'destinationLayout.dialog.skipCommonDefaults.label': `Skip common defaults (public, dbo)`,
     'destinationLayout.dialog.cta.addBindings': `Add Collections`,
     'destinationLayout.dialog.cta.sourceCapture': `Select Source Capture`,
 
@@ -314,7 +314,7 @@ export const Workflows: Record<string, string> = {
     'destinationLayout.strategy.matchSourceStructure.label': `Match source structure`,
     'destinationLayout.strategy.matchSourceStructure.description': `Preserve the original table and schema names. Tables keep their original names.`,
 
-    'destinationLayout.strategy.singleSchema.label': `All tables in one schema`,
+    'destinationLayout.strategy.singleSchema.label': `Set a default schema`,
     'destinationLayout.strategy.singleSchema.description': `Place all your tables in one schema. Only the table name is used.`,
 
     'destinationLayout.strategy.prefixTableNames.label': `Prefix table names`,
