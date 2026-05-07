@@ -51,9 +51,11 @@ export function TemplateInput({
             >
                 <TextField
                     size="small"
-                    label={intl.formatMessage({
-                        id: 'destinationLayout.dialog.field.prefix.label',
-                    })}
+                    label={`${intl.formatMessage({ id: keys.label })} ${intl.formatMessage(
+                        {
+                            id: 'destinationLayout.dialog.field.prefix.label',
+                        }
+                    )}`}
                     value={prefix}
                     onChange={(e) =>
                         onChange(`${e.target.value}${keys.token}${suffix}`)
@@ -70,9 +72,11 @@ export function TemplateInput({
                 />
                 <TextField
                     size="small"
-                    label={intl.formatMessage({
-                        id: 'destinationLayout.dialog.field.suffix.label',
-                    })}
+                    label={`${intl.formatMessage({ id: keys.label })} ${intl.formatMessage(
+                        {
+                            id: 'destinationLayout.dialog.field.suffix.label',
+                        }
+                    )}`}
                     value={suffix}
                     onChange={(e) =>
                         onChange(`${prefix}${keys.token}${e.target.value}`)

@@ -7,23 +7,12 @@ import {
     buildBothExamples,
     hasSchemaTemplate,
     hasTableTemplate,
+    initialSchemaValue,
+    initialTableValue,
     isStrategyKeyValid,
     isStrategyValid,
     parseExampleCollection,
 } from 'src/components/materialization/targetNaming/shared';
-
-function initialSchemaValue(strategy?: TargetNamingStrategy | null): string {
-    if (!strategy) return '';
-    if (strategy.strategy === 'matchSourceStructure') {
-        return hasSchemaTemplate(strategy) ? strategy.schemaTemplate : '';
-    }
-    return 'schema' in strategy ? (strategy.schema ?? '') : '';
-}
-
-function initialTableValue(strategy?: TargetNamingStrategy | null): string {
-    if (!strategy) return '';
-    return hasTableTemplate(strategy) ? strategy.tableTemplate : '';
-}
 
 export function useTargetNamingFormState(
     initialStrategy?: TargetNamingStrategy | null,
@@ -54,7 +43,7 @@ export function useTargetNamingFormState(
         initialTableValue(initialStrategy)
     );
 
-    const schemaTemplate = schemaValue || undefined;
+    const schemaTemplate = schemaValue.trim() || undefined;
     const tableTemplate = tableValue.trim() || undefined;
 
     const { srcSchema, srcTable, sourceName } = parseExampleCollection(

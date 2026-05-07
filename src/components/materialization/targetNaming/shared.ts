@@ -333,3 +333,38 @@ export function buildExample(
         }
     }
 }
+
+export function initialSchemaValue(
+    strategy?: TargetNamingStrategy | null
+): string {
+    if (!strategy) {
+        return '';
+    }
+
+    if (strategy.strategy === 'matchSourceStructure') {
+        return hasSchemaTemplate(strategy) ? strategy.schemaTemplate : '';
+    }
+
+    return 'schema' in strategy ? (strategy.schema ?? '') : '';
+}
+
+export function initialTableValue(
+    strategy?: TargetNamingStrategy | null
+): string {
+    if (!strategy) {
+        return '';
+    }
+
+    if (hasTableTemplate(strategy)) {
+        return strategy.tableTemplate;
+    }
+
+    if (
+        strategy.strategy === 'singleSchema' ||
+        strategy.strategy === 'prefixTableNames'
+    ) {
+        return TABLE_TEMPLATE_STRING;
+    }
+
+    return '';
+}

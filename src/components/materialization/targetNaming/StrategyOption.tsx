@@ -32,23 +32,26 @@ export function StrategyOption({
     const intl = useIntl();
     return (
         <Box
-            onClick={readOnly ? undefined : onSelect}
+            onClick={selected || readOnly ? undefined : onSelect}
             sx={{
                 'border': (theme) =>
                     selected
                         ? `1px solid ${theme.palette.primary.main}`
                         : defaultOutline[theme.palette.mode],
                 'borderRadius': 1,
-                'cursor': readOnly ? 'default' : 'pointer',
+                'cursor': selected || readOnly ? 'default' : 'pointer',
                 'p': 1.5,
-                '&:hover': readOnly
-                    ? undefined
-                    : {
-                          border: (theme) =>
-                              selected
-                                  ? `1px solid ${theme.palette.primary.main}`
-                                  : defaultOutline_hovered[theme.palette.mode],
-                      },
+                '&:hover':
+                    selected || readOnly
+                        ? undefined
+                        : {
+                              border: (theme) =>
+                                  selected
+                                      ? `1px solid ${theme.palette.primary.main}`
+                                      : defaultOutline_hovered[
+                                            theme.palette.mode
+                                        ],
+                          },
             }}
         >
             {readOnly ? (
@@ -87,6 +90,7 @@ export function StrategyOption({
                 {selected && example ? (
                     <Box
                         sx={{
+                            'cursor': 'default',
                             '& pre': { whiteSpace: 'pre-wrap' },
                         }}
                     >

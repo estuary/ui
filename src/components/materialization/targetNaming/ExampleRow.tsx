@@ -37,6 +37,7 @@ function ChipLabel({
         typeof value === 'string' && source
             ? splitAroundToken(value, source)
             : null;
+
     const parts =
         split && (split.prefix || split.suffix)
             ? { ...split, middle: source as string }
@@ -53,6 +54,8 @@ function ChipLabel({
                 </Box>
             );
         }
+
+        // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{value}</>;
     }
 
@@ -62,7 +65,7 @@ function ChipLabel({
                 component="span"
                 sx={{ color: 'primary.main', fontWeight: 700 }}
             >
-                {parts.prefix}
+                {parts.prefix.trim()}
             </Box>
             <Box component="span" sx={{ opacity: 0.8 }}>
                 {parts.middle}
@@ -71,7 +74,7 @@ function ChipLabel({
                 component="span"
                 sx={{ color: 'primary.main', fontWeight: 700 }}
             >
-                {parts.suffix}
+                {parts.suffix.trim()}
             </Box>
         </>
     );

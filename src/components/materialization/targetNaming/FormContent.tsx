@@ -50,6 +50,30 @@ export function TargetNamingFormContent({
         }
     };
 
+    const switchStrategy = (nextKey: StrategyKey) => {
+        if (strategyKey === nextKey) return;
+
+        if (nextKey === 'matchSourceStructure') {
+            if (matchSourceTemplatesEnabled) {
+                prefillTemplates(
+                    schemaValue,
+                    setSchemaValue,
+                    tableValue,
+                    setTableValue
+                );
+            }
+        } else {
+            if (strategyKey === 'matchSourceStructure') {
+                setSchemaValue('');
+            }
+            if (!tableValue) {
+                setTableValue(TABLE_TEMPLATE_STRING);
+            }
+        }
+
+        setStrategyKey(nextKey);
+    };
+
     const {
         canSubmitForm,
         example,
@@ -111,25 +135,15 @@ export function TargetNamingFormContent({
                     <StrategyOption
                         value="matchSourceStructure"
                         selected={strategyKey === 'matchSourceStructure'}
-                        onSelect={() => {
-                            if (strategyKey === 'matchSourceStructure') {
-                                return;
-                            }
-                            if (matchSourceTemplatesEnabled) {
-                                prefillTemplates(
-                                    schemaValue,
-                                    setSchemaValue,
-                                    tableValue,
-                                    setTableValue
-                                );
-                            }
-                            setStrategyKey('matchSourceStructure');
-                        }}
+                        onSelect={() => switchStrategy('matchSourceStructure')}
                         example={example}
                         publicExample={publicExample}
                     >
                         {strategyKey === 'matchSourceStructure' ? (
-                            <Stack spacing={1}>
+                            <Stack
+                                spacing={1}
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 <FormControlLabel
                                     control={
                                         <Checkbox
@@ -138,7 +152,6 @@ export function TargetNamingFormContent({
                                                 matchSourceTemplatesEnabled
                                             }
                                             onChange={(e) => {
-                                                e.stopPropagation();
                                                 if (e.target.checked) {
                                                     prefillTemplates(
                                                         schemaValue,
@@ -158,7 +171,11 @@ export function TargetNamingFormContent({
                                     })}
                                 />
                                 {matchSourceTemplatesEnabled ? (
-                                    <Stack spacing={1}>
+                                    <Stack
+                                        useFlexGap
+                                        spacing={1}
+                                        sx={{ ml: 1, bg: 'red' }}
+                                    >
                                         <TemplateInput
                                             {...sharedSchemaInputProps}
                                             templateAllowed={true}
@@ -176,15 +193,7 @@ export function TargetNamingFormContent({
                     <StrategyOption
                         value="singleSchema"
                         selected={strategyKey === 'singleSchema'}
-                        onSelect={() => {
-                            if (strategyKey === 'singleSchema') {
-                                return;
-                            }
-                            if (strategyKey === 'matchSourceStructure') {
-                                setSchemaValue('');
-                            }
-                            setStrategyKey('singleSchema');
-                        }}
+                        onSelect={() => switchStrategy('singleSchema')}
                         example={example}
                         publicExample={publicExample}
                     >
@@ -206,15 +215,7 @@ export function TargetNamingFormContent({
                     <StrategyOption
                         value="prefixTableNames"
                         selected={strategyKey === 'prefixTableNames'}
-                        onSelect={() => {
-                            if (strategyKey === 'prefixTableNames') {
-                                return;
-                            }
-                            if (strategyKey === 'matchSourceStructure') {
-                                setSchemaValue('');
-                            }
-                            setStrategyKey('prefixTableNames');
-                        }}
+                        onSelect={() => switchStrategy('prefixTableNames')}
                         example={example}
                         publicExample={publicExample}
                     >
