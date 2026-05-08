@@ -16,11 +16,12 @@ interface Props {
 
 function TimestampCell({ ts }: Props) {
     const dt = DateTime.fromISO(ts, { zone: 'UTC' });
-    const formattedDateTime = dt.toFormat(LOGS_DATE_FORMAT);
 
     if (!dt.isValid) {
         return <TableCell sx={BaseCellSx} component="div" />;
     }
+
+    const formattedDateTime = dt.toFormat(LOGS_DATE_FORMAT);
 
     return (
         <TableCell sx={BaseCellSx} component="div">
