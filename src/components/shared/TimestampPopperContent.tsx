@@ -41,7 +41,7 @@ function TimestampPopperContent({ dateTime, showRelative }: Props) {
 
     return (
         <Box
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} // Make sure we stop otherwise the row is opened
             component="dl"
             sx={{
                 'alignItems': 'baseline',
