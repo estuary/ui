@@ -49,7 +49,6 @@ function PopperWrapper({
             open={open}
             anchorEl={anchorEl}
             transition
-            modifiers={popperProps?.modifiers ?? []}
             sx={
                 popperProps?.sx
                     ? { ...popperProps.sx, zIndex: popperIndex }
