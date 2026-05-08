@@ -1,5 +1,4 @@
 import type { DateTime } from 'luxon';
-import type { ReactNode } from 'react';
 
 import { Fragment } from 'react';
 
@@ -23,7 +22,7 @@ const labelSx = {
 
 interface Row {
     labelId: string;
-    getValue: (dt: DateTime) => ReactNode;
+    getValue: (dt: DateTime) => string;
 }
 
 const rows: Row[] = [
