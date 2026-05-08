@@ -35,9 +35,8 @@ export interface DialogActionProps {
 }
 
 export interface EditButtonProps extends TableCellProps {
-    alertTypes: ReducedAlertSubscription['alertTypes'];
-    email: string;
     prefix: string;
+    subscriptionMetadata: SubscriptionMetadata;
 }
 
 export interface EmailDictionary {
@@ -48,6 +47,23 @@ export interface EmailListFieldProps {
     staticEmail?: string;
 }
 
+interface GlobalSetting {
+    [property: string]: boolean | number | string;
+}
+
+interface GlobalSettingDictionary {
+    [alertType: string]: GlobalSetting;
+}
+
 export interface PrefixFieldProps {
     staticPrefix?: string;
+}
+
+export interface SubscriptionMetadata {
+    settings: GlobalSettingDictionary;
+    subscriptions: ReducedAlertSubscription[];
+}
+
+export interface SubscriptionMetadataDictionary {
+    [prefix: string]: SubscriptionMetadata;
 }

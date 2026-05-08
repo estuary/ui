@@ -1,5 +1,6 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { ReducedAlertSubscription } from 'src/api/types';
+import type { SubscriptionMetadataDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
 import type { CombinedError } from 'urql';
 
@@ -8,6 +9,7 @@ import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 
+import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface AlertSubscriptionState {
@@ -20,6 +22,7 @@ interface AlertSubscriptionState {
         ReducedAlertSubscription,
         'alertTypes' | 'catalogPrefix' | 'email'
     >;
+    subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
     setAlertTypes: (values: AlertTypeInfo[], initialize?: boolean) => void;
     setEmailErrorsExist: (
@@ -31,6 +34,7 @@ interface AlertSubscriptionState {
     setSaveErrors: (value: AlertSubscriptionState['saveErrors']) => void;
     setSubscribedEmail: (value: string) => void;
     setSubscribedPrefix: (value: string, errors: string | null) => void;
+    setSubscriptionMetadata: (value: ReducedAlertSubscription[]) => void;
 }
 
 const getInitialState = (): Pick<
@@ -41,6 +45,7 @@ const getInitialState = (): Pick<
     | 'prefixErrorsExist'
     | 'saveErrors'
     | 'subscription'
+    | 'subscriptionMetadata'
 > => ({
     alertTypes: [],
     emailErrorsExist: false,
@@ -48,6 +53,7 @@ const getInitialState = (): Pick<
     prefixErrorsExist: false,
     saveErrors: [],
     subscription: { alertTypes: [], catalogPrefix: '', email: '' },
+    subscriptionMetadata: {},
 });
 
 const name = 'estuary.alert-subscriptions-store';
@@ -118,6 +124,16 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     }),
                     false,
                     'subscribed prefix set'
+                ),
+
+            setSubscriptionMetadata: (value) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.subscriptionMetadata =
+                            bundleSubscriptionsByPrefix(value);
+                    }),
+                    false,
+                    'subscription metadata set'
                 ),
         };
     }, devtoolsOptions(name))
