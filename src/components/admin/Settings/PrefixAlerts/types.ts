@@ -23,10 +23,11 @@ export interface AlertSubscriptionResponse
 }
 
 export interface AlertTypeFieldProps {
-    existingAlertTypes?: ReducedAlertSubscription['alertTypes'];
+    subscription?: ReducedAlertSubscription;
 }
 
 export interface AlertTypeSelectorProps {
+    subscription?: ReducedAlertSubscription;
     options: AlertTypeInfo[];
 }
 
@@ -60,8 +61,7 @@ export interface PrefixFieldProps {
 }
 
 export interface SubscriberAccordionProps {
-    alertTypes: ReducedAlertSubscription['alertTypes'];
-    email: string;
+    subscription: ReducedAlertSubscription;
     hovered?: boolean;
     expanded?: boolean;
 }

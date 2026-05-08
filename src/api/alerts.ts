@@ -68,7 +68,6 @@ const AlertSubscriptionQuery = gql<
             alertTypes
             catalogPrefix
             email
-            updatedAt
         }
     }
 `;

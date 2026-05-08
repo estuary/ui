@@ -26,7 +26,6 @@ const TITLE_ID = 'alert-subscription-dialog-title';
 const AlertSubscriptionDialog = ({
     descriptionId,
     enableDeletion,
-    existingAlertTypes,
     headerId,
     open,
     setOpen,

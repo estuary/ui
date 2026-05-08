@@ -10,32 +10,13 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import { useGetAlertTypes } from 'src/context/AlertType';
 
 const DEFAULT_OPTIONS: AlertTypeInfo[] = [];
-const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
+
+const AlertTypeField = ({ subscription }: AlertTypeFieldProps) => {
     const [{ fetching, data, error }] = useGetAlertTypes();
 
     const setServerError = useAlertSubscriptionsStore(
         (state) => state.setSaveErrors
     );
-
-    const setAlertTypes = useAlertSubscriptionsStore(
-        (state) => state.setAlertTypes
-    );
-
-    useEffect(() => {
-        if (!fetching && data?.alertTypes) {
-            const existingAlertTypeDefs = existingAlertTypes
-                ? data.alertTypes.filter(({ alertType }) =>
-                      existingAlertTypes.includes(alertType)
-                  )
-                : null;
-
-            setAlertTypes(
-                existingAlertTypeDefs === null
-                    ? data.alertTypes.filter(({ isSystem }) => isSystem)
-                    : existingAlertTypeDefs
-            );
-        }
-    }, [data?.alertTypes, existingAlertTypes, fetching, setAlertTypes]);
 
     useEffect(() => {
         if (error) {
@@ -46,7 +27,10 @@ const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
     return fetching || !data ? (
         <Skeleton height={38} width={490} />
     ) : (
-        <AlertTypeSelector options={data.alertTypes ?? DEFAULT_OPTIONS} />
+        <AlertTypeSelector
+            subscription={subscription}
+            options={data.alertTypes ?? DEFAULT_OPTIONS}
+        />
     );
 };
 

@@ -20,8 +20,7 @@ import { defaultOutline, defaultOutlineColor_hovered } from 'src/context/Theme';
 import { sortByAlertType } from 'src/utils/misc-utils';
 
 const Summary = ({
-    alertTypes,
-    email,
+    subscription,
     expanded,
     setHovered,
 }: SubscriberSummaryProps) => {
@@ -34,6 +33,8 @@ const Summary = ({
             !alertTypeResponse.data ? [] : alertTypeResponse.data.alertTypes,
         [alertTypeResponse.data]
     );
+
+    const { alertTypes, email } = subscription;
 
     const evaluatedAlertTypes: ChipDisplay[] = useMemo(
         () =>

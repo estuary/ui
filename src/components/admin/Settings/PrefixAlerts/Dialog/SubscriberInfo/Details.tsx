@@ -7,8 +7,7 @@ import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/Em
 import { defaultOutline, defaultOutline_hovered } from 'src/context/Theme';
 
 const Details = ({
-    alertTypes,
-    email,
+    subscription,
     expanded,
     hovered,
 }: SubscriberAccordionProps) => {
@@ -18,6 +17,8 @@ const Details = ({
         hovered && expanded
             ? defaultOutline_hovered[theme.palette.mode]
             : defaultOutline[theme.palette.mode];
+
+    const { email } = subscription;
 
     return (
         <AccordionDetails
@@ -32,7 +33,7 @@ const Details = ({
             <Stack spacing={3}>
                 <EmailListField staticEmail={email} />
 
-                <AlertTypeField existingAlertTypes={alertTypes} />
+                <AlertTypeField subscription={subscription} />
             </Stack>
         </AccordionDetails>
     );

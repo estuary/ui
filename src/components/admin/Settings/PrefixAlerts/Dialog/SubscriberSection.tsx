@@ -38,11 +38,10 @@ const SubscriberSection = () => {
             </Typography>
 
             {targetSubscriptionMetadata.subscriptions.map(
-                ({ alertTypes, catalogPrefix, email }, index) => (
+                (subscription, index) => (
                     <SubscriberInfo
-                        alertTypes={alertTypes}
-                        email={email}
-                        key={`${catalogPrefix}-${email}-${index}`}
+                        subscription={subscription}
+                        key={`${subscription.catalogPrefix}-${subscription.email}-${index}`}
                     />
                 )
             )}

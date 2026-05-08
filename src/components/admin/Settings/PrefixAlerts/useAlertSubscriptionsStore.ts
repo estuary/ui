@@ -9,6 +9,7 @@ import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
@@ -25,7 +26,11 @@ interface AlertSubscriptionState {
     >;
     subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
-    setAlertTypes: (values: AlertTypeInfo[], initialize?: boolean) => void;
+    setAlertTypes: (
+        values: AlertTypeInfo[],
+        catalogPrefix?: string,
+        email?: string
+    ) => void;
     setEmailErrorsExist: (
         value: AlertSubscriptionState['emailErrorsExist']
     ) => void;
@@ -66,18 +71,69 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
         return {
             ...getInitialState(),
 
-            resetState: () => set(getInitialState(), false, 'state reset'),
-
-            setAlertTypes: (values, initialize) =>
+            resetState: () =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        if (initialize) {
-                            state.alertTypes = values;
-                        } else {
-                            state.subscription.alertTypes = values.map(
-                                ({ alertType: name }) => name
-                            );
+                        return {
+                            ...getInitialState(),
+                            subscriptionMetadata: state.subscriptionMetadata,
+                        };
+                    }),
+                    false,
+                    'state reset'
+                ),
+
+            setAlertTypes: (values, catalogPrefix, email) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (!catalogPrefix || !email) {
+                            return;
                         }
+
+                        const alertTypes = values.map(
+                            ({ alertType: name }) => name
+                        );
+
+                        if (
+                            catalogPrefix.length === 0 ||
+                            !hasOwnProperty(
+                                state.subscriptionMetadata,
+                                catalogPrefix
+                            )
+                        ) {
+                            state.subscriptionMetadata[catalogPrefix] = {
+                                settings: {},
+                                subscriptions: [
+                                    { alertTypes, catalogPrefix, email },
+                                ],
+                            };
+
+                            return;
+                        }
+
+                        const existingSubscriptions =
+                            state.subscriptionMetadata[catalogPrefix]
+                                .subscriptions;
+
+                        const targetIndex = existingSubscriptions.findIndex(
+                            (subscription) => subscription.email === email
+                        );
+
+                        if (targetIndex === -1) {
+                            state.subscriptionMetadata[catalogPrefix] = {
+                                settings: {},
+                                subscriptions: [
+                                    ...existingSubscriptions,
+                                    { alertTypes, catalogPrefix, email },
+                                ],
+                            };
+
+                            return;
+                        }
+
+                        state.subscriptionMetadata[catalogPrefix].subscriptions[
+                            targetIndex
+                        ].alertTypes = alertTypes;
                     }),
                     false,
                     'alert types set'
