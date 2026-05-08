@@ -59,9 +59,9 @@ export default function TargetNamingUpdateWrapper() {
                   strategyKey,
                   { value: schema, template: schemaTemplate },
                   {
-                      template: tableTemplate,
                       skipCommonDefaults,
                       ignoreSchemaPrefix: true,
+                      template: tableTemplate,
                   },
                   {
                       schema: SCHEMA_TEMPLATE_STRING,
