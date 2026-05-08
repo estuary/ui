@@ -275,8 +275,9 @@ export interface ExampleSchemaConfig {
 }
 
 export interface ExampleTableConfig {
-    template?: string;
     skipCommonDefaults: boolean;
+    ignoreSchemaPrefix?: boolean;
+    template?: string;
 }
 
 export interface ExampleSource {
@@ -329,7 +330,10 @@ export function buildExample(
         case 'prefixTableNames': {
             const isDefault = ['public', 'dbo'].includes(sourceSchema);
             const prefix =
-                table.skipCommonDefaults && isDefault ? '' : `${sourceSchema}_`;
+                (table.skipCommonDefaults && isDefault) ||
+                Boolean(table.ignoreSchemaPrefix)
+                    ? ''
+                    : `${sourceSchema}_`;
 
             return {
                 ...providedSettings,
