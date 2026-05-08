@@ -51,9 +51,7 @@ function useTargetNaming() {
     }, [draftSpecs]);
 
     useEffect(() => {
-        if (specStrategy !== null) {
-            setStrategy(specStrategy);
-        }
+        setStrategy(specStrategy);
     }, [specStrategy, setStrategy]);
 
     // needsNamingDialog is fully controlled by the hydrator:

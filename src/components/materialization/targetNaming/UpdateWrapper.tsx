@@ -16,6 +16,7 @@ import {
     TABLE_TEMPLATE_STRING,
 } from 'src/components/materialization/targetNaming/shared';
 import { StrategyOption } from 'src/components/materialization/targetNaming/StrategyOption';
+import StrategyOptionWrapper from 'src/components/materialization/targetNaming/StrategyOptionWrapper';
 import PreformattedBlock from 'src/components/shared/PreformattedBlock';
 import SpecPropInvalidSetting from 'src/components/shared/specPropEditor/SpecPropInvalidSetting';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
@@ -66,18 +67,16 @@ export default function TargetNamingUpdateWrapper() {
             : null;
 
     const modifyButton = (
-        <Box sx={{ alignSelf: 'end' }}>
-            <Button
-                size="small"
-                variant="outlined"
-                disabled={saving || formActive}
-                onClick={openNamingDialog}
-            >
-                {intl.formatMessage({
-                    id: 'cta.modify',
-                })}
-            </Button>
-        </Box>
+        <Button
+            size="small"
+            variant="outlined"
+            disabled={saving || formActive}
+            onClick={openNamingDialog}
+        >
+            {intl.formatMessage({
+                id: 'cta.modify',
+            })}
+        </Button>
     );
 
     return (
@@ -104,45 +103,47 @@ export default function TargetNamingUpdateWrapper() {
                 />
             ) : null}
 
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Box sx={{ width: 'fit-content', maxWidth: 600 }}>
                 {validStrategy && strategyKey ? (
-                    <Box sx={{ maxWidth: 600 }}>
-                        <StrategyOption
-                            example={null}
-                            publicExample={null}
-                            readOnly
-                            selected
-                            value={strategyKey}
-                        >
-                            <Stack spacing={1}>
-                                {hasCustomNaming && example ? (
-                                    <PreformattedBlock>
-                                        <ExampleRow
-                                            hideSourceName
-                                            outputLayout="column"
-                                            example={example}
-                                        />
-                                    </PreformattedBlock>
-                                ) : null}
+                    <StrategyOption
+                        example={null}
+                        publicExample={null}
+                        readOnly
+                        selected
+                        value={strategyKey}
+                    >
+                        <Stack spacing={1}>
+                            {hasCustomNaming && example ? (
+                                <PreformattedBlock>
+                                    <ExampleRow
+                                        hideSourceName
+                                        outputLayout="column"
+                                        example={example}
+                                    />
+                                </PreformattedBlock>
+                            ) : null}
 
-                                {modifyButton}
-                            </Stack>
-                        </StrategyOption>
-                    </Box>
+                            <Box sx={{ alignSelf: 'end' }}>{modifyButton}</Box>
+                        </Stack>
+                    </StrategyOption>
                 ) : (
                     !strategyInvalid && (
-                        <>
-                            <Typography color="text.secondary" variant="body2">
-                                {intl.formatMessage({
-                                    id: 'destinationLayout.selected.none',
-                                })}
-                            </Typography>
-
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            <StrategyOptionWrapper readOnly selected={false}>
+                                <Typography
+                                    color="text.secondary"
+                                    variant="body2"
+                                >
+                                    {intl.formatMessage({
+                                        id: 'destinationLayout.selected.none',
+                                    })}
+                                </Typography>
+                            </StrategyOptionWrapper>
                             {modifyButton}
-                        </>
+                        </Stack>
                     )
                 )}
-            </Stack>
+            </Box>
 
             {targetNamingDialogOpen ? (
                 <TargetNamingDialog

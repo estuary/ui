@@ -301,7 +301,7 @@ export const Workflows: Record<string, string> = {
     'destinationLayout.dialog.title': `Destination Layout`,
     'destinationLayout.dialog.message': `Controls how collection names are mapped to destination tables and schemas. Becomes the default setting for newly added bindings.`,
     'destinationLayout.dialog.subtitle': `How should source schemas map to your destination? This applies to newly added bindings. You can override individual bindings later.`,
-    'destinationLayout.selected.none': `no layout set`,
+    'destinationLayout.selected.none': `no convention set`,
     'destinationLayout.dialog.schema.label': `Schema`,
     'destinationLayout.dialog.table.label': `Table`,
     'destinationLayout.dialog.field.prefix.label': `Prefix`,
