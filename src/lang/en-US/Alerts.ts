@@ -8,6 +8,7 @@ export const Alerts: Record<string, string> = {
     'alerts.config.dialog.error.generic': `An issue was encountered {operation} an alert subscription.`,
     'alerts.config.dialog.error.term.delete': `deleting`,
     'alerts.config.dialog.error.term.modify': `creating or updating`,
+    'alerts.config.dialog.label.subscribers': `Recipients ({count})`,
     'alerts.config.dialog.generate.description': `Choose where you'd like notifications to be sent. Email addresses can be for mailing lists, {docLink}, or individual users.`,
     'alerts.config.dialog.generate.description.docLink': `Slack channels`,
     'alerts.config.dialog.generate.description.docPath': `https://slack.com/intl/en-au/help/articles/206819278-Send-emails-to-Slack`,

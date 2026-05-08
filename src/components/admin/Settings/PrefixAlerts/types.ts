@@ -59,6 +59,19 @@ export interface PrefixFieldProps {
     staticPrefix?: string;
 }
 
+export interface SubscriberAccordionProps {
+    alertTypes: ReducedAlertSubscription['alertTypes'];
+    email: string;
+    hovered?: boolean;
+    expanded?: boolean;
+}
+
+export interface SubscriberInfoProps
+    extends Omit<SubscriberAccordionProps, 'expanded' | 'hovered'> {}
+
+export interface SubscriberSummaryProps extends SubscriberAccordionProps {
+    setHovered: Dispatch<SetStateAction<boolean>>;
+}
 export interface SubscriptionMetadata {
     settings: GlobalSettingDictionary;
     subscriptions: ReducedAlertSubscription[];

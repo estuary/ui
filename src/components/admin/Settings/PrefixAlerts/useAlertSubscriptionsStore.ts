@@ -14,6 +14,7 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface AlertSubscriptionState {
     alertTypes: AlertTypeInfo[];
+    catalogPrefix: string;
     emailErrorsExist: boolean;
     initializationError: CombinedError | PostgrestError | null | undefined;
     prefixErrorsExist: boolean;
@@ -40,6 +41,7 @@ interface AlertSubscriptionState {
 const getInitialState = (): Pick<
     AlertSubscriptionState,
     | 'alertTypes'
+    | 'catalogPrefix'
     | 'emailErrorsExist'
     | 'initializationError'
     | 'prefixErrorsExist'
@@ -48,6 +50,7 @@ const getInitialState = (): Pick<
     | 'subscriptionMetadata'
 > => ({
     alertTypes: [],
+    catalogPrefix: '',
     emailErrorsExist: false,
     initializationError: null,
     prefixErrorsExist: false,
@@ -120,6 +123,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                 set(
                     produce((state: AlertSubscriptionState) => {
                         state.subscription.catalogPrefix = value;
+                        state.catalogPrefix = value;
                         state.prefixErrorsExist = Boolean(errors);
                     }),
                     false,

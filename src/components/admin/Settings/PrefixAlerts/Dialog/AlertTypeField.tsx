@@ -3,7 +3,7 @@ import type { AlertTypeInfo } from 'src/gql-types/graphql';
 
 import { useEffect } from 'react';
 
-import { Grid, Skeleton } from '@mui/material';
+import { Skeleton } from '@mui/material';
 
 import AlertTypeSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/AlertTypeSelector';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -43,16 +43,10 @@ const AlertTypeField = ({ existingAlertTypes }: AlertTypeFieldProps) => {
         }
     }, [error, setServerError]);
 
-    return (
-        <Grid size={12}>
-            {fetching || !data ? (
-                <Skeleton height={38} width={490} />
-            ) : (
-                <AlertTypeSelector
-                    options={data.alertTypes ?? DEFAULT_OPTIONS}
-                />
-            )}
-        </Grid>
+    return fetching || !data ? (
+        <Skeleton height={38} width={490} />
+    ) : (
+        <AlertTypeSelector options={data.alertTypes ?? DEFAULT_OPTIONS} />
     );
 };
 
