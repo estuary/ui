@@ -37,7 +37,7 @@ export function StrategyOption({
             readOnly={readOnly}
         >
             {readOnly ? (
-                <Typography fontWeight={500} sx={{ mb: 0.5 }}>
+                <Typography sx={{ mb: 0.5, fontWeight: 500 }}>
                     {intl.formatMessage({
                         id: `destinationLayout.strategy.${value}.label`,
                     })}

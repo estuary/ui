@@ -25,7 +25,7 @@ function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
                 alignItems: 'center',
                 fontSize: 12,
                 [`& .${TARGET_SCHEMA_HIGHLIGHT_CLASS}`]: {
-                    fontWeight: 700,
+                    fontWeight: 500,
                     fontSize: 12.5,
                 },
             }}
