@@ -1,8 +1,8 @@
 import type { SubscriptionMetadata } from 'src/components/admin/Settings/PrefixAlerts/types';
 
-import { Stack, Typography } from '@mui/material';
+import { useMemo } from 'react';
 
-import { useShallow } from 'zustand/react/shallow';
+import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -13,26 +13,31 @@ import { hasOwnProperty } from 'src/utils/misc-utils';
 const SubscriberSection = () => {
     const intl = useIntl();
 
-    const subscriptionMetadata: SubscriptionMetadata =
-        useAlertSubscriptionsStore(
-            useShallow((state) =>
-                state.catalogPrefix.length > 0 &&
-                hasOwnProperty(state.subscriptionMetadata, state.catalogPrefix)
-                    ? state.subscriptionMetadata[state.catalogPrefix]
-                    : { settings: {}, subscriptions: [] }
-            )
-        );
+    const catalogPrefix = useAlertSubscriptionsStore(
+        (state) => state.catalogPrefix
+    );
+    const subscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.subscriptionMetadata
+    );
+
+    const targetSubscriptionMetadata: SubscriptionMetadata = useMemo(
+        () =>
+            hasOwnProperty(subscriptionMetadata, catalogPrefix)
+                ? subscriptionMetadata[catalogPrefix]
+                : { settings: {}, subscriptions: [] },
+        [catalogPrefix, subscriptionMetadata]
+    );
 
     return (
         <Stack spacing="10px" style={{ width: '100%' }}>
             <Typography style={{ fontWeight: 500, marginBottom: 8 }}>
                 {intl.formatMessage(
                     { id: 'alerts.config.dialog.label.subscribers' },
-                    { count: subscriptionMetadata.subscriptions.length }
+                    { count: targetSubscriptionMetadata.subscriptions.length }
                 )}
             </Typography>
 
-            {subscriptionMetadata.subscriptions.map(
+            {targetSubscriptionMetadata.subscriptions.map(
                 ({ alertTypes, catalogPrefix, email }, index) => (
                     <SubscriberInfo
                         alertTypes={alertTypes}
