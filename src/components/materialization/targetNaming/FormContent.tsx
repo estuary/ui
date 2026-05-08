@@ -131,7 +131,7 @@ export function TargetNamingFormContent({
                 value={strategyKey}
                 onChange={(e) => setStrategyKey(e.target.value as StrategyKey)}
             >
-                <Stack spacing={2}>
+                <Stack spacing={2} sx={{ width: '100%' }}>
                     <StrategyOption
                         value="matchSourceStructure"
                         selected={strategyKey === 'matchSourceStructure'}

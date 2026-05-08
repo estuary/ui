@@ -70,28 +70,21 @@ export function StrategyOption({
                 {children}
 
                 {selected && example ? (
-                    <Box
-                        sx={{
-                            'cursor': 'default',
-                            '& pre': { whiteSpace: 'pre-wrap' },
-                        }}
-                    >
-                        <PreformattedBlock>
-                            <Stack>
-                                <Typography>
-                                    {intl.formatMessage({
-                                        id: 'common.examples',
-                                    })}
-                                </Typography>
-                                <Stack sx={{ pl: 0.5 }} spacing={1}>
-                                    <ExampleRow example={example} />
-                                    {publicExample ? (
-                                        <ExampleRow example={publicExample} />
-                                    ) : null}
-                                </Stack>
+                    <PreformattedBlock>
+                        <Stack>
+                            <Typography>
+                                {intl.formatMessage({
+                                    id: 'common.examples',
+                                })}
+                            </Typography>
+                            <Stack sx={{ pl: 0.5 }} spacing={1}>
+                                <ExampleRow example={example} />
+                                {publicExample ? (
+                                    <ExampleRow example={publicExample} />
+                                ) : null}
                             </Stack>
-                        </PreformattedBlock>
-                    </Box>
+                        </Stack>
+                    </PreformattedBlock>
                 ) : null}
             </Box>
         </StrategyOptionWrapper>
