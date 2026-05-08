@@ -6,6 +6,7 @@ import HoverPopper from 'src/components/shared/HoverPopper';
 import TimestampPopperContent from 'src/components/shared/TimestampPopperContent';
 import {
     BaseCellSx,
+    BaseTypographySx,
     LOGS_DATE_FORMAT,
 } from 'src/components/tables/cells/logs/shared';
 
@@ -30,6 +31,7 @@ function TimestampCell({ ts }: Props) {
                 popperProps={{ placement: 'right' }}
             >
                 <Chip
+                    sx={BaseTypographySx}
                     label={formattedDateTime}
                     size="small"
                     variant="outlined"
