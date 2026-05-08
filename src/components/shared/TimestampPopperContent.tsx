@@ -66,10 +66,10 @@ function TimestampPopperContent({ dateTime, showRelative }: Props) {
             {showRelative ? (
                 <>
                     <Divider sx={{ gridColumn: '1 / -1', my: 0.5 }} />
+                    <Typography component="dt" />
                     <Typography
                         component="dd"
                         sx={{
-                            gridColumn: 2,
                             m: 0,
                             textAlign: 'right',
                         }}
