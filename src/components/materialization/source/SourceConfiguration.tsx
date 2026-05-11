@@ -41,7 +41,8 @@ function SourceConfiguration() {
                 ) : null}
 
                 {/* TODO (target naming:post migration:remove)*/}
-                {targetNamingModel === 'sourceTargetNaming' ? (
+                {sourceCaptureTargetSchemaSupported &&
+                targetNamingModel === 'sourceTargetNaming' ? (
                     <TargetSchemaUpdateWrapper />
                 ) : null}
 
