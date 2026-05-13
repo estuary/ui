@@ -49,12 +49,18 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
     const [dialogHandled, setDialogHandled] = useState(false);
 
     const handleConfirm = (strategy: TargetNamingStrategy) => {
-        if (response && response[0] && response[0].spec_type === 'capture') {
-            setPrefilledCapture(response[0].catalog_name);
+        // Make sure this is done right away so the prefill stuff below has it
+        setStrategy(strategy);
+
+        if (response && response.length > 0) {
+            // If we are here we are probably just populate a capture that was materialized
+            if (response[0].spec_type === 'capture') {
+                setPrefilledCapture(response[0].catalog_name);
+            }
+
             addEmptyBindings(response, false);
         }
 
-        setStrategy(strategy);
         setDialogHandled(true);
     };
 
