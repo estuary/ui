@@ -7,12 +7,13 @@ import { useMemo } from 'react';
 import {
     AccordionSummary,
     accordionSummaryClasses,
+    Box,
     Stack,
     Typography,
     useTheme,
 } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { NavArrowDown, NavArrowRight } from 'iconoir-react';
 
 import ChipList from 'src/components/shared/ChipList';
 import { useGetAlertTypes } from 'src/context/AlertType';
@@ -60,9 +61,6 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
 
     return (
         <AccordionSummary
-            expandIcon={
-                <NavArrowDown style={{ color: theme.palette.text.primary }} />
-            }
             sx={{
                 'minHeight': 40,
                 'px': 1,
@@ -82,16 +80,30 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
             }}
         >
             <Stack spacing="2px" style={{ marginRight: 24 }}>
-                <Typography style={{ fontWeight: 500, paddingLeft: 12 }}>
-                    {email}
-                </Typography>
+                <Stack direction="row">
+                    {expanded ? (
+                        <NavArrowDown
+                            style={{ color: theme.palette.text.primary }}
+                        />
+                    ) : (
+                        <NavArrowRight
+                            style={{ color: theme.palette.text.primary }}
+                        />
+                    )}
+
+                    <Typography style={{ fontWeight: 500, paddingLeft: 4 }}>
+                        {email}
+                    </Typography>
+                </Stack>
 
                 {expanded ? null : (
-                    <ChipList
-                        maxChips={3}
-                        stripPath={false}
-                        values={evaluatedAlertTypes}
-                    />
+                    <Box style={{ paddingLeft: 12 }}>
+                        <ChipList
+                            maxChips={3}
+                            stripPath={false}
+                            values={evaluatedAlertTypes}
+                        />
+                    </Box>
                 )}
             </Stack>
         </AccordionSummary>

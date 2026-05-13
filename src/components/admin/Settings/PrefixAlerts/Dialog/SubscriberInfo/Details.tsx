@@ -11,8 +11,7 @@ const Details = ({ subscription }: SubscriberAccordionProps) => {
     return (
         <AccordionDetails
             style={{
-                borderBottomLeftRadius: '6px',
-                borderBottomRightRadius: '6px',
+                paddingLeft: 32,
             }}
         >
             <Stack spacing={3}>
