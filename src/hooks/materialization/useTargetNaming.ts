@@ -88,7 +88,7 @@ function useTargetNaming() {
                     setStrategy(newStrategy);
                     setFormState({ status: FormStatus.UPDATED });
                 })
-                .catch(() => {
+                .catch((error) => {
                     enqueueSnackbar(
                         intl.formatMessage({
                             id: 'specPropEditor.update.error',
@@ -96,6 +96,7 @@ function useTargetNaming() {
                         { ...snackbarSettings, variant: 'error' }
                     );
                     setFormState({ status: FormStatus.FAILED });
+                    return Promise.reject(error);
                 })
                 .finally(() => setSaving(false));
         },
