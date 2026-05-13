@@ -62,16 +62,12 @@ export interface PrefixFieldProps {
 
 export interface SubscriberAccordionProps {
     subscription: ReducedAlertSubscription;
-    hovered?: boolean;
     expanded?: boolean;
 }
 
 export interface SubscriberInfoProps
-    extends Omit<SubscriberAccordionProps, 'expanded' | 'hovered'> {}
+    extends Omit<SubscriberAccordionProps, 'expanded'> {}
 
-export interface SubscriberSummaryProps extends SubscriberAccordionProps {
-    setHovered: Dispatch<SetStateAction<boolean>>;
-}
 export interface SubscriptionMetadata {
     settings: GlobalSettingDictionary;
     subscriptions: ReducedAlertSubscription[];
