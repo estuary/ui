@@ -318,6 +318,8 @@ const getInitialState = (
             if (error) {
                 get().setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
+                // get().addEmptyBindings(data, rehydrating);
+
                 return Promise.resolve(data);
             }
         } else if (materializationRehydrating) {

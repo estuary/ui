@@ -39,6 +39,10 @@ export const useBinding_setHydrationErrorsExist = () => {
     return useBindingStore((state) => state.setHydrationErrorsExist);
 };
 
+export const useBinding_addEmptyBindings = () => {
+    return useBindingStore((state) => state.addEmptyBindings);
+};
+
 export const useBinding_hydrateState = () => {
     return useBindingStore((state) => state.hydrateState);
 };
