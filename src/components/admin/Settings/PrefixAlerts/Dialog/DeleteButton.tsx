@@ -1,16 +1,14 @@
-import type { DialogActionProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import { IconButton, useTheme } from '@mui/material';
 
-import { Button } from '@mui/material';
-
-import { useIntl } from 'react-intl';
+import { Xmark } from 'iconoir-react';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
 
-const DeleteButton = ({ closeDialog }: DialogActionProps) => {
-    const intl = useIntl();
+const DeleteButton = () => {
+    const theme = useTheme();
 
-    const { loading, onClick } = useModifyAlertSubscription(closeDialog, true);
+    const { loading, onClick } = useModifyAlertSubscription(() => {}, true);
 
     const prefixErrorsExist = useAlertSubscriptionsStore(
         (state) => state.prefixErrorsExist
@@ -21,8 +19,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     );
 
     return (
-        <Button
-            color="error"
+        <IconButton
             disabled={Boolean(
                 prefixErrorsExist ||
                     loading ||
@@ -32,10 +29,9 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
             loading={loading}
             onClick={onClick}
             size="small"
-            variant="outlined"
         >
-            {intl.formatMessage({ id: 'cta.delete' })}
-        </Button>
+            <Xmark style={{ color: theme.palette.text.primary }} />
+        </IconButton>
     );
 };
 

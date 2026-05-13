@@ -9,11 +9,7 @@ const Details = ({ subscription }: SubscriberAccordionProps) => {
     const { email } = subscription;
 
     return (
-        <AccordionDetails
-            style={{
-                paddingLeft: 32,
-            }}
-        >
+        <AccordionDetails style={{ paddingLeft: 32, paddingRight: 32 }}>
             <Stack spacing={3}>
                 <EmailListField staticEmail={email} />
 

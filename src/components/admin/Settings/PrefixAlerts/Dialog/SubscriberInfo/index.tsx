@@ -1,4 +1,4 @@
-import type { SubscriberInfoProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { SubscriberAccordionProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import { useState } from 'react';
 
@@ -8,7 +8,9 @@ import Details from 'src/components/admin/Settings/PrefixAlerts/Dialog/Subscribe
 import Summary from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/Summary';
 import { defaultOutline, defaultOutlineColor_hovered } from 'src/context/Theme';
 
-const SubscriberInfo = ({ subscription }: SubscriberInfoProps) => {
+const SubscriberInfo = ({
+    subscription,
+}: Omit<SubscriberAccordionProps, 'expanded'>) => {
     const theme = useTheme();
 
     const [expanded, setExpanded] = useState(false);
@@ -30,7 +32,7 @@ const SubscriberInfo = ({ subscription }: SubscriberInfoProps) => {
                 },
             }}
         >
-            <Summary subscription={subscription} expanded={expanded} />
+            <Summary expanded={expanded} subscription={subscription} />
 
             <Details subscription={subscription} />
         </Accordion>

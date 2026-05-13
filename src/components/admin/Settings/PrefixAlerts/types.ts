@@ -65,9 +65,6 @@ export interface SubscriberAccordionProps {
     expanded?: boolean;
 }
 
-export interface SubscriberInfoProps
-    extends Omit<SubscriberAccordionProps, 'expanded'> {}
-
 export interface SubscriptionMetadata {
     settings: GlobalSettingDictionary;
     subscriptions: ReducedAlertSubscription[];
