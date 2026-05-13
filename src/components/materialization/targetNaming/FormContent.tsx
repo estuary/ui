@@ -36,6 +36,25 @@ export function TargetNamingFormContent({
 }: TargetNamingFormContentProps) {
     const intl = useIntl();
 
+    const {
+        canSubmitForm,
+        example,
+        isKeyValid,
+        matchSourceTemplatesEnabled,
+        publicExample,
+        schemaValue,
+        setMatchSourceTemplatesEnabled,
+        setSchemaValue,
+        setSkipCommonDefaults,
+        setStrategyKey,
+        setTableValue,
+        sharedSchemaInputProps,
+        sharedTableInputProps,
+        skipCommonDefaults,
+        strategyKey,
+        tableValue,
+    } = useTargetNamingFormState(initialStrategy, exampleCollections);
+
     const prefillTemplates = (
         currentSchema: string,
         setSchema: (v: string) => void,
@@ -73,25 +92,6 @@ export function TargetNamingFormContent({
 
         setStrategyKey(nextKey);
     };
-
-    const {
-        canSubmitForm,
-        example,
-        isKeyValid,
-        matchSourceTemplatesEnabled,
-        publicExample,
-        schemaValue,
-        setMatchSourceTemplatesEnabled,
-        setSchemaValue,
-        setSkipCommonDefaults,
-        setStrategyKey,
-        setTableValue,
-        sharedSchemaInputProps,
-        sharedTableInputProps,
-        skipCommonDefaults,
-        strategyKey,
-        tableValue,
-    } = useTargetNamingFormState(initialStrategy, exampleCollections);
 
     useEffect(() => {
         const strategy = buildStrategyFromState(

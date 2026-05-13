@@ -32,7 +32,7 @@ export default function TargetNamingUpdateWrapper() {
         targetNamingStrategy,
         saving,
         handleConfirm,
-        clearStrategy,
+        updateStrategy,
         targetNamingDialogOpen,
         openNamingDialog,
         closeNamingDialog,
@@ -103,7 +103,7 @@ export default function TargetNamingUpdateWrapper() {
                 <SpecPropInvalidSetting
                     currentSetting={targetNamingStrategy?.strategy}
                     invalidSettingsMessageId="specPropUpdater.error.message"
-                    updateDraftedSetting={clearStrategy}
+                    updateDraftedSetting={() => updateStrategy(null)}
                 />
             ) : null}
 

@@ -11,7 +11,7 @@ export function useWriteRootTargetNaming() {
     const draftUpdater = useDraftUpdater();
 
     return useCallback(
-        (strategy: TargetNamingStrategy | undefined) => {
+        (strategy: TargetNamingStrategy | null) => {
             return draftUpdater(
                 (spec) => {
                     return addOrRemoveTargetNaming(spec, strategy);
