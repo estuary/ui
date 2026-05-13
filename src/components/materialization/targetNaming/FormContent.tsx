@@ -174,7 +174,7 @@ export function TargetNamingFormContent({
                                     <Stack
                                         useFlexGap
                                         spacing={1}
-                                        sx={{ ml: 1, bg: 'red' }}
+                                        sx={{ ml: 1 }}
                                     >
                                         <TemplateInput
                                             {...sharedSchemaInputProps}
