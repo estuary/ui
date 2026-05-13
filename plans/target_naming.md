@@ -6,7 +6,7 @@ Migrating target naming to the root and remove the older `source.targetNaming`
 
 The server/db will handle a large migration to lift these settings properly. They are waiting on the UI to support the new spec setting. After that is done we will also need another round of UI changes to clean up the old stuff.
 
-If you look for `TODO (target naming:post migration:[remove,update])` you will find several areas marked with work that needs done. This is mainly just straight removal - but some areas do specifically call out an update.
+If you look for `TODO (target naming:post migration:[remove,update])` you will find several areas marked with work that needs done. This is mainly just straight removal - but some areas do specifically call out an update that will require some decisions / coding... should not be major though.
 
 # Dashboard Scenarios
 
