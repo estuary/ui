@@ -39,13 +39,6 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
         response.length > 0 &&
         sourceCaptureTargetSchemaSupported;
 
-    console.log('sup', {
-        shouldShowDialog,
-        editWorkflow,
-        response,
-        sourceCaptureTargetSchemaSupported,
-    });
-
     const [dialogHandled, setDialogHandled] = useState(false);
 
     const handleConfirm = (strategy: TargetNamingStrategy) => {
@@ -53,7 +46,8 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
         setStrategy(strategy);
 
         if (response && response.length > 0) {
-            // If we are here we are probably just populate a capture that was materialized
+            // TODO (source capture : multiple) - we'll need to handle a list of these one day
+            // Handle when we are materializing a sourceCapture.
             if (response[0].spec_type === 'capture') {
                 setPrefilledCapture(response[0].catalog_name);
             }
