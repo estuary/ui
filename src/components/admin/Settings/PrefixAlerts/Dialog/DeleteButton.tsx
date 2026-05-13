@@ -3,12 +3,10 @@ import { IconButton, useTheme } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
+import { disabledButtonText } from 'src/context/Theme';
 
 const DeleteButton = () => {
     const theme = useTheme();
-
-    const { loading, onClick } = useModifyAlertSubscription(() => {}, true);
 
     const prefixErrorsExist = useAlertSubscriptionsStore(
         (state) => state.prefixErrorsExist
@@ -18,19 +16,30 @@ const DeleteButton = () => {
         (state) => state.subscription
     );
 
+    const disabled = Boolean(
+        prefixErrorsExist ||
+            subscription.catalogPrefix.length === 0 ||
+            subscription.email.length === 0
+    );
+
     return (
         <IconButton
-            disabled={Boolean(
-                prefixErrorsExist ||
-                    loading ||
-                    subscription.catalogPrefix.length === 0 ||
-                    subscription.email.length === 0
-            )}
-            loading={loading}
-            onClick={onClick}
+            disabled={disabled}
+            onClick={() => {}}
             size="small"
+            sx={{
+                display: 'inline-flex',
+                mr: '3px',
+                mt: '4px',
+            }}
         >
-            <Xmark style={{ color: theme.palette.text.primary }} />
+            <Xmark
+                style={{
+                    color: disabled
+                        ? disabledButtonText[theme.palette.mode]
+                        : theme.palette.text.primary,
+                }}
+            />
         </IconButton>
     );
 };

@@ -15,7 +15,6 @@ import {
 
 import { NavArrowDown, NavArrowRight } from 'iconoir-react';
 
-import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
 import ChipList from 'src/components/shared/ChipList';
 import { useGetAlertTypes } from 'src/context/AlertType';
 import { sortByAlertType } from 'src/utils/misc-utils';
@@ -81,30 +80,20 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
             }}
         >
             <Stack style={{ width: '100%' }}>
-                <Stack
-                    direction="row"
-                    style={{
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <Stack direction="row">
-                        {expanded ? (
-                            <NavArrowDown
-                                style={{ color: theme.palette.text.primary }}
-                            />
-                        ) : (
-                            <NavArrowRight
-                                style={{ color: theme.palette.text.primary }}
-                            />
-                        )}
+                <Stack direction="row">
+                    {expanded ? (
+                        <NavArrowDown
+                            style={{ color: theme.palette.text.primary }}
+                        />
+                    ) : (
+                        <NavArrowRight
+                            style={{ color: theme.palette.text.primary }}
+                        />
+                    )}
 
-                        <Typography style={{ fontWeight: 500, paddingLeft: 4 }}>
-                            {email}
-                        </Typography>
-                    </Stack>
-
-                    <DeleteButton />
+                    <Typography style={{ fontWeight: 500, paddingLeft: 4 }}>
+                        {email}
+                    </Typography>
                 </Stack>
 
                 {expanded ? null : (

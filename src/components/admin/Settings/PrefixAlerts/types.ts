@@ -48,6 +48,10 @@ export interface EmailListFieldProps {
     staticEmail?: string;
 }
 
+export interface MutableAlertSubscription extends ReducedAlertSubscription {
+    deleted?: boolean;
+}
+
 interface GlobalSetting {
     [property: string]: boolean | number | string;
 }
@@ -67,7 +71,7 @@ export interface SubscriberAccordionProps {
 
 export interface SubscriptionMetadata {
     settings: GlobalSettingDictionary;
-    subscriptions: ReducedAlertSubscription[];
+    subscriptions: MutableAlertSubscription[];
 }
 
 export interface SubscriptionMetadataDictionary {

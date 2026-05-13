@@ -2,8 +2,9 @@ import type { SubscriberAccordionProps } from 'src/components/admin/Settings/Pre
 
 import { useState } from 'react';
 
-import { Accordion, useTheme } from '@mui/material';
+import { Accordion, Stack, useTheme } from '@mui/material';
 
+import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
 import Details from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/Details';
 import Summary from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/Summary';
 import { defaultOutline, defaultOutlineColor_hovered } from 'src/context/Theme';
@@ -32,7 +33,17 @@ const SubscriberInfo = ({
                 },
             }}
         >
-            <Summary expanded={expanded} subscription={subscription} />
+            <Stack
+                direction="row"
+                style={{
+                    alignItems: 'flex-start',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Summary expanded={expanded} subscription={subscription} />
+
+                <DeleteButton />
+            </Stack>
 
             <Details subscription={subscription} />
         </Accordion>
