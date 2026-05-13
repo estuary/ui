@@ -56,6 +56,10 @@ export const CommonMessages: Record<string, string> = {
     'common.upToDate': `Up-to-date`,
     'common.unknown': `Unknown`,
 
+    // Timestamp popper labels
+    'common.timestamp.utc.label': `UTC`,
+    'common.timestamp.local.label': `Local`,
+
     // Aria
     'aria.openExpand': `show more`,
     'aria.closeExpand': `show less`,
