@@ -14,6 +14,7 @@ export interface TemplateInputProps {
     templateAllowed?: boolean;
     required?: boolean;
     tokenString?: string;
+    disabled?: boolean;
 }
 
 const FIELD_KEYS = {
@@ -34,6 +35,7 @@ export function TemplateInput({
     value,
     onChange,
     tokenString,
+    disabled,
 }: TemplateInputProps) {
     const intl = useIntl();
     const keys = FIELD_KEYS[field];
@@ -51,6 +53,7 @@ export function TemplateInput({
             >
                 <TextField
                     size="small"
+                    disabled={disabled}
                     label={`${intl.formatMessage({ id: keys.label })} ${intl.formatMessage(
                         {
                             id: 'destinationLayout.dialog.field.prefix.label',
@@ -72,6 +75,7 @@ export function TemplateInput({
                 />
                 <TextField
                     size="small"
+                    disabled={disabled}
                     label={`${intl.formatMessage({ id: keys.label })} ${intl.formatMessage(
                         {
                             id: 'destinationLayout.dialog.field.suffix.label',
@@ -90,6 +94,7 @@ export function TemplateInput({
     return (
         <TextField
             size="small"
+            disabled={disabled}
             label={intl.formatMessage({ id: keys.label })}
             value={value}
             onChange={(e) => onChange(e.target.value)}

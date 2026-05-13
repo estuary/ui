@@ -15,6 +15,7 @@ interface Props {
     onConfirm: (strategy: TargetNamingStrategy) => void;
     confirmIntlKey: string;
     initialStrategy?: TargetNamingStrategy | null;
+    saving?: boolean;
 }
 
 export default function TargetNamingDialog({
@@ -23,6 +24,7 @@ export default function TargetNamingDialog({
     onCancel,
     onConfirm,
     confirmIntlKey,
+    saving,
 }: Props) {
     const intl = useIntl();
 
@@ -32,7 +34,7 @@ export default function TargetNamingDialog({
     const [canConfirm, setCanConfirm] = useState(true);
 
     const handleConfirm = () => {
-        if (!canConfirm) return;
+        if (!canConfirm || saving) return;
         onConfirm(strategyRef.current);
     };
 
@@ -48,6 +50,7 @@ export default function TargetNamingDialog({
         <Dialog open={open} fullWidth maxWidth="md">
             <DialogTitleWithClose
                 id="destination-layout-dialog-title"
+                disabled={saving}
                 onClose={onCancel}
             >
                 {intl.formatMessage({ id: 'destinationLayout.dialog.title' })}
@@ -57,17 +60,22 @@ export default function TargetNamingDialog({
                 <TargetNamingFormContent
                     initialStrategy={initialStrategy}
                     onChange={handleChange}
+                    disabled={saving}
                 />
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={onCancel} color="inherit">
+                <Button
+                    onClick={onCancel}
+                    color="inherit"
+                    disabled={saving}
+                >
                     {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
                 <Button
                     variant="contained"
                     onClick={handleConfirm}
-                    disabled={!canConfirm}
+                    disabled={!canConfirm || saving}
                 >
                     {intl.formatMessage({ id: confirmIntlKey })}
                 </Button>

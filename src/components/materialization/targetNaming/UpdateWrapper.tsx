@@ -156,6 +156,7 @@ export default function TargetNamingUpdateWrapper() {
                     initialStrategy={targetNamingStrategy}
                     onCancel={closeNamingDialog}
                     onConfirm={handleConfirm}
+                    saving={saving}
                 />
             ) : null}
         </Stack>

@@ -14,6 +14,11 @@ import {
     parseExampleCollection,
 } from 'src/components/materialization/targetNaming/shared';
 
+// This is a little bit weird but makes sense for the UX here
+//  Since these settings are always altered from within a modal
+//  it is just easier to keep some local "formState" so we can
+//  mutate as much as we want and never disturb the existing
+//  data in the store.
 export function useTargetNamingFormState(
     initialStrategy?: TargetNamingStrategy | null,
     exampleCollections?: string[]

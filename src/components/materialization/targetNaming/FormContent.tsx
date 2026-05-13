@@ -27,12 +27,14 @@ export interface TargetNamingFormContentProps {
     initialStrategy?: TargetNamingStrategy | null;
     onChange: (strategy: TargetNamingStrategy, isValid: boolean) => void;
     exampleCollections?: string[];
+    disabled?: boolean;
 }
 
 export function TargetNamingFormContent({
     initialStrategy,
     onChange,
     exampleCollections,
+    disabled,
 }: TargetNamingFormContentProps) {
     const intl = useIntl();
 
@@ -138,6 +140,7 @@ export function TargetNamingFormContent({
                         onSelect={() => switchStrategy('matchSourceStructure')}
                         example={example}
                         publicExample={publicExample}
+                        disabled={disabled}
                     >
                         {strategyKey === 'matchSourceStructure' ? (
                             <Stack
@@ -145,6 +148,7 @@ export function TargetNamingFormContent({
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <FormControlLabel
+                                    disabled={disabled}
                                     control={
                                         <Checkbox
                                             size="small"
@@ -180,9 +184,11 @@ export function TargetNamingFormContent({
                                             {...sharedSchemaInputProps}
                                             templateAllowed={true}
                                             tokenString={example.sourceSchema}
+                                            disabled={disabled}
                                         />
                                         <TemplateInput
                                             {...sharedTableInputProps}
+                                            disabled={disabled}
                                         />
                                     </Stack>
                                 ) : null}
@@ -196,6 +202,7 @@ export function TargetNamingFormContent({
                         onSelect={() => switchStrategy('singleSchema')}
                         example={example}
                         publicExample={publicExample}
+                        disabled={disabled}
                     >
                         {strategyKey === 'singleSchema' ? (
                             <Stack
@@ -206,8 +213,12 @@ export function TargetNamingFormContent({
                                     {...sharedSchemaInputProps}
                                     templateAllowed={false}
                                     required
+                                    disabled={disabled}
                                 />
-                                <TemplateInput {...sharedTableInputProps} />
+                                <TemplateInput
+                                    {...sharedTableInputProps}
+                                    disabled={disabled}
+                                />
                             </Stack>
                         ) : null}
                     </StrategyOption>
@@ -218,6 +229,7 @@ export function TargetNamingFormContent({
                         onSelect={() => switchStrategy('prefixTableNames')}
                         example={example}
                         publicExample={publicExample}
+                        disabled={disabled}
                     >
                         {strategyKey === 'prefixTableNames' ? (
                             <Stack spacing={1}>
@@ -225,9 +237,14 @@ export function TargetNamingFormContent({
                                     {...sharedSchemaInputProps}
                                     templateAllowed={false}
                                     required
+                                    disabled={disabled}
                                 />
-                                <TemplateInput {...sharedTableInputProps} />
+                                <TemplateInput
+                                    {...sharedTableInputProps}
+                                    disabled={disabled}
+                                />
                                 <FormControlLabel
+                                    disabled={disabled}
                                     control={
                                         <Checkbox
                                             checked={skipCommonDefaults}

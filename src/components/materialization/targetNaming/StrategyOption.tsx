@@ -18,6 +18,7 @@ export interface StrategyOptionProps extends BaseComponentProps {
     example: AutoCompleteOptionForTargetSchemaExample | null;
     publicExample: AutoCompleteOptionForTargetSchemaExample | null;
     readOnly?: boolean;
+    disabled?: boolean;
 }
 
 export function StrategyOption({
@@ -28,13 +29,15 @@ export function StrategyOption({
     publicExample,
     children,
     readOnly,
+    disabled,
 }: StrategyOptionProps) {
     const intl = useIntl();
     return (
         <StrategyOptionWrapper
-            onClick={selected || readOnly ? undefined : onSelect}
+            onClick={selected || readOnly || disabled ? undefined : onSelect}
             selected={selected}
             readOnly={readOnly}
+            disabled={disabled}
         >
             {readOnly ? (
                 <Typography sx={{ mb: 0.5, fontWeight: 500 }}>
@@ -45,6 +48,7 @@ export function StrategyOption({
             ) : (
                 <FormControlLabel
                     value={value}
+                    disabled={disabled}
                     control={<Radio size="small" />}
                     label={
                         <Typography fontWeight={500}>
