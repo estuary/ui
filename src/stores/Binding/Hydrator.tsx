@@ -79,144 +79,137 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     );
 
     useEffect(() => {
-        if (workflow && connectorTagState) {
-            const connectorTag = connectorTagState.applicable
-                ? connectorTagState.data
-                : null;
+        if (!workflow || !connectorTagState) {
+            return;
+        }
 
-            setActive(true);
+        const connectorTag = connectorTagState.applicable
+            ? connectorTagState.data
+            : null;
 
-            // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
-            //  make sure that we allow resetting everything in the store except for the bindings
-            //  themselves. That way `hydrateState` won't have to call `resetState` with a bunch of flags... hopefully
-            hydrateState(
-                editWorkflow,
-                entityType,
-                connectorTag,
-                getTrialPrefixes,
-                rehydrating.current
-            )
-                .then(
-                    async (response) => {
-                        if (!response || response.length === 0) return;
+        setActive(true);
 
-                        // Build the collection list and find the source capture
-                        const allCollections: string[] = [];
-                        let captureName: string | null = null;
+        // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
+        //  make sure that we allow resetting everything in the store except for the bindings
+        //  themselves. That way `hydrateState` won't have to call `resetState` with a bunch of flags... hopefully
+        hydrateState(
+            editWorkflow,
+            entityType,
+            connectorTag,
+            getTrialPrefixes,
+            rehydrating.current
+        )
+            .then(
+                async (response) => {
+                    if (!response || response.length === 0) return;
 
-                        for (const entry of response) {
-                            if (entry.spec_type === 'capture') {
-                                if (!captureName)
-                                    captureName = entry.catalog_name;
-                                for (const col of entry.writes_to ?? []) {
-                                    if (!allCollections.includes(col))
-                                        allCollections.push(col);
-                                }
-                            } else {
-                                if (
-                                    !allCollections.includes(entry.catalog_name)
-                                )
-                                    allCollections.push(entry.catalog_name);
-                            }
-                        }
+                    // Build the collection list and find the source capture
+                    const allCollections: string[] = [];
+                    let captureName: string | null = null;
 
-                        const { resourceConfigPointers } =
-                            useBindingStore.getState();
-                        const targetSchemaSupported = hasLength(
-                            resourceConfigPointers?.x_schema_name
-                        );
-
-                        if (
-                            !editWorkflow &&
-                            targetSchemaSupported &&
-                            allCollections.length > 0
-                        ) {
-                            // When prefilling we need to prompt the user to provide
-                            //  us with their targetNaming strategy before continuing
-                            //  so the prefilled bindings are populated correctly
-
-                            const {
-                                confirmationContext: ctx,
-                                handleConfirm: confirm,
-                                updateDraft: writeDraft,
-                            } = callbacksRef.current;
-
-                            pendingStrategyRef.current = {
-                                strategy: 'matchSourceStructure',
-                            };
-
-                            const confirmed = await ctx?.showConfirmation(
-                                {
-                                    title: 'destinationLayout.dialog.title',
-                                    confirmText:
-                                        'destinationLayout.dialog.cta.addBindings',
-                                    dialogProps: { maxWidth: 'md' },
-                                    message: (
-                                        <TargetNamingFormContent
-                                            initialStrategy={null}
-                                            exampleCollections={allCollections}
-                                            onChange={handleNamingChange}
-                                        />
-                                    ),
-                                },
-                                true
-                            );
-
-                            if (confirmed) {
-                                const sourceCaptureDef:
-                                    | SourceCaptureDef
-                                    | undefined = captureName
-                                    ? { capture: captureName }
-                                    : undefined;
-
-                                await confirm(
-                                    pendingStrategyRef.current,
-                                    () => {
-                                        useBindingStore
-                                            .getState()
-                                            .prefillResourceConfigs(
-                                                allCollections,
-                                                true,
-                                                sourceCaptureDef,
-                                                pendingStrategyRef.current
-                                            );
-                                        if (captureName) {
-                                            void writeDraft(captureName);
-                                            setPrefilledCapture(captureName);
-                                        }
-                                    }
-                                );
+                    for (const entry of response) {
+                        if (entry.spec_type === 'capture') {
+                            if (!captureName) captureName = entry.catalog_name;
+                            for (const col of entry.writes_to ?? []) {
+                                if (!allCollections.includes(col))
+                                    allCollections.push(col);
                             }
                         } else {
-                            // Fallback: preserve old behavior for edit workflows or
-                            // connectors without root target naming support.
-                            useBindingStore
-                                .getState()
-                                .addEmptyBindings(
-                                    response,
-                                    rehydrating.current
-                                );
-                            if (captureName && !editWorkflow) {
-                                setPrefilledCapture(captureName);
-                            }
+                            if (!allCollections.includes(entry.catalog_name))
+                                allCollections.push(entry.catalog_name);
                         }
-                    },
-                    (error) => {
-                        logRocketConsole(
-                            'Failed to hydrate binding-dependent views',
-                            error
+                    }
+
+                    const { resourceConfigPointers } =
+                        useBindingStore.getState();
+                    const targetSchemaSupported = hasLength(
+                        resourceConfigPointers?.x_schema_name
+                    );
+
+                    if (
+                        !editWorkflow &&
+                        targetSchemaSupported &&
+                        allCollections.length > 0
+                    ) {
+                        // When prefilling we need to prompt the user to provide
+                        //  us with their targetNaming strategy before continuing
+                        //  so the prefilled bindings are populated correctly
+
+                        const {
+                            confirmationContext: ctx,
+                            handleConfirm: confirm,
+                            updateDraft: writeDraft,
+                        } = callbacksRef.current;
+
+                        pendingStrategyRef.current = {
+                            strategy: 'matchSourceStructure',
+                        };
+
+                        const confirmed = await ctx?.showConfirmation(
+                            {
+                                title: 'destinationLayout.dialog.title',
+                                confirmText:
+                                    'destinationLayout.dialog.cta.addBindings',
+                                dialogProps: { maxWidth: 'md' },
+                                message: (
+                                    <TargetNamingFormContent
+                                        initialStrategy={null}
+                                        exampleCollections={allCollections}
+                                        onChange={handleNamingChange}
+                                    />
+                                ),
+                            },
+                            true
                         );
 
-                        setHydrationErrorsExist(true);
-                    }
-                )
-                .finally(() => {
-                    rehydrating.current = true;
-                    setHydrated(true);
+                        if (confirmed) {
+                            const sourceCaptureDef:
+                                | SourceCaptureDef
+                                | undefined = captureName
+                                ? { capture: captureName }
+                                : undefined;
 
-                    setActive(false);
-                });
-        }
+                            await confirm(pendingStrategyRef.current, () => {
+                                useBindingStore
+                                    .getState()
+                                    .prefillResourceConfigs(
+                                        allCollections,
+                                        true,
+                                        sourceCaptureDef,
+                                        pendingStrategyRef.current
+                                    );
+                                if (captureName) {
+                                    void writeDraft(captureName);
+                                    setPrefilledCapture(captureName);
+                                }
+                            });
+                        }
+                    } else {
+                        // Fallback: preserve old behavior for edit workflows or
+                        // connectors without root target naming support.
+                        useBindingStore
+                            .getState()
+                            .addEmptyBindings(response, rehydrating.current);
+                        if (captureName && !editWorkflow) {
+                            setPrefilledCapture(captureName);
+                        }
+                    }
+                },
+                (error) => {
+                    logRocketConsole(
+                        'Failed to hydrate binding-dependent views',
+                        error
+                    );
+
+                    setHydrationErrorsExist(true);
+                }
+            )
+            .finally(() => {
+                rehydrating.current = true;
+                setHydrated(true);
+
+                setActive(false);
+            });
     }, [
         connectorTagState,
         editWorkflow,
