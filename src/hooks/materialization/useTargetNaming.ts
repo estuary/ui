@@ -51,8 +51,14 @@ function useTargetNaming() {
     }, [draftSpecs]);
 
     useEffect(() => {
+        // TODO (target naming:post migration:remove)
+        // We do not need to worry about this unless we are using the new method
+        if (model !== 'rootTargetNaming') {
+            return;
+        }
+
         setStrategy(specStrategy);
-    }, [specStrategy, setStrategy]);
+    }, [specStrategy, setStrategy, model]);
 
     // needsNamingDialog is fully controlled by the hydrator:
     //   create → model is always 'rootTargetNaming'

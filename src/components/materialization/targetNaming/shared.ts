@@ -55,7 +55,7 @@ export function hasValidSchemaTemplate(
 } {
     return (
         hasSchemaTemplate(s) &&
-        s.schemaTemplate.length > SCHEMA_TEMPLATE_STRING.length &&
+        s.schemaTemplate.length >= SCHEMA_TEMPLATE_STRING.length &&
         s.schemaTemplate.includes(SCHEMA_TEMPLATE_STRING)
     );
 }
@@ -76,7 +76,7 @@ export function hasValidTableTemplate(
 ): s is TargetNamingStrategy & { tableTemplate: string } {
     return (
         hasTableTemplate(s) &&
-        s.tableTemplate.length > TABLE_TEMPLATE_STRING.length &&
+        s.tableTemplate.length >= TABLE_TEMPLATE_STRING.length &&
         s.tableTemplate.includes(TABLE_TEMPLATE_STRING)
     );
 }

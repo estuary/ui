@@ -25,6 +25,7 @@ import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
     addOrRemoveSourceCapture,
+    addOrRemoveTargetNaming,
     getSourceCapturePropKey,
     setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
@@ -281,14 +282,11 @@ export const generateTaskSpec = (
                 : options.sourceCaptureDefinition;
 
         addOrRemoveSourceCapture(draftSpec, sourceCaptureDefinition);
+        addOrRemoveTargetNaming(draftSpec, options.targetNamingStrategy);
         addOrRemoveOnIncompatibleSchemaChange(
             draftSpec,
             options.specOnIncompatibleSchemaChange
         );
-
-        if (options.targetNamingStrategy) {
-            draftSpec.targetNaming = options.targetNamingStrategy;
-        }
 
         if (options.defaultFieldsRecommended) {
             const targetSourceProperty = getSourceCapturePropKey(draftSpec);
