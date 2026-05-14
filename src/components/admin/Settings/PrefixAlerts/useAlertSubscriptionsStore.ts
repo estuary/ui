@@ -15,10 +15,16 @@ import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 interface AlertSubscriptionState {
-    alertTypes: AlertTypeInfo[];
+    addTemplatedSubscription: () => void;
+    alertTypeOptions: AlertTypeInfo[];
+    alertTypeOptionsFetching: boolean;
     catalogPrefix: string;
     emailErrorsExist: boolean;
     initializationError: CombinedError | PostgrestError | null | undefined;
+    initializeAlertTypeOptions: (
+        values: AlertTypeInfo[],
+        fetching: boolean
+    ) => void;
     initializeMutableSubscriptionMetadata: () => void;
     markSubscriptionForDeletion: (
         catalogPrefix: string,
@@ -73,7 +79,8 @@ const getMutableSubscriptionIndex = (
 
 const getInitialState = (): Pick<
     AlertSubscriptionState,
-    | 'alertTypes'
+    | 'alertTypeOptions'
+    | 'alertTypeOptionsFetching'
     | 'catalogPrefix'
     | 'emailErrorsExist'
     | 'initializationError'
@@ -83,7 +90,8 @@ const getInitialState = (): Pick<
     | 'subscription'
     | 'subscriptionMetadata'
 > => ({
-    alertTypes: [],
+    alertTypeOptions: [],
+    alertTypeOptionsFetching: false,
     catalogPrefix: '',
     emailErrorsExist: false,
     initializationError: null,
@@ -100,6 +108,71 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
     devtools((set) => {
         return {
             ...getInitialState(),
+
+            addTemplatedSubscription: () =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (
+                            !state.catalogPrefix ||
+                            state.alertTypeOptions.length === 0
+                        ) {
+                            return;
+                        }
+
+                        const templatedSubscription = {
+                            alertTypes: state.alertTypeOptions
+                                .filter(
+                                    (option) =>
+                                        option.isDefault || option.isSystem
+                                )
+                                .map(({ alertType }) => alertType),
+                            catalogPrefix: state.catalogPrefix,
+                            email: '',
+                            id: crypto.randomUUID(),
+                            viewing: true,
+                        };
+
+                        if (
+                            !hasOwnProperty(
+                                state.mutableSubscriptionMetadata,
+                                state.catalogPrefix
+                            )
+                        ) {
+                            state.mutableSubscriptionMetadata[
+                                state.catalogPrefix
+                            ] = {
+                                settings: {},
+                                subscriptions: [templatedSubscription],
+                            };
+
+                            return;
+                        }
+
+                        const targetSubscriptions =
+                            state.mutableSubscriptionMetadata[
+                                state.catalogPrefix
+                            ].subscriptions;
+
+                        state.mutableSubscriptionMetadata[
+                            state.catalogPrefix
+                        ].subscriptions = [
+                            ...targetSubscriptions,
+                            templatedSubscription,
+                        ];
+                    }),
+                    false,
+                    'templated subscription added'
+                ),
+
+            initializeAlertTypeOptions: (values, fetching) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.alertTypeOptions = values;
+                        state.alertTypeOptionsFetching = fetching;
+                    }),
+                    false,
+                    'alert type options initialized'
+                ),
 
             initializeMutableSubscriptionMetadata: () =>
                 set(
