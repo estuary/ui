@@ -57,20 +57,26 @@ interface AlertSubscriptionState {
     toggleSubscriptionViewingStatus: (subscriptionId: string) => void;
 }
 
-const getMutableSubscriptionIndex = (
+const getSubscriptionIndex = (
     state: AlertSubscriptionState | Partial<AlertSubscriptionState>,
-    subscriptionId: string
+    subscriptionId: string,
+    immutable?: boolean
 ): number => {
+    const subscriptionMetadataTarget = immutable
+        ? 'subscriptionMetadata'
+        : 'mutableSubscriptionMetadata';
+
     if (
         !state.catalogPrefix ||
         !subscriptionId ||
-        !state?.mutableSubscriptionMetadata ||
+        !hasOwnProperty(state, subscriptionMetadataTarget) ||
+        !state[subscriptionMetadataTarget] ||
         !hasOwnProperty(state.mutableSubscriptionMetadata, state.catalogPrefix)
     ) {
         return -1;
     }
 
-    return state.mutableSubscriptionMetadata[
+    return state[subscriptionMetadataTarget][
         state.catalogPrefix
     ].subscriptions.findIndex(
         (subscription) => subscription.id === subscriptionId
@@ -188,18 +194,38 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
             markSubscriptionForDeletion: (_catalogPrefix, subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        const subscriptionIndex = getMutableSubscriptionIndex(
+                        const mutableSubscriptionIndex = getSubscriptionIndex(
                             state,
                             subscriptionId
                         );
 
-                        if (subscriptionIndex === -1) {
+                        if (mutableSubscriptionIndex === -1) {
+                            return;
+                        }
+
+                        const immutableSubscriptionIndex = getSubscriptionIndex(
+                            state,
+                            subscriptionId,
+                            true
+                        );
+
+                        if (immutableSubscriptionIndex === -1) {
+                            state.mutableSubscriptionMetadata[
+                                state.catalogPrefix
+                            ].subscriptions = state.mutableSubscriptionMetadata[
+                                state.catalogPrefix
+                            ].subscriptions.filter(
+                                (subscription) =>
+                                    subscription.id !== subscriptionId
+                            );
+
                             return;
                         }
 
                         state.mutableSubscriptionMetadata[
                             state.catalogPrefix
-                        ].subscriptions[subscriptionIndex].deleted = true;
+                        ].subscriptions[mutableSubscriptionIndex].deleted =
+                            true;
                     }),
                     false,
                     'mark subscription for deletion'
@@ -315,7 +341,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
             setSubscribedEmail: (value, subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        const subscriptionIndex = getMutableSubscriptionIndex(
+                        const subscriptionIndex = getSubscriptionIndex(
                             state,
                             subscriptionId
                         );
@@ -356,7 +382,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
             toggleSubscriptionViewingStatus: (subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        const subscriptionIndex = getMutableSubscriptionIndex(
+                        const subscriptionIndex = getSubscriptionIndex(
                             state,
                             subscriptionId
                         );
