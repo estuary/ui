@@ -7,6 +7,7 @@ import { Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import SubscriberInfo from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo';
+import AddButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/AddButton';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
@@ -30,12 +31,25 @@ const SubscriberSection = () => {
 
     return (
         <Stack spacing="10px" style={{ width: '100%' }}>
-            <Typography style={{ fontWeight: 500, marginBottom: 8 }}>
-                {intl.formatMessage(
-                    { id: 'alerts.config.dialog.label.subscribers' },
-                    { count: targetSubscriptionMetadata.subscriptions.length }
-                )}
-            </Typography>
+            <Stack
+                direction="row"
+                style={{
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Typography style={{ fontWeight: 500 }}>
+                    {intl.formatMessage(
+                        { id: 'alerts.config.dialog.label.subscribers' },
+                        {
+                            count: targetSubscriptionMetadata.subscriptions
+                                .length,
+                        }
+                    )}
+                </Typography>
+
+                <AddButton />
+            </Stack>
 
             {targetSubscriptionMetadata.subscriptions
                 .filter(({ deleted }) => !deleted)

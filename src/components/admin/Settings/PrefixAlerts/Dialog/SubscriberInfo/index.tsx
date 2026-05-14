@@ -32,6 +32,9 @@ const SubscriberInfo = ({
                 [`&:first-of-type`]: {
                     borderRadius: '6px',
                 },
+                [`&:last-of-type`]: {
+                    borderRadius: '6px',
+                },
             }}
         >
             <Stack

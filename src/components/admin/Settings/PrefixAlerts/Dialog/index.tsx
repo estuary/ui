@@ -17,7 +17,7 @@ import { useUnmount } from 'react-use';
 import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
-import SubscriberSection from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection';
+import SubscriberSection from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/index';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';

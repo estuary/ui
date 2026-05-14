@@ -4,6 +4,7 @@ export const Alerts: Record<string, string> = {
     'alerts.config.header': `Organization Notifications`,
     'alerts.config.cta.addAlertMethod': `Configure Notifications`,
 
+    'alerts.config.dialog.cta.addSubscriber': `Add Recipient`,
     'alerts.config.dialog.emailSelector.inputError': `Email is incorrectly formatted.`,
     'alerts.config.dialog.error.generic': `An issue was encountered {operation} an alert subscription.`,
     'alerts.config.dialog.error.term.delete': `deleting`,
