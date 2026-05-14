@@ -42,7 +42,7 @@ const SubscriberInfo = ({
             >
                 <Summary expanded={expanded} subscription={subscription} />
 
-                <DeleteButton />
+                <DeleteButton subscription={subscription} />
             </Stack>
 
             <Details subscription={subscription} />

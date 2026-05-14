@@ -20,11 +20,14 @@ export const bundleSubscriptionsByPrefix = (
         const { catalogPrefix } = query;
 
         if (Object.hasOwn(subscriptionMetadata, catalogPrefix)) {
-            subscriptionMetadata[catalogPrefix].subscriptions.push(query);
+            subscriptionMetadata[catalogPrefix].subscriptions.push({
+                ...query,
+                id: crypto.randomUUID(),
+            });
         } else {
             subscriptionMetadata[catalogPrefix] = {
                 settings: {},
-                subscriptions: [query],
+                subscriptions: [{ ...query, id: crypto.randomUUID() }],
             };
         }
     });

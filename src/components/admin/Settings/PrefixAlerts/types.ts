@@ -31,6 +31,10 @@ export interface AlertTypeSelectorProps {
     options: AlertTypeInfo[];
 }
 
+export interface DeleteButtonProps {
+    subscription: MutableAlertSubscription;
+}
+
 export interface DialogActionProps {
     closeDialog: () => void;
 }
@@ -49,6 +53,7 @@ export interface EmailListFieldProps {
 }
 
 export interface MutableAlertSubscription extends ReducedAlertSubscription {
+    id: string;
     deleted?: boolean;
 }
 
@@ -65,7 +70,7 @@ export interface PrefixFieldProps {
 }
 
 export interface SubscriberAccordionProps {
-    subscription: ReducedAlertSubscription;
+    subscription: MutableAlertSubscription;
     expanded?: boolean;
 }
 

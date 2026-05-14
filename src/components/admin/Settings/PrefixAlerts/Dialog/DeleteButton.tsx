@@ -1,3 +1,5 @@
+import type { DeleteButtonProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+
 import { IconButton, useTheme } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
@@ -5,27 +7,31 @@ import { Xmark } from 'iconoir-react';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { disabledButtonText } from 'src/context/Theme';
 
-const DeleteButton = () => {
+const DeleteButton = ({
+    subscription: { catalogPrefix, email, id },
+}: DeleteButtonProps) => {
     const theme = useTheme();
 
     const prefixErrorsExist = useAlertSubscriptionsStore(
         (state) => state.prefixErrorsExist
     );
 
-    const subscription = useAlertSubscriptionsStore(
-        (state) => state.subscription
+    const markSubscriptionForDeletion = useAlertSubscriptionsStore(
+        (state) => state.markSubscriptionForDeletion
     );
 
     const disabled = Boolean(
-        prefixErrorsExist ||
-            subscription.catalogPrefix.length === 0 ||
-            subscription.email.length === 0
+        prefixErrorsExist || catalogPrefix.length === 0 || email.length === 0
     );
 
     return (
         <IconButton
             disabled={disabled}
-            onClick={() => {}}
+            onClick={(event) => {
+                event.stopPropagation();
+
+                markSubscriptionForDeletion(catalogPrefix, id);
+            }}
             size="small"
             sx={{
                 display: 'inline-flex',

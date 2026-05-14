@@ -8,6 +8,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
+import { cloneDeep } from 'lodash';
 
 import { hasOwnProperty } from 'src/utils/misc-utils';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
@@ -18,6 +19,12 @@ interface AlertSubscriptionState {
     catalogPrefix: string;
     emailErrorsExist: boolean;
     initializationError: CombinedError | PostgrestError | null | undefined;
+    initializeMutableSubscriptionMetadata: () => void;
+    markSubscriptionForDeletion: (
+        catalogPrefix: string,
+        subscriptionId: string
+    ) => void;
+    mutableSubscriptionMetadata: SubscriptionMetadataDictionary;
     prefixErrorsExist: boolean;
     saveErrors: (CombinedError | PostgrestError | null | undefined)[];
     subscription: Pick<
@@ -49,6 +56,7 @@ const getInitialState = (): Pick<
     | 'catalogPrefix'
     | 'emailErrorsExist'
     | 'initializationError'
+    | 'mutableSubscriptionMetadata'
     | 'prefixErrorsExist'
     | 'saveErrors'
     | 'subscription'
@@ -58,6 +66,7 @@ const getInitialState = (): Pick<
     catalogPrefix: '',
     emailErrorsExist: false,
     initializationError: null,
+    mutableSubscriptionMetadata: {},
     prefixErrorsExist: false,
     saveErrors: [],
     subscription: { alertTypes: [], catalogPrefix: '', email: '' },
@@ -70,6 +79,51 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
     devtools((set) => {
         return {
             ...getInitialState(),
+
+            initializeMutableSubscriptionMetadata: () =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.mutableSubscriptionMetadata = cloneDeep(
+                            state.subscriptionMetadata
+                        );
+                    }),
+                    false,
+                    'mutable subscription metadata initialized'
+                ),
+
+            markSubscriptionForDeletion: (catalogPrefix, subscriptionId) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (
+                            !catalogPrefix ||
+                            !subscriptionId ||
+                            !hasOwnProperty(
+                                state.mutableSubscriptionMetadata,
+                                catalogPrefix
+                            )
+                        ) {
+                            return;
+                        }
+
+                        const subscriptionIndex =
+                            state.mutableSubscriptionMetadata[
+                                catalogPrefix
+                            ].subscriptions.findIndex(
+                                (subscription) =>
+                                    subscription.id === subscriptionId
+                            );
+
+                        if (subscriptionIndex === -1) {
+                            return;
+                        }
+
+                        state.mutableSubscriptionMetadata[
+                            catalogPrefix
+                        ].subscriptions[subscriptionIndex].deleted = true;
+                    }),
+                    false,
+                    'mark subscription for deletion'
+                ),
 
             resetState: () =>
                 set(
@@ -97,43 +151,53 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                         if (
                             catalogPrefix.length === 0 ||
                             !hasOwnProperty(
-                                state.subscriptionMetadata,
+                                state.mutableSubscriptionMetadata,
                                 catalogPrefix
                             )
                         ) {
-                            state.subscriptionMetadata[catalogPrefix] = {
+                            state.mutableSubscriptionMetadata[catalogPrefix] = {
                                 settings: {},
                                 subscriptions: [
-                                    { alertTypes, catalogPrefix, email },
+                                    {
+                                        alertTypes,
+                                        catalogPrefix,
+                                        email,
+                                        id: crypto.randomUUID(),
+                                    },
                                 ],
                             };
 
                             return;
                         }
 
-                        const existingSubscriptions =
-                            state.subscriptionMetadata[catalogPrefix]
+                        const targetSubscriptions =
+                            state.mutableSubscriptionMetadata[catalogPrefix]
                                 .subscriptions;
 
-                        const targetIndex = existingSubscriptions.findIndex(
+                        const targetIndex = targetSubscriptions.findIndex(
                             (subscription) => subscription.email === email
                         );
 
                         if (targetIndex === -1) {
-                            state.subscriptionMetadata[catalogPrefix] = {
+                            state.mutableSubscriptionMetadata[catalogPrefix] = {
                                 settings: {},
                                 subscriptions: [
-                                    ...existingSubscriptions,
-                                    { alertTypes, catalogPrefix, email },
+                                    ...targetSubscriptions,
+                                    {
+                                        alertTypes,
+                                        catalogPrefix,
+                                        email,
+                                        id: crypto.randomUUID(),
+                                    },
                                 ],
                             };
 
                             return;
                         }
 
-                        state.subscriptionMetadata[catalogPrefix].subscriptions[
-                            targetIndex
-                        ].alertTypes = alertTypes;
+                        state.mutableSubscriptionMetadata[
+                            catalogPrefix
+                        ].subscriptions[targetIndex].alertTypes = alertTypes;
                     }),
                     false,
                     'alert types set'

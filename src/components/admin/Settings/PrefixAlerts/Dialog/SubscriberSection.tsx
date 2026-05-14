@@ -16,16 +16,16 @@ const SubscriberSection = () => {
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
     );
-    const subscriptionMetadata = useAlertSubscriptionsStore(
-        (state) => state.subscriptionMetadata
+    const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.mutableSubscriptionMetadata
     );
 
     const targetSubscriptionMetadata: SubscriptionMetadata = useMemo(
         () =>
-            hasOwnProperty(subscriptionMetadata, catalogPrefix)
-                ? subscriptionMetadata[catalogPrefix]
+            hasOwnProperty(mutableSubscriptionMetadata, catalogPrefix)
+                ? mutableSubscriptionMetadata[catalogPrefix]
                 : { settings: {}, subscriptions: [] },
-        [catalogPrefix, subscriptionMetadata]
+        [catalogPrefix, mutableSubscriptionMetadata]
     );
 
     return (
@@ -37,14 +37,14 @@ const SubscriberSection = () => {
                 )}
             </Typography>
 
-            {targetSubscriptionMetadata.subscriptions.map(
-                (subscription, index) => (
+            {targetSubscriptionMetadata.subscriptions
+                .filter(({ deleted }) => !deleted)
+                .map((subscription, index) => (
                     <SubscriberInfo
                         subscription={subscription}
                         key={`${subscription.catalogPrefix}-${subscription.email}-${index}`}
                     />
-                )
-            )}
+                ))}
         </Stack>
     );
 };
