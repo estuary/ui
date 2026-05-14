@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
+import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
 import {
     useBinding_addEmptyBindings,
     useBinding_sourceCaptureFlags,
@@ -31,6 +32,8 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
     const setPrefilledCapture = useSourceCaptureStore(
         (state) => state.setPrefilledCapture
     );
+    const { handleConfirm: targetNamingHandleConfirm } = useTargetNaming();
+
     const setStrategy = useTargetNaming_setStrategy();
 
     const shouldShowDialog =
@@ -61,12 +64,14 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
     return (
         <>
             {children}
-            <TargetNamingDialog
-                confirmIntlKey="cta.continue"
-                open={Boolean(shouldShowDialog && !dialogHandled)}
-                onCancel={() => setDialogHandled(true)}
-                onConfirm={handleConfirm}
-            />
+            {!dialogHandled && shouldShowDialog ? (
+                <TargetNamingDialog
+                    confirmIntlKey="cta.continue"
+                    open={true}
+                    onCancel={() => setDialogHandled(true)}
+                    onConfirm={handleConfirm}
+                />
+            ) : null}
         </>
     );
 }
