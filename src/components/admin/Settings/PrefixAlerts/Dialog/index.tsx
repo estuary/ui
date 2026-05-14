@@ -1,5 +1,7 @@
 import type { AlertSubscriptionDialogProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
+import { useEffect } from 'react';
+
 import {
     Box,
     Button,
@@ -33,6 +35,9 @@ const AlertSubscriptionDialog = ({
 }: AlertSubscriptionDialogProps) => {
     const intl = useIntl();
 
+    const initializeMutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.initializeMutableSubscriptionMetadata
+    );
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
     );
@@ -41,6 +46,12 @@ const AlertSubscriptionDialog = ({
         setOpen(false);
         resetSubscriptionState();
     };
+
+    useEffect(() => {
+        if (open) {
+            initializeMutableSubscriptionMetadata();
+        }
+    }, [initializeMutableSubscriptionMetadata, open]);
 
     useUnmount(() => {
         resetSubscriptionState();
