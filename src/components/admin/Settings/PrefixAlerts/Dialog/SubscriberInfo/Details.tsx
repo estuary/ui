@@ -6,12 +6,10 @@ import AlertTypeField from 'src/components/admin/Settings/PrefixAlerts/Dialog/Al
 import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/EmailListField';
 
 const Details = ({ subscription }: SubscriberAccordionProps) => {
-    const { email } = subscription;
-
     return (
         <AccordionDetails style={{ paddingLeft: 32, paddingRight: 32 }}>
             <Stack spacing={3}>
-                <EmailListField staticEmail={email} />
+                <EmailListField subscription={subscription} />
 
                 <AlertTypeField subscription={subscription} />
             </Stack>

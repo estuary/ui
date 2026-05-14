@@ -1,4 +1,4 @@
-import type { DeleteButtonProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { SubscriptionDependentProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import { IconButton, useTheme } from '@mui/material';
 
@@ -9,7 +9,7 @@ import { disabledButtonText } from 'src/context/Theme';
 
 const DeleteButton = ({
     subscription: { catalogPrefix, email, id },
-}: DeleteButtonProps) => {
+}: SubscriptionDependentProps) => {
     const theme = useTheme();
 
     const prefixErrorsExist = useAlertSubscriptionsStore(

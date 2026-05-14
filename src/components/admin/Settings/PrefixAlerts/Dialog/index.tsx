@@ -30,7 +30,6 @@ const AlertSubscriptionDialog = ({
     headerId,
     open,
     setOpen,
-    staticEmail,
     staticPrefix,
 }: AlertSubscriptionDialogProps) => {
     const intl = useIntl();

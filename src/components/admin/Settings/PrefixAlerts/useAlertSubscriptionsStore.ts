@@ -45,10 +45,31 @@ interface AlertSubscriptionState {
         value: AlertSubscriptionState['initializationError']
     ) => void;
     setSaveErrors: (value: AlertSubscriptionState['saveErrors']) => void;
-    setSubscribedEmail: (value: string) => void;
+    setSubscribedEmail: (value: string, subscriptionId: string) => void;
     setSubscribedPrefix: (value: string, errors: string | null) => void;
     setSubscriptionMetadata: (value: ReducedAlertSubscription[]) => void;
+    toggleSubscriptionViewingStatus: (subscriptionId: string) => void;
 }
+
+const getMutableSubscriptionIndex = (
+    state: AlertSubscriptionState | Partial<AlertSubscriptionState>,
+    subscriptionId: string
+): number => {
+    if (
+        !state.catalogPrefix ||
+        !subscriptionId ||
+        !state?.mutableSubscriptionMetadata ||
+        !hasOwnProperty(state.mutableSubscriptionMetadata, state.catalogPrefix)
+    ) {
+        return -1;
+    }
+
+    return state.mutableSubscriptionMetadata[
+        state.catalogPrefix
+    ].subscriptions.findIndex(
+        (subscription) => subscription.id === subscriptionId
+    );
+};
 
 const getInitialState = (): Pick<
     AlertSubscriptionState,
@@ -91,34 +112,20 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'mutable subscription metadata initialized'
                 ),
 
-            markSubscriptionForDeletion: (catalogPrefix, subscriptionId) =>
+            markSubscriptionForDeletion: (_catalogPrefix, subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        if (
-                            !catalogPrefix ||
-                            !subscriptionId ||
-                            !hasOwnProperty(
-                                state.mutableSubscriptionMetadata,
-                                catalogPrefix
-                            )
-                        ) {
-                            return;
-                        }
-
-                        const subscriptionIndex =
-                            state.mutableSubscriptionMetadata[
-                                catalogPrefix
-                            ].subscriptions.findIndex(
-                                (subscription) =>
-                                    subscription.id === subscriptionId
-                            );
+                        const subscriptionIndex = getMutableSubscriptionIndex(
+                            state,
+                            subscriptionId
+                        );
 
                         if (subscriptionIndex === -1) {
                             return;
                         }
 
                         state.mutableSubscriptionMetadata[
-                            catalogPrefix
+                            state.catalogPrefix
                         ].subscriptions[subscriptionIndex].deleted = true;
                     }),
                     false,
@@ -163,6 +170,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                         catalogPrefix,
                                         email,
                                         id: crypto.randomUUID(),
+                                        viewing: true,
                                     },
                                 ],
                             };
@@ -188,6 +196,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                         catalogPrefix,
                                         email,
                                         id: crypto.randomUUID(),
+                                        viewing: true,
                                     },
                                 ],
                             };
@@ -230,10 +239,21 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'save errors set'
                 ),
 
-            setSubscribedEmail: (value) =>
+            setSubscribedEmail: (value, subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.subscription.email = value;
+                        const subscriptionIndex = getMutableSubscriptionIndex(
+                            state,
+                            subscriptionId
+                        );
+
+                        if (subscriptionIndex === -1) {
+                            return;
+                        }
+
+                        state.mutableSubscriptionMetadata[
+                            state.catalogPrefix
+                        ].subscriptions[subscriptionIndex].email = value;
                     }),
                     false,
                     'subscribed email set'
@@ -255,6 +275,32 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     produce((state: AlertSubscriptionState) => {
                         state.subscriptionMetadata =
                             bundleSubscriptionsByPrefix(value);
+                    }),
+                    false,
+                    'subscription metadata set'
+                ),
+
+            toggleSubscriptionViewingStatus: (subscriptionId) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        const subscriptionIndex = getMutableSubscriptionIndex(
+                            state,
+                            subscriptionId
+                        );
+
+                        if (subscriptionIndex === -1) {
+                            return;
+                        }
+
+                        const previousValue =
+                            state.mutableSubscriptionMetadata[
+                                state.catalogPrefix
+                            ].subscriptions[subscriptionIndex].viewing;
+
+                        state.mutableSubscriptionMetadata[
+                            state.catalogPrefix
+                        ].subscriptions[subscriptionIndex].viewing =
+                            !previousValue;
                     }),
                     false,
                     'subscription metadata set'

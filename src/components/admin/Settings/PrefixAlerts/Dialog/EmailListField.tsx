@@ -6,14 +6,11 @@ import { useIntl } from 'react-intl';
 
 import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/EmailSelector';
 
-const EmailListField = ({ staticEmail }: EmailListFieldProps) => {
+const EmailListField = ({ subscription, staticEmail }: EmailListFieldProps) => {
     const intl = useIntl();
 
     return staticEmail ? (
         <TextField
-            InputProps={{
-                sx: { borderRadius: 3 },
-            }}
             disabled
             fullWidth
             label={intl.formatMessage({
@@ -21,11 +18,16 @@ const EmailListField = ({ staticEmail }: EmailListFieldProps) => {
             })}
             required
             size="small"
+            slotProps={{
+                input: {
+                    sx: { borderRadius: 3 },
+                },
+            }}
             value={staticEmail}
             variant="outlined"
         />
     ) : (
-        <EmailSelector />
+        <EmailSelector subscription={subscription} />
     );
 };
 

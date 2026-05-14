@@ -23,11 +23,14 @@ export const bundleSubscriptionsByPrefix = (
             subscriptionMetadata[catalogPrefix].subscriptions.push({
                 ...query,
                 id: crypto.randomUUID(),
+                viewing: false,
             });
         } else {
             subscriptionMetadata[catalogPrefix] = {
                 settings: {},
-                subscriptions: [{ ...query, id: crypto.randomUUID() }],
+                subscriptions: [
+                    { ...query, id: crypto.randomUUID(), viewing: false },
+                ],
             };
         }
     });
