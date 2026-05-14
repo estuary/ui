@@ -2,7 +2,7 @@ import type { SubscriberAccordionProps } from 'src/components/admin/Settings/Pre
 
 import { Accordion, Stack, useTheme } from '@mui/material';
 
-import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
+import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/DeleteButton';
 import Details from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/Details';
 import Summary from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/Summary';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
