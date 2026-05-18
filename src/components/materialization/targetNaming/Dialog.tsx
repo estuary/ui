@@ -2,11 +2,18 @@ import type { TargetNamingStrategy } from 'src/types';
 
 import { useCallback, useRef, useState } from 'react';
 
-import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    Stack,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
+import AlertBox from 'src/components/shared/AlertBox';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 
 interface Props {
@@ -16,6 +23,7 @@ interface Props {
     confirmIntlKey: string;
     initialStrategy?: TargetNamingStrategy | null;
     saving?: boolean;
+    alertIntlKey?: string;
 }
 
 export default function TargetNamingDialog({
@@ -25,6 +33,7 @@ export default function TargetNamingDialog({
     onConfirm,
     confirmIntlKey,
     saving,
+    alertIntlKey,
 }: Props) {
     const intl = useIntl();
 
@@ -57,19 +66,22 @@ export default function TargetNamingDialog({
             </DialogTitleWithClose>
 
             <DialogContent>
-                <TargetNamingFormContent
-                    initialStrategy={initialStrategy}
-                    onChange={handleChange}
-                    disabled={saving}
-                />
+                <Stack spacing={2}>
+                    {alertIntlKey ? (
+                        <AlertBox severity="warning" short>
+                            {intl.formatMessage({ id: alertIntlKey })}
+                        </AlertBox>
+                    ) : null}
+                    <TargetNamingFormContent
+                        initialStrategy={initialStrategy}
+                        onChange={handleChange}
+                        disabled={saving}
+                    />
+                </Stack>
             </DialogContent>
 
             <DialogActions>
-                <Button
-                    onClick={onCancel}
-                    color="inherit"
-                    disabled={saving}
-                >
+                <Button onClick={onCancel} color="inherit" disabled={saving}>
                     {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
                 <Button
