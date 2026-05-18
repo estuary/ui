@@ -1,29 +1,19 @@
 import type { AddCollectionDialogCTAProps } from 'src/components/shared/Entity/types';
-import type { SourceCaptureDef, TargetNamingStrategy } from 'src/types';
+import type { TargetNamingStrategy } from 'src/types';
 
 import { useCallback, useRef, useState } from 'react';
 
 import { Button } from '@mui/material';
 
 import { useStore } from 'zustand';
-import { useShallow } from 'zustand/react/shallow';
 
 import { FormattedMessage } from 'react-intl';
 
 import { TargetNamingFormContent } from 'src/components/materialization/targetNaming/FormContent';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import invariableStores from 'src/context/Zustand/invariableStores';
+import useApplyCollectionSelections from 'src/hooks/materialization/useApplyCollectionSelections';
 import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
-import useTrialCollections from 'src/hooks/trialStorage/useTrialCollections';
-import {
-    useBinding_discoveredCollections,
-    useBinding_prefillResourceConfigs,
-    useBinding_setRestrictedDiscoveredCollections,
-    useBinding_sourceCaptureFlags,
-} from 'src/stores/Binding/hooks';
-import { useBindingStore } from 'src/stores/Binding/Store';
-import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
-import { hasLength } from 'src/utils/misc-utils';
 
 function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
     const [updating, setUpdating] = useState(false);
@@ -46,33 +36,13 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         (state) => state.selected
     );
 
-    const evaluateTrialCollections = useTrialCollections();
-
-    const setCollectionMetadata = useBindingStore(
-        (state) => state.setCollectionMetadata
-    );
-
     const {
-        sourceCaptureDeltaUpdatesSupported,
-        sourceCaptureTargetSchemaSupported,
-    } = useBinding_sourceCaptureFlags();
-
-    const [deltaUpdates, targetSchema] = useSourceCaptureStore(
-        useShallow((state) => [state.deltaUpdates, state.targetSchema])
-    );
-
-    const {
-        model: targetNamingModel,
         targetNamingStrategy,
         needsNamingDialog,
         handleConfirm,
     } = useTargetNaming();
 
-    const prefillResourceConfigs = useBinding_prefillResourceConfigs();
-    const discoveredCollections = useBinding_discoveredCollections();
-
-    const setRestrictedDiscoveredCollections =
-        useBinding_setRestrictedDiscoveredCollections();
+    const applyCollectionSelections = useApplyCollectionSelections();
 
     // Pass appliedStrategy explicitly so the caller can provide the just-confirmed
     // value without relying on a stale store closure.
@@ -80,59 +50,8 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         appliedStrategy: TargetNamingStrategy | null | undefined
     ) => {
         setUpdating(true);
-
-        const value = Array.from(selected).map(([_id, row]) => {
-            return {
-                name: row.catalog_name,
-            };
-        });
-
-        // Get the SourceCapture settings prepared but ignore
-        const sourceCaptureSettings: SourceCaptureDef = {
-            // Never use the sourceCapture here because the user is manually adding collections
-            //  and we should use their names to base things on
-            capture: '',
-        };
-        if (sourceCaptureDeltaUpdatesSupported) {
-            sourceCaptureSettings.deltaUpdates = deltaUpdates;
-        }
-
-        // TODO (target naming:post migration:remove)
-        // Only pass targetNaming on the sourceCapture object for the old model.
-        // For rootTargetNaming the strategy is passed directly to WASM (handled in generateMaterializationResourceSpec).
-        if (
-            sourceCaptureTargetSchemaSupported &&
-            targetNamingModel === 'sourceTargetNaming'
-        ) {
-            sourceCaptureSettings.targetNaming = targetSchema;
-        }
-
-        const collections = value.map(({ name }) => name);
-
-        prefillResourceConfigs(
-            collections,
-            true,
-            sourceCaptureSettings,
-            targetNamingModel === 'rootTargetNaming'
-                ? (appliedStrategy ?? undefined)
-                : undefined
-        );
-
-        evaluateTrialCollections(collections).then(
-            (response) => {
-                setCollectionMetadata(response, collections);
-            },
-            () => {}
-        );
-
-        if (value.length > 0 && hasLength(discoveredCollections)) {
-            const latestCollection = value[value.length - 1].name;
-
-            if (discoveredCollections.includes(latestCollection)) {
-                setRestrictedDiscoveredCollections(latestCollection);
-            }
-        }
-
+        const selectedItems = Array.from(selected).map(([_id, row]) => row);
+        applyCollectionSelections(appliedStrategy, selectedItems);
         setUpdating(false);
         toggle(false);
     };

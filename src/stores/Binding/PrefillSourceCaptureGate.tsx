@@ -6,11 +6,8 @@ import { useState } from 'react';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
-import useTargetNaming from 'src/hooks/materialization/useTargetNaming';
-import {
-    useBinding_addEmptyBindings,
-    useBinding_sourceCaptureFlags,
-} from 'src/stores/Binding/hooks';
+import useApplyCollectionSelections from 'src/hooks/materialization/useApplyCollectionSelections';
+import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { useTargetNaming_setStrategy } from 'src/stores/TargetNaming/hooks';
 
@@ -28,13 +25,11 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
     const { sourceCaptureTargetSchemaSupported } =
         useBinding_sourceCaptureFlags();
 
-    const addEmptyBindings = useBinding_addEmptyBindings();
     const setPrefilledCapture = useSourceCaptureStore(
         (state) => state.setPrefilledCapture
     );
-    const { handleConfirm: targetNamingHandleConfirm } = useTargetNaming();
-
     const setStrategy = useTargetNaming_setStrategy();
+    const applyCollectionSelections = useApplyCollectionSelections();
 
     const shouldShowDialog =
         !editWorkflow &&
@@ -55,7 +50,7 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
                 setPrefilledCapture(response[0].catalog_name);
             }
 
-            addEmptyBindings(response, false);
+            applyCollectionSelections(strategy, response);
         }
 
         setDialogHandled(true);
