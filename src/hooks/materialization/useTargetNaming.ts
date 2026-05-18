@@ -1,13 +1,12 @@
 import type { TargetNamingStrategy } from 'src/types';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
-import { useEditorStore_queryResponse_draftSpecs } from 'src/components/editor/Store/hooks';
 import { useWriteRootTargetNaming } from 'src/hooks/materialization/useWriteRootTargetNaming';
 import { useBinding_sourceCaptureFlags } from 'src/stores/Binding/hooks';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
@@ -37,28 +36,28 @@ function useTargetNaming() {
     const { sourceCaptureTargetSchemaSupported } =
         useBinding_sourceCaptureFlags();
 
-    const draftSpecs = useEditorStore_queryResponse_draftSpecs();
-
+    // This could keep targetNaming in sync with the draft - does removing as we are
+    //  moving away from always available advanced spec editor
+    // const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     // Derive strategy from the live spec so advanced-editor changes propagate to
     // the store. The store stays authoritative for rendering; this effect keeps
     // it in sync when the spec is modified outside the normal dialog flow.
-    const specStrategy = useMemo<TargetNamingStrategy | null>(() => {
-        const spec = draftSpecs[0]?.spec;
-        if (spec?.targetNaming && typeof spec.targetNaming === 'object') {
-            return spec.targetNaming as TargetNamingStrategy;
-        }
-        return null;
-    }, [draftSpecs]);
+    // const specStrategy = useMemo<TargetNamingStrategy | null>(() => {
+    //     const spec = draftSpecs[0]?.spec;
+    //     if (spec?.targetNaming && typeof spec.targetNaming === 'object') {
+    //         return spec.targetNaming as TargetNamingStrategy;
+    //     }
+    //     return null;
+    // }, [draftSpecs]);
+    // useEffect(() => {
+    //     // TODO (target naming:post migration:remove)
+    //     // We do not need to worry about this unless we are using the new method
+    //     if (model !== 'rootTargetNaming') {
+    //         return;
+    //     }
 
-    useEffect(() => {
-        // TODO (target naming:post migration:remove)
-        // We do not need to worry about this unless we are using the new method
-        if (model !== 'rootTargetNaming') {
-            return;
-        }
-
-        setStrategy(specStrategy);
-    }, [specStrategy, setStrategy, model]);
+    //     setStrategy(specStrategy);
+    // }, [specStrategy, setStrategy, model]);
 
     // needsNamingDialog is fully controlled by the hydrator:
     //   create → model is always 'rootTargetNaming'
