@@ -187,6 +187,18 @@ const getInitialState = (
     evaluateDiscoveredBindings: (draftSpecResponse) => {
         set(
             produce((state: BindingState) => {
+                // Preserve which collections were marked for backfill so we can
+                // re-apply after discover replaces all binding UUIDs.
+                const previouslyBackfilledCollections = new Set(
+                    state.backfilledBindings
+                        .map(
+                            (uuid) =>
+                                state.resourceConfigs[uuid]?.meta.collectionName
+                        )
+                        .filter(Boolean)
+                );
+
+                // Start clearing everything out to prepare for all the new stuff coming in
                 state.bindings = {};
                 state.restrictedDiscoveredCollections = [];
 
@@ -204,7 +216,15 @@ const getInitialState = (
                 state.resourceConfigs = {};
                 draftSpecResponse.data[0].spec.bindings.forEach(
                     (binding: any, index: number) => {
-                        initializeAndGenerateUUID(state, binding, index);
+                        const { UUID, collection } = initializeAndGenerateUUID(
+                            state,
+                            binding,
+                            index
+                        );
+
+                        if (previouslyBackfilledCollections.has(collection)) {
+                            state.backfilledBindings.push(UUID);
+                        }
                     }
                 );
 
@@ -212,6 +232,11 @@ const getInitialState = (
                 state.resourceConfigs = sortResourceConfigs(
                     state.resourceConfigs
                 );
+
+                const allUUIDs = Object.keys(state.resourceConfigs);
+                state.backfillAllBindings =
+                    state.backfilledBindings.length > 0 &&
+                    state.backfilledBindings.length === allUUIDs.length;
 
                 state.discoveredCollections = Object.values(
                     state.resourceConfigs
