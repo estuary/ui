@@ -233,10 +233,11 @@ const getInitialState = (
                     state.resourceConfigs
                 );
 
-                const allUUIDs = Object.keys(state.resourceConfigs);
-                state.backfillAllBindings =
-                    state.backfilledBindings.length > 0 &&
-                    state.backfilledBindings.length === allUUIDs.length;
+                // Now we can update the "all backfill" kind of state
+                updateBackfilledBindingState(
+                    state,
+                    Object.entries(state.resourceConfigs)
+                );
 
                 state.discoveredCollections = Object.values(
                     state.resourceConfigs
