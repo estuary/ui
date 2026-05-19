@@ -209,7 +209,10 @@ const getInitialState = (
                 state.backfillAllBindings = false;
 
                 // TODO (perf) - we could probably go ahead and figure out the sort
-                //  while also going through and initializing but I am really tired right now
+                //      while also going through and initializing but I am really tired right now
+                //  ALSO - the call to updateBackfilledBindingState requires getting an array of
+                //      everything which maybe could be produces in the loop. However, we might
+                //      just be better off rethinking how we compute all this stuff? Q2 2026
 
                 // Go through the discovered bindings BEFORE sorting so that
                 //  we know the original indices of all the bindings.
