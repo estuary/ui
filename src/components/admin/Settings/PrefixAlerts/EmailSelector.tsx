@@ -19,6 +19,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { useEvaluateSubscriptionIneligibility } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateSubscriptionIneligibility';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import usePrefixAdministrators from 'src/hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'src/hooks/useUserInformationByPrefix';
@@ -51,6 +52,8 @@ function EmailSelector({
                 state.setEmailErrorsExist,
             ])
         );
+    const { emptyEmailDetected, duplicateSubscriptionEmails } =
+        useEvaluateSubscriptionIneligibility();
 
     const [inputValue, setInputValue] = useState(subscribedEmail);
 
@@ -76,7 +79,12 @@ function EmailSelector({
     return (
         <FormControl fullWidth>
             <Autocomplete
-                disabled={Boolean(serverError)}
+                disabled={
+                    Boolean(serverError) ||
+                    (emptyEmailDetected && subscribedEmail.length > 0) ||
+                    (duplicateSubscriptionEmails.length > 0 &&
+                        !duplicateSubscriptionEmails.includes(subscribedEmail))
+                }
                 filterOptions={(options) =>
                     options.filter((option) => {
                         if (typeof option === 'string') {
