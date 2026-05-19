@@ -14,8 +14,6 @@ const AddButton = () => {
     const { emptyEmailDetected, duplicateSubscriptionEmails } =
         useEvaluateSubscriptionIneligibility();
 
-    console.log(duplicateSubscriptionEmails);
-
     return (
         <Button
             disabled={
