@@ -25,6 +25,7 @@ const SubscriberInfo = ({
                 'backgroundColor':
                     theme.palette.mode === 'dark' ? 'transparent' : 'white',
                 'border': defaultOutline[theme.palette.mode],
+                'borderRadius': '6px',
                 '&:hover': {
                     borderColor:
                         defaultOutlineColor_hovered[theme.palette.mode],
