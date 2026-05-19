@@ -13,9 +13,10 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { NavArrowDown, NavArrowRight } from 'iconoir-react';
+import { NavArrowDown, NavArrowRight, WarningCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import { useEvaluateSubscriptionIneligibility } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateSubscriptionIneligibility';
 import ChipList from 'src/components/shared/ChipList';
 import { useGetAlertTypes } from 'src/context/AlertType';
 import { sortByAlertType } from 'src/utils/misc-utils';
@@ -24,6 +25,8 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
     const theme = useTheme();
     const intl = useIntl();
 
+    const { duplicateSubscriptionEmails, emptyEmailDetected } =
+        useEvaluateSubscriptionIneligibility();
     const [alertTypeResponse] = useGetAlertTypes();
 
     const alertTypeDefs: AlertTypeInfo[] = useMemo(
@@ -61,6 +64,11 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
         [alertTypeDefs, alertTypes]
     );
 
+    const ineligibleSubscription =
+        (emptyEmailDetected && subscription.email.length === 0) ||
+        (duplicateSubscriptionEmails.length > 0 &&
+            duplicateSubscriptionEmails.includes(subscription.email));
+
     return (
         <AccordionSummary
             sx={{
@@ -82,7 +90,7 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
             }}
         >
             <Stack style={{ width: '100%' }}>
-                <Stack direction="row">
+                <Stack direction="row" style={{ alignItems: 'center' }}>
                     {expanded ? (
                         <NavArrowDown
                             style={{ color: theme.palette.text.primary }}
@@ -100,6 +108,17 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
                                   id: 'alerts.config.dialog.label.placeholderSubscriberId',
                               })}
                     </Typography>
+
+                    {ineligibleSubscription &&
+                    subscription.email.length !== 0 ? (
+                        <WarningCircle
+                            style={{
+                                color: theme.palette.error.main,
+                                fontSize: 12,
+                                marginLeft: 6,
+                            }}
+                        />
+                    ) : null}
                 </Stack>
 
                 {expanded ? null : (
