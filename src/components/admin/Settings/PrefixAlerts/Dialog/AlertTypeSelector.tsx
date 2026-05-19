@@ -22,15 +22,15 @@ import { diminishedTextColor } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { basicSort_string, sortByAlertType } from 'src/utils/misc-utils';
 
-const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
+const AlertTypeSelector = ({
+    options,
+    subscription,
+}: AlertTypeSelectorProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
     const serverError = useAlertSubscriptionsStore(
         (state) => state.initializationError
-    );
-    const alertTypes = useAlertSubscriptionsStore(
-        (state) => state.subscription.alertTypes
     );
     const setAlertTypes = useAlertSubscriptionsStore(
         (state) => state.setAlertTypes
@@ -41,10 +41,13 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
         [options]
     );
 
-    const values: AlertTypeInfo[] = useMemo(
-        () => options.filter(({ alertType }) => alertTypes.includes(alertType)),
-        [options, alertTypes]
-    );
+    const values: AlertTypeInfo[] = useMemo(() => {
+        const alertTypes = subscription?.alertTypes ?? [];
+
+        return options.filter(({ alertType }) =>
+            alertTypes.includes(alertType)
+        );
+    }, [options, subscription?.alertTypes]);
 
     return (
         <FormControl fullWidth>
@@ -59,7 +62,11 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                 onChange={(_event, values) => {
                     const evaluatedValues = union(values, systemAlerts);
 
-                    setAlertTypes(evaluatedValues);
+                    setAlertTypes(
+                        evaluatedValues,
+                        subscription?.catalogPrefix,
+                        subscription?.email
+                    );
                 }}
                 options={options.sort((first, second) =>
                     basicSort_string(

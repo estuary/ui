@@ -1,24 +1,23 @@
 import type { AlertSubscriptionDialogProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
+import { useEffect } from 'react';
+
 import {
     Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
-    Grid,
     Stack,
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
-import AlertTypeField from 'src/components/admin/Settings/PrefixAlerts/Dialog/AlertTypeField';
-import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
-import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/EmailListField';
 import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
+import SubscriberSection from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/index';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
@@ -28,15 +27,16 @@ const TITLE_ID = 'alert-subscription-dialog-title';
 const AlertSubscriptionDialog = ({
     descriptionId,
     enableDeletion,
-    existingAlertTypes,
     headerId,
     open,
     setOpen,
-    staticEmail,
     staticPrefix,
 }: AlertSubscriptionDialogProps) => {
     const intl = useIntl();
 
+    const initializeMutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.initializeMutableSubscriptionMetadata
+    );
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
     );
@@ -45,6 +45,12 @@ const AlertSubscriptionDialog = ({
         setOpen(false);
         resetSubscriptionState();
     };
+
+    useEffect(() => {
+        if (open) {
+            initializeMutableSubscriptionMetadata();
+        }
+    }, [initializeMutableSubscriptionMetadata, open]);
 
     useUnmount(() => {
         resetSubscriptionState();
@@ -63,26 +69,14 @@ const AlertSubscriptionDialog = ({
                     <MessageWithLink messageID={descriptionId} />
                 </Box>
 
-                <Grid container spacing={2}>
+                <Stack spacing={4}>
                     <PrefixField staticPrefix={staticPrefix} />
 
-                    <EmailListField staticEmail={staticEmail} />
-
-                    <AlertTypeField existingAlertTypes={existingAlertTypes} />
-                </Grid>
+                    <SubscriberSection />
+                </Stack>
             </DialogContent>
 
-            <DialogActions
-                style={{
-                    justifyContent: enableDeletion
-                        ? 'space-between'
-                        : 'flex-end',
-                }}
-            >
-                {enableDeletion ? (
-                    <DeleteButton closeDialog={() => closeDialog()} />
-                ) : null}
-
+            <DialogActions>
                 <Stack direction="row" spacing={1}>
                     <Button
                         variant="outlined"

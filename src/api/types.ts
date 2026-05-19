@@ -56,7 +56,7 @@ export interface LiveSpecsExtQuery_GroupedUpdates {
 
 export type ReducedAlertSubscription = Pick<
     AlertSubscription,
-    'alertTypes' | 'catalogPrefix' | 'email' | 'updatedAt'
+    'alertTypes' | 'catalogPrefix' | 'email'
 >;
 
 export interface ReducedAlertSubscriptionQueryResponse {

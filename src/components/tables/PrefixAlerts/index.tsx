@@ -1,10 +1,12 @@
-import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
+import type { SubscriptionMetadataDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
 import type { TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Stack, Table, TableContainer } from '@mui/material';
+
+import { useShallow } from 'zustand/react/shallow';
 
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
@@ -23,34 +25,45 @@ import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { useGetAlertTypes } from 'src/context/AlertType';
 import { TableStatuses } from 'src/types';
+import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
 function PrefixAlertTable() {
     const [{ data, error, fetching }] = useGetAlertSubscriptions();
     const [alertTypeResponse] = useGetAlertTypes();
 
-    const setInitializationError = useAlertSubscriptionsStore(
-        (state) => state.setInitializationError
-    );
+    const [setInitializationError, setSubscriptionMetadata] =
+        useAlertSubscriptionsStore(
+            useShallow((state) => [
+                state.setInitializationError,
+                state.setSubscriptionMetadata,
+            ])
+        );
 
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [tableState, setTableState] = useState<TableState>({
         status: TableStatuses.LOADING,
     });
 
-    const processedData: ReducedAlertSubscriptionQueryResponse['alertSubscriptions'] =
-        useMemo(() => {
-            if (!data) {
-                return [];
-            }
+    const processedData: SubscriptionMetadataDictionary = useMemo(() => {
+        if (!data) {
+            return {};
+        }
 
-            return searchQuery
-                ? data.alertSubscriptions.filter(
-                      ({ catalogPrefix, email }) =>
-                          catalogPrefix.includes(searchQuery) ||
-                          email.includes(searchQuery)
-                  )
-                : data.alertSubscriptions;
-        }, [data, searchQuery]);
+        const evaluatedData = searchQuery
+            ? data.alertSubscriptions.filter(
+                  ({ catalogPrefix, email }) =>
+                      catalogPrefix.includes(searchQuery) ||
+                      email.includes(searchQuery)
+              )
+            : data.alertSubscriptions;
+
+        return bundleSubscriptionsByPrefix(evaluatedData);
+    }, [data, searchQuery]);
+
+    const processedDataExists = useMemo(
+        () => Object.keys(processedData).length > 0,
+        [processedData]
+    );
 
     const alertTypeDefs: AlertTypeInfo[] = useMemo(
         () =>
@@ -71,13 +84,21 @@ function PrefixAlertTable() {
     useEffect(() => {
         if (!fetching && !alertTypeResponse.fetching) {
             setInitializationError(error);
+            setSubscriptionMetadata(data?.alertSubscriptions ?? []);
         }
-    }, [alertTypeResponse.fetching, error, fetching, setInitializationError]);
+    }, [
+        alertTypeResponse.fetching,
+        data?.alertSubscriptions,
+        error,
+        fetching,
+        setInitializationError,
+        setSubscriptionMetadata,
+    ]);
 
     useEffect(() => {
         if (fetching || alertTypeResponse.fetching) {
             setTableState({ status: TableStatuses.LOADING });
-        } else if (processedData.length > 0) {
+        } else if (processedDataExists) {
             displayLoadingState.current?.cancel();
 
             setTableState({
@@ -94,8 +115,8 @@ function PrefixAlertTable() {
         }
     }, [
         alertTypeResponse.fetching,
+        processedDataExists,
         fetching,
-        processedData.length,
         searchQuery,
     ]);
 
@@ -144,11 +165,10 @@ function PrefixAlertTable() {
                             disableDoclink: true,
                         }}
                         rows={
-                            processedData.length > 0 &&
-                            alertTypeDefs.length > 0 ? (
+                            processedDataExists && alertTypeDefs.length > 0 ? (
                                 <Rows
                                     alertTypeDefs={alertTypeDefs}
-                                    data={processedData}
+                                    data={Object.values(processedData)}
                                 />
                             ) : null
                         }
