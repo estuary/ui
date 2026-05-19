@@ -162,8 +162,8 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                         state.mutableSubscriptionMetadata[
                             state.catalogPrefix
                         ].subscriptions = [
-                            ...targetSubscriptions,
                             templatedSubscription,
+                            ...targetSubscriptions,
                         ];
                     }),
                     false,
