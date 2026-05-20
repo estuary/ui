@@ -6,6 +6,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
+import type { MouseEvent } from 'react';
 
 import { NavArrowRight, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -39,12 +40,13 @@ export function AgentSkillsToast() {
         return null;
     }
 
+    const handleClick = () => {
+        window.open(AGENT_SKILLS_URL, '_blank', 'noopener,noreferrer');
+    };
+
     return (
-        <Link
-            href={AGENT_SKILLS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            underline="none"
+        <Box
+            onClick={handleClick}
             sx={{
                 'position': 'fixed',
                 'right': 24,
@@ -170,8 +172,12 @@ export function AgentSkillsToast() {
                         {intl.formatMessage({ id: 'agentSkills.description' })}
                     </Typography>
 
-                    <Box
-                        component="span"
+                    <Link
+                        href={AGENT_SKILLS_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        underline="none"
+                        onClick={(e: MouseEvent) => e.stopPropagation()}
                         sx={{
                             fontSize: 13,
                             fontWeight: 600,
@@ -189,14 +195,13 @@ export function AgentSkillsToast() {
                             strokeWidth={1.8}
                             style={{ transition: 'transform 200ms ease' }}
                         />
-                    </Box>
+                    </Link>
                 </Box>
 
                 {/* Close button */}
                 <IconButton
                     size="small"
                     onClick={(e) => {
-                        e.preventDefault();
                         e.stopPropagation();
                         setDismissed(true);
                     }}
@@ -214,6 +219,6 @@ export function AgentSkillsToast() {
                     <Xmark width={20} height={20} />
                 </IconButton>
             </Box>
-        </Link>
+        </Box>
     );
 }
