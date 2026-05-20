@@ -17,6 +17,8 @@ export const SECONDARY_TEXT_COLOR = {
     dark: '#94a3b8',
 };
 
+export const LINK_COLOR = '#2e64eb';
+
 const GRADIENT_HORIZONTAL = {
     light: 'linear-gradient(90deg, #2e64eb, #4f8ef7, #36c5b0, #5fe3c9, #2e64eb)',
     dark: 'linear-gradient(90deg, #1a4bcb, #3a6fd4, #2a9e8c, #4cc4aa, #1a4bcb)',

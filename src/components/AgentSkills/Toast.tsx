@@ -14,6 +14,7 @@ import { useLocalStorage } from 'react-use';
 import {
     AGENT_SKILLS_URL,
     GRADIENT,
+    LINK_COLOR,
     SECONDARY_TEXT_COLOR,
     SHIMMER_STYLES,
 } from 'src/components/AgentSkills/shared';
@@ -51,7 +52,6 @@ export function AgentSkillsToast() {
                 'width': 380,
                 'background': theme.palette.background.paper,
                 'borderRadius': '16px',
-                // 'border': '1px solid rgba(15, 23, 42, 0.06)',
                 'boxShadow':
                     '0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px -8px rgba(15, 23, 42, 0.18), 0 28px 64px -12px rgba(46, 100, 235, 0.22)',
                 'cursor': 'pointer',
@@ -121,9 +121,8 @@ export function AgentSkillsToast() {
                             sx={{
                                 fontSize: 10,
                                 fontWeight: 700,
-                                letterSpacing: '0.08em',
                                 textTransform: 'uppercase',
-                                color: '#2e64eb',
+                                color: LINK_COLOR,
                                 background: '#eaf0ff',
                                 px: '7px',
                                 py: '2px',
@@ -139,7 +138,6 @@ export function AgentSkillsToast() {
                                 fontSize: 11,
                                 color: '#64748b',
                                 fontWeight: 500,
-                                letterSpacing: '0.01em',
                             }}
                         >
                             {intl.formatMessage({
@@ -165,7 +163,7 @@ export function AgentSkillsToast() {
                         sx={{
                             fontSize: 13,
                             color: SECONDARY_TEXT_COLOR[mode],
-                            lineHeight: 1.45,
+                            lineHeight: 1.4,
                             mb: '10px',
                         }}
                     >
@@ -177,7 +175,7 @@ export function AgentSkillsToast() {
                         sx={{
                             fontSize: 13,
                             fontWeight: 600,
-                            color: '#2e64eb',
+                            color: LINK_COLOR,
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: 0.25,

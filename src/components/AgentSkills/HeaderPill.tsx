@@ -17,6 +17,7 @@ import {
     AGENT_SKILLS_URL,
     BG_GRADIENT,
     GRADIENT,
+    LINK_COLOR,
     SECONDARY_TEXT_COLOR,
     SHIMMER_STYLES,
 } from 'src/components/AgentSkills/shared';
@@ -46,10 +47,8 @@ export function HeaderPill() {
                 'px': '14px',
                 'pl': '10px',
                 'borderRadius': '999px',
-                'background':
-                    BG_GRADIENT[mode] /* theme.palette.mode === 'light', */,
+                'background': BG_GRADIENT[mode],
                 'border': '1px solid rgba(46,100,235,0.22)',
-                // 'color': '#1e3a8a',
                 'fontSize': 13,
                 'fontWeight': 600,
                 'cursor': 'pointer',
@@ -133,7 +132,6 @@ export function HeaderPill() {
                                         fontWeight: 600,
                                         color: 'text.primary',
                                         mb: 0.5,
-                                        letterSpacing: '-0.005em',
                                     }}
                                 >
                                     {intl.formatMessage({
@@ -143,7 +141,7 @@ export function HeaderPill() {
                                 <Typography
                                     sx={{
                                         fontSize: 12.5,
-                                        lineHeight: 1.45,
+                                        lineHeight: 1.4,
                                         color: SECONDARY_TEXT_COLOR[mode],
                                         mb: '10px',
                                     }}
@@ -157,7 +155,7 @@ export function HeaderPill() {
                                     sx={{
                                         fontSize: 12.5,
                                         fontWeight: 600,
-                                        color: '#2e64eb',
+                                        color: LINK_COLOR,
                                         display: 'inline-flex',
                                         alignItems: 'center',
                                         gap: 0.5,
