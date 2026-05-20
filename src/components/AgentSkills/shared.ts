@@ -1,6 +1,6 @@
 import { keyframes } from '@mui/material';
 
-export const AGENT_SKILLS_URL = 'https://docs.estuary.dev/';
+export const AGENT_SKILLS_URL = 'https://docs.estuary.dev/guides/agent-skills/';
 
 export const GRADIENT = {
     light: 'linear-gradient(135deg, #2e64eb 0%, #4f8ef7 45%, #36c5b0 100%)',
