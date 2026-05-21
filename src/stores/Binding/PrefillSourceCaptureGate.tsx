@@ -19,7 +19,9 @@ interface Props {
 // Renders after BindingHydrator completes so that useBinding_sourceCaptureFlags
 // reflects the hydrated resourceConfigPointers. Gates children behind
 // TargetNamingDialog when the connector supports x_schema_name and there is a
-// prefill response to act on. setPrefilledCapture only runs on confirm.
+// prefill response to act on.
+//  setPrefilledCapture only runs on confirm when targetNaming is supported.
+//  if it is not supported then we run that with an effect on load.
 export function PrefillSourceCaptureGate({ response, children }: Props) {
     const editWorkflow = useEntityWorkflow_Editing();
     const { sourceCaptureTargetSchemaSupported } =
@@ -46,7 +48,7 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
             readyToPrefill &&
             !sourceCaptureTargetSchemaSupported
         ) {
-            if (response?.[0].spec_type === 'capture') {
+            if (response![0].spec_type === 'capture') {
                 setPrefilledCapture(response?.[0].catalog_name);
             }
             applyCollectionSelections(null, response!);

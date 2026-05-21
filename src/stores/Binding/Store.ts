@@ -16,10 +16,7 @@ import { devtools } from 'zustand/middleware';
 import produce from 'immer';
 import { difference, has, isEmpty, isEqual, omit, omitBy, pick } from 'lodash';
 
-import {
-    getLiveSpecsById_writesTo,
-    getLiveSpecsByLiveSpecId,
-} from 'src/api/hydration';
+import { getLiveSpecsByLiveSpecId } from 'src/api/hydration';
 import { isBeforeTrialInterval } from 'src/components/materialization/shared';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { evaluateTrialCollections } from 'src/hooks/trialStorage/useTrialCollections';
@@ -309,20 +306,10 @@ const getInitialState = (
             );
         }
 
-        if (prefillLiveSpecIds.length > 0) {
-            // Prefills bindings in materialization workflows when the Materialize CTA
-            // on the Captures page, Collections page, or captures/collections Details page is clicked.
-            const { data, error } =
-                await getLiveSpecsById_writesTo(prefillLiveSpecIds);
-
-            if (error) {
-                get().setHydrationErrorsExist(true);
-            } else if (data && data.length > 0) {
-                // get().addEmptyBindings(data, rehydrating);
-
-                return Promise.resolve(data);
-            }
-        } else if (materializationRehydrating) {
+        // TODO (targetNaming:migration) - left in the prefillLiveSpecId check just to keep the scope
+        //  smaller. This prefill population is now handled in PrefillSourceCaptureGate.tsx and not longer
+        //  needs to be here.
+        if (prefillLiveSpecIds.length === 0 && materializationRehydrating) {
             // If there is nothing to prefill but we are rehydrating we want to make sure
             //  we prefill any collections the user already selected but only for materializations
             //  because for a Capture the collections are discovered and if the hydration is kicked
