@@ -1,53 +1,128 @@
-import { Divider, Stack, Toolbar } from '@mui/material';
+import React from 'react';
+
+import {
+    IconButton,
+    ListItemIcon,
+    Menu,
+    MenuItem,
+    Stack,
+    Toolbar,
+    Tooltip,
+} from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
 
+import { CloudDownload, CloudUpload, GitFork, Plus } from 'lucide-react';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { useNavigate } from 'react-router';
+
 import { HeaderPill } from 'src/components/AgentSkills/HeaderPill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
-import HelpMenu from 'src/components/menus/HelpMenu';
-import UserMenu from 'src/components/menus/UserMenu';
-import PageTitle from 'src/components/navigation/PageTitle';
+import CompanyMark from 'src/components/graphics/CompanyMark';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
-import { zIndexIncrement } from 'src/context/Theme';
+import { authenticatedRoutes } from 'src/app/routes';
 
-const Topbar = () => {
+interface TopbarProps {
+    navigationOpen?: boolean;
+}
+
+const Topbar = ({ navigationOpen = true }: TopbarProps) => {
     const theme = useTheme();
+    const intl = useIntl();
+    const navigate = useNavigate();
+
+    const [menuAnchor, setMenuAnchor] =
+        React.useState<HTMLElement | null>(null);
 
     return (
         <MuiAppBar
             sx={{
-                position: 'fixed',
-                zIndex: theme.zIndex.drawer + zIndexIncrement,
-                boxShadow:
-                    'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
+                position: 'static',
+                boxShadow: 'none',
+                background:theme.palette.background.default
+                // background:"gray"
             }}
         >
             <Toolbar
+                variant="dense"
                 sx={{
-                    px: 1,
+                    px: 0,
+                    minHeight: 48,
                     justifyContent: 'space-between',
                 }}
             >
-                <Stack
-                    direction="row"
-                    spacing={3}
-                    sx={{ alignItems: 'center' }}
-                    divider={<Divider orientation="vertical" flexItem />}
-                >
-                    <CompanyLogo />
+                {navigationOpen ? <CompanyLogo /> : <CompanyMark />}
 
-                    <PageTitle />
-                </Stack>
-
-                <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
+                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
                     <HeaderPill />
-
                     <UpdateAlert />
 
-                    <HelpMenu />
+                    <Tooltip
+                        title={intl.formatMessage({ id: 'cta.new' })}
+                    >
+                        <IconButton
+                            onClick={(e) => setMenuAnchor(e.currentTarget)}
+                            size="small"
+                            sx={{ color: theme.palette.text.primary, bgcolor: 'action.hover', borderRadius: 4 }}
+                        >
+                            <Plus size={20} strokeWidth={2} />
+                        </IconButton>
+                    </Tooltip>
 
-                    <UserMenu iconColor={theme.palette.text.primary} />
+                    <Menu
+                        anchorEl={menuAnchor}
+                        open={Boolean(menuAnchor)}
+                        onClose={() => setMenuAnchor(null)}
+                        onClick={() => setMenuAnchor(null)}
+                        anchorOrigin={{
+                            horizontal: 'right',
+                            vertical: 'bottom',
+                        }}
+                        transformOrigin={{
+                            horizontal: 'right',
+                            vertical: 'top',
+                        }}
+                    >
+                        <MenuItem
+                            onClick={() => {
+                                void navigate(
+                                    authenticatedRoutes.captures.create.fullPath
+                                );
+                            }}
+                        >
+                            <ListItemIcon>
+                                <CloudUpload size={16} strokeWidth={1.5} />
+                            </ListItemIcon>
+                            <FormattedMessage id="routeTitle.captureCreate" />
+                        </MenuItem>
+
+                        <MenuItem
+                            onClick={() => {
+                                void navigate(
+                                    authenticatedRoutes.collections.create.fullPath
+                                );
+                            }}
+                        >
+                            <ListItemIcon>
+                                <GitFork size={16} strokeWidth={1.5} />
+                            </ListItemIcon>
+                            <FormattedMessage id="routeTitle.collectionCreate" />
+                        </MenuItem>
+
+                        <MenuItem
+                            onClick={() => {
+                                void navigate(
+                                    authenticatedRoutes.materializations.create.fullPath
+                                );
+                            }}
+                        >
+                            <ListItemIcon>
+                                <CloudDownload size={16} strokeWidth={1.5} />
+                            </ListItemIcon>
+                            <FormattedMessage id="routeTitle.materializationCreate" />
+                        </MenuItem>
+                    </Menu>
 
                     <SidePanelDocsOpenButton />
                 </Stack>

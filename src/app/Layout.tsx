@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -10,6 +10,7 @@ import { useLocalStorage } from 'react-use';
 
 import { AgentSkillsToast } from 'src/components/AgentSkills/Toast';
 import Navigation from 'src/components/navigation/Navigation';
+import Topbar from 'src/components/navigation/TopBar';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import PageContainer from 'src/components/shared/PageContainer';
 import DocsSidePanel from 'src/components/sidePanelDocs/SidePanel';
@@ -75,29 +76,36 @@ function AppLayout() {
     };
 
     return (
-        <Box sx={{ height: '100vh' }}>
-            <Box>
-                <Navigation
-                    open={navigationOpen}
-                    width={navigationWidth}
-                    onNavigationToggle={toggleNavigationDrawer}
-                />
+        <Box
+            sx={{
+                display: 'grid',
+                gridTemplateColumns: `${navigationWidth}px 1fr`,
+                gridTemplateRows: 'auto 1fr',
+                height: '100vh',
+                transition: (t) =>
+                    `grid-template-columns ${t.transitions.duration.shortest}ms`,
+            }}
+        >
+            <Box sx={{ gridColumn: '1 / -1' }}>
+                <Topbar navigationOpen={navigationOpen} />
             </Box>
+
+            <Navigation
+                open={navigationOpen}
+                width={navigationWidth}
+                onNavigationToggle={toggleNavigationDrawer}
+            />
 
             <AgentSkillsToast />
 
-            <Box
-                sx={{
-                    ml: `${navigationWidth}px`,
-                    height: '100%',
-                }}
-            >
+            <Box sx={{ overflow: 'visible', minWidth: 0 }}>
                 <ReflexContainer orientation="vertical">
                     <ReflexElement
                         className="left-pane"
                         minSize={theme.breakpoints.values.sm / 2}
                         flex={leftPaneFlex}
                         style={{
+                            overflow: 'visible',
                             transitionDuration: animateOpening
                                 ? `${theme.transitions.duration.shortest}ms`
                                 : undefined,
@@ -105,7 +113,6 @@ function AppLayout() {
                     >
                         <Box className="pane-content">
                             <ErrorBoundryWrapper>
-                                <Toolbar />
                                 <PageContainer>
                                     <Outlet />
                                 </PageContainer>

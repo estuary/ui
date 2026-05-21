@@ -2,9 +2,9 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Navigation: Record<string, string> = {
-    'navigation.toggle.ariaLabel': `Toggle Navigation`,
-    'navigation.expand': `Expand Navigation`,
-    'navigation.collapse': `Collapse Navigation`,
+    'navigation.toggle.ariaLabel': `Toggle Sidebar`,
+    'navigation.expand': `Expand`,
+    'navigation.collapse': `Collapse`,
 
     // Header
     'mainMenu.tooltip': `Open Main Menu`,
@@ -27,7 +27,8 @@ export const Navigation: Record<string, string> = {
     'accountMenu.tooltip': `My Account`,
     'accountMenu.emailVerified': `verified`,
 
-    'modeSwitch.label': `Toggle Color Mode`,
+    'modeSwitch.darkLabel': `Dark Mode`,
+    'modeSwitch.lightLabel': `Light Mode`,
 
     'updateAlert.cta': `Update`,
     'updateAlert.title': `Dashboard Updated`,

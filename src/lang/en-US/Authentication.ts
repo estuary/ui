@@ -98,6 +98,7 @@ export const Authentication: Record<string, string> = {
     'legal.error.failedToFetch.message': `There was an issue while checking if you have accepted the latest {privacy} and {terms}.`,
 
     // Tenant
+    'tenant.organization': `Organization`,
     'tenant.message.1': `The organization name will be used as a prefix for everything you create within Estuary. It will only be public if you share data with other organizations.`,
 
     'tenant.expectations': `You can use ${CommonMessages['catalogName.limitations']}`,

@@ -94,7 +94,7 @@ declare module '@mui/material/Typography' {
 // Navigation Width
 export enum NavWidths {
     MOBILE = 0,
-    RAIL = 48,
+    RAIL = 54,
     FULL = 200,
 }
 
@@ -1153,7 +1153,7 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                         root: {
                             background:
                                 palette.mode === 'dark'
-                                    ? sample_grey[800]
+                                    ? sample_grey[900]
                                     : 'white',
                             boxShadow: 'none',
                             color: palette.text?.primary,

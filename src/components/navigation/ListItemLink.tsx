@@ -1,24 +1,16 @@
 import type { ReactNode } from 'react';
 
-import {
-    Badge,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Tooltip,
-} from '@mui/material';
+import { Badge, Box, Tooltip, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import RouterLink from 'src/components/navigation/RouterLink';
-import { NavWidths } from 'src/context/Theme';
 
 interface Props {
     icon: ReactNode;
     title: string;
     link: string | any;
     isOpen?: boolean;
-    menuWidth?: number;
     badgeContent?: number;
     tooltipDelay?: number;
 }
@@ -28,7 +20,6 @@ const ListItemLink = ({
     title,
     link,
     isOpen,
-    menuWidth,
     badgeContent,
     tooltipDelay,
 }: Props) => {
@@ -38,6 +29,11 @@ const ListItemLink = ({
         id: title,
     });
 
+    const linkProps =
+        typeof link === 'string'
+            ? { component: RouterLink, to: link }
+            : { component: 'a' as const, onClick: link };
+
     return (
         <li>
             <Tooltip
@@ -45,61 +41,47 @@ const ListItemLink = ({
                 placement="right-end"
                 enterDelay={tooltipDelay ? tooltipDelay : undefined}
             >
-                {menuWidth === NavWidths.FULL ? (
-                    <ListItemButton
-                        component={typeof link === 'string' ? RouterLink : 'a'}
-                        to={typeof link === 'string' ? link : undefined}
-                        onClick={typeof link === 'function' ? link : undefined}
-                        disableGutters
-                        sx={{
-                            whiteSpace: 'nowrap',
-                            px: 1.5,
-                        }}
-                    >
-                        {icon ? (
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 36,
-                                    color: (theme) =>
-                                        theme.palette.text.primary,
-                                }}
-                            >
+                <Box
+                    {...linkProps}
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        whiteSpace: 'nowrap',
+                        px: 1.25,
+                        py: 1,
+                        mx: 1,
+                        my: 0.25,
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                        textDecoration: 'none',
+                        color: 'text.primary',
+                        '&:hover': {
+                            backgroundColor: 'action.hover',
+                        },
+                        '&.Mui-selected': {
+                            backgroundColor: 'action.selected',
+                        },
+                    }}
+                >
+                    {icon ? (
+                        <Badge badgeContent={badgeContent}>
+                            <Box sx={{ display: 'flex', flexShrink: 0 }}>
                                 {icon}
-                            </ListItemIcon>
-                        ) : null}
+                            </Box>
+                        </Badge>
+                    ) : null}
 
-                        <ListItemText primary={translatedTitle} />
-
-                        <Badge badgeContent={badgeContent} />
-                    </ListItemButton>
-                ) : (
-                    <ListItemButton
-                        component={typeof link === 'string' ? RouterLink : 'a'}
-                        to={typeof link === 'string' ? link : undefined}
-                        onClick={typeof link === 'function' ? link : undefined}
-                        disableGutters
+                    <Typography
                         sx={{
-                            whiteSpace: 'nowrap',
-                            px: 1.5,
+                            fontSize: 13,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                         }}
                     >
-                        {icon ? (
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 36,
-                                    color: (theme) =>
-                                        theme.palette.text.primary,
-                                }}
-                            >
-                                <Badge badgeContent={badgeContent}>
-                                    {icon}
-                                </Badge>
-                            </ListItemIcon>
-                        ) : null}
-
-                        <ListItemText primary={translatedTitle} />
-                    </ListItemButton>
-                )}
+                        {translatedTitle}
+                    </Typography>
+                </Box>
             </Tooltip>
         </li>
     );
