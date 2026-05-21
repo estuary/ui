@@ -1,6 +1,12 @@
 import type { ReactNode } from 'react';
 
-import { Badge, Box, Tooltip, Typography } from '@mui/material';
+import {
+    Badge,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Tooltip,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -29,11 +35,6 @@ const ListItemLink = ({
         id: title,
     });
 
-    const linkProps =
-        typeof link === 'string'
-            ? { component: RouterLink, to: link }
-            : { component: 'a' as const, onClick: link };
-
     return (
         <li>
             <Tooltip
@@ -41,47 +42,22 @@ const ListItemLink = ({
                 placement="right-end"
                 enterDelay={tooltipDelay ? tooltipDelay : undefined}
             >
-                <Box
-                    {...linkProps}
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        whiteSpace: 'nowrap',
-                        px: 1.25,
-                        py: 1,
-                        mx: 1,
-                        my: 0.25,
-                        borderRadius: 4,
-                        cursor: 'pointer',
-                        textDecoration: 'none',
-                        color: 'text.primary',
-                        '&:hover': {
-                            backgroundColor: 'action.hover',
-                        },
-                        '&.Mui-selected': {
-                            backgroundColor: 'action.selected',
-                        },
-                    }}
+                <ListItemButton
+                    component={typeof link === 'string' ? RouterLink : 'a'}
+                    to={typeof link === 'string' ? link : undefined}
+                    onClick={typeof link === 'function' ? link : undefined}
+                    sx={{ mx: 1, my: 0.25 }}
                 >
                     {icon ? (
-                        <Badge badgeContent={badgeContent}>
-                            <Box sx={{ display: 'flex', flexShrink: 0 }}>
+                        <ListItemIcon>
+                            <Badge badgeContent={badgeContent}>
                                 {icon}
-                            </Box>
-                        </Badge>
+                            </Badge>
+                        </ListItemIcon>
                     ) : null}
 
-                    <Typography
-                        sx={{
-                            fontSize: 13,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                        }}
-                    >
-                        {translatedTitle}
-                    </Typography>
-                </Box>
+                    <ListItemText primary={translatedTitle} />
+                </ListItemButton>
             </Tooltip>
         </li>
     );
