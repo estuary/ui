@@ -25,6 +25,7 @@ import {
     CloudUpload,
     Database,
     Ellipsis,
+    HelpCircle,
     Home,
     LogOut,
     Moon,
@@ -36,6 +37,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import ListItemLink from 'src/components/navigation/ListItemLink';
+import ExternalLinkMenuItem from 'src/components/shared/ExternalLinkMenuItem';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { useColorMode } from 'src/context/Theme';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -69,6 +71,10 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const [orgAnchor, setOrgAnchor] =
         React.useState<HTMLElement | null>(null);
     const orgOpen = Boolean(orgAnchor);
+
+    const [helpAnchor, setHelpAnchor] =
+        React.useState<HTMLElement | null>(null);
+    const helpOpen = Boolean(helpAnchor);
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -148,6 +154,55 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 </List>
 
                 <Box sx={{ pb: 1 }}>
+                    <Tooltip
+                        title={intl.formatMessage({ id: 'helpMenu.tooltip' })}
+                        placement="right-end"
+                        enterDelay={open ? 1000 : undefined}
+                    >
+                        <ListItemButton
+                            onClick={(e) => setHelpAnchor(e.currentTarget)}
+                            sx={{ mx: 1, my: 0.25 }}
+                        >
+                            <ListItemIcon>
+                                <HelpCircle />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={intl.formatMessage({ id: 'helpMenu.tooltip' })}
+                            />
+                        </ListItemButton>
+                    </Tooltip>
+
+                    <Menu
+                        anchorEl={helpAnchor}
+                        open={helpOpen}
+                        onClose={() => setHelpAnchor(null)}
+                        onClick={() => setHelpAnchor(null)}
+                        anchorOrigin={{
+                            horizontal: 'right',
+                            vertical: 'top',
+                        }}
+                        transformOrigin={{
+                            horizontal: 'left',
+                            vertical: 'bottom',
+                        }}
+                    >
+                        <ExternalLinkMenuItem link={intl.formatMessage({ id: 'helpMenu.docs.link' })}>
+                            <FormattedMessage id="helpMenu.docs" />
+                        </ExternalLinkMenuItem>
+                        <ExternalLinkMenuItem link={intl.formatMessage({ id: 'helpMenu.status.link' })}>
+                            <FormattedMessage id="helpMenu.status" />
+                        </ExternalLinkMenuItem>
+                        <ExternalLinkMenuItem link={intl.formatMessage({ id: 'helpMenu.slack.link' })}>
+                            <FormattedMessage id="helpMenu.slack" />
+                        </ExternalLinkMenuItem>
+                        <ExternalLinkMenuItem link={intl.formatMessage({ id: 'helpMenu.support.link' })}>
+                            <FormattedMessage id="helpMenu.support" />
+                        </ExternalLinkMenuItem>
+                        <ExternalLinkMenuItem link={intl.formatMessage({ id: 'helpMenu.contact.link' })}>
+                            <FormattedMessage id="helpMenu.contact" />
+                        </ExternalLinkMenuItem>
+                    </Menu>
+
                     <Tooltip
                         title={intl.formatMessage({
                             id: theme.palette.mode === 'dark' ? 'modeSwitch.darkLabel' : 'modeSwitch.lightLabel',

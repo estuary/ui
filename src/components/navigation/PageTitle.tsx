@@ -25,7 +25,7 @@ function PageTitle() {
                 alignItems: 'baseline',
             }}
         >
-            <Typography variant="h6">
+            <Typography variant="h6" noWrap>
                 <FormattedMessage id={header} />
             </Typography>
 

@@ -8,6 +8,7 @@ import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
+import { AgentSkillsToast } from 'src/components/AgentSkills/Toast';
 import Navigation from 'src/components/navigation/Navigation';
 import Topbar from 'src/components/navigation/TopBar';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
@@ -94,6 +95,8 @@ function AppLayout() {
                 width={navigationWidth}
                 onNavigationToggle={toggleNavigationDrawer}
             />
+
+            <AgentSkillsToast />
 
             <Box sx={{ overflow: 'hidden', minWidth: 0 }}>
                 <ReflexContainer orientation="vertical">

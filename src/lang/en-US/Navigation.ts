@@ -10,7 +10,7 @@ export const Navigation: Record<string, string> = {
     'mainMenu.tooltip': `Open Main Menu`,
 
     'helpMenu.ariaLabel': `Open Help Menu`,
-    'helpMenu.tooltip': `Helpful Links`,
+    'helpMenu.tooltip': `Help`,
     'helpMenu.docs': `Docs`,
     'helpMenu.docs.link': `https://docs.estuary.dev/`,
     'helpMenu.slack': `Estuary Slack`,
@@ -27,8 +27,8 @@ export const Navigation: Record<string, string> = {
     'accountMenu.tooltip': `My Account`,
     'accountMenu.emailVerified': `verified`,
 
-    'modeSwitch.darkLabel': `Dark Mode`,
-    'modeSwitch.lightLabel': `Light Mode`,
+    'modeSwitch.darkLabel': `Dark`,
+    'modeSwitch.lightLabel': `Light`,
 
     'updateAlert.cta': `Update`,
     'updateAlert.title': `Dashboard Updated`,

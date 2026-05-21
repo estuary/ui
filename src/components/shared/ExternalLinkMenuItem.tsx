@@ -16,7 +16,7 @@ export const externalLinkStyling = {
     fontWeight: 500,
     px: 3,
     py: 1.5,
-    textTransform: 'uppercase',
+    textTransform: 'none',
 };
 
 function ExternalLinkMenuItem({ children, link }: Props) {

@@ -16,9 +16,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import { HeaderPill } from 'src/components/AgentSkills/HeaderPill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
 import CompanyMark from 'src/components/graphics/CompanyMark';
-import HelpMenu from 'src/components/menus/HelpMenu';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
 
@@ -48,9 +48,10 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
 
                 <Stack
                     direction="row"
-                    spacing={0.5}
+                    spacing={1}
                     sx={{ alignItems: 'center' }}
                 >
+                    <HeaderPill />
                     <UpdateAlert />
 
                     <Tooltip title={intl.formatMessage({ id: 'cta.new' })}>
@@ -122,8 +123,6 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
                             <FormattedMessage id="routeTitle.materializationCreate" />
                         </MenuItem>
                     </Menu>
-
-                    <HelpMenu />
 
                     <SidePanelDocsOpenButton />
                 </Stack>
