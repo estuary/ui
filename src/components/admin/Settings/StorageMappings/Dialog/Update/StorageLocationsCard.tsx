@@ -14,7 +14,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Check, EditPencil, Xmark } from 'iconoir-react';
+import { Check, Pencil, X } from 'lucide-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useIntl } from 'react-intl';
 
@@ -137,7 +137,7 @@ function NestedFormActions({
                 {intl.formatMessage({
                     id: 'storageMappings.dialog.storageLocations.cancel',
                 })}{' '}
-                <Xmark width={20} height={20} />
+                <X width={20} height={20} />
             </Link>
         </Stack>
     );
@@ -153,10 +153,10 @@ function StoreRowActions({
     return (
         <>
             <IconButton size="small" onClick={onEdit}>
-                <EditPencil width={16} height={16} />
+                <Pencil width={16} height={16} />
             </IconButton>
             <IconButton size="small" onClick={onRemove}>
-                <Xmark width={16} height={16} />
+                <X width={16} height={16} />
             </IconButton>
         </>
     );

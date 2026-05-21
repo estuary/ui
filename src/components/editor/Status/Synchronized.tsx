@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 
-import { DatabaseCheck } from 'iconoir-react';
+import { DatabaseZap } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -14,7 +14,7 @@ function Synchronized({ iconSize }: Props) {
                 <FormattedMessage id="common.synchronized" />
             </Typography>
 
-            <DatabaseCheck style={{ fontSize: iconSize }} />
+            <DatabaseZap style={{ fontSize: iconSize }} />
         </>
     );
 }

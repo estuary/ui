@@ -2,7 +2,7 @@ import type { BaseFieldOutcomeProps } from 'src/components/tables/cells/types';
 
 import { useTheme } from '@mui/material';
 
-import { Bookmark, BookmarkSolid, WarningTriangle } from 'iconoir-react';
+import { Bookmark, BookmarkCheck, TriangleAlert } from 'lucide-react';
 
 import IconButtonWithPopper from 'src/components/shared/buttons/IconButtonWithPopper';
 import FieldOutcomeOverview from 'src/components/tables/cells/fieldSelection/FieldOutcomeOverview';
@@ -30,9 +30,9 @@ const FieldOutcomeButton = ({
     const colorKey = conflictExists ? 'error' : 'primary';
 
     const Icon = conflictExists
-        ? WarningTriangle
+        ? TriangleAlert
         : isSelectedField(outcome)
-          ? BookmarkSolid
+          ? BookmarkCheck
           : Bookmark;
 
     return (

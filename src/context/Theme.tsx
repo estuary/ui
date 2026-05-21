@@ -27,7 +27,7 @@ import {
 import CssBaseline from '@mui/material/CssBaseline';
 import { gridClasses as dataGridClasses } from '@mui/x-data-grid';
 
-import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
+import { Check, CircleAlert, Copy, Square, XCircle } from 'lucide-react';
 import { useLocalStorage } from 'react-use';
 
 import CheckSquare from 'src/icons/CheckSquare';
@@ -619,7 +619,7 @@ export const getButtonIcon = (
             return <Check style={{ color: theme.palette.success.main }} />;
         case 'error':
             return (
-                <WarningCircle style={{ color: theme.palette.error.main }} />
+                <CircleAlert style={{ color: theme.palette.error.main }} />
             );
         default:
             return <Copy style={{ color: theme.palette.primary.main }} />;
@@ -966,6 +966,11 @@ const themeSettings = createTheme({
                 'body.loginPage': {
                     minWidth: xs,
                 },
+                '.lucide': {
+                    width: '1.25em',
+                    height: '1.25em',
+                    strokeWidth: 1.5,
+                },
             },
         },
         MuiBadge: {
@@ -1017,6 +1022,14 @@ const themeSettings = createTheme({
                 },
             },
         },
+        MuiIconButton: {
+            styleOverrides: {
+                root: {
+                    fontSize: 14,
+                    borderRadius: 8,
+                },
+            },
+        },
         MuiCheckbox: {
             defaultProps: {
                 icon: <Square style={{ fontSize: 14 }} />,
@@ -1025,7 +1038,7 @@ const themeSettings = createTheme({
         },
         MuiChip: {
             defaultProps: {
-                deleteIcon: <XmarkCircle style={{ fontSize: 14 }} />,
+                deleteIcon: <XCircle style={{ fontSize: 14 }} />,
                 sx: chipOutlinedStyling,
             },
         },

@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 
-import { Refresh } from 'iconoir-react';
+import { RefreshCw } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { logRocketEvent } from 'src/services/shared';
@@ -19,7 +19,7 @@ export default function RefreshButton() {
     return (
         <Button
             variant="text"
-            startIcon={<Refresh style={{ fontSize: 12 }} />}
+            startIcon={<RefreshCw style={{ fontSize: 12 }} />}
             onClick={() => {
                 setActive(true);
 
@@ -27,7 +27,7 @@ export default function RefreshButton() {
                     setActive(false);
                 });
 
-                logRocketEvent(`${CustomEvents.ENTITY_STATUS}:Refresh`);
+                logRocketEvent(`${CustomEvents.ENTITY_STATUS}:RefreshCw`);
             }}
             disabled={loading}
         >

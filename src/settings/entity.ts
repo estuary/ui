@@ -1,7 +1,7 @@
 import type { EntitySetting } from 'src/settings/types';
 import type { Entity } from 'src/types';
 
-import { CloudDownload, CloudUpload, DatabaseScript } from 'iconoir-react';
+import { CloudDownload, CloudUpload, Database } from 'lucide-react';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import {
@@ -62,7 +62,7 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         },
     },
     collection: {
-        Icon: DatabaseScript,
+        Icon: Database,
         background: semiTransparentBackground_blue,
         backgroundNesting: semiTransparentBackground_blue_nesting,
         bindingTermId: 'terms.collections.plural',

@@ -15,7 +15,7 @@ import {
 import { rankWith, uiTypeIs } from '@jsonforms/core';
 import { MaterialLayoutRenderer } from '@jsonforms/material-renderers';
 
-import { NavArrowDown, Xmark } from 'iconoir-react';
+import { ChevronDown, X } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { defaultOutline, jsonFormsGroupHeaders } from 'src/context/Theme';
@@ -78,7 +78,7 @@ const CollapsibleGroupRenderer = ({
         >
             <AccordionSummary
                 expandIcon={
-                    <NavArrowDown
+                    <ChevronDown
                         style={{ color: theme.palette.text.primary }}
                     />
                 }
@@ -118,7 +118,7 @@ const CollapsibleGroupRenderer = ({
                                 variant="text"
                                 size="small"
                                 onClick={clearSettings}
-                                startIcon={<Xmark style={{ fontSize: 13 }} />}
+                                startIcon={<X style={{ fontSize: 13 }} />}
                                 sx={{
                                     maxWidth: '75%',
                                 }}

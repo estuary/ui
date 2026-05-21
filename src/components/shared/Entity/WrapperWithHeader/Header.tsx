@@ -8,7 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 interface Props extends BaseComponentProps {
@@ -25,7 +25,7 @@ function Header({ children, disableClose, expanded, readOnly }: Props) {
         <AccordionSummary
             expandIcon={
                 !disableClose ? (
-                    <NavArrowDown
+                    <ChevronDown
                         style={{ color: theme.palette.text.primary }}
                     />
                 ) : undefined

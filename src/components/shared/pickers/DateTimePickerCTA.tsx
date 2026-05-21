@@ -11,7 +11,7 @@ import {
 } from '@mui/x-date-pickers';
 
 import { formatRFC3339, parseISO } from 'date-fns';
-import { Calendar } from 'iconoir-react';
+import { Calendar } from 'lucide-react';
 
 import { CustomLayoutWrapper } from 'src/components/shared/pickers/CustomLayoutWrapper';
 import DateOrTimePickerWrapper from 'src/components/shared/pickers/DateOrTimePickerWrapper';

@@ -1,6 +1,6 @@
 import { Button, Grid } from '@mui/material';
 
-import { Plus } from 'iconoir-react';
+import { Plus } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 

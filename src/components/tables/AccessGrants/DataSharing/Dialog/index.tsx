@@ -13,7 +13,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
+import { X } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -60,7 +60,7 @@ function ShareDataDialog({ open, setOpen }: Props) {
                 </Typography>
 
                 <IconButton onClick={closeDialog}>
-                    <Xmark
+                    <X
                         style={{
                             fontSize: '1rem',
                             color: theme.palette.text.primary,

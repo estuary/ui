@@ -3,7 +3,7 @@ import type { BaseComponentProps } from 'src/types';
 
 import { DialogTitle, IconButton } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
+import { X } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 export interface DialogTitleProps extends BaseComponentProps {
@@ -32,7 +32,7 @@ function DialogTitleWithClose({
                     top: 8,
                 }}
             >
-                <Xmark />
+                <X />
             </IconButton>
         </DialogTitle>
     );

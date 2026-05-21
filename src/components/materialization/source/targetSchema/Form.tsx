@@ -7,7 +7,7 @@ import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { InfoCircle } from 'iconoir-react';
+import { Info } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
@@ -72,7 +72,7 @@ export default function TargetSchemaForm({
                         id: 'schemaMode.message',
                     })}
                 >
-                    <InfoCircle
+                    <Info
                         style={{
                             color: theme.palette.text.primary,
                             fontSize: 12,

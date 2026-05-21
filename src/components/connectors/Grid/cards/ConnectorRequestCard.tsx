@@ -2,7 +2,7 @@ import type { ConnectorRequestCardProps } from 'src/components/connectors/Grid/c
 
 import { Stack, Typography, useTheme } from '@mui/material';
 
-import { PlusSquare } from 'iconoir-react';
+import { SquarePlus } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import Card from 'src/components/connectors/Grid/cards/Card';
@@ -39,7 +39,7 @@ function ConnectorRequestCard({ condensed }: ConnectorRequestCardProps) {
                         width: condensed ? 100 : undefined,
                     }}
                 >
-                    <PlusSquare
+                    <SquarePlus
                         style={{
                             color: theme.palette.text.primary,
                             fontSize: condensed ? 24 : '3rem',

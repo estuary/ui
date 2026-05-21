@@ -4,7 +4,7 @@ import { Box, Button, Dialog, DialogTitle } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
-import { Plus } from 'iconoir-react';
+import { Plus } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { setTenantPrimaryPaymentMethod } from 'src/api/billing';

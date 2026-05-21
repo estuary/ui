@@ -1,6 +1,6 @@
 import type { LogoProps } from 'src/components/connectors/Grid/cards/types';
 
-import { NetworkLeft } from 'iconoir-react';
+import { Network } from 'lucide-react';
 
 function Logo({
     imageSrc,
@@ -24,7 +24,7 @@ function Logo({
         );
     } else {
         return (
-            <NetworkLeft
+            <Network
                 style={{
                     width: unknownConnectorIconConfig?.width,
                     fontSize: unknownConnectorIconConfig?.fontSize ?? '3rem',

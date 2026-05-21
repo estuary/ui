@@ -1,6 +1,6 @@
 import { Button, Typography, useTheme } from '@mui/material';
 
-import { DatabaseXmark } from 'iconoir-react';
+import { DatabaseZap } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -17,7 +17,7 @@ function ServerDiff({ iconSize, onMerge }: Props) {
                 <FormattedMessage id="monacoEditor.serverDiff" />
             </Typography>
 
-            <DatabaseXmark
+            <DatabaseZap
                 style={{ fontSize: iconSize, color: theme.palette.error.main }}
             />
 

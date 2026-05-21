@@ -6,7 +6,7 @@ import type {
 
 import { Stack, TableCell, TableRow } from '@mui/material';
 
-import { Key } from 'iconoir-react';
+import { Key } from 'lucide-react';
 import { orderBy } from 'lodash';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';

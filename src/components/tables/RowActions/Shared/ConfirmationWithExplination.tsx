@@ -15,7 +15,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { WarningTriangle } from 'iconoir-react';
+import { TriangleAlert } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import MessageWithLink from 'src/components/content/MessageWithLink';
@@ -65,7 +65,7 @@ function ConfirmationWithExplanation({
                         textAlign: 'right',
                     }}
                 >
-                    {dangerous ? <WarningTriangle /> : null}
+                    {dangerous ? <TriangleAlert /> : null}
                 </TableCell>
 
                 <TableCell

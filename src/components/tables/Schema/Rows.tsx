@@ -12,7 +12,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { Lock } from 'iconoir-react';
+import { Lock } from 'lucide-react';
 import { orderBy } from 'lodash';
 import { useIntl } from 'react-intl';
 

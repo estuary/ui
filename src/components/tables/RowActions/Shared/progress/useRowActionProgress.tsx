@@ -3,7 +3,7 @@ import type { UseRowActionProgressProps } from 'src/components/tables/RowActions
 
 import { CircularProgress, useTheme } from '@mui/material';
 
-import { CheckCircle, InfoCircle, WarningCircle } from 'iconoir-react';
+import { CheckCircle, CircleAlert, Info } from 'lucide-react';
 
 import { ProgressStates } from 'src/components/tables/RowActions/Shared/types';
 
@@ -29,7 +29,7 @@ function useRowActionProgress({
         color = 'error';
         labelIntlKey = 'common.fail';
         statusIndicator = (
-            <WarningCircle style={{ color: theme.palette.error.main }} />
+            <CircleAlert style={{ color: theme.palette.error.main }} />
         );
     } else if (state === ProgressStates.SUCCESS) {
         color = 'success';
@@ -41,7 +41,7 @@ function useRowActionProgress({
         color = 'warning';
         labelIntlKey = 'common.skipped';
         statusIndicator = (
-            <InfoCircle style={{ color: theme.palette.info.main }} />
+            <Info style={{ color: theme.palette.info.main }} />
         );
     } else {
         active = true;

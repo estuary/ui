@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Button, Collapse, Stack, useTheme } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import Logs from 'src/components/logs';
@@ -36,7 +36,7 @@ function ErrorLogs({
                     sx={{ ...linkButtonSx, width: 'max-content' }}
                     onClick={toggleLogs}
                     endIcon={
-                        <NavArrowDown
+                        <ChevronDown
                             style={{
                                 fontSize: 14,
                                 color: theme.palette.primary.main,

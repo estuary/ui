@@ -2,7 +2,7 @@ import type { BaseComponentProps } from 'src/types';
 
 import { Link, useMediaQuery, useTheme } from '@mui/material';
 
-import { OpenNewWindow } from 'iconoir-react';
+import { ExternalLink } from 'lucide-react';
 import { Link as ReactRouterLink } from 'react-router-dom';
 
 interface Props extends BaseComponentProps {
@@ -33,7 +33,7 @@ function LinkWrapper({ ariaLabel, children, link, newWindow }: Props) {
         >
             {children}
             {newWindow ? (
-                <OpenNewWindow
+                <ExternalLink
                     style={{ height: 15, width: 15, marginLeft: 5 }}
                 />
             ) : null}

@@ -2,7 +2,7 @@ import type { Entity } from 'src/types';
 
 import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
 
-import { RefreshDouble } from 'iconoir-react';
+import { RefreshCcw } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import useDiscoverCapture from 'src/components/capture/useDiscoverCapture';
@@ -39,7 +39,7 @@ function RediscoverButton({ entityType }: Props) {
                         id: 'workflows.collectionSelector.cta.rediscover',
                     })}
                 >
-                    <RefreshDouble
+                    <RefreshCcw
                         style={{
                             color: disable
                                 ? disabledButtonText[theme.palette.mode]

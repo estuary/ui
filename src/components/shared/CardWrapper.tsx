@@ -8,7 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { HelpCircle } from 'iconoir-react';
+import { HelpCircle } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { eChartsTooltipSX } from 'src/components/graphs/tooltips';

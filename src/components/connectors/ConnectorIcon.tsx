@@ -1,6 +1,6 @@
 import { Avatar, Box } from '@mui/material';
 
-import { QuestionMark } from 'iconoir-react';
+import { CircleHelp } from 'lucide-react';
 
 interface Props {
     size?: number;
@@ -31,7 +31,7 @@ function ConnectorIcon({ size = defaultSize, iconPath }: Props) {
                     />
                 </Avatar>
             ) : (
-                <QuestionMark
+                <CircleHelp
                     style={{
                         height: size,
                         width: size,

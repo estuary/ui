@@ -11,7 +11,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
 import { defaultOutline } from 'src/context/Theme';
@@ -38,7 +38,7 @@ export default function ControllerAlert({
         >
             <AccordionSummary
                 expandIcon={
-                    <NavArrowDown
+                    <ChevronDown
                         style={{
                             color: theme.palette.text.primary,
                         }}

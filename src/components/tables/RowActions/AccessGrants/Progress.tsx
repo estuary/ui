@@ -8,7 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { CheckCircle, WarningCircle } from 'iconoir-react';
+import { CheckCircle, CircleAlert } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import Error from 'src/components/shared/Error';
@@ -30,7 +30,7 @@ function Progress({
         <Box sx={{ pr: 3 }}>
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 {progress === ProgressStates.FAILED ? (
-                    <WarningCircle
+                    <CircleAlert
                         style={{ color: theme.palette.error.main }}
                     />
                 ) : progress === ProgressStates.SUCCESS ? (

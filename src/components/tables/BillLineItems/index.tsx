@@ -12,7 +12,7 @@ import {
     tableRowClasses,
 } from '@mui/material';
 
-import { CreditCard, Download } from 'iconoir-react';
+import { CreditCard, Download } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { getTenantInvoice } from 'src/api/billing';

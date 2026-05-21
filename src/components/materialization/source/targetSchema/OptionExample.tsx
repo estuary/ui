@@ -2,7 +2,7 @@ import type { OptionExampleProps } from 'src/components/materialization/source/t
 
 import { Stack, Typography, useTheme } from '@mui/material';
 
-import { ArrowRight } from 'iconoir-react';
+import { ArrowRight } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { TARGET_SCHEMA_HIGHLIGHT_CLASS } from 'src/components/materialization/source/targetSchema/shared';

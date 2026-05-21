@@ -3,7 +3,7 @@ import type { DataPlaneIconProps } from 'src/components/shared/Entity/types';
 
 import { Avatar, Box, useTheme } from '@mui/material';
 
-import { Lock, QuestionMark } from 'iconoir-react';
+import { CircleHelp, Lock } from 'lucide-react';
 
 import { semiTransparentBackground_oneLayerElevated } from 'src/context/Theme';
 import awsLogoWhite from 'src/images/data-plane-providers/aws_logo-white.png';
@@ -68,7 +68,7 @@ export default function DataPlaneIcon({
                     />
                 </Avatar>
             ) : (
-                <QuestionMark
+                <CircleHelp
                     style={{
                         height: size,
                         width: size,

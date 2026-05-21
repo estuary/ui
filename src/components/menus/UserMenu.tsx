@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
+import { CircleUser, LogOut, Mail } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import IconMenu from 'src/components/menus/IconMenu';
@@ -53,7 +53,7 @@ const UserMenu = ({ iconColor }: Props) => {
             >
                 <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
-                        <ProfileCircle style={{ color: iconColor }} />
+                        <CircleUser style={{ color: iconColor }} />
                     </ListItemIcon>
                     {userName}
                 </MenuItem>

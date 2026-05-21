@@ -2,7 +2,7 @@ import type { RegisterPerkProps } from 'src/pages/login/types';
 
 import { Box, Stack } from '@mui/material';
 
-import { CheckCircleSolid, NavArrowRight } from 'iconoir-react';
+import { ChevronRight, CircleCheckBig } from 'lucide-react';
 
 import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
 import {
@@ -27,9 +27,9 @@ function RegisterPerk({
                 }}
             >
                 {disableEmphasisColor ? (
-                    <NavArrowRight />
+                    <ChevronRight />
                 ) : (
-                    <CheckCircleSolid />
+                    <CircleCheckBig />
                 )}
             </Box>
 

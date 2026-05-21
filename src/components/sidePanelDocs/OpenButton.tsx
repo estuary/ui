@@ -8,7 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { SidebarCollapse } from 'iconoir-react';
+import { PanelRightOpen } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
@@ -50,7 +50,7 @@ function SidePanelDocsOpenButton() {
                             setShowDocs(true);
                         }}
                         endIcon={
-                            <SidebarCollapse
+                            <PanelRightOpen
                                 style={{
                                     fontSize: 13,
                                 }}

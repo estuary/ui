@@ -10,7 +10,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { ArrowRight } from 'iconoir-react';
+import { ArrowRight } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { diminishedTextColor } from 'src/context/Theme';

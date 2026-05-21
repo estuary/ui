@@ -3,7 +3,7 @@ import type { PickerProps } from 'src/components/shared/pickers/types';
 import { StaticDatePicker } from '@mui/x-date-pickers';
 
 import { format, parseISO } from 'date-fns';
-import { Calendar } from 'iconoir-react';
+import { Calendar } from 'lucide-react';
 
 import DateOrTimePickerWrapper from 'src/components/shared/pickers/DateOrTimePickerWrapper';
 import { INVALID_DATE } from 'src/components/shared/pickers/shared';

@@ -1,6 +1,6 @@
 import { Button, Divider, Stack, Typography } from '@mui/material';
 
-import { ReloadWindow } from 'iconoir-react';
+import { RotateCw } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { logRocketEvent } from 'src/services/shared';
@@ -30,7 +30,7 @@ function Actions() {
             <Divider />
             <Button
                 onClick={reloadPage}
-                endIcon={<ReloadWindow style={{ fontSize: 12 }} />}
+                endIcon={<RotateCw style={{ fontSize: 12 }} />}
                 style={{
                     alignSelf: 'self-end',
                     maxWidth: 'fit-content',
