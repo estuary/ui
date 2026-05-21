@@ -4,23 +4,23 @@ import { FormattedMessage } from 'react-intl';
 
 interface Props {
     messageID: string;
-    // EmphasisComponent: any;
+    emphasisContent?: Record<string, any>;
 }
 
-function MessageWithEmphasis({ messageID }: Props) {
-    // const Wrapper = EmphasisComponent;
-
+function MessageWithEmphasis({ emphasisContent, messageID }: Props) {
     return (
         <FormattedMessage
             id={messageID}
             tagName={Box}
-            values={{
-                emphasis: (
-                    <b>
-                        <FormattedMessage id={`${messageID}.emphasis`} />
-                    </b>
-                ),
-            }}
+            values={
+                emphasisContent ?? {
+                    emphasis: (
+                        <b>
+                            <FormattedMessage id={`${messageID}.emphasis`} />
+                        </b>
+                    ),
+                }
+            }
         />
     );
 }

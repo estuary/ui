@@ -287,6 +287,11 @@ type AutoDiscoverStatus {
   pendingPublish: AutoDiscoverOutcome
 }
 
+type BillingPaymentMethodPayload {
+  paymentMethods: [PaymentMethod!]!
+  primaryPaymentMethod: PaymentMethod
+}
+
 input BoolFilter {
   eq: Boolean
 }
@@ -304,11 +309,24 @@ enum Capability {
   write
 }
 
+type CardPaymentMethodDetails {
+  brand: String
+  expMonth: Int!
+  expYear: Int!
+  last4: String
+}
+
 enum CatalogType {
   capture
   collection
   materialization
   test
+}
+
+enum ChargeStatus {
+  FAILED
+  PENDING
+  SUCCEEDED
 }
 
 scalar Collection
@@ -516,6 +534,10 @@ type Controller {
   updatedAt: DateTime!
 }
 
+type CreateBillingSetupIntentPayload {
+  clientSecret: String!
+}
+
 """Result of creating a storage mapping."""
 type CreateStorageMappingResult {
   """The catalog prefix for which the storage mapping was created."""
@@ -590,6 +612,11 @@ type DataPlaneEdge {
 
   """The item at the end of the edge"""
   node: DataPlane!
+}
+
+input DateFilter {
+  gt: NaiveDate
+  lt: NaiveDate
 }
 
 """
@@ -715,6 +742,63 @@ type InviteLinkEdge {
 input InviteLinksFilter {
   catalogPrefix: PrefixFilter
   singleUse: BoolFilter
+}
+
+type Invoice {
+  amountDue: Int
+  dateEnd: String!
+  dateStart: String!
+  extra: JSON!
+  hostedInvoiceUrl: String
+  invoicePdf: String
+  invoiceType: InvoiceType!
+  lineItems: JSON!
+  paymentDetails: InvoicePaymentDetails
+  status: String
+  subtotal: Int!
+}
+
+type InvoiceConnection {
+  """A list of edges."""
+  edges: [InvoiceEdge!]!
+
+  """A list of nodes."""
+  nodes: [Invoice!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type InvoiceEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Invoice!
+}
+
+input InvoiceFilter {
+  dateEnd: DateFilter
+  dateStart: DateFilter
+  invoiceType: InvoiceTypeFilter
+}
+
+type InvoicePaymentDetails {
+  card: CardPaymentMethodDetails
+  receiptUrl: String
+  status: ChargeStatus!
+  usBankAccount: UsBankAccountPaymentMethodDetails
+}
+
+enum InvoiceType {
+  FINAL
+  MANUAL
+  PREVIEW
+}
+
+input InvoiceTypeFilter {
+  eq: InvoiceType
 }
 
 """A scalar that can represent any JSON value."""
@@ -872,6 +956,7 @@ type MutationRoot {
   an existing subscription for the same prefix and email address.
   """
   createAlertSubscription(alertTypes: [AlertType!], detail: String, email: String!, prefix: Prefix!): AlertSubscription!
+  createBillingSetupIntent(tenant: String!): CreateBillingSetupIntentPayload!
 
   """
   Create an invite link that grants access to a catalog prefix.
@@ -896,6 +981,7 @@ type MutationRoot {
   Delete an alert subscription that exactly matches the given prefix and email.
   """
   deleteAlertSubscription(email: String!, prefix: Prefix!): AlertSubscription!
+  deleteBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
   Delete an invite link, revoking it so it can no longer be redeemed.
@@ -909,6 +995,7 @@ type MutationRoot {
   catalog prefix with the specified capability.
   """
   redeemInviteLink(token: UUID!): RedeemInviteLinkResult!
+  setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
   Check storage health for a given catalog prefix and storage definition.
@@ -958,6 +1045,17 @@ type MutationRoot {
   updateStorageMapping(catalogPrefix: Prefix!, detail: String, spec: JSON!): UpdateStorageMappingResult!
 }
 
+"""
+ISO 8601 calendar date without timezone.
+Format: %Y-%m-%d
+
+# Examples
+
+* `1994-11-13`
+* `2000-02-24`
+"""
+scalar NaiveDate
+
 scalar Name
 
 """Information about pagination in a connection"""
@@ -973,6 +1071,18 @@ type PageInfo {
 
   """When paginating backwards, the cursor to continue."""
   startCursor: String
+}
+
+type PaymentMethod {
+  billingDetails: PaymentMethodBillingDetails!
+  card: CardPaymentMethodDetails
+  id: String!
+  type: String!
+  usBankAccount: UsBankAccountPaymentMethodDetails
+}
+
+type PaymentMethodBillingDetails {
+  name: String
 }
 
 """
@@ -1191,6 +1301,7 @@ type QueryRoot {
   Results are paginated and sorted by catalog_prefix.
   """
   storageMappings(after: String, before: String, by: StorageMappingsBy!, first: Int, last: Int): StorageMappingConnection!
+  tenant(name: String!): Tenant
 }
 
 """Result of redeeming an invite link."""
@@ -1518,6 +1629,17 @@ input StorageMappingsBy {
   underPrefix: Prefix
 }
 
+type Tenant {
+  billing: TenantBilling!
+  name: String!
+}
+
+type TenantBilling {
+  invoices(after: String, before: String, filter: InvoiceFilter, first: Int, last: Int): InvoiceConnection!
+  paymentMethods: [PaymentMethod!]!
+  primaryPaymentMethod: PaymentMethod
+}
+
 """
 A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
 Strings within GraphQL. UUIDs are used to assign unique identifiers to
@@ -1552,3 +1674,9 @@ type UpdateStorageMappingResult {
 URL is a String implementing the [URL Standard](http://url.spec.whatwg.org/)
 """
 scalar Url
+
+type UsBankAccountPaymentMethodDetails {
+  accountHolderType: String
+  bankName: String
+  last4: String
+}

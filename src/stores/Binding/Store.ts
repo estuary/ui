@@ -318,7 +318,8 @@ const getInitialState = (
             if (error) {
                 get().setHydrationErrorsExist(true);
             } else if (data && data.length > 0) {
-                get().addEmptyBindings(data, rehydrating);
+                // We no longer fill things in here - we do that in the PrefillSourceCaptureGate
+                // but we still need to send the data so it can be used.
 
                 return Promise.resolve(data);
             }
@@ -470,7 +471,12 @@ const getInitialState = (
         };
     },
 
-    prefillResourceConfigs: (targetCollections, disableOmit, sourceCapture) => {
+    prefillResourceConfigs: (
+        targetCollections,
+        disableOmit,
+        sourceCapture,
+        rootTargetNaming
+    ) => {
         set(
             produce((state: BindingState) => {
                 const collections = getCollectionNames(state.resourceConfigs);
@@ -514,7 +520,8 @@ const getInitialState = (
                         prefilledData = generateMaterializationResourceSpec(
                             sourceCapture,
                             state.resourceConfigPointers,
-                            collectionName
+                            collectionName,
+                            rootTargetNaming
                         );
                     }
 

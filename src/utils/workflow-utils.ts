@@ -13,6 +13,8 @@ import type {
     EntityWithCreateWorkflow,
     Schema,
     SourceCaptureDef,
+    TargetNamingModel,
+    TargetNamingStrategy,
 } from 'src/types';
 import type { MaterializationBuiltBinding } from 'src/types/schemaModels';
 
@@ -23,6 +25,7 @@ import { isDekafEndpointConfig } from 'src/utils/connector-utils';
 import {
     addOrRemoveOnIncompatibleSchemaChange,
     addOrRemoveSourceCapture,
+    addOrRemoveTargetNaming,
     getSourceCapturePropKey,
     setFieldsStanzaRecommended,
 } from 'src/utils/entity-utils';
@@ -127,6 +130,8 @@ export const generateTaskSpec = (
         sourceCaptureDefinition: SourceCaptureDef | null;
         specOnIncompatibleSchemaChange?: string;
         defaultFieldsRecommended?: boolean;
+        targetNamingModel?: TargetNamingModel;
+        targetNamingStrategy?: TargetNamingStrategy | null;
     }
 ) => {
     const draftSpec = isEmpty(existingTaskData)
@@ -268,7 +273,16 @@ export const generateTaskSpec = (
 
     // Try adding at the end because these settings could be added/changed at any time
     if (entityType === 'materialization') {
-        addOrRemoveSourceCapture(draftSpec, options.sourceCaptureDefinition);
+        // rootTargetNaming uses spec.targetNaming at the root; source.targetNaming must never
+        // coexist with it. Strip targetNaming from the source capture def to enforce this.
+        const sourceCaptureDefinition =
+            options.targetNamingModel === 'rootTargetNaming' &&
+            options.sourceCaptureDefinition
+                ? omit(options.sourceCaptureDefinition, 'targetNaming')
+                : options.sourceCaptureDefinition;
+
+        addOrRemoveSourceCapture(draftSpec, sourceCaptureDefinition);
+        addOrRemoveTargetNaming(draftSpec, options.targetNamingStrategy);
         addOrRemoveOnIncompatibleSchemaChange(
             draftSpec,
             options.specOnIncompatibleSchemaChange

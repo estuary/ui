@@ -18,6 +18,7 @@ import useTargetSchemaOptions from 'src/hooks/sourceCapture/useTargetSchemaOptio
 import { compareOptionsIncludingAliases } from 'src/stores/SourceCapture/shared';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
+// TODO (target naming:post migration:remove)
 export default function TargetSchemaForm({
     currentSetting,
     scope,
