@@ -41,8 +41,6 @@ function useApplyCollectionSelections() {
         selectedItems: Array<{ catalog_name: string }>,
         sourceCapture?: string
     ) => {
-        console.log('selectedItems', selectedItems);
-
         const collections = selectedItems.map((item) => item.catalog_name);
 
         const sourceCaptureSettings: SourceCaptureDef = {

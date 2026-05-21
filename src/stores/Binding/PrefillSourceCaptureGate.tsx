@@ -22,11 +22,18 @@ interface Props {
 // prefill response to act on.
 //  setPrefilledCapture only runs on confirm when targetNaming is supported.
 //  if it is not supported then we run that with an effect on load.
+
+// TODO (target naming)
+// The prefilled source capture is still handled in .../SelectCapture.tsx and should probably live
+//  here. However - that was starting to make this WAY to beefy so left them stand alone items.
 export function PrefillSourceCaptureGate({ response, children }: Props) {
     const editWorkflow = useEntityWorkflow_Editing();
     const { sourceCaptureTargetSchemaSupported } =
         useBinding_sourceCaptureFlags();
 
+    const setSourceCapture = useSourceCaptureStore(
+        (state) => state.setSourceCapture
+    );
     const setPrefilledCapture = useSourceCaptureStore(
         (state) => state.setPrefilledCapture
     );
@@ -56,7 +63,9 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
                         : undefined,
                 collectionItems: response.flatMap((item) =>
                     item.spec_type === 'capture'
-                        ? item.writes_to.map((name) => ({ catalog_name: name }))
+                        ? (item.writes_to ?? []).map((name) => ({
+                              catalog_name: name,
+                          }))
                         : [item]
                 ),
             };
@@ -73,6 +82,7 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
         if (readyToPrefill && !sourceCaptureTargetSchemaSupported) {
             bypassRan.current = true;
             if (prefilledCaptureName) {
+                setSourceCapture(prefilledCaptureName);
                 setPrefilledCapture(prefilledCaptureName);
             }
             applyCollectionSelections(
@@ -81,12 +91,17 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
                 prefilledCaptureName
             );
         }
+
+        return () => {
+            bypassRan.current = false;
+        };
     }, [
         applyCollectionSelections,
         collectionItems,
         prefilledCaptureName,
         readyToPrefill,
         setPrefilledCapture,
+        setSourceCapture,
         sourceCaptureTargetSchemaSupported,
     ]);
 
@@ -96,6 +111,7 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
 
         // TODO (source capture : multiple) - we'll need to handle a list of these one day
         if (prefilledCaptureName) {
+            setSourceCapture(prefilledCaptureName);
             setPrefilledCapture(prefilledCaptureName);
         }
 

@@ -5,8 +5,7 @@ import type { TargetNamingModel } from 'src/types';
 //  and update it so we no longer have to check for `rootTargetNaming`
 
 // Detect which model version is present in a raw draft spec object.
-// Returns null when the connector does not support x_schema_name (caller
-// should check sourceCaptureTargetSchemaSupported before calling this).
+// Callers must verify sourceCaptureTargetSchemaSupported before calling this.
 export const detectTargetNamingModel = (
     spec: Record<string, any>
 ): Exclude<TargetNamingModel, null> => {

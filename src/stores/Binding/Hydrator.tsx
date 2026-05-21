@@ -62,7 +62,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
             )
                 .then(
                     (response) => {
-                        setPrefillResponse(response ?? null);
+                        setPrefillResponse(response);
                     },
                     (error) => {
                         logRocketConsole(
