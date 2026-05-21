@@ -28,7 +28,7 @@ const toastIn = keyframes`
     100% { opacity: 1; transform: translateY(0)    scale(1);    }
 `;
 
-export function AgentSkillsToast() {
+export function Toast() {
     const theme = useTheme();
     const mode = theme.palette.mode;
     const intl = useIntl();
@@ -63,7 +63,7 @@ export function AgentSkillsToast() {
                 'display': 'block',
                 'animation': `${toastIn} 750ms cubic-bezier(.2,.9,.25,1) 1s both`,
                 'transition': 'transform 200ms ease, box-shadow 200ms ease',
-                'zIndex': 1200,
+                'zIndex': theme.zIndex.snackbar,
                 '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow:

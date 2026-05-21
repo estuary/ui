@@ -40,7 +40,7 @@ const Topbar = () => {
                     <PageTitle />
                 </Stack>
 
-                <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
+                <Stack direction="row" sx={{ alignItems: 'center' }}>
                     <HeaderPill />
 
                     <UpdateAlert />

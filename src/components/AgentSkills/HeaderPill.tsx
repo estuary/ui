@@ -92,8 +92,9 @@ export function HeaderPill() {
         <Tooltip
             title={<TooltipContent />}
             placement="bottom-end"
+            disableInteractive={false}
             enterDelay={200}
-            leaveDelay={100}
+            leaveDelay={150}
             slotProps={{
                 tooltip: {
                     sx: {
