@@ -4,6 +4,9 @@ import {
     Box,
     Divider,
     List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
     Menu,
     MenuItem,
     Popover,
@@ -97,8 +100,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
-                    border: 0,
-                    background:theme.palette.background.default
                 },
                 transition: (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
@@ -157,50 +158,23 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         placement="right-end"
                         enterDelay={open ? 1000 : undefined}
                     >
-                        <Box
+                        <ListItemButton
                             onClick={colorMode.toggleColorMode}
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                px: 1.25,
-                                py: 1,
-                                mx: 1,
-                                my: 0.25,
-                                borderRadius: 1.5,
-                                whiteSpace: 'nowrap',
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    backgroundColor: 'action.hover',
-                                },
-                            }}
+                            sx={{ mx: 1, my: 0.25 }}
                         >
-                            {theme.palette.mode === 'dark' ? (
-                                <Moon
-                                    size={ICON_SIZE}
-                                    strokeWidth={ICON_STROKE}
-                                    style={{ flexShrink: 0 }}
-                                />
-                            ) : (
-                                <Sun
-                                    size={ICON_SIZE}
-                                    strokeWidth={ICON_STROKE}
-                                    style={{ flexShrink: 0 }}
-                                />
-                            )}
-
-                            <Typography
-                                sx={{
-                                    fontSize: 13,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
-                            >
-                                {intl.formatMessage({
+                            <ListItemIcon>
+                                {theme.palette.mode === 'dark' ? (
+                                    <Moon size={ICON_SIZE} strokeWidth={ICON_STROKE} />
+                                ) : (
+                                    <Sun size={ICON_SIZE} strokeWidth={ICON_STROKE} />
+                                )}
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={intl.formatMessage({
                                     id: theme.palette.mode === 'dark' ? 'modeSwitch.darkLabel' : 'modeSwitch.lightLabel',
                                 })}
-                            </Typography>
-                        </Box>
+                            />
+                        </ListItemButton>
                     </Tooltip>
 
                     <Tooltip
@@ -210,69 +184,35 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         placement="right-end"
                         enterDelay={open ? 1000 : undefined}
                     >
-                        <Box
+                        <ListItemButton
                             onClick={openNavigation}
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                px: 1.25,
-                                py: 1,
-                                mx: 1,
-                                my: 0.25,
-                                borderRadius: 1.5,
-                                whiteSpace: 'nowrap',
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    backgroundColor: 'action.hover',
-                                },
-                            }}
+                            sx={{ mx: 1, my: 0.25 }}
                         >
-                            <ChevronsLeft
-                                size={ICON_SIZE}
-                                strokeWidth={ICON_STROKE}
-                                style={{
-                                    flexShrink: 0,
-                                    transform: open
-                                        ? 'scaleX(1)'
-                                        : 'scaleX(-1)',
-                                    transition: 'all 50ms ease-in-out',
-                                }}
-                            />
-
-                            <Typography
-                                sx={{
-                                    fontSize: 13,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
-                            >
-                                {intl.formatMessage({
+                            <ListItemIcon>
+                                <ChevronsLeft
+                                    size={ICON_SIZE}
+                                    strokeWidth={ICON_STROKE}
+                                    style={{
+                                        transform: open
+                                            ? 'scaleX(1)'
+                                            : 'scaleX(-1)',
+                                        transition: 'all 50ms ease-in-out',
+                                    }}
+                                />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={intl.formatMessage({
                                     id: 'navigation.collapse',
                                 })}
-                            </Typography>
-                        </Box>
+                            />
+                        </ListItemButton>
                     </Tooltip>
 
                     {userDetails ? (
                         <>
-                        <Box
-                            onClick={(e) => setMenuAnchor(e.currentTarget)}
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                py: 1,
-                                px: 1.25,
-                                mx: 1,
-                                my: 0.25,
-                                borderRadius: 1.5,
-                                cursor: 'pointer',
-                                whiteSpace: 'nowrap',
-                                '&:hover': {
-                                    backgroundColor: 'action.hover',
-                                },
-                            }}
+                            <ListItemButton
+                                onClick={(e) => setMenuAnchor(e.currentTarget)}
+                                sx={{ mx: 1, my: 0.25 }}
                             >
                                 <UserAvatar
                                     userEmail={userDetails.email}
@@ -280,42 +220,24 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                     avatarUrl={userDetails.avatar}
                                     size={20}
                                 />
-
-                                {open ? (
-                                    <>
-                                        <Box
-                                            sx={{
-                                                flex: 1,
-                                                minWidth: 0,
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                            }}
-                                        >
-                                            <Typography
-                                                sx={{
-                                                    fontSize: 12,
-                                                    fontWeight: 500,
-                                                    lineHeight: 1.3,
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap',
-                                                }}
-                                            >
-                                                {userDetails.email}
-                                            </Typography>
-                                        </Box>
-
-                                        <Ellipsis
-                                            size={16}
-                                            style={{
-                                                flexShrink: 0,
-                                                color: theme.palette.text
-                                                    .secondary,
-                                            }}
-                                        />
-                                    </>
-                                ) : null}
-                            </Box>
+                                <ListItemText
+                                    primary={userDetails.email}
+                                    primaryTypographyProps={{
+                                        fontSize: 12,
+                                        fontWeight: 500,
+                                        lineHeight: 1.3,
+                                        noWrap: true,
+                                    }}
+                                />
+                                <Ellipsis
+                                    size={16}
+                                    style={{
+                                        flexShrink: 0,
+                                        color: theme.palette.text
+                                            .secondary,
+                                    }}
+                                />
+                            </ListItemButton>
 
                             <Menu
                                 anchorEl={menuAnchor}
@@ -360,125 +282,99 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                         void supabaseClient.auth.signOut();
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            mr: 1.5,
-                                            color: 'text.secondary',
-                                        }}
-                                    >
+                                    <ListItemIcon>
                                         <LogOut size={16} strokeWidth={ICON_STROKE} />
-                                    </Box>
+                                    </ListItemIcon>
                                     <FormattedMessage id="cta.logout" />
                                 </MenuItem>
                             </Menu>
 
-                        <Box
-                            onClick={(e) => setOrgAnchor(e.currentTarget)}
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1.25,
-                                py: 1,
-                                px: 1.25,
-                                mx: 1,
-                                my: 0.25,
-                                borderRadius: 1.5,
-                                cursor: 'pointer',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                '&:hover': {
-                                    backgroundColor: 'action.hover',
-                                },
-                            }}
-                        >
-                            <Building2
-                                size={ICON_SIZE}
-                                strokeWidth={ICON_STROKE}
-                                style={{ flexShrink: 0 }}
-                            />
-
-                            <Typography
-                                sx={{
-                                    fontSize: 12,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
+                            <ListItemButton
+                                onClick={(e) => setOrgAnchor(e.currentTarget)}
+                                sx={{ mx: 1, my: 0.25 }}
                             >
-                                {tenantLabel}
-                            </Typography>
-                        </Box>
+                                <ListItemIcon>
+                                    <Building2
+                                        size={ICON_SIZE}
+                                        strokeWidth={ICON_STROKE}
+                                    />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={tenantLabel}
+                                    primaryTypographyProps={{ fontSize: 12 }}
+                                />
+                            </ListItemButton>
 
-                        <Popover
-                            open={orgOpen}
-                            anchorEl={orgAnchor}
-                            onClose={() => setOrgAnchor(null)}
-                            anchorOrigin={{
-                                horizontal: 'left',
-                                vertical: 'top',
-                            }}
-                            transformOrigin={{
-                                horizontal: 'left',
-                                vertical: 'bottom',
-                            }}
-                            slotProps={{
-                                paper: {
-                                    sx: {
-                                        width: 240,
-                                        p: 1,
-                                        borderRadius: 2,
+                            <Popover
+                                open={orgOpen}
+                                anchorEl={orgAnchor}
+                                onClose={() => setOrgAnchor(null)}
+                                anchorOrigin={{
+                                    horizontal: 'left',
+                                    vertical: 'top',
+                                }}
+                                transformOrigin={{
+                                    horizontal: 'left',
+                                    vertical: 'bottom',
+                                }}
+                                slotProps={{
+                                    paper: {
+                                        sx: {
+                                            width: 240,
+                                            p: 1,
+                                            borderRadius: 2,
+                                        },
                                     },
-                                },
-                            }}
-                        >
-                            <Typography
-                                sx={{
-                                    px: 1,
-                                    pt: 0.5,
-                                    pb: 1,
-                                    fontSize: 11,
-                                    fontWeight: 600,
-                                    textTransform: 'uppercase',
-                                    letterSpacing: 0.5,
-                                    color: 'text.secondary',
                                 }}
                             >
-                                <FormattedMessage id="tenant.organization" />
-                            </Typography>
+                                <Typography
+                                    sx={{
+                                        px: 1,
+                                        pt: 0.5,
+                                        pb: 1,
+                                        fontSize: 11,
+                                        fontWeight: 600,
+                                        textTransform: 'uppercase',
+                                        letterSpacing: 0.5,
+                                        color: 'text.secondary',
+                                    }}
+                                >
+                                    <FormattedMessage id="tenant.organization" />
+                                </Typography>
 
-                            {tenantNames.map((tenant) => {
-                                const label = tenant.replace(/\/$/, '');
-                                const isSelected =
-                                    tenant === selectedTenant;
+                                {tenantNames.map((tenant) => {
+                                    const label = tenant.replace(/\/$/, '');
+                                    const isSelected =
+                                        tenant === selectedTenant;
 
-                                return (
-                                    <MenuItem
-                                        key={tenant}
-                                        selected={isSelected}
-                                        onClick={() => {
-                                            setSelectedTenant(tenant);
-                                            setOrgAnchor(null);
-                                        }}
-                                        sx={{
-                                            borderRadius: 1,
-                                            fontSize: 13,
-                                            py: 0.75,
-                                            justifyContent:
-                                                'space-between',
-                                        }}
-                                    >
-                                        {label}
+                                    return (
+                                        <MenuItem
+                                            key={tenant}
+                                            selected={isSelected}
+                                            onClick={() => {
+                                                setSelectedTenant(tenant);
+                                                setOrgAnchor(null);
+                                            }}
+                                            sx={{
+                                                borderRadius: 1,
+                                                fontSize: 13,
+                                                py: 0.75,
+                                                justifyContent:
+                                                    'space-between',
+                                            }}
+                                        >
+                                            {label}
 
-                                        {isSelected ? (
-                                            <Check
-                                                size={14}
-                                                strokeWidth={2}
-                                            />
-                                        ) : null}
-                                    </MenuItem>
-                                );
-                            })}
-                        </Popover>
+                                            {isSelected ? (
+                                                <Check
+                                                    size={14}
+                                                    strokeWidth={2}
+                                                />
+                                            ) : null}
+                                        </MenuItem>
+                                    );
+                                })}
+                            </Popover>
                         </>
                     ) : null}
                 </Box>

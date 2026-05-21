@@ -1149,14 +1149,50 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     },
                 },
                 MuiAppBar: {
+                    defaultProps: {
+                        position: 'static' as const,
+                        elevation: 0,
+                    },
                     styleOverrides: {
                         root: {
-                            background:
-                                palette.mode === 'dark'
-                                    ? sample_grey[900]
-                                    : 'white',
+                            background: palette.background?.default,
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiDrawer: {
+                    styleOverrides: {
+                        paper: {
+                            background: palette.background?.default,
+                            border: 0,
+                        },
+                    },
+                },
+                MuiListItemButton: {
+                    styleOverrides: {
+                        root: {
+                            gap: 8,
+                            whiteSpace: 'nowrap',
+                            padding: '6px 10px',
+                            borderRadius: 8,
+                        },
+                    },
+                },
+                MuiListItemIcon: {
+                    styleOverrides: {
+                        root: {
+                            minWidth: 'auto',
+                            color: 'inherit',
+                        },
+                    },
+                },
+                MuiListItemText: {
+                    styleOverrides: {
+                        primary: {
+                            fontSize: 13,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                         },
                     },
                 },

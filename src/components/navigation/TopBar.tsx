@@ -36,13 +36,7 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
         React.useState<HTMLElement | null>(null);
 
     return (
-        <MuiAppBar
-            sx={{
-                position: 'static',
-                boxShadow: 'none',
-                background:theme.palette.background.default
-            }}
-        >
+        <MuiAppBar>
             <Toolbar
                 variant="dense"
                 sx={{

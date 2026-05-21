@@ -116,7 +116,7 @@ function PageContainer({ children, hideBackground }: Props) {
                     width: '100%',
                     mb: 1,
                     boxShadow: boxShadowMixin,
-                    borderRadius: '1rem',
+                    borderRadius: 8,
                     background: backgroundMixin,
                 }}
             >
