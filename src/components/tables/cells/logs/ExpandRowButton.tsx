@@ -1,6 +1,6 @@
 import { Box, IconButton, Tooltip } from '@mui/material';
 
-import { NavArrowRight } from 'iconoir-react';
+import { ChevronRight } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { EXPAND_ROW_TRANSITION } from 'src/components/tables/Logs/shared';
@@ -29,7 +29,7 @@ function ExpandRowButton({ expanded }: Props) {
                         transition: `all ${EXPAND_ROW_TRANSITION}ms ease-in-out`,
                     }}
                 >
-                    <NavArrowRight />
+                    <ChevronRight />
                 </IconButton>
             </Box>
         </Tooltip>

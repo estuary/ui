@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 
 import { Button, Stack, Typography } from '@mui/material';
 
-import { Refresh } from 'iconoir-react';
+import { RefreshCw } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import HydrationError from 'src/components/collection/DataPreview/HydrationError';
@@ -104,7 +104,7 @@ export function DataPreview({ collectionName }: Props) {
 
                     <Button
                         variant="text"
-                        startIcon={<Refresh style={{ fontSize: 12 }} />}
+                        startIcon={<RefreshCw style={{ fontSize: 12 }} />}
                         onClick={() => journalData.refresh()}
                         disabled={Boolean(
                             isLoading ||

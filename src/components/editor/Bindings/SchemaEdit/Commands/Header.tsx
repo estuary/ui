@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 
-import { TerminalTag } from 'iconoir-react';
+import { TerminalSquare } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import ExternalLink from 'src/components/shared/ExternalLink';
@@ -18,7 +18,7 @@ function EditCommandsHeader() {
             }}
         >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <TerminalTag />
+                <TerminalSquare />
 
                 <Typography variant="h6" sx={{ ml: 1 }}>
                     <FormattedMessage id="workflows.collectionSelector.schemaEdit.header" />

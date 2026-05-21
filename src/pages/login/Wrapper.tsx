@@ -2,7 +2,7 @@ import type { LoginWrapperProps } from 'src/pages/login/types';
 
 import { Button, Grid, Stack } from '@mui/material';
 
-import { NavArrowLeft } from 'iconoir-react';
+import { ChevronLeft } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
@@ -49,7 +49,7 @@ const LoginWrapper = ({
                     {showBack ? (
                         <Button
                             href={backHref}
-                            startIcon={<NavArrowLeft />}
+                            startIcon={<ChevronLeft />}
                             style={{ alignSelf: 'start' }}
                             variant="text"
                         >

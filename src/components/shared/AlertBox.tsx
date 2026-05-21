@@ -12,10 +12,10 @@ import {
 
 import {
     CheckCircle,
-    InfoCircle,
-    WarningHexagon,
-    WarningTriangle,
-} from 'iconoir-react';
+    Info,
+    OctagonAlert,
+    TriangleAlert,
+} from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { alertBackground, alertTextPrimary } from 'src/context/Theme';
@@ -91,9 +91,9 @@ const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
             severity={severity}
             variant="outlined"
             iconMapping={{
-                error: <WarningHexagon style={iconComponentStyling} />,
-                warning: <WarningTriangle style={iconComponentStyling} />,
-                info: <InfoCircle style={iconComponentStyling} />,
+                error: <OctagonAlert style={iconComponentStyling} />,
+                warning: <TriangleAlert style={iconComponentStyling} />,
+                info: <Info style={iconComponentStyling} />,
                 success: <CheckCircle style={iconComponentStyling} />,
             }}
             onClose={onClose}

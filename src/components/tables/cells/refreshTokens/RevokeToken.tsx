@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { Button, Stack, TableCell, Tooltip, useTheme } from '@mui/material';
 
-import { WarningCircle } from 'iconoir-react';
+import { CircleAlert } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import {
@@ -86,7 +86,7 @@ function RevokeTokenButton({ id }: Props) {
                             />
                         }
                     >
-                        <WarningCircle
+                        <CircleAlert
                             style={{ color: theme.palette.error.main }}
                         />
                     </Tooltip>

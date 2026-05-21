@@ -11,7 +11,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { CloudUpload } from 'iconoir-react';
+import { CloudUpload } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';

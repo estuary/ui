@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { Badge, Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
 
-import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
+import { ChevronDown, Square, SquareMinus } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import { useZustandStore } from 'src/context/Zustand/provider';
@@ -66,7 +66,7 @@ function RowSelectorCheckBox({
                 invisible={!showSelectedCount}
             >
                 <Button size="small" variant="text" onClick={toggleSelection}>
-                    {hasSelections ? <MinusSquare /> : <Square />}
+                    {hasSelections ? <SquareMinus /> : <Square />}
                 </Button>
             </Badge>
 
@@ -79,7 +79,7 @@ function RowSelectorCheckBox({
                 variant="text"
                 onClick={openMenu}
             >
-                <NavArrowDown />
+                <ChevronDown />
             </Button>
 
             <Menu

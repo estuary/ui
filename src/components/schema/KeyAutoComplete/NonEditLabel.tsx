@@ -1,6 +1,6 @@
 import { IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
-import { HelpCircle } from 'iconoir-react';
+import { HelpCircle } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 function NonEditLabel() {

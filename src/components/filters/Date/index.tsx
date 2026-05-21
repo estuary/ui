@@ -13,7 +13,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Calendar } from 'iconoir-react';
+import { Calendar } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import DateFilterOption from 'src/components/filters/Date/FilterOption';

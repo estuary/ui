@@ -6,7 +6,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { HalfMoon, SunLight } from 'iconoir-react';
+import { Moon, Sun } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useColorMode } from 'src/context/Theme';
@@ -35,9 +35,9 @@ function ModeSwitch() {
                     sx={{ minWidth: 36, color: theme.palette.text.primary }}
                 >
                     {theme.palette.mode === 'dark' ? (
-                        <HalfMoon />
+                        <Moon />
                     ) : (
-                        <SunLight />
+                        <Sun />
                     )}
                 </ListItemIcon>
 

@@ -8,7 +8,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { Plus, Xmark } from 'iconoir-react';
+import { Plus, X } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import HeroImageAndDescription from 'src/components/home/hero';
@@ -47,7 +47,7 @@ export default function Welcome() {
                     style={{ position: 'absolute', top: 14, right: 8 }}
                 >
                     {welcomeShown ? (
-                        <Xmark style={{ color: theme.palette.text.primary }} />
+                        <X style={{ color: theme.palette.text.primary }} />
                     ) : (
                         <Plus style={{ color: theme.palette.text.primary }} />
                     )}

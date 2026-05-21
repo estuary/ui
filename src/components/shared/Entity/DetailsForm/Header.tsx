@@ -1,6 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 
-import { WarningCircle } from 'iconoir-react';
+import { CircleAlert } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
@@ -19,7 +19,7 @@ function DetailsFormHeader({ messagePrefix }: Props) {
     return (
         <>
             {detailsFormHasErrors ? (
-                <WarningCircle
+                <CircleAlert
                     style={{
                         marginRight: 8,
                         fontSize: 12,

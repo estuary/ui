@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import { Box, IconButton } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
+import { X } from 'lucide-react';
 
 import { deleteDraftSpecsByCatalogName } from 'src/api/draftSpecs';
 import { useEntityWorkflow } from 'src/context/Workflow';
@@ -100,7 +100,7 @@ function BindingsSelectorRemove({ binding, draftId, task }: Props) {
                 onClick={handlers.removeBinding}
                 sx={{ color: (theme) => theme.palette.text.primary }}
             >
-                <Xmark />
+                <X />
             </IconButton>
         </Box>
     );

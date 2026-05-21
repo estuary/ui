@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Box, Button, Dialog, DialogContent, useTheme } from '@mui/material';
 
-import { Expand } from 'iconoir-react';
+import { Maximize } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
@@ -41,7 +41,7 @@ function ServerErrorDialog({
                     width: 25,
                 }}
             >
-                <Expand />
+                <Maximize />
             </Button>
             <Dialog open={open} fullWidth maxWidth="lg" onClose={closeDialog}>
                 <DialogTitleWithClose

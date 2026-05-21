@@ -2,7 +2,7 @@ import { Divider, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { WarningCircle } from 'iconoir-react';
+import { CircleAlert } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import ExternalLink from 'src/components/shared/ExternalLink';
@@ -26,7 +26,7 @@ function EndpointConfigHeader() {
     return (
         <>
             {endpointConfigErrorsExist || hydrationErrorsExist ? (
-                <WarningCircle
+                <CircleAlert
                     style={{
                         marginRight: 8,
                         fontSize: 12,

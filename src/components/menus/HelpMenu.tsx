@@ -1,4 +1,4 @@
-import { HelpCircle } from 'iconoir-react';
+import { HelpCircle } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import IconMenu from 'src/components/menus/IconMenu';

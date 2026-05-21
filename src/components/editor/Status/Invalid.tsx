@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 
-import { DatabaseWarning } from 'iconoir-react';
+import { TriangleAlert } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -14,7 +14,7 @@ function Invalid({ iconSize }: Props) {
                 <FormattedMessage id="common.invalid" />
             </Typography>
 
-            <DatabaseWarning style={{ fontSize: iconSize }} />
+            <TriangleAlert style={{ fontSize: iconSize }} />
         </>
     );
 }

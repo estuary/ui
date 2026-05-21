@@ -3,7 +3,7 @@ import type { LoginProps } from 'src/components/login/Providers/types';
 
 import { Button, Typography, useTheme } from '@mui/material';
 
-import { Lock, OpenNewWindow } from 'iconoir-react';
+import { ExternalLink, Lock } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { unauthenticatedRoutes } from 'src/app/routes';
@@ -24,7 +24,7 @@ function SSOButton({ isRegister }: LoginProps) {
     if (isRegister) {
         endIcon = (
             <Typography>
-                <OpenNewWindow />
+                <ExternalLink />
             </Typography>
         );
         href = intl.formatMessage({

@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 
-import { HelpCircle } from 'iconoir-react';
+import { HelpCircle } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { getEvolutionMessageId, toEvolutionRequest } from 'src/api/evolutions';

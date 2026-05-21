@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import { Button } from '@mui/material';
 
-import { OpenNewWindow } from 'iconoir-react';
+import { ExternalLink as ExternalLinkIcon } from 'lucide-react';
 
 import { linkButtonSx } from 'src/context/Theme';
 
@@ -38,7 +38,7 @@ const ExternalLink = ({
         <Button
             variant={variant ?? 'text'}
             endIcon={
-                !hideIcon ? <OpenNewWindow style={{ fontSize: 12 }} /> : null
+                !hideIcon ? <ExternalLinkIcon size={12} /> : null
             }
             href={link}
             target="_blank"

@@ -9,7 +9,7 @@ import {
     tableSortLabelClasses,
 } from '@mui/material';
 
-import { ArrowDown } from 'iconoir-react';
+import { ArrowDown } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import { TABLE_HEADER_CELL_CLASS_PREFIX } from 'src/components/tables/EntityTable/shared';

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Box, Divider } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import useSWR from 'swr';
 
@@ -48,7 +48,7 @@ export function UpdateAlert() {
             <ButtonWithPopper
                 popper={<Actions />}
                 buttonProps={{
-                    endIcon: <NavArrowDown style={{ fontSize: 13 }} />,
+                    endIcon: <ChevronDown style={{ fontSize: 13 }} />,
                     size: 'small',
                     sx: {
                         alignItems: 'center',

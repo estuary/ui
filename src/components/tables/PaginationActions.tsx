@@ -1,11 +1,11 @@
 import { Box, IconButton, useTheme } from '@mui/material';
 
 import {
-    FastArrowLeft,
-    FastArrowRight,
-    NavArrowLeft,
-    NavArrowRight,
-} from 'iconoir-react';
+    ChevronFirst,
+    ChevronLast,
+    ChevronLeft,
+    ChevronRight,
+} from 'lucide-react';
 
 interface TablePaginationActionsProps {
     count: number;
@@ -48,9 +48,9 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
                 sx={{ color: theme.palette.text.primary }}
             >
                 {theme.direction === 'rtl' ? (
-                    <FastArrowRight />
+                    <ChevronLast />
                 ) : (
-                    <FastArrowLeft />
+                    <ChevronFirst />
                 )}
             </IconButton>
 
@@ -61,9 +61,9 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
                 sx={{ color: theme.palette.text.primary }}
             >
                 {theme.direction === 'rtl' ? (
-                    <NavArrowRight />
+                    <ChevronRight />
                 ) : (
-                    <NavArrowLeft />
+                    <ChevronLeft />
                 )}
             </IconButton>
 
@@ -74,9 +74,9 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
                 sx={{ color: theme.palette.text.primary }}
             >
                 {theme.direction === 'rtl' ? (
-                    <NavArrowLeft />
+                    <ChevronLeft />
                 ) : (
-                    <NavArrowRight />
+                    <ChevronRight />
                 )}
             </IconButton>
 
@@ -87,9 +87,9 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
                 sx={{ color: theme.palette.text.primary }}
             >
                 {theme.direction === 'rtl' ? (
-                    <FastArrowLeft />
+                    <ChevronFirst />
                 ) : (
-                    <FastArrowRight />
+                    <ChevronLast />
                 )}
             </IconButton>
         </Box>

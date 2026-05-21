@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { HelpCircle } from 'iconoir-react';
+import { HelpCircle } from 'lucide-react';
 import { isEmpty } from 'lodash';
 import { Duration } from 'luxon';
 import { FormattedMessage, useIntl } from 'react-intl';

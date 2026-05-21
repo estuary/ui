@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { Typography, useTheme } from '@mui/material';
 
-import { WarningCircle } from 'iconoir-react';
+import { CircleAlert } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { useEditorStore_currentCatalog } from 'src/components/editor/Store/hooks';
@@ -37,7 +37,7 @@ function DerivationSchemaHeader() {
     return (
         <>
             {schemaUnedited ? (
-                <WarningCircle
+                <CircleAlert
                     style={{
                         marginRight: 4,
                         fontSize: 12,

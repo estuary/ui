@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 
-import { HelpCircle } from 'iconoir-react';
+import { HelpCircle } from 'lucide-react';
 import { isEmpty } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 

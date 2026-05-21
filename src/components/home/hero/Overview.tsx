@@ -1,6 +1,6 @@
 import { Button, Grid, Typography } from '@mui/material';
 
-import { NavArrowRight } from 'iconoir-react';
+import { ChevronRight } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import MessageWithEmphasis from 'src/components/content/MessageWithEmphasis';
@@ -25,7 +25,7 @@ function HeroOverview() {
                 }}
             >
                 <Button
-                    endIcon={<NavArrowRight style={{ fontSize: 14 }} />}
+                    endIcon={<ChevronRight style={{ fontSize: 14 }} />}
                     onClick={openDetails}
                     sx={{ minWidth: 160 }}
                 >

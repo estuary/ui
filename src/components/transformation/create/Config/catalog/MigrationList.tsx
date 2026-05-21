@@ -11,7 +11,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 import { isEmpty } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -85,7 +85,7 @@ function MigrationList() {
         >
             <AccordionSummary
                 expandIcon={
-                    <NavArrowDown
+                    <ChevronDown
                         style={{
                             color:
                                 migrationSelected && !expanded

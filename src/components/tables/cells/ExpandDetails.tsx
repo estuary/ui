@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
@@ -29,7 +29,7 @@ function ExpandDetails({
             }}
             endIcon={
                 // TODO (duplication) this is copied a few times
-                <NavArrowDown
+                <ChevronDown
                     style={{
                         marginRight: 0,
                         fontSize: 14,

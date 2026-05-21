@@ -4,7 +4,7 @@ import { Box, chipClasses, IconButton, Tooltip, useTheme } from '@mui/material';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { MoreVert } from 'iconoir-react';
+import { EllipsisVertical } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { truncateTextSx } from 'src/context/Theme';
@@ -62,7 +62,7 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                                 },
                             }}
                         >
-                            <MoreVert />
+                            <EllipsisVertical />
                         </IconButton>
                     }
                     label={label}
@@ -89,7 +89,7 @@ function SortableTag({ tagProps, label, validOption }: Props) {
                                     {...listeners}
                                     size="small"
                                 >
-                                    <MoreVert />
+                                    <EllipsisVertical />
                                 </IconButton>
                             }
                             label={label}

@@ -11,7 +11,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useIntl } from 'react-intl';
 
@@ -66,7 +66,7 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
                     transition: 'all 250ms ease-in-out',
                 }}
             >
-                <NavArrowDown
+                <ChevronDown
                     style={{
                         fontSize: 14,
                         color: theme.palette.text.primary,

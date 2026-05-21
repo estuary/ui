@@ -9,7 +9,7 @@ import { Box, TableCell, TableRow, Typography, useTheme } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { WarningCircle } from 'iconoir-react';
+import { CircleAlert } from 'lucide-react';
 import { debounce } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { useIntersection, useUnmount } from 'react-use';
@@ -135,7 +135,7 @@ function WaitingForRowBase({
                 >
                     {lastFetchFailed ? (
                         <Typography sx={{ ...BaseTypographySx, fontSize: 0 }}>
-                            <WarningCircle
+                            <CircleAlert
                                 fontSize={12}
                                 style={{ color: theme.palette.error.main }}
                             />

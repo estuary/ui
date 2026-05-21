@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import { boxClasses, IconButton, Stack, Typography } from '@mui/material';
 
-import { HelpCircle } from 'iconoir-react';
+import { HelpCircle } from 'lucide-react';
 import { usePopupState } from 'material-ui-popup-state/hooks';
 import { useIntl } from 'react-intl';
 

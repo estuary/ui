@@ -5,11 +5,11 @@ import { Tooltip, Typography, useTheme } from '@mui/material';
 import {
     CheckCircle,
     Circle,
-    InfoCircle,
+    CircleAlert,
+    Info,
     MinusCircle,
-    WarningCircle,
-    XmarkCircle,
-} from 'iconoir-react';
+    XCircle,
+} from 'lucide-react';
 
 import { BaseTypographySx } from 'src/components/tables/cells/logs/shared';
 
@@ -24,16 +24,16 @@ function LevelIcon({ level }: Props) {
 
     const IconComponent =
         level === 'error'
-            ? XmarkCircle
+            ? XCircle
             : level === 'warn'
-              ? WarningCircle
+              ? CircleAlert
               : level === 'done'
                 ? CheckCircle
                 : level === 'debug'
                   ? MinusCircle
                   : level === 'trace'
                     ? Circle
-                    : InfoCircle;
+                    : Info;
 
     const iconColor =
         level === 'error'

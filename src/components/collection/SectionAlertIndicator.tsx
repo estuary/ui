@@ -1,6 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 
-import { WarningCircle } from 'iconoir-react';
+import { CircleAlert } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import {
@@ -48,7 +48,7 @@ export default function SectionAlertIndicator() {
     return (
         <>
             {hasErrors || hasWarnings ? (
-                <WarningCircle
+                <CircleAlert
                     style={{
                         marginRight: 8,
                         fontSize: 12,

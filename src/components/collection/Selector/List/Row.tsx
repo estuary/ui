@@ -1,6 +1,6 @@
 import { IconButton, ListItemText } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
+import { X } from 'lucide-react';
 
 import { typographyTruncation } from 'src/context/Theme';
 
@@ -36,7 +36,7 @@ function CollectionSelectorRow({
                 onClick={handlers.removeCollection}
                 sx={{ color: (theme) => theme.palette.text.primary }}
             >
-                <Xmark />
+                <X />
             </IconButton>
         </>
     );

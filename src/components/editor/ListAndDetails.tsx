@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 
-import { MoreVert } from 'iconoir-react';
+import { EllipsisVertical } from 'lucide-react';
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 
 import { defaultOutline, reflexSplitterBackground } from 'src/context/Theme';
@@ -74,7 +74,7 @@ function ListAndDetails({
                             reflexSplitterBackground[theme.palette.mode],
                     }}
                 >
-                    <MoreVert style={{ color: theme.palette.text.primary }} />
+                    <EllipsisVertical style={{ color: theme.palette.text.primary }} />
                 </ReflexSplitter>
 
                 <ReflexElement

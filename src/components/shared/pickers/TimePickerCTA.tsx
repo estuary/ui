@@ -13,7 +13,7 @@ import {
 } from '@mui/x-date-pickers';
 
 import { format } from 'date-fns';
-import { Clock } from 'iconoir-react';
+import { Clock } from 'lucide-react';
 
 import { CustomLayoutWrapper } from 'src/components/shared/pickers/CustomLayoutWrapper';
 import DateOrTimePickerWrapper from 'src/components/shared/pickers/DateOrTimePickerWrapper';

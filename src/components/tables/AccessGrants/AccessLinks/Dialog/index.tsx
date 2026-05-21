@@ -13,7 +13,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
+import { X } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import Error from 'src/components/shared/Error';
@@ -57,7 +57,7 @@ function PrefixInvitationDialog({ open, setOpen }: BaseDialogProps) {
                 </Typography>
 
                 <IconButton onClick={closeDialog}>
-                    <Xmark
+                    <X
                         style={{
                             fontSize: '1rem',
                             color: theme.palette.text.primary,

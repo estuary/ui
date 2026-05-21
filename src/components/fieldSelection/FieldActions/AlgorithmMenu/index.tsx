@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { Button, Divider, Menu, menuClasses } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import MenuActions from 'src/components/fieldSelection/FieldActions/AlgorithmMenu/MenuActions';
@@ -71,7 +71,7 @@ const AlgorithmMenu = ({
             <Button
                 disabled={disabled}
                 endIcon={
-                    <NavArrowDown style={{ fontSize: 14, fontWeight: 500 }} />
+                    <ChevronDown style={{ fontSize: 14, fontWeight: 500 }} />
                 }
                 onClick={(event) => {
                     event.stopPropagation();

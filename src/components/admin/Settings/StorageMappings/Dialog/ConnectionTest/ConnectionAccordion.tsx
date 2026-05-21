@@ -13,12 +13,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import {
-    CheckCircle,
-    NavArrowDown,
-    Refresh,
-    WarningTriangle,
-} from 'iconoir-react';
+import { CheckCircle, ChevronDown, RefreshCw, TriangleAlert } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { ConnectionInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionInstructions';
@@ -45,7 +40,7 @@ function ConnectionStatusBadge({ result }: ConnectionStatusBadgeProps) {
             color: 'success.main',
         },
         error: {
-            icon: <WarningTriangle width={20} height={20} />,
+            icon: <TriangleAlert width={20} height={20} />,
             color: 'warning.main',
         },
     } satisfies Record<
@@ -129,7 +124,7 @@ export function ConnectionAccordion({
             }}
         >
             <AccordionSummary
-                expandIcon={<NavArrowDown />}
+                expandIcon={<ChevronDown />}
                 sx={{
                     'minHeight': 'unset',
                     'px': 1,
@@ -209,7 +204,7 @@ export function ConnectionAccordion({
                                     );
                                 }
                             }}
-                            startIcon={<Refresh width={16} height={16} />}
+                            startIcon={<RefreshCw width={16} height={16} />}
                         >
                             {intl.formatMessage({
                                 id: 'storageMappings.dialog.connectionTests.retry',

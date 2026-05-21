@@ -5,7 +5,7 @@ import type {
 
 import { useMemo } from 'react';
 
-import { Check } from 'iconoir-react';
+import { Check } from 'lucide-react';
 
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 

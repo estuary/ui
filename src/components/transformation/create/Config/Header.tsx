@@ -1,6 +1,6 @@
 import { Typography, useTheme } from '@mui/material';
 
-import { WarningCircle } from 'iconoir-react';
+import { CircleAlert } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
@@ -25,7 +25,7 @@ function DerivationCatalogHeader() {
             {emptySQLExists ||
             shuffleKeyErrorsExist ||
             invalidEditors.length > 0 ? (
-                <WarningCircle
+                <CircleAlert
                     style={{
                         marginRight: 4,
                         fontSize: 12,

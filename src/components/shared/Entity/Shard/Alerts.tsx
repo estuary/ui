@@ -13,7 +13,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
+import { ChevronDown } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import ServerErrorDetail from 'src/components/shared/Alerts/ServerErrorDetails';
@@ -73,7 +73,7 @@ function ShardAlerts({ showWarnings, taskName, taskTypes }: Props) {
                             >
                                 <AccordionSummary
                                     expandIcon={
-                                        <NavArrowDown
+                                        <ChevronDown
                                             style={{
                                                 color: theme.palette.text
                                                     .primary,

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Link, MenuItem } from '@mui/material';
 
-import { OpenNewWindow } from 'iconoir-react';
+import { ExternalLink } from 'lucide-react';
 
 interface Props {
     children: ReactNode;
@@ -31,7 +31,7 @@ function ExternalLinkMenuItem({ children, link }: Props) {
         >
             <span>{children}</span>
 
-            <OpenNewWindow style={{ height: 20, width: 36 }} />
+            <ExternalLink style={{ height: 20, width: 36 }} />
         </MenuItem>
     );
 }

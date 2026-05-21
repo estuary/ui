@@ -49,9 +49,6 @@ interface NavigationProps {
     onNavigationToggle: Function;
 }
 
-const ICON_SIZE = 18;
-const ICON_STROKE = 1.5;
-
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
     const theme = useTheme();
@@ -119,31 +116,31 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     })}
                 >
                     <ListItemLink
-                        icon={<Home size={ICON_SIZE} strokeWidth={ICON_STROKE} />}
+                        icon={<Home />}
                         title={authenticatedRoutes.home.title}
                         link={authenticatedRoutes.home.path}
                         isOpen={open}
                     />
                     <ListItemLink
-                        icon={<CloudUpload size={ICON_SIZE} strokeWidth={ICON_STROKE} />}
+                        icon={<CloudUpload />}
                         title={authenticatedRoutes.captures.title}
                         link={authenticatedRoutes.captures.path}
                         isOpen={open}
                     />
                     <ListItemLink
-                        icon={<Database size={ICON_SIZE} strokeWidth={ICON_STROKE} />}
+                        icon={<Database />}
                         title={authenticatedRoutes.collections.title}
                         link={authenticatedRoutes.collections.path}
                         isOpen={open}
                     />
                     <ListItemLink
-                        icon={<CloudDownload size={ICON_SIZE} strokeWidth={ICON_STROKE} />}
+                        icon={<CloudDownload />}
                         title={authenticatedRoutes.materializations.title}
                         link={authenticatedRoutes.materializations.path}
                         isOpen={open}
                     />
                     <ListItemLink
-                        icon={<Settings size={ICON_SIZE} strokeWidth={ICON_STROKE} />}
+                        icon={<Settings />}
                         title={authenticatedRoutes.admin.title}
                         link={authenticatedRoutes.admin.path}
                         isOpen={open}
@@ -164,9 +161,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         >
                             <ListItemIcon>
                                 {theme.palette.mode === 'dark' ? (
-                                    <Moon size={ICON_SIZE} strokeWidth={ICON_STROKE} />
+                                    <Moon />
                                 ) : (
-                                    <Sun size={ICON_SIZE} strokeWidth={ICON_STROKE} />
+                                    <Sun />
                                 )}
                             </ListItemIcon>
                             <ListItemText
@@ -190,8 +187,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         >
                             <ListItemIcon>
                                 <ChevronsLeft
-                                    size={ICON_SIZE}
-                                    strokeWidth={ICON_STROKE}
                                     style={{
                                         transform: open
                                             ? 'scaleX(1)'
@@ -230,7 +225,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                     }}
                                 />
                                 <Ellipsis
-                                    size={16}
                                     style={{
                                         flexShrink: 0,
                                         color: theme.palette.text
@@ -283,7 +277,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                     }}
                                 >
                                     <ListItemIcon>
-                                        <LogOut size={16} strokeWidth={ICON_STROKE} />
+                                        <LogOut />
                                     </ListItemIcon>
                                     <FormattedMessage id="cta.logout" />
                                 </MenuItem>
@@ -294,10 +288,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 sx={{ mx: 1, my: 0.25 }}
                             >
                                 <ListItemIcon>
-                                    <Building2
-                                        size={ICON_SIZE}
-                                        strokeWidth={ICON_STROKE}
-                                    />
+                                    <Building2 />
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={tenantLabel}

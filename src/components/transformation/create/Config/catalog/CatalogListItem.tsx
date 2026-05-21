@@ -14,12 +14,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import {
-    NavArrowDown,
-    NavArrowRight,
-    WarningCircle,
-    Xmark,
-} from 'iconoir-react';
+import { ChevronDown, ChevronRight, CircleAlert, X } from 'lucide-react';
 
 import {
     useEditorStore_removeStaleStatus,
@@ -110,7 +105,7 @@ function CatalogListItem({
                         },
                     }}
                 >
-                    {open ? <NavArrowDown /> : <NavArrowRight />}
+                    {open ? <ChevronDown /> : <ChevronRight />}
 
                     <ListItemText
                         primary={itemLabel}
@@ -183,7 +178,7 @@ function CatalogListItem({
                     }}
                 >
                     {editorInvalid ? (
-                        <WarningCircle
+                        <CircleAlert
                             style={{
                                 marginRight: 4,
                                 fontSize: 12,
@@ -205,7 +200,7 @@ function CatalogListItem({
                         onClick={handlers.removeListItem}
                         sx={{ zIndex: 40 }}
                     >
-                        <Xmark />
+                        <X />
                     </IconButton>
                 </ListItemButton>
             </Stack>

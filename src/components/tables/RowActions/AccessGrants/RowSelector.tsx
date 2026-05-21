@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { Button, ButtonGroup, Menu, MenuItem, Stack } from '@mui/material';
 
-import { MinusSquare, NavArrowDown, Square } from 'iconoir-react';
+import { ChevronDown, Square, SquareMinus } from 'lucide-react';
 
 import { EVERYTHING } from 'src/components/collection/Selector/Table/shared';
 import DeleteButton from 'src/components/tables/RowActions/AccessGrants/DeleteButton';
@@ -51,7 +51,7 @@ function RowSelector({
                     variant="text"
                     onClick={handlers.toggleSelection}
                 >
-                    {selectionsExist ? <MinusSquare /> : <Square />}
+                    {selectionsExist ? <SquareMinus /> : <Square />}
                 </Button>
 
                 <Button
@@ -63,7 +63,7 @@ function RowSelector({
                     variant="text"
                     onClick={handlers.openMenu}
                 >
-                    <NavArrowDown />
+                    <ChevronDown />
                 </Button>
             </ButtonGroup>
 

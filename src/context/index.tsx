@@ -3,7 +3,6 @@ import type { BaseComponentProps } from 'src/types';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import ContentProvider from 'src/context/Content';
 import GlobalProviders from 'src/context/GlobalProviders';
-import IconoirProvider from 'src/context/Iconoir';
 import NotificationProvider from 'src/context/Notifications';
 import { PHProvider } from 'src/context/PostHog';
 import { SidePanelDocsProvider } from 'src/context/SidePanelDocs';
@@ -20,8 +19,7 @@ const AppProviders = ({ children }: BaseComponentProps) => {
             <UpdateHelmetProvider>
                 <PHProvider>
                     <ThemeProvider>
-                        <IconoirProvider>
-                            <ErrorBoundryWrapper>
+                        <ErrorBoundryWrapper>
                                 <NotificationProvider>
                                     <SwrConfigProvider>
                                         <UrqlConfigProvider>
@@ -38,7 +36,6 @@ const AppProviders = ({ children }: BaseComponentProps) => {
                                     </SwrConfigProvider>
                                 </NotificationProvider>
                             </ErrorBoundryWrapper>
-                        </IconoirProvider>
                     </ThemeProvider>
                 </PHProvider>
             </UpdateHelmetProvider>

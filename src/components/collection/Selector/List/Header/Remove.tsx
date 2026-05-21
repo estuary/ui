@@ -1,6 +1,6 @@
 import { Box, IconButton, Tooltip } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
+import { X } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 interface Props {
@@ -35,7 +35,7 @@ function CollectionSelectorHeaderRemove({
                         color: (theme) => theme.palette.text.primary,
                     }}
                 >
-                    <Xmark />
+                    <X />
                 </IconButton>
             </Box>
         </Tooltip>

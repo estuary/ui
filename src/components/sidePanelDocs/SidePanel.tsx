@@ -6,7 +6,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
+import { X } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 import SidePanelIframe from 'src/components/sidePanelDocs/Iframe';
@@ -59,7 +59,7 @@ function DocsSidePanel({ show }: Props) {
                     }}
                     sx={{ color: (theme) => theme.palette.text.primary }}
                 >
-                    <Xmark />
+                    <X />
                 </IconButton>
             </Toolbar>
 

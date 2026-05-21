@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 
-import { DatabaseBackup } from 'iconoir-react';
+import { DatabaseBackup } from 'lucide-react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

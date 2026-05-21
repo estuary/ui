@@ -2,7 +2,7 @@ import type { ErrorIndicatorProps } from 'src/components/editor/Bindings/Row/typ
 
 import { Typography, useTheme } from '@mui/material';
 
-import { WarningCircle } from 'iconoir-react';
+import { CircleAlert } from 'lucide-react';
 
 import {
     useBinding_collectionMetadataProperty,
@@ -50,7 +50,7 @@ function BindingsSelectorErrorIndicator({
     if (errorExists || Boolean(sourceBackfillRecommended)) {
         return (
             <Typography>
-                <WarningCircle
+                <CircleAlert
                     style={{
                         fontSize: 12,
                         color: errorExists

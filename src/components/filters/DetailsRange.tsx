@@ -6,7 +6,7 @@ import { Button, Menu, MenuItem, Stack, Typography } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { Calendar } from 'iconoir-react';
+import { Calendar } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { DataGrains } from 'src/components/graphs/types';

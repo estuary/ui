@@ -2,7 +2,7 @@ import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
-import { Star, StarSolid, Xmark } from 'iconoir-react';
+import { Star, X } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import { toPresentableName } from 'src/utils/dataPlane-utils';
@@ -42,7 +42,7 @@ export function DataPlaneRow({
                     </Typography>
                     {isDefault ? (
                         <>
-                            <StarSolid width={16} height={16} color="#f5c518" />{' '}
+                            <Star width={16} height={16} color="#f5c518" />{' '}
                             <Typography
                                 variant="caption"
                                 color="text.secondary"
@@ -89,7 +89,7 @@ export function DataPlaneRow({
             </Box>
 
             <IconButton size="small" onClick={handleRemove}>
-                <Xmark width={16} height={16} />
+                <X width={16} height={16} />
             </IconButton>
         </Stack>
     );

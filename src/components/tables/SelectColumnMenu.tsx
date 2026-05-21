@@ -10,7 +10,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { ViewColumns3 } from 'iconoir-react';
+import { Columns3 } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import IconMenu from 'src/components/menus/IconMenu';
@@ -36,7 +36,7 @@ function SelectColumnMenu({
             disableCloseOnClick
             disabled={disabled}
             icon={
-                <ViewColumns3
+                <Columns3
                     style={{
                         color: disabled
                             ? disabledButtonText_primary[theme.palette.mode]

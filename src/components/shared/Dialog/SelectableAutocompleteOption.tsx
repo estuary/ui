@@ -3,7 +3,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import { Box, Stack, useTheme } from '@mui/material';
 
-import { Check } from 'iconoir-react';
+import { Check } from 'lucide-react';
 
 interface SelectableAutocompleteOptionProps {
     Content: ReactNode;

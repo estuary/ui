@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { DialogTitle, IconButton, Typography, useTheme } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
+import { X } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useRefreshTokenStore } from 'src/components/admin/Api/RefreshToken/Store/create';
@@ -39,7 +39,7 @@ function RefreshTokenTitle({ setOpen }: Props) {
             </Typography>
 
             <IconButton disabled={saving} onClick={closeDialog}>
-                <Xmark
+                <X
                     aria-label={intl.formatMessage({ id: 'cta.close' })}
                     style={{
                         fontSize: '1rem',
