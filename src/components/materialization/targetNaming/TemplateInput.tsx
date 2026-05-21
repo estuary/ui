@@ -8,7 +8,7 @@ import {
 } from 'src/components/materialization/targetNaming/shared';
 
 export interface TemplateInputProps {
-    field?: 'schema' | 'table';
+    field: 'schema' | 'table';
     value: string;
     onChange: (value: string) => void;
     templateAllowed?: boolean;
@@ -29,7 +29,7 @@ const FIELD_KEYS = {
 } as const;
 
 export function TemplateInput({
-    field = 'schema',
+    field,
     templateAllowed = true,
     required,
     value,

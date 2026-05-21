@@ -1,3 +1,4 @@
+import { getSourceCapturePropKey } from 'src/utils/entity-utils';
 import type { TargetNamingModel } from 'src/types';
 
 // TODO (target naming:post migration:update) - we can remove this but we'll need to go through
@@ -14,7 +15,7 @@ export const detectTargetNamingModel = (
     }
     // Only use sourceTargetNaming when source.targetNaming is explicitly present.
     // Specs with no targetNaming anywhere get the new rootTargetNaming UI.
-    const sourceKey = spec?.sourceCapture ? 'sourceCapture' : 'source';
+    const sourceKey = getSourceCapturePropKey(spec);
     if (spec?.[sourceKey]?.targetNaming) {
         return 'sourceTargetNaming';
     }
