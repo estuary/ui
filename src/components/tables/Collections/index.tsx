@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import { Box } from '@mui/material';
-
 import { getLiveSpecs_collections } from 'src/api/liveSpecsExt';
 import CollectionExportButton from 'src/components/tables/Collections/Export';
 import Rows from 'src/components/tables/Collections/Rows';
@@ -42,58 +40,47 @@ function CollectionsTable() {
     }, [columnToSort, pagination, searchQuery, sortDirection]);
 
     return (
-        <Box>
-            <TableHydrator
-                query={query}
-                selectableTableStoreName={selectableTableStoreName}
-            >
-                <StatsHydrator
+        <TableHydrator
+            query={query}
+            selectableTableStoreName={selectableTableStoreName}
+        >
+            <StatsHydrator selectableTableStoreName={selectableTableStoreName}>
+                <EntityTable
+                    ExportComponent={CollectionExportButton}
+                    noExistingDataContentIds={
+                        ENTITY_SETTINGS.collection.table
+                            .noExistingDataContentIds
+                    }
+                    columns={tableColumns}
+                    renderTableRows={(data, showEntityStatus) => (
+                        <Rows data={data} showEntityStatus={showEntityStatus} />
+                    )}
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
+                    pagination={pagination}
+                    setPagination={setPagination}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    sortDirection={sortDirection}
+                    setSortDirection={setSortDirection}
+                    columnToSort={columnToSort}
+                    setColumnToSort={setColumnToSort}
+                    header={ENTITY_SETTINGS.collection.table.headerIntlKey}
+                    filterLabel={ENTITY_SETTINGS.collection.table.filterIntlKey}
+                    showEntityStatus
                     selectableTableStoreName={selectableTableStoreName}
-                >
-                    <EntityTable
-                        ExportComponent={CollectionExportButton}
-                        noExistingDataContentIds={
-                            ENTITY_SETTINGS.collection.table
-                                .noExistingDataContentIds
-                        }
-                        columns={tableColumns}
-                        renderTableRows={(data, showEntityStatus) => (
-                            <Rows
-                                data={data}
-                                showEntityStatus={showEntityStatus}
-                            />
-                        )}
-                        rowsPerPage={rowsPerPage}
-                        setRowsPerPage={setRowsPerPage}
-                        pagination={pagination}
-                        setPagination={setPagination}
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                        sortDirection={sortDirection}
-                        setSortDirection={setSortDirection}
-                        columnToSort={columnToSort}
-                        setColumnToSort={setColumnToSort}
-                        header={ENTITY_SETTINGS.collection.table.headerIntlKey}
-                        filterLabel={
-                            ENTITY_SETTINGS.collection.table.filterIntlKey
-                        }
-                        showEntityStatus
-                        selectableTableStoreName={selectableTableStoreName}
-                        showToolbar
-                        toolbar={
-                            <RowSelector
-                                selectableTableStoreName={
-                                    selectableTableStoreName
-                                }
-                                selectKeyValueName={selectKeyValueName}
-                                showMaterialize={true}
-                                showTransform
-                            />
-                        }
-                    />
-                </StatsHydrator>
-            </TableHydrator>
-        </Box>
+                    showToolbar
+                    toolbar={
+                        <RowSelector
+                            selectableTableStoreName={selectableTableStoreName}
+                            selectKeyValueName={selectKeyValueName}
+                            showMaterialize={true}
+                            showTransform
+                        />
+                    }
+                />
+            </StatsHydrator>
+        </TableHydrator>
     );
 }
 
