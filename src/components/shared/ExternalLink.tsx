@@ -37,9 +37,7 @@ const ExternalLink = ({
     return (
         <Button
             variant={variant ?? 'text'}
-            endIcon={
-                !hideIcon ? <ExternalLinkIcon size={12} /> : null
-            }
+            endIcon={!hideIcon ? <ExternalLinkIcon /> : null}
             href={link}
             target="_blank"
             rel="noopener"

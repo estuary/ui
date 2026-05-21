@@ -618,9 +618,7 @@ export const getButtonIcon = (
         case 'success':
             return <Check style={{ color: theme.palette.success.main }} />;
         case 'error':
-            return (
-                <CircleAlert style={{ color: theme.palette.error.main }} />
-            );
+            return <CircleAlert style={{ color: theme.palette.error.main }} />;
         default:
             return <Copy style={{ color: theme.palette.primary.main }} />;
     }

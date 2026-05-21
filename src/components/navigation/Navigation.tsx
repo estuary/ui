@@ -11,11 +11,12 @@ import {
     MenuItem,
     Popover,
     Stack,
-    Tooltip,
     Typography,
     useTheme,
 } from '@mui/material';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
+
+import { useShallow } from 'zustand/react/shallow';
 
 import {
     Building2,
@@ -25,6 +26,7 @@ import {
     CloudUpload,
     Database,
     Ellipsis,
+    HelpCircle,
     Home,
     LogOut,
     Moon,
@@ -32,13 +34,13 @@ import {
     Sun,
 } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useShallow } from 'zustand/react/shallow';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import { HelpMenu } from 'src/components/menus/HelpMenu';
 import ListItemLink from 'src/components/navigation/ListItemLink';
 import UserAvatar from 'src/components/shared/UserAvatar';
-import { useColorMode } from 'src/context/Theme';
 import { supabaseClient } from 'src/context/GlobalProviders';
+import { useColorMode } from 'src/context/Theme';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
 import { useTenantStore } from 'src/stores/Tenant/Store';
@@ -62,13 +64,17 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
         (state) => state.setSelectedTenant
     );
 
-    const [menuAnchor, setMenuAnchor] =
-        React.useState<HTMLElement | null>(null);
+    const [menuAnchor, setMenuAnchor] = React.useState<HTMLElement | null>(
+        null
+    );
     const menuOpen = Boolean(menuAnchor);
 
-    const [orgAnchor, setOrgAnchor] =
-        React.useState<HTMLElement | null>(null);
+    const [orgAnchor, setOrgAnchor] = React.useState<HTMLElement | null>(null);
     const orgOpen = Boolean(orgAnchor);
+
+    const [helpAnchor, setHelpAnchor] = React.useState<HTMLElement | null>(
+        null
+    );
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -148,60 +154,47 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 </List>
 
                 <Box sx={{ pb: 1 }}>
-                    <Tooltip
-                        title={intl.formatMessage({
-                            id: theme.palette.mode === 'dark' ? 'modeSwitch.darkLabel' : 'modeSwitch.lightLabel',
-                        })}
-                        placement="right-end"
-                        enterDelay={open ? 1000 : undefined}
-                    >
-                        <ListItemButton
-                            onClick={colorMode.toggleColorMode}
-                            sx={{ mx: 1, my: 0.25 }}
-                        >
-                            <ListItemIcon>
-                                {theme.palette.mode === 'dark' ? (
-                                    <Moon />
-                                ) : (
-                                    <Sun />
-                                )}
-                            </ListItemIcon>
-                            <ListItemText
-                                primary={intl.formatMessage({
-                                    id: theme.palette.mode === 'dark' ? 'modeSwitch.darkLabel' : 'modeSwitch.lightLabel',
-                                })}
-                            />
-                        </ListItemButton>
-                    </Tooltip>
+                    <ListItemLink
+                        icon={<HelpCircle />}
+                        title="helpMenu.tooltip"
+                        link={(e: React.MouseEvent<HTMLElement>) =>
+                            setHelpAnchor(e.currentTarget)
+                        }
+                        isOpen={open}
+                    />
+                    <HelpMenu
+                        anchorEl={helpAnchor}
+                        onClose={() => setHelpAnchor(null)}
+                    />
 
-                    <Tooltip
-                        title={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
-                        })}
-                        placement="right-end"
-                        enterDelay={open ? 1000 : undefined}
-                    >
-                        <ListItemButton
-                            onClick={openNavigation}
-                            sx={{ mx: 1, my: 0.25 }}
-                        >
-                            <ListItemIcon>
-                                <ChevronsLeft
-                                    style={{
-                                        transform: open
-                                            ? 'scaleX(1)'
-                                            : 'scaleX(-1)',
-                                        transition: 'all 50ms ease-in-out',
-                                    }}
-                                />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary={intl.formatMessage({
-                                    id: 'navigation.collapse',
-                                })}
+                    <ListItemLink
+                        icon={
+                            theme.palette.mode === 'dark' ? <Moon /> : <Sun />
+                        }
+                        title={
+                            theme.palette.mode === 'dark'
+                                ? 'modeSwitch.darkLabel'
+                                : 'modeSwitch.lightLabel'
+                        }
+                        link={colorMode.toggleColorMode}
+                        isOpen={open}
+                    />
+
+                    <ListItemLink
+                        icon={
+                            <ChevronsLeft
+                                style={{
+                                    transform: open
+                                        ? 'scaleX(1)'
+                                        : 'scaleX(-1)',
+                                    transition: 'all 50ms ease-in-out',
+                                }}
                             />
-                        </ListItemButton>
-                    </Tooltip>
+                        }
+                        title="navigation.collapse"
+                        link={openNavigation}
+                        isOpen={open}
+                    />
 
                     {userDetails ? (
                         <>
@@ -227,8 +220,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 <Ellipsis
                                     style={{
                                         flexShrink: 0,
-                                        color: theme.palette.text
-                                            .secondary,
+                                        color: theme.palette.text.secondary,
                                     }}
                                 />
                             </ListItemButton>
@@ -247,7 +239,10 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                     vertical: 'bottom',
                                 }}
                             >
-                                <MenuItem disabled sx={{ opacity: '1 !important' }}>
+                                <MenuItem
+                                    disabled
+                                    sx={{ opacity: '1 !important' }}
+                                >
                                     <Stack spacing={0}>
                                         <Typography
                                             sx={{
@@ -350,8 +345,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                                 borderRadius: 1,
                                                 fontSize: 13,
                                                 py: 0.75,
-                                                justifyContent:
-                                                    'space-between',
+                                                justifyContent: 'space-between',
                                             }}
                                         >
                                             {label}

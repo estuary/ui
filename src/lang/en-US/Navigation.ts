@@ -10,7 +10,7 @@ export const Navigation: Record<string, string> = {
     'mainMenu.tooltip': `Open Main Menu`,
 
     'helpMenu.ariaLabel': `Open Help Menu`,
-    'helpMenu.tooltip': `Helpful Links`,
+    'helpMenu.tooltip': `Help`,
     'helpMenu.docs': `Docs`,
     'helpMenu.docs.link': `https://docs.estuary.dev/`,
     'helpMenu.slack': `Estuary Slack`,

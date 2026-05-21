@@ -39,20 +39,18 @@ const ListItemLink = ({
         <li>
             <Tooltip
                 title={!isOpen ? translatedTitle : ''}
-                placement="right-end"
+                placement="right"
                 enterDelay={tooltipDelay ? tooltipDelay : undefined}
             >
                 <ListItemButton
-                    component={typeof link === 'string' ? RouterLink : 'a'}
-                    to={typeof link === 'string' ? link : undefined}
-                    onClick={typeof link === 'function' ? link : undefined}
+                    {...(typeof link === 'string'
+                        ? { component: RouterLink, to: link }
+                        : { onClick: link })}
                     sx={{ mx: 1, my: 0.25 }}
                 >
                     {icon ? (
                         <ListItemIcon>
-                            <Badge badgeContent={badgeContent}>
-                                {icon}
-                            </Badge>
+                            <Badge badgeContent={badgeContent}>{icon}</Badge>
                         </ListItemIcon>
                     ) : null}
 
