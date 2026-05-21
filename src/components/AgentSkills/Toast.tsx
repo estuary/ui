@@ -69,7 +69,7 @@ export function Toast() {
                     boxShadow:
                         '0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 40px -8px rgba(15, 23, 42, 0.22), 0 36px 80px -12px rgba(46, 100, 235, 0.28)',
                 },
-                '&:hover .est-toast-cta-arrow': {
+                '&:hover .cta-arrow': {
                     transform: 'translateX(3px)',
                 },
             }}
@@ -105,7 +105,7 @@ export function Toast() {
                     }}
                 >
                     <SparkleIcon
-                        sx={{ width: 26, height: 26, color: '#fff' }}
+                        sx={{ width: 26, height: 26, color: 'common.white' }}
                     />
                 </Box>
 
@@ -190,7 +190,7 @@ export function Toast() {
                     >
                         {intl.formatMessage({ id: 'agentSkills.cta' })}
                         <NavArrowRight
-                            className="est-toast-cta-arrow"
+                            className="cta-arrow"
                             width={17}
                             height={17}
                             strokeWidth={1.8}

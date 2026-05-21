@@ -21,6 +21,9 @@ function TooltipContent() {
     return (
         <Paper
             elevation={0}
+            onClick={() =>
+                window.open(AGENT_SKILLS_URL, '_blank', 'noopener,noreferrer')
+            }
             sx={{
                 width: 320,
                 borderRadius: '12px',
@@ -92,7 +95,6 @@ export function HeaderPill() {
         <Tooltip
             title={<TooltipContent />}
             placement="bottom-end"
-            disableInteractive={false}
             enterDelay={200}
             leaveDelay={150}
             slotProps={{
@@ -149,7 +151,7 @@ export function HeaderPill() {
                     }}
                 >
                     <SparkleIcon
-                        sx={{ width: 14, height: 14, color: '#fff' }}
+                        sx={{ width: 14, height: 14, color: 'common.white' }}
                     />
                 </Box>
                 <Typography
