@@ -1,10 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 
-import { Box, Button, Toolbar } from '@mui/material';
-
-import { Plus } from 'lucide-react';
-import { FormattedMessage } from 'react-intl';
-import { NavLink } from 'react-router-dom';
+import { Box } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import MaterializationsTable from 'src/components/tables/Materializations';
@@ -22,31 +18,9 @@ const Materializations = () => {
     });
 
     return (
-        <>
-            <Toolbar
-                sx={{
-                    alignItems: 'center',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <NavLink
-                    style={{ textDecoration: 'none' }}
-                    to={authenticatedRoutes.materializations.create.fullPath}
-                >
-                    <Button
-                        size="large"
-                        startIcon={<Plus style={{ fontSize: 14 }} />}
-                    >
-                        <FormattedMessage id="materializationsTable.cta.new" />
-                    </Button>
-                </NavLink>
-            </Toolbar>
-
-            <Box sx={boxStyling}>
-                <MaterializationsTable />
-            </Box>
-        </>
+        <Box sx={boxStyling}>
+            <MaterializationsTable />
+        </Box>
     );
 };
 
