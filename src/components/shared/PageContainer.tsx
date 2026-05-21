@@ -3,21 +3,34 @@ import type { Notification } from 'src/stores/NotificationStore';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Paper, Snackbar, useTheme } from '@mui/material';
+import { Box, Paper, Snackbar, Typography, useTheme } from '@mui/material';
+
+import { Building2 } from 'lucide-react';
+import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { paperBackground } from 'src/context/Theme';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
+import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 interface Props {
     children: ReactNode | ReactNode[];
     hideBackground?: boolean;
+    navigationOpen?: boolean;
 }
 
-function PageContainer({ children, hideBackground }: Props) {
+function PageContainer({
+    children,
+    hideBackground,
+    navigationOpen = true,
+}: Props) {
+    const intl = useIntl();
     const theme = useTheme();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const header = useTopBarStore((state) => state.header);
 
     const notification = useNotificationStore(
         notificationStoreSelectors.notification
@@ -76,7 +89,14 @@ function PageContainer({ children, hideBackground }: Props) {
     }, [notification]);
 
     return (
-        <Box sx={{ pr: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Box
+            sx={{
+                pr: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+            }}
+        >
             {notification && alertBody ? (
                 <Snackbar
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -106,9 +126,41 @@ function PageContainer({ children, hideBackground }: Props) {
                 </Snackbar>
             ) : null}
 
+            {header ? (
+                <Paper
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        py: 1,
+                        px: 2,
+                        color: 'text.secondary',
+                        fontSize: '0.8rem',
+                        width: '100%',
+                        boxShadow: boxShadowMixin,
+                        borderRadius: '16px 16px 0 0',
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+                        background: backgroundMixin,
+                    }}
+                >
+                    <Building2 />
+                    <Typography>
+                        {selectedTenant.replace(/\/$/, '')}
+                        {' / '}
+                        <Box component="span" fontWeight="bold">
+                            {intl.formatMessage({ id: header })}
+                        </Box>
+                    </Typography>
+                </Paper>
+            ) : null}
+
             <Paper
                 sx={{
-                    p: 2,
+                    px: navigationOpen ? 1 : 5,
+                    transition: (t) =>
+                        `padding ${t.transitions.duration.shortest}ms`,
+                    py: 2,
                     flex: 1,
                     minHeight: 0,
                     overflow: 'auto',
@@ -116,7 +168,7 @@ function PageContainer({ children, hideBackground }: Props) {
                     width: '100%',
                     mb: 1,
                     boxShadow: boxShadowMixin,
-                    borderRadius: 8,
+                    borderRadius: header ? '0 0 16px 16px' : 8,
                     background: backgroundMixin,
                 }}
             >

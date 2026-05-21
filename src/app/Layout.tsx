@@ -110,7 +110,7 @@ function AppLayout() {
                     >
                         <Box className="pane-content" sx={{ height: '100%' }}>
                             <ErrorBoundryWrapper>
-                                <PageContainer>
+                                <PageContainer navigationOpen={navigationOpen}>
                                     <Outlet />
                                 </PageContainer>
                             </ErrorBoundryWrapper>

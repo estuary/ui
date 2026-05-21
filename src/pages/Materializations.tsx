@@ -1,15 +1,6 @@
-import type { SxProps, Theme } from '@mui/material';
-
-import { Box } from '@mui/material';
-
 import { authenticatedRoutes } from 'src/app/routes';
 import MaterializationsTable from 'src/components/tables/Materializations';
 import usePageTitle from 'src/hooks/usePageTitle';
-
-const boxStyling: SxProps<Theme> = {
-    marginBottom: 2,
-    padding: 2,
-};
 
 const Materializations = () => {
     usePageTitle({
@@ -17,11 +8,7 @@ const Materializations = () => {
         headerLink: 'https://docs.estuary.dev/concepts/#materializations',
     });
 
-    return (
-        <Box sx={boxStyling}>
-            <MaterializationsTable />
-        </Box>
-    );
+    return <MaterializationsTable />;
 };
 
 export default Materializations;
