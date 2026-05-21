@@ -56,6 +56,9 @@ export const logRocketEvent = (
     event: CustomEvents | KnownEvents | (string & {}),
     eventProperties?: any
 ) => {
+    if (!isProduction && import.meta.env.VITE_LOG_LR_EVENTS === 'true') {
+        console.log(`lr:event:"${event}"`, eventProperties);
+    }
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
