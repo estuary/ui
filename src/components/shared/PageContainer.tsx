@@ -76,7 +76,7 @@ function PageContainer({ children, hideBackground }: Props) {
     }, [notification]);
 
     return (
-        <Box sx={{ pr: 2 }}>
+        <Box sx={{ pr: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
             {notification && alertBody ? (
                 <Snackbar
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -110,6 +110,9 @@ function PageContainer({ children, hideBackground }: Props) {
                 sx={{
                     p: 2,
                     flex: 1,
+                    minHeight: 0,
+                    overflow: 'auto',
+                    overscrollBehavior: 'none',
                     width: '100%',
                     mb: 1,
                     boxShadow: boxShadowMixin,
