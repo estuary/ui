@@ -9,7 +9,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { NavArrowRight, Xmark } from 'iconoir-react';
+import { ChevronRight, X } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import { useLocalStorage } from 'react-use';
 
@@ -189,10 +189,9 @@ export function AgentSkillsToast() {
                         }}
                     >
                         {intl.formatMessage({ id: 'agentSkills.cta' })}
-                        <NavArrowRight
+                        <ChevronRight
                             className="est-toast-cta-arrow"
-                            width={17}
-                            height={17}
+                            size={17}
                             strokeWidth={1.8}
                             style={{ transition: 'transform 200ms ease' }}
                         />
@@ -217,7 +216,7 @@ export function AgentSkillsToast() {
                         '&:hover': { color: '#475569', background: 'none' },
                     }}
                 >
-                    <Xmark width={20} height={20} />
+                    <X size={20} />
                 </IconButton>
             </Box>
         </Box>

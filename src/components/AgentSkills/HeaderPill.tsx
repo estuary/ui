@@ -1,6 +1,6 @@
 import { Box, Link, Paper, Tooltip, Typography, useTheme } from '@mui/material';
 
-import { NavArrowRight } from 'iconoir-react';
+import { ChevronRight } from 'lucide-react';
 import { useIntl } from 'react-intl';
 
 import {
@@ -76,7 +76,7 @@ function TooltipContent() {
                     {intl.formatMessage({
                         id: 'agentSkills.cta',
                     })}
-                    <NavArrowRight width={16} height={16} />
+                    <ChevronRight size={16} />
                 </Box>
             </Box>
         </Paper>
@@ -113,9 +113,10 @@ export function HeaderPill() {
                     'display': 'inline-flex',
                     'alignItems': 'center',
                     'gap': 1,
-                    'height': 36,
-                    'px': '14px',
-                    'pl': '10px',
+                    // 'height': 36,
+                    'py': '4px',
+                    'px': '10px',
+                    'pl': '6px',
                     'borderRadius': '999px',
                     'background': BG_GRADIENT[mode],
                     'border': '1px solid rgba(46,100,235,0.22)',
@@ -135,8 +136,7 @@ export function HeaderPill() {
             >
                 <Box
                     sx={{
-                        width: 22,
-                        height: 22,
+                        p: '3px',
                         borderRadius: '999px',
                         background: GRADIENT[mode],
                         display: 'inline-flex',

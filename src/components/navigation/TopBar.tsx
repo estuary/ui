@@ -48,7 +48,7 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
 
                 <Stack
                     direction="row"
-                    spacing={0.5}
+                    spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
                     <HeaderPill />
