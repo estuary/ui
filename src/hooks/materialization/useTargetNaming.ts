@@ -36,7 +36,8 @@ function useTargetNaming() {
     const { sourceCaptureTargetSchemaSupported } =
         useBinding_sourceCaptureFlags();
 
-    // This could keep targetNaming in sync with the draft - does removing as we are
+    // TODO (targetNaming)
+    // This could keep targetNaming in sync with the draft - removing as we are
     //  moving away from always available advanced spec editor
     // const draftSpecs = useEditorStore_queryResponse_draftSpecs();
     // Derive strategy from the live spec so advanced-editor changes propagate to
