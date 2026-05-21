@@ -56,6 +56,9 @@ export const logRocketEvent = (
     event: CustomEvents | KnownEvents | (string & {}),
     eventProperties?: any
 ) => {
+    if (!isProduction) {
+        console.log(event, eventProperties);
+    }
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
