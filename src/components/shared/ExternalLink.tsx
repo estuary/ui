@@ -1,52 +1,34 @@
-import type { ButtonTypeMap, SxProps } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 
-import { Button } from '@mui/material';
+import { Link } from '@mui/material';
 
 import { ExternalLink as ExternalLinkIcon } from 'lucide-react';
 
-import { linkButtonSx } from 'src/context/Theme';
-
-export interface ExternalLinkOptions {
-    color?: ButtonTypeMap['props']['color'];
-    hideIcon?: boolean;
-    padding?: number;
-    sx?: SxProps;
-    variant?: ButtonTypeMap['props']['variant'];
-}
-
-interface Props extends ExternalLinkOptions {
+interface Props {
     children: ReactNode;
     link: string;
+    sx?: SxProps<Theme>;
 }
 
-const ExternalLink = ({
-    color,
-    children,
-    link,
-    hideIcon,
-    sx,
-    variant,
-}: Props) => {
-    const onClick = (event: any) => {
-        event.stopPropagation();
-    };
-
-    const styling = sx ?? ({} as any);
-
+const ExternalLink = ({ children, link, sx }: Props) => {
     return (
-        <Button
-            variant={variant ?? 'text'}
-            endIcon={!hideIcon ? <ExternalLinkIcon /> : null}
+        <Link
             href={link}
             target="_blank"
             rel="noopener"
-            color={color ?? 'secondary'}
-            onClick={onClick}
-            sx={{ ...linkButtonSx, ...styling }}
+            sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.5,
+                fontWeight: 500,
+                ...sx,
+            }}
+            onClick={(e) => e.stopPropagation()}
         >
             {children}
-        </Button>
+            <ExternalLinkIcon />
+        </Link>
     );
 };
 

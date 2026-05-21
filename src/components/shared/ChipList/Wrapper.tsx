@@ -8,7 +8,6 @@ import { Box, styled, Tooltip } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import LinkWrapper from 'src/components/shared/LinkWrapper';
-import { underlineTextSx } from 'src/context/Theme';
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 import { stripPathing } from 'src/utils/misc-utils';
 
@@ -60,7 +59,6 @@ function ChipWrapper({
         if (val.link) {
             chipSX = {
                 ...chipSX,
-                ...underlineTextSx,
                 color: (theme) => theme.palette.primary.main,
             };
         }
