@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { TargetNamingStrategy } from 'src/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
@@ -33,32 +33,59 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
     const setStrategy = useTargetNaming_setStrategy();
     const applyCollectionSelections = useApplyCollectionSelections();
 
-    const readyToPrefill = useMemo(
-        () =>
-            Boolean(!editWorkflow && response !== null && response.length > 0),
-        [editWorkflow, response]
-    );
     const [dialogHandled, setDialogHandled] = useState(false);
+
+    // readyToPrefill: true when there is something to act on
+    // prefilledCaptureName: use to set sourceCapture
+    // collectionItems: either writes_to or the list of collections provided
+    const { readyToPrefill, prefilledCaptureName, collectionItems } =
+        useMemo(() => {
+            if (editWorkflow || !response || response.length === 0) {
+                return {
+                    readyToPrefill: false,
+                    prefilledCaptureName: undefined,
+                    collectionItems: [],
+                };
+            }
+
+            return {
+                readyToPrefill: true,
+                prefilledCaptureName:
+                    response[0]?.spec_type === 'capture'
+                        ? response[0].catalog_name
+                        : undefined,
+                collectionItems: response.flatMap((item) =>
+                    item.spec_type === 'capture'
+                        ? item.writes_to.map((name) => ({ catalog_name: name }))
+                        : [item]
+                ),
+            };
+        }, [editWorkflow, response]);
 
     // Bypass path: connector doesn't support x_schema_name so no dialog is shown,
     // but we still need to populate the source capture and bindings.
+    const bypassRan = useRef(false);
     useEffect(() => {
-        if (
-            !dialogHandled &&
-            readyToPrefill &&
-            !sourceCaptureTargetSchemaSupported
-        ) {
-            if (response![0].spec_type === 'capture') {
-                setPrefilledCapture(response?.[0].catalog_name);
+        if (bypassRan.current) {
+            return;
+        }
+
+        if (readyToPrefill && !sourceCaptureTargetSchemaSupported) {
+            bypassRan.current = true;
+            if (prefilledCaptureName) {
+                setPrefilledCapture(prefilledCaptureName);
             }
-            applyCollectionSelections(null, response!);
-            setDialogHandled(true);
+            applyCollectionSelections(
+                null,
+                collectionItems,
+                prefilledCaptureName
+            );
         }
     }, [
         applyCollectionSelections,
-        dialogHandled,
+        collectionItems,
+        prefilledCaptureName,
         readyToPrefill,
-        response,
         setPrefilledCapture,
         sourceCaptureTargetSchemaSupported,
     ]);
@@ -67,24 +94,18 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
         // Make sure this is done right away so the prefill stuff below has it
         setStrategy(strategy);
 
-        if (response && response.length > 0) {
-            // TODO (source capture : multiple) - we'll need to handle a list of these one day
-            // Handle when we are materializing a sourceCapture.
-            if (response[0].spec_type === 'capture') {
-                setPrefilledCapture(response[0].catalog_name);
-            }
-
-            applyCollectionSelections(strategy, response);
+        // TODO (source capture : multiple) - we'll need to handle a list of these one day
+        if (prefilledCaptureName) {
+            setPrefilledCapture(prefilledCaptureName);
         }
 
+        applyCollectionSelections(
+            strategy,
+            collectionItems,
+            prefilledCaptureName
+        );
         setDialogHandled(true);
     };
-
-    console.log('gate >>>> ', {
-        dialogHandled,
-        readyToPrefill,
-        sourceCaptureTargetSchemaSupported,
-    });
 
     return (
         <>
@@ -95,6 +116,8 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
                 <TargetNamingDialog
                     confirmIntlKey="cta.continue"
                     open={true}
+                    // This will DROP all the prefilling on purpose. The user has to provide the settings
+                    //  to get the prefill to work.
                     onCancel={() => setDialogHandled(true)}
                     onConfirm={handleConfirm}
                 />

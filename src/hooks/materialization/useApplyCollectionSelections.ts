@@ -38,16 +38,15 @@ function useApplyCollectionSelections() {
 
     return (
         appliedStrategy: TargetNamingStrategy | null | undefined,
-        selectedItems: Array<{ catalog_name: string }>
+        selectedItems: Array<{ catalog_name: string }>,
+        sourceCapture?: string
     ) => {
         console.log('selectedItems', selectedItems);
 
-        const value = selectedItems.map((item) => ({
-            name: item.catalog_name,
-        }));
+        const collections = selectedItems.map((item) => item.catalog_name);
 
         const sourceCaptureSettings: SourceCaptureDef = {
-            capture: '',
+            capture: sourceCapture ?? '',
         };
         if (sourceCaptureDeltaUpdatesSupported) {
             sourceCaptureSettings.deltaUpdates = deltaUpdates;
@@ -59,8 +58,6 @@ function useApplyCollectionSelections() {
         ) {
             sourceCaptureSettings.targetNaming = targetSchema;
         }
-
-        const collections = value.map(({ name }) => name);
 
         prefillResourceConfigs(
             collections,
@@ -78,8 +75,8 @@ function useApplyCollectionSelections() {
             () => {}
         );
 
-        if (value.length > 0 && hasLength(discoveredCollections)) {
-            const latestCollection = value[value.length - 1].name;
+        if (collections.length > 0 && hasLength(discoveredCollections)) {
+            const latestCollection = collections[collections.length - 1];
 
             if (discoveredCollections.includes(latestCollection)) {
                 setRestrictedDiscoveredCollections(latestCollection);
