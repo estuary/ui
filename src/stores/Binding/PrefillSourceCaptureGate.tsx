@@ -80,6 +80,12 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
         setDialogHandled(true);
     };
 
+    console.log('gate >>>> ', {
+        dialogHandled,
+        readyToPrefill,
+        sourceCaptureTargetSchemaSupported,
+    });
+
     return (
         <>
             {children}
