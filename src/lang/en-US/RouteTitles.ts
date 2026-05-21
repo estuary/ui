@@ -1,7 +1,7 @@
 import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 
 export const RouteTitles: Record<string, string> = {
-    'routeTitle.home': `Welcome`,
+    'routeTitle.home': `Overview`,
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
     'routeTitle.admin.accessGrants': `Access Grants`,

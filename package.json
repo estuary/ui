@@ -91,6 +91,7 @@
         "lodash": "^4.18.1",
         "logrocket": "^10.1.1",
         "logrocket-react": "^5.0.1",
+        "lucide-react": "^1.16.0",
         "luxon": "^3.7.1",
         "markdown-to-jsx": "^9.7.4",
         "material-ui-popup-state": "^5.0.10",

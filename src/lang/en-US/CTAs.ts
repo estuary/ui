@@ -1,4 +1,5 @@
 export const CTAs: Record<string, string> = {
+    'cta.new': `New`,
     'cta.cancel': `Cancel`,
     'cta.close': `Close`,
     'cta.dismiss': `Dismiss`,

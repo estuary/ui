@@ -3,9 +3,8 @@ import type { Notification } from 'src/stores/NotificationStore';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Container, Paper, Snackbar, useTheme } from '@mui/material';
+import { Box, Paper, Snackbar, useTheme } from '@mui/material';
 
-import Topbar from 'src/components/navigation/TopBar';
 import AlertBox from 'src/components/shared/AlertBox';
 import { paperBackground } from 'src/context/Theme';
 import useNotificationStore, {
@@ -77,12 +76,7 @@ function PageContainer({ children, hideBackground }: Props) {
     }, [notification]);
 
     return (
-        <Container
-            maxWidth={false}
-            sx={{
-                paddingTop: 3,
-            }}
-        >
+        <Box sx={{ pr: 2 }}>
             {notification && alertBody ? (
                 <Snackbar
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -112,20 +106,20 @@ function PageContainer({ children, hideBackground }: Props) {
                 </Snackbar>
             ) : null}
 
-            <Topbar />
-
             <Paper
                 sx={{
                     p: 2,
+                    flex: 1,
                     width: '100%',
+                    mb: 1,
                     boxShadow: boxShadowMixin,
-                    borderRadius: 3,
+                    borderRadius: '1rem',
                     background: backgroundMixin,
                 }}
             >
                 {children}
             </Paper>
-        </Container>
+        </Box>
     );
 }
 
