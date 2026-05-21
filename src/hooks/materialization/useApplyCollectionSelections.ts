@@ -40,7 +40,11 @@ function useApplyCollectionSelections() {
         appliedStrategy: TargetNamingStrategy | null | undefined,
         selectedItems: Array<{ catalog_name: string }>
     ) => {
-        const value = selectedItems.map((item) => ({ name: item.catalog_name }));
+        console.log('selectedItems', selectedItems);
+
+        const value = selectedItems.map((item) => ({
+            name: item.catalog_name,
+        }));
 
         const sourceCaptureSettings: SourceCaptureDef = {
             capture: '',

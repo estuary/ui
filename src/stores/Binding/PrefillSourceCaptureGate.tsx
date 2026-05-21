@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { TargetNamingStrategy } from 'src/types';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import TargetNamingDialog from 'src/components/materialization/targetNaming/Dialog';
 import { useEntityWorkflow_Editing } from 'src/context/Workflow';
@@ -31,13 +31,35 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
     const setStrategy = useTargetNaming_setStrategy();
     const applyCollectionSelections = useApplyCollectionSelections();
 
-    const shouldShowDialog =
-        !editWorkflow &&
-        response !== null &&
-        response.length > 0 &&
-        sourceCaptureTargetSchemaSupported;
-
+    const readyToPrefill = useMemo(
+        () =>
+            Boolean(!editWorkflow && response !== null && response.length > 0),
+        [editWorkflow, response]
+    );
     const [dialogHandled, setDialogHandled] = useState(false);
+
+    // Bypass path: connector doesn't support x_schema_name so no dialog is shown,
+    // but we still need to populate the source capture and bindings.
+    useEffect(() => {
+        if (
+            !dialogHandled &&
+            readyToPrefill &&
+            !sourceCaptureTargetSchemaSupported
+        ) {
+            if (response?.[0].spec_type === 'capture') {
+                setPrefilledCapture(response?.[0].catalog_name);
+            }
+            applyCollectionSelections(null, response!);
+            setDialogHandled(true);
+        }
+    }, [
+        applyCollectionSelections,
+        dialogHandled,
+        readyToPrefill,
+        response,
+        setPrefilledCapture,
+        sourceCaptureTargetSchemaSupported,
+    ]);
 
     const handleConfirm = (strategy: TargetNamingStrategy) => {
         // Make sure this is done right away so the prefill stuff below has it
@@ -59,7 +81,9 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
     return (
         <>
             {children}
-            {!dialogHandled && shouldShowDialog ? (
+            {!dialogHandled &&
+            readyToPrefill &&
+            sourceCaptureTargetSchemaSupported ? (
                 <TargetNamingDialog
                     confirmIntlKey="cta.continue"
                     open={true}
