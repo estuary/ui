@@ -6,11 +6,6 @@ export interface SourceCaptureState {
     sourceCapture: string | undefined;
     setSourceCapture: (value: SourceCaptureState['sourceCapture']) => void;
 
-    prefilledCapture: string | undefined;
-    setPrefilledCapture: (
-        value: SourceCaptureState['prefilledCapture']
-    ) => void;
-
     deltaUpdates: boolean | undefined;
     setDeltaUpdates: (value: SourceCaptureState['deltaUpdates']) => void;
     deltaUpdatesHasError: boolean;

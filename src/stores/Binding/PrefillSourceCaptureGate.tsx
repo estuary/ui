@@ -20,8 +20,6 @@ interface Props {
 // reflects the hydrated resourceConfigPointers. Gates children behind
 // TargetNamingDialog when the connector supports x_schema_name and there is a
 // prefill response to act on.
-//  setPrefilledCapture only runs on confirm when targetNaming is supported.
-//  if it is not supported then we run that with an effect on load.
 
 // TODO (target naming)
 // The prefilled source capture is still handled in .../SelectCapture.tsx and should probably live
@@ -33,9 +31,6 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
 
     const setSourceCapture = useSourceCaptureStore(
         (state) => state.setSourceCapture
-    );
-    const setPrefilledCapture = useSourceCaptureStore(
-        (state) => state.setPrefilledCapture
     );
     const setStrategy = useTargetNaming_setStrategy();
     const applyCollectionSelections = useApplyCollectionSelections();
@@ -83,7 +78,6 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
             bypassRan.current = true;
             if (prefilledCaptureName) {
                 setSourceCapture(prefilledCaptureName);
-                setPrefilledCapture(prefilledCaptureName);
             }
             applyCollectionSelections(
                 null,
@@ -100,7 +94,6 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
         collectionItems,
         prefilledCaptureName,
         readyToPrefill,
-        setPrefilledCapture,
         setSourceCapture,
         sourceCaptureTargetSchemaSupported,
     ]);
@@ -112,7 +105,6 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
         // TODO (source capture : multiple) - we'll need to handle a list of these one day
         if (prefilledCaptureName) {
             setSourceCapture(prefilledCaptureName);
-            setPrefilledCapture(prefilledCaptureName);
         }
 
         applyCollectionSelections(
