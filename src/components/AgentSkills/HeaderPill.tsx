@@ -1,11 +1,4 @@
-import {
-    Box,
-    Link,
-    Paper,
-    Tooltip,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Box, Link, Paper, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { NavArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -154,7 +147,9 @@ export function HeaderPill() {
                         flexShrink: 0,
                     }}
                 >
-                    <SparkleIcon sx={{ width: 14, height: 14, color: '#fff' }} />
+                    <SparkleIcon
+                        sx={{ width: 14, height: 14, color: '#fff' }}
+                    />
                 </Box>
                 <Typography
                     component="span"

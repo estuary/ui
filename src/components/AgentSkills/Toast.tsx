@@ -1,3 +1,5 @@
+import type { MouseEvent } from 'react';
+
 import {
     Box,
     IconButton,
@@ -6,7 +8,6 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import type { MouseEvent } from 'react';
 
 import { NavArrowRight, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
