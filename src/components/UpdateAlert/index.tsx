@@ -52,7 +52,8 @@ export function UpdateAlert() {
                     size: 'small',
                     sx: {
                         alignItems: 'center',
-                        p: 1,
+                        px: 1,
+                        py: 0.5,
                     },
                     variant: 'text',
                 }}

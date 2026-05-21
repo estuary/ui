@@ -999,6 +999,11 @@ const themeSettings = createTheme({
                 },
             },
         },
+        MuiLink: {
+            defaultProps: {
+                underline: 'hover',
+            },
+        },
         MuiButton: {
             defaultProps: {
                 variant: 'contained',
@@ -1007,7 +1012,8 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     fontSize: 14,
-                    borderRadius: 4,
+                    borderRadius: 8,
+                    textTransform: 'none',
                 },
             },
         },
@@ -1045,6 +1051,13 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     transitionTimingFunction: standardTransitionEasing,
+                },
+            },
+        },
+        MuiTab: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
                 },
             },
         },
