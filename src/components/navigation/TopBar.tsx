@@ -10,30 +10,29 @@ import {
     Tooltip,
 } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { useTheme } from '@mui/material/styles';
 
 import { CloudDownload, CloudUpload, GitFork, Plus } from 'lucide-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 
+import { authenticatedRoutes } from 'src/app/routes';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
 import CompanyMark from 'src/components/graphics/CompanyMark';
 import HelpMenu from 'src/components/menus/HelpMenu';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
-import { authenticatedRoutes } from 'src/app/routes';
 
 interface TopbarProps {
     navigationOpen?: boolean;
 }
 
 const Topbar = ({ navigationOpen = true }: TopbarProps) => {
-    const theme = useTheme();
     const intl = useIntl();
     const navigate = useNavigate();
 
-    const [menuAnchor, setMenuAnchor] =
-        React.useState<HTMLElement | null>(null);
+    const [menuAnchor, setMenuAnchor] = React.useState<HTMLElement | null>(
+        null
+    );
 
     return (
         <MuiAppBar>
@@ -47,18 +46,24 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
             >
                 {navigationOpen ? <CompanyLogo /> : <CompanyMark />}
 
-                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+                <Stack
+                    direction="row"
+                    spacing={0.5}
+                    sx={{ alignItems: 'center' }}
+                >
                     <UpdateAlert />
 
-                    <Tooltip
-                        title={intl.formatMessage({ id: 'cta.new' })}
-                    >
+                    <Tooltip title={intl.formatMessage({ id: 'cta.new' })}>
                         <IconButton
                             onClick={(e) => setMenuAnchor(e.currentTarget)}
                             size="small"
-                            sx={{ color: theme.palette.text.primary, bgcolor: 'action.hover', borderRadius: 4 }}
+                            sx={{
+                                'color': 'primary.contrastText',
+                                'bgcolor': 'primary.main',
+                                '&:hover': { bgcolor: 'primary.dark' },
+                            }}
                         >
-                            <Plus size={20} strokeWidth={2} />
+                            <Plus style={{ strokeWidth: 2.25 }} />
                         </IconButton>
                     </Tooltip>
 
@@ -84,7 +89,7 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
                             }}
                         >
                             <ListItemIcon>
-                                <CloudUpload size={16} strokeWidth={1.5} />
+                                <CloudUpload />
                             </ListItemIcon>
                             <FormattedMessage id="routeTitle.captureCreate" />
                         </MenuItem>
@@ -92,12 +97,13 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
                         <MenuItem
                             onClick={() => {
                                 void navigate(
-                                    authenticatedRoutes.collections.create.fullPath
+                                    authenticatedRoutes.collections.create
+                                        .fullPath
                                 );
                             }}
                         >
                             <ListItemIcon>
-                                <GitFork size={16} strokeWidth={1.5} />
+                                <GitFork />
                             </ListItemIcon>
                             <FormattedMessage id="routeTitle.collectionCreate" />
                         </MenuItem>
@@ -105,12 +111,13 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
                         <MenuItem
                             onClick={() => {
                                 void navigate(
-                                    authenticatedRoutes.materializations.create.fullPath
+                                    authenticatedRoutes.materializations.create
+                                        .fullPath
                                 );
                             }}
                         >
                             <ListItemIcon>
-                                <CloudDownload size={16} strokeWidth={1.5} />
+                                <CloudDownload />
                             </ListItemIcon>
                             <FormattedMessage id="routeTitle.materializationCreate" />
                         </MenuItem>
