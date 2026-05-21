@@ -20,10 +20,6 @@ interface Props {
 // reflects the hydrated resourceConfigPointers. Gates children behind
 // TargetNamingDialog when the connector supports x_schema_name and there is a
 // prefill response to act on.
-
-// TODO (target naming)
-// The prefilled source capture is still handled in .../SelectCapture.tsx and should probably live
-//  here. However - that was starting to make this WAY to beefy so left them stand alone items.
 export function PrefillSourceCaptureGate({ response, children }: Props) {
     const editWorkflow = useEntityWorkflow_Editing();
     const { sourceCaptureTargetSchemaSupported } =
@@ -85,10 +81,6 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
                 prefilledCaptureName
             );
         }
-
-        return () => {
-            bypassRan.current = false;
-        };
     }, [
         applyCollectionSelections,
         collectionItems,
