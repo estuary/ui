@@ -95,20 +95,20 @@ function AppLayout() {
                 onNavigationToggle={toggleNavigationDrawer}
             />
 
-            <Box sx={{ overflow: 'visible', minWidth: 0 }}>
+            <Box sx={{ overflow: 'hidden', minWidth: 0 }}>
                 <ReflexContainer orientation="vertical">
                     <ReflexElement
                         className="left-pane"
                         minSize={theme.breakpoints.values.sm / 2}
                         flex={leftPaneFlex}
                         style={{
-                            overflow: 'visible',
+                            overflow: 'hidden',
                             transitionDuration: animateOpening
                                 ? `${theme.transitions.duration.shortest}ms`
                                 : undefined,
                         }}
                     >
-                        <Box className="pane-content">
+                        <Box className="pane-content" sx={{ height: '100%' }}>
                             <ErrorBoundryWrapper>
                                 <PageContainer>
                                     <Outlet />

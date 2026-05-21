@@ -41,13 +41,12 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
                 position: 'static',
                 boxShadow: 'none',
                 background:theme.palette.background.default
-                // background:"gray"
             }}
         >
             <Toolbar
                 variant="dense"
                 sx={{
-                    px: 0,
+                    pl: '19px !important',
                     minHeight: 48,
                     justifyContent: 'space-between',
                 }}

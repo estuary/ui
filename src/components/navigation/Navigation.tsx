@@ -34,11 +34,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { authenticatedRoutes } from 'src/app/routes';
 import ListItemLink from 'src/components/navigation/ListItemLink';
 import UserAvatar from 'src/components/shared/UserAvatar';
-import {
-    defaultOutline,
-    semiTransparentBackground_oneLayerElevated,
-    useColorMode,
-} from 'src/context/Theme';
+import { useColorMode } from 'src/context/Theme';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
@@ -153,7 +149,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     />
                 </List>
 
-                <Box>
+                <Box sx={{ pb: 1 }}>
                     <Tooltip
                         title={intl.formatMessage({
                             id: theme.palette.mode === 'dark' ? 'modeSwitch.darkLabel' : 'modeSwitch.lightLabel',
@@ -168,8 +164,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 alignItems: 'center',
                                 gap: 1,
                                 px: 1.25,
-                                py: 0.75,
+                                py: 1,
                                 mx: 1,
+                                my: 0.25,
                                 borderRadius: 1.5,
                                 whiteSpace: 'nowrap',
                                 cursor: 'pointer',
@@ -220,9 +217,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 alignItems: 'center',
                                 gap: 1,
                                 px: 1.25,
-                                py: 0.75,
+                                py: 1,
                                 mx: 1,
-                                mb: 1,
+                                my: 0.25,
                                 borderRadius: 1.5,
                                 whiteSpace: 'nowrap',
                                 cursor: 'pointer',
@@ -259,32 +256,29 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
 
                     {userDetails ? (
                         <>
-                        <Box sx={{ px: 1, pb: 1.5 }}>
-                            <Box
-                                onClick={(e) => setMenuAnchor(e.currentTarget)}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1.25,
-                                    py: 1,
-                                    px: 1.25,
-                                    borderRadius: 1.5,
-                                    cursor: 'pointer',
-                                    background:
-                                        semiTransparentBackground_oneLayerElevated[
-                                            theme.palette.mode
-                                        ],
-                                    border: defaultOutline[theme.palette.mode],
-                                    '&:hover': {
-                                        opacity: 0.85,
-                                    },
-                                }}
+                        <Box
+                            onClick={(e) => setMenuAnchor(e.currentTarget)}
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                py: 1,
+                                px: 1.25,
+                                mx: 1,
+                                my: 0.25,
+                                borderRadius: 1.5,
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                '&:hover': {
+                                    backgroundColor: 'action.hover',
+                                },
+                            }}
                             >
                                 <UserAvatar
                                     userEmail={userDetails.email}
                                     userName={userDetails.userName}
                                     avatarUrl={userDetails.avatar}
-                                    size={26}
+                                    size={20}
                                 />
 
                                 {open ? (
@@ -309,23 +303,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                             >
                                                 {userDetails.email}
                                             </Typography>
-
-                                            {tenantLabel ? (
-                                                <Typography
-                                                    sx={{
-                                                        fontSize: 10,
-                                                        lineHeight: 1.3,
-                                                        color: 'text.secondary',
-                                                        fontFamily: 'monospace',
-                                                        overflow: 'hidden',
-                                                        textOverflow:
-                                                            'ellipsis',
-                                                        whiteSpace: 'nowrap',
-                                                    }}
-                                                >
-                                                    {tenantLabel}
-                                                </Typography>
-                                            ) : null}
                                         </Box>
 
                                         <Ellipsis
@@ -395,7 +372,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                     <FormattedMessage id="cta.logout" />
                                 </MenuItem>
                             </Menu>
-                        </Box>
 
                         <Box
                             onClick={(e) => setOrgAnchor(e.currentTarget)}
@@ -403,10 +379,10 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 1.25,
-                                py: 0.75,
+                                py: 1,
                                 px: 1.25,
                                 mx: 1,
-                                mb: 1.5,
+                                my: 0.25,
                                 borderRadius: 1.5,
                                 cursor: 'pointer',
                                 whiteSpace: 'nowrap',
