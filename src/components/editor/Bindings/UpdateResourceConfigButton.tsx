@@ -36,11 +36,8 @@ function UpdateResourceConfigButton({ toggle }: AddCollectionDialogCTAProps) {
         (state) => state.selected
     );
 
-    const {
-        targetNamingStrategy,
-        needsNamingDialog,
-        handleConfirm,
-    } = useTargetNaming();
+    const { targetNamingStrategy, needsNamingDialog, handleConfirm } =
+        useTargetNaming();
 
     const applyCollectionSelections = useApplyCollectionSelections();
 

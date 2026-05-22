@@ -1,5 +1,6 @@
-import { getSourceCapturePropKey } from 'src/utils/entity-utils';
 import type { TargetNamingModel } from 'src/types';
+
+import { getSourceCapturePropKey } from 'src/utils/entity-utils';
 
 // TODO (target naming:post migration:update) - we can remove this but we'll need to go through
 //  and update it so we no longer have to check for `rootTargetNaming`

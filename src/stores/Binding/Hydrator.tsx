@@ -39,8 +39,9 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     const setActive = useBinding_setActive();
     const hydrateState = useBinding_hydrateState();
 
-    const [prefillResponse, setPrefillResponse] =
-        useState<LiveSpecsExt_MaterializeOrTransform[] | null>(null);
+    const [prefillResponse, setPrefillResponse] = useState<
+        LiveSpecsExt_MaterializeOrTransform[] | null
+    >(null);
 
     useEffect(() => {
         if (workflow && connectorTagState) {
