@@ -1,5 +1,6 @@
 import { Box, Link, Paper, Tooltip, Typography, useTheme } from '@mui/material';
 
+import { usePostHog } from '@posthog/react';
 import { NavArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
@@ -10,10 +11,11 @@ import {
     LINK_COLOR,
     SECONDARY_TEXT_COLOR,
     SHIMMER_STYLES,
+    useAgentSkillsStore,
 } from 'src/components/AgentSkills/shared';
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
 
-function TooltipContent() {
+function TooltipContent({ onClick }: { onClick: () => void }) {
     const theme = useTheme();
     const mode = theme.palette.mode;
     const intl = useIntl();
@@ -21,9 +23,7 @@ function TooltipContent() {
     return (
         <Paper
             elevation={0}
-            onClick={() =>
-                window.open(AGENT_SKILLS_URL, '_blank', 'noopener,noreferrer')
-            }
+            onClick={onClick}
             sx={{
                 width: 320,
                 borderRadius: '12px',
@@ -90,10 +90,31 @@ export function HeaderPill() {
     const theme = useTheme();
     const mode = theme.palette.mode;
     const intl = useIntl();
+    const postHog = usePostHog();
+    const toastDismissed = useAgentSkillsStore(
+        (s) => s.toastDismissed
+    );
+
+    if (!toastDismissed) {
+        return null;
+    }
 
     return (
         <Tooltip
-            title={<TooltipContent />}
+            title={
+                <TooltipContent
+                    onClick={() => {
+                        postHog.capture('AgentSkills:Click', {
+                            source: 'popover',
+                        });
+                        window.open(
+                            AGENT_SKILLS_URL,
+                            '_blank',
+                            'noopener,noreferrer'
+                        );
+                    }}
+                />
+            }
             placement="bottom-end"
             enterDelay={200}
             leaveDelay={150}
@@ -112,6 +133,11 @@ export function HeaderPill() {
                 target="_blank"
                 rel="noopener noreferrer"
                 underline="none"
+                onClick={() =>
+                    postHog.capture('AgentSkills:Click', {
+                        source: 'pill',
+                    })
+                }
                 sx={{
                     'display': 'inline-flex',
                     'alignItems': 'center',

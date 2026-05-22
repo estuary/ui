@@ -9,9 +9,9 @@ import {
     useTheme,
 } from '@mui/material';
 
+import { usePostHog } from '@posthog/react';
 import { NavArrowRight, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
-import { useLocalStorage } from 'react-use';
 
 import {
     AGENT_SKILLS_URL,
@@ -19,9 +19,9 @@ import {
     LINK_COLOR,
     SECONDARY_TEXT_COLOR,
     SHIMMER_STYLES,
+    useAgentSkillsStore,
 } from 'src/components/AgentSkills/shared';
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
-import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 const toastIn = keyframes`
     0%   { opacity: 0; transform: translateY(16px) scale(0.98); }
@@ -32,16 +32,16 @@ export function Toast() {
     const theme = useTheme();
     const mode = theme.palette.mode;
     const intl = useIntl();
-    const [dismissed, setDismissed] = useLocalStorage(
-        LocalStorageKeys.AGENT_SKILLS_TOAST_DISMISSED,
-        false
-    );
+    const postHog = usePostHog();
+    const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
+    const dismissToast = useAgentSkillsStore((s) => s.dismissToast);
 
-    if (dismissed) {
+    if (toastDismissed) {
         return null;
     }
 
     const handleClick = () => {
+        postHog.capture('AgentSkills:Click', { source: 'toast' });
         window.open(AGENT_SKILLS_URL, '_blank', 'noopener,noreferrer');
     };
 
@@ -204,7 +204,10 @@ export function Toast() {
                     size="small"
                     onClick={(e) => {
                         e.stopPropagation();
-                        setDismissed(true);
+                        postHog.capture('AgentSkills:Click', {
+                            source: 'dismiss',
+                        });
+                        dismissToast();
                     }}
                     aria-label={intl.formatMessage({
                         id: 'agentSkills.dismiss',
