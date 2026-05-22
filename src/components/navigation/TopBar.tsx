@@ -2,6 +2,7 @@ import { Divider, Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import { useTheme } from '@mui/material/styles';
 
+import { HeaderPill } from 'src/components/AgentSkills/HeaderPill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
 import HelpMenu from 'src/components/menus/HelpMenu';
 import UserMenu from 'src/components/menus/UserMenu';
@@ -40,6 +41,8 @@ const Topbar = () => {
                 </Stack>
 
                 <Stack direction="row" sx={{ alignItems: 'center' }}>
+                    <HeaderPill />
+
                     <UpdateAlert />
 
                     <HelpMenu />
