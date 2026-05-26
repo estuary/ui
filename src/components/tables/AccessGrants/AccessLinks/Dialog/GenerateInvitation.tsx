@@ -21,7 +21,10 @@ import { usePostHog } from '@posthog/react';
 import { useIntl } from 'react-intl';
 import { useMutation } from 'urql';
 
-import { CREATE_INVITE_LINK } from 'src/api/gql/inviteLinks';
+import {
+    CREATE_INVITE_LINK_BY_CAPABILITY,
+    isCreateInviteLinkCapability,
+} from 'src/api/gql/inviteLinks';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
 import PrefixedName from 'src/components/inputs/PrefixedName';
 import useValidatePrefix from 'src/components/inputs/PrefixedName/useValidatePrefix';
@@ -82,8 +85,6 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
     const postHog = usePostHog();
     const { palette } = useTheme();
 
-    const [{ fetching }, createMutation] = useMutation(CREATE_INVITE_LINK);
-
     const {
         handlers: prefixHandlers,
         name,
@@ -99,6 +100,11 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
 
     const [capability, setCapability] = useState<Capability>(
         capabilityOptions[0]
+    );
+    const [{ fetching }, createMutation] = useMutation(
+        CREATE_INVITE_LINK_BY_CAPABILITY[
+            isCreateInviteLinkCapability(capability) ? capability : 'read'
+        ]
     );
     const [singleUse, setSingleUse] = useState(true);
     const [accessScope, setAccessScope] = useState<string | null>(null);
@@ -119,7 +125,6 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
 
         const result = await createMutation({
             catalogPrefix,
-            capability,
             singleUse,
         });
 

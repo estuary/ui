@@ -56,16 +56,19 @@ export function useInviteLinks(afterCursor?: string) {
     };
 }
 
-export const CREATE_INVITE_LINK = graphql(`
-    mutation CreateInviteLink(
+// The capability is interpolated as an unquoted GraphQL enum literal in a
+// fixed per-value mutation rather than passed as a `$capability: Capability!`
+// variable. This keeps the query string from referring to the `Capability`
+// enum type by name, so a backend rename of the type cannot break parsing.
+const CREATE_INVITE_LINK_ADMIN = graphql(`
+    mutation CreateInviteLinkAdmin(
         $catalogPrefix: Prefix!
-        $capability: Capability!
         $singleUse: Boolean!
         $detail: String
     ) {
         createInviteLink(
             catalogPrefix: $catalogPrefix
-            capability: $capability
+            capability: admin
             singleUse: $singleUse
             detail: $detail
         ) {
@@ -78,6 +81,69 @@ export const CREATE_INVITE_LINK = graphql(`
         }
     }
 `);
+
+const CREATE_INVITE_LINK_READ = graphql(`
+    mutation CreateInviteLinkRead(
+        $catalogPrefix: Prefix!
+        $singleUse: Boolean!
+        $detail: String
+    ) {
+        createInviteLink(
+            catalogPrefix: $catalogPrefix
+            capability: read
+            singleUse: $singleUse
+            detail: $detail
+        ) {
+            token
+            catalogPrefix
+            capability
+            singleUse
+            detail
+            createdAt
+        }
+    }
+`);
+
+const CREATE_INVITE_LINK_WRITE = graphql(`
+    mutation CreateInviteLinkWrite(
+        $catalogPrefix: Prefix!
+        $singleUse: Boolean!
+        $detail: String
+    ) {
+        createInviteLink(
+            catalogPrefix: $catalogPrefix
+            capability: write
+            singleUse: $singleUse
+            detail: $detail
+        ) {
+            token
+            catalogPrefix
+            capability
+            singleUse
+            detail
+            createdAt
+        }
+    }
+`);
+
+export const CREATE_INVITE_LINK_BY_CAPABILITY = {
+    admin: CREATE_INVITE_LINK_ADMIN,
+    read: CREATE_INVITE_LINK_READ,
+    write: CREATE_INVITE_LINK_WRITE,
+} as const;
+
+export type CreateInviteLinkCapability =
+    keyof typeof CREATE_INVITE_LINK_BY_CAPABILITY;
+
+export function isCreateInviteLinkCapability(
+    value: unknown
+): value is CreateInviteLinkCapability {
+    return (
+        value === 'admin' ||
+        value === 'read' ||
+        value === 'write'
+    );
+}
 
 export const DELETE_INVITE_LINK = graphql(`
     mutation DeleteInviteLink($token: UUID!) {
