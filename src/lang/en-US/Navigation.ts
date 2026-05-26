@@ -23,6 +23,10 @@ export const Navigation: Record<string, string> = {
     'helpMenu.status': `Status`,
     'helpMenu.status.link': `https://status.estuary.dev/`,
 
+    'dataFlows.tab.sources': `Sources`,
+    'dataFlows.tab.collections': `Collections`,
+    'dataFlows.tab.destinations': `Destinations`,
+
     'accountMenu.ariaLabel': `Open Account Menu`,
     'accountMenu.tooltip': `My Account`,
     'accountMenu.emailVerified': `verified`,

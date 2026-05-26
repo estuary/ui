@@ -141,6 +141,24 @@ const collections = {
     },
 };
 
+const dataFlows = {
+    title: 'routeTitle.dataFlows',
+    path: 'data-flows',
+    fullPath: '/data-flows',
+    sources: {
+        path: 'sources',
+        fullPath: '/data-flows/sources',
+    },
+    collections: {
+        path: 'collections',
+        fullPath: '/data-flows/collections',
+    },
+    destinations: {
+        path: 'destinations',
+        fullPath: '/data-flows/destinations',
+    },
+};
+
 const dataPlaneAuth = {
     title: 'routeTitle.dataPlaneAuthReq',
     path: '/data-plane-auth-req',
@@ -267,6 +285,7 @@ export const authenticatedRoutes = {
     admin,
     captures,
     collections,
+    dataFlows,
     dataPlaneAuth,
     express,
     home,

@@ -14,6 +14,7 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.captureEdit': `Edit Capture`,
     'routeTitle.captures': `${CommonMessages['terms.sources']}`,
     'routeTitle.collections': `Collections`,
+    'routeTitle.dataFlows': `Data Flows`,
     'routeTitle.collectionCreate': `New Transformation`,
     'routeTitle.collectionDetails': `Collection Details`,
     'routeTitle.dataPlaneAuthReq': `Data Plane Authorization Checkpoint`,

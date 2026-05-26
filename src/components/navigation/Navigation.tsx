@@ -22,9 +22,7 @@ import {
     Building2,
     Check,
     ChevronsLeft,
-    CloudDownload,
-    CloudUpload,
-    Database,
+    Shuffle,
     Ellipsis,
     HelpCircle,
     Home,
@@ -128,21 +126,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         isOpen={open}
                     />
                     <ListItemLink
-                        icon={<CloudUpload />}
-                        title={authenticatedRoutes.captures.title}
-                        link={authenticatedRoutes.captures.path}
-                        isOpen={open}
-                    />
-                    <ListItemLink
-                        icon={<Database />}
-                        title={authenticatedRoutes.collections.title}
-                        link={authenticatedRoutes.collections.path}
-                        isOpen={open}
-                    />
-                    <ListItemLink
-                        icon={<CloudDownload />}
-                        title={authenticatedRoutes.materializations.title}
-                        link={authenticatedRoutes.materializations.path}
+                        icon={<Shuffle />}
+                        title={authenticatedRoutes.dataFlows.title}
+                        link={authenticatedRoutes.dataFlows.path}
                         isOpen={open}
                     />
                     <ListItemLink

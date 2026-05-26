@@ -31,6 +31,9 @@ function PageContainer({
     const theme = useTheme();
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const header = useTopBarStore((state) => state.header);
+    const headerBreadcrumbs = useTopBarStore(
+        (state) => state.headerBreadcrumbs
+    );
 
     const notification = useNotificationStore(
         notificationStoreSelectors.notification
@@ -147,6 +150,12 @@ function PageContainer({
                     <Building2 />
                     <Typography>
                         {selectedTenant.replace(/\/$/, '')}
+                        {headerBreadcrumbs?.map((crumb) => (
+                            <span key={crumb}>
+                                {' / '}
+                                {intl.formatMessage({ id: crumb })}
+                            </span>
+                        ))}
                         {' / '}
                         <Box component="span" fontWeight="bold">
                             {intl.formatMessage({ id: header })}

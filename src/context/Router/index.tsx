@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import {
     createBrowserRouter,
     createRoutesFromElements,
+    Navigate,
     Route,
     RouterProvider,
     Routes,
@@ -30,6 +31,7 @@ import { OAuthPopup } from 'src/hooks/forks/react-use-oauth2/components';
 import Admin from 'src/pages/Admin';
 import Auth from 'src/pages/Auth';
 import Collections from 'src/pages/Collections';
+import DataFlows from 'src/pages/DataFlows';
 import DataPlaneAuthReq from 'src/pages/DataPlaneAuthReq';
 import GqlExplorer from 'src/pages/dev/gqlExplorer';
 import TestJsonForms from 'src/pages/dev/TestJsonForms';
@@ -227,6 +229,20 @@ const router = createBrowserRouter(
                                 </DashboardWelcomeProvider>
                             </Suspense>
                         }
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.dataFlows.path}
+                        element={
+                            <Navigate
+                                to={authenticatedRoutes.dataFlows.sources.fullPath}
+                                replace
+                            />
+                        }
+                    />
+                    <Route
+                        path={`${authenticatedRoutes.dataFlows.path}/:tab`}
+                        element={<DataFlows />}
                     />
 
                     <Route

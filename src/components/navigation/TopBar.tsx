@@ -98,8 +98,7 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
                         <MenuItem
                             onClick={() => {
                                 void navigate(
-                                    authenticatedRoutes.collections.create
-                                        .fullPath
+                                    `${authenticatedRoutes.collections.create.fullPath}/new`
                                 );
                             }}
                         >

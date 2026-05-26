@@ -9,8 +9,12 @@ import produce from 'immer';
 import { GlobalStoreNames } from 'src/stores/names';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
-const getInitialStateData = (): Pick<TopBarState, 'header' | 'headerLink'> => ({
+const getInitialStateData = (): Pick<
+    TopBarState,
+    'header' | 'headerBreadcrumbs' | 'headerLink'
+> => ({
     header: '',
+    headerBreadcrumbs: undefined,
     headerLink: undefined,
 });
 
@@ -27,6 +31,16 @@ const getInitialState = (
             }),
             false,
             'Top Bar Header Updated'
+        );
+    },
+
+    setHeaderBreadcrumbs: (val) => {
+        set(
+            produce((state: TopBarState) => {
+                state.headerBreadcrumbs = val;
+            }),
+            false,
+            'Top Bar Header Breadcrumbs Updated'
         );
     },
 
