@@ -13,7 +13,6 @@ import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
 import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
-import AdminConnectors from 'src/components/admin/Connectors';
 import AdminSettings from 'src/components/admin/Settings';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import HasSupportRoleGuard from 'src/components/shared/guards/SupportRole';
@@ -720,18 +719,6 @@ const router = createBrowserRouter(
                             />
                         </Route>
 
-                        <Route
-                            path={authenticatedRoutes.admin.connectors.path}
-                            element={
-                                <ErrorBoundary
-                                    FallbackComponent={ErrorImporting}
-                                >
-                                    <Suspense fallback={null}>
-                                        <AdminConnectors />
-                                    </Suspense>
-                                </ErrorBoundary>
-                            }
-                        />
                         <Route
                             path={authenticatedRoutes.admin.billing.path}
                             element={
