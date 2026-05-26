@@ -187,6 +187,18 @@ const getInitialState = (
     evaluateDiscoveredBindings: (draftSpecResponse) => {
         set(
             produce((state: BindingState) => {
+                // Preserve which collections were marked for backfill so we can
+                // re-apply after discover replaces all binding UUIDs.
+                const previouslyBackfilledCollections = new Set(
+                    state.backfilledBindings
+                        .map(
+                            (uuid) =>
+                                state.resourceConfigs[uuid]?.meta.collectionName
+                        )
+                        .filter(Boolean)
+                );
+
+                // Start clearing everything out to prepare for all the new stuff coming in
                 state.bindings = {};
                 state.restrictedDiscoveredCollections = [];
 
@@ -197,20 +209,37 @@ const getInitialState = (
                 state.backfillAllBindings = false;
 
                 // TODO (perf) - we could probably go ahead and figure out the sort
-                //  while also going through and initializing but I am really tired right now
+                //      while also going through and initializing but I am really tired right now
+                //  ALSO - the call to updateBackfilledBindingState requires getting an array of
+                //      everything which maybe could be produces in the loop. However, we might
+                //      just be better off rethinking how we compute all this stuff? Q2 2026
 
                 // Go through the discovered bindings BEFORE sorting so that
                 //  we know the original indices of all the bindings.
                 state.resourceConfigs = {};
                 draftSpecResponse.data[0].spec.bindings.forEach(
                     (binding: any, index: number) => {
-                        initializeAndGenerateUUID(state, binding, index);
+                        const { UUID, collection } = initializeAndGenerateUUID(
+                            state,
+                            binding,
+                            index
+                        );
+
+                        if (previouslyBackfilledCollections.has(collection)) {
+                            state.backfilledBindings.push(UUID);
+                        }
                     }
                 );
 
                 // Now that we have gone through the initialized everything we are safe to sort
                 state.resourceConfigs = sortResourceConfigs(
                     state.resourceConfigs
+                );
+
+                // Now we can update the "all backfill" kind of state
+                updateBackfilledBindingState(
+                    state,
+                    Object.entries(state.resourceConfigs)
                 );
 
                 state.discoveredCollections = Object.values(
