@@ -2,6 +2,7 @@ import type { MouseEvent } from 'react';
 
 import {
     Box,
+    Chip,
     IconButton,
     keyframes,
     Link,
@@ -119,22 +120,21 @@ export function Toast() {
                             mb: 0.5,
                         }}
                     >
-                        <Box
-                            component="span"
+                        <Chip
+                            label={intl.formatMessage({
+                                id: 'agentSkills.badge',
+                            })}
+                            size="small"
                             sx={{
                                 fontSize: 10,
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
                                 color: LINK_COLOR,
-                                background: '#eaf0ff',
-                                px: '7px',
+                                bgcolor: '#eaf0ff',
+                                height: 'auto',
                                 py: '2px',
-                                borderRadius: '999px',
-                                lineHeight: 1.4,
                             }}
-                        >
-                            {intl.formatMessage({ id: 'agentSkills.badge' })}
-                        </Box>
+                        />
                         <Typography
                             component="span"
                             sx={{

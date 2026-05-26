@@ -1,3 +1,5 @@
+import type { PersistOptions } from 'zustand/middleware';
+
 import { keyframes } from '@mui/material';
 
 import { create } from 'zustand';
@@ -10,13 +12,19 @@ interface AgentSkillsState {
     dismissToast: () => void;
 }
 
+// v0 - {"state":{"toastDismissed":false},"version":0}
+const persistOptions: PersistOptions<AgentSkillsState> = {
+    name: LocalStorageKeys.AGENT_SKILLS_TOAST_DISMISSED,
+    version: 0,
+};
+
 export const useAgentSkillsStore = create<AgentSkillsState>()(
     persist(
         (set) => ({
             toastDismissed: false,
             dismissToast: () => set({ toastDismissed: true }),
         }),
-        { name: LocalStorageKeys.AGENT_SKILLS_TOAST_DISMISSED }
+        persistOptions
     )
 );
 

@@ -91,9 +91,7 @@ export function HeaderPill() {
     const mode = theme.palette.mode;
     const intl = useIntl();
     const postHog = usePostHog();
-    const toastDismissed = useAgentSkillsStore(
-        (s) => s.toastDismissed
-    );
+    const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
 
     if (!toastDismissed) {
         return null;
@@ -150,9 +148,7 @@ export function HeaderPill() {
                     'border': '1px solid rgba(46,100,235,0.22)',
                     'fontSize': 13,
                     'fontWeight': 600,
-                    'cursor': 'pointer',
-                    'transition':
-                        'background 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease',
+                    'transition': 'transform 200ms ease',
                     '&:hover': {
                         background:
                             'linear-gradient(135deg, rgba(46,100,235,0.14) 0%, rgba(54,197,176,0.16) 100%)',

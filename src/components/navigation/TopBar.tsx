@@ -41,9 +41,9 @@ const Topbar = () => {
                 </Stack>
 
                 <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <HeaderPill />
-
                     <UpdateAlert />
+
+                    <HeaderPill />
 
                     <HelpMenu />
 
