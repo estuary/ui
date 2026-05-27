@@ -309,7 +309,7 @@ export const Workflows: Record<string, string> = {
     'destinationLayout.dialog.matchSourceStructure.customize': `Add a prefix or suffix to table or schema names`,
     'destinationLayout.dialog.skipCommonDefaults.label': `Skip common defaults (public, dbo)`,
     'destinationLayout.dialog.cta.addBindings': `Add Collections`,
-    'destinationLayout.dialog.cta.sourceCapture': `Select Source Capture`,
+    'destinationLayout.dialog.cta.sourceCapture': `Set Source Capture`,
 
     // Used dynamically in ui/src/components/materialization/targetNaming/StrategyOption.tsx
     'destinationLayout.strategy.matchSourceStructure.label': `Match source structure`,
