@@ -68,7 +68,7 @@ export default function TargetNamingDialog({
             <DialogContent>
                 <Stack spacing={2}>
                     {alertIntlKey ? (
-                        <AlertBox severity="warning" short>
+                        <AlertBox severity="info" short>
                             {intl.formatMessage({ id: alertIntlKey })}
                         </AlertBox>
                     ) : null}

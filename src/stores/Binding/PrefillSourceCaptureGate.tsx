@@ -114,6 +114,7 @@ export function PrefillSourceCaptureGate({ response, children }: Props) {
             readyToPrefill &&
             sourceCaptureTargetSchemaSupported ? (
                 <TargetNamingDialog
+                    alertIntlKey="destinationLayout.dialog.alert"
                     confirmIntlKey="cta.continue"
                     open={true}
                     // This will DROP all the prefilling on purpose. The user has to provide the settings

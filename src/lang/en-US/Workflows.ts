@@ -297,6 +297,7 @@ export const Workflows: Record<string, string> = {
 
     // Destination Layout dialog (new targetNaming model)
     'destinationLayout.title': `Default Naming Convention`,
+    'destinationLayout.dialog.alert': `Before we can materialize we need some settings.`,
     'destinationLayout.dialog.title': `Destination Layout`,
     'destinationLayout.dialog.message': `Controls how collection names are mapped to destination tables and schemas. Becomes the default setting for newly added bindings.`,
     'destinationLayout.dialog.subtitle': `How should source schemas map to your destination? This applies to newly added bindings. You can override individual bindings later.`,
