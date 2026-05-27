@@ -81,7 +81,7 @@ export default function TargetNamingDialog({
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={onCancel} color="inherit" disabled={saving}>
+                <Button onClick={onCancel} disabled={saving} variant="outlined">
                     {intl.formatMessage({ id: 'cta.cancel' })}
                 </Button>
                 <Button
