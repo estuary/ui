@@ -61,10 +61,6 @@ function BindingsEditorAdd({
         setOpen(typeof args === 'boolean' ? args : !open);
     };
 
-    const handleAddClick = () => {
-        toggleDialog(true);
-    };
-
     return (
         <>
             <Tooltip placement="top" title={tooltip}>
@@ -73,7 +69,7 @@ function BindingsEditorAdd({
                     aria-expanded={open ? 'true' : undefined}
                     aria-haspopup="true"
                     disabled={disabled}
-                    onClick={handleAddClick}
+                    onClick={() => toggleDialog(true)}
                     sx={{ borderRadius: 0 }}
                     variant="text"
                 >
