@@ -1,4 +1,5 @@
-import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
+import type { PostgrestError } from '@supabase/postgrest-js';
+import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import { useState } from 'react';
 
@@ -8,6 +9,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
 import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
 import { BASE_ERROR } from 'src/services/supabase';
+import { hasOwnProperty, isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 export function useModifyAlertSubscription(
     closeDialog: () => void,
@@ -22,8 +24,12 @@ export function useModifyAlertSubscription(
         (state) => state.setSaveErrors
     );
 
-    const subscription = useAlertSubscriptionsStore(
-        (state) => state.subscription
+    const catalogPrefix = useAlertSubscriptionsStore(
+        (state) => state.catalogPrefix
+    );
+
+    const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.mutableSubscriptionMetadata
     );
 
     const [loading, setLoading] = useState(false);
@@ -32,44 +38,87 @@ export function useModifyAlertSubscription(
         setLoading(true);
         setServerError([]);
 
-        const subscriptionInput: BaseAlertSubscriptionMutationInput = {
-            email: subscription.email,
-            prefix: subscription.catalogPrefix,
-        };
+        if (catalogPrefix.length === 0) {
+            // TODO: Add LogRocket event for this error scenario.
+            return Promise.reject('Catalog prefix undefined.');
+        }
 
-        const response = deletionTrigger
-            ? await deleteSubscription(subscriptionInput)
-            : await upsertSubscription({
-                  ...subscriptionInput,
-                  alertTypes: subscription.alertTypes,
-              });
+        if (
+            !hasOwnProperty(mutableSubscriptionMetadata, catalogPrefix) ||
+            mutableSubscriptionMetadata[catalogPrefix].subscriptions.length ===
+                0
+        ) {
+            // TODO: Add LogRocket event for this success scenario.
+            return Promise.resolve();
+        }
 
-        // The create could be undefined and this was easier to mark than tweak logic
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const error =
-            response?.invalid && !response?.error
-                ? {
-                      ...BASE_ERROR,
-                      message: intl.formatMessage(
-                          {
-                              id: 'alerts.config.dialog.error.generic',
-                          },
-                          {
-                              operation: intl.formatMessage({
-                                  id: deletionTrigger
-                                      ? 'alerts.config.dialog.error.term.delete'
-                                      : 'alerts.config.dialog.error.term.modify',
-                              }),
-                          }
-                      ),
-                  }
-                : response?.error;
+        const subscriptionQueries: Promise<AlertSubscriptionResponse>[] =
+            mutableSubscriptionMetadata[catalogPrefix].subscriptions.map(
+                (subscription) => {
+                    const {
+                        alertTypes,
+                        catalogPrefix: prefix,
+                        email,
+                    } = subscription;
 
-        if (!error) {
+                    return deletionTrigger || subscription.deleted
+                        ? deleteSubscription({ email, prefix })
+                        : upsertSubscription({
+                              alertTypes,
+                              email,
+                              prefix,
+                          });
+                }
+            );
+
+        const serverErrors: PostgrestError[] = [];
+
+        Promise.allSettled(subscriptionQueries).then(
+            (responses) => {
+                responses.forEach((response) => {
+                    if (isPromiseFulfilledResult(response)) {
+                        if (!response.value) {
+                            // TODO: Add LogRocket event for this error scenario.
+                            return;
+                        }
+
+                        // TODO: Detect single subscription deletions when evaluating the operation performed.
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                        const serverError =
+                            response.value?.invalid && response.value?.error
+                                ? {
+                                      ...BASE_ERROR,
+                                      message: intl.formatMessage(
+                                          {
+                                              id: 'alerts.config.dialog.error.generic',
+                                          },
+                                          {
+                                              operation: intl.formatMessage({
+                                                  id: deletionTrigger
+                                                      ? 'alerts.config.dialog.error.term.delete'
+                                                      : 'alerts.config.dialog.error.term.modify',
+                                              }),
+                                          }
+                                      ),
+                                  }
+                                : response.value?.error;
+
+                        serverErrors.push(serverError);
+                    } else {
+                        // TODO: Add LogRocket event for this error scenario.
+                    }
+                });
+            },
+            () => {
+                // TODO: Add LogRocket event for this error scenario.
+            }
+        );
+
+        if (serverErrors.length !== 0) {
             closeDialog();
         }
 
-        setServerError([error]);
+        setServerError(serverErrors);
         setLoading(false);
     };
 

@@ -209,6 +209,8 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             true
                         );
 
+                        // If the alert subscription does not exist in the database,
+                        // it can be removed entirely from the array of mutable subscriptions.
                         if (immutableSubscriptionIndex === -1) {
                             state.mutableSubscriptionMetadata[
                                 state.catalogPrefix
@@ -222,6 +224,10 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             return;
                         }
 
+                        // If the alert subscription does exist in the database,
+                        // the subscription metadata should be preserved in the
+                        // array of mutable subscriptions with it marked for deletion
+                        // via the corresponding GraphQL endpoint.
                         state.mutableSubscriptionMetadata[
                             state.catalogPrefix
                         ].subscriptions[mutableSubscriptionIndex].deleted =
