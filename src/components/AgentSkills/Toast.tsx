@@ -30,7 +30,11 @@ const toastIn = keyframes`
     100% { opacity: 1; transform: translateY(0)    scale(1);    }
 `;
 
-export function Toast() {
+interface ToastProps {
+    docsPanelOpen?: boolean;
+}
+
+export function Toast({ docsPanelOpen }: ToastProps) {
     const theme = useTheme();
     const mode = theme.palette.mode;
     const intl = useIntl();
@@ -38,7 +42,9 @@ export function Toast() {
     const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
     const dismissToast = useAgentSkillsStore((s) => s.dismissToast);
 
-    if (toastDismissed) {
+    // If the docs panel is open just hide the toast. That way it cannot cover up
+    //  the cookie consent banner in the docs.
+    if (toastDismissed || docsPanelOpen) {
         return null;
     }
 
