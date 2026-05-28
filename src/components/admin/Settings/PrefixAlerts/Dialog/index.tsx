@@ -14,6 +14,7 @@ import {
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
+import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
 import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
@@ -76,7 +77,13 @@ const AlertSubscriptionDialog = ({
                 </Stack>
             </DialogContent>
 
-            <DialogActions>
+            <DialogActions
+                style={{
+                    justifyContent: 'space-between',
+                }}
+            >
+                <DeleteButton closeDialog={() => closeDialog()} />
+
                 <Stack direction="row" spacing={1}>
                     <Button
                         variant="outlined"
