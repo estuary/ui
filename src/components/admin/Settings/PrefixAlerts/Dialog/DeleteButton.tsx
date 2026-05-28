@@ -55,7 +55,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
             size="small"
             variant="outlined"
         >
-            {intl.formatMessage({ id: 'cta.delete' })}
+            {intl.formatMessage({ id: 'alerts.config.dialog.cta.deleteAll' })}
         </Button>
     );
 };
