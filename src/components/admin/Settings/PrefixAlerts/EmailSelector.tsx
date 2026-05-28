@@ -142,6 +142,14 @@ function EmailSelector({
                         subscriptionId
                     );
                 }}
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === 'Tab') {
+                        setSubscribedEmail(
+                            sanitizeEmail(inputValue),
+                            subscriptionId
+                        );
+                    }
+                }}
                 onInputChange={(_event, value) => {
                     setInputValue(value);
                 }}
