@@ -23,6 +23,7 @@ import {
     useAgentSkillsStore,
 } from 'src/components/AgentSkills/shared';
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
+import { toastIndex } from 'src/context/Theme';
 
 const toastIn = keyframes`
     0%   { opacity: 0; transform: translateY(16px) scale(0.98); }
@@ -64,7 +65,7 @@ export function Toast() {
                 'display': 'block',
                 'animation': `${toastIn} 750ms cubic-bezier(.2,.9,.25,1) 1s both`,
                 'transition': 'transform 200ms ease, box-shadow 200ms ease',
-                'zIndex': theme.zIndex.snackbar,
+                'zIndex': toastIndex,
                 '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow:
