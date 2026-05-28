@@ -63,9 +63,9 @@ export const logRocketEvent = (
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     //  We use LogRocket for support so we can be a bit less strict with what
-    //  we pass back as only engineers, support, etc. have access and the only
-    //  this it is used for is support of the product. If you want to track something
-    //  we are firing in LogRocket in PostHog then you need to ensure the `eventProperties`
+    //  we pass back as only engineers, support, etc. have access and it is only
+    //  used for support of the product. If you want to track something that is firing
+    //  in LogRocket in PostHog then you need to ensure the `eventProperties`
     //  are safe to pass to PostHog.
     // !!! NO AUTO POSTHOG TRACKING HERE !!!
     // !!! NO AUTO POSTHOG TRACKING HERE !!!

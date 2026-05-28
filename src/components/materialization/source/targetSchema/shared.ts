@@ -2,6 +2,7 @@ import type { AutoCompleteOptionForIncompatibleSchemaChange } from 'src/componen
 
 import { getTypedAutoCompleteDefaults } from 'src/components/shared/AutoComplete/DefaultProps';
 
+// TODO (target naming:post migration:remove)
 export const choices = [
     'abort',
     'backfill',

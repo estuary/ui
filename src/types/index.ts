@@ -353,6 +353,35 @@ export interface SourceCaptureDef {
     targetNaming?: TargetSchemas;
 }
 
+// New root-level target naming model (flow PR #2809).
+// Lives at spec.targetNaming (not inside spec.source).
+export type TargetNamingStrategy =
+    | {
+          strategy: 'matchSourceStructure';
+          tableTemplate?: string;
+          schemaTemplate?: string;
+      }
+    | {
+          strategy: 'singleSchema';
+          schema?: string;
+          tableTemplate?: string;
+      }
+    | {
+          strategy: 'prefixTableNames';
+          schema?: string;
+          skipCommonDefaults?: boolean;
+          tableTemplate?: string;
+      };
+
+// Tracks which model version was present in the spec at load time.
+// rootTargetNaming  = spec.targetNaming object at root (new model, always used on create)
+// sourceTargetNaming = spec.source.targetNaming string (old model, preserved on edit)
+// null = connector does not support x_schema_name; feature not applicable
+export type TargetNamingModel =
+    | 'rootTargetNaming'
+    | 'sourceTargetNaming'
+    | null;
+
 export interface BaseButtonProps {
     disabled?: boolean;
 }

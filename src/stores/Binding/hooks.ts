@@ -366,6 +366,7 @@ export const useBinding_sourceCaptureFlags = () =>
             sourceCaptureDeltaUpdatesSupported: hasLength(
                 state.resourceConfigPointers?.x_delta_updates
             ),
+            // TODO (target naming:post migration:update) - we can rename/move this so it is not tied to sourceCapture
             sourceCaptureTargetSchemaSupported: hasLength(
                 state.resourceConfigPointers?.x_schema_name
             ),
