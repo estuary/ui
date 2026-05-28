@@ -368,7 +368,9 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                 set(
                     produce((state: AlertSubscriptionState) => {
                         state.subscription.catalogPrefix = value;
-                        state.catalogPrefix = value;
+                        state.catalogPrefix = value.endsWith('/')
+                            ? value
+                            : `${value}/`;
                         state.prefixErrorsExist = Boolean(errors);
                     }),
                     false,

@@ -23,9 +23,6 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
 
     return staticPrefix ? (
         <TextField
-            InputProps={{
-                sx: { borderRadius: 3 },
-            }}
             disabled
             fullWidth
             label={intl.formatMessage({
@@ -33,16 +30,22 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
             })}
             required
             size="small"
+            slotProps={{
+                input: {
+                    sx: { borderRadius: 3 },
+                },
+            }}
             value={staticPrefix}
             variant="outlined"
         />
     ) : (
         <PrefixedName
+            allowBlankName
+            allowEndSlash
             label={intl.formatMessage({
                 id: 'common.tenant',
             })}
             onChange={setSubscribedPrefix}
-            prefixOnly
             required
             size="small"
             validateOnLoad
