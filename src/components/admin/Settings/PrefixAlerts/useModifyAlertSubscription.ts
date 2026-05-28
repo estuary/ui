@@ -114,7 +114,7 @@ export function useModifyAlertSubscription(
             }
         );
 
-        if (serverErrors.length !== 0) {
+        if (serverErrors.length > 0) {
             closeDialog();
         }
 
