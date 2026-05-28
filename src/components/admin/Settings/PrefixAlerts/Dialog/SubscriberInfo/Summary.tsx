@@ -25,7 +25,7 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
     const theme = useTheme();
     const intl = useIntl();
 
-    const { duplicateSubscriptionEmails, emptyEmailDetected } =
+    const { duplicateSubscriptionEmails } =
         useEvaluateSubscriptionIneligibility();
     const [alertTypeResponse] = useGetAlertTypes();
 
@@ -65,9 +65,8 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
     );
 
     const ineligibleSubscription =
-        (emptyEmailDetected && subscription.email.length === 0) ||
-        (duplicateSubscriptionEmails.length > 0 &&
-            duplicateSubscriptionEmails.includes(subscription.email));
+        duplicateSubscriptionEmails.length > 0 &&
+        duplicateSubscriptionEmails.includes(subscription.email);
 
     return (
         <AccordionSummary
@@ -109,8 +108,7 @@ const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
                               })}
                     </Typography>
 
-                    {ineligibleSubscription &&
-                    subscription.email.length !== 0 ? (
+                    {ineligibleSubscription ? (
                         <WarningCircle
                             style={{
                                 color: theme.palette.error.main,
