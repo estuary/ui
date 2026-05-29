@@ -23,13 +23,18 @@ import {
     useAgentSkillsStore,
 } from 'src/components/AgentSkills/shared';
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
+import { toastIndex } from 'src/context/Theme';
 
 const toastIn = keyframes`
     0%   { opacity: 0; transform: translateY(16px) scale(0.98); }
     100% { opacity: 1; transform: translateY(0)    scale(1);    }
 `;
 
-export function Toast() {
+interface ToastProps {
+    docsPanelOpen?: boolean;
+}
+
+export function Toast({ docsPanelOpen }: ToastProps) {
     const theme = useTheme();
     const mode = theme.palette.mode;
     const intl = useIntl();
@@ -37,7 +42,9 @@ export function Toast() {
     const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
     const dismissToast = useAgentSkillsStore((s) => s.dismissToast);
 
-    if (toastDismissed) {
+    // If the docs panel is open just hide the toast. That way it cannot cover up
+    //  the cookie consent banner in the docs.
+    if (toastDismissed || docsPanelOpen) {
         return null;
     }
 
@@ -64,7 +71,7 @@ export function Toast() {
                 'display': 'block',
                 'animation': `${toastIn} 750ms cubic-bezier(.2,.9,.25,1) 1s both`,
                 'transition': 'transform 200ms ease, box-shadow 200ms ease',
-                'zIndex': theme.zIndex.snackbar,
+                'zIndex': toastIndex,
                 '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow:

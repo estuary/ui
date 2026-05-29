@@ -84,7 +84,7 @@ function AppLayout() {
                 />
             </Box>
 
-            <Toast />
+            <Toast docsPanelOpen={displaySidePanel} />
 
             <Box
                 sx={{
