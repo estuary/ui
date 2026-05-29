@@ -14,7 +14,6 @@ const getInitialStateData = (): Pick<
     | 'error'
     | 'sourceCapture'
     | 'saving'
-    | 'prefilledCapture'
     | 'deltaUpdates'
     | 'deltaUpdatesHasError'
     | 'targetSchema'
@@ -24,7 +23,6 @@ const getInitialStateData = (): Pick<
     error: null,
     sourceCapture: undefined,
     saving: false,
-    prefilledCapture: undefined,
     deltaUpdates: undefined,
     deltaUpdatesHasError: false,
     targetSchema: undefined,
@@ -53,16 +51,6 @@ const getInitialState = (
             }),
             false,
             'Source Capture Set'
-        );
-    },
-
-    setPrefilledCapture: (value: SourceCaptureState['sourceCapture']) => {
-        set(
-            produce((state: SourceCaptureState) => {
-                state.prefilledCapture = value;
-            }),
-            false,
-            'Source Prefilled Capture Set'
         );
     },
 

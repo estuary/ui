@@ -1,4 +1,4 @@
-import type { Schema, SourceCaptureDef } from 'src/types';
+import type { Schema, SourceCaptureDef, TargetNamingStrategy } from 'src/types';
 import type { Projections } from 'src/types/schemaModels';
 
 import produce from 'immer';
@@ -90,6 +90,19 @@ export const addOrRemoveSourceCapture = (
     } else {
         delete schema.source;
         delete schema.sourceCapture;
+    }
+
+    return schema;
+};
+
+export const addOrRemoveTargetNaming = (
+    schema: Schema,
+    targetNamingStrategy: TargetNamingStrategy | null | undefined
+) => {
+    if (targetNamingStrategy) {
+        schema.targetNaming = targetNamingStrategy;
+    } else {
+        delete schema.targetNaming;
     }
 
     return schema;

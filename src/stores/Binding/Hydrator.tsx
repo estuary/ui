@@ -1,6 +1,7 @@
+import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { BaseComponentProps } from 'src/types';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useConnectorTag_nullable } from 'src/context/ConnectorTag';
 import { useEntityType } from 'src/context/EntityContext';
@@ -17,7 +18,7 @@ import {
     useBinding_setHydrated,
     useBinding_setHydrationErrorsExist,
 } from 'src/stores/Binding/hooks';
-import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { PrefillSourceCaptureGate } from 'src/stores/Binding/PrefillSourceCaptureGate';
 
 export const BindingHydrator = ({ children }: BaseComponentProps) => {
     // We want to manually control this in a REF to not fire extra effect calls
@@ -38,9 +39,9 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     const setActive = useBinding_setActive();
     const hydrateState = useBinding_hydrateState();
 
-    const setPrefilledCapture = useSourceCaptureStore(
-        (state) => state.setPrefilledCapture
-    );
+    const [prefillResponse, setPrefillResponse] = useState<
+        LiveSpecsExt_MaterializeOrTransform[] | null
+    >(null);
 
     useEffect(() => {
         if (workflow && connectorTagState) {
@@ -62,14 +63,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
             )
                 .then(
                     (response) => {
-                        if (
-                            response &&
-                            response.length === 1 &&
-                            response[0].spec_type === 'capture' &&
-                            !editWorkflow
-                        ) {
-                            setPrefilledCapture(response[0].catalog_name);
-                        }
+                        setPrefillResponse(response);
                     },
                     (error) => {
                         logRocketConsole(
@@ -96,7 +90,6 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         setActive,
         setHydrated,
         setHydrationErrorsExist,
-        setPrefilledCapture,
         workflow,
     ]);
 
@@ -104,8 +97,11 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         return null;
     }
 
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <>{children}</>;
+    return (
+        <PrefillSourceCaptureGate response={prefillResponse}>
+            {children}
+        </PrefillSourceCaptureGate>
+    );
 };
 
 export default BindingHydrator;

@@ -319,8 +319,20 @@ export type BoolFilter = {
 export type Capability =
   | 'admin'
   /** Note that the discriminants here align with those in the database type. */
+  | 'none'
   | 'read'
   | 'write';
+
+export type CapabilityBit =
+  | 'Assume'
+  | 'CatalogRead'
+  | 'CreateGrant'
+  | 'CreateInviteLink'
+  | 'Delegate'
+  | 'DeleteGrant'
+  | 'JournalAppend'
+  | 'JournalRead'
+  | 'SpecEdit';
 
 export type CardPaymentMethodDetails = {
   __typename?: 'CardPaymentMethodDetails';
@@ -1143,9 +1155,21 @@ export type PrefixFilter = {
 /** A prefix to which the user is authorized. */
 export type PrefixRef = {
   __typename?: 'PrefixRef';
+  /** Fine-grained capabilities the user has at this prefix. */
+  capabilities: Array<CapabilityBit>;
   /** The prefix to which the user is authorized. */
   prefix: Scalars['Prefix']['output'];
-  /** The capability granted to the user for this prefix. */
+  /**
+   * The literal legacy `capability` column value of the grant(s) that
+   * emitted this prefix (max'd if multiple grants land at the same
+   * prefix). Reports `none` for prefixes whose authorization comes
+   * entirely from the `bundles` column rather than the legacy column.
+   *
+   * Exists solely so the dashboard's read/write/admin prefix-bucket
+   * store keeps working until it migrates to consuming `capabilities`
+   * directly. Once that migration lands, this field and its derivation
+   * can be deleted.
+   */
   userCapability: Capability;
 };
 

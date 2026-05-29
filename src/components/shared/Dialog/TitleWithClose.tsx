@@ -9,12 +9,14 @@ import { useIntl } from 'react-intl';
 export interface DialogTitleProps extends BaseComponentProps {
     id: string;
     onClose: () => void;
+    disabled?: boolean;
     sx?: SxProps<Theme>;
 }
 
 function DialogTitleWithClose({
     children,
     onClose,
+    disabled,
     ...other
 }: DialogTitleProps) {
     const intl = useIntl();
@@ -24,6 +26,7 @@ function DialogTitleWithClose({
             {children}
             <IconButton
                 aria-label={intl.formatMessage({ id: 'cta.close' })}
+                disabled={disabled}
                 onClick={onClose}
                 sx={{
                     color: (theme) => theme.palette.text.primary,

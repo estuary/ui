@@ -1,27 +1,32 @@
 import { Box } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 interface Props {
     messageID: string;
-    // EmphasisComponent: any;
+    emphasisContent?: Record<string, any>;
 }
 
-function MessageWithEmphasis({ messageID }: Props) {
-    // const Wrapper = EmphasisComponent;
+function MessageWithEmphasis({ emphasisContent, messageID }: Props) {
+    const intl = useIntl();
 
     return (
-        <FormattedMessage
-            id={messageID}
-            tagName={Box}
-            values={{
-                emphasis: (
-                    <b>
-                        <FormattedMessage id={`${messageID}.emphasis`} />
-                    </b>
-                ),
-            }}
-        />
+        <Box id={messageID}>
+            {intl.formatMessage(
+                { id: messageID },
+                emphasisContent
+                    ? emphasisContent
+                    : {
+                          emphasis: (
+                              <b>
+                                  {intl.formatMessage({
+                                      id: `${messageID}.emphasis`,
+                                  })}
+                              </b>
+                          ),
+                      }
+            )}
+        </Box>
     );
 }
 
