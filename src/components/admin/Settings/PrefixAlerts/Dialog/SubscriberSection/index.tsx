@@ -7,6 +7,7 @@ import { Stack, Typography } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import SubscriberInfo from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo';
+import SummaryEmpty from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/SummaryEmpty';
 import AddButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/AddButton';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useGetAlertTypes } from 'src/context/AlertType';
@@ -75,13 +76,17 @@ const SubscriberSection = () => {
                 <AddButton />
             </Stack>
 
-            {targetSubscriptionMetadata.subscriptions.map(
-                (subscription, index) => (
-                    <SubscriberInfo
-                        subscription={subscription}
-                        key={`${subscription.catalogPrefix}-${subscription.email}-${index}`}
-                    />
+            {targetSubscriptionMetadata.subscriptions.length > 0 ? (
+                targetSubscriptionMetadata.subscriptions.map(
+                    (subscription, index) => (
+                        <SubscriberInfo
+                            subscription={subscription}
+                            key={`${subscription.catalogPrefix}-${subscription.email}-${index}`}
+                        />
+                    )
                 )
+            ) : (
+                <SummaryEmpty />
             )}
         </Stack>
     );
