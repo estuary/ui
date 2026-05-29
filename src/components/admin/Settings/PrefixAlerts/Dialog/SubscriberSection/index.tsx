@@ -31,13 +31,17 @@ const SubscriberSection = () => {
         (state) => state.initializeAlertTypeOptions
     );
 
-    const targetSubscriptionMetadata: SubscriptionMetadata = useMemo(
-        () =>
-            hasOwnProperty(mutableSubscriptionMetadata, catalogPrefix)
-                ? mutableSubscriptionMetadata[catalogPrefix]
-                : { settings: {}, subscriptions: [] },
-        [catalogPrefix, mutableSubscriptionMetadata]
-    );
+    const targetSubscriptionMetadata: SubscriptionMetadata = useMemo(() => {
+        if (hasOwnProperty(mutableSubscriptionMetadata, catalogPrefix)) {
+            return {
+                ...mutableSubscriptionMetadata[catalogPrefix],
+                subscriptions: mutableSubscriptionMetadata[
+                    catalogPrefix
+                ].subscriptions.filter(({ deleted }) => !deleted),
+            };
+        }
+        return { settings: {}, subscriptions: [] };
+    }, [catalogPrefix, mutableSubscriptionMetadata]);
 
     useEffect(() => {
         if (error) {
@@ -62,9 +66,8 @@ const SubscriberSection = () => {
                     {intl.formatMessage(
                         { id: 'alerts.config.dialog.label.subscribers' },
                         {
-                            count: targetSubscriptionMetadata.subscriptions.filter(
-                                ({ deleted }) => !deleted
-                            ).length,
+                            count: targetSubscriptionMetadata.subscriptions
+                                .length,
                         }
                     )}
                 </Typography>
@@ -72,14 +75,14 @@ const SubscriberSection = () => {
                 <AddButton />
             </Stack>
 
-            {targetSubscriptionMetadata.subscriptions
-                .filter(({ deleted }) => !deleted)
-                .map((subscription, index) => (
+            {targetSubscriptionMetadata.subscriptions.map(
+                (subscription, index) => (
                     <SubscriberInfo
                         subscription={subscription}
                         key={`${subscription.catalogPrefix}-${subscription.email}-${index}`}
                     />
-                ))}
+                )
+            )}
         </Stack>
     );
 };
