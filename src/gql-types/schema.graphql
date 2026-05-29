@@ -305,8 +305,21 @@ enum Capability {
   """
   Note that the discriminants here align with those in the database type.
   """
+  none
   read
   write
+}
+
+enum CapabilityBit {
+  Assume
+  CatalogRead
+  CreateGrant
+  CreateInviteLink
+  Delegate
+  DeleteGrant
+  JournalAppend
+  JournalRead
+  SpecEdit
 }
 
 type CardPaymentMethodDetails {
@@ -1105,10 +1118,23 @@ input PrefixFilter {
 
 """A prefix to which the user is authorized."""
 type PrefixRef {
+  """Fine-grained capabilities the user has at this prefix."""
+  capabilities: [CapabilityBit!]!
+
   """The prefix to which the user is authorized."""
   prefix: Prefix!
 
-  """The capability granted to the user for this prefix."""
+  """
+  The literal legacy `capability` column value of the grant(s) that
+  emitted this prefix (max'd if multiple grants land at the same
+  prefix). Reports `none` for prefixes whose authorization comes
+  entirely from the `bundles` column rather than the legacy column.
+  
+  Exists solely so the dashboard's read/write/admin prefix-bucket
+  store keeps working until it migrates to consuming `capabilities`
+  directly. Once that migration lands, this field and its derivation
+  can be deleted.
+  """
   userCapability: Capability!
 }
 
