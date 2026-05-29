@@ -8,7 +8,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 
 import { hasOwnProperty } from 'src/utils/misc-utils';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
@@ -70,8 +70,8 @@ const getSubscriptionIndex = (
         !state.catalogPrefix ||
         !subscriptionId ||
         !hasOwnProperty(state, subscriptionMetadataTarget) ||
-        !state[subscriptionMetadataTarget] ||
-        !hasOwnProperty(state.mutableSubscriptionMetadata, state.catalogPrefix)
+        isEmpty(state[subscriptionMetadataTarget]) ||
+        !hasOwnProperty(state[subscriptionMetadataTarget], state.catalogPrefix)
     ) {
         return -1;
     }
