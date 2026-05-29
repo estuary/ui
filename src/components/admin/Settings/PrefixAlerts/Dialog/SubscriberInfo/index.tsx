@@ -6,6 +6,7 @@ import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/Subs
 import Details from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/Details';
 import Summary from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/Summary';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { useEvaluateSubscriptionIneligibility } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateSubscriptionIneligibility';
 import { defaultOutline, defaultOutlineColor_hovered } from 'src/context/Theme';
 
 const SubscriberInfo = ({
@@ -17,6 +18,9 @@ const SubscriberInfo = ({
         (state) => state.toggleSubscriptionViewingStatus
     );
 
+    const { duplicateSubscriptionEmails, emptyEmailDetected } =
+        useEvaluateSubscriptionIneligibility();
+
     return (
         <Accordion
             expanded={subscription.viewing}
@@ -25,6 +29,10 @@ const SubscriberInfo = ({
                 'backgroundColor':
                     theme.palette.mode === 'dark' ? 'transparent' : 'white',
                 'border': defaultOutline[theme.palette.mode],
+                'borderWidth':
+                    emptyEmailDetected && subscription.email.length === 0
+                        ? 3
+                        : undefined,
                 'borderRadius': '6px',
                 '&:hover': {
                     borderColor:
@@ -46,6 +54,7 @@ const SubscriberInfo = ({
                 }}
             >
                 <Summary
+                    duplicateSubscriptionEmails={duplicateSubscriptionEmails}
                     expanded={subscription.viewing}
                     subscription={subscription}
                 />

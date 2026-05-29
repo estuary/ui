@@ -68,6 +68,11 @@ export interface SubscriberAccordionProps {
     expanded?: boolean;
 }
 
+export interface SubscriberAccordionSummaryProps
+    extends SubscriberAccordionProps {
+    duplicateSubscriptionEmails: string[];
+}
+
 export interface SubscriptionDependentProps {
     subscription: MutableAlertSubscription;
 }

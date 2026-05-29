@@ -1,4 +1,4 @@
-import type { SubscriberAccordionProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { SubscriberAccordionSummaryProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { ChipDisplay } from 'src/components/shared/ChipList/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
 
@@ -16,17 +16,18 @@ import {
 import { NavArrowDown, NavArrowRight, WarningCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-import { useEvaluateSubscriptionIneligibility } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateSubscriptionIneligibility';
 import ChipList from 'src/components/shared/ChipList';
 import { useGetAlertTypes } from 'src/context/AlertType';
 import { sortByAlertType } from 'src/utils/misc-utils';
 
-const Summary = ({ expanded, subscription }: SubscriberAccordionProps) => {
+const Summary = ({
+    duplicateSubscriptionEmails,
+    expanded,
+    subscription,
+}: SubscriberAccordionSummaryProps) => {
     const theme = useTheme();
     const intl = useIntl();
 
-    const { duplicateSubscriptionEmails } =
-        useEvaluateSubscriptionIneligibility();
     const [alertTypeResponse] = useGetAlertTypes();
 
     const alertTypeDefs: AlertTypeInfo[] = useMemo(
