@@ -4,8 +4,6 @@ import { useTheme } from '@mui/material/styles';
 
 import { HeaderPill } from 'src/components/AgentSkills/HeaderPill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
-import HelpMenu from 'src/components/menus/HelpMenu';
-import UserMenu from 'src/components/menus/UserMenu';
 import PageTitle from 'src/components/navigation/PageTitle';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
@@ -44,10 +42,6 @@ const Topbar = () => {
                     <UpdateAlert />
 
                     <HeaderPill />
-
-                    <HelpMenu />
-
-                    <UserMenu iconColor={theme.palette.text.primary} />
 
                     <SidePanelDocsOpenButton />
                 </Stack>
