@@ -16,13 +16,14 @@ import {
 
 const DataMovementSetting = ({
     prefix,
-    setting,
+    config,
+    targetSetting,
 }: GlobalSettingProps<{ stalledFor: string }>) => {
     const intl = useIntl();
 
     const { options } = useSettingIntervalOptions();
 
-    const initializeGlobalPrefixSettings = useAlertSubscriptionsStore(
+    const setGlobalPrefixSettings = useAlertSubscriptionsStore(
         (state) => state.setGlobalPrefixSettings
     );
 
@@ -50,13 +51,16 @@ const DataMovementSetting = ({
                 onChange={(_event: React.SyntheticEvent, value: string) => {
                     const formattedValue = toUnconventionalTimeFormat(value);
 
-                    if (formattedValue !== 'none') {
-                        initializeGlobalPrefixSettings({
-                            dataMovementStalled: {
-                                condition: { stalledFor: formattedValue },
-                            },
-                        });
-                    }
+                    setGlobalPrefixSettings(
+                        formattedValue !== 'none'
+                            ? {
+                                  [targetSetting]: {
+                                      condition: { stalledFor: formattedValue },
+                                  },
+                              }
+                            : {},
+                        targetSetting
+                    );
                 }}
                 options={Object.keys(options)}
                 renderInput={({
@@ -79,7 +83,7 @@ const DataMovementSetting = ({
                     />
                 )}
                 value={fromUnconventionalTimeFormat(
-                    setting?.condition.stalledFor
+                    config?.condition.stalledFor
                 )}
             />
         </Stack>

@@ -9,7 +9,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import { cloneDeep, isEmpty } from 'lodash';
+import { cloneDeep, isEmpty, omit } from 'lodash';
 
 import { hasOwnProperty } from 'src/utils/misc-utils';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
@@ -48,7 +48,7 @@ interface AlertSubscriptionState {
     setEmailErrorsExist: (
         value: AlertSubscriptionState['emailErrorsExist']
     ) => void;
-    setGlobalPrefixSettings: (value: Schema) => void;
+    setGlobalPrefixSettings: (value: Schema, targetSetting?: string) => void;
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
     ) => void;
@@ -182,18 +182,21 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'alert type options initialized'
                 ),
 
-            setGlobalPrefixSettings: (value) =>
+            setGlobalPrefixSettings: (value, targetSetting) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        if (!state.catalogPrefix || isEmpty(value)) {
+                        if (!state.catalogPrefix) {
                             return;
                         }
+
+                        const valueEmpty = isEmpty(value);
 
                         if (
                             !hasOwnProperty(
                                 state.mutableSubscriptionMetadata,
                                 state.catalogPrefix
-                            )
+                            ) &&
+                            !valueEmpty
                         ) {
                             state.mutableSubscriptionMetadata[
                                 state.catalogPrefix
@@ -207,12 +210,20 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
 
                         state.mutableSubscriptionMetadata[
                             state.catalogPrefix
-                        ].settings = {
-                            ...state.mutableSubscriptionMetadata[
-                                state.catalogPrefix
-                            ].settings,
-                            ...value,
-                        };
+                        ].settings =
+                            valueEmpty && targetSetting
+                                ? omit(
+                                      state.mutableSubscriptionMetadata[
+                                          state.catalogPrefix
+                                      ].settings,
+                                      targetSetting
+                                  )
+                                : {
+                                      ...state.mutableSubscriptionMetadata[
+                                          state.catalogPrefix
+                                      ].settings,
+                                      ...value,
+                                  };
                     }),
                     false,
                     'global prefix settings set'

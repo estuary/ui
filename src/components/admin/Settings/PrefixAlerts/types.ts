@@ -4,6 +4,7 @@ import type { ReducedAlertSubscription } from 'src/api/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
 import type { Schema } from 'src/types';
 import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
+import type { AlertConfigKeys } from 'src/utils/notification-utils';
 
 export interface AlertSubscriptionDialogProps extends PrefixFieldProps {
     descriptionId: string;
@@ -29,12 +30,6 @@ export interface AlertTypeSelectorProps extends AlertTypeFieldProps {
     options: AlertTypeInfo[];
 }
 
-export interface BaseGlobalSetting<T> {
-    condition: T;
-    autoDisable?: boolean;
-    enabled?: boolean;
-}
-
 export interface DialogActionProps {
     closeDialog: () => void;
 }
@@ -52,9 +47,16 @@ export interface EmailListFieldProps extends SubscriptionDependentProps {
     staticEmail?: string;
 }
 
+interface GlobalSettingConfig<T> {
+    condition: T;
+    autoDisable?: boolean;
+    enabled?: boolean;
+}
+
 export interface GlobalSettingProps<T> {
+    config: GlobalSettingConfig<T> | undefined;
     prefix: string;
-    setting: BaseGlobalSetting<T> | undefined;
+    targetSetting: AlertConfigKeys;
 }
 
 export interface MutableAlertSubscription extends ReducedAlertSubscription {

@@ -8,6 +8,7 @@ import DataMovementSetting from 'src/components/admin/Settings/PrefixAlerts/Dial
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { defaultOutline } from 'src/context/Theme';
 import { hasOwnProperty } from 'src/utils/misc-utils';
+import { AlertConfigKeys } from 'src/utils/notification-utils';
 
 const GlobalSettings = () => {
     const intl = useIntl();
@@ -53,8 +54,13 @@ const GlobalSettings = () => {
             </Stack>
 
             <DataMovementSetting
+                config={
+                    targetGlobalSettings?.[
+                        AlertConfigKeys.DATA_MOVEMENT_STALLED
+                    ]
+                }
                 prefix={catalogPrefix}
-                setting={targetGlobalSettings?.['dataMovementStalled']}
+                targetSetting={AlertConfigKeys.DATA_MOVEMENT_STALLED}
             />
         </Stack>
     );

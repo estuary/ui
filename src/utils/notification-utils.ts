@@ -2,6 +2,10 @@ import type { OptionsObject } from 'notistack';
 import type { ReducedAlertSubscription } from 'src/api/types';
 import type { SubscriptionMetadataDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 
+export enum AlertConfigKeys {
+    DATA_MOVEMENT_STALLED = 'dataMovementStalled',
+}
+
 export const snackbarSettings: OptionsObject = {
     anchorOrigin: {
         vertical: 'top',
