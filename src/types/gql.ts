@@ -1,4 +1,8 @@
-import type { AlertType, AlertTypeInfo } from 'src/gql-types/graphql';
+import type {
+    AlertConfigsFilter,
+    AlertType,
+    AlertTypeInfo,
+} from 'src/gql-types/graphql';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
 export interface AlertDetailsRecipients {
@@ -95,6 +99,12 @@ export interface ActiveAlertCountQueryResponse {
 
 export type AlertHistoryForTaskQueryResponse = DefaultAlertingQueryResponse;
 export type AlertingOverviewQueryResponse = AlertHistoryForTaskQueryResponse;
+
+export interface AlertConfigQueryInput {
+    after?: string;
+    filter?: AlertConfigsFilter;
+    first?: number;
+}
 
 export interface AlertHistoryQueryResponse {
     liveSpecs: {

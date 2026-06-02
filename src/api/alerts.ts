@@ -1,9 +1,13 @@
-import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
+import type {
+    AlertConfigQueryResponse,
+    ReducedAlertSubscriptionQueryResponse,
+} from 'src/api/types';
 import type {
     DataProcessingAlert,
     AlertSubscription as LegacyAlertSubscription,
 } from 'src/types';
 import type {
+    AlertConfigQueryInput,
     AlertSubscriptionMutationInput,
     AlertSubscriptionsBy,
     AlertTypeQueryResponse,
@@ -21,6 +25,38 @@ import {
     TABLES,
     updateSupabase,
 } from 'src/services/supabase';
+
+const AlertConfigQuery = gql<AlertConfigQueryResponse, AlertConfigQueryInput>`
+    query AlertConfigs(
+        $filter: AlertConfigsFilter
+        $after: String
+        $first: Int
+    ) {
+        alertConfigs(filter: $filter, after: $after, first: $first) {
+            edges {
+                node {
+                    catalogPrefixOrName
+                    config
+                    createdAt
+                    detail
+                    effective {
+                        config
+                        provenance {
+                            source
+                        }
+                    }
+                    id
+                    lastModifiedBy
+                    updatedAt
+                }
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+    }
+`;
 
 const AlertSubscriptionCreateMutation = gql<
     { catalogPrefix: string; email: string },
@@ -176,6 +212,7 @@ const getTaskNotification = async (catalogName: string) => {
 };
 
 export {
+    AlertConfigQuery,
     AlertSubscriptionCreateMutation,
     AlertSubscriptionDeleteMutation,
     AlertSubscriptionQuery,

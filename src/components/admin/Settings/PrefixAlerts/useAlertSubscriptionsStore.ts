@@ -2,6 +2,7 @@ import type { PostgrestError } from '@supabase/postgrest-js';
 import type { ReducedAlertSubscription } from 'src/api/types';
 import type { SubscriptionMetadataDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
+import type { Schema } from 'src/types';
 import type { CombinedError } from 'urql';
 
 import { create } from 'zustand';
@@ -25,6 +26,7 @@ interface AlertSubscriptionState {
         values: AlertTypeInfo[],
         fetching: boolean
     ) => void;
+    initializeGlobalPrefixSettings: (value: Schema) => void;
     initializeMutableSubscriptionMetadata: () => void;
     markSubscriptionForDeletion: (
         catalogPrefix: string,
@@ -178,6 +180,37 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     }),
                     false,
                     'alert type options initialized'
+                ),
+
+            initializeGlobalPrefixSettings: (value) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (!state.catalogPrefix || isEmpty(value)) {
+                            return;
+                        }
+
+                        if (
+                            !hasOwnProperty(
+                                state.mutableSubscriptionMetadata,
+                                state.catalogPrefix
+                            )
+                        ) {
+                            state.mutableSubscriptionMetadata[
+                                state.catalogPrefix
+                            ] = {
+                                settings: value,
+                                subscriptions: [],
+                            };
+
+                            return;
+                        }
+
+                        state.mutableSubscriptionMetadata[
+                            state.catalogPrefix
+                        ].settings = value;
+                    }),
+                    false,
+                    'global prefix settings initialized'
                 ),
 
             initializeMutableSubscriptionMetadata: () =>
@@ -410,7 +443,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             !previousValue;
                     }),
                     false,
-                    'subscription metadata set'
+                    'subscription viewing status toggled'
                 ),
         };
     }, devtoolsOptions(name))
