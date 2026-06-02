@@ -15,6 +15,7 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
+// TODO (target naming:post migration:remove)
 export default function TargetSchemaUpdateWrapper() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();

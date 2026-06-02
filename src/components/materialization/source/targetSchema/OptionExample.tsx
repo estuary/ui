@@ -9,6 +9,7 @@ import { TARGET_SCHEMA_HIGHLIGHT_CLASS } from 'src/components/materialization/so
 
 const labelStyling = { fontWeight: 500, fontSize: 12 };
 
+// TODO (target naming:post migration:remove)
 function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
     const intl = useIntl();
     const theme = useTheme();
@@ -24,7 +25,7 @@ function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
                 alignItems: 'center',
                 fontSize: 12,
                 [`& .${TARGET_SCHEMA_HIGHLIGHT_CLASS}`]: {
-                    fontWeight: 700,
+                    fontWeight: 500,
                     fontSize: 12.5,
                 },
             }}
@@ -52,12 +53,16 @@ function OptionExample({ example, baseTableMessageID }: OptionExampleProps) {
                 }}
             >
                 <Typography component="span" sx={labelStyling}>
-                    {intl.formatMessage({ id: 'schemaMode.data.table' })}
+                    {intl.formatMessage({
+                        id: 'destinationLayout.example.table.label',
+                    })}
                 </Typography>
                 <code>{example.table}</code>
                 <Typography component="span">|</Typography>
                 <Typography component="span" sx={labelStyling}>
-                    {intl.formatMessage({ id: 'schemaMode.data.schema' })}
+                    {intl.formatMessage({
+                        id: 'destinationLayout.example.schema.label',
+                    })}
                 </Typography>
                 <code>{example.schema}</code>
             </Stack>

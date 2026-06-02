@@ -6,7 +6,7 @@ import { Button, Tooltip } from '@mui/material';
 
 import { useStore } from 'zustand';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AddDialog from 'src/components/shared/Entity/AddDialog';
 import { useEntityType } from 'src/context/EntityContext';
@@ -69,13 +69,14 @@ function BindingsEditorAdd({
                     aria-expanded={open ? 'true' : undefined}
                     aria-haspopup="true"
                     disabled={disabled}
-                    onClick={toggleDialog}
+                    onClick={() => toggleDialog(true)}
                     sx={{ borderRadius: 0 }}
                     variant="text"
                 >
-                    <FormattedMessage id="cta.add" />
+                    {intl.formatMessage({ id: 'cta.add' })}
                 </Button>
             </Tooltip>
+
             <AddDialog
                 entity="collection"
                 id={DIALOG_ID}

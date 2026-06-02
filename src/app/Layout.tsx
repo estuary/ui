@@ -8,6 +8,7 @@ import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
+import { Toast } from 'src/components/AgentSkills/Toast';
 import Navigation from 'src/components/navigation/Navigation';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import PageContainer from 'src/components/shared/PageContainer';
@@ -82,6 +83,8 @@ function AppLayout() {
                     onNavigationToggle={toggleNavigationDrawer}
                 />
             </Box>
+
+            <Toast docsPanelOpen={displaySidePanel} />
 
             <Box
                 sx={{

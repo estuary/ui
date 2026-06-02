@@ -55,7 +55,7 @@ function BindingsSelectorToggle({ bindingUUID }: BindingsSelectorToggleProps) {
                 title={
                     <SpecPropInvalidSetting
                         currentSetting={currentSetting}
-                        invalidSettingsMessageId="specPropUpdater.error.message.toggle"
+                        invalidSettingsMessageId="specPropUpdater.error.message.withRemove"
                         updateDraftedSetting={() =>
                             updateDraft(bindingUUID, false, true)
                         }

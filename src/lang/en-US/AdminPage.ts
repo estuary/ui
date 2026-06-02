@@ -137,7 +137,6 @@ export const AdminPage: Record<string, string> = {
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.notifications': `Notifications`,
-    'admin.tabs.connectors': `Connectors`,
     'admin.tabs.api': `CLI-API`,
     'admin.tabs.billing': `Billing`,
     'admin.tabs.settings': `Settings`,

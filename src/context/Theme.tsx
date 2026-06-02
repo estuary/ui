@@ -344,6 +344,9 @@ const accordionButton = zIndexIncrement * 5;
 // Need to make the sticky header be on top
 export const headerLinkIndex = zIndexIncrement * 30;
 
+// Want to make sure it is near the top but right under the screen disable overlay
+export const toastIndex = zIndexIncrement * 35;
+
 // Popper component z index must be greater than 100, the z index of the reflex splitter component.
 export const popperIndex = zIndexIncrement * 500;
 

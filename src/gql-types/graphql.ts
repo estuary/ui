@@ -26,6 +26,16 @@ export type Scalars = {
   JSON: { input: any; output: any; }
   /** A scalar that can represent any JSON Object value. */
   JSONObject: { input: any; output: any; }
+  /**
+   * ISO 8601 calendar date without timezone.
+   * Format: %Y-%m-%d
+   *
+   * # Examples
+   *
+   * * `1994-11-13`
+   * * `2000-02-24`
+   */
+  NaiveDate: { input: any; output: any; }
   Name: { input: any; output: any; }
   Prefix: { input: any; output: any; }
   /**
@@ -295,6 +305,12 @@ export type AutoDiscoverStatus = {
   pendingPublish?: Maybe<AutoDiscoverOutcome>;
 };
 
+export type BillingPaymentMethodPayload = {
+  __typename?: 'BillingPaymentMethodPayload';
+  paymentMethods: Array<PaymentMethod>;
+  primaryPaymentMethod?: Maybe<PaymentMethod>;
+};
+
 export type BoolFilter = {
   eq?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -303,14 +319,39 @@ export type BoolFilter = {
 export type Capability =
   | 'admin'
   /** Note that the discriminants here align with those in the database type. */
+  | 'none'
   | 'read'
   | 'write';
+
+export type CapabilityBit =
+  | 'Assume'
+  | 'CatalogRead'
+  | 'CreateGrant'
+  | 'CreateInviteLink'
+  | 'Delegate'
+  | 'DeleteGrant'
+  | 'JournalAppend'
+  | 'JournalRead'
+  | 'SpecEdit';
+
+export type CardPaymentMethodDetails = {
+  __typename?: 'CardPaymentMethodDetails';
+  brand?: Maybe<Scalars['String']['output']>;
+  expMonth: Scalars['Int']['output'];
+  expYear: Scalars['Int']['output'];
+  last4?: Maybe<Scalars['String']['output']>;
+};
 
 export type CatalogType =
   | 'capture'
   | 'collection'
   | 'materialization'
   | 'test';
+
+export type ChargeStatus =
+  | 'FAILED'
+  | 'PENDING'
+  | 'SUCCEEDED';
 
 /** Result of checking storage health for a catalog prefix. */
 export type ConnectionHealthTestResult = {
@@ -482,6 +523,11 @@ export type Controller = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type CreateBillingSetupIntentPayload = {
+  __typename?: 'CreateBillingSetupIntentPayload';
+  clientSecret: Scalars['String']['output'];
+};
+
 /** Result of creating a storage mapping. */
 export type CreateStorageMappingResult = {
   __typename?: 'CreateStorageMappingResult';
@@ -545,6 +591,11 @@ export type DataPlaneEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: DataPlane;
+};
+
+export type DateFilter = {
+  gt?: InputMaybe<Scalars['NaiveDate']['input']>;
+  lt?: InputMaybe<Scalars['NaiveDate']['input']>;
 };
 
 /** A capture binding that has changed as a result of a discover */
@@ -652,6 +703,63 @@ export type InviteLinkEdge = {
 export type InviteLinksFilter = {
   catalogPrefix?: InputMaybe<PrefixFilter>;
   singleUse?: InputMaybe<BoolFilter>;
+};
+
+export type Invoice = {
+  __typename?: 'Invoice';
+  amountDue?: Maybe<Scalars['Int']['output']>;
+  dateEnd: Scalars['String']['output'];
+  dateStart: Scalars['String']['output'];
+  extra: Scalars['JSON']['output'];
+  hostedInvoiceUrl?: Maybe<Scalars['String']['output']>;
+  invoicePdf?: Maybe<Scalars['String']['output']>;
+  invoiceType: InvoiceType;
+  lineItems: Scalars['JSON']['output'];
+  paymentDetails?: Maybe<InvoicePaymentDetails>;
+  status?: Maybe<Scalars['String']['output']>;
+  subtotal: Scalars['Int']['output'];
+};
+
+export type InvoiceConnection = {
+  __typename?: 'InvoiceConnection';
+  /** A list of edges. */
+  edges: Array<InvoiceEdge>;
+  /** A list of nodes. */
+  nodes: Array<Invoice>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type InvoiceEdge = {
+  __typename?: 'InvoiceEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: Invoice;
+};
+
+export type InvoiceFilter = {
+  dateEnd?: InputMaybe<DateFilter>;
+  dateStart?: InputMaybe<DateFilter>;
+  invoiceType?: InputMaybe<InvoiceTypeFilter>;
+};
+
+export type InvoicePaymentDetails = {
+  __typename?: 'InvoicePaymentDetails';
+  card?: Maybe<CardPaymentMethodDetails>;
+  receiptUrl?: Maybe<Scalars['String']['output']>;
+  status: ChargeStatus;
+  usBankAccount?: Maybe<UsBankAccountPaymentMethodDetails>;
+};
+
+export type InvoiceType =
+  | 'FINAL'
+  | 'MANUAL'
+  | 'PREVIEW';
+
+export type InvoiceTypeFilter = {
+  eq?: InputMaybe<InvoiceType>;
 };
 
 /** The status of a publication. */
@@ -840,6 +948,7 @@ export type MutationRoot = {
    * an existing subscription for the same prefix and email address.
    */
   createAlertSubscription: AlertSubscription;
+  createBillingSetupIntent: CreateBillingSetupIntentPayload;
   /**
    * Create an invite link that grants access to a catalog prefix.
    *
@@ -859,6 +968,7 @@ export type MutationRoot = {
   createStorageMapping: CreateStorageMappingResult;
   /** Delete an alert subscription that exactly matches the given prefix and email. */
   deleteAlertSubscription: AlertSubscription;
+  deleteBillingPaymentMethod: BillingPaymentMethodPayload;
   /**
    * Delete an invite link, revoking it so it can no longer be redeemed.
    *
@@ -870,6 +980,7 @@ export type MutationRoot = {
    * catalog prefix with the specified capability.
    */
   redeemInviteLink: RedeemInviteLinkResult;
+  setBillingPaymentMethod: BillingPaymentMethodPayload;
   /**
    * Check storage health for a given catalog prefix and storage definition.
    *
@@ -924,6 +1035,11 @@ export type MutationRootCreateAlertSubscriptionArgs = {
 };
 
 
+export type MutationRootCreateBillingSetupIntentArgs = {
+  tenant: Scalars['String']['input'];
+};
+
+
 export type MutationRootCreateInviteLinkArgs = {
   capability: Capability;
   catalogPrefix: Scalars['Prefix']['input'];
@@ -945,6 +1061,12 @@ export type MutationRootDeleteAlertSubscriptionArgs = {
 };
 
 
+export type MutationRootDeleteBillingPaymentMethodArgs = {
+  paymentMethodId: Scalars['String']['input'];
+  tenant: Scalars['String']['input'];
+};
+
+
 export type MutationRootDeleteInviteLinkArgs = {
   token: Scalars['UUID']['input'];
 };
@@ -952,6 +1074,12 @@ export type MutationRootDeleteInviteLinkArgs = {
 
 export type MutationRootRedeemInviteLinkArgs = {
   token: Scalars['UUID']['input'];
+};
+
+
+export type MutationRootSetBillingPaymentMethodArgs = {
+  paymentMethodId: Scalars['String']['input'];
+  tenant: Scalars['String']['input'];
 };
 
 
@@ -995,6 +1123,20 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']['output']>;
 };
 
+export type PaymentMethod = {
+  __typename?: 'PaymentMethod';
+  billingDetails: PaymentMethodBillingDetails;
+  card?: Maybe<CardPaymentMethodDetails>;
+  id: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  usBankAccount?: Maybe<UsBankAccountPaymentMethodDetails>;
+};
+
+export type PaymentMethodBillingDetails = {
+  __typename?: 'PaymentMethodBillingDetails';
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 /**
  * Information on the config updates performed by the controller.
  * This does not include any information on user-initiated config updates.
@@ -1013,9 +1155,21 @@ export type PrefixFilter = {
 /** A prefix to which the user is authorized. */
 export type PrefixRef = {
   __typename?: 'PrefixRef';
+  /** Fine-grained capabilities the user has at this prefix. */
+  capabilities: Array<CapabilityBit>;
   /** The prefix to which the user is authorized. */
   prefix: Scalars['Prefix']['output'];
-  /** The capability granted to the user for this prefix. */
+  /**
+   * The literal legacy `capability` column value of the grant(s) that
+   * emitted this prefix (max'd if multiple grants land at the same
+   * prefix). Reports `none` for prefixes whose authorization comes
+   * entirely from the `bundles` column rather than the legacy column.
+   *
+   * Exists solely so the dashboard's read/write/admin prefix-bucket
+   * store keeps working until it migrates to consuming `capabilities`
+   * directly. Once that migration lands, this field and its derivation
+   * can be deleted.
+   */
   userCapability: Capability;
 };
 
@@ -1175,6 +1329,7 @@ export type QueryRoot = {
    * Results are paginated and sorted by catalog_prefix.
    */
   storageMappings: StorageMappingConnection;
+  tenant?: Maybe<Tenant>;
 };
 
 
@@ -1256,6 +1411,11 @@ export type QueryRootStorageMappingsArgs = {
   by: StorageMappingsBy;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootTenantArgs = {
+  name: Scalars['String']['input'];
 };
 
 /** Result of redeeming an invite link. */
@@ -1540,6 +1700,28 @@ export type StorageMappingsBy = {
   underPrefix?: InputMaybe<Scalars['Prefix']['input']>;
 };
 
+export type Tenant = {
+  __typename?: 'Tenant';
+  billing: TenantBilling;
+  name: Scalars['String']['output'];
+};
+
+export type TenantBilling = {
+  __typename?: 'TenantBilling';
+  invoices: InvoiceConnection;
+  paymentMethods: Array<PaymentMethod>;
+  primaryPaymentMethod?: Maybe<PaymentMethod>;
+};
+
+
+export type TenantBillingInvoicesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<InvoiceFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+};
+
 /** Result of the `updateAlertConfig` mutation. */
 export type UpdateAlertConfigResult = {
   __typename?: 'UpdateAlertConfigResult';
@@ -1555,6 +1737,13 @@ export type UpdateStorageMappingResult = {
   catalogPrefix: Scalars['Prefix']['output'];
   /** Whether a republish is required because the primary storage bucket changed. */
   republish: Scalars['Boolean']['output'];
+};
+
+export type UsBankAccountPaymentMethodDetails = {
+  __typename?: 'UsBankAccountPaymentMethodDetails';
+  accountHolderType?: Maybe<Scalars['String']['output']>;
+  bankName?: Maybe<Scalars['String']['output']>;
+  last4?: Maybe<Scalars['String']['output']>;
 };
 
 export type CreateAlertSubscriptionMutationMutationVariables = Exact<{
