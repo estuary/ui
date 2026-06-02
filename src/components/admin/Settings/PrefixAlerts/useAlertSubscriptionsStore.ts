@@ -207,10 +207,15 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
 
                         state.mutableSubscriptionMetadata[
                             state.catalogPrefix
-                        ].settings = value;
+                        ].settings = {
+                            ...state.mutableSubscriptionMetadata[
+                                state.catalogPrefix
+                            ].settings,
+                            ...value,
+                        };
                     }),
                     false,
-                    'global prefix settings initialized'
+                    'global prefix settings set'
                 ),
 
             initializeMutableSubscriptionMetadata: () =>
