@@ -26,7 +26,6 @@ interface AlertSubscriptionState {
         values: AlertTypeInfo[],
         fetching: boolean
     ) => void;
-    initializeGlobalPrefixSettings: (value: Schema) => void;
     initializeMutableSubscriptionMetadata: () => void;
     markSubscriptionForDeletion: (
         catalogPrefix: string,
@@ -49,6 +48,7 @@ interface AlertSubscriptionState {
     setEmailErrorsExist: (
         value: AlertSubscriptionState['emailErrorsExist']
     ) => void;
+    setGlobalPrefixSettings: (value: Schema) => void;
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
     ) => void;
@@ -182,7 +182,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'alert type options initialized'
                 ),
 
-            initializeGlobalPrefixSettings: (value) =>
+            setGlobalPrefixSettings: (value) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
                         if (!state.catalogPrefix || isEmpty(value)) {

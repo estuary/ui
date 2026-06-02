@@ -11,8 +11,8 @@ export function useInitializeAlertConfigs() {
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
     );
-    const initializeGlobalPrefixSettings = useAlertSubscriptionsStore(
-        (state) => state.initializeGlobalPrefixSettings
+    const setGlobalPrefixSettings = useAlertSubscriptionsStore(
+        (state) => state.setGlobalPrefixSettings
     );
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
@@ -55,7 +55,7 @@ export function useInitializeAlertConfigs() {
             data?.alertConfigs &&
             data.alertConfigs.edges.length > 0
         ) {
-            initializeGlobalPrefixSettings(
+            setGlobalPrefixSettings(
                 data.alertConfigs.edges[0].node.effective.config
             );
         }
@@ -64,7 +64,7 @@ export function useInitializeAlertConfigs() {
         data,
         debouncedPrefix,
         fetching,
-        initializeGlobalPrefixSettings,
+        setGlobalPrefixSettings,
         settingsDefined,
     ]);
 }

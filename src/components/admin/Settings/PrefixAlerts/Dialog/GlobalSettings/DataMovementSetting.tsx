@@ -1,12 +1,18 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { GlobalSettingProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
+import React from 'react';
+
 import { Autocomplete, Stack, TextField, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import useSettingIntervalOptions from 'src/components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
-import { translateUnconventionalTimeFormat } from 'src/utils/notification-utils';
+import {
+    fromUnconventionalTimeFormat,
+    toUnconventionalTimeFormat,
+} from 'src/utils/notification-utils';
 
 const DataMovementSetting = ({
     prefix,
@@ -15,6 +21,10 @@ const DataMovementSetting = ({
     const intl = useIntl();
 
     const { options } = useSettingIntervalOptions();
+
+    const initializeGlobalPrefixSettings = useAlertSubscriptionsStore(
+        (state) => state.setGlobalPrefixSettings
+    );
 
     return (
         <Stack spacing={2}>
@@ -37,7 +47,17 @@ const DataMovementSetting = ({
                 disableClearable
                 fullWidth
                 getOptionLabel={(interval) => options[interval]}
-                onChange={() => {}}
+                onChange={(_event: React.SyntheticEvent, value: string) => {
+                    const formattedValue = toUnconventionalTimeFormat(value);
+
+                    if (formattedValue !== 'none') {
+                        initializeGlobalPrefixSettings({
+                            dataMovementStalled: {
+                                condition: { stalledFor: formattedValue },
+                            },
+                        });
+                    }
+                }}
                 options={Object.keys(options)}
                 renderInput={({
                     InputProps,
@@ -58,7 +78,7 @@ const DataMovementSetting = ({
                         }}
                     />
                 )}
-                value={translateUnconventionalTimeFormat(
+                value={fromUnconventionalTimeFormat(
                     setting?.condition.stalledFor
                 )}
             />
