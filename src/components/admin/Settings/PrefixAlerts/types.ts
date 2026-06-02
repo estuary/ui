@@ -2,6 +2,7 @@ import type { TableCellProps } from '@mui/material';
 import type { Dispatch, SetStateAction } from 'react';
 import type { ReducedAlertSubscription } from 'src/api/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
+import type { Schema } from 'src/types';
 import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
 
 export interface AlertSubscriptionDialogProps extends PrefixFieldProps {
@@ -28,6 +29,12 @@ export interface AlertTypeSelectorProps extends AlertTypeFieldProps {
     options: AlertTypeInfo[];
 }
 
+export interface BaseGlobalSetting<T> {
+    condition: T;
+    autoDisable?: boolean;
+    enabled?: boolean;
+}
+
 export interface DialogActionProps {
     closeDialog: () => void;
 }
@@ -45,18 +52,15 @@ export interface EmailListFieldProps extends SubscriptionDependentProps {
     staticEmail?: string;
 }
 
+export interface GlobalSettingProps<T> {
+    prefix: string;
+    setting: BaseGlobalSetting<T> | undefined;
+}
+
 export interface MutableAlertSubscription extends ReducedAlertSubscription {
     id: string;
     viewing: boolean;
     deleted?: boolean;
-}
-
-interface GlobalSetting {
-    [property: string]: boolean | number | string;
-}
-
-interface GlobalSettingDictionary {
-    [alertType: string]: GlobalSetting;
 }
 
 export interface PrefixFieldProps {
@@ -78,7 +82,7 @@ export interface SubscriptionDependentProps {
 }
 
 export interface SubscriptionMetadata {
-    settings: GlobalSettingDictionary;
+    settings: Schema;
     subscriptions: MutableAlertSubscription[];
 }
 

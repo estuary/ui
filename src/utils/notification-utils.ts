@@ -37,3 +37,32 @@ export const bundleSubscriptionsByPrefix = (
 
     return subscriptionMetadata;
 };
+
+export const translateUnconventionalTimeFormat = (
+    value: string | undefined
+) => {
+    switch (value) {
+        case '1h':
+            return '01:00:00';
+        case '2h':
+            return '02:00:00';
+        case '4h':
+            return '04:00:00';
+        case '8h':
+            return '08:00:00';
+        case '12h':
+            return '12:00:00';
+        case '24h':
+            return '24:00:00';
+        case '1d':
+            return '24:00:00';
+        case '2d':
+            return '2 days';
+        case '3d':
+            return '3 days';
+        case '7d':
+            return '7 days';
+        default:
+            return 'none';
+    }
+};

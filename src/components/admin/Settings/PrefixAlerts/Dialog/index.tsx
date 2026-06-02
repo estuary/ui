@@ -15,6 +15,7 @@ import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import DeleteButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/DeleteButton';
+import GlobalSettings from 'src/components/admin/Settings/PrefixAlerts/Dialog/GlobalSettings';
 import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/PrefixField';
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
@@ -75,6 +76,8 @@ const AlertSubscriptionDialog = ({
 
                 <Stack spacing={4}>
                     <PrefixField staticPrefix={staticPrefix} />
+
+                    <GlobalSettings />
 
                     <SubscriberSection />
                 </Stack>
