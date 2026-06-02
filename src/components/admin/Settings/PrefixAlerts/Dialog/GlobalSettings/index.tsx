@@ -39,8 +39,8 @@ const GlobalSettings = () => {
                 padding: 2,
             }}
         >
-            <Stack spacing="2px">
-                <Typography style={{ fontWeight: 500 }}>
+            <Stack spacing="4px">
+                <Typography style={{ fontSize: 16, fontWeight: 300 }}>
                     {intl.formatMessage({
                         id: 'alerts.config.dialog.label.globalSettings',
                     })}

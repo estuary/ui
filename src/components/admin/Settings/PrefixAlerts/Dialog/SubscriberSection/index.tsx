@@ -63,7 +63,7 @@ const SubscriberSection = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography style={{ fontWeight: 500 }}>
+                <Typography style={{ fontSize: 16, fontWeight: 300 }}>
                     {intl.formatMessage(
                         { id: 'alerts.config.dialog.label.subscribers' },
                         {
