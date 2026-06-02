@@ -4,7 +4,7 @@ import { TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/EmailSelector';
+import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/EmailSelector';
 
 const EmailListField = ({ subscription, staticEmail }: EmailListFieldProps) => {
     const intl = useIntl();

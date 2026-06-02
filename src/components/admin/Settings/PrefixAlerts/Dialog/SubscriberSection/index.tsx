@@ -6,9 +6,9 @@ import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import SubscriberInfo from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo';
-import SummaryEmpty from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/SummaryEmpty';
 import AddButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/AddButton';
+import SubscriberInfo from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo';
+import SummaryEmpty from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/SummaryEmpty';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useGetAlertTypes } from 'src/context/AlertType';
 import { hasOwnProperty } from 'src/utils/misc-utils';

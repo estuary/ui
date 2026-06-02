@@ -2,7 +2,7 @@ import type { AlertTypeFieldProps } from 'src/components/admin/Settings/PrefixAl
 
 import { Skeleton } from '@mui/material';
 
-import AlertTypeSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/AlertTypeSelector';
+import AlertTypeSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/AlertTypeSelector';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 const AlertTypeField = ({ subscription }: AlertTypeFieldProps) => {

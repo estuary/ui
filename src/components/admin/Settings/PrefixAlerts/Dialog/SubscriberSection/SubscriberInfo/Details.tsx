@@ -2,8 +2,8 @@ import type { SubscriberAccordionProps } from 'src/components/admin/Settings/Pre
 
 import { AccordionDetails, Stack } from '@mui/material';
 
-import AlertTypeField from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/AlertTypeField';
-import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberInfo/EmailListField';
+import AlertTypeField from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/AlertTypeField';
+import EmailListField from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/EmailListField';
 
 const Details = ({ subscription }: SubscriberAccordionProps) => {
     return (
