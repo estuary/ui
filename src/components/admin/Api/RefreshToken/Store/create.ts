@@ -7,7 +7,6 @@ import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
 
-import { BASE_ERROR } from 'src/services/supabase';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
 const getInitialStateData = (): Pick<
@@ -43,10 +42,7 @@ const getInitialState = (
     setServerError: (value) => {
         set(
             produce((state: RefreshTokenState) => {
-                state.serverError =
-                    typeof value === 'string'
-                        ? { ...BASE_ERROR, message: value }
-                        : value;
+                state.serverError = value;
             }),
             false,
             'Server error set'

@@ -279,4 +279,10 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.instructions.azure.docsLink': `For more help, see the `,
     'storageMappings.dialog.instructions.azure.docsLinkText': `Azure docs`,
     'storageMappings.dialog.instructions.azure.docsLinkPath': `https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal`,
+
+    // Refresh Tokens - additional
+    'admin.cli_api.refreshToken.table.error': `There was an error loading refresh tokens.`,
+    'admin.cli_api.refreshToken.revoke.header': `Revoke Refresh Token`,
+    'admin.cli_api.refreshToken.revoke.message': `Revoke the refresh token "{detail}"? This action is permanent.`,
+    'admin.cli_api.refreshToken.revoke.message.noDetail': `Revoke this refresh token? This action is permanent.`,
 };

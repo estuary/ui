@@ -1,90 +1,130 @@
-import type { TableColumns } from 'src/types';
+import {
+    Box,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableFooter,
+    TableHead,
+    TablePagination,
+    TableRow,
+    Typography,
+} from '@mui/material';
 
-import { useMemo } from 'react';
+import { FormattedMessage } from 'react-intl';
 
-import { getRefreshTokensForTable } from 'src/api/tokens';
+import { useRefreshTokens } from 'src/api/gql/refreshTokens';
 import ConfigureRefreshTokenButton from 'src/components/admin/Api/RefreshToken/ConfigureTokenButton';
-import EntityTable from 'src/components/tables/EntityTable';
 import Rows from 'src/components/tables/RefreshTokens/Rows';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
-import TableHydrator from 'src/stores/Tables/Hydrator';
-
-const columns: TableColumns[] = [
-    {
-        field: 'created_at',
-        headerIntlKey: 'entityTable.data.created',
-    },
-    {
-        field: 'detail',
-        headerIntlKey: 'entityTable.data.description',
-    },
-    {
-        field: 'uses',
-        headerIntlKey: 'entityTable.data.status',
-    },
-    {
-        field: null,
-        width: 125,
-    },
-];
-
-const selectableTableStoreName = SelectTableStoreNames.REFRESH_TOKENS;
+import { useCursorPagination } from 'src/hooks/useCursorPagination';
 
 function RefreshTokenTable() {
-    const {
-        pagination,
-        setPagination,
-        rowsPerPage,
-        setRowsPerPage,
-        searchQuery,
-        setSearchQuery,
-        sortDirection,
-        setSortDirection,
-        columnToSort,
-        setColumnToSort,
-    } = useTableState(TablePrefixes.refreshTokens, 'created_at', 'desc');
+    const { currentPage, cursor, onPageChange } = useCursorPagination();
 
-    const query = useMemo(() => {
-        return getRefreshTokensForTable(pagination, searchQuery, [
-            {
-                col: columnToSort,
-                direction: sortDirection,
-            },
-        ]);
-    }, [columnToSort, pagination, searchQuery, sortDirection]);
+    const { refreshTokens, fetching, error, pageInfo, pageSize } =
+        useRefreshTokens(cursor);
+
+    const handlePageChange = (_event: any, page: number) => {
+        onPageChange(_event, page, pageInfo?.endCursor);
+    };
 
     return (
-        <TableHydrator
-            query={query}
-            selectableTableStoreName={selectableTableStoreName}
-        >
-            <EntityTable
-                noExistingDataContentIds={{
-                    header: 'admin.cli_api.refreshToken.table.noContent.header',
-                    message:
-                        'admin.cli_api.refreshToken.table.noContent.message',
-                    disableDoclink: true,
-                }}
-                columns={columns}
-                renderTableRows={(data) => <Rows data={data} />}
-                rowsPerPage={rowsPerPage}
-                setRowsPerPage={setRowsPerPage}
-                pagination={pagination}
-                setPagination={setPagination}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                sortDirection={sortDirection}
-                setSortDirection={setSortDirection}
-                columnToSort={columnToSort}
-                setColumnToSort={setColumnToSort}
-                header={null}
-                filterLabel="admin.cli_api.refreshToken.table.filterLabel"
-                selectableTableStoreName={selectableTableStoreName}
-                showToolbar
-                toolbar={<ConfigureRefreshTokenButton />}
-            />
-        </TableHydrator>
+        <Box sx={{ mx: 2 }}>
+            <Stack
+                direction="row"
+                sx={{ mb: 1, justifyContent: 'flex-end', alignItems: 'center' }}
+            >
+                <ConfigureRefreshTokenButton />
+            </Stack>
+
+            {error ? (
+                <Typography color="error" sx={{ mb: 2 }}>
+                    <FormattedMessage id="admin.cli_api.refreshToken.table.error" />
+                </Typography>
+            ) : null}
+
+            <TableContainer>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>
+                                <FormattedMessage id="entityTable.data.created" />
+                            </TableCell>
+                            <TableCell>
+                                <FormattedMessage id="entityTable.data.description" />
+                            </TableCell>
+                            <TableCell>
+                                <FormattedMessage id="entityTable.data.status" />
+                            </TableCell>
+                            <TableCell sx={{ width: 125 }} />
+                        </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                        {fetching && refreshTokens.length === 0 ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={4}
+                                    sx={{ textAlign: 'center' }}
+                                >
+                                    <FormattedMessage id="common.loading" />
+                                </TableCell>
+                            </TableRow>
+                        ) : refreshTokens.length === 0 ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={4}
+                                    sx={{ textAlign: 'center' }}
+                                >
+                                    <Typography sx={{ py: 2 }}>
+                                        <FormattedMessage id="admin.cli_api.refreshToken.table.noContent.header" />
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                    >
+                                        <FormattedMessage id="admin.cli_api.refreshToken.table.noContent.message" />
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            <Rows data={refreshTokens} />
+                        )}
+                    </TableBody>
+
+                    {pageInfo ? (
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    count={-1}
+                                    page={currentPage}
+                                    rowsPerPage={pageSize}
+                                    rowsPerPageOptions={[pageSize]}
+                                    onPageChange={handlePageChange}
+                                    labelDisplayedRows={({ from }) => {
+                                        const to =
+                                            from + refreshTokens.length - 1;
+                                        return `${from}–${to}`;
+                                    }}
+                                    slotProps={{
+                                        actions: {
+                                            previousButton: {
+                                                disabled:
+                                                    !pageInfo.hasPreviousPage,
+                                            },
+                                            nextButton: {
+                                                disabled: !pageInfo.hasNextPage,
+                                            },
+                                        },
+                                    }}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    ) : null}
+                </Table>
+            </TableContainer>
+        </Box>
     );
 }
 

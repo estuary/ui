@@ -11,7 +11,7 @@ function CopyRefreshToken() {
 
     return token ? (
         <Grid size={{ xs: 12 }}>
-            <AlertBox severity="info" short>
+            <AlertBox severity="info" short data-private>
                 <Typography sx={{ mb: 1 }}>
                     <FormattedMessage id="admin.cli_api.refreshToken.dialog.alert.copyToken" />
                 </Typography>

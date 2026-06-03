@@ -1,97 +1,111 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
-import type { SelectableTableStore } from 'src/stores/Tables/Store';
+import type { CombinedError } from 'urql';
 
 import { useState } from 'react';
 
-import { Button, Stack, TableCell, Tooltip, useTheme } from '@mui/material';
-
-import { WarningCircle } from 'iconoir-react';
-import { useIntl } from 'react-intl';
-
 import {
-    INVALID_TOKEN_INTERVAL,
-    updateRefreshTokenValidity,
-} from 'src/api/tokens';
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Stack,
+    TableCell,
+    Typography,
+} from '@mui/material';
+
+import { FormattedMessage, useIntl } from 'react-intl';
+
+import { useDeleteRefreshToken } from 'src/api/gql/refreshTokens';
 import Error from 'src/components/shared/Error';
-import { sample_blue } from 'src/context/Theme';
-import { useZustandStore } from 'src/context/Zustand/provider';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
 interface Props {
     id: string;
+    detail?: string | null;
 }
 
-function RevokeTokenButton({ id }: Props) {
+function RevokeTokenButton({ id, detail }: Props) {
     const intl = useIntl();
-    const theme = useTheme();
 
-    const hydrate = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['hydrate']
-    >(
-        SelectTableStoreNames.REFRESH_TOKENS,
-        selectableTableStoreSelectors.query.hydrate
-    );
+    const [, deleteRefreshToken] = useDeleteRefreshToken();
 
+    const [confirmOpen, setConfirmOpen] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [error, setError] = useState<PostgrestError | null>(null);
+    const [error, setError] = useState<CombinedError | null>(null);
 
-    const revokeToken = async (event: React.MouseEvent<HTMLElement>) => {
-        event.preventDefault();
-
+    const revokeToken = async () => {
         setSaving(true);
         setError(null);
 
-        const response = await updateRefreshTokenValidity(
-            id,
-            INVALID_TOKEN_INTERVAL
-        );
+        const result = await deleteRefreshToken({ id });
 
-        if (response.error) {
-            setError(response.error);
+        if (result.error) {
+            setError(result.error);
             setSaving(false);
 
             return;
         }
 
-        hydrate();
         setSaving(false);
+        setConfirmOpen(false);
     };
 
     return (
         <TableCell>
-            <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-                <Button
-                    color={error ? 'error' : 'primary'}
-                    loading={Boolean(saving)}
-                    onClick={revokeToken}
-                    variant="text"
-                >
-                    {intl.formatMessage({ id: 'cta.remove' })}
-                </Button>
+            <Button
+                color="error"
+                onClick={() => setConfirmOpen(true)}
+                variant="text"
+            >
+                {intl.formatMessage({ id: 'cta.remove' })}
+            </Button>
 
-                {error ? (
-                    <Tooltip
-                        placement="bottom-end"
-                        title={
-                            <Error
-                                condensed
-                                error={error}
-                                linkOptions={{
-                                    sx: { color: sample_blue[200] },
-                                }}
-                                noAlertBox
-                                severity="error"
-                            />
-                        }
+            <Dialog
+                open={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                TransitionProps={{
+                    onExited: () => setError(null),
+                }}
+                maxWidth="xs"
+                fullWidth
+            >
+                <DialogTitle>
+                    <FormattedMessage id="admin.cli_api.refreshToken.revoke.header" />
+                </DialogTitle>
+                <DialogContent>
+                    <Stack spacing={1}>
+                        {error ? (
+                            <Error condensed error={error} severity="error" />
+                        ) : null}
+                        <Typography>
+                            {detail ? (
+                                <FormattedMessage
+                                    id="admin.cli_api.refreshToken.revoke.message"
+                                    values={{ detail }}
+                                />
+                            ) : (
+                                <FormattedMessage id="admin.cli_api.refreshToken.revoke.message.noDetail" />
+                            )}
+                        </Typography>
+                    </Stack>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => setConfirmOpen(false)}
+                        disabled={saving}
                     >
-                        <WarningCircle
-                            style={{ color: theme.palette.error.main }}
-                        />
-                    </Tooltip>
-                ) : null}
-            </Stack>
+                        {intl.formatMessage({ id: 'cta.cancel' })}
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={revokeToken}
+                        disabled={saving}
+                        loading={saving}
+                    >
+                        {intl.formatMessage({ id: 'cta.remove' })}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </TableCell>
     );
 }

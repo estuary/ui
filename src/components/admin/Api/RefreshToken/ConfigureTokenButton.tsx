@@ -9,11 +9,13 @@ import RefreshTokenError from 'src/components/admin/Api/RefreshToken/Dialog/Erro
 import GenerateButton from 'src/components/admin/Api/RefreshToken/Dialog/GenerateButton';
 import RefreshTokenTitle from 'src/components/admin/Api/RefreshToken/Dialog/Title';
 import CopyRefreshToken from 'src/components/admin/Api/RefreshToken/Dialog/Token';
+import { useRefreshTokenStore } from 'src/components/admin/Api/RefreshToken/Store/create';
 
 const TITLE_ID = 'create-refresh-tokens-title';
 
 function ConfigureRefreshTokenButton() {
     const [open, setOpen] = useState(false);
+    const token = useRefreshTokenStore((state) => state.token);
 
     return (
         <>
@@ -44,13 +46,23 @@ function ConfigureRefreshTokenButton() {
 
                         <CopyRefreshToken />
 
-                        <Grid size={{ xs: 9 }} sx={{ mt: 1, display: 'flex' }}>
-                            <RefreshTokenDescription />
-                        </Grid>
+                        {!token ? (
+                            <>
+                                <Grid
+                                    size={{ xs: 9 }}
+                                    sx={{ mt: 1, display: 'flex' }}
+                                >
+                                    <RefreshTokenDescription />
+                                </Grid>
 
-                        <Grid size={{ xs: 3 }} sx={{ mt: 1, display: 'flex' }}>
-                            <GenerateButton />
-                        </Grid>
+                                <Grid
+                                    size={{ xs: 3 }}
+                                    sx={{ mt: 1, display: 'flex' }}
+                                >
+                                    <GenerateButton />
+                                </Grid>
+                            </>
+                        ) : null}
                     </Grid>
                 </DialogContent>
             </Dialog>

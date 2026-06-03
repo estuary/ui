@@ -1,4 +1,4 @@
-import type { RefreshTokenQuery } from 'src/api/tokens';
+import type { RefreshTokenInfo } from 'src/gql-types/graphql';
 
 import { TableCell, TableRow, Typography, useTheme } from '@mui/material';
 
@@ -9,11 +9,11 @@ import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
 
 interface RowsProps {
-    data: RefreshTokenQuery[];
+    data: Pick<RefreshTokenInfo, 'id' | 'detail' | 'createdAt' | 'uses'>[];
 }
 
 interface RowProps {
-    row: RefreshTokenQuery;
+    row: RowsProps['data'][number];
 }
 
 function Row({ row }: RowProps) {
@@ -21,7 +21,7 @@ function Row({ row }: RowProps) {
 
     return (
         <TableRow hover sx={getEntityTableRowSx(theme)}>
-            <TimeStamp time={row.created_at} enableExact />
+            <TimeStamp time={row.createdAt} enableExact />
 
             <TableCell>
                 <Typography sx={{ textWrap: 'wrap' }}>{row.detail}</Typography>
@@ -34,7 +34,7 @@ function Row({ row }: RowProps) {
                 />
             </TableCell>
 
-            <RevokeTokenButton id={row.id} />
+            <RevokeTokenButton id={row.id} detail={row.detail} />
         </TableRow>
     );
 }

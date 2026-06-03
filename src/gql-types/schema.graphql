@@ -235,6 +235,15 @@ input AlertsBy {
   prefix: String!
 }
 
+type ApiKeyInfo {
+  createdAt: DateTime!
+  createdBy: UUID!
+  expiresAt: DateTime!
+  id: Id!
+  label: String!
+  lastUsedAt: DateTime
+}
+
 type AutoDiscoverFailure {
   """The number of consecutive failures that have been observed."""
   count: Int!
@@ -575,6 +584,11 @@ type Controller {
   """Only present for materializations that use `sources`."""
   sourceCapture: SourceCaptureStatus
   updatedAt: DateTime!
+}
+
+type CreateApiKeyResult {
+  id: Id!
+  secret: String!
 }
 
 type CreateBillingSetupIntentPayload {
@@ -1043,6 +1057,20 @@ type MutationRoot {
   an existing subscription for the same prefix and email address.
   """
   createAlertSubscription(alertTypes: [AlertType!], detail: String, email: String!, prefix: Prefix!): AlertSubscription!
+
+  """
+  Create an API key for a service account.
+  
+  Returns the key_id and the plaintext secret (flow_sa_...).
+  The secret is returned exactly once and cannot be retrieved again.
+  """
+  createApiKey(
+    label: String!
+    serviceAccountId: UUID!
+
+    """ISO 8601 duration for key validity (e.g. P90D, P1Y)"""
+    validFor: String!
+  ): CreateApiKeyResult!
   createBillingSetupIntent(tenant: String!): CreateBillingSetupIntentPayload!
 
   """
@@ -1052,6 +1080,24 @@ type MutationRoot {
   Share the returned token with the intended recipient out-of-band.
   """
   createInviteLink(capability: Capability!, catalogPrefix: Prefix!, detail: String, singleUse: Boolean! = true): InviteLink!
+
+  """Create a refresh token for the authenticated user."""
+  createRefreshToken(
+    detail: String = null
+    multiUse: Boolean! = true
+
+    """ISO 8601 duration for token validity (e.g. P90D)"""
+    validFor: String! = "P90D"
+  ): RefreshTokenResult!
+
+  """
+  Create a service account with a grant to the specified prefix.
+  
+  The caller must have admin capability on the prefix.
+  Creates an auth.users row, an internal.service_accounts row,
+  and a user_grants row for the service account.
+  """
+  createServiceAccount(capability: Capability!, displayName: String!, prefix: Prefix!): ServiceAccount!
 
   """
   Create a storage mapping for the given catalog prefix.
@@ -1078,10 +1124,59 @@ type MutationRoot {
   deleteInviteLink(token: UUID!): Boolean!
 
   """
+  Revoke a refresh token owned by the authenticated user.
+  
+  Rather than deleting the row, we zero its `valid_for` interval, which
+  marks the token as expired/invalid while preserving the audit trail.
+  Already-zeroed (revoked) tokens are treated as not found.
+  """
+  deleteRefreshToken(id: Id!): Boolean!
+
+  """
+  Disable a service account, revoking all API keys and grants.
+  
+  The caller must have admin capability on the service account's prefix.
+  The auth.users row is preserved for audit trail / FK integrity.
+  
+  Unlike revoking a single key, disabling removes the service account's
+  grants, so access tokens already issued from its keys resolve to zero
+  capability on their next authorization check (bounded by snapshot-refresh
+  lag, not the token's full ~1h lifetime). Use this to cut off an
+  active service account, not just stop new tokens.
+  
+  Idempotent: returns `true` if this call disabled the account, `false`
+  if it was already disabled.
+  """
+  disableServiceAccount(id: UUID!): Boolean!
+
+  """
+  Re-enable a disabled service account, restoring its user_grants row.
+  
+  Does NOT restore previously revoked API keys — new ones must be minted.
+  
+  Idempotent: returns `true` if this call enabled the account, `false`
+  if it was not disabled.
+  """
+  enableServiceAccount(id: UUID!): Boolean!
+
+  """
   Redeem an invite link token, granting the caller access to the associated
   catalog prefix with the specified capability.
   """
   redeemInviteLink(token: UUID!): RedeemInviteLinkResult!
+
+  """
+  Revoke (delete) an API key.
+  
+  The caller must have admin capability on the owning service account's prefix.
+  
+  Revocation stops *new* access tokens from being minted with this key, but
+  does not invalidate access tokens already issued from it — those remain
+  valid until they expire (up to ~1h), since the service account's grants
+  are untouched. To cut off active sessions immediately, disable the
+  service account (which removes its grants).
+  """
+  revokeApiKey(id: Id!): Boolean!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
@@ -1424,6 +1519,10 @@ type QueryRoot {
   liveSpecs(after: String, before: String, by: LiveSpecsBy!, first: Int, last: Int): LiveSpecRefConnection!
   prefixes(after: String, by: PrefixesBy!, first: Int): PrefixRefConnection!
 
+  """List refresh tokens owned by the authenticated user."""
+  refreshTokens(after: String, first: Int): RefreshTokenInfoConnection!
+  serviceAccounts(after: String, filter: ServiceAccountsFilter, first: Int): ServiceAccountConnection!
+
   """
   Returns storage mappings accessible to the current user.
   
@@ -1443,6 +1542,44 @@ type RedeemInviteLinkResult {
   catalogPrefix: Prefix!
 }
 
+type RefreshTokenInfo {
+  createdAt: DateTime!
+  detail: String
+
+  """
+  True once the token's validity window has elapsed
+  (now is past `updated_at + valid_for`).
+  """
+  expired: Boolean!
+  id: Id!
+  multiUse: Boolean!
+  updatedAt: DateTime!
+  uses: Int!
+  validFor: String!
+}
+
+type RefreshTokenInfoConnection {
+  """A list of edges."""
+  edges: [RefreshTokenInfoEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type RefreshTokenInfoEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: RefreshTokenInfo!
+}
+
+type RefreshTokenResult {
+  id: Id!
+  secret: String!
+}
+
 type RepublishRequested {
   """
   The `last_build_id` of the live spec as of when the `Republish` message
@@ -1459,6 +1596,40 @@ type RepublishRequested {
   Informational only, timestamp of when the controller observed the `Republish` request.
   """
   receivedAt: DateTime!
+}
+
+type ServiceAccount {
+  apiKeys: [ApiKeyInfo!]!
+  capability: Capability!
+  createdAt: DateTime!
+  createdBy: UUID!
+  disabledAt: DateTime
+  displayName: String!
+  id: UUID!
+  lastUsedAt: DateTime
+  prefix: Prefix!
+  updatedAt: DateTime!
+}
+
+type ServiceAccountConnection {
+  """A list of edges."""
+  edges: [ServiceAccountEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type ServiceAccountEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ServiceAccount!
+}
+
+input ServiceAccountsFilter {
+  catalogPrefix: PrefixFilter
 }
 
 """The shape of a connector status, which matches that of an ops::Log."""

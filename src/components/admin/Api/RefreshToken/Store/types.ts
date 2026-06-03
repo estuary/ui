@@ -1,5 +1,3 @@
-import type { PostgrestError } from '@supabase/postgrest-js';
-
 export interface RefreshTokenState {
     token: string;
     setToken: (value: string) => void;
@@ -10,8 +8,8 @@ export interface RefreshTokenState {
     saving: boolean;
     setSaving: (value: boolean) => void;
 
-    serverError: PostgrestError | null;
-    setServerError: (value: PostgrestError | string | null) => void;
+    serverError: string | null;
+    setServerError: (value: string | null) => void;
 
     resetState: () => void;
 }

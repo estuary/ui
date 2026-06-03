@@ -1,29 +1,17 @@
-import type { SelectableTableStore } from 'src/stores/Tables/Store';
-
 import { Button } from '@mui/material';
 
-import { isEmpty } from 'lodash';
 import { useIntl } from 'react-intl';
 
-import { createRefreshToken } from 'src/api/tokens';
+import { useCreateRefreshToken } from 'src/api/gql/refreshTokens';
 import { useRefreshTokenStore } from 'src/components/admin/Api/RefreshToken/Store/create';
-import { useZustandStore } from 'src/context/Zustand/provider';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
-const TOKEN_VALIDITY = '1 year';
+const TOKEN_VALIDITY = 'P1Y';
 
 function GenerateButton() {
     const intl = useIntl();
 
-    const hydrate = useZustandStore<
-        SelectableTableStore,
-        SelectableTableStore['hydrate']
-    >(
-        SelectTableStoreNames.REFRESH_TOKENS,
-        selectableTableStoreSelectors.query.hydrate
-    );
+    const [, createRefreshToken] = useCreateRefreshToken();
 
     const description = useRefreshTokenStore((state) => state.description);
     const saving = useRefreshTokenStore((state) => state.saving);
@@ -39,26 +27,31 @@ function GenerateButton() {
         setServerError(null);
         setSaving(true);
 
-        const response = await createRefreshToken(
-            true,
-            TOKEN_VALIDITY,
-            description
-        );
+        const result = await createRefreshToken({
+            multiUse: true,
+            validFor: TOKEN_VALIDITY,
+            detail: description,
+        });
 
         setSaving(false);
 
-        if (response.error || isEmpty(response.data)) {
-            setServerError(response.error);
+        if (result.error || !result.data?.createRefreshToken) {
+            setServerError(
+                result.error?.message ??
+                    intl.formatMessage({
+                        id: 'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed',
+                    })
+            );
 
             return;
         }
 
-        hydrate();
+        const { id, secret } = result.data.createRefreshToken;
 
         // The refresh token ID and secret are needed by Flow, therefore it was decided
         // to base64 encode the data returned in the response and present that as the
         // one-time secret presented to the user.
-        const token = Buffer.from(JSON.stringify(response.data)).toString(
+        const token = Buffer.from(JSON.stringify({ id, secret })).toString(
             'base64'
         );
 
