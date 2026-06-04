@@ -1,0 +1,181 @@
+import { useState } from 'react';
+
+import {
+    Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Stack,
+    TextField,
+    Typography,
+    useTheme,
+} from '@mui/material';
+
+import { Xmark } from 'iconoir-react';
+
+import { useCreateRefreshToken } from 'src/api/gql/refreshTokens';
+import SingleLineCode from 'src/components/content/SingleLineCode';
+import AlertBox from 'src/components/shared/AlertBox';
+import Error from 'src/components/shared/Error';
+import { hasLength } from 'src/utils/misc-utils';
+
+const TOKEN_VALIDITY = 'P1Y';
+
+interface Props {
+    open: boolean;
+    onClose: () => void;
+    onCreated: () => void;
+}
+
+export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
+    const theme = useTheme();
+
+    const [label, setLabel] = useState('');
+    const [token, setToken] = useState('');
+    const [serverError, setServerError] = useState<string | null>(null);
+
+    const [{ fetching: generating }, createRefreshToken] =
+        useCreateRefreshToken();
+
+    const resetDialog = () => {
+        setLabel('');
+        setToken('');
+        setServerError(null);
+    };
+
+    const generateToken = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        setServerError(null);
+
+        const result = await createRefreshToken({
+            multiUse: true,
+            validFor: TOKEN_VALIDITY,
+            detail: label,
+        });
+
+        if (result.error || !result.data?.createRefreshToken) {
+            setServerError(
+                result.error?.message ??
+                    'An issue was encountered displaying your token. Please generate a new token.'
+            );
+
+            return;
+        }
+
+        const { id, secret } = result.data.createRefreshToken;
+
+        // The refresh token ID and secret are needed by Flow, therefore it was decided
+        // to base64 encode the data returned in the response and present that as the
+        // one-time secret presented to the user.
+        const encodedToken = Buffer.from(
+            JSON.stringify({ id, secret })
+        ).toString('base64');
+
+        if (!hasLength(encodedToken)) {
+            setServerError(
+                'An issue was encountered displaying your token. Please generate a new token.'
+            );
+
+            return;
+        }
+
+        setToken(encodedToken);
+        onCreated();
+    };
+
+    return (
+        <Dialog
+            open={open}
+            onClose={token ? undefined : onClose}
+            maxWidth="sm"
+            fullWidth
+            aria-label="Create Refresh Token"
+            slotProps={{
+                transition: {
+                    onExited: resetDialog,
+                },
+            }}
+        >
+            <DialogTitle
+                component="div"
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Typography variant="h6">Create Refresh Token</Typography>
+
+                <IconButton disabled={generating} onClick={onClose}>
+                    <Xmark
+                        aria-label="Close"
+                        style={{
+                            fontSize: '1rem',
+                            color: theme.palette.text.primary,
+                        }}
+                    />
+                </IconButton>
+            </DialogTitle>
+
+            <DialogContent>
+                <Stack spacing={3} sx={{ mb: 1 }}>
+                    {serverError ? (
+                        <Error
+                            severity="error"
+                            error={serverError}
+                            condensed
+                        />
+                    ) : null}
+
+                    {token ? (
+                        <AlertBox severity="info" short data-private>
+                            <Typography sx={{ mb: 1 }}>
+                                Copy this refresh token now - you won&apos;t be
+                                able to see it again!
+                            </Typography>
+
+                            <SingleLineCode value={token} />
+                        </AlertBox>
+                    ) : (
+                        <Stack
+                            component="form"
+                            direction="row"
+                            onSubmit={generateToken}
+                            spacing={2}
+                            sx={{ pt: 1 }}
+                        >
+                            <TextField
+                                label="Label"
+                                autoFocus
+                                onChange={(event) =>
+                                    setLabel(event.target.value)
+                                }
+                                required
+                                size="small"
+                                sx={{ flex: 1 }}
+                                value={label}
+                                variant="outlined"
+                                slotProps={{
+                                    input: {
+                                        sx: { borderRadius: 3 },
+                                    },
+                                }}
+                            />
+
+                            <Button
+                                disabled={!hasLength(label) || generating}
+                                loading={generating}
+                                type="submit"
+                                variant="contained"
+                            >
+                                Create
+                            </Button>
+                        </Stack>
+                    )}
+                </Stack>
+            </DialogContent>
+        </Dialog>
+    );
+}

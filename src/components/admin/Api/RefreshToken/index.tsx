@@ -1,10 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { RefreshTokenTable } from 'src/components/admin/Api/RefreshToken/Table';
 
-import RefreshTokenTable from 'src/components/tables/RefreshTokens';
-
-function RefreshToken() {
+export function RefreshToken() {
     return (
         <Box sx={{ mb: 5 }}>
             <Stack sx={{ mx: 2, mb: 1 }}>
@@ -15,11 +13,12 @@ function RefreshToken() {
                         fontWeight: '400',
                     }}
                 >
-                    <FormattedMessage id="admin.cli_api.refreshToken" />
+                    Refresh Tokens
                 </Typography>
 
                 <Typography>
-                    <FormattedMessage id="admin.cli_api.refreshToken.message" />
+                    Refresh tokens enable programmatic access to most services
+                    including the Kafka compatible API &quot;dekaf&quot;.
                 </Typography>
             </Stack>
 
@@ -27,5 +26,3 @@ function RefreshToken() {
         </Box>
     );
 }
-
-export default RefreshToken;
