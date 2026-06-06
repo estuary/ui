@@ -1,11 +1,9 @@
 import type { ReactNode } from 'react';
 
-import { Link, MenuItem } from '@mui/material';
+import { Link, Menu, MenuItem } from '@mui/material';
 
-import { HelpCircle, OpenNewWindow } from 'iconoir-react';
+import { OpenNewWindow } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
-
-import IconMenu from 'src/components/menus/IconMenu';
 
 const ExternalLinkMenuItem = ({
     children,
@@ -36,15 +34,28 @@ const ExternalLinkMenuItem = ({
     </MenuItem>
 );
 
-function HelpMenu() {
+interface HelpMenuProps {
+    anchorEl: HTMLElement | null;
+    onClose: () => void;
+}
+
+export function HelpMenu({ anchorEl, onClose }: HelpMenuProps) {
     const intl = useIntl();
 
     return (
-        <IconMenu
-            ariaLabel={intl.formatMessage({ id: 'helpMenu.ariaLabel' })}
-            icon={<HelpCircle />}
-            identifier="help-menu"
-            tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
+        <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={onClose}
+            onClick={onClose}
+            anchorOrigin={{
+                horizontal: 'left',
+                vertical: 'top',
+            }}
+            transformOrigin={{
+                horizontal: 'left',
+                vertical: 'bottom',
+            }}
         >
             <ExternalLinkMenuItem
                 link={intl.formatMessage({ id: 'helpMenu.docs.link' })}
@@ -71,7 +82,7 @@ function HelpMenu() {
             >
                 <FormattedMessage id="helpMenu.contact" />
             </ExternalLinkMenuItem>
-        </IconMenu>
+        </Menu>
     );
 }
 

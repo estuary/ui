@@ -1,8 +1,7 @@
 import type { SelectableTableStore } from 'src/stores/Tables/Store';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-import TenantSelector from 'src/components/shared/TenantSelector';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { useBillingStore } from 'src/stores/Billing/Store';
 import { SelectTableStoreNames } from 'src/stores/names';
@@ -11,10 +10,12 @@ import {
     useBillingTable_setHydrationErrorsExist,
 } from 'src/stores/Tables/Billing/hooks';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 
-function TenantOptions() {
+function useTenantChangeReset() {
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
     const resetBillingState = useBillingStore((state) => state.resetState);
-
     const setHydrated = useBillingTable_setHydrated();
     const setHydrationErrorsExist = useBillingTable_setHydrationErrorsExist();
 
@@ -23,9 +24,8 @@ function TenantOptions() {
         SelectableTableStore['resetState']
     >(SelectTableStoreNames.BILLING, selectableTableStoreSelectors.state.reset);
 
-    const updateStoreState = useCallback(() => {
+    const resetStores = useCallback(() => {
         resetBillingState();
-
         resetBillingSelectTableState(false);
         setHydrated(false);
         setHydrationErrorsExist(false);
@@ -36,7 +36,13 @@ function TenantOptions() {
         setHydrationErrorsExist,
     ]);
 
-    return <TenantSelector updateStoreState={updateStoreState} />;
+    const previousTenant = useRef(selectedTenant);
+    useEffect(() => {
+        if (previousTenant.current !== selectedTenant) {
+            previousTenant.current = selectedTenant;
+            resetStores();
+        }
+    }, [selectedTenant, resetStores]);
 }
 
-export default TenantOptions;
+export default useTenantChangeReset;
