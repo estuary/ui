@@ -11,14 +11,12 @@ import {
 import { useIntl } from 'react-intl';
 
 import RouterLink from 'src/components/navigation/RouterLink';
-import { NavWidths } from 'src/context/Theme';
 
 interface Props {
     icon: ReactNode;
     title: string;
     link: string | any;
     isOpen?: boolean;
-    menuWidth?: number;
     badgeContent?: number;
     tooltipDelay?: number;
 }
@@ -28,7 +26,6 @@ const ListItemLink = ({
     title,
     link,
     isOpen,
-    menuWidth,
     badgeContent,
     tooltipDelay,
 }: Props) => {
@@ -42,64 +39,23 @@ const ListItemLink = ({
         <li>
             <Tooltip
                 title={!isOpen ? translatedTitle : ''}
-                placement="right-end"
+                placement="right"
                 enterDelay={tooltipDelay ? tooltipDelay : undefined}
             >
-                {menuWidth === NavWidths.FULL ? (
-                    <ListItemButton
-                        component={typeof link === 'string' ? RouterLink : 'a'}
-                        to={typeof link === 'string' ? link : undefined}
-                        onClick={typeof link === 'function' ? link : undefined}
-                        disableGutters
-                        sx={{
-                            whiteSpace: 'nowrap',
-                            px: 1.5,
-                        }}
-                    >
-                        {icon ? (
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 36,
-                                    color: (theme) =>
-                                        theme.palette.text.primary,
-                                }}
-                            >
-                                {icon}
-                            </ListItemIcon>
-                        ) : null}
+                <ListItemButton
+                    {...(typeof link === 'string'
+                        ? { component: RouterLink, to: link }
+                        : { onClick: link })}
+                    sx={{ mx: 1, my: 0.25 }}
+                >
+                    {icon ? (
+                        <ListItemIcon>
+                            <Badge badgeContent={badgeContent}>{icon}</Badge>
+                        </ListItemIcon>
+                    ) : null}
 
-                        <ListItemText primary={translatedTitle} />
-
-                        <Badge badgeContent={badgeContent} />
-                    </ListItemButton>
-                ) : (
-                    <ListItemButton
-                        component={typeof link === 'string' ? RouterLink : 'a'}
-                        to={typeof link === 'string' ? link : undefined}
-                        onClick={typeof link === 'function' ? link : undefined}
-                        disableGutters
-                        sx={{
-                            whiteSpace: 'nowrap',
-                            px: 1.5,
-                        }}
-                    >
-                        {icon ? (
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 36,
-                                    color: (theme) =>
-                                        theme.palette.text.primary,
-                                }}
-                            >
-                                <Badge badgeContent={badgeContent}>
-                                    {icon}
-                                </Badge>
-                            </ListItemIcon>
-                        ) : null}
-
-                        <ListItemText primary={translatedTitle} />
-                    </ListItemButton>
-                )}
+                    <ListItemText primary={translatedTitle} />
+                </ListItemButton>
             </Tooltip>
         </li>
     );

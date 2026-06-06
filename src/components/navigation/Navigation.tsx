@@ -14,7 +14,6 @@ import {
     MenuItem,
     Popover,
     Stack,
-    Toolbar,
     Tooltip,
     Typography,
     useTheme,
@@ -45,7 +44,7 @@ import { HelpMenu } from 'src/components/menus/HelpMenu';
 import ListItemLink from 'src/components/navigation/ListItemLink';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
-import { paperBackground, useColorMode } from 'src/context/Theme';
+import { useColorMode } from 'src/context/Theme';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import {
@@ -111,19 +110,17 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
             sx={{
                 [`& .${drawerClasses.paper}`]: {
                     boxSizing: 'border-box',
+                    position: 'static',
+                    height: '100%',
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
-                    border: 0,
-                    background: paperBackground[theme.palette.mode],
                 },
                 transition: (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
                 width,
             }}
         >
-            <Toolbar />
-
             <Stack
                 sx={{
                     height: '100%',
@@ -165,15 +162,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     </List>
                 </Box>
 
-                <Box>
-                    <List
-                        aria-label={intl.formatMessage({
-                            id: 'navigation.ariaLabel',
-                        })}
-                        sx={{
-                            py: 1,
-                        }}
-                    >
+                <Box sx={{ pb: 1 }}>
                         <Tooltip
                             title={
                                 !open
@@ -188,13 +177,9 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                             <ListItemButton
                                 component="a"
                                 onClick={openNavigation}
-                                sx={{
-                                    minHeight: 45,
-                                    px: 1.5,
-                                    whiteSpace: 'nowrap',
-                                }}
+                                sx={{ mx: 1, my: 0.25 }}
                             >
-                                <ListItemIcon sx={{ minWidth: 36 }}>
+                                <ListItemIcon>
                                     <FastArrowLeft
                                         style={{
                                             transform: open
@@ -234,32 +219,21 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                     onClick={(e) =>
                                         setMenuAnchor(e.currentTarget)
                                     }
-                                    sx={{
-                                        minHeight: 45,
-                                        px: 1.5,
-                                        whiteSpace: 'nowrap',
-                                    }}
+                                    sx={{ mx: 1, my: 0.25 }}
                                 >
-                                    <ListItemIcon sx={{ minWidth: 36 }}>
-                                        <UserAvatar
-                                            userEmail={userDetails.email}
-                                            userName={userDetails.userName}
-                                            avatarUrl={userDetails.avatar}
-                                            size={22}
-                                        />
-                                    </ListItemIcon>
-
+                                    <UserAvatar
+                                        userEmail={userDetails.email}
+                                        userName={userDetails.userName}
+                                        avatarUrl={userDetails.avatar}
+                                        size={20}
+                                    />
                                     <ListItemText
-                                        primary={
-                                            userDetails.userName ??
-                                            userDetails.email
-                                        }
+                                        primary={userDetails.email}
                                         primaryTypographyProps={{
-                                            fontSize: 14,
+                                            fontSize: 12,
+                                            fontWeight: 500,
+                                            lineHeight: 1.3,
                                             noWrap: true,
-                                        }}
-                                        sx={{
-                                            display: !open ? 'none' : undefined,
                                         }}
                                     />
                                 </ListItemButton>
@@ -346,24 +320,15 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                             ? setOrgDialogOpen(true)
                                             : setOrgAnchor(e.currentTarget)
                                     }
-                                    sx={{
-                                        minHeight: 45,
-                                        px: 1.5,
-                                        whiteSpace: 'nowrap',
-                                    }}
+                                    sx={{ mx: 1, my: 0.25 }}
                                 >
-                                    <ListItemIcon sx={{ minWidth: 36 }}>
+                                    <ListItemIcon>
                                         <Building />
                                     </ListItemIcon>
-
                                     <ListItemText
                                         primary={tenantLabel}
                                         primaryTypographyProps={{
-                                            fontSize: 14,
-                                            noWrap: true,
-                                        }}
-                                        sx={{
-                                            display: !open ? 'none' : undefined,
+                                            fontSize: 12,
                                         }}
                                     />
                                 </ListItemButton>
@@ -463,7 +428,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 </Dialog>
                             </>
                         ) : null}
-                    </List>
                 </Box>
             </Stack>
         </MuiDrawer>

@@ -1,48 +1,36 @@
-import { Divider, Stack, Toolbar } from '@mui/material';
+import { Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
-import { useTheme } from '@mui/material/styles';
 
 import { HeaderPill } from 'src/components/AgentSkills/HeaderPill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
-import PageTitle from 'src/components/navigation/PageTitle';
+import CompanyMark from 'src/components/graphics/CompanyMark';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
-import { zIndexIncrement } from 'src/context/Theme';
 
-const Topbar = () => {
-    const theme = useTheme();
+interface TopbarProps {
+    navigationOpen?: boolean;
+}
 
+const Topbar = ({ navigationOpen = true }: TopbarProps) => {
     return (
-        <MuiAppBar
-            sx={{
-                position: 'fixed',
-                zIndex: theme.zIndex.drawer + zIndexIncrement,
-                boxShadow:
-                    'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
-            }}
-        >
+        <MuiAppBar>
             <Toolbar
+                variant="dense"
                 sx={{
-                    px: 1,
+                    pl: '19px !important',
+                    minHeight: 48,
                     justifyContent: 'space-between',
                 }}
             >
+                {navigationOpen ? <CompanyLogo /> : <CompanyMark />}
+
                 <Stack
                     direction="row"
-                    spacing={3}
+                    spacing={2}
                     sx={{ alignItems: 'center' }}
-                    divider={<Divider orientation="vertical" flexItem />}
                 >
-                    <CompanyLogo />
-
-                    <PageTitle />
-                </Stack>
-
-                <Stack direction="row" sx={{ alignItems: 'center' }}>
-                    <UpdateAlert />
-
                     <HeaderPill />
-
+                    <UpdateAlert />
                     <SidePanelDocsOpenButton />
                 </Stack>
             </Toolbar>
