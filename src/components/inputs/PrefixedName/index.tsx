@@ -169,16 +169,28 @@ function PrefixedName({
                         },
                 }}
             >
-                <PrefixSelector
-                    disabled={disabled}
-                    error={Boolean(prefixError)}
-                    label={label}
-                    labelId={INPUT_ID}
-                    onChange={(newValue) => handlers.setPrefix(newValue)}
-                    options={objectRoles}
-                    value={prefix}
-                    variantString={variantString}
-                />
+                {singleOption ? (
+                    <TextField
+                        disabled
+                        fullWidth
+                        variant={variantString}
+                        id={INPUT_ID}
+                        label={label}
+                        value={prefix}
+                        size="small"
+                    />
+                ) : (
+                    <PrefixSelector
+                        disabled={disabled}
+                        error={Boolean(prefixError)}
+                        label={label}
+                        labelId={INPUT_ID}
+                        onChange={(newValue) => handlers.setPrefix(newValue)}
+                        options={objectRoles}
+                        value={prefix}
+                        variantString={variantString}
+                    />
+                )}
 
                 <FormHelperText
                     id={DESCRIPTION_ID}

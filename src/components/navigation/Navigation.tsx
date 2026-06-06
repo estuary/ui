@@ -1,4 +1,7 @@
-//TODO (UI / UX) - These icons are not final
+import type { MouseEvent } from 'react';
+
+import { useState } from 'react';
+
 import {
     Box,
     List,
@@ -12,20 +15,26 @@ import {
 } from '@mui/material';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import {
     CloudDownload,
     CloudUpload,
     DatabaseScript,
     FastArrowLeft,
+    HelpCircle,
     HomeSimple,
     Settings,
 } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import { HelpMenu } from 'src/components/menus/HelpMenu';
+import OrgMenu from 'src/components/menus/OrgMenu';
+import UserMenu from 'src/components/menus/UserMenu';
 import ListItemLink from 'src/components/navigation/ListItemLink';
-import ModeSwitch from 'src/components/navigation/ModeSwitch';
 import { paperBackground } from 'src/context/Theme';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 
 interface NavigationProps {
     open: boolean;
@@ -36,6 +45,9 @@ interface NavigationProps {
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
     const theme = useTheme();
+    const userDetails = useUserStore(useShallow((state) => state.userDetails));
+
+    const [helpAnchor, setHelpAnchor] = useState<HTMLElement | null>(null);
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -78,7 +90,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 <Box>
                     <List
                         aria-label={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
+                            id: 'navigation.ariaLabel',
                         })}
                     >
                         <ListItemLink
@@ -112,18 +124,20 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 <Box>
                     <List
                         aria-label={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
+                            id: 'navigation.ariaLabel',
                         })}
                         sx={{
                             py: 1,
                         }}
                     >
-                        <ModeSwitch />
-
                         <Tooltip
-                            title={intl.formatMessage({
-                                id: 'navigation.toggle.ariaLabel',
-                            })}
+                            title={
+                                !open
+                                    ? intl.formatMessage({
+                                          id: 'navigation.tooltip.expand',
+                                      })
+                                    : null
+                            }
                             placement="right-end"
                             enterDelay={open ? 1000 : undefined}
                         >
@@ -157,6 +171,26 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                                 />
                             </ListItemButton>
                         </Tooltip>
+                        <ListItemLink
+                            icon={<HelpCircle />}
+                            title="helpMenu.tooltip"
+                            link={(e: MouseEvent<HTMLElement>) =>
+                                setHelpAnchor(e.currentTarget)
+                            }
+                            isOpen={open}
+                        />
+                        <HelpMenu
+                            anchorEl={helpAnchor}
+                            onClose={() => setHelpAnchor(null)}
+                        />
+
+                        {userDetails ? (
+                            <>
+                                <UserMenu open={open} />
+
+                                <OrgMenu open={open} />
+                            </>
+                        ) : null}
                     </List>
                 </Box>
             </Stack>
