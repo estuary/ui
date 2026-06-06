@@ -1,8 +1,40 @@
-import { HelpCircle } from 'iconoir-react';
+import type { ReactNode } from 'react';
+
+import { Link, MenuItem } from '@mui/material';
+
+import { HelpCircle, OpenNewWindow } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import IconMenu from 'src/components/menus/IconMenu';
-import ExternalLinkMenuItem from 'src/components/shared/ExternalLinkMenuItem';
+
+const ExternalLinkMenuItem = ({
+    children,
+    link,
+}: {
+    children: ReactNode;
+    link: string;
+}) => (
+    <MenuItem
+        component={Link}
+        href={link}
+        target="_blank"
+        rel="noopener"
+        tabIndex={0}
+        sx={{
+            bgcolor: 'none',
+            color: 'text.primary',
+            fontSize: 14,
+            fontWeight: 500,
+            gap: 1,
+            px: 3,
+            py: 1.5,
+        }}
+    >
+        <span>{children}</span>
+
+        <OpenNewWindow style={{ fontSize: '0.75em' }} />
+    </MenuItem>
+);
 
 function HelpMenu() {
     const intl = useIntl();
