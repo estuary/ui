@@ -92,11 +92,13 @@ declare module '@mui/material/Typography' {
 }
 
 // Navigation Width
-export enum NavWidths {
-    MOBILE = 0,
-    RAIL = 48,
-    FULL = 200,
-}
+export const NavWidths = {
+    MOBILE: 0,
+    RAIL: 54,
+    FULL: 170,
+} as const;
+
+export type NavWidths = (typeof NavWidths)[keyof typeof NavWidths];
 
 // Colors
 export const sample_blue = {
@@ -1010,8 +1012,22 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     fontSize: 14,
-                    borderRadius: 4,
+                    borderRadius: 8,
+                    textTransform: 'none',
                 },
+            },
+        },
+        MuiIconButton: {
+            styleOverrides: {
+                root: {
+                    fontSize: 14,
+                    borderRadius: 8,
+                },
+            },
+        },
+        MuiLink: {
+            defaultProps: {
+                underline: 'hover' as const,
             },
         },
         MuiCheckbox: {
@@ -1048,6 +1064,13 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     transitionTimingFunction: standardTransitionEasing,
+                },
+            },
+        },
+        MuiTab: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
                 },
             },
         },
@@ -1152,14 +1175,51 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     },
                 },
                 MuiAppBar: {
+                    defaultProps: {
+                        position: 'static' as const,
+                        elevation: 0,
+                    },
                     styleOverrides: {
                         root: {
-                            background:
-                                palette.mode === 'dark'
-                                    ? sample_grey[800]
-                                    : 'white',
+                            background: palette.background?.default,
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiDrawer: {
+                    styleOverrides: {
+                        paper: {
+                            background: palette.background?.default,
+                            border: 0,
+                        },
+                    },
+                },
+                MuiListItemButton: {
+                    styleOverrides: {
+                        root: {
+                            gap: 8,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            padding: '6px 8px',
+                            borderRadius: 8,
+                        },
+                    },
+                },
+                MuiListItemIcon: {
+                    styleOverrides: {
+                        root: {
+                            minWidth: 'auto',
+                            color: 'inherit',
+                        },
+                    },
+                },
+                MuiListItemText: {
+                    styleOverrides: {
+                        primary: {
+                            fontSize: 13,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                         },
                     },
                 },

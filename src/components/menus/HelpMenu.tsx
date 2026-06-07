@@ -1,18 +1,61 @@
-import { HelpCircle } from 'iconoir-react';
+import type { ReactNode } from 'react';
+
+import { Link, Menu, MenuItem } from '@mui/material';
+
+import { OpenNewWindow } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import IconMenu from 'src/components/menus/IconMenu';
-import ExternalLinkMenuItem from 'src/components/shared/ExternalLinkMenuItem';
+const ExternalLinkMenuItem = ({
+    children,
+    link,
+}: {
+    children: ReactNode;
+    link: string;
+}) => (
+    <MenuItem
+        component={Link}
+        href={link}
+        target="_blank"
+        rel="noopener"
+        tabIndex={0}
+        sx={{
+            bgcolor: 'none',
+            color: 'text.primary',
+            fontSize: 14,
+            fontWeight: 500,
+            gap: 1,
+            px: 3,
+            py: 1.5,
+        }}
+    >
+        <span>{children}</span>
 
-function HelpMenu() {
+        <OpenNewWindow style={{ fontSize: '0.75em' }} />
+    </MenuItem>
+);
+
+interface HelpMenuProps {
+    anchorEl: HTMLElement | null;
+    onClose: () => void;
+}
+
+export function HelpMenu({ anchorEl, onClose }: HelpMenuProps) {
     const intl = useIntl();
 
     return (
-        <IconMenu
-            ariaLabel={intl.formatMessage({ id: 'helpMenu.ariaLabel' })}
-            icon={<HelpCircle />}
-            identifier="help-menu"
-            tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
+        <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={onClose}
+            onClick={onClose}
+            anchorOrigin={{
+                horizontal: 'left',
+                vertical: 'top',
+            }}
+            transformOrigin={{
+                horizontal: 'left',
+                vertical: 'bottom',
+            }}
         >
             <ExternalLinkMenuItem
                 link={intl.formatMessage({ id: 'helpMenu.docs.link' })}
@@ -39,7 +82,7 @@ function HelpMenu() {
             >
                 <FormattedMessage id="helpMenu.contact" />
             </ExternalLinkMenuItem>
-        </IconMenu>
+        </Menu>
     );
 }
 

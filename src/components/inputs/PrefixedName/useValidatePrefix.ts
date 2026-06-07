@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import { useTenantStore } from 'src/stores/Tenant/Store';
 import { hasLength } from 'src/utils/misc-utils';
 import { validateCatalogName } from 'src/validation';
 
@@ -39,20 +40,19 @@ function useValidatePrefix({
     const objectRoles = useEntitiesStore_capabilities_adminable(
         Boolean(workflow)
     );
-    const singleOption = objectRoles.length === 1;
-
-    // Fetch for the default value
-    // const [selectedTenant, setSelectedTenant] = useTenantStore(useShallow((state) => [
-    //     state.selectedTenant,
-    //     state.setSelectedTenant,
-    // ]));
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const singleOption = objectRoles.length === 1 || hasLength(selectedTenant);
 
     // Local State for editing
     const [errors, setErrors] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<PrefixedName_Errors>(null);
     const [prefix, setPrefix] = useState(
-        singleOption || defaultPrefix ? objectRoles[0] : '' //selectedTenant
+        hasLength(selectedTenant)
+            ? selectedTenant
+            : singleOption || defaultPrefix
+              ? objectRoles[0]
+              : ''
     );
     const [prefixError, setPrefixError] = useState<PrefixedName_Errors>(null);
 

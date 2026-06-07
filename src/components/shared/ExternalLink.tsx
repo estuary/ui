@@ -1,18 +1,12 @@
-import type { ButtonTypeMap, SxProps } from '@mui/material';
-import type { ReactNode } from 'react';
+import type { SxProps, Theme } from '@mui/material';
+import type { MouseEvent, ReactNode } from 'react';
 
-import { Button } from '@mui/material';
+import { Link } from '@mui/material';
 
 import { OpenNewWindow } from 'iconoir-react';
 
-import { linkButtonSx } from 'src/context/Theme';
-
 export interface ExternalLinkOptions {
-    color?: ButtonTypeMap['props']['color'];
-    hideIcon?: boolean;
-    padding?: number;
-    sx?: SxProps;
-    variant?: ButtonTypeMap['props']['variant'];
+    sx?: SxProps<Theme>;
 }
 
 interface Props extends ExternalLinkOptions {
@@ -20,35 +14,32 @@ interface Props extends ExternalLinkOptions {
     link: string;
 }
 
-const ExternalLink = ({
-    color,
-    children,
-    link,
-    hideIcon,
-    sx,
-    variant,
-}: Props) => {
-    const onClick = (event: any) => {
+const ExternalLink = ({ children, link, sx }: Props) => {
+    const onClick = (event: MouseEvent) => {
         event.stopPropagation();
     };
 
-    const styling = sx ?? ({} as any);
-
     return (
-        <Button
-            variant={variant ?? 'text'}
-            endIcon={
-                !hideIcon ? <OpenNewWindow style={{ fontSize: 12 }} /> : null
-            }
+        <Link
             href={link}
             target="_blank"
             rel="noopener"
-            color={color ?? 'secondary'}
             onClick={onClick}
-            sx={{ ...linkButtonSx, ...styling }}
+            sx={{
+                'display': 'inline-flex',
+                'alignItems': 'center',
+                'gap': 0.5,
+                'color': 'secondary.main',
+                'textDecoration': 'none',
+                '&:hover, &:focus': {
+                    textDecoration: 'underline',
+                },
+                ...sx,
+            }}
         >
             {children}
-        </Button>
+            <OpenNewWindow style={{ fontSize: '.75em' }} />
+        </Link>
     );
 };
 
