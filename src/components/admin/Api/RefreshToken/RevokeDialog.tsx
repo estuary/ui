@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useDeleteRefreshToken } from 'src/api/gql/refreshTokens';
+import { useRevokeRefreshToken } from 'src/api/gql/refreshTokens';
 import Error from 'src/components/shared/Error';
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
 }
 
 export function RevokeDialog({ open, onClose, onRevoked, id, detail }: Props) {
-    const [, deleteRefreshToken] = useDeleteRefreshToken();
+    const [, revokeRefreshToken] = useRevokeRefreshToken();
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<CombinedError | null>(null);
@@ -33,7 +33,7 @@ export function RevokeDialog({ open, onClose, onRevoked, id, detail }: Props) {
         setSaving(true);
         setError(null);
 
-        const result = await deleteRefreshToken({ id });
+        const result = await revokeRefreshToken({ id });
 
         if (result.error) {
             setError(result.error);

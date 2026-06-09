@@ -84,7 +84,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             createRefreshToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'refreshTokens');
                             },
-                            deleteRefreshToken(_result, _args, cache) {
+                            revokeRefreshToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'refreshTokens');
                             },
                         },

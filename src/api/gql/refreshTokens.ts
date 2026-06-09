@@ -77,9 +77,9 @@ const CREATE_REFRESH_TOKEN = graphql(`
     }
 `);
 
-const DELETE_REFRESH_TOKEN = graphql(`
-    mutation DeleteRefreshToken($id: Id!) {
-        deleteRefreshToken(id: $id)
+const REVOKE_REFRESH_TOKEN = graphql(`
+    mutation RevokeRefreshToken($id: Id!) {
+        revokeRefreshToken(id: $id)
     }
 `);
 
@@ -87,6 +87,6 @@ export function useCreateRefreshToken() {
     return useMutation(CREATE_REFRESH_TOKEN);
 }
 
-export function useDeleteRefreshToken() {
-    return useMutation(DELETE_REFRESH_TOKEN);
+export function useRevokeRefreshToken() {
+    return useMutation(REVOKE_REFRESH_TOKEN);
 }

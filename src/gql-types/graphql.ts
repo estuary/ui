@@ -372,6 +372,7 @@ export type CapabilityBit =
   | 'DeleteGrant'
   | 'JournalAppend'
   | 'JournalRead'
+  | 'ManageServiceAccounts'
   | 'ModifyDataPlanePrivateNetworking'
   | 'SpecEdit'
   | 'ViewDataPlanePrivateNetworking';
@@ -1082,14 +1083,6 @@ export type MutationRoot = {
    */
   deleteInviteLink: Scalars['Boolean']['output'];
   /**
-   * Revoke a refresh token owned by the authenticated user.
-   *
-   * Rather than deleting the row, we zero its `valid_for` interval, which
-   * marks the token as expired/invalid while preserving the audit trail.
-   * Already-zeroed (revoked) tokens are treated as not found.
-   */
-  deleteRefreshToken: Scalars['Boolean']['output'];
-  /**
    * Disable a service account, revoking all API keys and grants.
    *
    * The caller must have admin capability on the service account's prefix.
@@ -1131,6 +1124,14 @@ export type MutationRoot = {
    * service account (which removes its grants).
    */
   revokeApiKey: Scalars['Boolean']['output'];
+  /**
+   * Revoke a refresh token owned by the authenticated user.
+   *
+   * Rather than deleting the row, we zero its `valid_for` interval, which
+   * marks the token as expired/invalid while preserving the audit trail.
+   * Already-zeroed (revoked) tokens are treated as not found.
+   */
+  revokeRefreshToken: Scalars['Boolean']['output'];
   setBillingPaymentMethod: BillingPaymentMethodPayload;
   /**
    * Check storage health for a given catalog prefix and storage definition.
@@ -1257,11 +1258,6 @@ export type MutationRootDeleteInviteLinkArgs = {
 };
 
 
-export type MutationRootDeleteRefreshTokenArgs = {
-  id: Scalars['Id']['input'];
-};
-
-
 export type MutationRootDisableServiceAccountArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -1278,6 +1274,11 @@ export type MutationRootRedeemInviteLinkArgs = {
 
 
 export type MutationRootRevokeApiKeyArgs = {
+  id: Scalars['Id']['input'];
+};
+
+
+export type MutationRootRevokeRefreshTokenArgs = {
   id: Scalars['Id']['input'];
 };
 
@@ -1756,7 +1757,7 @@ export type ServiceAccountEdge = {
 };
 
 export type ServiceAccountsFilter = {
-  catalogPrefix?: InputMaybe<PrefixFilter>;
+  tenant?: InputMaybe<TenantFilter>;
 };
 
 /** The shape of a connector status, which matches that of an ops::Log. */
@@ -2039,6 +2040,10 @@ export type TenantBillingInvoicesArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type TenantFilter = {
+  eq?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** Result of the `updateAlertConfig` mutation. */
 export type UpdateAlertConfigResult = {
   __typename?: 'UpdateAlertConfigResult';
@@ -2183,12 +2188,12 @@ export type CreateRefreshTokenMutationVariables = Exact<{
 
 export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: any, secret: string } };
 
-export type DeleteRefreshTokenMutationVariables = Exact<{
+export type RevokeRefreshTokenMutationVariables = Exact<{
   id: Scalars['Id']['input'];
 }>;
 
 
-export type DeleteRefreshTokenMutation = { __typename?: 'MutationRoot', deleteRefreshToken: boolean };
+export type RevokeRefreshTokenMutation = { __typename?: 'MutationRoot', revokeRefreshToken: boolean };
 
 export type CreateStorageMappingMutationVariables = Exact<{
   catalogPrefix: Scalars['Prefix']['input'];
@@ -2279,7 +2284,7 @@ export const RedeemInviteLinkDocument = {"kind":"Document","definitions":[{"kind
 export const LiveSpecsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LiveSpecsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"liveSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogType"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<LiveSpecsQueryQuery, LiveSpecsQueryQueryVariables>;
 export const RefreshTokensDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RefreshTokens"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshTokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"multiUse"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"uses"}},{"kind":"Field","name":{"kind":"Name","value":"validFor"}},{"kind":"Field","name":{"kind":"Name","value":"expired"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<RefreshTokensQuery, RefreshTokensQueryVariables>;
 export const CreateRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"multiUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}},{"kind":"Argument","name":{"kind":"Name","value":"multiUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"multiUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"validFor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]}}]} as unknown as DocumentNode<CreateRefreshTokenMutation, CreateRefreshTokenMutationVariables>;
-export const DeleteRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteRefreshTokenMutation, DeleteRefreshTokenMutationVariables>;
+export const RevokeRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RevokeRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<RevokeRefreshTokenMutation, RevokeRefreshTokenMutationVariables>;
 export const CreateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<CreateStorageMappingMutation, CreateStorageMappingMutationVariables>;
 export const UpdateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"republish"}}]}}]}}]} as unknown as DocumentNode<UpdateStorageMappingMutation, UpdateStorageMappingMutationVariables>;
 export const TestConnectionHealthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestConnectionHealth"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testConnectionHealth"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"results"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fragmentStore"}},{"kind":"Field","name":{"kind":"Name","value":"dataPlaneName"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]}}]} as unknown as DocumentNode<TestConnectionHealthMutation, TestConnectionHealthMutationVariables>;

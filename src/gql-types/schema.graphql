@@ -356,6 +356,7 @@ enum CapabilityBit {
   DeleteGrant
   JournalAppend
   JournalRead
+  ManageServiceAccounts
   ModifyDataPlanePrivateNetworking
   SpecEdit
   ViewDataPlanePrivateNetworking
@@ -1124,15 +1125,6 @@ type MutationRoot {
   deleteInviteLink(token: UUID!): Boolean!
 
   """
-  Revoke a refresh token owned by the authenticated user.
-  
-  Rather than deleting the row, we zero its `valid_for` interval, which
-  marks the token as expired/invalid while preserving the audit trail.
-  Already-zeroed (revoked) tokens are treated as not found.
-  """
-  deleteRefreshToken(id: Id!): Boolean!
-
-  """
   Disable a service account, revoking all API keys and grants.
   
   The caller must have admin capability on the service account's prefix.
@@ -1177,6 +1169,15 @@ type MutationRoot {
   service account (which removes its grants).
   """
   revokeApiKey(id: Id!): Boolean!
+
+  """
+  Revoke a refresh token owned by the authenticated user.
+  
+  Rather than deleting the row, we zero its `valid_for` interval, which
+  marks the token as expired/invalid while preserving the audit trail.
+  Already-zeroed (revoked) tokens are treated as not found.
+  """
+  revokeRefreshToken(id: Id!): Boolean!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
@@ -1629,7 +1630,7 @@ type ServiceAccountEdge {
 }
 
 input ServiceAccountsFilter {
-  catalogPrefix: PrefixFilter
+  tenant: TenantFilter
 }
 
 """The shape of a connector status, which matches that of an ops::Log."""
@@ -1939,6 +1940,10 @@ type TenantBilling {
   invoices(after: String, before: String, filter: InvoiceFilter, first: Int, last: Int): InvoiceConnection!
   paymentMethods: [PaymentMethod!]!
   primaryPaymentMethod: PaymentMethod
+}
+
+input TenantFilter {
+  eq: String
 }
 
 """
