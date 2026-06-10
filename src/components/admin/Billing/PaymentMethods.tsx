@@ -34,7 +34,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 import TableLoadingRows from 'src/components/tables/Loading';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useBillingStore } from 'src/stores/Billing/Store';
+import { useBillingStore } from 'src/stores/Billing';
 import { useTenantStore } from 'src/stores/Tenant/Store';
 import { getColumnKeyList } from 'src/utils/table-utils';
 
