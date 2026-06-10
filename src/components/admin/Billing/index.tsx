@@ -31,11 +31,11 @@ import BillingLineItemsTable from 'src/components/tables/BillLineItems';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useTenantStore } from 'src/stores/Tenant/Store';
 import {
     useBilling_selectedInvoice,
     useBillingStore,
 } from 'src/stores/Billing';
+import { useTenantStore } from 'src/stores/Tenant';
 import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;

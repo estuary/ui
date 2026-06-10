@@ -22,11 +22,11 @@ import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import { useTenantStore } from 'src/stores/Tenant/Store';
 import {
     useBilling_selectedInvoice,
     useBillingStore,
 } from 'src/stores/Billing';
+import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 
 export const columns: TableColumns[] = [

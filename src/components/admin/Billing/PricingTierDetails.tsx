@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { useTenantUsesExternalPayment } from 'src/context/fetcher/TenantBillingDetails';
 import { useBillingStore } from 'src/stores/Billing';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 
 function PricingTierDetails() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
