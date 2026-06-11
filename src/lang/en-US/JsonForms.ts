@@ -42,6 +42,7 @@ export const JsonForms: Record<string, string> = {
     'oauth.authenticate': `Authenticate your {provider} account`,
     'oauth.remove': `Remove`,
     'oauth.edit.message': `If you edit your endpoint config and want to continue using OAuth you must reauthenticate.`,
+    'oauth.popup.complete': `Authentication finished. You can close this window.`,
     'oauth.windowOpener.error.dialog.title': `OAuth Failed`,
     'oauth.windowOpener.error.title': `Cannot reach parent window`,
     'oauth.windowOpener.error.message1': `We are unable to communicate with the window that opened the OAuth pop up. The window may have been closed.`,

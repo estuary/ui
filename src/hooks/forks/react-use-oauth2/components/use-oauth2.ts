@@ -4,11 +4,13 @@ import { useCallback, useRef, useState } from 'react';
 
 import {
     MESSAGE_KEY,
+    OAUTH_BROADCAST_CHANNEL,
     OAUTH_RESPONSE,
-    OAUTH_STATE_KEY,
     POPUP_HEIGHT,
+    POPUP_RESULT_TIMEOUT,
     POPUP_WIDTH,
 } from 'src/hooks/forks/react-use-oauth2/components/constants';
+import { base64RemovePadding } from 'src/utils/misc-utils';
 
 export type AuthTokenPayload = {
     token_type: string;
@@ -24,14 +26,6 @@ export type Oauth2Props<TData = AuthTokenPayload> = {
         payload: TData,
         codeVerifier: string
     ) => void | Promise<any> | PromiseLike<any>;
-};
-
-const saveState = (state: string) => {
-    sessionStorage.setItem(OAUTH_STATE_KEY, state);
-};
-
-const removeState = () => {
-    sessionStorage.removeItem(OAUTH_STATE_KEY);
 };
 
 const openPopup = (url: string) => {
@@ -52,17 +46,6 @@ const closePopup = (
     popupRef.current?.close();
 };
 
-const cleanup = (
-    intervalRef: React.MutableRefObject<any>,
-    popupRef: React.MutableRefObject<Window | null | undefined>,
-    handleMessageListener: any
-) => {
-    clearInterval(intervalRef.current);
-    closePopup(popupRef);
-    removeState();
-    window.removeEventListener(MESSAGE_KEY, handleMessageListener);
-};
-
 export type State<TData = AuthTokenPayload> = TData | null;
 
 const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
@@ -70,32 +53,76 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
 
     const popupRef = useRef<Window | null>();
     const intervalRef = useRef<any>();
+    const timeoutRef = useRef<any>();
+    const channelRef = useRef<BroadcastChannel | null>(null);
+    const listenerRef = useRef<any>(null);
     const [loading, setLoading] = useState(false);
 
     const getAuth = useCallback(
         (authorizeUrl: string, state: string, codeVerifier: string) => {
-            // 1. Init
+            // 1. Init - tear down any previous attempt so a stale listener
+            //  cannot process this attempt's response or close its channel
+            clearInterval(intervalRef.current);
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+            channelRef.current?.close();
+            channelRef.current = null;
+            if (listenerRef.current) {
+                window.removeEventListener(MESSAGE_KEY, listenerRef.current);
+                listenerRef.current = null;
+            }
             setLoading(true);
 
-            // 2. Generate and save state
-            saveState(state);
-
-            // 3. Open popup
+            // 2. Open popup
             popupRef.current = openPopup(authorizeUrl);
 
-            // 4. Register message listener
+            const cleanup = () => {
+                clearInterval(intervalRef.current);
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+                closePopup(popupRef);
+                window.removeEventListener(MESSAGE_KEY, handleMessageListener);
+                listenerRef.current = null;
+                channelRef.current?.close();
+                channelRef.current = null;
+            };
+
+            // 3. Register listeners for the response. Providers that enforce
+            //  Cross-Origin-Opener-Policy on their login pages (ex: Microsoft)
+            //  permanently null out the pop-up's window.opener, so the message
+            //  event cannot deliver - the BroadcastChannel (same-origin
+            //  messaging COOP cannot sever) is the path that works there.
+            //  When the opener survives, both paths deliver - the responseHandled
+            //  flag makes sure only the first one is processed.
+            let responseHandled = false;
             async function handleMessageListener(message: MessageEvent<any>) {
                 try {
                     const type = message.data?.type;
                     if (type === OAUTH_RESPONSE) {
+                        if (responseHandled) {
+                            return;
+                        }
+                        responseHandled = true;
+
                         const errorMaybe = message.data?.error;
                         if (errorMaybe) {
                             await onError(errorMaybe);
                         } else {
                             const payload = message.data?.payload;
-                            await onSuccess(payload, codeVerifier);
+
+                            // The pop-up cannot verify state itself (COOP can drop
+                            //  its copy of sessionStorage) so verify it here where
+                            //  the expected value is in scope
+                            if (
+                                base64RemovePadding(payload?.state ?? null) ===
+                                base64RemovePadding(state)
+                            ) {
+                                await onSuccess(payload, codeVerifier);
+                            } else {
+                                await onError('OAuth error: State mismatch.');
+                            }
                         }
-                        cleanup(intervalRef, popupRef, handleMessageListener);
+                        cleanup();
                         setLoading(false);
                     }
 
@@ -103,34 +130,61 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                 } catch (genericError: unknown) {
                     await onError(String(genericError));
                     setLoading(false);
-                    cleanup(intervalRef, popupRef, handleMessageListener);
+                    cleanup();
                 }
             }
-            window.addEventListener(MESSAGE_KEY, handleMessageListener);
+            try {
+                channelRef.current = new BroadcastChannel(
+                    OAUTH_BROADCAST_CHANNEL
+                );
+                channelRef.current.onmessage = handleMessageListener;
+            } catch {
+                // No BroadcastChannel support - the opener path below can
+                //  still deliver for providers that do not enforce COOP
+                channelRef.current = null;
+            }
 
-            // 4. Begin interval to check if popup was closed forcefully by the user
+            window.addEventListener(MESSAGE_KEY, handleMessageListener);
+            listenerRef.current = handleMessageListener;
+
+            // 4. Begin interval to check if popup was closed forcefully by the user.
+            //  A closed reading is ambiguous - COOP-severed handles read as closed
+            //  while the user is still logging in - so it only starts a grace timer
+            //  instead of erroring right away.
             intervalRef.current = setInterval(async () => {
-                const popupClosed =
-                    !popupRef.current?.window || popupRef.current.window.closed;
-                if (popupClosed) {
-                    // Popup was closed before completing auth...
+                if (!popupRef.current?.window) {
+                    // window.open returned nothing at all - the pop-up truly never opened
                     setLoading(false);
                     await onError(
                         'Pop-up was closed before completing authentication. Your browser may be blocking it from opening. Please ensure your browser allows pop-ups.'
                     );
+                    cleanup();
+                    return;
+                }
+
+                if (popupRef.current.window.closed && !timeoutRef.current) {
+                    // Stop polling: every read of a COOP-severed handle logs a
+                    //  console warning, and closed will never read false again.
                     clearInterval(intervalRef.current);
-                    removeState();
-                    window.removeEventListener(
-                        MESSAGE_KEY,
-                        handleMessageListener
-                    );
+
+                    timeoutRef.current = setTimeout(async () => {
+                        setLoading(false);
+                        await onError(
+                            'We did not receive a response from the authentication pop-up. If you closed it before finishing, or the provider could not complete your login, please try authenticating again.'
+                        );
+                        cleanup();
+                    }, POPUP_RESULT_TIMEOUT);
                 }
             }, 250);
 
             // 5. Remove listener(s) on unmount
             return () => {
                 window.removeEventListener(MESSAGE_KEY, handleMessageListener);
+                listenerRef.current = null;
                 if (intervalRef.current) clearInterval(intervalRef.current);
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                channelRef.current?.close();
+                channelRef.current = null;
             };
         },
         [onError, onSuccess]
