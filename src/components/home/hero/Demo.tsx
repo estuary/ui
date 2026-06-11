@@ -1,10 +1,10 @@
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 
+import { OpenNewWindow } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import DemoButton from 'src/components/home/hero/DemoButton';
 import DemoStep from 'src/components/home/hero/Steps/Demo';
-import ExternalLink from 'src/components/shared/ExternalLink';
 
 const DEMO_URL =
     'https://docs.google.com/spreadsheets/d/1Cd_afDejaVXKeGxSTCupKaTtrb3a7ZHBghTemDNKE5I/edit#gid=0';
@@ -33,17 +33,17 @@ function HeroDemo() {
                     mt: 3,
                 }}
             >
-                <ExternalLink
-                    color="primary"
-                    sx={{
-                        py: 1,
-                        px: 3,
-                    }}
+                <Button
                     variant="contained"
-                    link={DEMO_URL}
+                    color="primary"
+                    endIcon={<OpenNewWindow style={{ fontSize: 10 }} />}
+                    href={DEMO_URL}
+                    target="_blank"
+                    rel="noopener"
+                    sx={{ py: 1, px: 3 }}
                 >
                     <FormattedMessage id="home.hero.button" />
-                </ExternalLink>
+                </Button>
             </Grid>
         </>
     );
