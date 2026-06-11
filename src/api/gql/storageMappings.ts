@@ -348,13 +348,13 @@ export function useStorageMappingService() {
     };
 }
 
-export function useStorageMappings() {
+export function useStorageMappings(pause = false) {
     const tenant = useTenantStore((state) => state.selectedTenant);
 
     const [{ data, fetching, error }] = useQuery({
         query: QUERY,
         variables: { underPrefix: tenant },
-        pause: !tenant,
+        pause: !tenant || pause,
     });
 
     const storageMappings: StorageMapping[] =

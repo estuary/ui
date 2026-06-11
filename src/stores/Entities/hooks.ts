@@ -13,7 +13,7 @@ import { useShallow } from 'zustand/react/shallow';
 import useSWR from 'swr';
 import { gql, useQuery } from 'urql';
 
-import { getAllStorageMappingStores } from 'src/api/storageMappings';
+import { useStorageMappings } from 'src/api/gql/storageMappings';
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { logRocketEvent } from 'src/services/shared';
@@ -261,30 +261,27 @@ export const useStorageMappingsHydrator = () => {
         (state) => state.hasSupportAccess
     );
 
-    // We hardcode the key here as we only call once
-    const storageMappingResponse = useSWR(
-        `entities_hydrator:storage_mappings`,
-        hasSupportRole
-            ? null
-            : () => {
-                  return getAllStorageMappingStores();
-              },
-        singleCallSettings
-    );
+    const { storageMappings, loading, error } =
+        useStorageMappings(hasSupportRole);
 
-    // Once we are done validating update all the settings
+    // Once we are done loading update all the settings
     useEffect(() => {
-        if (hydrated && !storageMappingResponse.isValidating) {
+        if (hydrated && !loading && !hasSupportRole) {
             // TODO (data planes) - need to filter these down to those that are admin-able
-            setStorageMappings(storageMappingResponse.data?.data as any);
+            setStorageMappings(
+                storageMappings.map((m) => ({
+                    catalog_prefix: m.catalogPrefix,
+                    spec: { data_planes: m.spec.dataPlanes },
+                })) as any
+            );
         }
     }, [
+        hasSupportRole,
         hydrated,
+        loading,
         setStorageMappings,
-        storageMappingResponse.data?.data,
-        storageMappingResponse.data?.error,
-        storageMappingResponse.isValidating,
+        storageMappings,
     ]);
 
-    return storageMappingResponse;
+    return { error };
 };

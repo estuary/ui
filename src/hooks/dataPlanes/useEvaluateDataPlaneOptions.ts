@@ -1,8 +1,11 @@
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
+
 import { useCallback } from 'react';
 
 import { uniq } from 'lodash';
+import { useClient } from 'urql';
 
-import { getDataPlaneOptions } from 'src/api/dataPlanes';
+import { DATA_PLANES_QUERY, toDataPlaneNode } from 'src/api/gql/dataPlanes';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
@@ -16,7 +19,19 @@ import {
 } from 'src/utils/dataPlane-utils';
 import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 
+const toBaseDataPlaneQuery = (node: DataPlaneNode) => ({
+    data_plane_name: node.name,
+    id: node.name,
+    reactor_address: node.reactorAddress,
+    cidr_blocks: node.cidrBlocks,
+    gcp_service_account_email: node.gcpServiceAccountEmail,
+    aws_iam_user_arn: node.awsIamUserArn,
+    data_plane_fqdn: node.fqdn,
+});
+
 export const useEvaluateDataPlaneOptions = () => {
+    const client = useClient();
+
     const setDataPlaneOptions = useDetailsFormStore(
         (state) => state.setDataPlaneOptions
     );
@@ -63,15 +78,22 @@ export const useEvaluateDataPlaneOptions = () => {
                     ? [existingDataPlane.name].concat(dataPlaneNames)
                     : dataPlaneNames;
 
-            const { data: dataPlanes, error } = await getDataPlaneOptions();
+            const result = await client
+                .query(DATA_PLANES_QUERY, {})
+                .toPromise();
+            const dataPlanes =
+                result.data?.dataPlanes.edges.map((e) =>
+                    toDataPlaneNode(e.node)
+                ) ?? [];
+            const error = result.error;
 
             // If the array of data-planes does not contain an element with the same name
             // as the existing data-plane, stub the BaseDataPlaneQuery response corresponding
             // to the existing data-plane so it can appear as a data-plane option. This is
             // particularly important for edit workflows.
-            if (dataPlanes) {
+            if (dataPlanes.length > 0) {
                 const queriedDataPlaneNames = dataPlanes
-                    ?.map(({ data_plane_name }) => data_plane_name)
+                    .map(({ name }) => name)
                     .filter((name) => !evaluatedDataPlaneNames.includes(name));
 
                 evaluatedDataPlaneNames = [
@@ -82,32 +104,30 @@ export const useEvaluateDataPlaneOptions = () => {
 
             let evaluatedDataPlaneOptions = uniq(evaluatedDataPlaneNames).map(
                 (dataPlaneName) => {
-                    const existingDataPlane = dataPlanes
-                        ? dataPlanes.find(
-                              (dataPlane) =>
-                                  dataPlane.data_plane_name === dataPlaneName
-                          )
-                        : undefined;
+                    const matchedPlane = dataPlanes.find(
+                        (dp) => dp.name === dataPlaneName
+                    );
 
-                    const defaultDataPlaneName =
-                        existingDataPlane?.data_plane_name
-                            ? existingDataPlane.data_plane_name
-                            : hasSupportRole
-                              ? `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
-                              : matchedDataPlaneNames.length > 0
-                                ? matchedDataPlaneNames[0]
-                                : dataPlaneNames.at(0);
+                    const defaultDataPlaneName = matchedPlane?.name
+                        ? matchedPlane.name
+                        : hasSupportRole
+                          ? `${DATA_PLANE_SETTINGS.public.prefix}${defaultDataPlaneSuffix}`
+                          : matchedDataPlaneNames.length > 0
+                            ? matchedDataPlaneNames[0]
+                            : dataPlaneNames.at(0);
 
                     return generateDataPlaneOption(
-                        existingDataPlane ?? {
-                            data_plane_name: dataPlaneName,
-                            id: dataPlaneName,
-                            reactor_address: '',
-                            cidr_blocks: null,
-                            gcp_service_account_email: null,
-                            aws_iam_user_arn: null,
-                            data_plane_fqdn: null,
-                        },
+                        matchedPlane
+                            ? toBaseDataPlaneQuery(matchedPlane)
+                            : {
+                                  data_plane_name: dataPlaneName,
+                                  id: dataPlaneName,
+                                  reactor_address: '',
+                                  cidr_blocks: null,
+                                  gcp_service_account_email: null,
+                                  aws_iam_user_arn: null,
+                                  data_plane_fqdn: null,
+                              },
                         defaultDataPlaneName
                     );
                 }
@@ -158,6 +178,7 @@ export const useEvaluateDataPlaneOptions = () => {
             return evaluatedDataPlaneOptions;
         },
         [
+            client,
             hasSupportRole,
             setDataPlaneOptions,
             setExistingDataPlaneOption,

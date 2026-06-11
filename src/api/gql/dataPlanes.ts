@@ -13,6 +13,7 @@ interface DataPlaneGqlNode {
     azureApplicationClientId: string | null;
     azureApplicationName: string | null;
     fqdn: string;
+    reactorAddress: string;
 }
 
 export interface DataPlaneNode extends DataPlaneGqlNode {
@@ -49,6 +50,7 @@ export const DATA_PLANES_QUERY = gql<DataPlanesResponse, { after?: string }>`
                     region
                     isPublic
                     fqdn
+                    reactorAddress
                     cidrBlocks
                     awsIamUserArn
                     gcpServiceAccountEmail
