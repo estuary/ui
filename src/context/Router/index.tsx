@@ -547,10 +547,23 @@ const routes: RouteObject[] = [
     },
 ];
 
-const router = createBrowserRouter(routes);
+// Opt into v7 behavior while still on v6 so the v7 package swap is a no-op.
+// These all become defaults in v7 (and are removed at that point).
+// Note: v7_startTransition is a RouterProvider prop, not a router option.
+const router = createBrowserRouter(routes, {
+    future: {
+        v7_relativeSplatPath: true,
+        v7_fetcherPersist: true,
+        v7_normalizeFormMethod: true,
+        v7_partialHydration: true,
+        v7_skipActionErrorRevalidation: true,
+    },
+});
 
 const ApplicationRouter = () => {
-    return <RouterProvider router={router} />;
+    return (
+        <RouterProvider router={router} future={{ v7_startTransition: true }} />
+    );
 };
 
 export default ApplicationRouter;
