@@ -47,7 +47,22 @@
         "// LGPL - only used for image processing and easy to remove": "0.0.0",
         "@img/sharp-libvips-linux-x64": "1.1.0",
         "@img/sharp-libvips-linuxmusl-x64": "1.1.0",
-        "@img/sharp-libvips-darwin-arm64": "1.1.0"
+        "@img/sharp-libvips-darwin-arm64": "1.1.0",
+
+        "// MIT - CopilotKit assistant + AG-UI deps with non-standard license metadata licensee can't parse": "0.0.0",
+        "@ag-ui/a2ui-middleware": "0.0.*",
+        "@ag-ui/a2ui-toolkit": "0.0.*",
+        "@ag-ui/client": "0.0.*",
+        "@ag-ui/core": "0.0.*",
+        "@ag-ui/encoder": "0.0.*",
+        "@ag-ui/langgraph": "0.0.*",
+        "@ag-ui/mcp-apps-middleware": "0.0.*",
+        "@ag-ui/mcp-middleware": "0.0.*",
+        "@ag-ui/proto": "0.0.*",
+        "@copilotkit/core": "1.60.*",
+        "@copilotkit/web-inspector": "1.60.*",
+        "format": "0.2.2",
+        "khroma": "2.1.0"
     },
     "ignore": [{ "prefix": "@estuary" }]
 }

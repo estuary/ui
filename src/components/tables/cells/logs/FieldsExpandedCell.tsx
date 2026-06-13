@@ -1,8 +1,19 @@
-import { Box, Collapse, Divider, Typography, useTheme } from '@mui/material';
+import {
+    Box,
+    Button,
+    Collapse,
+    Divider,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 
 import ReactJson from '@microlink/react-json-view';
+import { Sparks } from 'iconoir-react';
 
+import { buildLogExplanationPrompt } from 'src/components/copilot/shared';
 import { jsonViewTheme, paperBackground } from 'src/context/Theme';
+import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 
 interface Props {
     fields: any;
@@ -20,6 +31,10 @@ function FieldsExpandedCell({
     uuid,
 }: Props) {
     const theme = useTheme();
+
+    const openWithPrompt = useCopilotAssistantStore(
+        (state) => state.openWithPrompt
+    );
 
     return (
         <Collapse
@@ -41,11 +56,35 @@ function FieldsExpandedCell({
                     opacity: heightChanging ? 0 : undefined,
                 }}
             >
-                <Typography
-                    sx={{ fontFamily: 'Monospace', whiteSpace: 'break-spaces' }}
+                <Stack
+                    direction="row"
+                    alignItems="flex-start"
+                    justifyContent="space-between"
+                    spacing={2}
                 >
-                    {message}
-                </Typography>
+                    <Typography
+                        sx={{
+                            fontFamily: 'Monospace',
+                            whiteSpace: 'break-spaces',
+                        }}
+                    >
+                        {message}
+                    </Typography>
+
+                    <Button
+                        size="small"
+                        variant="outlined"
+                        startIcon={<Sparks />}
+                        onClick={() =>
+                            openWithPrompt(
+                                buildLogExplanationPrompt(message, fields)
+                            )
+                        }
+                        sx={{ flexShrink: 0, whiteSpace: 'nowrap' }}
+                    >
+                        Explain
+                    </Button>
+                </Stack>
 
                 <Divider sx={{ my: 2 }} />
 

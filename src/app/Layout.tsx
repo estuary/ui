@@ -9,6 +9,7 @@ import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
 import { Toast } from 'src/components/AgentSkills/Toast';
+import CopilotAssistant from 'src/components/copilot/Assistant';
 import Navigation from 'src/components/navigation/Navigation';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import PageContainer from 'src/components/shared/PageContainer';
@@ -140,6 +141,8 @@ function AppLayout() {
                     </ReflexElement>
                 </ReflexContainer>
             </Box>
+
+            <CopilotAssistant />
         </Box>
     );
 }

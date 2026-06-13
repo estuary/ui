@@ -22,6 +22,9 @@
 .env.test.local
 .env.production.local
 
+# local CopilotKit dev runtime secret
+dev/copilot-runtime/.env
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

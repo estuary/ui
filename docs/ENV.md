@@ -67,6 +67,27 @@ foo_enabled=true
 
 ---
 
+## In-Dashboard Assistant (CopilotKit)
+
+Experimental "explain log / feature / setup" assistant rendered in the authenticated layout. See `src/components/copilot/`.
+
+| Key                        | Description                                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `VITE_COPILOT_RUNTIME_URL` | CopilotKit runtime endpoint. Defaults to `http://localhost:4000/copilotkit` when unset (local dev).  |
+
+**Local dev runtime.** The runtime is a small throwaway Node process under `dev/copilot-runtime/` that holds the Anthropic key server-side (the key never reaches the browser). Set it up and run it alongside `npm start`:
+
+```bash
+cp dev/copilot-runtime/.env.example dev/copilot-runtime/.env   # then add ANTHROPIC_API_KEY
+npm run dev:copilot
+```
+
+Its own env (`dev/copilot-runtime/.env`, gitignored) holds `ANTHROPIC_API_KEY` and optional `ANTHROPIC_MODEL` / `COPILOT_RUNTIME_PORT` / `COPILOT_ALLOWED_ORIGIN`.
+
+**Shared demo.** To serve without a local runtime, point the provider at CopilotKit Cloud instead — swap `runtimeUrl` for `publicApiKey` in `src/components/copilot/Assistant.tsx` (free Developer tier; configure the Anthropic key in the Cloud dashboard).
+
+---
+
 ## Authentication / Login UI
 
 | Key                          | Description                           |

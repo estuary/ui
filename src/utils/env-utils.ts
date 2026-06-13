@@ -181,6 +181,16 @@ export const getDocsSettings = () => {
     return settings;
 };
 
+export const getCopilotSettings = () => {
+    return {
+        // Local dev runtime by default; point at CopilotKit Cloud or a deployed
+        // runtime for a shared demo. See docs/ENV.md.
+        runtimeUrl:
+            import.meta.env.VITE_COPILOT_RUNTIME_URL ??
+            'http://localhost:4000/copilotkit',
+    };
+};
+
 export const getEntityStatusSettings = () => {
     const entityStatusBaseEndpoint = import.meta.env
         .VITE_ENTITY_STATUS_BASE_URL;
