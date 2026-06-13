@@ -15,6 +15,7 @@ import { CopilotChat } from '@copilotkit/react-ui';
 import { Role, TextMessage } from '@copilotkit/runtime-client-gql';
 import { Sparks, Xmark } from 'iconoir-react';
 
+import DocsActions from 'src/components/copilot/DocsActions';
 import TaskHealthActions from 'src/components/copilot/TaskHealthActions';
 import { ASSISTANT_INSTRUCTIONS } from 'src/components/copilot/shared';
 import useCopilotPageContext from 'src/hooks/copilot/useCopilotPageContext';
@@ -144,6 +145,7 @@ export default function CopilotAssistant() {
     return (
         <CopilotKit runtimeUrl={runtimeUrl}>
             <PageContext />
+            <DocsActions />
             <TaskHealthActions />
             <PromptBridge />
             <AssistantPanel />

@@ -99,6 +99,62 @@ const server = createServer(async (req, res) => {
         return;
     }
 
+    // Doc-grounding proxy: fetches an Estuary docs page server-side (avoids
+    // browser CORS) and returns it as plain text for the assistant to ground on.
+    if (req.url?.startsWith('/docs')) {
+        const sendJson = (code, body) => {
+            res.writeHead(code, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(body));
+        };
+
+        try {
+            const target = new URL(
+                req.url,
+                `http://localhost:${PORT}`
+            ).searchParams.get('url');
+
+            if (!target) {
+                sendJson(400, { error: 'Missing ?url= parameter.' });
+                return;
+            }
+
+            const parsed = new URL(target);
+            if (parsed.hostname !== 'docs.estuary.dev') {
+                sendJson(403, {
+                    error: 'Only docs.estuary.dev URLs are allowed.',
+                });
+                return;
+            }
+
+            const docResponse = await fetch(parsed.href);
+            if (!docResponse.ok) {
+                sendJson(200, {
+                    url: parsed.href,
+                    ok: false,
+                    status: docResponse.status,
+                    error: `Doc fetch failed (${docResponse.status}). Try a different docs.estuary.dev path or fetch the sitemap.`,
+                });
+                return;
+            }
+
+            const html = await docResponse.text();
+            const text = html
+                .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+                .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, 12000);
+
+            sendJson(200, { url: parsed.href, ok: true, text });
+        } catch (error) {
+            sendJson(200, {
+                error: error instanceof Error ? error.message : String(error),
+            });
+        }
+        return;
+    }
+
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not found');
 });
