@@ -116,6 +116,10 @@ function AssistantPanel() {
                                 theme.palette.primary.contrastText,
                             '--copilot-kit-background-color':
                                 theme.palette.background.paper,
+                            // Input field bg — defaults to white, which leaves
+                            // the light text unreadable in dark mode.
+                            '--copilot-kit-input-background-color':
+                                theme.palette.background.default,
                             '--copilot-kit-secondary-color':
                                 theme.palette.background.default,
                             '--copilot-kit-secondary-contrast-color':
