@@ -10,8 +10,9 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { CopilotKit, useCopilotChatHeadless_c } from '@copilotkit/react-core';
+import { CopilotKit, useCopilotChat } from '@copilotkit/react-core';
 import { CopilotChat } from '@copilotkit/react-ui';
+import { Role, TextMessage } from '@copilotkit/runtime-client-gql';
 import { Sparks, Xmark } from 'iconoir-react';
 
 import { ASSISTANT_INSTRUCTIONS } from 'src/components/copilot/shared';
@@ -34,20 +35,18 @@ function PromptBridge() {
     const clearPendingPrompt = useCopilotAssistantStore(
         (state) => state.clearPendingPrompt
     );
-    const { sendMessage } = useCopilotChatHeadless_c();
+    const { appendMessage } = useCopilotChat();
 
     useEffect(() => {
         if (!pendingPrompt) {
             return;
         }
 
-        void sendMessage({
-            id: crypto.randomUUID(),
-            role: 'user',
-            content: pendingPrompt,
-        });
+        void appendMessage(
+            new TextMessage({ content: pendingPrompt, role: Role.User })
+        );
         clearPendingPrompt();
-    }, [pendingPrompt, sendMessage, clearPendingPrompt]);
+    }, [pendingPrompt, appendMessage, clearPendingPrompt]);
 
     return null;
 }

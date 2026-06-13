@@ -46,7 +46,13 @@ if (provider === 'google') {
         process.exit(1);
     }
 
-    modelLabel = process.env.GEMINI_MODEL ?? 'gemini-2.0-flash';
+    // CopilotKit's GoogleGenerativeAIAdapter doesn't reliably forward its
+    // `apiKey` option to the underlying LangChain/Gemini client, which reads
+    // the key from these env vars — so set them explicitly.
+    process.env.GOOGLE_API_KEY = GOOGLE_API_KEY;
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY = GOOGLE_API_KEY;
+
+    modelLabel = process.env.GEMINI_MODEL ?? 'gemini-2.5-flash';
     serviceAdapter = new GoogleGenerativeAIAdapter({
         model: modelLabel,
         apiKey: GOOGLE_API_KEY,
