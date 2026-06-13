@@ -75,14 +75,14 @@ Experimental "explain log / feature / setup" assistant rendered in the authentic
 | -------------------------- | ---------------------------------------------------------------------------------------------------- |
 | `VITE_COPILOT_RUNTIME_URL` | CopilotKit runtime endpoint. Defaults to `http://localhost:4000/copilotkit` when unset (local dev).  |
 
-**Local dev runtime.** The runtime is a small throwaway Node process under `dev/copilot-runtime/` that holds the Anthropic key server-side (the key never reaches the browser). Set it up and run it alongside `npm start`:
+**Local dev runtime.** The runtime is a small throwaway Node process under `dev/copilot-runtime/` that holds the LLM key server-side (the key never reaches the browser). Set it up and run it alongside `npm start`:
 
 ```bash
-cp dev/copilot-runtime/.env.example dev/copilot-runtime/.env   # then add ANTHROPIC_API_KEY
+cp dev/copilot-runtime/.env.example dev/copilot-runtime/.env   # then add ONE provider key
 npm run dev:copilot
 ```
 
-Its own env (`dev/copilot-runtime/.env`, gitignored) holds `ANTHROPIC_API_KEY` and optional `ANTHROPIC_MODEL` / `COPILOT_RUNTIME_PORT` / `COPILOT_ALLOWED_ORIGIN`.
+Its own env (`dev/copilot-runtime/.env`, gitignored) holds the provider key and optional overrides. The provider is auto-selected: set `GEMINI_API_KEY` (Google AI Studio) to use **Gemini** (`GEMINI_MODEL`, default `gemini-2.0-flash`), or `ANTHROPIC_API_KEY` to use **Claude** (`ANTHROPIC_MODEL`, default `claude-opus-4-8`). Force one with `COPILOT_PROVIDER=google|anthropic`. Other overrides: `COPILOT_RUNTIME_PORT`, `COPILOT_ALLOWED_ORIGIN`.
 
 **Shared demo.** To serve without a local runtime, point the provider at CopilotKit Cloud instead — swap `runtimeUrl` for `publicApiKey` in `src/components/copilot/Assistant.tsx` (free Developer tier; configure the Anthropic key in the Cloud dashboard).
 
