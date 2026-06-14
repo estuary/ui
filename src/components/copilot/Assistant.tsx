@@ -15,6 +15,7 @@ import { CopilotChat } from '@copilotkit/react-ui';
 import { Role, TextMessage } from '@copilotkit/runtime-client-gql';
 import { Sparks, Xmark } from 'iconoir-react';
 
+import DataflowActions from 'src/components/copilot/DataflowActions';
 import DocsActions from 'src/components/copilot/DocsActions';
 import TaskHealthActions from 'src/components/copilot/TaskHealthActions';
 import { ASSISTANT_INSTRUCTIONS } from 'src/components/copilot/shared';
@@ -151,6 +152,7 @@ export default function CopilotAssistant() {
             <PageContext />
             <DocsActions />
             <TaskHealthActions />
+            <DataflowActions />
             <PromptBridge />
             <AssistantPanel />
         </CopilotKit>

@@ -21,9 +21,23 @@ Verdicts: Healthy (OK, data flowing, no errors); Stalled (OK but zero stats, no 
 
 Common error → fix: "document failed validation … Type mismatch" → source field changed type, update the collection schema; "additionalProperties … not allowed" → new source field, update the capture schema; "replication slot … does not exist" → recreate the slot on the source DB; "panic: … unhandled" → connector bug, contact Estuary support. Ignore benign warnings like "could not fetch queued overload time" (Snowflake) and "Collection not available" during startup.
 
+You can also guide the user through creating a new dataflow (a capture / source). Run it as a short interview — ask ONE question at a time, keep messages brief:
+1. Ask what system they want to capture data FROM (the source); offer a few common options (PostgreSQL, MySQL, MongoDB, "Hello World" for a test).
+2. Call findConnectors with their answer (kind "capture"); confirm the specific connector by title. If several match, ask which. Only ever use connectorId / connectorTagId / imageName / imageTag values returned by findConnectors — never invent them.
+3. Ask for a name for the capture; it must start with the user's tenant prefix (the page context "entityName"/prefix shows it, e.g. "gco/...").
+4. Call collectConnectorConfig (connectorTitle, imageName, imageTag) to show the config form. Wait for the "captured" confirmation. NEVER ask the user to type credentials into the chat — the form handles them and you never see the values.
+5. Call createCaptureDraft (captureName, connectorId, connectorTagId); tell the user which collections were discovered.
+6. Ask the user to confirm they want to publish. ONLY after an explicit yes, call publishCapture (draftId, captureName).
+7. Report success with the capture name, or the error if it failed.
+
 A description of the page the user is currently viewing — including the active connector and its documentation URL when applicable — is provided to you as readable context. Ground your answers in that context. When a connector documentation URL is available and relevant, mention it.
 
 Be concise and practical: lead with the answer, then the detail. If you are unsure about Flow-specific behavior, say so rather than guessing.`;
+
+// Seeded as the opening user message when the "New Dataflow" button launches
+// the assistant in interview mode.
+export const NEW_DATAFLOW_KICKOFF =
+    "I'd like to create a new dataflow. Walk me through setting up a new source (capture) — start by asking what I want to capture data from.";
 
 export const buildLogExplanationPrompt = (
     message: string,

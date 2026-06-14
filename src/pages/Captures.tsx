@@ -2,13 +2,15 @@ import type { SxProps, Theme } from '@mui/material';
 
 import { Box, Button, Toolbar } from '@mui/material';
 
-import { Plus } from 'iconoir-react';
+import { Plus, Sparks } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import { NEW_DATAFLOW_KICKOFF } from 'src/components/copilot/shared';
 import CapturesTable from 'src/components/tables/Captures';
 import usePageTitle from 'src/hooks/usePageTitle';
+import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 
 const boxStyling: SxProps<Theme> = { marginBottom: 2, padding: 2 };
 
@@ -20,6 +22,10 @@ const Capture = () => {
 
     const intl = useIntl();
 
+    const openWithPrompt = useCopilotAssistantStore(
+        (state) => state.openWithPrompt
+    );
+
     return (
         <>
             <Toolbar
@@ -29,19 +35,30 @@ const Capture = () => {
                     justifyContent: 'space-between',
                 }}
             >
-                <NavLink
-                    style={{ textDecoration: 'none' }}
-                    to={authenticatedRoutes.captures.create.fullPath}
-                >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <NavLink
+                        style={{ textDecoration: 'none' }}
+                        to={authenticatedRoutes.captures.create.fullPath}
+                    >
+                        <Button
+                            size="large"
+                            startIcon={<Plus style={{ fontSize: 14 }} />}
+                        >
+                            {intl.formatMessage({
+                                id: 'capturesTable.cta.new',
+                            })}
+                        </Button>
+                    </NavLink>
+
                     <Button
                         size="large"
-                        startIcon={<Plus style={{ fontSize: 14 }} />}
+                        variant="outlined"
+                        startIcon={<Sparks style={{ fontSize: 14 }} />}
+                        onClick={() => openWithPrompt(NEW_DATAFLOW_KICKOFF)}
                     >
-                        {intl.formatMessage({
-                            id: 'capturesTable.cta.new',
-                        })}
+                        New Dataflow
                     </Button>
-                </NavLink>
+                </Box>
             </Toolbar>
 
             <Box sx={boxStyling}>
