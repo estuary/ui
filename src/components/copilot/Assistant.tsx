@@ -17,8 +17,8 @@ import { Sparks, Xmark } from 'iconoir-react';
 
 import DataflowActions from 'src/components/copilot/DataflowActions';
 import DocsActions from 'src/components/copilot/DocsActions';
-import TaskHealthActions from 'src/components/copilot/TaskHealthActions';
 import { ASSISTANT_INSTRUCTIONS } from 'src/components/copilot/shared';
+import TaskHealthActions from 'src/components/copilot/TaskHealthActions';
 import useCopilotPageContext from 'src/hooks/copilot/useCopilotPageContext';
 import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 import { getCopilotSettings } from 'src/utils/env-utils';
@@ -132,8 +132,8 @@ function AssistantPanel() {
 
                     <Box
                         sx={{
-                            flex: 1,
-                            minHeight: 0,
+                            'flex': 1,
+                            'minHeight': 0,
                             // Match the CopilotKit chat to the MUI theme.
                             '--copilot-kit-primary-color':
                                 theme.palette.primary.main,
@@ -158,7 +158,6 @@ function AssistantPanel() {
                             instructions={ASSISTANT_INSTRUCTIONS}
                             labels={{
                                 title: 'Flow assistant',
-                                initial: "Hi! I can explain log messages, Flow features, and how to set up this connector. What would you like to know?",
                             }}
                         />
                     </Box>
@@ -172,7 +171,7 @@ function AssistantPanel() {
 // bridge + the floating panel. Mounted inside the authenticated layout.
 export default function CopilotAssistant() {
     return (
-        <CopilotKit runtimeUrl={runtimeUrl}>
+        <CopilotKit runtimeUrl={runtimeUrl} showDevConsole={false}>
             <PageContext />
             <DocsActions />
             <TaskHealthActions />
