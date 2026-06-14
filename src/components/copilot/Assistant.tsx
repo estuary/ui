@@ -4,6 +4,7 @@ import {
     Box,
     Drawer,
     Fab,
+    GlobalStyles,
     IconButton,
     Stack,
     Typography,
@@ -171,13 +172,21 @@ function AssistantPanel() {
 // bridge + the floating panel. Mounted inside the authenticated layout.
 export default function CopilotAssistant() {
     return (
-        <CopilotKit runtimeUrl={runtimeUrl} showDevConsole={false}>
-            <PageContext />
-            <DocsActions />
-            <TaskHealthActions />
-            <DataflowActions />
-            <PromptBridge />
-            <AssistantPanel />
-        </CopilotKit>
+        <>
+            {/* showDevConsole={false} doesn't reliably suppress CopilotKit's v2
+                web-inspector custom element (a version-bridge quirk), so hide it
+                directly. */}
+            <GlobalStyles
+                styles={{ 'cpk-web-inspector': { display: 'none !important' } }}
+            />
+            <CopilotKit runtimeUrl={runtimeUrl} showDevConsole={false}>
+                <PageContext />
+                <DocsActions />
+                <TaskHealthActions />
+                <DataflowActions />
+                <PromptBridge />
+                <AssistantPanel />
+            </CopilotKit>
+        </>
     );
 }
