@@ -7,14 +7,24 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 
 // UI store for the in-dashboard assistant. Decouples "Explain" affordances
 // scattered through the app from the CopilotKit chat surface mounted in the
-// authenticated layout: a trigger calls `openWithPrompt`, a bridge component
-// inside the CopilotKit provider consumes `pendingPrompt` and sends it.
+// authenticated layout. A bridge component inside the CopilotKit provider
+// consumes the pending values and appends the corresponding chat message.
+//
+// Two trigger styles:
+// - openWithPrompt: appends a visible USER message and runs the model (used by
+//   "Explain this log" etc., where the user is effectively asking a question).
+// - openWithOpener: appends an ASSISTANT message WITHOUT running the model (used
+//   by "New Dataflow", so the panel opens with the agent already asking its
+//   first question — no synthetic user prompt shown, no latency).
 interface CopilotAssistantState {
     open: boolean;
     pendingPrompt: string | null;
+    pendingOpener: string | null;
     setOpen: (open: boolean) => void;
     openWithPrompt: (prompt: string) => void;
+    openWithOpener: (message: string) => void;
     clearPendingPrompt: () => void;
+    clearPendingOpener: () => void;
 }
 
 export const useCopilotAssistantStore = create<CopilotAssistantState>()(
@@ -22,6 +32,7 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
         (set) => ({
             open: false,
             pendingPrompt: null,
+            pendingOpener: null,
 
             setOpen: (open) => {
                 set(
@@ -44,6 +55,17 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                 );
             },
 
+            openWithOpener: (message) => {
+                set(
+                    produce((state: CopilotAssistantState) => {
+                        state.open = true;
+                        state.pendingOpener = message;
+                    }),
+                    false,
+                    'Copilot Assistant Opened With Opener'
+                );
+            },
+
             clearPendingPrompt: () => {
                 set(
                     produce((state: CopilotAssistantState) => {
@@ -51,6 +73,16 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                     }),
                     false,
                     'Copilot Assistant Pending Prompt Cleared'
+                );
+            },
+
+            clearPendingOpener: () => {
+                set(
+                    produce((state: CopilotAssistantState) => {
+                        state.pendingOpener = null;
+                    }),
+                    false,
+                    'Copilot Assistant Pending Opener Cleared'
                 );
             },
         }),

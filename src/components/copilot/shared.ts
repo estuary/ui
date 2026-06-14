@@ -34,10 +34,11 @@ A description of the page the user is currently viewing — including the active
 
 Be concise and practical: lead with the answer, then the detail. If you are unsure about Flow-specific behavior, say so rather than guessing.`;
 
-// Seeded as the opening user message when the "New Dataflow" button launches
-// the assistant in interview mode.
-export const NEW_DATAFLOW_KICKOFF =
-    "I'd like to create a new dataflow. Walk me through setting up a new source (capture) — start by asking what I want to capture data from.";
+// The agent's opening question, appended (as an assistant message, no model
+// call) when the "New Dataflow" button launches the interview — so the panel
+// opens with the agent already asking, and no synthetic user prompt is shown.
+export const NEW_DATAFLOW_OPENER =
+    'Let\'s set up a new dataflow. What system do you want to capture data from? (For example: PostgreSQL, MySQL, MongoDB — or "Hello World" to try a synthetic test source.)';
 
 export const buildLogExplanationPrompt = (
     message: string,

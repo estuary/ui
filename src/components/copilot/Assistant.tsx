@@ -29,14 +29,24 @@ const { runtimeUrl } = getCopilotSettings();
 
 const DRAWER_WIDTH = 440;
 
-// Sends a queued prompt (from an "Explain" affordance) into the chat. Mounted
-// at provider level so it works even when the panel was closed when triggered.
+// Bridges queued messages from the store into the chat. Mounted at provider
+// level so it works even when the panel was closed when triggered.
+// - pendingPrompt: a visible USER message that runs the model ("Explain this…").
+// - pendingOpener: an ASSISTANT message appended WITHOUT running the model, so a
+//   flow like "New Dataflow" opens with the agent already asking its first
+//   question and no synthetic user prompt is shown.
 function PromptBridge() {
     const pendingPrompt = useCopilotAssistantStore(
         (state) => state.pendingPrompt
     );
     const clearPendingPrompt = useCopilotAssistantStore(
         (state) => state.clearPendingPrompt
+    );
+    const pendingOpener = useCopilotAssistantStore(
+        (state) => state.pendingOpener
+    );
+    const clearPendingOpener = useCopilotAssistantStore(
+        (state) => state.clearPendingOpener
     );
     const { appendMessage } = useCopilotChat();
 
@@ -50,6 +60,20 @@ function PromptBridge() {
         );
         clearPendingPrompt();
     }, [pendingPrompt, appendMessage, clearPendingPrompt]);
+
+    useEffect(() => {
+        if (!pendingOpener) {
+            return;
+        }
+
+        // followUp: false → append the agent's opening question without calling
+        // the model. The interview proceeds when the user replies.
+        void appendMessage(
+            new TextMessage({ content: pendingOpener, role: Role.Assistant }),
+            { followUp: false }
+        );
+        clearPendingOpener();
+    }, [pendingOpener, appendMessage, clearPendingOpener]);
 
     return null;
 }

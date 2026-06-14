@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import { NEW_DATAFLOW_KICKOFF } from 'src/components/copilot/shared';
+import { NEW_DATAFLOW_OPENER } from 'src/components/copilot/shared';
 import CapturesTable from 'src/components/tables/Captures';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
@@ -22,8 +22,8 @@ const Capture = () => {
 
     const intl = useIntl();
 
-    const openWithPrompt = useCopilotAssistantStore(
-        (state) => state.openWithPrompt
+    const openWithOpener = useCopilotAssistantStore(
+        (state) => state.openWithOpener
     );
 
     return (
@@ -54,7 +54,7 @@ const Capture = () => {
                         size="large"
                         variant="outlined"
                         startIcon={<Sparks style={{ fontSize: 14 }} />}
-                        onClick={() => openWithPrompt(NEW_DATAFLOW_KICKOFF)}
+                        onClick={() => openWithOpener(NEW_DATAFLOW_OPENER)}
                     >
                         New Dataflow
                     </Button>
