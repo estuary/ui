@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import type { ErrorDetails } from 'src/components/shared/Error/types';
 
 import { useMemo } from 'react';
@@ -16,11 +16,13 @@ import { CustomEvents } from 'src/services/types';
 
 interface Props {
     error: ErrorDetails;
+    actions?: ReactNode;
     disableMessageWrapping?: boolean;
     message?: ReactElement;
     title?: ReactElement | string;
 }
 function FullPageError({
+    actions,
     disableMessageWrapping,
     error,
     message,
@@ -56,6 +58,7 @@ function FullPageError({
                 <Typography variant="subtitle1">
                     <MessageWithLink messageID="fullPage.instructions" />
                 </Typography>
+                {actions}
                 <Divider />
                 <Error error={error} condensed />
             </Stack>
