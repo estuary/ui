@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import {
     Box,
@@ -49,7 +49,12 @@ function PromptBridge() {
     const clearPendingOpener = useCopilotAssistantStore(
         (state) => state.clearPendingOpener
     );
-    const { appendMessage } = useCopilotChat();
+    const { appendMessage, isAvailable } = useCopilotChat();
+
+    // Guards against StrictMode's double-effect appending the opener twice.
+    // Resets naturally on remount, which is exactly when a new interview
+    // starts (the provider is keyed on threadNonce).
+    const openerAppended = useRef(false);
 
     useEffect(() => {
         if (!pendingPrompt) {
@@ -63,18 +68,27 @@ function PromptBridge() {
     }, [pendingPrompt, appendMessage, clearPendingPrompt]);
 
     useEffect(() => {
-        if (!pendingOpener) {
+        if (!pendingOpener || openerAppended.current) {
             return;
         }
 
-        // followUp: false → append the agent's opening question without calling
-        // the model. The interview proceeds when the user replies.
+        // The provider remounts (keyed on threadNonce) for each new interview,
+        // so the thread is already empty here. Wait for the chat to be available
+        // before appending — on a fresh mount the runtime session isn't ready
+        // yet, and an append fired before then is silently dropped. Once ready,
+        // show the agent's opening question (followUp: false → no model call);
+        // the interview proceeds when the user replies.
+        if (!isAvailable) {
+            return;
+        }
+
+        openerAppended.current = true;
         void appendMessage(
             new TextMessage({ content: pendingOpener, role: Role.Assistant }),
             { followUp: false }
         );
         clearPendingOpener();
-    }, [pendingOpener, appendMessage, clearPendingOpener]);
+    }, [pendingOpener, isAvailable, appendMessage, clearPendingOpener]);
 
     return null;
 }
@@ -171,6 +185,12 @@ function AssistantPanel() {
 // Top-level assistant: CopilotKit provider + readable page context + prompt
 // bridge + the floating panel. Mounted inside the authenticated layout.
 export default function CopilotAssistant() {
+    // Bumped by openWithOpener (the "New Dataflow" button). Used as the provider
+    // `key` so each new interview remounts CopilotKit with a fresh, empty
+    // message thread — the version's reset()/setMessages don't reliably clear
+    // the v2 store, so a remount is the dependable way to start clean.
+    const threadNonce = useCopilotAssistantStore((state) => state.threadNonce);
+
     return (
         <>
             {/* showDevConsole={false} doesn't reliably suppress CopilotKit's v2
@@ -179,7 +199,11 @@ export default function CopilotAssistant() {
             <GlobalStyles
                 styles={{ 'cpk-web-inspector': { display: 'none !important' } }}
             />
-            <CopilotKit runtimeUrl={runtimeUrl} showDevConsole={false}>
+            <CopilotKit
+                key={`thread-${threadNonce}`}
+                runtimeUrl={runtimeUrl}
+                showDevConsole={false}
+            >
                 <PageContext />
                 <DocsActions />
                 <TaskHealthActions />

@@ -20,6 +20,10 @@ interface CopilotAssistantState {
     open: boolean;
     pendingPrompt: string | null;
     pendingOpener: string | null;
+    // Bumped by openWithOpener; used as the CopilotKit provider `key` so a new
+    // interview remounts the provider with a fresh (empty) message thread —
+    // the version's reset()/setMessages don't reliably clear the v2 store.
+    threadNonce: number;
     setOpen: (open: boolean) => void;
     openWithPrompt: (prompt: string) => void;
     openWithOpener: (message: string) => void;
@@ -33,6 +37,7 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
             open: false,
             pendingPrompt: null,
             pendingOpener: null,
+            threadNonce: 0,
 
             setOpen: (open) => {
                 set(
@@ -60,6 +65,9 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                     produce((state: CopilotAssistantState) => {
                         state.open = true;
                         state.pendingOpener = message;
+                        // Remount the CopilotKit provider (via its `key`) so the
+                        // new interview starts from an empty message thread.
+                        state.threadNonce += 1;
                     }),
                     false,
                     'Copilot Assistant Opened With Opener'

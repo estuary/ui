@@ -16,6 +16,7 @@
 
 import { createServer } from 'node:http';
 
+import Anthropic from '@anthropic-ai/sdk';
 import {
     AnthropicAdapter,
     CopilotRuntime,
@@ -65,10 +66,20 @@ if (provider === 'google') {
         process.exit(1);
     }
 
-    // AnthropicAdapter constructs `new Anthropic()` internally, which reads
-    // ANTHROPIC_API_KEY from the environment.
+    // CopilotKit's AnthropicAdapter reads `baseURL` off the official
+    // @anthropic-ai/sdk client (which is `https://api.anthropic.com`, NO /v1)
+    // and hands it to @ai-sdk/anthropic, which appends `/messages` — yielding
+    // `https://api.anthropic.com/messages` → 404. The two libs disagree on
+    // whether /v1 lives in the base URL. Pass a client whose baseURL already
+    // includes /v1 so the resolved endpoint is `/v1/messages`.
     modelLabel = process.env.ANTHROPIC_MODEL ?? 'claude-opus-4-8';
-    serviceAdapter = new AnthropicAdapter({ model: modelLabel });
+    serviceAdapter = new AnthropicAdapter({
+        model: modelLabel,
+        anthropic: new Anthropic({
+            apiKey: process.env.ANTHROPIC_API_KEY,
+            baseURL: 'https://api.anthropic.com/v1',
+        }),
+    });
 }
 
 const runtime = new CopilotRuntime();
