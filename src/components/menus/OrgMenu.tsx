@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Dialog,
@@ -24,6 +24,7 @@ import {
     useEntitiesStore_tenantsWithAdmin,
 } from 'src/stores/Entities/hooks';
 import { useTenantStore } from 'src/stores/Tenant';
+import { hasLength } from 'src/utils/misc-utils';
 
 interface OrgMenuProps {
     // Whether the side nav is expanded; controls the trigger label visibility.
@@ -41,6 +42,18 @@ const OrgMenu = ({ open }: OrgMenuProps) => {
         (state) => state.hasSupportAccess
     );
     const allPrefixes = useEntitiesStore_capabilities_adminable(false);
+
+    // The org menu is always mounted in the nav, so it owns defaulting the
+    // selected tenant: keep a still-valid selection (e.g. one persisted from a
+    // prior session), otherwise fall back to the first available tenant.
+    useEffect(() => {
+        if (
+            hasLength(tenantNames) &&
+            !(selectedTenant && tenantNames.includes(selectedTenant))
+        ) {
+            setSelectedTenant(tenantNames[0]);
+        }
+    }, [selectedTenant, setSelectedTenant, tenantNames]);
 
     const [orgAnchor, setOrgAnchor] = useState<HTMLElement | null>(null);
     const [orgDialogOpen, setOrgDialogOpen] = useState(false);
