@@ -1,13 +1,12 @@
 import type { BaseComponentProps } from 'src/types';
 
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
 import FullPageWrapper from 'src/app/FullPageWrapper';
 import useDirectiveGuard from 'src/app/guards/hooks';
 import FullPageError from 'src/components/fullPage/Error';
-import { supabaseClient } from 'src/context/GlobalProviders';
 import ClickToAccept from 'src/directives/ClickToAccept';
 
 const SELECTED_DIRECTIVE = 'clickToAccept';
@@ -34,20 +33,6 @@ function LegalGuard({ children }: BaseComponentProps) {
                             terms: <FormattedMessage id="legal.docs.terms" />,
                         }}
                     />
-                }
-                actions={
-                    // The check failed before the layout (and its logout) could
-                    // render, so offer a way out — signing out and back in
-                    // clears a stale ToS-acceptance check.
-                    <Button
-                        variant="outlined"
-                        onClick={() => {
-                            void supabaseClient.auth.signOut();
-                        }}
-                        sx={{ alignSelf: 'flex-start' }}
-                    >
-                        <FormattedMessage id="cta.logout" />
-                    </Button>
                 }
             />
         );
