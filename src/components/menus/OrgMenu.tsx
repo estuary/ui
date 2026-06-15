@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
     Dialog,
@@ -22,10 +22,7 @@ import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfo
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import {
-    useEntitiesStore_capabilities_adminable,
-    useEntitiesStore_tenantsWithAdmin,
-} from 'src/stores/Entities/hooks';
+import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
 import { useTenantStore } from 'src/stores/Tenant';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -40,36 +37,29 @@ const OrgMenu = ({ open }: OrgMenuProps) => {
     const setSelectedTenant = useTenantStore(
         (state) => state.setSelectedTenant
     );
+    // Same tenant list the old TenantSelector showed everyone (incl. support).
     const tenantNames = useEntitiesStore_tenantsWithAdmin();
     const hasSupportAccess = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess
-    );
-    const allPrefixes = useEntitiesStore_capabilities_adminable(false);
-
-    // Support users pick from every admin prefix (a potentially huge list, hence
-    // the autocomplete dialog); everyone else picks from their top-level orgs.
-    const availableTenants = useMemo(
-        () => (hasSupportAccess ? allPrefixes : tenantNames),
-        [allPrefixes, hasSupportAccess, tenantNames]
     );
 
     const prefixParam = useGlobalSearchParams(GlobalSearchParams.PREFIX);
     const appliedPrefixParam = useRef<string | null>(null);
 
     // The org menu is always mounted, so it owns selecting a tenant. Once the
-    // available list loads: honor a `?prefix=` deep link (e.g. the billing "add
+    // tenant list loads: honor a `?prefix=` deep link (e.g. the billing "add
     // payment method" CTA) the first time it appears, then keep a still-valid
     // selection, otherwise fall back to the first available tenant. Tracking the
     // applied param lets a manual switch stick instead of losing to a stale
     // param lingering in the URL.
     useEffect(() => {
-        if (!hasLength(availableTenants)) {
+        if (!hasLength(tenantNames)) {
             return;
         }
 
         if (
             hasLength(prefixParam) &&
-            availableTenants.includes(prefixParam) &&
+            tenantNames.includes(prefixParam) &&
             prefixParam !== appliedPrefixParam.current
         ) {
             appliedPrefixParam.current = prefixParam;
@@ -81,10 +71,10 @@ const OrgMenu = ({ open }: OrgMenuProps) => {
             return;
         }
 
-        if (!(selectedTenant && availableTenants.includes(selectedTenant))) {
-            setSelectedTenant(availableTenants[0]);
+        if (!(selectedTenant && tenantNames.includes(selectedTenant))) {
+            setSelectedTenant(tenantNames[0]);
         }
-    }, [availableTenants, prefixParam, selectedTenant, setSelectedTenant]);
+    }, [prefixParam, selectedTenant, setSelectedTenant, tenantNames]);
 
     const [orgAnchor, setOrgAnchor] = useState<HTMLElement | null>(null);
     const [orgDialogOpen, setOrgDialogOpen] = useState(false);
@@ -185,7 +175,7 @@ const OrgMenu = ({ open }: OrgMenuProps) => {
                             setSelectedTenant(newValue);
                             setOrgDialogOpen(false);
                         }}
-                        options={allPrefixes}
+                        options={tenantNames}
                         value={selectedTenant}
                         variantString="outlined"
                     />
