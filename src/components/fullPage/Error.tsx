@@ -58,19 +58,29 @@ function FullPageError({
                     <MessageWithLink messageID="fullPage.instructions" />
                 </Typography>
 
-                {/* A full-page error replaces the layout — including the nav's
-                    logout button. Every caller is behind auth, so always offer
-                    logout as an escape; signing out and back in clears stale
-                    check/hydration failures. */}
-                <Button
-                    variant="outlined"
-                    onClick={() => {
-                        void supabaseClient.auth.signOut();
-                    }}
-                    sx={{ alignSelf: 'flex-start' }}
-                >
-                    <FormattedMessage id="cta.logout" />
-                </Button>
+                {/* A full-page error replaces the whole layout, including the
+                    nav. Most of these failures are transient, so offer a reload;
+                    and since every caller is behind auth, a logout escape hatch
+                    too (signing out and back in clears stale checks). */}
+                <Stack direction="row" spacing={1}>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            window.location.reload();
+                        }}
+                    >
+                        <FormattedMessage id="cta.reload" />
+                    </Button>
+
+                    <Button
+                        variant="outlined"
+                        onClick={() => {
+                            void supabaseClient.auth.signOut();
+                        }}
+                    >
+                        <FormattedMessage id="cta.logout" />
+                    </Button>
+                </Stack>
 
                 <Divider />
                 <Error error={error} condensed />
