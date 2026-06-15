@@ -58,10 +58,6 @@ function FullPageError({
                     <MessageWithLink messageID="fullPage.instructions" />
                 </Typography>
 
-                {/* A full-page error replaces the whole layout, including the
-                    nav. Most of these failures are transient, so offer a reload;
-                    and since every caller is behind auth, a logout escape hatch
-                    too (signing out and back in clears stale checks). */}
                 <Stack direction="row" spacing={1}>
                     <Button
                         variant="contained"
