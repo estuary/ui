@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useBillingStore } from 'src/stores/Billing';
 import { useTenantStore } from 'src/stores/Tenant';
 
-function useTenantChangeReset() {
+export function useTenantChangeReset() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const resetBillingState = useBillingStore((state) => state.resetState);
@@ -20,5 +20,3 @@ function useTenantChangeReset() {
         }
     }, [selectedTenant, resetStores]);
 }
-
-export default useTenantChangeReset;

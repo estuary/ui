@@ -12,7 +12,7 @@ interface NavTriggerButtonProps {
 
 // A side-nav list item that opens a menu/popover anchored to itself, rather
 // than navigating. Shared by the user and org switcher triggers.
-const NavTriggerButton = ({
+export const NavTriggerButton = ({
     icon,
     label,
     open,
@@ -40,5 +40,3 @@ const NavTriggerButton = ({
         />
     </ListItemButton>
 );
-
-export default NavTriggerButton;

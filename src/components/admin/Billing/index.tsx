@@ -19,7 +19,7 @@ import BillingLoadError from 'src/components/admin/Billing/LoadError';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
-import useTenantChangeReset from 'src/components/admin/Billing/useTenantChangeReset';
+import { useTenantChangeReset } from 'src/components/admin/Billing/useTenantChangeReset';
 import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
 import GraphStateWrapper from 'src/components/graphs/states/Wrapper';

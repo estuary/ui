@@ -53,5 +53,3 @@ export function HelpMenu({ anchorEl, onClose }: HelpMenuProps) {
         </Menu>
     );
 }
-
-export default HelpMenu;

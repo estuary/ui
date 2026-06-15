@@ -30,8 +30,8 @@ import { useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import { HelpMenu } from 'src/components/menus/HelpMenu';
-import OrgMenu from 'src/components/menus/OrgMenu';
-import UserMenu from 'src/components/menus/UserMenu';
+import { OrgMenu } from 'src/components/menus/OrgMenu';
+import { UserMenu } from 'src/components/menus/UserMenu';
 import ListItemLink from 'src/components/navigation/ListItemLink';
 import { paperBackground } from 'src/context/Theme';
 import { useUserStore } from 'src/context/User/useUserContextStore';

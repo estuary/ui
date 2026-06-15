@@ -19,7 +19,7 @@ import {
     sideNavMenuAnchorOrigin,
     sideNavMenuTransformOrigin,
 } from 'src/components/menus/shared';
-import NavTriggerButton from 'src/components/navigation/NavTriggerButton';
+import { NavTriggerButton } from 'src/components/navigation/NavTriggerButton';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useColorMode } from 'src/context/Theme';
@@ -30,7 +30,7 @@ interface UserMenuProps {
     open: boolean;
 }
 
-const UserMenu = ({ open }: UserMenuProps) => {
+export const UserMenu = ({ open }: UserMenuProps) => {
     const theme = useTheme();
     const colorMode = useColorMode();
     const userDetails = useUserStore(useShallow((state) => state.userDetails));
@@ -126,5 +126,3 @@ const UserMenu = ({ open }: UserMenuProps) => {
         </>
     );
 };
-
-export default UserMenu;

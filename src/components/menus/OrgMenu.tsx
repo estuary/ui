@@ -17,7 +17,7 @@ import {
     sideNavMenuAnchorOrigin,
     sideNavMenuTransformOrigin,
 } from 'src/components/menus/shared';
-import NavTriggerButton from 'src/components/navigation/NavTriggerButton';
+import { NavTriggerButton } from 'src/components/navigation/NavTriggerButton';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
 import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
 import { useTenantStore } from 'src/stores/Tenant';
