@@ -140,7 +140,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
 
                     <PricingTierDetails />
                 </Grid>
-
             </Grid>
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
