@@ -1,28 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    MenuItem,
-    Popover,
-    Typography,
-} from '@mui/material';
+import { MenuItem, Popover, Typography } from '@mui/material';
 
 import { Building, Check } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
-import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
 import {
     sideNavMenuAnchorOrigin,
     sideNavMenuTransformOrigin,
 } from 'src/components/menus/shared';
 import NavTriggerButton from 'src/components/navigation/NavTriggerButton';
-import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import {
-    useEntitiesStore_capabilities_adminable,
-    useEntitiesStore_tenantsWithAdmin,
-} from 'src/stores/Entities/hooks';
+import useGlobalSearchParams, {
+    GlobalSearchParams,
+} from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
 import { useTenantStore } from 'src/stores/Tenant';
 import { hasLength } from 'src/utils/misc-utils';
 
@@ -32,31 +23,46 @@ interface OrgMenuProps {
 }
 
 const OrgMenu = ({ open }: OrgMenuProps) => {
-    const intl = useIntl();
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
         (state) => state.setSelectedTenant
     );
     const tenantNames = useEntitiesStore_tenantsWithAdmin();
-    const hasSupportAccess = useUserInfoSummaryStore(
-        (state) => state.hasSupportAccess
-    );
-    const allPrefixes = useEntitiesStore_capabilities_adminable(false);
 
-    // The org menu is always mounted in the nav, so it owns defaulting the
-    // selected tenant: keep a still-valid selection (e.g. one persisted from a
-    // prior session), otherwise fall back to the first available tenant.
+    const prefixParam = useGlobalSearchParams(GlobalSearchParams.PREFIX);
+    const appliedPrefixParam = useRef<string | null>(null);
+
+    // The org menu is always mounted, so it owns selecting a tenant. Once the
+    // tenant list loads: honor a `?prefix=` deep link (e.g. the billing "add
+    // payment method" CTA) the first time it appears, then keep a still-valid
+    // selection, otherwise fall back to the first available tenant. Tracking the
+    // applied param lets a manual switch stick instead of losing to a stale
+    // param lingering in the URL.
     useEffect(() => {
+        if (!hasLength(tenantNames)) {
+            return;
+        }
+
         if (
-            hasLength(tenantNames) &&
-            !(selectedTenant && tenantNames.includes(selectedTenant))
+            hasLength(prefixParam) &&
+            tenantNames.includes(prefixParam) &&
+            prefixParam !== appliedPrefixParam.current
         ) {
+            appliedPrefixParam.current = prefixParam;
+
+            if (prefixParam !== selectedTenant) {
+                setSelectedTenant(prefixParam);
+            }
+
+            return;
+        }
+
+        if (!(selectedTenant && tenantNames.includes(selectedTenant))) {
             setSelectedTenant(tenantNames[0]);
         }
-    }, [selectedTenant, setSelectedTenant, tenantNames]);
+    }, [prefixParam, selectedTenant, setSelectedTenant, tenantNames]);
 
     const [orgAnchor, setOrgAnchor] = useState<HTMLElement | null>(null);
-    const [orgDialogOpen, setOrgDialogOpen] = useState(false);
 
     const tenantLabel = selectedTenant
         ? selectedTenant.replace(/\/$/, '')
@@ -66,11 +72,7 @@ const OrgMenu = ({ open }: OrgMenuProps) => {
         <>
             <NavTriggerButton
                 open={open}
-                onClick={(e) =>
-                    hasSupportAccess
-                        ? setOrgDialogOpen(true)
-                        : setOrgAnchor(e.currentTarget)
-                }
+                onClick={(e) => setOrgAnchor(e.currentTarget)}
                 icon={<Building />}
                 label={tenantLabel}
             />
@@ -132,34 +134,6 @@ const OrgMenu = ({ open }: OrgMenuProps) => {
                     );
                 })}
             </Popover>
-
-            <Dialog
-                open={orgDialogOpen}
-                onClose={() => setOrgDialogOpen(false)}
-                fullWidth
-                maxWidth="xs"
-            >
-                <DialogTitle>
-                    <FormattedMessage id="tenant.organization" />
-                </DialogTitle>
-                <DialogContent>
-                    <PrefixSelector
-                        disabled={false}
-                        error={false}
-                        label={intl.formatMessage({
-                            id: 'common.tenant',
-                        })}
-                        labelId="org-switcher"
-                        onChange={(newValue) => {
-                            setSelectedTenant(newValue);
-                            setOrgDialogOpen(false);
-                        }}
-                        options={allPrefixes}
-                        value={selectedTenant}
-                        variantString="outlined"
-                    />
-                </DialogContent>
-            </Dialog>
         </>
     );
 };
