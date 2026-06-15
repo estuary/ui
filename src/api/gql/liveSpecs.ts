@@ -1,7 +1,7 @@
 import { gql } from 'urql';
 
 import { useAllPages } from 'src/api/gql/useAllPages';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 
 interface LiveSpecsQueryResponse {
     liveSpecs: {

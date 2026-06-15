@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 
 import { gql, useClient, useQuery } from 'urql';
 
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 
 // Public types
 export interface FragmentStore {
