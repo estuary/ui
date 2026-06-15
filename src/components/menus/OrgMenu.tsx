@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import {
     Dialog,
@@ -19,62 +19,25 @@ import {
 } from 'src/components/menus/shared';
 import NavTriggerButton from 'src/components/navigation/NavTriggerButton';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
 import { useTenantStore } from 'src/stores/Tenant';
-import { hasLength } from 'src/utils/misc-utils';
 
 interface OrgMenuProps {
     // Whether the side nav is expanded; controls the trigger label visibility.
     open: boolean;
 }
 
-const OrgMenu = ({ open }: OrgMenuProps) => {
+export const OrgMenu = ({ open }: OrgMenuProps) => {
     const intl = useIntl();
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
         (state) => state.setSelectedTenant
     );
-    // Same tenant list the old TenantSelector showed everyone (incl. support).
+    // Same tenant list the old TenantSelector showed everyone (incl. estuary_support).
     const tenantNames = useEntitiesStore_tenantsWithAdmin();
     const hasSupportAccess = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess
     );
-
-    const prefixParam = useGlobalSearchParams(GlobalSearchParams.PREFIX);
-    const appliedPrefixParam = useRef<string | null>(null);
-
-    // The org menu is always mounted, so it owns selecting a tenant. Once the
-    // tenant list loads: honor a `?prefix=` deep link (e.g. the billing "add
-    // payment method" CTA) the first time it appears, then keep a still-valid
-    // selection, otherwise fall back to the first available tenant. Tracking the
-    // applied param lets a manual switch stick instead of losing to a stale
-    // param lingering in the URL.
-    useEffect(() => {
-        if (!hasLength(tenantNames)) {
-            return;
-        }
-
-        if (
-            hasLength(prefixParam) &&
-            tenantNames.includes(prefixParam) &&
-            prefixParam !== appliedPrefixParam.current
-        ) {
-            appliedPrefixParam.current = prefixParam;
-
-            if (prefixParam !== selectedTenant) {
-                setSelectedTenant(prefixParam);
-            }
-
-            return;
-        }
-
-        if (!(selectedTenant && tenantNames.includes(selectedTenant))) {
-            setSelectedTenant(tenantNames[0]);
-        }
-    }, [prefixParam, selectedTenant, setSelectedTenant, tenantNames]);
 
     const [orgAnchor, setOrgAnchor] = useState<HTMLElement | null>(null);
     const [orgDialogOpen, setOrgDialogOpen] = useState(false);
@@ -184,5 +147,3 @@ const OrgMenu = ({ open }: OrgMenuProps) => {
         </>
     );
 };
-
-export default OrgMenu;
