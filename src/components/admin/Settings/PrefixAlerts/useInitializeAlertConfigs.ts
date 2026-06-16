@@ -7,6 +7,8 @@ import { AlertConfigQuery } from 'src/api/alerts';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
+// TODO: Figure out the best way to display a loading state for each global
+//   setting component.
 export function useInitializeAlertConfigs() {
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
