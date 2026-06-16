@@ -28,9 +28,6 @@ function TenantGuard({ children }: BaseComponentProps) {
     const mutate = useUserInfoSummaryStore((state) => state.mutate);
     const usedSSO = useUserStore((state) => state.userDetails?.usedSSO);
 
-    // Bootstrap the globally-selected tenant once an authenticated user is
-    // present; lives here rather than in the nav so it does not depend on a
-    // menu component being mounted.
     useInitializeSelectedTenant();
 
     const showOnboarding = !hasAnyAccess || showBeta;
