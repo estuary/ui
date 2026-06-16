@@ -13,6 +13,7 @@ import {
     useTheme,
 } from '@mui/material';
 
+import { Lock } from 'iconoir-react';
 import { union } from 'lodash';
 import { useIntl } from 'react-intl';
 
@@ -96,20 +97,37 @@ const AlertTypeSelector = ({
                     const { key, ...restRenderOptionProps } = renderOptionProps;
                     const { description, displayName, isSystem } = option;
 
-                    return isSystem ? null : (
+                    return (
                         <SelectableAutocompleteOption
                             key={key}
                             Content={
                                 <Stack>
-                                    <Typography
+                                    <Stack
+                                        direction="row"
                                         style={{
-                                            fontWeight: 500,
-                                            marginBottom: 4,
-                                            textTransform: 'capitalize',
+                                            justifyContent: 'space-between',
                                         }}
                                     >
-                                        {displayName}
-                                    </Typography>
+                                        <Typography
+                                            style={{
+                                                fontWeight: 500,
+                                                marginBottom: 4,
+                                                textTransform: 'capitalize',
+                                            }}
+                                        >
+                                            {displayName}
+                                        </Typography>
+
+                                        {isSystem ? (
+                                            <Lock
+                                                style={{
+                                                    color: diminishedTextColor[
+                                                        theme.palette.mode
+                                                    ],
+                                                }}
+                                            />
+                                        ) : null}
+                                    </Stack>
 
                                     {description ? (
                                         <Typography
