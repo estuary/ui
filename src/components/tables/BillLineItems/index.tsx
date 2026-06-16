@@ -22,10 +22,7 @@ import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import {
-    useBilling_selectedInvoice,
-    useBillingStore,
-} from 'src/stores/Billing';
+import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 
@@ -57,10 +54,7 @@ function BillingLineItemsTable() {
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const selectedInvoice = useBilling_selectedInvoice();
-
-    const hydrated = useBillingStore((state) => state.hydrated);
-    const invoices = useBillingStore((state) => state.invoices);
+    const { invoices, selectedInvoice, isLoading } = useBillingInvoices();
 
     const dataRows = useMemo(
         () => <Rows lineItems={selectedInvoice?.line_items ?? []} />,
@@ -120,7 +114,7 @@ function BillingLineItemsTable() {
                                 ? { status: TableStatuses.DATA_FETCHED }
                                 : { status: TableStatuses.NO_EXISTING_DATA }
                         }
-                        loading={!hydrated}
+                        loading={isLoading}
                         rows={dataRows}
                     />
                 </Table>
@@ -135,7 +129,7 @@ function BillingLineItemsTable() {
                 }}
             >
                 {selectedInvoice?.invoice_type !== 'preview' ? (
-                    hydrated ? (
+                    !isLoading ? (
                         <Box>
                             <Button
                                 href={stripeInvoice?.invoice_pdf}
