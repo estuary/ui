@@ -62,6 +62,9 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         PrefixRef: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
+                        Tenant: (_data) => null,
+                        TenantBilling: (_data) => null,
+                        Invoice: (_data) => null,
                     },
                     updates: {
                         Mutation: {
