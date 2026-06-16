@@ -27,7 +27,7 @@ import { useIntl } from 'react-intl';
 import useLegendConfig from 'src/components/graphs/useLegendConfig';
 import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 import { eChartsColors } from 'src/context/Theme';
-import { useBillingStore } from 'src/stores/Billing';
+import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
 
 const chartContainerId = 'data-by-month';
@@ -40,8 +40,7 @@ function UsageByMonthGraph() {
     const tooltipConfig = useTooltipConfig();
     const legendConfig = useLegendConfig([{ name: 'Data' }, { name: 'Hours' }]);
 
-    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
-    const invoices = useBillingStore((state) => state.invoices);
+    const { invoices, isLoading } = useBillingInvoices();
 
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
 
@@ -96,7 +95,7 @@ function UsageByMonthGraph() {
     }, [invoices, intl, today]);
 
     useEffect(() => {
-        if (billingStoreHydrated && invoices.length > 0) {
+        if (!isLoading && invoices.length > 0) {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
@@ -126,7 +125,7 @@ function UsageByMonthGraph() {
         return undefined;
     }, [
         invoices,
-        billingStoreHydrated,
+        isLoading,
         intl,
         legendConfig,
         months,

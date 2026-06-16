@@ -107,13 +107,12 @@ One class component exists: `src/forms/overrides/material/complex/CombinatorProp
 
 See [`STATE.md`](./STATE.md) for the full Zustand architecture. Key React-specific patterns:
 
-- **Direct selector access** — components access store state via `useShallow` selectors:
+- **Direct selector access** — select one value per store hook call:
     ```typescript
-    const [active, setActive] = useBillingStore(
-        useShallow((state) => [state.active, state.setActive])
-    );
+    const active = useDetailsFormStore((state) => state.active);
+    const setActive = useDetailsFormStore((state) => state.setActive);
     ```
-- **Pre-made hooks** — complex derived state still uses named hooks (e.g., `useBinding_sourceCaptureFlags`) to keep selector logic out of components.
+- **Pre-made hooks** — multi-field and derived selections use named hooks (e.g., `useBinding_sourceCaptureFlags`) to keep selector logic out of components.
 - **Local Zustand** — `src/context/LocalZustand.tsx` and `src/context/Zustand/provider.tsx` provide per-subtree Zustand stores via React context, used for scoped state that does not need to be global.
 - **Selector stability** — `useShallow` selectors that return arrays of object literals (e.g., `.map(() => ({ ... }))`) cause infinite render loops because `Object.is` fails on new object references. See [`INFINITE_LOOP_PATTERNS.md`](./INFINITE_LOOP_PATTERNS.md) for the failure mode, safe patterns, and the fix.
 
