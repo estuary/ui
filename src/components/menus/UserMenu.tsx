@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import {
     Divider,
     ListItemIcon,
@@ -19,110 +17,90 @@ import {
     sideNavMenuAnchorOrigin,
     sideNavMenuTransformOrigin,
 } from 'src/components/menus/shared';
-import { NavTriggerButton } from 'src/components/navigation/NavTriggerButton';
-import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useColorMode } from 'src/context/Theme';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 
 interface UserMenuProps {
-    // Whether the side nav is expanded; controls the trigger label visibility.
-    open: boolean;
+    anchorEl: HTMLElement | null;
+    onClose: () => void;
 }
 
-export const UserMenu = ({ open }: UserMenuProps) => {
+export const UserMenu = ({ anchorEl, onClose }: UserMenuProps) => {
     const theme = useTheme();
     const colorMode = useColorMode();
     const userDetails = useUserStore(useShallow((state) => state.userDetails));
-
-    const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
 
     if (!userDetails) {
         return null;
     }
 
     return (
-        <>
-            <NavTriggerButton
-                open={open}
-                onClick={(e) => setMenuAnchor(e.currentTarget)}
-                icon={
-                    <UserAvatar
-                        userEmail={userDetails.email}
-                        userName={userDetails.userName}
-                        avatarUrl={userDetails.avatar}
-                        size={22}
-                    />
-                }
-                label={userDetails.userName ?? userDetails.email}
-            />
+        <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={onClose}
+            onClick={onClose}
+            anchorOrigin={sideNavMenuAnchorOrigin}
+            transformOrigin={sideNavMenuTransformOrigin}
+        >
+            <MenuItem disabled sx={{ opacity: '1 !important' }}>
+                <Stack spacing={0}>
+                    <Typography
+                        sx={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                        }}
+                    >
+                        {userDetails.userName ?? userDetails.email}
+                    </Typography>
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            color: 'text.secondary',
+                        }}
+                    >
+                        {userDetails.email}
+                    </Typography>
+                </Stack>
+            </MenuItem>
 
-            <Menu
-                anchorEl={menuAnchor}
-                open={Boolean(menuAnchor)}
-                onClose={() => setMenuAnchor(null)}
-                onClick={() => setMenuAnchor(null)}
-                anchorOrigin={sideNavMenuAnchorOrigin}
-                transformOrigin={sideNavMenuTransformOrigin}
+            <Divider />
+
+            <MenuItem
+                onClick={(e) => {
+                    e.stopPropagation();
+                    colorMode.toggleColorMode();
+                }}
             >
-                <MenuItem disabled sx={{ opacity: '1 !important' }}>
-                    <Stack spacing={0}>
-                        <Typography
-                            sx={{
-                                fontSize: 13,
-                                fontWeight: 500,
-                            }}
-                        >
-                            {userDetails.userName ?? userDetails.email}
-                        </Typography>
-                        <Typography
-                            variant="caption"
-                            sx={{
-                                color: 'text.secondary',
-                            }}
-                        >
-                            {userDetails.email}
-                        </Typography>
-                    </Stack>
-                </MenuItem>
+                <ListItemIcon>
+                    {theme.palette.mode === 'dark' ? (
+                        <SunLight />
+                    ) : (
+                        <HalfMoon />
+                    )}
+                </ListItemIcon>
+                <FormattedMessage
+                    id={
+                        theme.palette.mode === 'dark'
+                            ? 'modeSwitch.label.light'
+                            : 'modeSwitch.label.dark'
+                    }
+                />
+            </MenuItem>
 
-                <Divider />
+            <Divider />
 
-                <MenuItem
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        colorMode.toggleColorMode();
-                    }}
-                >
-                    <ListItemIcon>
-                        {theme.palette.mode === 'dark' ? (
-                            <SunLight />
-                        ) : (
-                            <HalfMoon />
-                        )}
-                    </ListItemIcon>
-                    <FormattedMessage
-                        id={
-                            theme.palette.mode === 'dark'
-                                ? 'modeSwitch.label.light'
-                                : 'modeSwitch.label.dark'
-                        }
-                    />
-                </MenuItem>
-
-                <Divider />
-
-                <MenuItem
-                    onClick={() => {
-                        void supabaseClient.auth.signOut();
-                    }}
-                >
-                    <ListItemIcon>
-                        <LogOut />
-                    </ListItemIcon>
-                    <FormattedMessage id="cta.logout" />
-                </MenuItem>
-            </Menu>
-        </>
+            <MenuItem
+                onClick={() => {
+                    void supabaseClient.auth.signOut();
+                }}
+            >
+                <ListItemIcon>
+                    <LogOut />
+                </ListItemIcon>
+                <FormattedMessage id="cta.logout" />
+            </MenuItem>
+        </Menu>
     );
 };

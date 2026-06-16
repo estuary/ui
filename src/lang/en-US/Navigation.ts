@@ -3,6 +3,7 @@ import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Navigation: Record<string, string> = {
     'navigation.ariaLabel': `Main Navigation`,
+    'navigation.ariaLabel.secondary': `Account and Help`,
     'navigation.tooltip.expand': `Expand Navigation`,
     'navigation.collapse': `Collapse`,
 
