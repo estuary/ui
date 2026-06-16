@@ -58,10 +58,7 @@ const Summary = ({
                         'asc'
                     )
                 )
-                .map(({ displayName, isSystem }) => ({
-                    display: displayName,
-                    diminishedText: isSystem,
-                })),
+                .map(({ displayName }) => ({ display: displayName })),
         [alertTypeDefs, alertTypes]
     );
 

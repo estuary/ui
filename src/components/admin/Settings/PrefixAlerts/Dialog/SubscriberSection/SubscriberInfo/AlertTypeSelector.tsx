@@ -153,7 +153,6 @@ const AlertTypeSelector = ({
                             return (
                                 <OutlinedChip
                                     {...restOfTagProps}
-                                    diminishedText={isSystem}
                                     key={`alert_type-tag-${alertType}-${index}`}
                                     label={displayName}
                                     onDelete={isSystem ? undefined : onDelete}
