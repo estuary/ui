@@ -78,6 +78,7 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.table.line_items.tooltip.download_pdf': `Download invoice PDF`,
     'admin.billing.table.line_items.tooltip.pay_invoice': `Pay Invoice`,
     'admin.billing.table.line_items.tooltip.invoice_paid': `Invoice Paid`,
+    'admin.billing.table.line_items.tooltip.view_receipt': `View Receipt`,
 
     'admin.billing.paymentMethods.header': `Payment Information`,
     'admin.billing.paymentMethods.description': `Enter your payment information. You won't be charged until your account usage exceeds free tier limits.`,

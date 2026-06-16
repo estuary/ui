@@ -47,6 +47,10 @@ const mapInvoice = (
         subtotal: number;
         lineItems: unknown;
         extra: unknown;
+        status?: string | null;
+        invoicePdf?: string | null;
+        hostedInvoiceUrl?: string | null;
+        paymentDetails?: { receiptUrl?: string | null } | null;
     },
     tenant: string
 ): Invoice => ({
@@ -57,6 +61,10 @@ const mapInvoice = (
     subtotal: node.subtotal,
     line_items: (node.lineItems ?? []) as InvoiceLineItem[],
     extra: (node.extra ?? undefined) as Invoice['extra'],
+    status: node.status,
+    invoice_pdf: node.invoicePdf,
+    hosted_invoice_url: node.hostedInvoiceUrl,
+    receipt_url: node.paymentDetails?.receiptUrl ?? null,
 });
 
 // Mirrors the predicate the previous PostgREST query enforced server-side:
