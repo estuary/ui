@@ -461,6 +461,9 @@ export const opaqueLightModeBorder = {
     dark: undefined,
 };
 
+// TODO need to consolidate lots of duplicated "rgba(247, 249, 252, 0.05)" values in the theme, but not today...
+export const stripePaymentFormFieldBackgroundDark = 'rgba(247, 249, 252, 0.05)';
+
 export const opaqueLightModeBackground = {
     light: 'rgba(255, 255, 255, 0.70)',
     dark: 'rgba(247, 249, 252, 0.05)',
