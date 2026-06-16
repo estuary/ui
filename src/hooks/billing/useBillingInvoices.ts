@@ -21,7 +21,12 @@ import { useTenantStore } from 'src/stores/Tenant';
 import { invoiceId, stripTimeFromDate } from 'src/utils/billing-utils';
 
 export interface UseBillingInvoicesResult {
+    // The rolling-window subset (plus manual invoices) used by the usage
+    // graphs, which only chart the recent period.
     invoices: Invoice[];
+    // Every invoice for the tenant, newest first. Drives the full, paginated
+    // history table.
+    allInvoices: Invoice[];
     // The invoice currently shown in the line-item/detail views: the stored
     // selection if it still exists in this tenant's data, otherwise the newest
     // invoice. Falling back this way means an org switch self-corrects without
@@ -103,34 +108,39 @@ export function useBillingInvoices(): UseBillingInvoicesResult {
         pause: !selectedTenant,
     });
 
-    const invoices = useMemo(() => {
+    const allInvoices = useMemo(() => {
         const nodes = data?.tenant?.billing.invoices.nodes ?? [];
 
         return nodes
             .map((node) => mapInvoice(node, selectedTenant))
-            .filter((invoice) => isVisible(invoice, dateWindow))
             .sort((a, b) =>
                 compareDesc(
                     stripTimeFromDate(a.date_start),
                     stripTimeFromDate(b.date_start)
                 )
             );
-    }, [data, dateWindow, selectedTenant]);
+    }, [data, selectedTenant]);
+
+    const invoices = useMemo(
+        () => allInvoices.filter((invoice) => isVisible(invoice, dateWindow)),
+        [allInvoices, dateWindow]
+    );
 
     const selectedInvoice = useMemo(() => {
-        if (invoices.length === 0) {
+        if (allInvoices.length === 0) {
             return null;
         }
 
         return (
-            invoices.find(
+            allInvoices.find(
                 (invoice) => invoiceId(invoice) === selectedInvoiceId
-            ) ?? invoices[0]
+            ) ?? allInvoices[0]
         );
-    }, [invoices, selectedInvoiceId]);
+    }, [allInvoices, selectedInvoiceId]);
 
     return {
         invoices,
+        allInvoices,
         selectedInvoice,
         isLoading: fetching,
         networkFailed: Boolean(error?.networkError),
