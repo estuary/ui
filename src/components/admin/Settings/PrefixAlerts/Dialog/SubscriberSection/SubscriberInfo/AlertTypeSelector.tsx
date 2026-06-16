@@ -82,9 +82,11 @@ const AlertTypeSelector = ({
                 }: AutocompleteRenderInputParams) => (
                     <TextField
                         {...params}
-                        InputProps={{
-                            ...InputProps,
-                            sx: { borderRadius: 3 },
+                        slotProps={{
+                            input: {
+                                ...InputProps,
+                                sx: { borderRadius: 3 },
+                            },
                         }}
                         label={intl.formatMessage({
                             id: 'entityTable.data.alertTypes',
