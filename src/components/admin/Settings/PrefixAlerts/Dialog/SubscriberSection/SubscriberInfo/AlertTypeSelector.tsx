@@ -129,7 +129,7 @@ const AlertTypeSelector = ({
                         />
                     );
                 }}
-                renderTags={(values, getTagProps) => {
+                renderValue={(values, getTagProps) => {
                     return values
                         .sort((first, second) =>
                             sortByAlertType(
