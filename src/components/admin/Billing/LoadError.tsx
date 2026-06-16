@@ -3,14 +3,12 @@ import { Grid } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
-import { useBillingStore } from 'src/stores/Billing';
+import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 
 function BillingLoadError() {
-    const hydrationErrorsExist = useBillingStore(
-        (state) => state.hydrationErrorsExist
-    );
+    const { errorExists } = useBillingInvoices();
 
-    if (!hydrationErrorsExist) {
+    if (!errorExists) {
         return null;
     }
 

@@ -10,10 +10,7 @@ import Rows from 'src/components/tables/Billing/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import {
-    useBilling_selectedInvoice,
-    useBillingStore,
-} from 'src/stores/Billing';
+import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { TableStatuses } from 'src/types';
 import { invoiceId } from 'src/utils/billing-utils';
 
@@ -46,12 +43,12 @@ export const columns: TableColumns[] = [
 function BillingHistoryTable() {
     const intl = useIntl();
 
-    const selectedInvoice = useBilling_selectedInvoice();
-
-    const active = useBillingStore((state) => state.active);
-    const hydrated = useBillingStore((state) => state.hydrated);
-    const networkFailed = useBillingStore((state) => state.networkFailed);
-    const billingHistory = useBillingStore((state) => state.invoices);
+    const {
+        invoices: billingHistory,
+        selectedInvoice,
+        isLoading,
+        networkFailed,
+    } = useBillingInvoices();
 
     const dataRows = useMemo(
         () =>
@@ -95,7 +92,7 @@ function BillingHistoryTable() {
                               ? { status: TableStatuses.NETWORK_FAILED }
                               : { status: TableStatuses.NO_EXISTING_DATA }
                     }
-                    loading={Boolean(active || !hydrated)}
+                    loading={isLoading}
                     rows={dataRows}
                 />
             </Table>
