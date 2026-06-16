@@ -21,6 +21,13 @@ export const TENANT_BILLING_INVOICES_QUERY = graphql(`
                         subtotal
                         lineItems
                         extra
+                        status
+                        invoicePdf
+                        hostedInvoiceUrl
+                        paymentDetails {
+                            status
+                            receiptUrl
+                        }
                     }
                 }
             }

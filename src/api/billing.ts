@@ -9,33 +9,6 @@ const OPERATIONS = {
     GET_TENANT_PAYMENT_METHODS: 'get-tenant-payment-methods',
     DELETE_TENANT_PAYMENT_METHODS: 'delete-tenant-payment-method',
     SET_PRIMARY: 'set-tenant-primary-payment-method',
-    GET_TENANT_INVOICE: 'get-tenant-invoice',
-};
-
-export interface StripeInvoice {
-    id: string;
-    amount_due: number;
-    invoice_pdf: string;
-    hosted_invoice_url: string;
-    status: 'open' | 'paid' | 'void' | 'uncollectable';
-}
-
-export const getTenantInvoice = (
-    tenant: string,
-    date_start: string,
-    date_end: string,
-    type: 'manual' | 'final'
-) => {
-    return invokeSupabase<{ invoice?: StripeInvoice | null }>(
-        FUNCTIONS.BILLING,
-        {
-            operation: OPERATIONS.GET_TENANT_INVOICE,
-            tenant,
-            date_start,
-            date_end,
-            type,
-        }
-    );
 };
 
 export const getSetupIntentSecret = (tenant: string) => {
@@ -86,6 +59,12 @@ export interface Invoice {
         processed_data_gb: number;
         task_usage_hours: number;
     };
+    // Stripe-sourced fields carried on the GQL invoice node. Absent on previews
+    // and on invoices that haven't been issued in Stripe yet.
+    status?: string | null;
+    invoice_pdf?: string | null;
+    hosted_invoice_url?: string | null;
+    receipt_url?: string | null;
 }
 
 export interface MultiplePaymentMethods {
