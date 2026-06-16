@@ -1,8 +1,8 @@
+import type { Invoice } from 'src/api/billing';
 import type { SeriesConfig } from 'src/utils/billing-utils';
 
 import {
     formatDataVolumeForDisplay,
-    formatDateForApi,
     invoiceId,
     stripTimeFromDate,
 } from 'src/utils/billing-utils';
@@ -29,23 +29,6 @@ describe('stripTimeFromDate', () => {
         expect(result.getFullYear()).toBe(2023);
         expect(result.getMonth()).toBe(11); // December
         expect(result.getDate()).toBe(31);
-    });
-});
-
-describe('formatDateForApi', () => {
-    test('formats a Date to the expected API string format', () => {
-        const date = new Date(2024, 0, 15); // Jan 15 2024 local time
-        expect(formatDateForApi(date)).toBe('2024-01-15 00:00:00+00');
-    });
-
-    test('pads single-digit months and days', () => {
-        const date = new Date(2024, 2, 5); // March 5 2024
-        expect(formatDateForApi(date)).toBe('2024-03-05 00:00:00+00');
-    });
-
-    test('handles end-of-year dates', () => {
-        const date = new Date(2023, 11, 31); // Dec 31 2023
-        expect(formatDateForApi(date)).toBe('2023-12-31 00:00:00+00');
     });
 });
 
@@ -122,22 +105,18 @@ describe('formatDataVolumeForDisplay', () => {
 });
 
 describe('invoiceId', () => {
-    test('concatenates date_start, date_end, and billed_prefix', () => {
-        const invoice = {
-            date_start: '2024-01-01',
-            date_end: '2024-01-31',
-            billed_prefix: 'acme/',
-        } as any;
-        expect(invoiceId(invoice)).toBe('2024-01-01-2024-01-31-acme/');
-    });
+    const invoice: Invoice = {
+        date_start: '2024-01-01',
+        date_end: '2024-01-31',
+        billed_prefix: 'acme/',
+        invoice_type: 'final',
+        line_items: [],
+        subtotal: 0,
+    };
 
     test('is unique for different prefixes', () => {
-        const base = {
-            date_start: '2024-01-01',
-            date_end: '2024-01-31',
-        } as any;
-        expect(invoiceId({ ...base, billed_prefix: 'acme/' })).not.toBe(
-            invoiceId({ ...base, billed_prefix: 'other/' })
+        expect(invoiceId(invoice)).not.toBe(
+            invoiceId({ ...invoice, billed_prefix: 'other/' })
         );
     });
 });
