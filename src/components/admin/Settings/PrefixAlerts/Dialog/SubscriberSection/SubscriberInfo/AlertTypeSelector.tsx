@@ -41,7 +41,7 @@ const AlertTypeSelector = ({
         [options]
     );
 
-    const values: AlertTypeInfo[] = useMemo(() => {
+    const selectedAlertTypes: AlertTypeInfo[] = useMemo(() => {
         const alertTypes = subscription?.alertTypes ?? [];
 
         return options.filter(({ alertType }) =>
@@ -162,7 +162,7 @@ const AlertTypeSelector = ({
                             );
                         });
                 }}
-                value={values}
+                value={selectedAlertTypes}
             />
         </FormControl>
     );
