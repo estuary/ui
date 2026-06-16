@@ -106,6 +106,7 @@ export function useAllPages<
         pause,
     });
     const operationKey = operation?.key;
+    const currentError = operationKey === requestKey ? error : undefined;
     const responseCursor = operation?.variables.after ?? undefined;
 
     // Accumulate paginated records, then setResult when we reach the end
@@ -151,7 +152,7 @@ export function useAllPages<
 
     return {
         data: result,
-        loading: !pause && !error && !complete,
-        error,
+        loading: !pause && !currentError && !complete,
+        error: currentError,
     };
 }
