@@ -31,9 +31,11 @@ import BillingLineItemsTable from 'src/components/tables/BillLineItems';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
-import { useBillingStore } from 'src/stores/Billing/Store';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import {
+    useBilling_selectedInvoice,
+    useBillingStore,
+} from 'src/stores/Billing';
+import { useTenantStore } from 'src/stores/Tenant';
 import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
@@ -64,9 +66,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     );
     const setHydrationErrorsExist = useBillingStore(
         (state) => state.setHydrationErrorsExist
-    );
-    const setHistoryInitialized = useBillingStore(
-        (state) => state.setInvoicesInitialized
     );
     const setInvoices = useBillingStore((state) => state.setInvoices);
     const setNetworkFailed = useBillingStore((state) => state.setNetworkFailed);
@@ -110,7 +109,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     setInvoices([]);
                 } finally {
                     setHydrated(true);
-                    setHistoryInitialized(true);
                     setActive(false);
                 }
             })();
@@ -120,7 +118,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         dateRange.start,
         selectedTenant,
         setActive,
-        setHistoryInitialized,
         setHydrated,
         setHydrationErrorsExist,
         setInvoices,

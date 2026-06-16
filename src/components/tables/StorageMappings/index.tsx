@@ -10,7 +10,7 @@ import { tableColumns } from 'src/components/tables/StorageMappings/shared';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 
 function StorageMappingsTable() {
     const {

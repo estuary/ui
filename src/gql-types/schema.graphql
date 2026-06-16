@@ -3,6 +3,20 @@ schema {
   mutation: MutationRoot
 }
 
+type AWSPrivateLink {
+  azIds: [String!]!
+  region: String!
+  serviceName: String!
+  serviceRegion: String
+}
+
+input AWSPrivateLinkInput {
+  azIds: [String!]!
+  region: String!
+  serviceName: String!
+  serviceRegion: String
+}
+
 """Status of the abandonment evaluation for a task."""
 type AbandonStatus {
   """When this spec was last checked for abandonment"""
@@ -287,6 +301,20 @@ type AutoDiscoverStatus {
   pendingPublish: AutoDiscoverOutcome
 }
 
+type AzurePrivateLink {
+  dnsName: String
+  location: String!
+  resourceType: String
+  serviceName: String!
+}
+
+input AzurePrivateLinkInput {
+  dnsName: String
+  location: String!
+  resourceType: String
+  serviceName: String!
+}
+
 type BillingPaymentMethodPayload {
   paymentMethods: [PaymentMethod!]!
   primaryPaymentMethod: PaymentMethod
@@ -319,7 +347,9 @@ enum CapabilityBit {
   DeleteGrant
   JournalAppend
   JournalRead
+  ModifyDataPlanePrivateNetworking
   SpecEdit
+  ViewDataPlanePrivateNetworking
 }
 
 type CardPaymentMethodDetails {
@@ -562,11 +592,24 @@ type DataPlane {
   """AWS IAM user ARN for this data-plane."""
   awsIamUserArn: String
 
+  """
+  AWS PrivateLink endpoint provisioning results, opaque JSON exported by
+  the data-plane controller. Empty when no AWS endpoints are provisioned,
+  or when the caller lacks `ViewDataPlanePrivateNetworking`.
+  """
+  awsLinkEndpoints: [JSON!]!
+
   """Azure application client ID for this data-plane."""
   azureApplicationClientId: String
 
   """Azure application name for this data-plane."""
   azureApplicationName: String
+
+  """
+  Azure Private Link endpoint provisioning results, opaque JSON. Empty when
+  the caller lacks `ViewDataPlanePrivateNetworking`.
+  """
+  azureLinkEndpoints: [JSON!]!
 
   """CIDR blocks for this data-plane."""
   cidrBlocks: [String!]!
@@ -577,6 +620,12 @@ type DataPlane {
   """Fully-qualified domain name of this data-plane."""
   fqdn: String!
 
+  """
+  GCP Private Service Connect endpoint provisioning results, opaque JSON.
+  Empty when the caller lacks `ViewDataPlanePrivateNetworking`.
+  """
+  gcpPscEndpoints: [JSON!]!
+
   """GCP service account email for this data-plane."""
   gcpServiceAccountEmail: String
 
@@ -585,6 +634,15 @@ type DataPlane {
 
   """Name of this data-plane under the catalog namespace."""
   name: String!
+
+  """
+  Configured private link endpoints for this data-plane. Replacing this
+  list (via `updateDataPlanePrivateLinks`) triggers reconvergence by the
+  data-plane controller on its next poll. Returns an empty list to
+  callers that lack the `ViewDataPlanePrivateNetworking` capability on
+  this data plane.
+  """
+  privateLinks: [PrivateLink!]!
 
   """Address of reactors within the data-plane."""
   reactorAddress: String!
@@ -670,6 +728,22 @@ type Error {
 type FieldProvenance {
   path: String!
   source: String
+}
+
+type GCPPrivateServiceConnect {
+  allPorts: Boolean!
+  dnsRecordNames: [String!]!
+  dnsZoneName: String!
+  region: String!
+  serviceAttachment: String!
+}
+
+input GCPPrivateServiceConnectInput {
+  allPorts: Boolean! = false
+  dnsRecordNames: [String!]!
+  dnsZoneName: String!
+  region: String!
+  serviceAttachment: String!
 }
 
 scalar Id
@@ -1045,6 +1119,20 @@ type MutationRoot {
   updateAlertSubscription(alertTypes: [AlertType!], detail: String, email: String!, prefix: Prefix!): AlertSubscription!
 
   """
+  Replaces the configured private link endpoints on a private data plane.
+  
+  The provided list overwrites the entire `private_links` column; partial
+  updates are intentionally not supported. The data-plane controller
+  converges to the new configuration on its next poll. Returns the desired
+  private links state. The `*LinkEndpoints` provisioning results are not echoed here:
+  they lag this write until the controller converges, so callers needing them re-query `dataPlanes`.
+  
+  Requires the `ModifyDataPlanePrivateNetworking` capability on the
+  private data-plane name.
+  """
+  updateDataPlanePrivateLinks(dataPlaneName: String!, privateLinks: [PrivateLinkInput!]!): [PrivateLink!]!
+
+  """
   Update an existing storage mapping for the given catalog prefix.
   
   This validates that the user has admin access to the catalog prefix,
@@ -1158,6 +1246,22 @@ type PrefixRefEdge {
 input PrefixesBy {
   """Filter returned prefixes by user capability."""
   minCapability: Capability!
+}
+
+"""
+Private link configuration for a customer-owned data plane: AWS
+PrivateLink, Azure Private Link, or GCP Private Service Connect.
+"""
+union PrivateLink = AWSPrivateLink | AzurePrivateLink | GCPPrivateServiceConnect
+
+"""
+Private link configuration for a customer-owned data plane: AWS
+PrivateLink, Azure Private Link, or GCP Private Service Connect.
+"""
+input PrivateLinkInput {
+  aws: AWSPrivateLinkInput
+  azure: AzurePrivateLinkInput
+  gcp: GCPPrivateServiceConnectInput
 }
 
 """Filter connectors by their protocol (capture or materialization)."""
