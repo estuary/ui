@@ -53,6 +53,21 @@ export type Scalars = {
   Url: { input: any; output: any; }
 };
 
+export type AwsPrivateLink = {
+  __typename?: 'AWSPrivateLink';
+  azIds: Array<Scalars['String']['output']>;
+  region: Scalars['String']['output'];
+  serviceName: Scalars['String']['output'];
+  serviceRegion?: Maybe<Scalars['String']['output']>;
+};
+
+export type AwsPrivateLinkInput = {
+  azIds: Array<Scalars['String']['input']>;
+  region: Scalars['String']['input'];
+  serviceName: Scalars['String']['input'];
+  serviceRegion?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** Status of the abandonment evaluation for a task. */
 export type AbandonStatus = {
   __typename?: 'AbandonStatus';
@@ -305,6 +320,21 @@ export type AutoDiscoverStatus = {
   pendingPublish?: Maybe<AutoDiscoverOutcome>;
 };
 
+export type AzurePrivateLink = {
+  __typename?: 'AzurePrivateLink';
+  dnsName?: Maybe<Scalars['String']['output']>;
+  location: Scalars['String']['output'];
+  resourceType?: Maybe<Scalars['String']['output']>;
+  serviceName: Scalars['String']['output'];
+};
+
+export type AzurePrivateLinkInput = {
+  dnsName?: InputMaybe<Scalars['String']['input']>;
+  location: Scalars['String']['input'];
+  resourceType?: InputMaybe<Scalars['String']['input']>;
+  serviceName: Scalars['String']['input'];
+};
+
 export type BillingPaymentMethodPayload = {
   __typename?: 'BillingPaymentMethodPayload';
   paymentMethods: Array<PaymentMethod>;
@@ -332,7 +362,9 @@ export type CapabilityBit =
   | 'DeleteGrant'
   | 'JournalAppend'
   | 'JournalRead'
-  | 'SpecEdit';
+  | 'ModifyDataPlanePrivateNetworking'
+  | 'SpecEdit'
+  | 'ViewDataPlanePrivateNetworking';
 
 export type CardPaymentMethodDetails = {
   __typename?: 'CardPaymentMethodDetails';
@@ -540,22 +572,46 @@ export type DataPlane = {
   __typename?: 'DataPlane';
   /** AWS IAM user ARN for this data-plane. */
   awsIamUserArn?: Maybe<Scalars['String']['output']>;
+  /**
+   * AWS PrivateLink endpoint provisioning results, opaque JSON exported by
+   * the data-plane controller. Empty when no AWS endpoints are provisioned,
+   * or when the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  awsLinkEndpoints: Array<Scalars['JSON']['output']>;
   /** Azure application client ID for this data-plane. */
   azureApplicationClientId?: Maybe<Scalars['String']['output']>;
   /** Azure application name for this data-plane. */
   azureApplicationName?: Maybe<Scalars['String']['output']>;
+  /**
+   * Azure Private Link endpoint provisioning results, opaque JSON. Empty when
+   * the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  azureLinkEndpoints: Array<Scalars['JSON']['output']>;
   /** CIDR blocks for this data-plane. */
   cidrBlocks: Array<Scalars['String']['output']>;
   /** Cloud provider where this data-plane is hosted. */
   cloudProvider: DataPlaneCloudProvider;
   /** Fully-qualified domain name of this data-plane. */
   fqdn: Scalars['String']['output'];
+  /**
+   * GCP Private Service Connect endpoint provisioning results, opaque JSON.
+   * Empty when the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  gcpPscEndpoints: Array<Scalars['JSON']['output']>;
   /** GCP service account email for this data-plane. */
   gcpServiceAccountEmail?: Maybe<Scalars['String']['output']>;
   /** Whether this is a public data-plane. */
   isPublic: Scalars['Boolean']['output'];
   /** Name of this data-plane under the catalog namespace. */
   name: Scalars['String']['output'];
+  /**
+   * Configured private link endpoints for this data-plane. Replacing this
+   * list (via `updateDataPlanePrivateLinks`) triggers reconvergence by the
+   * data-plane controller on its next poll. Returns an empty list to
+   * callers that lack the `ViewDataPlanePrivateNetworking` capability on
+   * this data plane.
+   */
+  privateLinks: Array<PrivateLink>;
   /** Address of reactors within the data-plane. */
   reactorAddress: Scalars['String']['output'];
   /**
@@ -627,6 +683,23 @@ export type FieldProvenance = {
   __typename?: 'FieldProvenance';
   path: Scalars['String']['output'];
   source?: Maybe<Scalars['String']['output']>;
+};
+
+export type GcpPrivateServiceConnect = {
+  __typename?: 'GCPPrivateServiceConnect';
+  allPorts: Scalars['Boolean']['output'];
+  dnsRecordNames: Array<Scalars['String']['output']>;
+  dnsZoneName: Scalars['String']['output'];
+  region: Scalars['String']['output'];
+  serviceAttachment: Scalars['String']['output'];
+};
+
+export type GcpPrivateServiceConnectInput = {
+  allPorts?: Scalars['Boolean']['input'];
+  dnsRecordNames: Array<Scalars['String']['input']>;
+  dnsZoneName: Scalars['String']['input'];
+  region: Scalars['String']['input'];
+  serviceAttachment: Scalars['String']['input'];
 };
 
 /** Status of the inferred schema */
@@ -1013,6 +1086,19 @@ export type MutationRoot = {
    */
   updateAlertSubscription: AlertSubscription;
   /**
+   * Replaces the configured private link endpoints on a private data plane.
+   *
+   * The provided list overwrites the entire `private_links` column; partial
+   * updates are intentionally not supported. The data-plane controller
+   * converges to the new configuration on its next poll. Returns the desired
+   * private links state. The `*LinkEndpoints` provisioning results are not echoed here:
+   * they lag this write until the controller converges, so callers needing them re-query `dataPlanes`.
+   *
+   * Requires the `ModifyDataPlanePrivateNetworking` capability on the
+   * private data-plane name.
+   */
+  updateDataPlanePrivateLinks: Array<PrivateLink>;
+  /**
    * Update an existing storage mapping for the given catalog prefix.
    *
    * This validates that the user has admin access to the catalog prefix,
@@ -1101,6 +1187,12 @@ export type MutationRootUpdateAlertSubscriptionArgs = {
   detail?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootUpdateDataPlanePrivateLinksArgs = {
+  dataPlaneName: Scalars['String']['input'];
+  privateLinks: Array<PrivateLinkInput>;
 };
 
 
@@ -1193,6 +1285,22 @@ export type PrefixRefEdge = {
 export type PrefixesBy = {
   /** Filter returned prefixes by user capability. */
   minCapability: Capability;
+};
+
+/**
+ * Private link configuration for a customer-owned data plane: AWS
+ * PrivateLink, Azure Private Link, or GCP Private Service Connect.
+ */
+export type PrivateLink = AwsPrivateLink | AzurePrivateLink | GcpPrivateServiceConnect;
+
+/**
+ * Private link configuration for a customer-owned data plane: AWS
+ * PrivateLink, Azure Private Link, or GCP Private Service Connect.
+ */
+export type PrivateLinkInput = {
+  aws?: InputMaybe<AwsPrivateLinkInput>;
+  azure?: InputMaybe<AzurePrivateLinkInput>;
+  gcp?: InputMaybe<GcpPrivateServiceConnectInput>;
 };
 
 /** Filter connectors by their protocol (capture or materialization). */
