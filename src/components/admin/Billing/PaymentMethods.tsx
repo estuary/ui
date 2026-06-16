@@ -74,8 +74,8 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const setPaymentMethodExists = useBillingStore(
-        (state) => state.setPaymentMethodExists
+    const setPaymentMethodStatus = useBillingStore(
+        (state) => state.setPaymentMethodStatus
     );
 
     const [refreshCounter, setRefreshCounter] = useState(0);
@@ -93,10 +93,15 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
     // These are two different iifes so this component loads just a _tiny bit_ faster
     useEffect(() => {
+        let active = true;
         void (async () => {
             if (selectedTenant) {
                 const setupResponse =
                     await getSetupIntentSecret(selectedTenant);
+
+                if (!active) {
+                    return;
+                }
 
                 if (setupResponse.data?.intent_secret) {
                     setSetupIntentSecret(setupResponse.data.intent_secret);
@@ -121,20 +126,25 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                     const methodsResponse =
                         await getTenantPaymentMethods(selectedTenant);
 
-                    setMethods(methodsResponse.data?.payment_methods);
-                    setDefaultSource(methodsResponse.data?.primary);
+                    if (active) {
+                        setMethods(methodsResponse.data?.payment_methods);
+                        setDefaultSource(methodsResponse.data?.primary);
+                        setPaymentMethodStatus(
+                            selectedTenant,
+                            methodsResponse.data?.payment_methods
+                        );
+                    }
                 } finally {
-                    setMethodsLoading(false);
+                    if (active) {
+                        setMethodsLoading(false);
+                    }
                 }
             }
         })();
-    }, [selectedTenant, refreshCounter]);
-
-    useEffect(() => {
-        if (!methodsLoading) {
-            setPaymentMethodExists(methods);
-        }
-    }, [setPaymentMethodExists, methods, methodsLoading]);
+        return () => {
+            active = false;
+        };
+    }, [selectedTenant, refreshCounter, setPaymentMethodStatus]);
 
     // TODO (optimization): Remove this temporary, hacky means of detecting when the payment methods service errs
     //   when proper error handling is in place.

@@ -29,7 +29,7 @@ import {
 } from 'src/components/graphs/tooltips';
 import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 import { defaultOutlineColor } from 'src/context/Theme';
-import { useBillingStore } from 'src/stores/Billing';
+import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
 
 const chartContainerId = 'task-hours-by-month';
@@ -39,8 +39,7 @@ function TaskHoursByMonthGraph() {
     const intl = useIntl();
     const tooltipConfig = useTooltipConfig();
 
-    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
-    const invoices = useBillingStore((state) => state.invoices);
+    const { invoices, isLoading } = useBillingInvoices();
 
     const resizeListener = useRef<EventListener | null>(null);
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
@@ -85,7 +84,7 @@ function TaskHoursByMonthGraph() {
     }, [invoices, intl, today]);
 
     useEffect(() => {
-        if (billingStoreHydrated && invoices.length > 0) {
+        if (!isLoading && invoices.length > 0) {
             if (!myChart) {
                 echarts.use([
                     GridComponent,
@@ -190,7 +189,7 @@ function TaskHoursByMonthGraph() {
         }
     }, [
         invoices,
-        billingStoreHydrated,
+        isLoading,
         intl,
         months,
         myChart,
