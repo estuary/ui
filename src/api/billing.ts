@@ -2,9 +2,7 @@ import type { TenantPaymentDetails } from 'src/types';
 
 import pLimit from 'p-limit';
 
-import { supabaseClient } from 'src/context/GlobalProviders';
-import { FUNCTIONS, invokeSupabase, TABLES } from 'src/services/supabase';
-import { formatDateForApi } from 'src/utils/billing-utils';
+import { FUNCTIONS, invokeSupabase } from 'src/services/supabase';
 
 const OPERATIONS = {
     SETUP_INTENT: 'setup-intent',
@@ -89,41 +87,6 @@ export interface Invoice {
         task_usage_hours: number;
     };
 }
-
-const invoicesQuery = [
-    'billed_prefix',
-    'date_start',
-    'date_end',
-    'line_items',
-    'subtotal',
-    'invoice_type',
-    'extra',
-].join(', ');
-
-export const getInvoicesBetween = (
-    billed_prefix: string,
-    date_start: Date,
-    date_end: Date
-) => {
-    const formattedStart = formatDateForApi(date_start);
-    const formattedEnd = formatDateForApi(date_end);
-
-    return supabaseClient
-        .from(TABLES.INVOICES_EXT)
-        .select(invoicesQuery)
-        .filter('billed_prefix', 'eq', billed_prefix)
-        .or(
-            `invoice_type.eq.manual,and(${[
-                `date_start.gte.${formattedStart}`,
-                `date_start.lte.${formattedEnd}`,
-                `date_end.gte.${formattedStart}`,
-                `date_end.lte.${formattedEnd}`,
-            ].join(',')})`
-        )
-        .order('date_start', { ascending: false })
-        .throwOnError()
-        .returns<Invoice[]>();
-};
 
 export interface MultiplePaymentMethods {
     responses: any[];

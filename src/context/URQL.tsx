@@ -81,6 +81,9 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         CatalogTaskStats: (_data) => null,
                         CaptureBindingStats: (_data) => null,
                         MaterializeBindingStats: (_data) => null,
+                        Tenant: (_data) => null,
+                        TenantBilling: (_data) => null,
+                        Invoice: (_data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters
