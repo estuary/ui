@@ -13,10 +13,13 @@ function PricingTierDetails() {
     const [externalPaymentMethod, marketPlaceProvider] =
         useTenantUsesExternalPayment(selectedTenant);
 
-    const billingStoreHydrated = useBillingStore((state) => state.hydrated);
-    const paymentMethodExists = useBillingStore(
-        (state) => state.paymentMethodExists
+    const paymentMethodState = useBillingStore(
+        (state) => state.paymentMethodStatus
     );
+    const paymentMethodExists =
+        paymentMethodState?.tenant === selectedTenant
+            ? paymentMethodState.exists
+            : null;
 
     const messageId = useMemo(() => {
         if (externalPaymentMethod) {
@@ -38,7 +41,7 @@ function PricingTierDetails() {
         return 'admin.billing.message.freeTier';
     }, [externalPaymentMethod, marketPlaceProvider, paymentMethodExists]);
 
-    if (!billingStoreHydrated || typeof paymentMethodExists !== 'boolean') {
+    if (typeof paymentMethodExists !== 'boolean') {
         return (
             <Skeleton>
                 <Typography>
