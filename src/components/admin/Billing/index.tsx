@@ -1,25 +1,16 @@
 import type { AdminBillingProps } from 'src/components/admin/Billing/types';
 
-import { useEffect, useMemo } from 'react';
-import useConstant from 'use-constant';
-
 import { Divider, Grid, Typography } from '@mui/material';
 
-import { useShallow } from 'zustand/react/shallow';
-
-import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useIntl } from 'react-intl';
-import { useUnmount } from 'react-use';
 
-import { getInvoicesBetween } from 'src/api/billing';
 import { authenticatedRoutes } from 'src/app/routes';
 import DateRange from 'src/components/admin/Billing/DateRange';
 import BillingLoadError from 'src/components/admin/Billing/LoadError';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
-import { useTenantChangeReset } from 'src/components/admin/Billing/useTenantChangeReset';
 import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
 import GraphStateWrapper from 'src/components/graphs/states/Wrapper';
@@ -28,14 +19,10 @@ import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import BillingHistoryTable from 'src/components/tables/Billing';
 import BillingLineItemsTable from 'src/components/tables/BillLineItems';
+import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import {
-    useBilling_selectedInvoice,
-    useBillingStore,
-} from 'src/stores/Billing';
-import { useTenantStore } from 'src/stores/Tenant';
 import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
@@ -50,83 +37,9 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         headerLink: 'https://www.estuary.dev/pricing/',
     });
 
-    useTenantChangeReset();
-
     const intl = useIntl();
 
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-
-    // Billing Store
-    // TODO (billing store)
-    // The `active` stuff could probably be removed now that other stuff is
-    //  cleaned up - but leaving to make it easier
-    const [active, setActive] = useBillingStore(
-        useShallow((state) => [state.active, state.setActive])
-    );
-    const [hydrated, setHydrated] = useBillingStore(
-        useShallow((state) => [state.hydrated, state.setHydrated])
-    );
-    const setHydrationErrorsExist = useBillingStore(
-        (state) => state.setHydrationErrorsExist
-    );
-    const setInvoices = useBillingStore((state) => state.setInvoices);
-    const setNetworkFailed = useBillingStore((state) => state.setNetworkFailed);
-
-    const selectedInvoice = useBilling_selectedInvoice();
-
-    const resetBillingState = useBillingStore((state) => state.resetState);
-
-    const currentMonth = useConstant(() => {
-        const today = new Date();
-
-        return endOfMonth(today);
-    });
-
-    const dateRange = useMemo(() => {
-        const startMonth = startOfMonth(subMonths(currentMonth, 5));
-
-        return { start: startMonth, end: currentMonth };
-    }, [currentMonth]);
-
-    useEffect(() => {
-        if (selectedTenant) {
-            void (async () => {
-                setNetworkFailed(null);
-                setActive(true);
-                try {
-                    const response = await getInvoicesBetween(
-                        selectedTenant,
-                        dateRange.start,
-                        dateRange.end
-                    );
-                    if (response.error) {
-                        throw new Error(response.error.message);
-                    }
-                    setNetworkFailed(null);
-                    setHydrationErrorsExist(false);
-                    setInvoices(response.data);
-                } catch (errorMessage: unknown) {
-                    setNetworkFailed(`${errorMessage}`);
-                    setHydrationErrorsExist(true);
-                    setInvoices([]);
-                } finally {
-                    setHydrated(true);
-                    setActive(false);
-                }
-            })();
-        }
-    }, [
-        dateRange.end,
-        dateRange.start,
-        selectedTenant,
-        setActive,
-        setHydrated,
-        setHydrationErrorsExist,
-        setInvoices,
-        setNetworkFailed,
-    ]);
-
-    useUnmount(() => resetBillingState());
+    const { isLoading, selectedInvoice } = useBillingInvoices();
 
     return (
         <>
@@ -173,7 +86,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     <CardWrapper
                         height={invoiceCardHeight}
                         message={
-                            active || !hydrated ? (
+                            isLoading ? (
                                 intl.formatMessage({
                                     id: 'admin.billing.label.lineItems.loading',
                                 })
@@ -194,7 +107,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                             )
                         }
                     >
-                        {!active && hydrated ? (
+                        {!isLoading ? (
                             <BillingLineItemsTable
                                 // The key here makes sure that any stateful fetching logic doesn't get confused.
                                 key={
