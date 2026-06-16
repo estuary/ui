@@ -55,6 +55,17 @@ function BillingLineItemsTable() {
         [selectedInvoice]
     );
 
+    // Whether the selected invoice has any Stripe artifact (PDF, hosted page,
+    // receipt, or a status). When it has none, there's nothing to download or
+    // pay, so we show a single "No invoice available" button instead.
+    const hasInvoiceArtifact = Boolean(
+        selectedInvoice &&
+            (selectedInvoice.invoice_pdf ||
+                selectedInvoice.hosted_invoice_url ||
+                selectedInvoice.receipt_url ||
+                selectedInvoice.status)
+    );
+
     return (
         <>
             <TableContainer component={Box}>
@@ -103,71 +114,88 @@ function BillingLineItemsTable() {
             >
                 {selectedInvoice &&
                 selectedInvoice.invoice_type !== 'preview' ? (
-                    <Box>
-                        <Button
-                            href={selectedInvoice.invoice_pdf ?? undefined}
-                            disabled={!selectedInvoice.invoice_pdf}
-                            startIcon={<Download />}
-                            variant="outlined"
-                            size="small"
-                        >
+                    hasInvoiceArtifact ? (
+                        <Box>
+                            <Button
+                                component="a"
+                                href={selectedInvoice.invoice_pdf ?? undefined}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                disabled={!selectedInvoice.invoice_pdf}
+                                startIcon={<Download />}
+                                variant="outlined"
+                                size="small"
+                            >
+                                {intl.formatMessage({
+                                    id: 'admin.billing.table.line_items.tooltip.download_pdf',
+                                })}
+                            </Button>
+                            {selectedInvoice.receipt_url ? (
+                                <Button
+                                    component="a"
+                                    href={selectedInvoice.receipt_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    startIcon={<CreditCard />}
+                                    sx={{ marginLeft: 1 }}
+                                    variant="outlined"
+                                    size="small"
+                                >
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.table.line_items.tooltip.view_receipt',
+                                    })}
+                                </Button>
+                            ) : selectedInvoice.status === 'open' ? (
+                                <Button
+                                    component="a"
+                                    href={
+                                        selectedInvoice.hosted_invoice_url ??
+                                        undefined
+                                    }
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    startIcon={<CreditCard />}
+                                    sx={{ marginLeft: 1 }}
+                                    variant="outlined"
+                                    size="small"
+                                >
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.table.line_items.tooltip.pay_invoice',
+                                    })}
+                                </Button>
+                            ) : selectedInvoice.status === 'paid' ? (
+                                <Button
+                                    startIcon={<CreditCard />}
+                                    disabled
+                                    sx={{ marginLeft: 1 }}
+                                    variant="outlined"
+                                    size="small"
+                                >
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.table.line_items.tooltip.invoice_paid',
+                                    })}
+                                </Button>
+                            ) : (
+                                <Button
+                                    startIcon={<CreditCard />}
+                                    disabled
+                                    sx={{ marginLeft: 1 }}
+                                    variant="outlined"
+                                    size="small"
+                                >
+                                    {intl.formatMessage({
+                                        id: 'admin.billing.table.line_items.tooltip.pay_invoice',
+                                    })}
+                                </Button>
+                            )}
+                        </Box>
+                    ) : (
+                        <Button disabled variant="outlined" size="small">
                             {intl.formatMessage({
-                                id: 'admin.billing.table.line_items.tooltip.download_pdf',
+                                id: 'admin.billing.table.line_items.tooltip.no_invoice',
                             })}
                         </Button>
-                        {selectedInvoice.receipt_url ? (
-                            <Button
-                                href={selectedInvoice.receipt_url}
-                                startIcon={<CreditCard />}
-                                sx={{ marginLeft: 1 }}
-                                variant="outlined"
-                                size="small"
-                            >
-                                {intl.formatMessage({
-                                    id: 'admin.billing.table.line_items.tooltip.view_receipt',
-                                })}
-                            </Button>
-                        ) : selectedInvoice.status === 'open' ? (
-                            <Button
-                                href={
-                                    selectedInvoice.hosted_invoice_url ??
-                                    undefined
-                                }
-                                startIcon={<CreditCard />}
-                                sx={{ marginLeft: 1 }}
-                                variant="outlined"
-                                size="small"
-                            >
-                                {intl.formatMessage({
-                                    id: 'admin.billing.table.line_items.tooltip.pay_invoice',
-                                })}
-                            </Button>
-                        ) : selectedInvoice.status === 'paid' ? (
-                            <Button
-                                startIcon={<CreditCard />}
-                                disabled
-                                sx={{ marginLeft: 1 }}
-                                variant="outlined"
-                                size="small"
-                            >
-                                {intl.formatMessage({
-                                    id: 'admin.billing.table.line_items.tooltip.invoice_paid',
-                                })}
-                            </Button>
-                        ) : (
-                            <Button
-                                startIcon={<CreditCard />}
-                                disabled
-                                sx={{ marginLeft: 1 }}
-                                variant="outlined"
-                                size="small"
-                            >
-                                {intl.formatMessage({
-                                    id: 'admin.billing.table.line_items.tooltip.pay_invoice',
-                                })}
-                            </Button>
-                        )}
-                    </Box>
+                    )
                 ) : null}
                 <Box sx={{ flexGrow: 1 }} />
                 {selectedInvoice ? (
