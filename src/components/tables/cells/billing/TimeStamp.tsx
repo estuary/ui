@@ -17,7 +17,7 @@ function TimeStamp({ date, asLink, tooltipMessageId }: Props) {
     const strippedDate = stripTimeFromDate(date);
 
     return (
-        <TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>
             <CustomWidthTooltip
                 title={
                     <FormattedMessage

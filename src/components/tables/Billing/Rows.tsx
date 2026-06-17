@@ -38,7 +38,7 @@ function Row({ row, isSelected }: RowProps) {
                 tooltipMessageId="admin.billing.table.history.tooltip.date_end"
             />
 
-            <TableCell sx={{ whiteSpace: 'nowrap' }}>
+            <TableCell>
                 <Typography>
                     <FormattedMessage
                         id="admin.billing.table.history.value.usage"
