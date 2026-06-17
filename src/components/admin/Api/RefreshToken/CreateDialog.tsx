@@ -1,3 +1,5 @@
+import type { ErrorDetails } from 'src/components/shared/Error/types';
+
 import { useState } from 'react';
 
 import {
@@ -22,6 +24,16 @@ import { hasLength } from 'src/utils/misc-utils';
 
 const TOKEN_VALIDITY = 'P1Y';
 
+// The shared Error component renders an error's literal `message` only when the
+// object looks like a Supabase or GraphQL error (it carries a `code` or a
+// `networkError`); otherwise it treats `message` as an i18n key. The `code`
+// makes it display this client-side message verbatim.
+const TOKEN_DISPLAY_ERROR: ErrorDetails = {
+    code: 'refresh_token_display_failed',
+    message:
+        'An issue was encountered displaying your token. Please generate a new token.',
+};
+
 interface Props {
     open: boolean;
     onClose: () => void;
@@ -33,7 +45,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
 
     const [label, setLabel] = useState('');
     const [token, setToken] = useState('');
-    const [serverError, setServerError] = useState<string | null>(null);
+    const [serverError, setServerError] = useState<ErrorDetails>(null);
 
     const [{ fetching: generating }, createRefreshToken] =
         useCreateRefreshToken();
@@ -56,10 +68,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
         });
 
         if (result.error || !result.data?.createRefreshToken) {
-            setServerError(
-                result.error?.message ??
-                    'An issue was encountered displaying your token. Please generate a new token.'
-            );
+            setServerError(result.error ?? TOKEN_DISPLAY_ERROR);
 
             return;
         }
@@ -74,9 +83,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
         ).toString('base64');
 
         if (!hasLength(encodedToken)) {
-            setServerError(
-                'An issue was encountered displaying your token. Please generate a new token.'
-            );
+            setServerError(TOKEN_DISPLAY_ERROR);
 
             return;
         }
@@ -122,11 +129,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
             <DialogContent>
                 <Stack spacing={3} sx={{ mb: 1 }}>
                     {serverError ? (
-                        <Error
-                            severity="error"
-                            error={serverError}
-                            condensed
-                        />
+                        <Error severity="error" error={serverError} condensed />
                     ) : null}
 
                     {token ? (

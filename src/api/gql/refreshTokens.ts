@@ -18,8 +18,6 @@ const REFRESH_TOKENS_QUERY = graphql(`
                     id
                     detail
                     createdAt
-                    multiUse
-                    updatedAt
                     uses
                     expired
                 }

@@ -130,7 +130,7 @@ export function RefreshTokenTable() {
                         {fetching && refreshTokens.length === 0 ? (
                             <TableRow>
                                 <TableCell
-                                    colSpan={4}
+                                    colSpan={5}
                                     sx={{ textAlign: 'center' }}
                                 >
                                     Loading...
@@ -139,7 +139,7 @@ export function RefreshTokenTable() {
                         ) : refreshTokens.length === 0 ? (
                             <TableRow>
                                 <TableCell
-                                    colSpan={4}
+                                    colSpan={5}
                                     sx={{ textAlign: 'center', p: 4 }}
                                 >
                                     <Typography sx={{ py: 1 }}>
