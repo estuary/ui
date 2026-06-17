@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import {
     Box,
+    Button,
     Stack,
     Table,
     TableBody,
@@ -16,6 +17,7 @@ import {
 } from '@mui/material';
 
 import { loadStripe } from '@stripe/stripe-js';
+import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
 import {
@@ -24,7 +26,7 @@ import {
     getTenantPaymentMethods,
     setTenantPrimaryPaymentMethod,
 } from 'src/api/billing';
-import AddPaymentMethod from 'src/components/admin/Billing/AddPaymentMethod';
+import { AddPaymentMethodDialog } from 'src/components/admin/Billing/AddPaymentMethod';
 import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
 import {
     INTENT_SECRET_ERROR,
@@ -42,7 +44,6 @@ const columns: TableColumns[] = [
     {
         field: 'type',
         headerIntlKey: 'admin.billing.paymentMethods.table.label.cardType',
-        width: 200,
     },
     {
         field: 'name',
@@ -57,12 +58,9 @@ const columns: TableColumns[] = [
         headerIntlKey: 'admin.billing.paymentMethods.table.label.details',
     },
     {
-        field: 'primary',
-        headerIntlKey: 'admin.billing.paymentMethods.table.label.primary',
-    },
-    {
         field: 'actions',
-        headerIntlKey: 'admin.billing.paymentMethods.table.label.actions',
+        align: 'center',
+        width: 100,
     },
 ];
 
@@ -152,6 +150,10 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
         }
     }, [serverErrored]);
 
+    const enable =
+        setupIntentSecret !== INTENT_SECRET_LOADING &&
+        setupIntentSecret !== INTENT_SECRET_ERROR;
+
     return (
         <Stack spacing={serverErrored ? 0 : 3}>
             {setupIntentSecret === INTENT_SECRET_ERROR ? (
@@ -164,7 +166,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
 
             <Stack
                 spacing={2}
-                direction="row"
+                direction={{ xs: 'column', md: 'row' }}
                 sx={{ mb: 1, justifyContent: 'space-between' }}
             >
                 <Box>
@@ -186,14 +188,33 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                 </Box>
 
                 {serverErrored ? null : (
-                    <AddPaymentMethod
-                        show={newMethodOpen}
-                        setOpen={setNewMethodOpen}
-                        tenant={selectedTenant}
-                        onSuccess={() => setRefreshCounter((r) => r + 1)}
-                        stripePromise={stripePromise}
-                        setupIntentSecret={setupIntentSecret}
-                    />
+                    <>
+                        <Button
+                            loadingPosition="start"
+                            disabled={!enable}
+                            loading={
+                                setupIntentSecret === INTENT_SECRET_LOADING
+                            }
+                            onClick={() => setNewMethodOpen(true)}
+                            startIcon={<Plus style={{ fontSize: 15 }} />}
+                            sx={{
+                                whiteSpace: 'nowrap',
+                                width: { xs: '100%', md: 'auto' },
+                                alignSelf: 'flex-start',
+                            }}
+                            variant="contained"
+                        >
+                            <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod" />
+                        </Button>
+                        <AddPaymentMethodDialog
+                            show={newMethodOpen}
+                            setOpen={setNewMethodOpen}
+                            tenant={selectedTenant}
+                            onSuccess={() => setRefreshCounter((r) => r + 1)}
+                            stripePromise={stripePromise}
+                            setupIntentSecret={setupIntentSecret}
+                        />
+                    </>
                 )}
             </Stack>
 
@@ -205,11 +226,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                 </AlertBox>
             ) : (
                 <TableContainer>
-                    <Table
-                        sx={{ minWidth: 650 }}
-                        aria-label="simple table"
-                        size="small"
-                    >
+                    <Table aria-label="simple table" size="small">
                         <TableHead>
                             <TableRow
                                 sx={{
@@ -219,6 +236,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                             >
                                 {columns.map((column, index) => (
                                     <TableCell
+                                        align={column.align ?? 'left'}
                                         key={`${column.field}-${index}`}
                                         width={column.width ?? 'auto'}
                                     >
@@ -261,7 +279,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={6}>
+                                    <TableCell colSpan={columns.length}>
                                         <Typography
                                             sx={{ textAlign: 'center' }}
                                         >

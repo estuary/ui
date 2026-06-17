@@ -1,6 +1,6 @@
 import type { AdminBillingProps } from 'src/components/admin/Billing/types';
 
-import { Divider, Grid, Stack, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
 import { useIntl } from 'react-intl';
@@ -41,41 +41,65 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         <>
             <AdminTabs />
 
-            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
-                <Grid size={{ xs: 12, md: 9 }}>
+            <Stack
+                direction={{ xs: 'column', md: 'row' }}
+                spacing={{ xs: 3, md: 2 }}
+                sx={{
+                    p: 2,
+                    justifyContent: 'space-between',
+                    alignItems: { md: 'end' },
+                }}
+            >
+                <div>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
                         {intl.formatMessage({ id: 'admin.billing.header' })}
                     </Typography>
 
                     <PricingTierDetails />
-                </Grid>
+                </div>
 
-                <Grid
-                    size={{ xs: 12, md: 3 }}
-                    sx={{ display: 'flex', alignItems: 'end' }}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        width: { xs: '100%', md: 250 },
+                        flexShrink: 0,
+                    }}
                 >
                     <TenantOptions />
-                </Grid>
-            </Grid>
+                </Box>
+            </Stack>
 
             <Stack spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+                <CardWrapper
+                    height={TOTAL_CARD_HEIGHT}
+                    message={intl.formatMessage({
+                        id: 'admin.billing.graph.usageByMonth.header',
+                    })}
+                >
+                    <GraphStateWrapper>
+                        <UsageByMonthGraph />
+                    </GraphStateWrapper>
+                </CardWrapper>
                 <BillingLoadError />
 
                 <Stack
                     direction={{ xs: 'column', md: 'row' }}
                     spacing={{ xs: 3, md: 2 }}
-                    sx={{ alignItems: { md: 'flex-start' } }}
+                    sx={{
+                        alignItems: 'stretch',
+                    }}
                 >
                     <CardWrapper
                         message={intl.formatMessage({
                             id: 'admin.billing.table.history.header',
                         })}
+                        // sx={{ flex: 1 }}
                     >
                         <BillingHistoryTable />
                     </CardWrapper>
 
                     <CardWrapper
-                        sx={{ flex: { md: 1 } }}
+                        sx={{ flex: 1 }}
                         height={TOTAL_CARD_HEIGHT}
                         message={
                             isLoading ? (
@@ -113,17 +137,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                         )}
                     </CardWrapper>
                 </Stack>
-
-                <CardWrapper
-                    height={TOTAL_CARD_HEIGHT}
-                    message={intl.formatMessage({
-                        id: 'admin.billing.graph.usageByMonth.header',
-                    })}
-                >
-                    <GraphStateWrapper>
-                        <UsageByMonthGraph />
-                    </GraphStateWrapper>
-                </CardWrapper>
 
                 <Divider sx={{ mt: 3 }} />
 

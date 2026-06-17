@@ -17,7 +17,7 @@ function TimeStamp({ date, asLink, tooltipMessageId }: Props) {
     const strippedDate = stripTimeFromDate(date);
 
     return (
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+        <TableCell>
             <CustomWidthTooltip
                 title={
                     <FormattedMessage
@@ -43,7 +43,17 @@ function TimeStamp({ date, asLink, tooltipMessageId }: Props) {
                             : undefined
                     }
                 >
-                    <FormattedDate dateStyle="medium" value={strippedDate} />
+                    {/* Keep the month and day together so the year is the only
+                        wrap point and drops to the next line in a narrow column. */}
+                    <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
+                        <FormattedDate
+                            value={strippedDate}
+                            month="short"
+                            day="numeric"
+                        />
+                        ,
+                    </Box>{' '}
+                    <FormattedDate value={strippedDate} year="numeric" />
                 </Box>
             </CustomWidthTooltip>
         </TableCell>

@@ -75,7 +75,9 @@ function BillingHistoryTable() {
     }, [allInvoices, currentPage, selectedInvoice]);
 
     return (
-        <Box>
+        <Box
+            sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}
+        >
             <TableContainer component={Box}>
                 <Table
                     aria-label={intl.formatMessage({
@@ -116,6 +118,7 @@ function BillingHistoryTable() {
                     rowsPerPageOptions={[]}
                     onPageChange={(_event, newPage) => setPage(newPage)}
                     ActionsComponent={TablePaginationActions}
+                    sx={{ mt: 'auto' }}
                 />
             ) : null}
         </Box>

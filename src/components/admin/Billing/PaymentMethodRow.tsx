@@ -1,6 +1,6 @@
-import { Button, TableCell, TableRow } from '@mui/material';
+import { Box, IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 
-import { Check } from 'iconoir-react';
+import { Star, StarSolid, Trash } from 'iconoir-react';
 
 import AmexLogo from 'src/images/payment-methods/amex.png';
 import DiscoverLogo from 'src/images/payment-methods/discover.png';
@@ -66,7 +66,13 @@ export const PaymentMethod = ({
     primary,
 }: PaymentMethodProps) => {
     return (
-        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+        <TableRow
+            sx={{
+                '&:last-child td, &:last-child th': { border: 0 },
+                '&:hover .row-hover-action': { opacity: 1 },
+                '& .row-hover-action:focus-visible': { opacity: 1 },
+            }}
+        >
             <TableCell>
                 {type === 'card' ? (
                     cardLogos[card.brand] ? (
@@ -89,22 +95,67 @@ export const PaymentMethod = ({
             <TableCell>
                 {type === 'card' ? (
                     <>
-                        Expires {card.exp_month}/{card.exp_year}
+                        {card.exp_month}/{card.exp_year}
                     </>
                 ) : (
                     us_bank_account.account_type
                 )}
             </TableCell>
-            <TableCell>{primary ? <Check /> : ''}</TableCell>
             <TableCell>
-                <Button size="small" variant="text" onClick={onDelete}>
-                    Delete
-                </Button>
-                {!primary ? (
-                    <Button size="small" variant="text" onClick={onPrimary}>
-                        Make Primary
-                    </Button>
-                ) : null}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 3,
+                    }}
+                >
+                    <Tooltip title={primary ? 'Primary' : 'Make primary'}>
+                        {primary ? (
+                            <IconButton
+                                disableRipple
+                                size="small"
+                                aria-label="Primary payment method"
+                                sx={{
+                                    color: 'warning.main',
+                                    cursor: 'default',
+                                }}
+                            >
+                                <StarSolid />
+                            </IconButton>
+                        ) : (
+                            <IconButton
+                                className="row-hover-action"
+                                size="small"
+                                onClick={onPrimary}
+                                aria-label="Make primary"
+                                sx={{
+                                    opacity: 0,
+                                    transition: 'opacity 0.2s',
+                                    color: 'text.secondary',
+                                }}
+                            >
+                                <Star />
+                            </IconButton>
+                        )}
+                    </Tooltip>
+
+                    <Tooltip title="Delete">
+                        <IconButton
+                            className="row-hover-action"
+                            size="small"
+                            onClick={onDelete}
+                            aria-label="Delete payment method"
+                            sx={{
+                                opacity: 0,
+                                transition: 'opacity 0.2s',
+                                color: 'error.main',
+                            }}
+                        >
+                            <Trash />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
             </TableCell>
         </TableRow>
     );

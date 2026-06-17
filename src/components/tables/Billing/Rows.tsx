@@ -1,9 +1,7 @@
 import type { Invoice } from 'src/api/billing';
 import type { InvoiceId } from 'src/utils/billing-utils';
 
-import { TableCell, TableRow, Typography } from '@mui/material';
-
-import { FormattedMessage } from 'react-intl';
+import { Box, TableCell, TableRow, Typography } from '@mui/material';
 
 import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
@@ -40,15 +38,14 @@ function Row({ row, isSelected }: RowProps) {
 
             <TableCell>
                 <Typography>
-                    <FormattedMessage
-                        id="admin.billing.table.history.value.usage"
-                        values={{
-                            volume: (
-                                row.extra?.processed_data_gb ?? 0
-                            ).toFixed(1),
-                            tasks: row.extra?.task_usage_hours ?? 0,
-                        }}
-                    />
+                    {/* Keep each value and its unit together so the column wraps
+                        only at the space before the slash. */}
+                    <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
+                        {(row.extra?.processed_data_gb ?? 0).toFixed(1)} GB
+                    </Box>{' '}
+                    <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
+                        / {row.extra?.task_usage_hours ?? 0} Hr
+                    </Box>
                 </Typography>
             </TableCell>
 

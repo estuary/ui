@@ -1,10 +1,9 @@
 import type { Stripe } from '@stripe/stripe-js';
 
-import { Box, Button, Dialog, DialogTitle, useTheme } from '@mui/material';
+import { Dialog, DialogTitle, useTheme } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
-import { Plus } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import { setTenantPrimaryPaymentMethod } from 'src/api/billing';
@@ -25,7 +24,7 @@ interface Props {
     tenant: string;
 }
 
-function AddPaymentMethod({
+export function AddPaymentMethodDialog({
     onSuccess,
     show,
     setupIntentSecret,
@@ -45,111 +44,90 @@ function AddPaymentMethod({
         setupIntentSecret !== INTENT_SECRET_ERROR;
 
     return (
-        <>
-            <Box>
-                <Button
-                    loadingPosition="start"
-                    disabled={!enable}
-                    loading={setupIntentSecret === INTENT_SECRET_LOADING}
-                    onClick={() => setOpen(true)}
-                    startIcon={<Plus style={{ fontSize: 15 }} />}
-                    sx={{ whiteSpace: 'nowrap' }}
-                    variant="contained"
-                >
-                    {intl.formatMessage({
-                        id: 'admin.billing.paymentMethods.cta.addPaymentMethod',
-                    })}
-                </Button>
-            </Box>
-
-            <Dialog
-                maxWidth="sm"
-                fullWidth
-                sx={{ padding: 2 }}
-                open={show}
-                onClose={() => setOpen(false)}
-                data-private
-            >
-                <DialogTitle>
-                    {intl.formatMessage({
-                        id: 'admin.billing.addPaymentMethods.title',
-                    })}
-                </DialogTitle>
-                {enable ? (
-                    <Elements
-                        stripe={stripePromise}
-                        options={{
-                            clientSecret: setupIntentSecret,
-                            loader: 'auto',
-                            appearance: {
-                                theme: isDark ? 'night' : 'stripe',
-                                variables: {
-                                    colorPrimary: theme.palette.primary.main,
-                                    fontFamily: theme.typography.fontFamily,
-                                    borderRadius: `6px`,
-                                    focusBoxShadow: 'none',
-                                    focusOutline: 'none',
-                                },
-                                ...(isDark && {
-                                    rules: {
-                                        '.Input': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.Tab--focused': {
-                                            borderColor:
-                                                theme.palette.primary.main,
-                                        },
-                                        '.Block': {
-                                            ...flatField,
-                                            padding: '14px',
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                        '.PickerItem': {
-                                            ...flatField,
-                                            backgroundColor:
-                                                stripePaymentFormFieldBackgroundDark,
-                                        },
-                                    },
-                                }),
+        <Dialog
+            maxWidth="sm"
+            fullWidth
+            sx={{ padding: 2 }}
+            open={show}
+            onClose={() => setOpen(false)}
+            data-private
+        >
+            <DialogTitle>
+                {intl.formatMessage({
+                    id: 'admin.billing.addPaymentMethods.title',
+                })}
+            </DialogTitle>
+            {enable ? (
+                <Elements
+                    stripe={stripePromise}
+                    options={{
+                        clientSecret: setupIntentSecret,
+                        loader: 'auto',
+                        appearance: {
+                            theme: isDark ? 'night' : 'stripe',
+                            variables: {
+                                colorPrimary: theme.palette.primary.main,
+                                fontFamily: theme.typography.fontFamily,
+                                borderRadius: `6px`,
+                                focusBoxShadow: 'none',
+                                focusOutline: 'none',
                             },
-                        }}
-                    >
-                        {!tenant ? null : (
-                            <PaymentForm
-                                onSuccess={async (id) => {
-                                    if (id) {
-                                        await setTenantPrimaryPaymentMethod(
-                                            tenant,
-                                            id
-                                        );
+                            ...(isDark && {
+                                rules: {
+                                    '.Input': {
+                                        ...flatField,
+                                        backgroundColor:
+                                            stripePaymentFormFieldBackgroundDark,
+                                    },
+                                    '.Tab': {
+                                        ...flatField,
+                                        backgroundColor:
+                                            stripePaymentFormFieldBackgroundDark,
+                                    },
+                                    '.Tab--focused': {
+                                        borderColor: theme.palette.primary.main,
+                                    },
+                                    '.Block': {
+                                        ...flatField,
+                                        padding: '14px',
+                                        backgroundColor:
+                                            stripePaymentFormFieldBackgroundDark,
+                                    },
+                                    '.PickerItem': {
+                                        ...flatField,
+                                        backgroundColor:
+                                            stripePaymentFormFieldBackgroundDark,
+                                    },
+                                },
+                            }),
+                        },
+                    }}
+                >
+                    {!tenant ? null : (
+                        <PaymentForm
+                            onSuccess={async (id) => {
+                                if (id) {
+                                    await setTenantPrimaryPaymentMethod(
+                                        tenant,
+                                        id
+                                    );
 
-                                        fireGtmEvent('Payment_Entered', {
-                                            tenant,
-                                        });
+                                    fireGtmEvent('Payment_Entered', {
+                                        tenant,
+                                    });
 
-                                        postHog.capture('Payment_Entered', {
-                                            tenant,
-                                        });
-                                    }
-                                    setOpen(false);
-                                    onSuccess();
-                                }}
-                                onError={console.log}
-                            />
-                        )}
-                    </Elements>
-                ) : null}
-            </Dialog>
-        </>
+                                    postHog.capture('Payment_Entered', {
+                                        tenant,
+                                    });
+                                }
+                                setOpen(false);
+                                onSuccess();
+                            }}
+                            onError={console.log}
+                        />
+                    )}
+                </Elements>
+            ) : null}
+        </Dialog>
     );
 }
-
-export default AddPaymentMethod;
