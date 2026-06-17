@@ -267,16 +267,6 @@ export type AlertsBy = {
   prefix: Scalars['String']['input'];
 };
 
-export type ApiKeyInfo = {
-  __typename?: 'ApiKeyInfo';
-  createdAt: Scalars['DateTime']['output'];
-  createdBy: Scalars['UUID']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['Id']['output'];
-  label: Scalars['String']['output'];
-  lastUsedAt?: Maybe<Scalars['DateTime']['output']>;
-};
-
 export type AutoDiscoverFailure = {
   __typename?: 'AutoDiscoverFailure';
   /** The number of consecutive failures that have been observed. */
@@ -372,7 +362,6 @@ export type CapabilityBit =
   | 'DeleteGrant'
   | 'JournalAppend'
   | 'JournalRead'
-  | 'ManageServiceAccounts'
   | 'ModifyDataPlanePrivateNetworking'
   | 'SpecEdit'
   | 'ViewDataPlanePrivateNetworking';
@@ -564,12 +553,6 @@ export type Controller = {
   /** Only present for materializations that use `sources`. */
   sourceCapture?: Maybe<SourceCaptureStatus>;
   updatedAt: Scalars['DateTime']['output'];
-};
-
-export type CreateApiKeyResult = {
-  __typename?: 'CreateApiKeyResult';
-  id: Scalars['Id']['output'];
-  secret: Scalars['String']['output'];
 };
 
 export type CreateBillingSetupIntentPayload = {
@@ -1038,13 +1021,6 @@ export type MutationRoot = {
    * an existing subscription for the same prefix and email address.
    */
   createAlertSubscription: AlertSubscription;
-  /**
-   * Create an API key for a service account.
-   *
-   * Returns the key_id and the plaintext secret (flow_sa_...).
-   * The secret is returned exactly once and cannot be retrieved again.
-   */
-  createApiKey: CreateApiKeyResult;
   createBillingSetupIntent: CreateBillingSetupIntentPayload;
   /**
    * Create an invite link that grants access to a catalog prefix.
@@ -1055,14 +1031,6 @@ export type MutationRoot = {
   createInviteLink: InviteLink;
   /** Create a refresh token for the authenticated user. */
   createRefreshToken: RefreshTokenResult;
-  /**
-   * Create a service account with a grant to the specified prefix.
-   *
-   * The caller must have admin capability on the prefix.
-   * Creates an auth.users row, an internal.service_accounts row,
-   * and a user_grants row for the service account.
-   */
-  createServiceAccount: ServiceAccount;
   /**
    * Create a storage mapping for the given catalog prefix.
    *
@@ -1083,47 +1051,10 @@ export type MutationRoot = {
    */
   deleteInviteLink: Scalars['Boolean']['output'];
   /**
-   * Disable a service account, revoking all API keys and grants.
-   *
-   * The caller must have admin capability on the service account's prefix.
-   * The auth.users row is preserved for audit trail / FK integrity.
-   *
-   * Unlike revoking a single key, disabling removes the service account's
-   * grants, so access tokens already issued from its keys resolve to zero
-   * capability on their next authorization check (bounded by snapshot-refresh
-   * lag, not the token's full ~1h lifetime). Use this to cut off an
-   * active service account, not just stop new tokens.
-   *
-   * Idempotent: returns `true` if this call disabled the account, `false`
-   * if it was already disabled.
-   */
-  disableServiceAccount: Scalars['Boolean']['output'];
-  /**
-   * Re-enable a disabled service account, restoring its user_grants row.
-   *
-   * Does NOT restore previously revoked API keys — new ones must be minted.
-   *
-   * Idempotent: returns `true` if this call enabled the account, `false`
-   * if it was not disabled.
-   */
-  enableServiceAccount: Scalars['Boolean']['output'];
-  /**
    * Redeem an invite link token, granting the caller access to the associated
    * catalog prefix with the specified capability.
    */
   redeemInviteLink: RedeemInviteLinkResult;
-  /**
-   * Revoke (delete) an API key.
-   *
-   * The caller must have admin capability on the owning service account's prefix.
-   *
-   * Revocation stops *new* access tokens from being minted with this key, but
-   * does not invalidate access tokens already issued from it — those remain
-   * valid until they expire (up to ~1h), since the service account's grants
-   * are untouched. To cut off active sessions immediately, disable the
-   * service account (which removes its grants).
-   */
-  revokeApiKey: Scalars['Boolean']['output'];
   /**
    * Revoke a refresh token owned by the authenticated user.
    *
@@ -1200,13 +1131,6 @@ export type MutationRootCreateAlertSubscriptionArgs = {
 };
 
 
-export type MutationRootCreateApiKeyArgs = {
-  label: Scalars['String']['input'];
-  serviceAccountId: Scalars['UUID']['input'];
-  validFor: Scalars['String']['input'];
-};
-
-
 export type MutationRootCreateBillingSetupIntentArgs = {
   tenant: Scalars['String']['input'];
 };
@@ -1224,13 +1148,6 @@ export type MutationRootCreateRefreshTokenArgs = {
   detail?: InputMaybe<Scalars['String']['input']>;
   multiUse?: Scalars['Boolean']['input'];
   validFor?: Scalars['String']['input'];
-};
-
-
-export type MutationRootCreateServiceAccountArgs = {
-  capability: Capability;
-  displayName: Scalars['String']['input'];
-  prefix: Scalars['Prefix']['input'];
 };
 
 
@@ -1258,23 +1175,8 @@ export type MutationRootDeleteInviteLinkArgs = {
 };
 
 
-export type MutationRootDisableServiceAccountArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-export type MutationRootEnableServiceAccountArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
 export type MutationRootRedeemInviteLinkArgs = {
   token: Scalars['UUID']['input'];
-};
-
-
-export type MutationRootRevokeApiKeyArgs = {
-  id: Scalars['Id']['input'];
 };
 
 
@@ -1552,7 +1454,6 @@ export type QueryRoot = {
   prefixes: PrefixRefConnection;
   /** List refresh tokens owned by the authenticated user. */
   refreshTokens: RefreshTokenInfoConnection;
-  serviceAccounts: ServiceAccountConnection;
   /**
    * Returns storage mappings accessible to the current user.
    *
@@ -1642,13 +1543,6 @@ export type QueryRootRefreshTokensArgs = {
 };
 
 
-export type QueryRootServiceAccountsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<ServiceAccountsFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-};
-
-
 export type QueryRootStorageMappingsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -1684,7 +1578,6 @@ export type RefreshTokenInfo = {
   multiUse: Scalars['Boolean']['output'];
   updatedAt: Scalars['DateTime']['output'];
   uses: Scalars['Int']['output'];
-  validFor: Scalars['String']['output'];
 };
 
 export type RefreshTokenInfoConnection = {
@@ -1723,41 +1616,6 @@ export type RepublishRequested = {
   reason: Scalars['String']['output'];
   /** Informational only, timestamp of when the controller observed the `Republish` request. */
   receivedAt: Scalars['DateTime']['output'];
-};
-
-export type ServiceAccount = {
-  __typename?: 'ServiceAccount';
-  apiKeys: Array<ApiKeyInfo>;
-  capability: Capability;
-  createdAt: Scalars['DateTime']['output'];
-  createdBy: Scalars['UUID']['output'];
-  disabledAt?: Maybe<Scalars['DateTime']['output']>;
-  displayName: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  lastUsedAt?: Maybe<Scalars['DateTime']['output']>;
-  prefix: Scalars['Prefix']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type ServiceAccountConnection = {
-  __typename?: 'ServiceAccountConnection';
-  /** A list of edges. */
-  edges: Array<ServiceAccountEdge>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-};
-
-/** An edge in a connection. */
-export type ServiceAccountEdge = {
-  __typename?: 'ServiceAccountEdge';
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node: ServiceAccount;
-};
-
-export type ServiceAccountsFilter = {
-  tenant?: InputMaybe<TenantFilter>;
 };
 
 /** The shape of a connector status, which matches that of an ops::Log. */
@@ -2040,10 +1898,6 @@ export type TenantBillingInvoicesArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type TenantFilter = {
-  eq?: InputMaybe<Scalars['String']['input']>;
-};
-
 /** Result of the `updateAlertConfig` mutation. */
 export type UpdateAlertConfigResult = {
   __typename?: 'UpdateAlertConfigResult';
@@ -2177,7 +2031,7 @@ export type RefreshTokensQueryVariables = Exact<{
 }>;
 
 
-export type RefreshTokensQuery = { __typename?: 'QueryRoot', refreshTokens: { __typename?: 'RefreshTokenInfoConnection', edges: Array<{ __typename?: 'RefreshTokenInfoEdge', cursor: string, node: { __typename?: 'RefreshTokenInfo', id: any, detail?: string | null, createdAt: any, multiUse: boolean, updatedAt: any, uses: number, validFor: string, expired: boolean } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type RefreshTokensQuery = { __typename?: 'QueryRoot', refreshTokens: { __typename?: 'RefreshTokenInfoConnection', edges: Array<{ __typename?: 'RefreshTokenInfoEdge', cursor: string, node: { __typename?: 'RefreshTokenInfo', id: any, detail?: string | null, createdAt: any, multiUse: boolean, updatedAt: any, uses: number, expired: boolean } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type CreateRefreshTokenMutationVariables = Exact<{
   detail?: InputMaybe<Scalars['String']['input']>;
@@ -2282,7 +2136,7 @@ export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind
 export const DeleteInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<DeleteInviteLinkMutation, DeleteInviteLinkMutationVariables>;
 export const RedeemInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RedeemInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"redeemInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<RedeemInviteLinkMutation, RedeemInviteLinkMutationVariables>;
 export const LiveSpecsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LiveSpecsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"liveSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogType"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<LiveSpecsQueryQuery, LiveSpecsQueryQueryVariables>;
-export const RefreshTokensDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RefreshTokens"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshTokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"multiUse"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"uses"}},{"kind":"Field","name":{"kind":"Name","value":"validFor"}},{"kind":"Field","name":{"kind":"Name","value":"expired"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<RefreshTokensQuery, RefreshTokensQueryVariables>;
+export const RefreshTokensDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RefreshTokens"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshTokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"multiUse"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"uses"}},{"kind":"Field","name":{"kind":"Name","value":"expired"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<RefreshTokensQuery, RefreshTokensQueryVariables>;
 export const CreateRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"multiUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}},{"kind":"Argument","name":{"kind":"Name","value":"multiUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"multiUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"validFor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]}}]} as unknown as DocumentNode<CreateRefreshTokenMutation, CreateRefreshTokenMutationVariables>;
 export const RevokeRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RevokeRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<RevokeRefreshTokenMutation, RevokeRefreshTokenMutationVariables>;
 export const CreateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<CreateStorageMappingMutation, CreateStorageMappingMutationVariables>;
