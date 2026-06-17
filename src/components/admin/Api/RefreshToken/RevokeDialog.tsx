@@ -12,6 +12,8 @@ import {
     Typography,
 } from '@mui/material';
 
+import { FormattedMessage } from 'react-intl';
+
 import { useRevokeRefreshToken } from 'src/api/gql/refreshTokens';
 import Error from 'src/components/shared/Error';
 
@@ -59,23 +61,32 @@ export function RevokeDialog({ open, onClose, onRevoked, id, detail }: Props) {
             maxWidth="xs"
             fullWidth
         >
-            <DialogTitle>Remove Refresh Token</DialogTitle>
+            <DialogTitle>
+                <FormattedMessage id="admin.cli_api.refreshToken.revoke.header" />
+            </DialogTitle>
             <DialogContent>
                 <Stack spacing={1}>
                     {error ? (
                         <Error condensed error={error} severity="error" />
                     ) : null}
                     <Typography>
-                        {detail
-                            ? `Remove the refresh token "${detail}"?`
-                            : 'Remove this refresh token?'}
+                        {detail ? (
+                            <FormattedMessage
+                                id="admin.cli_api.refreshToken.revoke.message.named"
+                                values={{ detail }}
+                            />
+                        ) : (
+                            <FormattedMessage id="admin.cli_api.refreshToken.revoke.message" />
+                        )}
                     </Typography>
-                    <Typography>This action is permanent.</Typography>
+                    <Typography>
+                        <FormattedMessage id="admin.cli_api.refreshToken.revoke.permanent" />
+                    </Typography>
                 </Stack>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} disabled={saving}>
-                    Cancel
+                    <FormattedMessage id="cta.cancel" />
                 </Button>
                 <Button
                     variant="outlined"
@@ -84,7 +95,7 @@ export function RevokeDialog({ open, onClose, onRevoked, id, detail }: Props) {
                     disabled={saving}
                     loading={saving}
                 >
-                    Remove
+                    <FormattedMessage id="cta.remove" />
                 </Button>
             </DialogActions>
         </Dialog>

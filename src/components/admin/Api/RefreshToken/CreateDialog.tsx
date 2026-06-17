@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useCreateRefreshToken } from 'src/api/gql/refreshTokens';
 import SingleLineCode from 'src/components/content/SingleLineCode';
@@ -24,14 +25,12 @@ import { hasLength } from 'src/utils/misc-utils';
 
 const TOKEN_VALIDITY = 'P1Y';
 
-// The shared Error component renders an error's literal `message` only when the
-// object looks like a Supabase or GraphQL error (it carries a `code` or a
-// `networkError`); otherwise it treats `message` as an i18n key. The `code`
-// makes it display this client-side message verbatim.
+// The shared Error component treats an error's `message` as an i18n key unless
+// the object looks like a Supabase or GraphQL error (it carries a `code` or a
+// `networkError`). This client-side error carries neither, so the message is
+// resolved from the language files.
 const TOKEN_DISPLAY_ERROR: ErrorDetails = {
-    code: 'refresh_token_display_failed',
-    message:
-        'An issue was encountered displaying your token. Please generate a new token.',
+    message: 'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed',
 };
 
 interface Props {
@@ -41,6 +40,7 @@ interface Props {
 }
 
 export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
 
     const [label, setLabel] = useState('');
@@ -98,7 +98,9 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
             onClose={token ? undefined : onClose}
             maxWidth="sm"
             fullWidth
-            aria-label="Create Refresh Token"
+            aria-label={intl.formatMessage({
+                id: 'admin.cli_api.refreshToken.dialog.header',
+            })}
             slotProps={{
                 transition: {
                     onExited: resetDialog,
@@ -113,11 +115,13 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography variant="h6">Create Refresh Token</Typography>
+                <Typography variant="h6">
+                    <FormattedMessage id="admin.cli_api.refreshToken.dialog.header" />
+                </Typography>
 
                 <IconButton disabled={generating} onClick={onClose}>
                     <Xmark
-                        aria-label="Close"
+                        aria-label={intl.formatMessage({ id: 'cta.close' })}
                         style={{
                             fontSize: '1rem',
                             color: theme.palette.text.primary,
@@ -135,8 +139,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     {token ? (
                         <AlertBox severity="info" short data-private>
                             <Typography sx={{ mb: 1 }}>
-                                Copy this refresh token now - you won&apos;t be
-                                able to see it again!
+                                <FormattedMessage id="admin.cli_api.refreshToken.dialog.alert.copyToken" />
                             </Typography>
 
                             <SingleLineCode value={token} />
@@ -150,7 +153,9 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                             sx={{ pt: 1 }}
                         >
                             <TextField
-                                label="Label"
+                                label={intl.formatMessage({
+                                    id: 'admin.cli_api.refreshToken.dialog.label',
+                                })}
                                 autoFocus
                                 onChange={(event) =>
                                     setLabel(event.target.value)
@@ -173,7 +178,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                                 type="submit"
                                 variant="contained"
                             >
-                                Create
+                                <FormattedMessage id="admin.cli_api.refreshToken.dialog.cta.create" />
                             </Button>
                         </Stack>
                     )}

@@ -16,6 +16,8 @@ import {
     Typography,
 } from '@mui/material';
 
+import { FormattedMessage, useIntl } from 'react-intl';
+
 import { useRefreshTokens } from 'src/api/gql/refreshTokens';
 import { CreateRefreshTokenDialog } from 'src/components/admin/Api/RefreshToken/CreateDialog';
 import { RevokeDialog } from 'src/components/admin/Api/RefreshToken/RevokeDialog';
@@ -31,6 +33,8 @@ interface RowProps {
 }
 
 function Row({ row, onRevoked }: RowProps) {
+    const intl = useIntl();
+
     const [revokeOpen, setRevokeOpen] = useState(false);
 
     return (
@@ -47,11 +51,18 @@ function Row({ row, onRevoked }: RowProps) {
             </TableCell>
 
             <TableCell sx={row.expired ? { opacity: 0.5 } : undefined}>
-                {`Used ${row.uses} ${row.uses === 1 ? 'time' : 'times'}`}
+                {intl.formatMessage(
+                    { id: 'admin.cli_api.refreshToken.table.label.uses' },
+                    { count: row.uses }
+                )}
             </TableCell>
 
             <TableCell sx={row.expired ? { opacity: 0.5 } : undefined}>
-                {row.expired ? <Typography>Expired</Typography> : null}
+                {row.expired ? (
+                    <Typography>
+                        <FormattedMessage id="admin.cli_api.refreshToken.table.status.expired" />
+                    </Typography>
+                ) : null}
             </TableCell>
 
             <TableCell>
@@ -60,7 +71,7 @@ function Row({ row, onRevoked }: RowProps) {
                     onClick={() => setRevokeOpen(true)}
                     variant="text"
                 >
-                    Remove
+                    <FormattedMessage id="cta.remove" />
                 </Button>
 
                 <RevokeDialog
@@ -98,7 +109,7 @@ export function RefreshTokenTable() {
                 }}
             >
                 <Button onClick={() => setDialogOpen(true)} variant="outlined">
-                    Create Refresh Token
+                    <FormattedMessage id="admin.cli_api.refreshToken.cta.create" />
                 </Button>
 
                 <CreateRefreshTokenDialog
@@ -110,7 +121,7 @@ export function RefreshTokenTable() {
 
             {error ? (
                 <Typography color="error" sx={{ mb: 2 }}>
-                    There was an error loading refresh tokens.
+                    <FormattedMessage id="admin.cli_api.refreshToken.table.error" />
                 </Typography>
             ) : null}
 
@@ -118,9 +129,15 @@ export function RefreshTokenTable() {
                 <Table size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Created</TableCell>
-                            <TableCell>Label</TableCell>
-                            <TableCell>Status</TableCell>
+                            <TableCell>
+                                <FormattedMessage id="entityTable.data.created" />
+                            </TableCell>
+                            <TableCell>
+                                <FormattedMessage id="admin.cli_api.refreshToken.table.column.label" />
+                            </TableCell>
+                            <TableCell>
+                                <FormattedMessage id="entityTable.data.status" />
+                            </TableCell>
                             <TableCell sx={{ width: 100 }} />
                             <TableCell sx={{ width: 125 }} />
                         </TableRow>
@@ -133,7 +150,7 @@ export function RefreshTokenTable() {
                                     colSpan={5}
                                     sx={{ textAlign: 'center' }}
                                 >
-                                    Loading...
+                                    <FormattedMessage id="common.loading" />
                                 </TableCell>
                             </TableRow>
                         ) : refreshTokens.length === 0 ? (
@@ -143,7 +160,7 @@ export function RefreshTokenTable() {
                                     sx={{ textAlign: 'center', p: 4 }}
                                 >
                                     <Typography sx={{ py: 1 }}>
-                                        No refresh tokens found.
+                                        <FormattedMessage id="admin.cli_api.refreshToken.table.noContent.header" />
                                     </Typography>
                                     <Typography
                                         component="a"
@@ -157,7 +174,7 @@ export function RefreshTokenTable() {
                                             },
                                         }}
                                     >
-                                        Create one now
+                                        <FormattedMessage id="admin.cli_api.refreshToken.table.noContent.cta" />
                                     </Typography>
                                 </TableCell>
                             </TableRow>
