@@ -19,10 +19,11 @@ function TotalLines({ invoice }: { invoice: Invoice }) {
                 sx={{
                     flex: 1,
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
                 }}
             >
-                <Typography fontWeight="bold">
+                <Typography fontWeight="bold" sx={{ textWrap: 'nowrap' }}>
                     <FormattedMessage id="admin.billing.table.line_items.label.total" />
                 </Typography>
                 <Typography fontWeight="bold">

@@ -107,7 +107,6 @@ function BillingLineItemsTable() {
                 sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    marginTop: 2,
                     flexGrow: 1,
                     alignItems: 'end',
                 }}

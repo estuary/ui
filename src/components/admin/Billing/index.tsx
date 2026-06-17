@@ -1,6 +1,6 @@
 import type { AdminBillingProps } from 'src/components/admin/Billing/types';
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Stack, Typography } from '@mui/material';
 
 import { ErrorBoundary } from 'react-error-boundary';
 import { useIntl } from 'react-intl';
@@ -10,7 +10,6 @@ import DateRange from 'src/components/admin/Billing/DateRange';
 import BillingLoadError from 'src/components/admin/Billing/LoadError';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
-import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import TenantOptions from 'src/components/admin/Billing/TenantOptions';
 import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
@@ -27,10 +26,6 @@ import { CustomEvents } from 'src/services/types';
 import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
-
-// Adding the height of a row generally works and should make it
-//  not _too_ tall
-const invoiceCardHeight = TOTAL_CARD_HEIGHT + INVOICE_ROW_HEIGHT;
 
 function AdminBilling({ showAddPayment }: AdminBillingProps) {
     usePageTitle({
@@ -63,36 +58,25 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 </Grid>
             </Grid>
 
-            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+            <Stack spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <BillingLoadError />
 
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Stack
+                    direction={{ xs: 'column', md: 'row' }}
+                    spacing={{ xs: 3, md: 2 }}
+                    sx={{ alignItems: { md: 'flex-start' } }}
+                >
                     <CardWrapper
-                        height={TOTAL_CARD_HEIGHT}
                         message={intl.formatMessage({
                             id: 'admin.billing.table.history.header',
                         })}
                     >
                         <BillingHistoryTable />
                     </CardWrapper>
-                </Grid>
 
-                <Grid size={{ xs: 12, md: 6 }}>
                     <CardWrapper
+                        sx={{ flex: { md: 1 } }}
                         height={TOTAL_CARD_HEIGHT}
-                        message={intl.formatMessage({
-                            id: 'admin.billing.graph.usageByMonth.header',
-                        })}
-                    >
-                        <GraphStateWrapper>
-                            <UsageByMonthGraph />
-                        </GraphStateWrapper>
-                    </CardWrapper>
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 12 }}>
-                    <CardWrapper
-                        height={invoiceCardHeight}
                         message={
                             isLoading ? (
                                 intl.formatMessage({
@@ -128,49 +112,56 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                             <GraphLoadingState />
                         )}
                     </CardWrapper>
-                </Grid>
+                </Stack>
 
-                <Grid size={{ xs: 12 }}>
-                    <Divider sx={{ mt: 3 }} />
-                </Grid>
+                <CardWrapper
+                    height={TOTAL_CARD_HEIGHT}
+                    message={intl.formatMessage({
+                        id: 'admin.billing.graph.usageByMonth.header',
+                    })}
+                >
+                    <GraphStateWrapper>
+                        <UsageByMonthGraph />
+                    </GraphStateWrapper>
+                </CardWrapper>
 
-                <Grid size={{ xs: 12 }}>
-                    <ErrorBoundary
-                        fallback={
-                            <>
-                                <Typography
-                                    sx={{
-                                        mb: 1,
-                                        fontSize: 18,
-                                        fontWeight: '400',
-                                    }}
-                                >
+                <Divider sx={{ mt: 3 }} />
+
+                <ErrorBoundary
+                    fallback={
+                        <>
+                            <Typography
+                                sx={{
+                                    mb: 1,
+                                    fontSize: 18,
+                                    fontWeight: '400',
+                                }}
+                            >
+                                {intl.formatMessage({
+                                    id: 'admin.billing.paymentMethods.header',
+                                })}
+                            </Typography>
+                            <AlertBox short severity="error">
+                                <Typography component="div">
                                     {intl.formatMessage({
-                                        id: 'admin.billing.paymentMethods.header',
+                                        id: 'admin.billing.error.paymentMethodsError',
                                     })}
                                 </Typography>
-                                <AlertBox short severity="error">
-                                    <Typography component="div">
-                                        {intl.formatMessage({
-                                            id: 'admin.billing.error.paymentMethodsError',
-                                        })}
-                                    </Typography>
-                                </AlertBox>
-                            </>
-                        }
-                        onError={(errorLoadingPaymentMethods) => {
-                            logRocketEvent(
-                                CustomEvents.ERROR_BOUNDARY_PAYMENT_METHODS,
-                                {
-                                    stack: errorLoadingPaymentMethods.stack,
-                                }
-                            );
-                        }}
-                    >
-                        <PaymentMethods showAddPayment={showAddPayment} />
-                    </ErrorBoundary>
-                </Grid>
-            </Grid>
+                            </AlertBox>
+                        </>
+                    }
+                    onError={(errorLoadingPaymentMethods) => {
+                        logRocketEvent(
+                            CustomEvents.ERROR_BOUNDARY_PAYMENT_METHODS,
+                            {
+                                stack: errorLoadingPaymentMethods.stack,
+                            }
+                        );
+                    }}
+                >
+                    <PaymentMethods showAddPayment={showAddPayment} />
+                </ErrorBoundary>
+            </Stack>
         </>
     );
 }

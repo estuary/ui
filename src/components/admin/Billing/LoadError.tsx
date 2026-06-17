@@ -1,5 +1,3 @@
-import { Grid } from '@mui/material';
-
 import { FormattedMessage } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -13,17 +11,13 @@ function BillingLoadError() {
     }
 
     return (
-        <Grid size={{ xs: 12 }}>
-            <AlertBox
-                short
-                severity="warning"
-                title={
-                    <FormattedMessage id="admin.billing.error.details.header" />
-                }
-            >
-                <FormattedMessage id="admin.billing.error.details.message" />
-            </AlertBox>
-        </Grid>
+        <AlertBox
+            short
+            severity="warning"
+            title={<FormattedMessage id="admin.billing.error.details.header" />}
+        >
+            <FormattedMessage id="admin.billing.error.details.message" />
+        </AlertBox>
     );
 }
 

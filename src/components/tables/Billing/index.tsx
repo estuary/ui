@@ -17,20 +17,12 @@ import { invoiceId } from 'src/utils/billing-utils';
 
 export const columns: TableColumns[] = [
     {
-        field: 'date_start',
-        headerIntlKey: 'admin.billing.table.history.label.date_start',
-    },
-    {
         field: 'date_end',
         headerIntlKey: 'admin.billing.table.history.label.date_end',
     },
     {
-        field: 'data_volume',
-        headerIntlKey: 'admin.billing.table.history.label.dataVolume',
-    },
-    {
-        field: 'task_usage',
-        headerIntlKey: 'admin.billing.table.history.label.tasks',
+        field: 'usage',
+        headerIntlKey: 'admin.billing.table.history.label.usage',
     },
     {
         field: 'total_cost',
@@ -90,10 +82,7 @@ function BillingHistoryTable() {
                         id: 'entityTable.title',
                     })}
                     size="small"
-                    sx={{
-                        ...getTableHeaderWithoutHeaderColor(),
-                        minWidth: 450,
-                    }}
+                    sx={{ ...getTableHeaderWithoutHeaderColor() }}
                 >
                     <EntityTableHeader columns={columns} />
 

@@ -5,7 +5,6 @@ import { TableCell, TableRow, Typography } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
-import DataVolume from 'src/components/tables/cells/billing/DataVolume';
 import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
 import { useBillingStore } from 'src/stores/Billing';
@@ -34,23 +33,21 @@ function Row({ row, isSelected }: RowProps) {
             sx={{ cursor: 'pointer' }}
         >
             <TimeStamp
-                date={row.date_start}
-                asLink
-                tooltipMessageId="admin.billing.table.history.tooltip.date_start"
-            />
-            <TimeStamp
                 date={row.date_end}
                 asLink
                 tooltipMessageId="admin.billing.table.history.tooltip.date_end"
             />
 
-            <DataVolume volumeInGB={row.extra?.processed_data_gb ?? 0} />
-
-            <TableCell>
+            <TableCell sx={{ whiteSpace: 'nowrap' }}>
                 <Typography>
                     <FormattedMessage
-                        id="admin.billing.graph.taskHoursByMonth.formatValue"
-                        values={{ taskUsage: row.extra?.task_usage_hours ?? 0 }}
+                        id="admin.billing.table.history.value.usage"
+                        values={{
+                            volume: (
+                                row.extra?.processed_data_gb ?? 0
+                            ).toFixed(1),
+                            tasks: row.extra?.task_usage_hours ?? 0,
+                        }}
                     />
                 </Typography>
             </TableCell>

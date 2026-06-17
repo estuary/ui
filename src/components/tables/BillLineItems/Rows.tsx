@@ -17,7 +17,9 @@ function Row({ row, descriptionTooltip }: RowProps) {
                     spacing={1}
                     sx={{ alignItems: 'center' }}
                 >
-                    <Typography>{row.description}</Typography>
+                    <Typography sx={{ minWidth: 0 }}>
+                        {row.description}
+                    </Typography>
                     {descriptionTooltip}
                 </Stack>
             </TableCell>
