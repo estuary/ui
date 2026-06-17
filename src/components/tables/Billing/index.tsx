@@ -44,17 +44,23 @@ const ROWS_PER_PAGE = 4;
 function BillingHistoryTable() {
     const intl = useIntl();
 
-    const { allInvoices, selectedInvoice, isLoading, networkFailed } =
-        useBillingInvoices();
+    const {
+        allInvoices,
+        selectedInvoice,
+        isLoading,
+        networkFailed,
+        selectedTenant,
+    } = useBillingInvoices();
 
     const [page, setPage] = useState(0);
 
-    // The selected tenant lives behind the hook; reset to the first (newest)
-    // page whenever the invoice set changes so a tenant switch starts at the
-    // top rather than stranding the view on a now-out-of-range page.
+    // Return to the first (newest) page when the tenant changes, so a tenant
+    // switch starts at the top; refreshes within the same tenant keep the
+    // current page. The currentPage clamp below keeps the view in range when
+    // the invoice count changes.
     useEffect(() => {
         setPage(0);
-    }, [allInvoices]);
+    }, [selectedTenant]);
 
     const pageCount = Math.ceil(allInvoices.length / ROWS_PER_PAGE);
     const currentPage = Math.min(page, Math.max(0, pageCount - 1));

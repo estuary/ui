@@ -35,6 +35,9 @@ export interface UseBillingInvoicesResult {
     isLoading: boolean;
     networkFailed: boolean;
     errorExists: boolean;
+    // The tenant these invoices belong to, exposed so views can respond to a
+    // tenant change — e.g. the history table resets pagination on a switch.
+    selectedTenant: string;
 }
 
 interface DateWindow {
@@ -153,5 +156,6 @@ export function useBillingInvoices(): UseBillingInvoicesResult {
         isLoading: fetching,
         networkFailed: Boolean(error?.networkError),
         errorExists: Boolean(error),
+        selectedTenant,
     };
 }
