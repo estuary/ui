@@ -21,7 +21,6 @@ const REFRESH_TOKENS_QUERY = graphql(`
                     multiUse
                     updatedAt
                     uses
-                    validFor
                     expired
                 }
                 cursor
