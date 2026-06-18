@@ -6,7 +6,6 @@ import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { useIntl } from 'react-intl';
 
-import { setTenantPrimaryPaymentMethod } from 'src/api/billing';
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
 import {
     INTENT_SECRET_ERROR,
@@ -19,7 +18,9 @@ interface Props {
     show: boolean;
     setupIntentSecret: string;
     setOpen: (val: boolean) => void;
-    onSuccess: () => void;
+    // Called with the newly added method's id once Stripe confirms it, so the
+    // parent can promote it to primary and re-fetch the list.
+    onSuccess: (paymentMethodId?: string | null) => void | Promise<void>;
     stripePromise: Promise<Stripe | null>;
     tenant: string;
 }
@@ -107,11 +108,6 @@ export function AddPaymentMethodDialog({
                         <PaymentForm
                             onSuccess={async (id) => {
                                 if (id) {
-                                    await setTenantPrimaryPaymentMethod(
-                                        tenant,
-                                        id
-                                    );
-
                                     fireGtmEvent('Payment_Entered', {
                                         tenant,
                                     });
@@ -121,7 +117,7 @@ export function AddPaymentMethodDialog({
                                     });
                                 }
                                 setOpen(false);
-                                onSuccess();
+                                await onSuccess(id);
                             }}
                             onError={console.log}
                         />

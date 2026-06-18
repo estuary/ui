@@ -20,13 +20,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Plus } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
 
-import {
-    deleteTenantPaymentMethod,
-    getSetupIntentSecret,
-    getTenantPaymentMethods,
-    setTenantPrimaryPaymentMethod,
-} from 'src/api/billing';
 import { AddPaymentMethodDialog } from 'src/components/admin/Billing/AddPaymentMethod';
+import { DeletePaymentMethodDialog } from 'src/components/admin/Billing/DeletePaymentMethodDialog';
 import { PaymentMethod } from 'src/components/admin/Billing/PaymentMethodRow';
 import {
     INTENT_SECRET_ERROR,
@@ -34,6 +29,7 @@ import {
 } from 'src/components/admin/Billing/shared';
 import AlertBox from 'src/components/shared/AlertBox';
 import TableLoadingRows from 'src/components/tables/Loading';
+import { useBillingPaymentMethods } from 'src/hooks/billing/useBillingPaymentMethods';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 import { useBillingStore } from 'src/stores/Billing';
@@ -76,73 +72,28 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
         (state) => state.setPaymentMethodExists
     );
 
-    const [refreshCounter, setRefreshCounter] = useState(0);
-
-    const [setupIntentSecret, setSetupIntentSecret] = useState(
-        INTENT_SECRET_LOADING
-    );
     const [newMethodOpen, setNewMethodOpen] = useState(showAddPayment ?? false);
 
-    const [methodsLoading, setMethodsLoading] = useState(false);
-    const [methods, setMethods] = useState<any[] | undefined>([]);
-    const [defaultSource, setDefaultSource] = useState<
-        string | null | undefined
-    >(null);
+    const [methodIdToDelete, setMethodIdToDelete] = useState<string | null>(
+        null
+    );
 
-    // These are two different iifes so this component loads just a _tiny bit_ faster
-    useEffect(() => {
-        void (async () => {
-            if (selectedTenant) {
-                const setupResponse =
-                    await getSetupIntentSecret(selectedTenant);
-
-                if (setupResponse.data?.intent_secret) {
-                    setSetupIntentSecret(setupResponse.data.intent_secret);
-                } else {
-                    setSetupIntentSecret(INTENT_SECRET_ERROR);
-                }
-            }
-        })();
-
-        void (async () => {
-            if (selectedTenant) {
-                setMethodsLoading(true);
-
-                try {
-                    // TODO (optimization): Add proper typing and error handling for this service call. The response assumes
-                    //  an unexpected shape when the service errors. The error property is null and the data property
-                    //  is an object with the following shape: { error: string; }. Consequently, an undefined value is passed
-                    //  to the setters below (unbeknownst to the compiler given the state typing defined above), causing the
-                    //  the component to lean on the ErrorBoundary wrapper for its display in the presence of an error.
-
-                    // TODO (store payment method info) we load this for the first 5 tenants so we should just pull that info
-                    const methodsResponse =
-                        await getTenantPaymentMethods(selectedTenant);
-
-                    setMethods(methodsResponse.data?.payment_methods);
-                    setDefaultSource(methodsResponse.data?.primary);
-                } finally {
-                    setMethodsLoading(false);
-                }
-            }
-        })();
-    }, [selectedTenant, refreshCounter]);
+    const {
+        methods,
+        primaryId,
+        isLoading,
+        serverErrored,
+        setupIntentSecret,
+        setPrimary,
+        deleteMethod,
+        refresh,
+    } = useBillingPaymentMethods();
 
     useEffect(() => {
-        if (!methodsLoading) {
+        if (!isLoading) {
             setPaymentMethodExists(methods);
         }
-    }, [setPaymentMethodExists, methods, methodsLoading]);
-
-    // TODO (optimization): Remove this temporary, hacky means of detecting when the payment methods service errs
-    //   when proper error handling is in place.
-    const serverErrored = useMemo(
-        () =>
-            !methodsLoading &&
-            (typeof defaultSource === 'undefined' ||
-                typeof methods === 'undefined'),
-        [defaultSource, methods, methodsLoading]
-    );
+    }, [isLoading, methods, setPaymentMethodExists]);
 
     useEffect(() => {
         if (serverErrored) {
@@ -210,7 +161,13 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                             show={newMethodOpen}
                             setOpen={setNewMethodOpen}
                             tenant={selectedTenant}
-                            onSuccess={() => setRefreshCounter((r) => r + 1)}
+                            onSuccess={async (id) => {
+                                if (id) {
+                                    await setPrimary(id);
+                                }
+                                // A card was added, so the list itself changed.
+                                refresh();
+                            }}
                             stripePromise={stripePromise}
                             setupIntentSecret={setupIntentSecret}
                         />
@@ -251,30 +208,20 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                         </TableHead>
 
                         <TableBody>
-                            {!selectedTenant || methodsLoading ? (
+                            {!selectedTenant || isLoading ? (
                                 <TableLoadingRows
                                     columnKeys={getColumnKeyList(columns)}
                                 />
-                            ) : methods && methods.length > 0 ? (
+                            ) : methods.length > 0 ? (
                                 methods.map((method) => (
                                     <PaymentMethod
-                                        onDelete={async () => {
-                                            await deleteTenantPaymentMethod(
-                                                selectedTenant,
-                                                method.id
-                                            );
-                                            setRefreshCounter((r) => r + 1);
-                                        }}
-                                        onPrimary={async () => {
-                                            await setTenantPrimaryPaymentMethod(
-                                                selectedTenant,
-                                                method.id
-                                            );
-                                            setRefreshCounter((r) => r + 1);
-                                        }}
+                                        onDelete={() =>
+                                            setMethodIdToDelete(method.id)
+                                        }
+                                        onPrimary={() => setPrimary(method.id)}
                                         key={method.id}
                                         {...method}
-                                        primary={method.id === defaultSource}
+                                        primary={method.id === primaryId}
                                     />
                                 ))
                             ) : (
@@ -292,6 +239,17 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
                     </Table>
                 </TableContainer>
             )}
+
+            <DeletePaymentMethodDialog
+                open={Boolean(methodIdToDelete)}
+                onClose={() => setMethodIdToDelete(null)}
+                onConfirm={async () => {
+                    if (methodIdToDelete) {
+                        await deleteMethod(methodIdToDelete);
+                    }
+                    setMethodIdToDelete(null);
+                }}
+            />
         </Stack>
     );
 };

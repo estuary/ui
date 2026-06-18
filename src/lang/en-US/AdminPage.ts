@@ -96,9 +96,9 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.paymentMethods.table.label.name': `Name`,
     'admin.billing.paymentMethods.table.label.lastFour': `Last 4 Digits`,
     'admin.billing.paymentMethods.table.label.details': `Exp`,
-    'admin.billing.paymentMethods.table.label.primary': `Primary`,
-    'admin.billing.paymentMethods.table.label.actions': `Actions`,
     'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
+    'admin.billing.paymentMethods.delete.confirmation.title': `Delete payment method?`,
+    'admin.billing.paymentMethods.delete.confirmation.message': `This payment method will be removed from your account. This action cannot be undone.`,
     'admin.billing.addPaymentMethods.title': `Add a payment method`,
     'admin.billing.addPaymentMethods.stripeLoadError': `Unable to load the forms from Stripe. ${Errors['error.tryAgain']}`,
 

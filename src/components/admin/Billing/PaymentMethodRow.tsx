@@ -21,15 +21,6 @@ export interface PaymentMethodProps {
     id: string;
     type: 'card' | 'us_bank_account';
     billing_details: {
-        address: {
-            city: string;
-            country: string;
-            line1: string;
-            line2: string;
-            postal_code: string;
-            state: string;
-        };
-        email: string;
         name: string;
     };
     card: {
@@ -43,13 +34,11 @@ export interface PaymentMethodProps {
             | 'unionpay'
             | 'visa'
             | 'unknown';
-        country: string;
         exp_month: number;
         exp_year: number;
         last4: number;
     };
     us_bank_account: {
-        account_holder_type: 'individual' | 'company';
         account_type: 'checking' | 'savings';
         bank_name: string;
         last4: number;
