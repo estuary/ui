@@ -40,11 +40,10 @@ interface PaymentMethodNode {
 }
 
 // The GQL node is camelCased and narrower than the legacy REST payload. Map
-// what the schema provides into the shape the table renders. `account_type` is
-// not exposed by the GQL API, so bank accounts render it empty.
+// what the schema provides into the shape the table renders.
 const mapPaymentMethod = (node: PaymentMethodNode): BillingPaymentMethod => ({
     id: node.id,
-    type: node.type as PaymentMethodProps['type'],
+    type: node.type,
     billing_details: {
         name: node.billingDetails?.name ?? '',
     },
@@ -53,13 +52,11 @@ const mapPaymentMethod = (node: PaymentMethodNode): BillingPaymentMethod => ({
             'unknown') as PaymentMethodProps['card']['brand'],
         exp_month: node.card?.expMonth ?? 0,
         exp_year: node.card?.expYear ?? 0,
-        last4: node.card?.last4 ? Number(node.card.last4) : 0,
+        last4: node.card?.last4 ?? '',
     },
     us_bank_account: {
-        account_type:
-            '' as unknown as PaymentMethodProps['us_bank_account']['account_type'],
         bank_name: node.usBankAccount?.bankName ?? '',
-        last4: node.usBankAccount?.last4 ? Number(node.usBankAccount.last4) : 0,
+        last4: node.usBankAccount?.last4 ?? '',
     },
 });
 

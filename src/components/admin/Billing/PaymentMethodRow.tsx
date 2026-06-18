@@ -1,6 +1,6 @@
 import { Box, IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 
-import { Star, StarSolid, Trash } from 'iconoir-react';
+import { Bank, CreditCard, Star, StarSolid, Trash } from 'iconoir-react';
 
 import AmexLogo from 'src/images/payment-methods/amex.png';
 import DiscoverLogo from 'src/images/payment-methods/discover.png';
@@ -14,12 +14,20 @@ const cardLogos: Record<string, string> = {
     mastercard: MastercardLogo,
 };
 
+// Stripe types other than card / us_bank_account (link, cashapp, amazon_pay, …)
+// get a generic row labelled with the humanized type.
+const humanizePaymentType = (type: string) =>
+    type
+        .split('_')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
 export interface PaymentMethodProps {
     onDelete(): void;
     onPrimary(): void;
     primary: boolean;
     id: string;
-    type: 'card' | 'us_bank_account';
+    type: string;
     billing_details: {
         name: string;
     };
@@ -36,12 +44,11 @@ export interface PaymentMethodProps {
             | 'unknown';
         exp_month: number;
         exp_year: number;
-        last4: number;
+        last4: string;
     };
     us_bank_account: {
-        account_type: 'checking' | 'savings';
         bank_name: string;
-        last4: number;
+        last4: string;
     };
 }
 
@@ -73,13 +80,25 @@ export const PaymentMethod = ({
                     ) : (
                         card.brand
                     )
+                ) : type === 'us_bank_account' ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Bank style={{ fontSize: 24 }} />
+                        {us_bank_account.bank_name}
+                    </Box>
                 ) : (
-                    us_bank_account.bank_name
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <CreditCard style={{ fontSize: 24 }} />
+                        {humanizePaymentType(type)}
+                    </Box>
                 )}
             </TableCell>
             <TableCell>{billing_details.name}</TableCell>
             <TableCell>
-                {type === 'card' ? card.last4 : us_bank_account.last4}
+                {type === 'card'
+                    ? card.last4
+                    : type === 'us_bank_account'
+                      ? us_bank_account.last4
+                      : '—'}
             </TableCell>
             <TableCell>
                 {type === 'card' ? (
@@ -87,7 +106,7 @@ export const PaymentMethod = ({
                         {card.exp_month}/{card.exp_year}
                     </>
                 ) : (
-                    us_bank_account.account_type
+                    '—'
                 )}
             </TableCell>
             <TableCell>
