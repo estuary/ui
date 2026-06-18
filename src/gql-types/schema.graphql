@@ -1053,6 +1053,17 @@ type MutationRoot {
   """
   createInviteLink(capability: Capability!, catalogPrefix: Prefix!, detail: String, singleUse: Boolean! = true): InviteLink!
 
+  """Create a refresh token for the authenticated user."""
+  createRefreshToken(
+    detail: String = null
+    multiUse: Boolean! = true
+
+    """
+    ISO 8601 duration for token validity (e.g. P90D); must be greater than zero and at most one year
+    """
+    validFor: String! = "P90D"
+  ): RefreshTokenResult!
+
   """
   Create a storage mapping for the given catalog prefix.
   
@@ -1082,6 +1093,15 @@ type MutationRoot {
   catalog prefix with the specified capability.
   """
   redeemInviteLink(token: UUID!): RedeemInviteLinkResult!
+
+  """
+  Revoke a refresh token owned by the authenticated user.
+  
+  Rather than deleting the row, we zero its `valid_for` interval, which
+  marks the token as expired/invalid while preserving the audit trail.
+  Already-zeroed (revoked) tokens are treated as not found.
+  """
+  revokeRefreshToken(id: Id!): Boolean!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
@@ -1424,6 +1444,9 @@ type QueryRoot {
   liveSpecs(after: String, before: String, by: LiveSpecsBy!, first: Int, last: Int): LiveSpecRefConnection!
   prefixes(after: String, by: PrefixesBy!, first: Int): PrefixRefConnection!
 
+  """List refresh tokens owned by the authenticated user."""
+  refreshTokens(after: String, first: Int): RefreshTokenInfoConnection!
+
   """
   Returns storage mappings accessible to the current user.
   
@@ -1441,6 +1464,43 @@ type RedeemInviteLinkResult {
 
   """The catalog prefix that was granted."""
   catalogPrefix: Prefix!
+}
+
+type RefreshTokenInfo {
+  createdAt: DateTime!
+  detail: String
+
+  """
+  True once the token's validity window has elapsed
+  (now is past `updated_at + valid_for`).
+  """
+  expired: Boolean!
+  id: Id!
+  multiUse: Boolean!
+  updatedAt: DateTime!
+  uses: Int!
+}
+
+type RefreshTokenInfoConnection {
+  """A list of edges."""
+  edges: [RefreshTokenInfoEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type RefreshTokenInfoEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: RefreshTokenInfo!
+}
+
+type RefreshTokenResult {
+  id: Id!
+  secret: String!
 }
 
 type RepublishRequested {

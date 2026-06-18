@@ -73,7 +73,6 @@ export enum TABLES {
     // PUBLICATION_SPECS = 'publication_specs',
     PUBLICATION_SPECS_EXT = 'publication_specs_ext',
     PUBLICATIONS = 'publications',
-    REFRESH_TOKENS = 'refresh_tokens',
     ROLE_GRANTS = 'role_grants',
     STORAGE_MAPPINGS = 'storage_mappings',
     TASKS_BY_DAY = 'task_stats_by_day',
@@ -86,7 +85,6 @@ export enum TABLES {
 export enum RPCS {
     AUTH_ROLES = 'auth_roles',
     // BILLING_REPORT = 'billing_report_202308',
-    CREATE_REFRESH_TOKEN = 'create_refresh_token',
     DRAFT_COLLECTIONS_ELIGIBLE_FOR_DELETION = 'draft_collections_eligible_for_deletion',
     EXCHANGE_DIRECTIVES = 'exchange_directive_token',
     REPUBLISH_PREFIX = 'republish_prefix',

@@ -81,9 +81,6 @@ const invariableStores = {
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
     ),
-    [SelectTableStoreNames.REFRESH_TOKENS]: createSelectableTableStore(
-        SelectTableStoreNames.REFRESH_TOKENS
-    ),
 
     // Shard Detail Store
     [ShardDetailStoreNames.CAPTURE]: createShardDetailStore(
