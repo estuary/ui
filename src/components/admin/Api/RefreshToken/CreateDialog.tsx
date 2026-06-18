@@ -95,7 +95,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
     return (
         <Dialog
             open={open}
-            onClose={token ? undefined : onClose}
+            onClose={token || generating ? undefined : onClose}
             maxWidth="sm"
             fullWidth
             aria-label={intl.formatMessage({

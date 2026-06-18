@@ -1,10 +1,11 @@
 import type { RefreshTokenInfo } from 'src/gql-types/graphql';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Box,
     Button,
+    IconButton,
     Table,
     TableBody,
     TableCell,
@@ -16,6 +17,7 @@ import {
     Typography,
 } from '@mui/material';
 
+import { Trash } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useRefreshTokens } from 'src/api/gql/refreshTokens';
@@ -29,16 +31,21 @@ interface RowProps {
         RefreshTokenInfo,
         'id' | 'detail' | 'createdAt' | 'uses' | 'expired'
     >;
-    onRevoked?: () => void;
 }
 
-function Row({ row, onRevoked }: RowProps) {
+function Row({ row }: RowProps) {
     const intl = useIntl();
 
     const [revokeOpen, setRevokeOpen] = useState(false);
 
     return (
-        <TableRow>
+        <TableRow
+            sx={{
+                '&:hover .revoke-action, &:focus-within .revoke-action': {
+                    opacity: 1,
+                },
+            }}
+        >
             <TimeStamp
                 time={row.createdAt}
                 TableCellProps={
@@ -66,18 +73,20 @@ function Row({ row, onRevoked }: RowProps) {
             </TableCell>
 
             <TableCell>
-                <Button
+                <IconButton
+                    aria-label={intl.formatMessage({ id: 'cta.remove' })}
+                    className="revoke-action"
                     color="error"
                     onClick={() => setRevokeOpen(true)}
-                    variant="text"
+                    size="small"
+                    sx={{ opacity: 0, transition: 'opacity 100ms ease-in-out' }}
                 >
-                    <FormattedMessage id="cta.remove" />
-                </Button>
+                    <Trash />
+                </IconButton>
 
                 <RevokeDialog
                     open={revokeOpen}
                     onClose={() => setRevokeOpen(false)}
-                    onRevoked={onRevoked}
                     id={row.id}
                     detail={row.detail}
                 />
@@ -98,6 +107,22 @@ export function RefreshTokenTable() {
     const handlePageChange = (_event: any, page: number) => {
         onPageChange(_event, page, pageInfo?.endCursor);
     };
+
+    // Revoking the last token on a page empties it, since the list query
+    // excludes revoked tokens (a concurrent revoke elsewhere can do the same).
+    // Step back so the user lands on a populated page instead of being
+    // stranded on a blank one with no Previous control. Mirrors the
+    // AccessLinksTable recovery.
+    useEffect(() => {
+        if (
+            !fetching &&
+            !error &&
+            refreshTokens.length === 0 &&
+            currentPage > 0
+        ) {
+            goToPage(currentPage - 1);
+        }
+    }, [fetching, error, refreshTokens.length, currentPage, goToPage]);
 
     return (
         <Box sx={{ mx: 2 }}>
@@ -136,7 +161,7 @@ export function RefreshTokenTable() {
                                 <FormattedMessage id="admin.cli_api.refreshToken.table.column.label" />
                             </TableCell>
                             <TableCell>
-                                <FormattedMessage id="entityTable.data.status" />
+                                <FormattedMessage id="admin.cli_api.refreshToken.table.column.uses" />
                             </TableCell>
                             <TableCell sx={{ width: 100 }} />
                             <TableCell sx={{ width: 125 }} />
@@ -153,7 +178,7 @@ export function RefreshTokenTable() {
                                     <FormattedMessage id="common.loading" />
                                 </TableCell>
                             </TableRow>
-                        ) : refreshTokens.length === 0 ? (
+                        ) : refreshTokens.length === 0 && !error ? (
                             <TableRow>
                                 <TableCell
                                     colSpan={5}
@@ -180,16 +205,7 @@ export function RefreshTokenTable() {
                             </TableRow>
                         ) : (
                             refreshTokens.map((row) => (
-                                <Row
-                                    key={row.id}
-                                    row={row}
-                                    onRevoked={
-                                        currentPage > 0 &&
-                                        refreshTokens.length === 1
-                                            ? () => goToPage(currentPage - 1)
-                                            : undefined
-                                    }
-                                />
+                                <Row key={row.id} row={row} />
                             ))
                         )}
                     </TableBody>

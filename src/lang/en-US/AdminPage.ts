@@ -17,6 +17,7 @@ export const AdminPage: Record<string, string> = {
     'admin.cli_api.refreshToken.cta.create': `Create Refresh Token`,
     'admin.cli_api.refreshToken.table.error': `There was an error loading refresh tokens.`,
     'admin.cli_api.refreshToken.table.column.label': `Label`,
+    'admin.cli_api.refreshToken.table.column.uses': `Uses`,
     'admin.cli_api.refreshToken.table.label.uses': `Used {count} {count, plural, one {time} other {times}}`,
     'admin.cli_api.refreshToken.table.status.expired': `Expired`,
     'admin.cli_api.refreshToken.table.noContent.header': `No refresh tokens found.`,

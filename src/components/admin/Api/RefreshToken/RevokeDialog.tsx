@@ -20,12 +20,11 @@ import Error from 'src/components/shared/Error';
 interface Props {
     open: boolean;
     onClose: () => void;
-    onRevoked?: () => void;
     id: string;
     detail?: string | null;
 }
 
-export function RevokeDialog({ open, onClose, onRevoked, id, detail }: Props) {
+export function RevokeDialog({ open, onClose, id, detail }: Props) {
     const [, revokeRefreshToken] = useRevokeRefreshToken();
 
     const [saving, setSaving] = useState(false);
@@ -46,7 +45,6 @@ export function RevokeDialog({ open, onClose, onRevoked, id, detail }: Props) {
 
         setSaving(false);
         onClose();
-        onRevoked?.();
     };
 
     return (
