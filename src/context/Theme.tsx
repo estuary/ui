@@ -981,24 +981,9 @@ const themeSettings = createTheme({
         },
         MuiButtonBase: {
             defaultProps: {
-                // based on React-Admin's solution
-                //   https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/defaultTheme.ts
                 disableRipple: true,
                 sx: {
-                    'fontSize': 14,
-                    '&.Mui-focusVisible::after, &:hover::after': {
-                        backgroundColor: 'currentColor',
-                        borderRadius: 'inherit',
-                        content: '""',
-                        display: 'block',
-                        height: '100%',
-                        opacity: 0.1,
-                        position: 'absolute',
-                        right: 0,
-                        top: 0,
-                        width: '100%',
-                        zIndex: buttonHoverIndex,
-                    },
+                    fontSize: 14,
                     [`& .${chipClasses.deleteIcon}, button`]: {
                         zIndex: chipDeleteIndex,
                     },
