@@ -7,12 +7,12 @@ import { Button } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
+import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
 import { hasOwnProperty } from 'src/utils/misc-utils';
 
 const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     const intl = useIntl();
-    const { loading, onClick } = useModifyAlertSubscription(closeDialog, true);
+    const { loading, onClick } = useModifyAlertMetadata(closeDialog, true);
 
     const errorsExist = useAlertSubscriptionsStore(
         (state) => state.emailErrorsExist || state.prefixErrorsExist

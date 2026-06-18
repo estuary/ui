@@ -74,6 +74,9 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             deleteInviteLink(_result, _args, cache) {
                                 invalidateQuery(cache, 'inviteLinks');
                             },
+                            updateAlertConfig(_result, _args, cache) {
+                                invalidateQuery(cache, 'alertConfigs');
+                            },
                             createAlertSubscription(_result, _args, cache) {
                                 invalidateQuery(cache, 'alertSubscriptions');
                             },

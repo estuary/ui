@@ -56,13 +56,13 @@ export const fromUnconventionalTimeFormat = (value: string | undefined) => {
             return '12:00:00';
         case '24h':
             return '24:00:00';
-        case '1d':
+        case '1day':
             return '24:00:00';
-        case '2d':
+        case '2days':
             return '2 days';
-        case '3d':
+        case '3days':
             return '3 days';
-        case '7d':
+        case '7days':
             return '7 days';
         default:
             return 'none';
@@ -84,11 +84,11 @@ export const toUnconventionalTimeFormat = (value: string | undefined) => {
         case '24:00:00':
             return '24h';
         case '2 days':
-            return '2d';
+            return '2days';
         case '3 days':
-            return '3d';
+            return '3days';
         case '7 days':
-            return '7d';
+            return '7days';
         default:
             return 'none';
     }

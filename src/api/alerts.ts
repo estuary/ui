@@ -7,6 +7,7 @@ import type {
     AlertSubscription as LegacyAlertSubscription,
 } from 'src/types';
 import type {
+    AlertConfigMutationInput,
     AlertConfigQueryInput,
     AlertSubscriptionMutationInput,
     AlertSubscriptionsBy,
@@ -54,6 +55,25 @@ const AlertConfigQuery = gql<AlertConfigQueryResponse, AlertConfigQueryInput>`
                 endCursor
                 hasNextPage
             }
+        }
+    }
+`;
+
+const AlertConfigUpdateMutation = gql<
+    { catalogPrefixOrName: string },
+    AlertConfigMutationInput
+>`
+    mutation UpdateAlertConfigMutation(
+        $catalogPrefixOrName: Prefix!
+        $config: JSON!
+        $detail: String
+    ) {
+        updateAlertConfig(
+            catalogPrefixOrName: $catalogPrefixOrName
+            config: $config
+            detail: $detail
+        ) {
+            catalogPrefixOrName
         }
     }
 `;
@@ -213,6 +233,7 @@ const getTaskNotification = async (catalogName: string) => {
 
 export {
     AlertConfigQuery,
+    AlertConfigUpdateMutation,
     AlertSubscriptionCreateMutation,
     AlertSubscriptionDeleteMutation,
     AlertSubscriptionQuery,

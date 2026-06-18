@@ -6,6 +6,15 @@ import type { Schema } from 'src/types';
 import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
 import type { AlertConfigKeys } from 'src/utils/notification-utils';
 
+export interface AlertConfigResponse extends AlertMetadataErrorResponse {
+    prefix: string;
+}
+
+interface AlertMetadataErrorResponse {
+    error?: any;
+    invalid?: boolean;
+}
+
 export interface AlertSubscriptionDialogProps extends PrefixFieldProps {
     descriptionId: string;
     headerId: string;
@@ -15,10 +24,9 @@ export interface AlertSubscriptionDialogProps extends PrefixFieldProps {
 }
 
 export interface AlertSubscriptionResponse
-    extends BaseAlertSubscriptionMutationInput {
+    extends AlertMetadataErrorResponse,
+        BaseAlertSubscriptionMutationInput {
     id: string;
-    error?: any;
-    invalid?: boolean;
 }
 
 // TODO: Remove and replace type with instance of SubscriptionDependentProps.

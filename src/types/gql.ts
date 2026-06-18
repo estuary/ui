@@ -4,6 +4,7 @@ import type {
     AlertTypeInfo,
 } from 'src/gql-types/graphql';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { Schema } from 'src/types/index';
 
 export interface AlertDetailsRecipients {
     email: string;
@@ -132,6 +133,13 @@ export interface AlertSubscription extends BaseFields {
     catalogPrefix: string;
     destination: string;
     email: string;
+}
+
+// This interface is used for the upsert alert config mutation.
+export interface AlertConfigMutationInput {
+    catalogPrefixOrName: string;
+    config: Schema;
+    detail?: string;
 }
 
 // This interface is used for create and update alert subscription mutations.
