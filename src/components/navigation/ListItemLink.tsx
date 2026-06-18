@@ -1,108 +1,62 @@
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 
 import {
-    Badge,
     ListItemButton,
     ListItemIcon,
     ListItemText,
     Tooltip,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import RouterLink from 'src/components/navigation/RouterLink';
-import { NavWidths } from 'src/context/Theme';
 
 interface Props {
     icon: ReactNode;
     title: string;
-    link: string | any;
     isOpen?: boolean;
-    menuWidth?: number;
-    badgeContent?: number;
-    tooltipDelay?: number;
+    // Hover tooltip shown when collapsed; defaults to `title`. Set it when the
+    // tooltip should differ from the label (e.g. a toggle).
+    tooltip?: string;
+    // Pass `to` for a route link, or `onClick` for a button (e.g. a menu trigger).
+    to?: string;
+    onClick?: (event: MouseEvent<HTMLElement>) => void;
 }
 
-const ListItemLink = ({
+export const ListItemLink = ({
     icon,
     title,
-    link,
     isOpen,
-    menuWidth,
-    badgeContent,
-    tooltipDelay,
+    tooltip,
+    to,
+    onClick,
 }: Props) => {
-    const intl = useIntl();
-
-    const translatedTitle = intl.formatMessage({
-        id: title,
-    });
-
     return (
         <li>
             <Tooltip
-                title={!isOpen ? translatedTitle : ''}
+                title={!isOpen ? (tooltip ?? title) : ''}
                 placement="right-end"
-                enterDelay={tooltipDelay ? tooltipDelay : undefined}
             >
-                {menuWidth === NavWidths.FULL ? (
-                    <ListItemButton
-                        component={typeof link === 'string' ? RouterLink : 'a'}
-                        to={typeof link === 'string' ? link : undefined}
-                        onClick={typeof link === 'function' ? link : undefined}
-                        disableGutters
+                <ListItemButton
+                    component={to ? RouterLink : 'a'}
+                    to={to}
+                    onClick={onClick}
+                    disableGutters
+                    sx={{
+                        whiteSpace: 'nowrap',
+                        px: 1.5,
+                    }}
+                >
+                    <ListItemIcon
                         sx={{
-                            whiteSpace: 'nowrap',
-                            px: 1.5,
+                            minWidth: 36,
+                            color: (theme) => theme.palette.text.primary,
                         }}
                     >
-                        {icon ? (
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 36,
-                                    color: (theme) =>
-                                        theme.palette.text.primary,
-                                }}
-                            >
-                                {icon}
-                            </ListItemIcon>
-                        ) : null}
+                        {icon}
+                    </ListItemIcon>
 
-                        <ListItemText primary={translatedTitle} />
-
-                        <Badge badgeContent={badgeContent} />
-                    </ListItemButton>
-                ) : (
-                    <ListItemButton
-                        component={typeof link === 'string' ? RouterLink : 'a'}
-                        to={typeof link === 'string' ? link : undefined}
-                        onClick={typeof link === 'function' ? link : undefined}
-                        disableGutters
-                        sx={{
-                            whiteSpace: 'nowrap',
-                            px: 1.5,
-                        }}
-                    >
-                        {icon ? (
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 36,
-                                    color: (theme) =>
-                                        theme.palette.text.primary,
-                                }}
-                            >
-                                <Badge badgeContent={badgeContent}>
-                                    {icon}
-                                </Badge>
-                            </ListItemIcon>
-                        ) : null}
-
-                        <ListItemText primary={translatedTitle} />
-                    </ListItemButton>
-                )}
+                    <ListItemText primary={title} />
+                </ListItemButton>
             </Tooltip>
         </li>
     );
 };
-
-export default ListItemLink;

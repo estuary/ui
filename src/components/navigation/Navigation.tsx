@@ -1,31 +1,31 @@
-//TODO (UI / UX) - These icons are not final
-import {
-    Box,
-    List,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Stack,
-    Toolbar,
-    Tooltip,
-    useTheme,
-} from '@mui/material';
+import { useState } from 'react';
+
+import { Box, List, Stack, Toolbar, useTheme } from '@mui/material';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import {
+    Building,
     CloudDownload,
     CloudUpload,
     DatabaseScript,
     FastArrowLeft,
+    HelpCircle,
     HomeSimple,
     Settings,
 } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import ListItemLink from 'src/components/navigation/ListItemLink';
-import ModeSwitch from 'src/components/navigation/ModeSwitch';
+import { HelpMenu } from 'src/components/menus/HelpMenu';
+import { OrgMenu } from 'src/components/menus/OrgMenu';
+import { UserMenu } from 'src/components/menus/UserMenu';
+import { ListItemLink } from 'src/components/navigation/ListItemLink';
+import UserAvatar from 'src/components/shared/UserAvatar';
 import { paperBackground } from 'src/context/Theme';
+import { useUserStore } from 'src/context/User/useUserContextStore';
+import { useTenantStore } from 'src/stores/Tenant';
 
 interface NavigationProps {
     open: boolean;
@@ -36,6 +36,12 @@ interface NavigationProps {
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
     const theme = useTheme();
+    const userDetails = useUserStore(useShallow((state) => state.userDetails));
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
+    const [helpAnchor, setHelpAnchor] = useState<HTMLElement | null>(null);
+    const [userAnchor, setUserAnchor] = useState<HTMLElement | null>(null);
+    const [orgAnchor, setOrgAnchor] = useState<HTMLElement | null>(null);
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -78,33 +84,48 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 <Box>
                     <List
                         aria-label={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
+                            id: 'navigation.ariaLabel',
                         })}
                     >
                         <ListItemLink
+                            isOpen={open}
                             icon={<HomeSimple />}
-                            title={authenticatedRoutes.home.title}
-                            link={authenticatedRoutes.home.path}
+                            title={intl.formatMessage({
+                                id: authenticatedRoutes.home.title,
+                            })}
+                            to={authenticatedRoutes.home.path}
                         />
                         <ListItemLink
+                            isOpen={open}
                             icon={<CloudUpload />}
-                            title={authenticatedRoutes.captures.title}
-                            link={authenticatedRoutes.captures.path}
+                            title={intl.formatMessage({
+                                id: authenticatedRoutes.captures.title,
+                            })}
+                            to={authenticatedRoutes.captures.path}
                         />
                         <ListItemLink
+                            isOpen={open}
                             icon={<DatabaseScript />}
-                            title={authenticatedRoutes.collections.title}
-                            link={authenticatedRoutes.collections.path}
+                            title={intl.formatMessage({
+                                id: authenticatedRoutes.collections.title,
+                            })}
+                            to={authenticatedRoutes.collections.path}
                         />
                         <ListItemLink
+                            isOpen={open}
                             icon={<CloudDownload />}
-                            title={authenticatedRoutes.materializations.title}
-                            link={authenticatedRoutes.materializations.path}
+                            title={intl.formatMessage({
+                                id: authenticatedRoutes.materializations.title,
+                            })}
+                            to={authenticatedRoutes.materializations.path}
                         />
                         <ListItemLink
+                            isOpen={open}
                             icon={<Settings />}
-                            title={authenticatedRoutes.admin.title}
-                            link={authenticatedRoutes.admin.path}
+                            title={intl.formatMessage({
+                                id: authenticatedRoutes.admin.title,
+                            })}
+                            to={authenticatedRoutes.admin.path}
                         />
                     </List>
                 </Box>
@@ -112,51 +133,85 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 <Box>
                     <List
                         aria-label={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
+                            id: 'navigation.ariaLabel.secondary',
                         })}
-                        sx={{
-                            py: 1,
-                        }}
                     >
-                        <ModeSwitch />
-
-                        <Tooltip
-                            title={intl.formatMessage({
-                                id: 'navigation.toggle.ariaLabel',
-                            })}
-                            placement="right-end"
-                            enterDelay={open ? 1000 : undefined}
-                        >
-                            <ListItemButton
-                                component="a"
-                                onClick={openNavigation}
-                                sx={{
-                                    minHeight: 45,
-                                    px: 1.5,
-                                    whiteSpace: 'nowrap',
-                                }}
-                            >
-                                <ListItemIcon sx={{ minWidth: 36 }}>
-                                    <FastArrowLeft
-                                        style={{
-                                            transform: open
-                                                ? 'scaleX(1)'
-                                                : 'scaleX(-1)',
-                                            transition: 'all 50ms ease-in-out',
-                                        }}
-                                    />
-                                </ListItemIcon>
-
-                                <ListItemText
-                                    primary={intl.formatMessage({
-                                        id: 'navigation.collapse',
-                                    })}
-                                    sx={{
-                                        display: !open ? 'none' : undefined,
+                        <ListItemLink
+                            icon={
+                                <FastArrowLeft
+                                    style={{
+                                        transform: open
+                                            ? 'scaleX(1)'
+                                            : 'scaleX(-1)',
+                                        transition: 'all 50ms ease-in-out',
                                     }}
                                 />
-                            </ListItemButton>
-                        </Tooltip>
+                            }
+                            title={intl.formatMessage({
+                                id: 'navigation.collapse',
+                            })}
+                            tooltip={intl.formatMessage({
+                                id: 'navigation.tooltip.expand',
+                            })}
+                            onClick={openNavigation}
+                            isOpen={open}
+                        />
+                        <ListItemLink
+                            icon={<HelpCircle />}
+                            title={intl.formatMessage({
+                                id: 'helpMenu.tooltip',
+                            })}
+                            onClick={(e) => setHelpAnchor(e.currentTarget)}
+                            isOpen={open}
+                        />
+                        <HelpMenu
+                            anchorEl={helpAnchor}
+                            onClose={() => setHelpAnchor(null)}
+                        />
+
+                        {userDetails ? (
+                            <>
+                                <ListItemLink
+                                    icon={
+                                        <UserAvatar
+                                            userEmail={userDetails.email}
+                                            userName={userDetails.userName}
+                                            avatarUrl={userDetails.avatar}
+                                            size={22}
+                                        />
+                                    }
+                                    title={
+                                        userDetails.userName ??
+                                        userDetails.email
+                                    }
+                                    onClick={(e) =>
+                                        setUserAnchor(e.currentTarget)
+                                    }
+                                    isOpen={open}
+                                />
+                                <UserMenu
+                                    anchorEl={userAnchor}
+                                    onClose={() => setUserAnchor(null)}
+                                />
+
+                                <ListItemLink
+                                    icon={<Building />}
+                                    title={
+                                        selectedTenant
+                                            ? selectedTenant.replace(/\/$/, '')
+                                            : ''
+                                    }
+                                    onClick={(e) =>
+                                        setOrgAnchor(e.currentTarget)
+                                    }
+                                    isOpen={open}
+                                />
+                                <OrgMenu
+                                    anchorEl={orgAnchor}
+                                    onClose={() => setOrgAnchor(null)}
+                                />
+                            </>
+                        ) : null}
                     </List>
                 </Box>
             </Stack>

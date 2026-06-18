@@ -20,6 +20,12 @@ export const getUserDetails = (
 
     if (!isEmpty(user.user_metadata)) {
         email = user.user_metadata.email;
+        // Identity-provider-asserted flag, not Supabase's authoritative
+        // `email_confirmed_at`. Production only supports SSO and social login,
+        // so the provider always vouches for the email and this is true for
+        // practically every user (confirmed against prod) — not a meaningful UI
+        // or analytics signal. Use `email_confirmed_at` if you ever need real
+        // confirmation state.
         emailVerified = user.user_metadata.email_verified;
         avatar = user.user_metadata.avatar_url;
         userName = user.user_metadata.full_name ?? email;

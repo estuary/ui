@@ -9,6 +9,7 @@ import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfo
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
+import { useInitializeSelectedTenant } from 'src/hooks/useInitializeSelectedTenant';
 
 // This is a way to very simply "hide" the flow where anyone
 //  can create a tenant but allow us to test it out in prod.
@@ -26,6 +27,8 @@ function TenantGuard({ children }: BaseComponentProps) {
     const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
     const mutate = useUserInfoSummaryStore((state) => state.mutate);
     const usedSSO = useUserStore((state) => state.userDetails?.usedSSO);
+
+    useInitializeSelectedTenant();
 
     const showOnboarding = !hasAnyAccess || showBeta;
     if (showOnboarding) {
