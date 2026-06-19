@@ -4,7 +4,6 @@ import { Dialog, DialogTitle, useTheme } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { Elements } from '@stripe/react-stripe-js';
-import { useIntl } from 'react-intl';
 
 import { PaymentForm } from 'src/components/admin/Billing/CapturePaymentMethod';
 import {
@@ -33,7 +32,6 @@ export function AddPaymentMethodDialog({
     stripePromise,
     tenant,
 }: Props) {
-    const intl = useIntl();
     const postHog = usePostHog();
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
@@ -53,11 +51,7 @@ export function AddPaymentMethodDialog({
             onClose={() => setOpen(false)}
             data-private
         >
-            <DialogTitle>
-                {intl.formatMessage({
-                    id: 'admin.billing.addPaymentMethods.title',
-                })}
-            </DialogTitle>
+            <DialogTitle>Add a payment method</DialogTitle>
             {enable ? (
                 <Elements
                     stripe={stripePromise}

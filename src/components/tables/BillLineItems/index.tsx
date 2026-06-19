@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 
 import { CreditCard, Download } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import Rows from 'src/components/tables/BillLineItems/Rows';
@@ -46,8 +45,6 @@ export const columns: TableColumns[] = [
 // TODO (billing): Use the getStatsForBillingHistoryTable query function as the primary source of data for this view
 //   when a database table containing historic billing data is available.
 function BillingLineItemsTable() {
-    const intl = useIntl();
-
     const { invoices, selectedInvoice, isLoading } = useBillingInvoices();
 
     const dataRows = useMemo(
@@ -70,9 +67,7 @@ function BillingLineItemsTable() {
         <>
             <TableContainer component={Box}>
                 <Table
-                    aria-label={intl.formatMessage({
-                        id: 'admin.billing.table.line_items.title',
-                    })}
+                    aria-label="Invoice Details"
                     size="small"
                     stickyHeader
                     sx={{
@@ -125,9 +120,7 @@ function BillingLineItemsTable() {
                                 variant="outlined"
                                 size="small"
                             >
-                                {intl.formatMessage({
-                                    id: 'admin.billing.table.line_items.tooltip.download_pdf',
-                                })}
+                                Invoice
                             </Button>
                             {selectedInvoice.receipt_url ? (
                                 <Button
@@ -140,9 +133,7 @@ function BillingLineItemsTable() {
                                     variant="outlined"
                                     size="small"
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.table.line_items.tooltip.view_receipt',
-                                    })}
+                                    Receipt
                                 </Button>
                             ) : selectedInvoice.status === 'open' ? (
                                 <Button
@@ -158,9 +149,7 @@ function BillingLineItemsTable() {
                                     variant="outlined"
                                     size="small"
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.table.line_items.tooltip.pay_invoice',
-                                    })}
+                                    Pay Invoice
                                 </Button>
                             ) : selectedInvoice.status === 'paid' ? (
                                 <Button
@@ -170,9 +159,7 @@ function BillingLineItemsTable() {
                                     variant="outlined"
                                     size="small"
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.table.line_items.tooltip.invoice_paid',
-                                    })}
+                                    Invoice Paid
                                 </Button>
                             ) : (
                                 <Button
@@ -182,17 +169,13 @@ function BillingLineItemsTable() {
                                     variant="outlined"
                                     size="small"
                                 >
-                                    {intl.formatMessage({
-                                        id: 'admin.billing.table.line_items.tooltip.pay_invoice',
-                                    })}
+                                    Pay Invoice
                                 </Button>
                             )}
                         </Box>
                     ) : (
                         <Button disabled variant="outlined" size="small">
-                            {intl.formatMessage({
-                                id: 'admin.billing.table.line_items.tooltip.no_invoice',
-                            })}
+                            No invoice available
                         </Button>
                     )
                 ) : null}

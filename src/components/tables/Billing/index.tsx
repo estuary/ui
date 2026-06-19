@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Table, TableContainer, TablePagination } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import Rows from 'src/components/tables/Billing/Rows';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
@@ -34,8 +32,6 @@ export const columns: TableColumns[] = [
 const ROWS_PER_PAGE = 4;
 
 function BillingHistoryTable() {
-    const intl = useIntl();
-
     const {
         allInvoices,
         selectedInvoice,
@@ -75,14 +71,10 @@ function BillingHistoryTable() {
     }, [allInvoices, currentPage, selectedInvoice]);
 
     return (
-        <Box
-            sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}
-        >
+        <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
             <TableContainer component={Box}>
                 <Table
-                    aria-label={intl.formatMessage({
-                        id: 'entityTable.title',
-                    })}
+                    aria-label="Entity Table"
                     size="small"
                     sx={{ ...getTableHeaderWithoutHeaderColor() }}
                 >

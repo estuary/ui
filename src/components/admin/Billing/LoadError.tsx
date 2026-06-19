@@ -1,5 +1,3 @@
-import { FormattedMessage } from 'react-intl';
-
 import AlertBox from 'src/components/shared/AlertBox';
 import { useBillingInvoices } from 'src/hooks/billing/useBillingInvoices';
 
@@ -11,12 +9,9 @@ function BillingLoadError() {
     }
 
     return (
-        <AlertBox
-            short
-            severity="warning"
-            title={<FormattedMessage id="admin.billing.error.details.header" />}
-        >
-            <FormattedMessage id="admin.billing.error.details.message" />
+        <AlertBox short severity="warning" title="There was a network issue.">
+            There was an error fetching your billing details. Try again and if
+            the issue persists please contact support.
         </AlertBox>
     );
 }

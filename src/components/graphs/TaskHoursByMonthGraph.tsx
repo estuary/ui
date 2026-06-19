@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material';
 
 import {
     eachMonthOfInterval,
+    format,
     isWithinInterval,
     startOfMonth,
     sub,
@@ -20,7 +21,6 @@ import {
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
 import {
@@ -36,7 +36,6 @@ const chartContainerId = 'task-hours-by-month';
 
 function TaskHoursByMonthGraph() {
     const theme = useTheme();
-    const intl = useIntl();
     const tooltipConfig = useTooltipConfig();
 
     const { invoices, isLoading } = useBillingInvoices();
@@ -52,8 +51,8 @@ function TaskHoursByMonthGraph() {
         return eachMonthOfInterval({
             start: startDate,
             end: today,
-        }).map((date) => intl.formatDate(date, { month: 'short' }));
-    }, [intl, today]);
+        }).map((date) => format(date, 'MMM'));
+    }, [today]);
 
     const seriesConfig: SeriesConfig[] = useMemo(() => {
         const startDate = startOfMonth(sub(today, { months: 5 }));
@@ -74,14 +73,14 @@ function TaskHoursByMonthGraph() {
             })
             .map(({ date_start, extra }) => {
                 const billedMonth = stripTimeFromDate(date_start);
-                const month = intl.formatDate(billedMonth, { month: 'short' });
+                const month = format(billedMonth, 'MMM');
 
                 return {
                     seriesName: date_start,
                     data: [[month, extra?.task_usage_hours ?? 0]],
                 };
             });
-    }, [invoices, intl, today]);
+    }, [invoices, today]);
 
     useEffect(() => {
         if (!isLoading && invoices.length > 0) {
@@ -131,12 +130,9 @@ function TaskHoursByMonthGraph() {
 
                         tooltipConfigs.forEach((config) => {
                             const taskCount = config.value[1];
-                            const formattedValue = intl.formatMessage(
-                                {
-                                    id: 'admin.billing.graph.taskHoursByMonth.formatValue',
-                                },
-                                { taskUsage: taskCount }
-                            );
+                            const formattedValue = `${taskCount} ${
+                                taskCount === 1 ? 'Hour' : 'Hours'
+                            }`;
 
                             const tooltipItem = getTooltipItem(
                                 config.marker,
@@ -152,12 +148,9 @@ function TaskHoursByMonthGraph() {
                                             const billedMonth =
                                                 stripTimeFromDate(date_start);
 
-                                            return intl.formatDate(
+                                            return format(
                                                 billedMonth,
-                                                {
-                                                    month: 'short',
-                                                    year: 'numeric',
-                                                }
+                                                'MMM yyyy'
                                             );
                                         })
                                         .find((date) =>
@@ -190,7 +183,6 @@ function TaskHoursByMonthGraph() {
     }, [
         invoices,
         isLoading,
-        intl,
         months,
         myChart,
         seriesConfig,

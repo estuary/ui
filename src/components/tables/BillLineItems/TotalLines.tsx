@@ -2,10 +2,7 @@ import type { Invoice } from 'src/api/billing';
 
 import { Box, Divider, Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 function TotalLines({ invoice }: { invoice: Invoice }) {
-    const intl = useIntl();
     return (
         <Box
             sx={{
@@ -24,10 +21,10 @@ function TotalLines({ invoice }: { invoice: Invoice }) {
                 }}
             >
                 <Typography fontWeight="bold" sx={{ textWrap: 'nowrap' }}>
-                    <FormattedMessage id="admin.billing.table.line_items.label.total" />
+                    Total Due
                 </Typography>
                 <Typography fontWeight="bold">
-                    {intl.formatNumber(invoice.subtotal / 100, {
+                    {(invoice.subtotal / 100).toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
                     })}

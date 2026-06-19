@@ -2,8 +2,6 @@ import { useMemo } from 'react';
 
 import { Skeleton, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { useTenantUsesExternalPayment } from 'src/context/fetcher/TenantBillingDetails';
 import { useBillingStore } from 'src/stores/Billing';
 import { useTenantStore } from 'src/stores/Tenant';
@@ -17,40 +15,34 @@ function PricingTierDetails() {
         (state) => state.paymentMethodExists
     );
 
-    const messageId = useMemo(() => {
+    const message = useMemo(() => {
         if (externalPaymentMethod) {
             if (marketPlaceProvider === 'gcp') {
-                return 'admin.billing.message.external.gcp';
+                return 'GCP Marketplace';
             }
 
             if (marketPlaceProvider === 'aws') {
-                return 'admin.billing.message.external.aws';
+                return 'AWS Marketplace';
             }
 
-            return 'admin.billing.message.external';
+            return ' ';
         }
 
         if (paymentMethodExists) {
-            return 'admin.billing.message.paidTier';
+            return 'Cloud tier';
         }
 
-        return 'admin.billing.message.freeTier';
+        return 'The free tier lets you try Estuary with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.';
     }, [externalPaymentMethod, marketPlaceProvider, paymentMethodExists]);
 
     if (typeof paymentMethodExists !== 'boolean') {
         return (
             <Skeleton>
-                <Typography>
-                    <FormattedMessage id={messageId} />
-                </Typography>
+                <Typography>{message}</Typography>
             </Skeleton>
         );
     } else {
-        return (
-            <Typography>
-                <FormattedMessage id={messageId} />
-            </Typography>
-        );
+        return <Typography>{message}</Typography>;
     }
 }
 

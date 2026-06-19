@@ -9,8 +9,6 @@ import {
     DialogTitle,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 interface Props {
     open: boolean;
     onClose: () => void;
@@ -19,8 +17,6 @@ interface Props {
 }
 
 export function DeletePaymentMethodDialog({ open, onClose, onConfirm }: Props) {
-    const intl = useIntl();
-
     const [processing, setProcessing] = useState(false);
 
     const handleConfirm = async () => {
@@ -41,23 +37,18 @@ export function DeletePaymentMethodDialog({ open, onClose, onConfirm }: Props) {
             maxWidth="xs"
             fullWidth
         >
-            <DialogTitle>
-                {intl.formatMessage({
-                    id: 'admin.billing.paymentMethods.delete.confirmation.title',
-                })}
-            </DialogTitle>
+            <DialogTitle>Delete payment method?</DialogTitle>
 
             <DialogContent>
                 <DialogContentText>
-                    {intl.formatMessage({
-                        id: 'admin.billing.paymentMethods.delete.confirmation.message',
-                    })}
+                    This payment method will be removed from your account. This
+                    action cannot be undone.
                 </DialogContentText>
             </DialogContent>
 
             <DialogActions>
                 <Button onClick={onClose} disabled={processing}>
-                    {intl.formatMessage({ id: 'cta.cancel' })}
+                    Cancel
                 </Button>
 
                 <Button
@@ -66,7 +57,7 @@ export function DeletePaymentMethodDialog({ open, onClose, onConfirm }: Props) {
                     variant="outlined"
                     color="error"
                 >
-                    {intl.formatMessage({ id: 'cta.delete' })}
+                    Delete
                 </Button>
             </DialogActions>
         </Dialog>

@@ -33,7 +33,9 @@ function Row({ row, isSelected }: RowProps) {
             <TimeStamp
                 date={row.date_end}
                 asLink
-                tooltipMessageId="admin.billing.table.history.tooltip.date_end"
+                getTooltip={(formattedDate) =>
+                    `This billing period ended on ${formattedDate}`
+                }
             />
 
             <TableCell>
