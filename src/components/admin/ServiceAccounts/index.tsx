@@ -25,8 +25,7 @@ export function ServiceAccounts() {
                         Service accounts provide non-login identities for CI/CD
                         pipelines, AI agents, and other programmatic
                         integrations, including the Kafka compatible API
-                        “dekaf”. Each service account authenticates with API
-                        keys and has scoped access to a single catalog prefix.
+                        “dekaf”.
                     </Typography>
                 </Stack>
 

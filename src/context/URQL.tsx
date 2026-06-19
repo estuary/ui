@@ -57,11 +57,12 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         Alert: (_data) => null,
                         AlertSubscription: (_data) => null,
                         AlertTypeInfo: (_data) => null,
-                        ApiKeyInfo: (_data) => null,
                         InviteLink: (data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
                         RefreshTokenInfo: (_data) => null,
+                        ServiceAccount: (_data) => null,
+                        ServiceAccountTokenInfo: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
                     },
@@ -91,16 +92,10 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             createServiceAccount(_result, _args, cache) {
                                 invalidateQuery(cache, 'serviceAccounts');
                             },
-                            disableServiceAccount(_result, _args, cache) {
+                            createServiceAccountToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'serviceAccounts');
                             },
-                            enableServiceAccount(_result, _args, cache) {
-                                invalidateQuery(cache, 'serviceAccounts');
-                            },
-                            createApiKey(_result, _args, cache) {
-                                invalidateQuery(cache, 'serviceAccounts');
-                            },
-                            revokeApiKey(_result, _args, cache) {
+                            revokeServiceAccountToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'serviceAccounts');
                             },
                         },
