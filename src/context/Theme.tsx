@@ -91,6 +91,35 @@ declare module '@mui/material/Typography' {
     }
 }
 
+// Border-radius scale. Roundness tracks an element's size and prominence:
+// larger, more container-like surfaces get more rounding, small controls get
+// less, and `full` fully rounds pills/toggles. Values are px strings so they
+// read literally in `sx`/`styled` `borderRadius` — a *number* there is
+// multiplied by `theme.shape.borderRadius`, a string is used as-is. When
+// nesting a rounded element in the corner of another, keep corners concentric:
+// inner radius = outer radius − padding.
+interface RadiusScale {
+    /** 4px — small insets: code strips, option panels, compact tiles */
+    sm: string;
+    /** 8px — monogram/icon tiles, settings panels */
+    md: string;
+    /** 12px — cards */
+    lg: string;
+    /** 16px — large or prominent surfaces (page containers, hero blocks) */
+    xl: string;
+    /** Fully rounded — pills, toggle buttons */
+    full: string;
+}
+
+declare module '@mui/material/styles' {
+    interface Theme {
+        radius: RadiusScale;
+    }
+    interface ThemeOptions {
+        radius?: RadiusScale;
+    }
+}
+
 // Colors
 const sample_blue = {
     100: '#DCE6FE',
@@ -1051,6 +1080,13 @@ const themeSettings = createTheme({
     },
     shape: {
         borderRadius: 2,
+    },
+    radius: {
+        sm: '4px',
+        md: '8px',
+        lg: '12px',
+        xl: '16px',
+        full: '9999px',
     },
     typography: {
         fontFamily: [

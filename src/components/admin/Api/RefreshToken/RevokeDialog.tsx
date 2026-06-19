@@ -59,27 +59,18 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
             maxWidth="xs"
             fullWidth
         >
-            <DialogTitle>
-                <FormattedMessage id="admin.cli_api.refreshToken.revoke.header" />
-            </DialogTitle>
+            <DialogTitle>Remove Personal Token</DialogTitle>
             <DialogContent>
                 <Stack spacing={1}>
                     {error ? (
                         <Error condensed error={error} severity="error" />
                     ) : null}
                     <Typography>
-                        {detail ? (
-                            <FormattedMessage
-                                id="admin.cli_api.refreshToken.revoke.message.named"
-                                values={{ detail }}
-                            />
-                        ) : (
-                            <FormattedMessage id="admin.cli_api.refreshToken.revoke.message" />
-                        )}
+                        {detail
+                            ? `Remove the personal token "${detail}"?`
+                            : 'Remove this personal token?'}
                     </Typography>
-                    <Typography>
-                        <FormattedMessage id="admin.cli_api.refreshToken.revoke.permanent" />
-                    </Typography>
+                    <Typography>This action is permanent.</Typography>
                 </Stack>
             </DialogContent>
             <DialogActions>
