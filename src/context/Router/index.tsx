@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import {
     createBrowserRouter,
     createRoutesFromElements,
+    redirect,
     Route,
     RouterProvider,
     Routes,
@@ -11,7 +12,6 @@ import {
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
-import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
 import { ServiceAccounts } from 'src/components/admin/ServiceAccounts';
 import AdminSettings from 'src/components/admin/Settings';
@@ -694,10 +694,11 @@ const router = createBrowserRouter(
                         />
                         <Route
                             path={authenticatedRoutes.admin.api.path}
-                            element={
-                                <Suspense fallback={null}>
-                                    <AdminApi />
-                                </Suspense>
+                            loader={() =>
+                                redirect(
+                                    authenticatedRoutes.flowctl.accessToken
+                                        .fullPath
+                                )
                             }
                         />
 

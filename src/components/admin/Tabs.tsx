@@ -34,11 +34,6 @@ function AdminTabs() {
             path: authenticatedRoutes.admin.serviceAccounts.fullPath,
         });
 
-        response.push({
-            labelMessageId: 'admin.tabs.api',
-            path: authenticatedRoutes.admin.api.fullPath,
-        });
-
         return response;
     }, [hasAnyAccess]);
 

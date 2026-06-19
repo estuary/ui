@@ -41,10 +41,6 @@ function FlowctlAccessToken() {
     return (
         <Box sx={{ maxWidth: 680, p: 2 }} data-private>
             <Stack spacing={2}>
-                <Typography variant="h6" component="h1">
-                    Flowctl access token
-                </Typography>
-
                 {accessToken ? (
                     <Stack spacing={2}>
                         <Button
