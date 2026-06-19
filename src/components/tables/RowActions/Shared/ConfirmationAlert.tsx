@@ -4,14 +4,19 @@ import { Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-function ConfirmationAlert({ messageId }: ConfirmationAlertProps) {
+export function ConfirmationAlert({
+    message,
+}: Omit<ConfirmationAlertProps, 'messageId'> & { message: string }) {
+    return <Typography component="div">{message}</Typography>;
+}
+
+/** @deprecated Prefer the named `ConfirmationAlert` export */
+function ConfirmationAlertWrapper({ messageId }: ConfirmationAlertProps) {
     const intl = useIntl();
 
     return (
-        <Typography component="div">
-            {intl.formatMessage({ id: messageId })}
-        </Typography>
+        <ConfirmationAlert message={intl.formatMessage({ id: messageId })} />
     );
 }
 
-export default ConfirmationAlert;
+export default ConfirmationAlertWrapper;

@@ -54,11 +54,7 @@ export const ListItemLink = ({ icon, title, link }: Props) => {
     );
 };
 
-/**
- * @deprecated Prefer the named `ListItemLink` export, which takes a literal
- * `title` string. This wrapper translates an i18n message ID through
- * `react-intl`; it can be removed once `routes.ts` titles hold English copy.
- */
+/** @deprecated Prefer the named `ListItemLink` export */
 const ListItemLinkWrapper = ({ title, ...props }: Props) => {
     const intl = useIntl();
 

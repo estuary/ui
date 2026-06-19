@@ -7,11 +7,10 @@ import { useIntl } from 'react-intl';
 import AlertBox from 'src/components/shared/AlertBox';
 import { useEntityType } from 'src/context/EntityContext';
 
-export default function TrialOnlyPrefixAlert({
-    messageId,
+export function TrialOnlyPrefixAlert({
+    message,
     triggered,
-}: TrialOnlyPrefixAlertProps) {
-    const intl = useIntl();
+}: Omit<TrialOnlyPrefixAlertProps, 'messageId'> & { message: string }) {
     const entityType = useEntityType();
 
     if (entityType !== 'materialization' || !triggered) {
@@ -20,7 +19,22 @@ export default function TrialOnlyPrefixAlert({
 
     return (
         <AlertBox severity="warning" short>
-            <Typography>{intl.formatMessage({ id: messageId })}</Typography>
+            <Typography>{message}</Typography>
         </AlertBox>
+    );
+}
+
+/** @deprecated Prefer the named `TrialOnlyPrefixAlert` export */
+export default function TrialOnlyPrefixAlertWrapper({
+    messageId,
+    ...props
+}: TrialOnlyPrefixAlertProps) {
+    const intl = useIntl();
+
+    return (
+        <TrialOnlyPrefixAlert
+            {...props}
+            message={intl.formatMessage({ id: messageId })}
+        />
     );
 }
