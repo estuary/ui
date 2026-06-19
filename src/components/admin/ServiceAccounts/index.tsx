@@ -1,7 +1,6 @@
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import AccessToken from 'src/components/admin/Api/AccessToken';
 import { RefreshToken } from 'src/components/admin/Api/RefreshToken';
 import { ServiceAccountsTable } from 'src/components/admin/ServiceAccounts/Table';
 import AdminTabs from 'src/components/admin/Tabs';
@@ -34,8 +33,6 @@ export function ServiceAccounts() {
                 <ServiceAccountsTable />
             </Box>
 
-            <AccessToken />
-            <Divider sx={{ my: 3 }} />
             <RefreshToken />
         </>
     );
