@@ -40,6 +40,7 @@ import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import PersonalTokens from 'src/pages/PersonalTokens';
 import { SSORequired } from 'src/pages/SSORequired';
 import { isProduction } from 'src/utils/env-utils';
 
@@ -238,6 +239,13 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.flowctl.accessToken.fullPath}
                         element={<FlowctlAccessToken />}
+                    />
+
+                    <Route
+                        path={
+                            authenticatedRoutes.settings.personalTokens.fullPath
+                        }
+                        element={<PersonalTokens />}
                     />
 
                     <Route

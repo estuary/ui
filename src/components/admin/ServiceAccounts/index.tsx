@@ -1,7 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import { RefreshToken } from 'src/components/admin/Api/RefreshToken';
 import { ServiceAccountsTable } from 'src/components/admin/ServiceAccounts/Table';
 import AdminTabs from 'src/components/admin/Tabs';
 import usePageTitle from 'src/hooks/usePageTitle';
@@ -31,8 +30,6 @@ export function ServiceAccounts() {
 
                 <ServiceAccountsTable />
             </Box>
-
-            <RefreshToken />
         </>
     );
 }

@@ -249,6 +249,16 @@ const pageNotFound = {
     path: '*',
 };
 
+const settings = {
+    title: 'routeTitle.settings',
+    path: 'settings',
+    personalTokens: {
+        title: 'routeTitle.settings.personalTokens',
+        path: 'personalTokens',
+        fullPath: '/settings/personalTokens',
+    },
+};
+
 const user = {
     title: 'routeTitle.user',
     path: 'user',
@@ -284,6 +294,7 @@ export const authenticatedRoutes = {
     marketplace: marketplace.authenticated,
     user,
     pageNotFound,
+    settings,
     beta,
 };
 
