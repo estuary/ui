@@ -1,4 +1,7 @@
-import type { ApiKeyInfo, ServiceAccount } from 'src/gql-types/graphql';
+import type {
+    ServiceAccount,
+    ServiceAccountTokenInfo,
+} from 'src/gql-types/graphql';
 
 import { useState } from 'react';
 
@@ -21,32 +24,32 @@ import {
 
 import { DateTime } from 'luxon';
 
-import { useRevokeApiKey } from 'src/api/gql/serviceAccounts';
+import { useRevokeServiceAccountToken } from 'src/api/gql/serviceAccounts';
 import CreateApiKeyDialog from 'src/components/admin/ServiceAccounts/CreateApiKeyDialog';
 import Error from 'src/components/shared/Error';
 
 interface Props {
-    serviceAccount: Pick<ServiceAccount, 'id' | 'displayName' | 'apiKeys'>;
-    isDisabled: boolean;
+    serviceAccount: Pick<ServiceAccount, 'catalogName' | 'tokens'>;
 }
 
 function isExpired(expiresAt: string): boolean {
     return DateTime.fromISO(expiresAt) < DateTime.now();
 }
 
-function ApiKeyRow({ apiKey }: { apiKey: ApiKeyInfo }) {
-    const [, revokeApiKey] = useRevokeApiKey();
+function ApiKeyRow({ apiKey }: { apiKey: ServiceAccountTokenInfo }) {
+    const [, revokeServiceAccountToken] = useRevokeServiceAccountToken();
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [revoking, setRevoking] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const expired = isExpired(apiKey.expiresAt);
+    const label = apiKey.detail ?? 'Unnamed key';
 
     const handleRevoke = async () => {
         setError(null);
         setRevoking(true);
 
-        const result = await revokeApiKey({ id: apiKey.id });
+        const result = await revokeServiceAccountToken({ id: apiKey.id });
 
         setRevoking(false);
 
@@ -61,7 +64,7 @@ function ApiKeyRow({ apiKey }: { apiKey: ApiKeyInfo }) {
     return (
         <TableRow>
             <TableCell>
-                <Typography variant="body2">{apiKey.label}</Typography>
+                <Typography variant="body2">{label}</Typography>
             </TableCell>
 
             <TableCell>
@@ -130,7 +133,7 @@ function ApiKeyRow({ apiKey }: { apiKey: ApiKeyInfo }) {
                                 />
                             ) : null}
                             <Typography>
-                                {`Revoke "${apiKey.label}"? This action is permanent.`}
+                                {`Revoke "${label}"? This action is permanent.`}
                             </Typography>
                             {apiKey.lastUsedAt &&
                             DateTime.fromISO(apiKey.lastUsedAt) >
@@ -167,10 +170,10 @@ function ApiKeyRow({ apiKey }: { apiKey: ApiKeyInfo }) {
     );
 }
 
-function ApiKeysRow({ serviceAccount, isDisabled }: Props) {
+function ApiKeysRow({ serviceAccount }: Props) {
     return (
         <TableRow>
-            <TableCell colSpan={7} sx={{ p: 0 }}>
+            <TableCell colSpan={5} sx={{ p: 0 }}>
                 <Box sx={{ px: 4, py: 2, bgcolor: 'background.default' }}>
                     <Stack
                         direction="row"
@@ -182,15 +185,12 @@ function ApiKeysRow({ serviceAccount, isDisabled }: Props) {
                     >
                         <Typography variant="subtitle2">API Keys</Typography>
 
-                        {!isDisabled ? (
-                            <CreateApiKeyDialog
-                                serviceAccountId={serviceAccount.id}
-                                serviceAccountName={serviceAccount.displayName}
-                            />
-                        ) : null}
+                        <CreateApiKeyDialog
+                            catalogName={serviceAccount.catalogName}
+                        />
                     </Stack>
 
-                    {serviceAccount.apiKeys.length === 0 ? (
+                    {serviceAccount.tokens.length === 0 ? (
                         <Typography variant="body2" color="text.secondary">
                             No API keys. Create one to enable programmatic
                             authentication.
@@ -207,8 +207,8 @@ function ApiKeysRow({ serviceAccount, isDisabled }: Props) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {serviceAccount.apiKeys.map((key) => (
-                                    <ApiKeyRow key={key.id} apiKey={key} />
+                                {serviceAccount.tokens.map((token) => (
+                                    <ApiKeyRow key={token.id} apiKey={token} />
                                 ))}
                             </TableBody>
                         </Table>

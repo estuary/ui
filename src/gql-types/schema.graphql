@@ -347,10 +347,7 @@ enum CapabilityBit {
   DeleteGrant
   JournalAppend
   JournalRead
-<<<<<<< HEAD
-=======
   ManageServiceAccount
->>>>>>> 72f13fa7 (service accoutns)
   ModifyDataPlanePrivateNetworking
   SpecEdit
   ViewDataPlanePrivateNetworking
@@ -1091,8 +1088,6 @@ type MutationRoot {
   ): RefreshTokenResult!
 
   """
-<<<<<<< HEAD
-=======
   Create a service account homed at the specified catalog name, seeded
   with the given user_grants.
   
@@ -1129,7 +1124,6 @@ type MutationRoot {
   ): CreateServiceAccountTokenResult!
 
   """
->>>>>>> 72f13fa7 (service accoutns)
   Create a storage mapping for the given catalog prefix.
   
   This validates that the user has admin access to the catalog prefix,
@@ -1160,15 +1154,6 @@ type MutationRoot {
   redeemInviteLink(token: UUID!): RedeemInviteLinkResult!
 
   """
-<<<<<<< HEAD
-  Revoke a refresh token owned by the authenticated user.
-  
-  Rather than deleting the row, we zero its `valid_for` interval, which
-  marks the token as expired/invalid while preserving the audit trail.
-  Already-zeroed (revoked) tokens are treated as not found.
-  """
-  revokeRefreshToken(id: Id!): Boolean!
-=======
   Remove a user_grant from a service account.
   
   The caller must manage the service account (ManageServiceAccount on its
@@ -1200,7 +1185,6 @@ type MutationRoot {
   tokens are treated as not found.
   """
   revokeServiceAccountToken(id: Id!): Boolean!
->>>>>>> 72f13fa7 (service accoutns)
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
@@ -1545,10 +1529,7 @@ type QueryRoot {
 
   """List refresh tokens owned by the authenticated user."""
   refreshTokens(after: String, first: Int): RefreshTokenInfoConnection!
-<<<<<<< HEAD
-=======
   serviceAccounts(after: String, first: Int): ServiceAccountConnection!
->>>>>>> 72f13fa7 (service accoutns)
 
   """
   Returns storage mappings accessible to the current user.
@@ -1624,8 +1605,6 @@ type RepublishRequested {
   receivedAt: DateTime!
 }
 
-<<<<<<< HEAD
-=======
 type ServiceAccount {
   catalogName: Name!
   createdAt: DateTime!
@@ -1672,7 +1651,6 @@ type ServiceAccountTokenInfo {
   lastUsedAt: DateTime
 }
 
->>>>>>> 72f13fa7 (service accoutns)
 """The shape of a connector status, which matches that of an ops::Log."""
 type ShardFailure {
   """

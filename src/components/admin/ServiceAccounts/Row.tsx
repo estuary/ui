@@ -14,7 +14,8 @@ import {
 
 import { NavArrowDown, NavArrowRight } from 'iconoir-react';
 
-import ServiceAccountActions from 'src/components/admin/ServiceAccounts/Actions';
+import { DateTime } from 'luxon';
+
 import ApiKeysRow from 'src/components/admin/ServiceAccounts/ApiKeysRow';
 import { getEntityTableRowSx } from 'src/context/Theme';
 
@@ -26,19 +27,12 @@ function ServiceAccountRow({ serviceAccount: sa }: ServiceAccountRowProps) {
     const theme = useTheme();
 
     const [expanded, setExpanded] = useState(false);
-    const isDisabled = Boolean(sa.disabledAt);
+
+    const tokenCount = sa.tokens.length;
 
     return (
         <>
-            <TableRow
-                hover
-                sx={{
-                    ...getEntityTableRowSx(theme),
-                    '& td:not(:last-child)': {
-                        opacity: isDisabled ? 0.6 : 1,
-                    },
-                }}
-            >
+            <TableRow hover sx={getEntityTableRowSx(theme)}>
                 <TableCell sx={{ width: 48 }}>
                     <IconButton
                         size="small"
@@ -59,11 +53,7 @@ function ServiceAccountRow({ serviceAccount: sa }: ServiceAccountRowProps) {
                     </IconButton>
                 </TableCell>
 
-                <TableCell>
-                    <Typography>{sa.displayName}</Typography>
-                </TableCell>
-
-                <TableCell sx={{ maxWidth: 200 }}>
+                <TableCell sx={{ maxWidth: 280 }}>
                     <Typography
                         variant="body2"
                         sx={{
@@ -72,7 +62,7 @@ function ServiceAccountRow({ serviceAccount: sa }: ServiceAccountRowProps) {
                             wordBreak: 'keep-all',
                         }}
                     >
-                        {sa.prefix
+                        {sa.catalogName
                             .split(/(?<=[/_-])/)
                             .map((segment: string, i: number) => (
                                 <span key={i}>
@@ -84,42 +74,35 @@ function ServiceAccountRow({ serviceAccount: sa }: ServiceAccountRowProps) {
                 </TableCell>
 
                 <TableCell>
-                    <Chip
-                        label={sa.capability}
-                        size="small"
-                        variant="outlined"
-                    />
+                    <Typography variant="body2">
+                        {DateTime.fromISO(sa.createdAt).toLocaleString(
+                            DateTime.DATE_MED
+                        )}
+                    </Typography>
+                </TableCell>
+
+                <TableCell>
+                    <Typography variant="body2" color="text.secondary">
+                        {sa.lastUsedAt
+                            ? DateTime.fromISO(sa.lastUsedAt).toRelative()
+                            : 'Never'}
+                    </Typography>
                 </TableCell>
 
                 <TableCell>
                     <Tooltip
-                        title={`${sa.apiKeys.length} API ${sa.apiKeys.length === 1 ? 'key' : 'keys'}`}
+                        title={`${tokenCount} API ${tokenCount === 1 ? 'key' : 'keys'}`}
                     >
                         <Chip
-                            label={sa.apiKeys.length}
+                            label={tokenCount}
                             size="small"
-                            color={sa.apiKeys.length > 0 ? 'info' : 'default'}
+                            color={tokenCount > 0 ? 'info' : 'default'}
                         />
                     </Tooltip>
                 </TableCell>
-
-                <TableCell>
-                    <Chip
-                        label={isDisabled ? 'Disabled' : 'Active'}
-                        size="small"
-                        color={isDisabled ? 'default' : 'success'}
-                        variant="outlined"
-                    />
-                </TableCell>
-
-                <TableCell>
-                    <ServiceAccountActions serviceAccount={sa} />
-                </TableCell>
             </TableRow>
 
-            {expanded ? (
-                <ApiKeysRow serviceAccount={sa} isDisabled={isDisabled} />
-            ) : null}
+            {expanded ? <ApiKeysRow serviceAccount={sa} /> : null}
         </>
     );
 }
