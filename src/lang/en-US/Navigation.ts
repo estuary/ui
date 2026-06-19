@@ -26,6 +26,7 @@ export const Navigation: Record<string, string> = {
     'accountMenu.ariaLabel': `Open Account Menu`,
     'accountMenu.tooltip': `My Account`,
     'accountMenu.emailVerified': `verified`,
+    'accountMenu.personalTokens': `Personal Tokens`,
 
     'modeSwitch.label': `Toggle Color Mode`,
 

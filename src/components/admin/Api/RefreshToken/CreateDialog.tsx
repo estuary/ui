@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useCreateRefreshToken } from 'src/api/gql/refreshTokens';
 import SingleLineCode from 'src/components/content/SingleLineCode';
@@ -25,12 +25,14 @@ import { hasLength } from 'src/utils/misc-utils';
 
 const TOKEN_VALIDITY = 'P1Y';
 
-// The shared Error component treats an error's `message` as an i18n key unless
-// the object looks like a Supabase or GraphQL error (it carries a `code` or a
-// `networkError`). This client-side error carries neither, so the message is
-// resolved from the language files.
+// The shared Error component renders `message` verbatim when the error object
+// carries a `code` or `networkError`; otherwise it treats the message as an
+// i18n key. This client-side error sets a sentinel code so its inlined copy is
+// shown directly.
 const TOKEN_DISPLAY_ERROR: ErrorDetails = {
-    message: 'admin.cli_api.refreshToken.dialog.alert.tokenEncodingFailed',
+    message:
+        'An issue was encountered displaying your token. Please generate a new token.',
+    code: 'token_display_failed',
 };
 
 interface Props {
@@ -98,9 +100,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
             onClose={token || generating ? undefined : onClose}
             maxWidth="sm"
             fullWidth
-            aria-label={intl.formatMessage({
-                id: 'admin.cli_api.refreshToken.dialog.header',
-            })}
+            aria-label="Create Personal Token"
             slotProps={{
                 transition: {
                     onExited: resetDialog,
@@ -115,9 +115,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     justifyContent: 'space-between',
                 }}
             >
-                <Typography variant="h6">
-                    <FormattedMessage id="admin.cli_api.refreshToken.dialog.header" />
-                </Typography>
+                <Typography variant="h6">Create Personal Token</Typography>
 
                 <IconButton disabled={generating} onClick={onClose}>
                     <Xmark
@@ -139,7 +137,8 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     {token ? (
                         <AlertBox severity="info" short data-private>
                             <Typography sx={{ mb: 1 }}>
-                                <FormattedMessage id="admin.cli_api.refreshToken.dialog.alert.copyToken" />
+                                Copy this personal token now - you won’t be able
+                                to see it again!
                             </Typography>
 
                             <SingleLineCode value={token} />
@@ -153,9 +152,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                             sx={{ pt: 1 }}
                         >
                             <TextField
-                                label={intl.formatMessage({
-                                    id: 'admin.cli_api.refreshToken.dialog.label',
-                                })}
+                                label="Label"
                                 autoFocus
                                 onChange={(event) =>
                                     setLabel(event.target.value)
@@ -178,7 +175,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                                 type="submit"
                                 variant="contained"
                             >
-                                <FormattedMessage id="admin.cli_api.refreshToken.dialog.cta.create" />
+                                Create
                             </Button>
                         </Stack>
                     )}

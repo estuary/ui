@@ -30,6 +30,8 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `${CommonMessages['terms.destinations']}`,
     'routeTitle.registration': `Registration`,
+    'routeTitle.settings': `Settings`,
+    'routeTitle.settings.personalTokens': `Personal Tokens`,
 
     // The routes with custom prefix values
     //  The some of these strings are generated in login/Basic and login/Enterprise
