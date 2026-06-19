@@ -15,7 +15,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useCreateApiKey } from 'src/api/gql/serviceAccounts';
+import { useCreateServiceAccountToken } from 'src/api/gql/serviceAccounts';
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import AlertBox from 'src/components/shared/AlertBox';
 import { hasLength } from 'src/utils/misc-utils';
@@ -27,18 +27,18 @@ const VALIDITY_OPTIONS = [
 ];
 
 interface Props {
-    serviceAccountId: string;
-    serviceAccountName: string;
+    catalogName: string;
 }
 
-function CreateApiKeyDialog({ serviceAccountId, serviceAccountName }: Props) {
+function CreateApiKeyDialog({ catalogName }: Props) {
     const [open, setOpen] = useState(false);
     const [label, setLabel] = useState('');
     const [validFor, setValidFor] = useState('P90D');
     const [secret, setSecret] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const [{ fetching }, createApiKey] = useCreateApiKey();
+    const [{ fetching }, createServiceAccountToken] =
+        useCreateServiceAccountToken();
 
     const resetForm = () => {
         setLabel('');
@@ -58,13 +58,13 @@ function CreateApiKeyDialog({ serviceAccountId, serviceAccountName }: Props) {
             return;
         }
 
-        const result = await createApiKey({
-            serviceAccountId,
-            label,
+        const result = await createServiceAccountToken({
+            catalogName,
+            detail: label,
             validFor,
         });
 
-        if (result.error || !result.data?.createApiKey) {
+        if (result.error || !result.data?.createServiceAccountToken) {
             setError(
                 result.error?.message ??
                     'There was an error creating the API key.'
@@ -72,7 +72,7 @@ function CreateApiKeyDialog({ serviceAccountId, serviceAccountName }: Props) {
             return;
         }
 
-        setSecret(result.data.createApiKey.secret);
+        setSecret(result.data.createServiceAccountToken.secret);
     };
 
     return (
@@ -95,7 +95,7 @@ function CreateApiKeyDialog({ serviceAccountId, serviceAccountName }: Props) {
                 }}
             >
                 <DialogTitle>
-                    {`Create API Key for ${serviceAccountName}`}
+                    {`Create API Key for ${catalogName}`}
                 </DialogTitle>
 
                 <DialogContent>

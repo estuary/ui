@@ -15,18 +15,14 @@ const SERVICE_ACCOUNTS_QUERY = graphql(`
         serviceAccounts(first: $first, after: $after) {
             edges {
                 node {
-                    id
-                    displayName
-                    prefix
-                    capability
-                    createdBy
+                    catalogName
                     createdAt
+                    createdBy
                     updatedAt
-                    disabledAt
                     lastUsedAt
-                    apiKeys {
+                    tokens {
                         id
-                        label
+                        detail
                         createdAt
                         createdBy
                         expiresAt
@@ -43,7 +39,7 @@ const SERVICE_ACCOUNTS_QUERY = graphql(`
 `);
 
 export function useServiceAccounts(afterCursor?: string) {
-    const [{ fetching, data, error }, reexecute] = useQuery({
+    const [{ fetching, data, error }] = useQuery({
         query: SERVICE_ACCOUNTS_QUERY,
         variables: {
             first: SERVICE_ACCOUNTS_PAGE_SIZE,
@@ -66,52 +62,35 @@ export function useServiceAccounts(afterCursor?: string) {
         error,
         pageInfo,
         pageSize: SERVICE_ACCOUNTS_PAGE_SIZE,
-        reexecute,
     };
 }
 
-export const CREATE_SERVICE_ACCOUNT = graphql(`
+// A service account is homed at `catalogName` (its management anchor) and
+// seeded with one or more grants, each granting a capability on a prefix.
+const CREATE_SERVICE_ACCOUNT = graphql(`
     mutation CreateServiceAccount(
-        $prefix: Prefix!
-        $capability: Capability!
-        $displayName: String!
+        $catalogName: Name!
+        $grants: [ServiceAccountGrantInput!]!
     ) {
-        createServiceAccount(
-            prefix: $prefix
-            capability: $capability
-            displayName: $displayName
-        ) {
-            id
-            displayName
-            prefix
-            capability
+        createServiceAccount(catalogName: $catalogName, grants: $grants) {
+            catalogName
             createdAt
             createdBy
         }
     }
 `);
 
-export const DISABLE_SERVICE_ACCOUNT = graphql(`
-    mutation DisableServiceAccount($id: UUID!) {
-        disableServiceAccount(id: $id)
-    }
-`);
-
-export const ENABLE_SERVICE_ACCOUNT = graphql(`
-    mutation EnableServiceAccount($id: UUID!) {
-        enableServiceAccount(id: $id)
-    }
-`);
-
-export const CREATE_API_KEY = graphql(`
-    mutation CreateApiKey(
-        $serviceAccountId: UUID!
-        $label: String!
+// Mints a credential (refresh token) owned by the account. The secret is
+// returned exactly once and cannot be retrieved again.
+const CREATE_SERVICE_ACCOUNT_TOKEN = graphql(`
+    mutation CreateServiceAccountToken(
+        $catalogName: Name!
+        $detail: String!
         $validFor: String!
     ) {
-        createApiKey(
-            serviceAccountId: $serviceAccountId
-            label: $label
+        createServiceAccountToken(
+            catalogName: $catalogName
+            detail: $detail
             validFor: $validFor
         ) {
             id
@@ -120,9 +99,9 @@ export const CREATE_API_KEY = graphql(`
     }
 `);
 
-export const REVOKE_API_KEY = graphql(`
-    mutation RevokeApiKey($id: Id!) {
-        revokeApiKey(id: $id)
+const REVOKE_SERVICE_ACCOUNT_TOKEN = graphql(`
+    mutation RevokeServiceAccountToken($id: Id!) {
+        revokeServiceAccountToken(id: $id)
     }
 `);
 
@@ -130,18 +109,10 @@ export function useCreateServiceAccount() {
     return useMutation(CREATE_SERVICE_ACCOUNT);
 }
 
-export function useDisableServiceAccount() {
-    return useMutation(DISABLE_SERVICE_ACCOUNT);
+export function useCreateServiceAccountToken() {
+    return useMutation(CREATE_SERVICE_ACCOUNT_TOKEN);
 }
 
-export function useEnableServiceAccount() {
-    return useMutation(ENABLE_SERVICE_ACCOUNT);
-}
-
-export function useCreateApiKey() {
-    return useMutation(CREATE_API_KEY);
-}
-
-export function useRevokeApiKey() {
-    return useMutation(REVOKE_API_KEY);
+export function useRevokeServiceAccountToken() {
+    return useMutation(REVOKE_SERVICE_ACCOUNT_TOKEN);
 }

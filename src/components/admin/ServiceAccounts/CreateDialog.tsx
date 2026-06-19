@@ -23,7 +23,7 @@ import { useStorageMappings } from 'src/api/gql/storageMappings';
 import AlertBox from 'src/components/shared/AlertBox';
 import { useCouldMatchRoot } from 'src/components/shared/LeavesAutocomplete';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 import { hasLength } from 'src/utils/misc-utils';
 
 // 'none' and 'write' intentionally omitted
@@ -40,7 +40,7 @@ export function CreateServiceAccountDialog({
 }: CreateServiceAccountDialogProps) {
     const intl = useIntl();
 
-    const [displayName, setDisplayName] = useState('');
+    const [catalogName, setCatalogName] = useState('');
     const [prefix, setPrefix] = useState('');
     const [capability, setCapability] = useState<Capability>('admin');
     const [error, setError] = useState<string | null>(null);
@@ -69,6 +69,16 @@ export function CreateServiceAccountDialog({
                 )
               : null;
 
+    const catalogNameError =
+        finalEnabled &&
+        hasLength(catalogName) &&
+        !catalogName.startsWith(selectedTenant)
+            ? intl.formatMessage(
+                  { id: 'leavesAutocomplete.mustStartWith.single' },
+                  { root: selectedTenant }
+              )
+            : null;
+
     // build list of leaves out of live specs and storage mappings,
     // scoped to the globally selected tenant
     const leaves = useMemo(
@@ -93,7 +103,7 @@ export function CreateServiceAccountDialog({
     };
 
     const resetForm = () => {
-        setDisplayName('');
+        setCatalogName('');
         setPrefix('');
         setCapability('admin');
         setError(null);
@@ -108,19 +118,21 @@ export function CreateServiceAccountDialog({
     const handleCreate = async () => {
         setError(null);
 
-        if (!hasLength(displayName) || !hasLength(prefix)) {
+        if (!hasLength(catalogName) || !hasLength(prefix)) {
             return;
         }
 
-        if (!prefix.startsWith(selectedTenant)) {
+        if (
+            !catalogName.startsWith(selectedTenant) ||
+            !prefix.startsWith(selectedTenant)
+        ) {
             setFinalEnabled(true);
             return;
         }
 
         const result = await createServiceAccount({
-            displayName,
-            prefix,
-            capability,
+            catalogName,
+            grants: [{ prefix, capability }],
         });
 
         if (result.error) {
@@ -138,9 +150,9 @@ export function CreateServiceAccountDialog({
             <DialogContent>
                 <Stack spacing={2} sx={{ mt: 1 }}>
                     <Typography variant="body2" color="text.secondary">
-                        Create a non-login identity scoped to a catalog prefix.
-                        The service account will be able to authenticate with
-                        API keys.
+                        Create a non-login identity homed at a catalog name and
+                        granted access to a prefix. The service account will be
+                        able to authenticate with API keys.
                     </Typography>
 
                     {error ? (
@@ -150,13 +162,19 @@ export function CreateServiceAccountDialog({
                     ) : null}
 
                     <TextField
-                        label="Display Name"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
+                        label="Name"
+                        value={catalogName}
+                        onChange={(e) => setCatalogName(e.target.value)}
+                        onBlur={() => setFinalEnabled(true)}
                         required
                         size="small"
                         fullWidth
-                        placeholder="e.g. CI deploy bot"
+                        placeholder={`${selectedTenant}ci-deploy-bot`}
+                        error={Boolean(catalogNameError)}
+                        helperText={
+                            catalogNameError ??
+                            'The catalog name that anchors this account.'
+                        }
                     />
 
                     <LeavesAutocomplete
@@ -164,7 +182,7 @@ export function CreateServiceAccountDialog({
                         value={prefix}
                         onChange={handlePrefixChange}
                         onBlur={handlePrefixBlur}
-                        label="Prefix"
+                        label="Grant access to prefix"
                         required
                         error={Boolean(prefixError)}
                         errorMessage={prefixError ?? undefined}
@@ -198,10 +216,7 @@ export function CreateServiceAccountDialog({
                     variant="contained"
                     onClick={handleCreate}
                     disabled={
-                        !hasLength(displayName) ||
-                        !hasLength(prefix) ||
-                        Boolean(prefixError) ||
-                        fetching
+                        !hasLength(catalogName) || !hasLength(prefix) || fetching
                     }
                     loading={fetching}
                 >

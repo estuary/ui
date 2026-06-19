@@ -15,11 +15,7 @@ export function RefreshToken() {
                         fontWeight: '400',
                     }}
                 >
-<<<<<<< HEAD
                     <FormattedMessage id="admin.cli_api.refreshToken.header" />
-=======
-                    <FormattedMessage id="admin.cli_api.refreshToken" />
->>>>>>> 72f13fa7 (service accoutns)
                 </Typography>
 
                 <Typography>
