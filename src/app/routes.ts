@@ -31,6 +31,11 @@ const admin = {
             fullPath: '/admin/billing/paymentMethod/new',
         },
     },
+    serviceAccounts: {
+        title: 'routeTitle.admin.serviceAccounts',
+        path: 'serviceAccounts',
+        fullPath: '/admin/serviceAccounts',
+    },
     settings: {
         title: 'routeTitle.admin.settings',
         path: 'settings',
@@ -154,6 +159,15 @@ const express = {
     },
 };
 
+const flowctl = {
+    accessToken: {
+        title: 'routeTitle.flowctl.accessToken',
+        path: 'accessToken',
+        fullPath: '/flowctl/accessToken',
+    },
+    path: 'flowctl',
+};
+
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
@@ -264,6 +278,7 @@ export const authenticatedRoutes = {
     collections,
     dataPlaneAuth,
     express,
+    flowctl,
     home,
     materializations,
     marketplace: marketplace.authenticated,

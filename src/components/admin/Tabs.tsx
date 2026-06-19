@@ -30,6 +30,11 @@ function AdminTabs() {
         }
 
         response.push({
+            labelMessageId: 'admin.tabs.serviceAccounts',
+            path: authenticatedRoutes.admin.serviceAccounts.fullPath,
+        });
+
+        response.push({
             labelMessageId: 'admin.tabs.api',
             path: authenticatedRoutes.admin.api.fullPath,
         });

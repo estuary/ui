@@ -13,6 +13,7 @@ import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
 import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
+import { ServiceAccounts } from 'src/components/admin/ServiceAccounts';
 import AdminSettings from 'src/components/admin/Settings';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import HasSupportRoleGuard from 'src/components/shared/guards/SupportRole';
@@ -33,6 +34,7 @@ import DataPlaneAuthReq from 'src/pages/DataPlaneAuthReq';
 import GqlExplorer from 'src/pages/dev/gqlExplorer';
 import TestJsonForms from 'src/pages/dev/TestJsonForms';
 import PageNotFound from 'src/pages/error/PageNotFound';
+import FlowctlAccessToken from 'src/pages/FlowctlAccessToken';
 import HomePage from 'src/pages/Home';
 import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
@@ -231,6 +233,11 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.dataPlaneAuth.path}
                         element={<DataPlaneAuthReq />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.flowctl.accessToken.fullPath}
+                        element={<FlowctlAccessToken />}
                     />
 
                     <Route
@@ -729,6 +736,16 @@ const router = createBrowserRouter(
                                         <AdminBilling />
                                     </Suspense>
                                 </ErrorBoundary>
+                            }
+                        />
+                        <Route
+                            path={
+                                authenticatedRoutes.admin.serviceAccounts.path
+                            }
+                            element={
+                                <Suspense fallback={null}>
+                                    <ServiceAccounts />
+                                </Suspense>
                             }
                         />
                         <Route

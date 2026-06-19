@@ -347,6 +347,10 @@ enum CapabilityBit {
   DeleteGrant
   JournalAppend
   JournalRead
+<<<<<<< HEAD
+=======
+  ManageServiceAccount
+>>>>>>> 72f13fa7 (service accoutns)
   ModifyDataPlanePrivateNetworking
   SpecEdit
   ViewDataPlanePrivateNetworking
@@ -579,6 +583,16 @@ type Controller {
 
 type CreateBillingSetupIntentPayload {
   clientSecret: String!
+}
+
+type CreateServiceAccountTokenResult {
+  id: Id!
+
+  """
+  The bearer credential, returned exactly once. Present it as an
+  `Authorization: Bearer` token or exchange it at `POST /api/v1/auth/token`.
+  """
+  secret: String!
 }
 
 """Result of creating a storage mapping."""
@@ -1039,6 +1053,18 @@ type LockFailure {
 
 type MutationRoot {
   """
+  Add a user_grant to a service account.
+  
+  The caller must manage the service account (ManageServiceAccount on its
+  catalog name) AND have CreateGrant on the granted prefix. The second
+  requirement prevents a caller from extending an account's access beyond
+  what they could grant anyone. (Human-user grant creation still lives in
+  PostgREST; when it migrates to GraphQL it should gate on this same
+  CreateGrant capability.)
+  """
+  addServiceAccountGrant(capability: Capability!, catalogName: Name!, prefix: Prefix!): Boolean!
+
+  """
   Creates a new alert subscription. Returns an error if there is already
   an existing subscription for the same prefix and email address.
   """
@@ -1065,6 +1091,45 @@ type MutationRoot {
   ): RefreshTokenResult!
 
   """
+<<<<<<< HEAD
+=======
+  Create a service account homed at the specified catalog name, seeded
+  with the given user_grants.
+  
+  `catalogName` is a management anchor: admins of a prefix covering it
+  may manage the account. It determines who may manage the account, not
+  what the account may access. Access is determined solely by the
+  account's user_grants, which may span multiple prefixes.
+  
+  The caller must have ManageServiceAccount on the catalog name AND
+  CreateGrant on each granted prefix. Creates an auth.users row, an
+  internal.service_accounts row, and a user_grants row per requested
+  grant.
+  """
+  createServiceAccount(catalogName: Name!, grants: [ServiceAccountGrantInput!]!): ServiceAccount!
+
+  """
+  Mint a credential for a service account.
+  
+  The credential is a multi-use refresh token owned by the account: its
+  secret never rotates and its validity window of `valid_for` slides with
+  use, like any refresh token. Returns the token id and the bearer secret,
+  which is returned exactly once and cannot be retrieved again. Present it
+  as an `Authorization: Bearer` credential or exchange it for a 1-hour
+  access token via `POST /api/v1/auth/token`.
+  
+  The caller must have ManageServiceAccount on the account's catalog name.
+  """
+  createServiceAccountToken(
+    catalogName: Name!
+    detail: String!
+
+    """ISO 8601 duration for token validity (e.g. P90D, P1Y)"""
+    validFor: String!
+  ): CreateServiceAccountTokenResult!
+
+  """
+>>>>>>> 72f13fa7 (service accoutns)
   Create a storage mapping for the given catalog prefix.
   
   This validates that the user has admin access to the catalog prefix,
@@ -1095,6 +1160,7 @@ type MutationRoot {
   redeemInviteLink(token: UUID!): RedeemInviteLinkResult!
 
   """
+<<<<<<< HEAD
   Revoke a refresh token owned by the authenticated user.
   
   Rather than deleting the row, we zero its `valid_for` interval, which
@@ -1102,6 +1168,39 @@ type MutationRoot {
   Already-zeroed (revoked) tokens are treated as not found.
   """
   revokeRefreshToken(id: Id!): Boolean!
+=======
+  Remove a user_grant from a service account.
+  
+  The caller must manage the service account (ManageServiceAccount on its
+  catalog name). Unlike addServiceAccountGrant, no capability on the
+  grant's prefix is required: removal only ever narrows the account's
+  access, so managers may remove ANY grant — including grants to
+  prefixes they don't themselves administer.
+  """
+  removeServiceAccountGrant(catalogName: Name!, prefix: Prefix!): Boolean!
+
+  """
+  Revoke a refresh token owned by the authenticated user.
+  
+  Rather than deleting the row, we zero its `valid_for` interval, which
+  marks the token as expired/invalid while preserving the audit trail.
+  Already-zeroed (revoked) tokens are treated as not found.
+  """
+  revokeRefreshToken(id: Id!): Boolean!
+
+  """
+  Revoke a service-account token.
+  
+  The caller must have ManageServiceAccount capability on the owning service
+  account's catalog name.
+  
+  Rather than deleting the row, we zero its `valid_for` interval, which
+  makes the token inert (it fails the exchange's expiry check and is
+  excluded from listings) while preserving the audit trail. Already-revoked
+  tokens are treated as not found.
+  """
+  revokeServiceAccountToken(id: Id!): Boolean!
+>>>>>>> 72f13fa7 (service accoutns)
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
@@ -1446,6 +1545,10 @@ type QueryRoot {
 
   """List refresh tokens owned by the authenticated user."""
   refreshTokens(after: String, first: Int): RefreshTokenInfoConnection!
+<<<<<<< HEAD
+=======
+  serviceAccounts(after: String, first: Int): ServiceAccountConnection!
+>>>>>>> 72f13fa7 (service accoutns)
 
   """
   Returns storage mappings accessible to the current user.
@@ -1521,6 +1624,55 @@ type RepublishRequested {
   receivedAt: DateTime!
 }
 
+<<<<<<< HEAD
+=======
+type ServiceAccount {
+  catalogName: Name!
+  createdAt: DateTime!
+  createdBy: UUID!
+  lastUsedAt: DateTime
+  tokens: [ServiceAccountTokenInfo!]!
+  updatedAt: DateTime!
+}
+
+type ServiceAccountConnection {
+  """A list of edges."""
+  edges: [ServiceAccountEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+}
+
+"""An edge in a connection."""
+type ServiceAccountEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ServiceAccount!
+}
+
+"""A user_grant to seed a service account with at creation time."""
+input ServiceAccountGrantInput {
+  capability: Capability!
+  prefix: Prefix!
+}
+
+"""
+A service-account credential: a multi-use refresh token owned by the account
+and minted by an administrator. The secret itself is returned only once at
+creation (see [`CreateServiceAccountTokenResult`]).
+"""
+type ServiceAccountTokenInfo {
+  createdAt: DateTime!
+  createdBy: UUID!
+  detail: String
+  expiresAt: DateTime!
+  id: Id!
+  lastUsedAt: DateTime
+}
+
+>>>>>>> 72f13fa7 (service accoutns)
 """The shape of a connector status, which matches that of an ops::Log."""
 type ShardFailure {
   """

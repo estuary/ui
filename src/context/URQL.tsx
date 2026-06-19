@@ -57,6 +57,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         Alert: (_data) => null,
                         AlertSubscription: (_data) => null,
                         AlertTypeInfo: (_data) => null,
+                        ApiKeyInfo: (_data) => null,
                         InviteLink: (data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
@@ -86,6 +87,21 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             revokeRefreshToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'refreshTokens');
+                            },
+                            createServiceAccount(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
+                            },
+                            disableServiceAccount(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
+                            },
+                            enableServiceAccount(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
+                            },
+                            createApiKey(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
+                            },
+                            revokeApiKey(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
                             },
                         },
                     },
