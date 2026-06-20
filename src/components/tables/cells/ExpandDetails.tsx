@@ -1,21 +1,16 @@
 import { Button } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 interface Props {
     onClick?: any;
     disabled?: boolean;
     expanded?: boolean;
-    messageId?: string;
+    message?: string;
 }
 
-function ExpandDetails({
-    onClick,
-    disabled,
-    expanded,
-    messageId = 'cta.details',
-}: Props) {
+export function ExpandDetails({ onClick, disabled, expanded, message }: Props) {
     return (
         <Button
             variant="text"
@@ -39,9 +34,24 @@ function ExpandDetails({
                 />
             }
         >
-            <FormattedMessage id={messageId} />
+            {message}
         </Button>
     );
 }
 
-export default ExpandDetails;
+/** @deprecated Prefer the named `ExpandDetails` export */
+function ExpandDetailsWrapper({
+    messageId = 'cta.details',
+    ...props
+}: Omit<Props, 'message'> & { messageId?: string }) {
+    const intl = useIntl();
+
+    return (
+        <ExpandDetails
+            {...props}
+            message={intl.formatMessage({ id: messageId })}
+        />
+    );
+}
+
+export default ExpandDetailsWrapper;

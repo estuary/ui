@@ -20,23 +20,21 @@ interface Props {
     open: boolean;
     onCancel: () => void;
     onConfirm: (strategy: TargetNamingStrategy) => void;
-    confirmIntlKey: string;
+    confirmLabel: string;
     initialStrategy?: TargetNamingStrategy | null;
     saving?: boolean;
-    alertIntlKey?: string;
+    alertMessage?: string;
 }
 
-export default function TargetNamingDialog({
+export function TargetNamingDialog({
     open,
     initialStrategy,
     onCancel,
     onConfirm,
-    confirmIntlKey,
+    confirmLabel,
     saving,
-    alertIntlKey,
+    alertMessage,
 }: Props) {
-    const intl = useIntl();
-
     const strategyRef = useRef<TargetNamingStrategy>({
         strategy: 'matchSourceStructure',
     });
@@ -62,14 +60,14 @@ export default function TargetNamingDialog({
                 disabled={saving}
                 onClose={onCancel}
             >
-                {intl.formatMessage({ id: 'destinationLayout.dialog.title' })}
+                Destination Layout
             </DialogTitleWithClose>
 
             <DialogContent>
                 <Stack spacing={2}>
-                    {alertIntlKey ? (
+                    {alertMessage ? (
                         <AlertBox severity="info" short>
-                            {intl.formatMessage({ id: alertIntlKey })}
+                            {alertMessage}
                         </AlertBox>
                     ) : null}
                     <TargetNamingFormContent
@@ -82,16 +80,40 @@ export default function TargetNamingDialog({
 
             <DialogActions>
                 <Button onClick={onCancel} disabled={saving} variant="text">
-                    {intl.formatMessage({ id: 'cta.cancel' })}
+                    Cancel
                 </Button>
                 <Button
                     variant="contained"
                     onClick={handleConfirm}
                     disabled={!canConfirm || saving}
                 >
-                    {intl.formatMessage({ id: confirmIntlKey })}
+                    {confirmLabel}
                 </Button>
             </DialogActions>
         </Dialog>
+    );
+}
+
+/** @deprecated Prefer the named `TargetNamingDialog` export */
+export default function TargetNamingDialogWrapper({
+    confirmIntlKey,
+    alertIntlKey,
+    ...props
+}: Omit<Props, 'confirmLabel' | 'alertMessage'> & {
+    confirmIntlKey: string;
+    alertIntlKey?: string;
+}) {
+    const intl = useIntl();
+
+    return (
+        <TargetNamingDialog
+            {...props}
+            confirmLabel={intl.formatMessage({ id: confirmIntlKey })}
+            alertMessage={
+                alertIntlKey
+                    ? intl.formatMessage({ id: alertIntlKey })
+                    : undefined
+            }
+        />
     );
 }

@@ -32,7 +32,6 @@ export const CommonMessages: Record<string, string> = {
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
-    'common.missing': `N/A`,
     'common.none': `none`,
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,

@@ -1,22 +1,28 @@
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import ExternalLink from 'src/components/shared/ExternalLink';
 
 interface Props {
     path?: string;
-    messageId: string;
+    message: string;
 }
 
-function Link({ path, messageId }: Props) {
+export function Link({ path, message }: Props) {
     if (path && path.length > 0) {
-        return (
-            <ExternalLink link={path}>
-                <FormattedMessage id={messageId} />
-            </ExternalLink>
-        );
-    } else {
-        return <FormattedMessage id="common.missing" />;
+        return <ExternalLink link={path}>{message}</ExternalLink>;
     }
+
+    return <>N/A</>;
 }
 
-export default Link;
+/** @deprecated Prefer the named `Link` export */
+function LinkWrapper({
+    messageId,
+    ...props
+}: Omit<Props, 'message'> & { messageId: string }) {
+    const intl = useIntl();
+
+    return <Link {...props} message={intl.formatMessage({ id: messageId })} />;
+}
+
+export default LinkWrapper;
