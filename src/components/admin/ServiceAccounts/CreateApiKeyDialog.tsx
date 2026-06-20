@@ -1,55 +1,60 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
     Stack,
     TextField,
     Typography,
 } from '@mui/material';
 
 import { useCreateServiceAccountToken } from 'src/api/gql/serviceAccounts';
-import SingleLineCode from 'src/components/content/SingleLineCode';
+import LifetimeSelector from 'src/components/admin/ServiceAccounts/LifetimeSelector';
+import SecretRevealModal from 'src/components/admin/ServiceAccounts/SecretRevealModal';
+import {
+    DEFAULT_LIFETIME,
+    formatExpiryFromNow,
+} from 'src/components/admin/ServiceAccounts/shared';
 import AlertBox from 'src/components/shared/AlertBox';
+import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { hasLength } from 'src/utils/misc-utils';
 
-const VALIDITY_OPTIONS = [
-    { label: '90 days', value: 'P90D' },
-    { label: '180 days', value: 'P180D' },
-    { label: '1 year', value: 'P1Y' },
-];
+const TITLE_ID = 'create-service-account-api-key';
 
-interface Props {
+interface CreateApiKeyDialogProps {
+    open: boolean;
     catalogName: string;
+    onClose: () => void;
+    // Called once the freshly created key has been acknowledged, so the caller
+    // can refetch the account's keys.
+    onCreated?: () => void;
 }
 
-function CreateApiKeyDialog({ catalogName }: Props) {
-    const [open, setOpen] = useState(false);
+function CreateApiKeyDialog({
+    open,
+    catalogName,
+    onClose,
+    onCreated,
+}: CreateApiKeyDialogProps) {
     const [label, setLabel] = useState('');
-    const [validFor, setValidFor] = useState('P90D');
+    const [validFor, setValidFor] = useState(DEFAULT_LIFETIME);
     const [secret, setSecret] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     const [{ fetching }, createServiceAccountToken] =
         useCreateServiceAccountToken();
 
-    const resetForm = () => {
-        setLabel('');
-        setValidFor('P90D');
-        setSecret(null);
-        setError(null);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
+    useEffect(() => {
+        if (open) {
+            setLabel('');
+            setValidFor(DEFAULT_LIFETIME);
+            setSecret(null);
+            setError(null);
+        }
+    }, [open]);
 
     const handleCreate = async () => {
         setError(null);
@@ -75,109 +80,99 @@ function CreateApiKeyDialog({ catalogName }: Props) {
         setSecret(result.data.createServiceAccountToken.secret);
     };
 
+    const handleRevealDone = () => {
+        setSecret(null);
+        onCreated?.();
+        onClose();
+    };
+
     return (
         <>
-            <Button
-                size="small"
-                variant="outlined"
-                onClick={() => setOpen(true)}
-            >
-                Create API Key
-            </Button>
-
             <Dialog
-                open={open}
-                onClose={secret ? undefined : handleClose}
+                open={Boolean(open && !secret)}
+                onClose={onClose}
                 maxWidth="xs"
                 fullWidth
-                slotProps={{
-                    transition: { onExited: resetForm },
-                }}
+                aria-labelledby={TITLE_ID}
             >
-                <DialogTitle>
-                    {`Create API Key for ${catalogName}`}
-                </DialogTitle>
+                <DialogTitleWithClose
+                    id={TITLE_ID}
+                    onClose={onClose}
+                    disabled={fetching}
+                >
+                    Create API key
+                </DialogTitleWithClose>
 
                 <DialogContent>
                     <Stack spacing={2} sx={{ mt: 1 }}>
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontFamily: 'monospace' }}
+                        >
+                            {catalogName}
+                        </Typography>
+
                         {error ? (
                             <AlertBox severity="error" short>
                                 <Typography>{error}</Typography>
                             </AlertBox>
                         ) : null}
 
-                        {secret ? (
-                            <AlertBox severity="info" short data-private>
-                                <Typography sx={{ mb: 1 }}>
-                                    Copy this API key now — it will not be shown
-                                    again. Use it as the value of FLOW_API_KEY
-                                    in your CI/CD environment.
-                                </Typography>
+                        <TextField
+                            label="Description"
+                            value={label}
+                            onChange={(event) => setLabel(event.target.value)}
+                            required
+                            size="small"
+                            fullWidth
+                            placeholder="CI deploy pipeline"
+                            helperText="Helps you recognise this key later."
+                        />
 
-                                <SingleLineCode value={secret} />
-                            </AlertBox>
-                        ) : (
-                            <>
-                                <TextField
-                                    label="Label"
-                                    value={label}
-                                    onChange={(e) => setLabel(e.target.value)}
-                                    required
-                                    size="small"
-                                    fullWidth
-                                    placeholder="e.g. GitHub Actions"
-                                />
-
-                                <FormControl size="small" fullWidth>
-                                    <InputLabel>Lifetime</InputLabel>
-                                    <Select
-                                        value={validFor}
-                                        onChange={(e) =>
-                                            setValidFor(e.target.value)
-                                        }
-                                        label="Lifetime"
-                                    >
-                                        {VALIDITY_OPTIONS.map((opt) => (
-                                            <MenuItem
-                                                key={opt.value}
-                                                value={opt.value}
-                                            >
-                                                {opt.label}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </>
-                        )}
+                        <Box>
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{ mb: 1 }}
+                            >
+                                Lifetime
+                            </Typography>
+                            <LifetimeSelector
+                                value={validFor}
+                                onChange={setValidFor}
+                            />
+                        </Box>
                     </Stack>
                 </DialogContent>
 
                 <DialogActions>
-                    {secret ? (
-                        <Button variant="contained" onClick={handleClose}>
-                            Done
-                        </Button>
-                    ) : (
-                        <>
-                            <Button
-                                onClick={handleClose}
-                                disabled={fetching}
-                                variant="outlined"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="contained"
-                                onClick={handleCreate}
-                                disabled={!hasLength(label) || fetching}
-                                loading={fetching}
-                            >
-                                Create API Key
-                            </Button>
-                        </>
-                    )}
+                    <Button
+                        onClick={onClose}
+                        disabled={fetching}
+                        variant="outlined"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleCreate}
+                        disabled={!hasLength(label) || fetching}
+                        loading={fetching}
+                    >
+                        Create key
+                    </Button>
                 </DialogActions>
             </Dialog>
+
+            <SecretRevealModal
+                open={Boolean(secret)}
+                secret={secret ?? ''}
+                description={label || 'API key'}
+                expires={formatExpiryFromNow(validFor)}
+                account={catalogName}
+                onDone={handleRevealDone}
+            />
         </>
     );
 }

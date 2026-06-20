@@ -1106,6 +1106,17 @@ export type MutationRoot = {
    */
   redeemInviteLink: RedeemInviteLinkResult;
   /**
+   * Remove ALL user_grants from a service account, stripping its access in
+   * one call.
+   *
+   * The caller must manage the service account (ManageServiceAccount on its
+   * catalog name). As with removeServiceAccountGrant, no capability on the
+   * grants' prefixes is required: removal only narrows access, so a manager
+   * may clear grants to prefixes they don't themselves administer. Returns
+   * the number of grants removed (0 if the account had none — not an error).
+   */
+  removeAllServiceAccountGrants: Scalars['Int']['output'];
+  /**
    * Remove a user_grant from a service account.
    *
    * The caller must manage the service account (ManageServiceAccount on its
@@ -1115,6 +1126,18 @@ export type MutationRoot = {
    * prefixes they don't themselves administer.
    */
   removeServiceAccountGrant: Scalars['Boolean']['output'];
+  /**
+   * Revoke ALL of a service account's tokens at once — the credential kill
+   * switch.
+   *
+   * The caller must have ManageServiceAccount on the account's catalog name.
+   * Like revokeServiceAccountToken, each token is made inert by zeroing its
+   * `valid_for` interval (preserving the audit trail) rather than deleted;
+   * already-revoked tokens are skipped. A service account's user_id only ever
+   * owns its own minted credentials, so this targets exactly those. Returns
+   * the number of tokens revoked (0 if none were active — not an error).
+   */
+  revokeAllServiceAccountTokens: Scalars['Int']['output'];
   /**
    * Revoke a refresh token owned by the authenticated user.
    *
@@ -1272,9 +1295,19 @@ export type MutationRootRedeemInviteLinkArgs = {
 };
 
 
+export type MutationRootRemoveAllServiceAccountGrantsArgs = {
+  catalogName: Scalars['Name']['input'];
+};
+
+
 export type MutationRootRemoveServiceAccountGrantArgs = {
   catalogName: Scalars['Name']['input'];
   prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootRevokeAllServiceAccountTokensArgs = {
+  catalogName: Scalars['Name']['input'];
 };
 
 
@@ -1733,6 +1766,7 @@ export type ServiceAccount = {
   catalogName: Scalars['Name']['output'];
   createdAt: Scalars['DateTime']['output'];
   createdBy: Scalars['UUID']['output'];
+  grants: Array<ServiceAccountGrant>;
   lastUsedAt?: Maybe<Scalars['DateTime']['output']>;
   tokens: Array<ServiceAccountTokenInfo>;
   updatedAt: Scalars['DateTime']['output'];
@@ -1753,6 +1787,20 @@ export type ServiceAccountEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: ServiceAccount;
+};
+
+/**
+ * A user_grant held by a service account: the prefix it may act on and the
+ * capability it holds there. An account's access is the union of its grants,
+ * which may span multiple prefixes independent of its catalog_name anchor.
+ */
+export type ServiceAccountGrant = {
+  __typename?: 'ServiceAccountGrant';
+  capability: Capability;
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  prefix: Scalars['Prefix']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 /** A user_grant to seed a service account with at creation time. */
@@ -2239,6 +2287,23 @@ export type RevokeServiceAccountTokenMutationVariables = Exact<{
 
 export type RevokeServiceAccountTokenMutation = { __typename?: 'MutationRoot', revokeServiceAccountToken: boolean };
 
+export type AddServiceAccountGrantMutationVariables = Exact<{
+  catalogName: Scalars['Name']['input'];
+  prefix: Scalars['Prefix']['input'];
+  capability: Capability;
+}>;
+
+
+export type AddServiceAccountGrantMutation = { __typename?: 'MutationRoot', addServiceAccountGrant: boolean };
+
+export type RemoveServiceAccountGrantMutationVariables = Exact<{
+  catalogName: Scalars['Name']['input'];
+  prefix: Scalars['Prefix']['input'];
+}>;
+
+
+export type RemoveServiceAccountGrantMutation = { __typename?: 'MutationRoot', removeServiceAccountGrant: boolean };
+
 export type CreateStorageMappingMutationVariables = Exact<{
   catalogPrefix: Scalars['Prefix']['input'];
   spec: Scalars['JSON']['input'];
@@ -2333,6 +2398,8 @@ export const ServiceAccountsDocument = {"kind":"Document","definitions":[{"kind"
 export const CreateServiceAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateServiceAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"grants"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ServiceAccountGrantInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createServiceAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}},{"kind":"Argument","name":{"kind":"Name","value":"grants"},"value":{"kind":"Variable","name":{"kind":"Name","value":"grants"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}}]}}]}}]} as unknown as DocumentNode<CreateServiceAccountMutation, CreateServiceAccountMutationVariables>;
 export const CreateServiceAccountTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateServiceAccountToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createServiceAccountToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}},{"kind":"Argument","name":{"kind":"Name","value":"validFor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]}}]} as unknown as DocumentNode<CreateServiceAccountTokenMutation, CreateServiceAccountTokenMutationVariables>;
 export const RevokeServiceAccountTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RevokeServiceAccountToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeServiceAccountToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<RevokeServiceAccountTokenMutation, RevokeServiceAccountTokenMutationVariables>;
+export const AddServiceAccountGrantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddServiceAccountGrant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"capability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Capability"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addServiceAccountGrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}},{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"capability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"capability"}}}]}]}}]} as unknown as DocumentNode<AddServiceAccountGrantMutation, AddServiceAccountGrantMutationVariables>;
+export const RemoveServiceAccountGrantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveServiceAccountGrant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeServiceAccountGrant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}},{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}]}}]} as unknown as DocumentNode<RemoveServiceAccountGrantMutation, RemoveServiceAccountGrantMutationVariables>;
 export const CreateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<CreateStorageMappingMutation, CreateStorageMappingMutationVariables>;
 export const UpdateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"republish"}}]}}]}}]} as unknown as DocumentNode<UpdateStorageMappingMutation, UpdateStorageMappingMutationVariables>;
 export const TestConnectionHealthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestConnectionHealth"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testConnectionHealth"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"results"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fragmentStore"}},{"kind":"Field","name":{"kind":"Name","value":"dataPlaneName"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]}}]} as unknown as DocumentNode<TestConnectionHealthMutation, TestConnectionHealthMutationVariables>;
