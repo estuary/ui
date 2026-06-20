@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 
 import { useCreateServiceAccountToken } from 'src/api/gql/serviceAccounts';
-import LifetimeSelector from 'src/components/admin/ServiceAccounts/LifetimeSelector';
-import SecretRevealModal from 'src/components/admin/ServiceAccounts/SecretRevealModal';
+import { LifetimeSelector } from 'src/components/admin/ServiceAccounts/LifetimeSelector';
+import { SecretRevealModal } from 'src/components/admin/ServiceAccounts/SecretRevealModal';
 import {
     DEFAULT_LIFETIME,
     formatExpiryFromNow,
@@ -28,16 +28,12 @@ interface CreateApiKeyDialogProps {
     open: boolean;
     catalogName: string;
     onClose: () => void;
-    // Called once the freshly created key has been acknowledged, so the caller
-    // can refetch the account's keys.
-    onCreated?: () => void;
 }
 
-function CreateApiKeyDialog({
+export function CreateApiKeyDialog({
     open,
     catalogName,
     onClose,
-    onCreated,
 }: CreateApiKeyDialogProps) {
     const [label, setLabel] = useState('');
     const [validFor, setValidFor] = useState(DEFAULT_LIFETIME);
@@ -82,7 +78,6 @@ function CreateApiKeyDialog({
 
     const handleRevealDone = () => {
         setSecret(null);
-        onCreated?.();
         onClose();
     };
 
@@ -176,5 +171,3 @@ function CreateApiKeyDialog({
         </>
     );
 }
-
-export default CreateApiKeyDialog;

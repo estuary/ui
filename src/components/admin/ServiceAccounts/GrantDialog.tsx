@@ -15,7 +15,7 @@ import {
 import { Lock } from 'iconoir-react';
 
 import { useAddServiceAccountGrant } from 'src/api/gql/serviceAccounts';
-import CapabilitySelector from 'src/components/admin/ServiceAccounts/CapabilitySelector';
+import { CapabilitySelector } from 'src/components/admin/ServiceAccounts/CapabilitySelector';
 import AlertBox from 'src/components/shared/AlertBox';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
@@ -33,13 +33,12 @@ interface GrantDialogProps {
     initialPrefix?: string;
     initialCapability?: Capability;
     onClose: () => void;
-    onSaved: () => void;
 }
 
 // Adds a grant, or changes the capability of an existing one. The prefix is
 // fixed once a grant exists, so edit mode locks it and only re-adds it with a
 // new capability (addServiceAccountGrant upserts).
-function GrantDialog({
+export function GrantDialog({
     open,
     mode,
     catalogName,
@@ -47,7 +46,6 @@ function GrantDialog({
     initialPrefix,
     initialCapability,
     onClose,
-    onSaved,
 }: GrantDialogProps) {
     const [prefix, setPrefix] = useState('');
     const [capability, setCapability] = useState<Capability>('read');
@@ -81,7 +79,6 @@ function GrantDialog({
             return;
         }
 
-        onSaved();
         onClose();
     };
 
@@ -189,5 +186,3 @@ function GrantDialog({
         </Dialog>
     );
 }
-
-export default GrantDialog;

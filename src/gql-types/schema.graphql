@@ -590,6 +590,12 @@ type CreateServiceAccountTokenResult {
   `Authorization: Bearer` token or exchange it at `POST /api/v1/auth/token`.
   """
   secret: String!
+
+  """
+  The owning account in its post-mint state, so the new token merges into
+  client caches without a follow-up query.
+  """
+  serviceAccount: ServiceAccount!
 }
 
 """Result of creating a storage mapping."""
@@ -1059,7 +1065,7 @@ type MutationRoot {
   PostgREST; when it migrates to GraphQL it should gate on this same
   CreateGrant capability.)
   """
-  addServiceAccountGrant(capability: Capability!, catalogName: Name!, prefix: Prefix!): Boolean!
+  addServiceAccountGrant(capability: Capability!, catalogName: Name!, prefix: Prefix!): ServiceAccount!
 
   """
   Creates a new alert subscription. Returns an error if there is already
@@ -1155,39 +1161,43 @@ type MutationRoot {
 
   """
   Remove ALL user_grants from a service account, stripping its access in
-  one call.
+  one call and returning the account with `grants: []`.
   
   The caller must manage the service account (ManageServiceAccount on its
   catalog name). As with removeServiceAccountGrant, no capability on the
   grants' prefixes is required: removal only narrows access, so a manager
-  may clear grants to prefixes they don't themselves administer. Returns
-  the number of grants removed (0 if the account had none — not an error).
+  may clear grants to prefixes they don't themselves administer. Clearing
+  an account that already has no grants is an idempotent no-op.
   """
-  removeAllServiceAccountGrants(catalogName: Name!): Int!
+  removeAllServiceAccountGrants(catalogName: Name!): ServiceAccount!
 
   """
-  Remove a user_grant from a service account.
+  Remove a user_grant from a service account, returning the account in its
+  post-removal state.
   
   The caller must manage the service account (ManageServiceAccount on its
   catalog name). Unlike addServiceAccountGrant, no capability on the
   grant's prefix is required: removal only ever narrows the account's
   access, so managers may remove ANY grant — including grants to
   prefixes they don't themselves administer.
+  
+  Removal is idempotent: removing a grant the account doesn't hold is a
+  no-op that returns the unchanged account rather than an error.
   """
-  removeServiceAccountGrant(catalogName: Name!, prefix: Prefix!): Boolean!
+  removeServiceAccountGrant(catalogName: Name!, prefix: Prefix!): ServiceAccount!
 
   """
   Revoke ALL of a service account's tokens at once — the credential kill
-  switch.
+  switch — returning the account with no active tokens.
   
   The caller must have ManageServiceAccount on the account's catalog name.
   Like revokeServiceAccountToken, each token is made inert by zeroing its
   `valid_for` interval (preserving the audit trail) rather than deleted;
   already-revoked tokens are skipped. A service account's user_id only ever
-  owns its own minted credentials, so this targets exactly those. Returns
-  the number of tokens revoked (0 if none were active — not an error).
+  owns its own minted credentials, so this targets exactly those. An
+  account with no active tokens is an idempotent no-op.
   """
-  revokeAllServiceAccountTokens(catalogName: Name!): Int!
+  revokeAllServiceAccountTokens(catalogName: Name!): ServiceAccount!
 
   """
   Revoke a refresh token owned by the authenticated user.
@@ -1199,17 +1209,19 @@ type MutationRoot {
   revokeRefreshToken(id: Id!): Boolean!
 
   """
-  Revoke a service-account token.
+  Revoke a service-account token, returning the owning account in its
+  post-revocation state.
   
   The caller must have ManageServiceAccount capability on the owning service
-  account's catalog name.
+  account's catalog name. The account is resolved from the token id.
   
   Rather than deleting the row, we zero its `valid_for` interval, which
   makes the token inert (it fails the exchange's expiry check and is
-  excluded from listings) while preserving the audit trail. Already-revoked
-  tokens are treated as not found.
+  excluded from listings) while preserving the audit trail. Revocation is
+  idempotent: revoking an already-inert token is a no-op that still returns
+  the account. Only an id that maps to no service-account token errors.
   """
-  revokeServiceAccountToken(id: Id!): Boolean!
+  revokeServiceAccountToken(id: Id!): ServiceAccount!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """

@@ -1,19 +1,26 @@
 import type { SxProps, Theme } from '@mui/material';
+import type { ReactNode } from 'react';
 import type {
     ServiceAccount,
     ServiceAccountGrant,
 } from 'src/gql-types/graphql';
 
-import { Box, ButtonBase, Chip, Stack, Typography } from '@mui/material';
+import { useState } from 'react';
 
-import { Key, Lock } from 'iconoir-react';
-import { DateTime } from 'luxon';
+import { Box, ButtonBase, Stack, Typography } from '@mui/material';
 
-import CatalogName from 'src/components/admin/ServiceAccounts/CatalogName';
+import { Folder, Key, Lock } from 'iconoir-react';
+
 import {
-    capabilityColor,
+    ExpiryWarning,
+    soonestExpiry,
+} from 'src/components/admin/ServiceAccounts/ExpiryWarning';
+import { GrantScroller } from 'src/components/admin/ServiceAccounts/GrantScroller';
+import {
     monogram,
+    splitCatalogName,
 } from 'src/components/admin/ServiceAccounts/shared';
+import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import {
     defaultBoxShadow,
     defaultOutline,
@@ -37,26 +44,45 @@ const META_LABEL_SX: SxProps<Theme> = {
     color: (theme) => diminishedTextColor[theme.palette.mode],
 };
 
-function lastUsedSummary(lastUsedAt: string | null | undefined): string {
-    if (!lastUsedAt) {
-        return 'Active · never used';
-    }
-
-    return `Active · used ${DateTime.fromISO(lastUsedAt).toRelative()}`;
+// Render a catalog prefix so it only wraps after a slash: each "/"-terminated
+// segment stays on one line, with a break opportunity between segments.
+function slashBreaks(prefix: string): ReactNode[] {
+    return prefix
+        .split(/(?<=\/)/)
+        .filter(Boolean)
+        .flatMap((segment, index) => [
+            <Box
+                key={`segment-${index}`}
+                component="span"
+                sx={{ whiteSpace: 'nowrap' }}
+            >
+                {segment}
+            </Box>,
+            <wbr key={`break-${index}`} />,
+        ]);
 }
 
-function AccountCard({ serviceAccount, grants, onOpen }: AccountCardProps) {
+export function AccountCard({
+    serviceAccount,
+    grants,
+    onOpen,
+}: AccountCardProps) {
     const grantCount = grants.length;
     const hasGrants = grantCount > 0;
+
     const keyCount = serviceAccount.tokens.length;
 
-    const capabilities = [...new Set(grants.map((grant) => grant.capability))];
+    const [hovered, setHovered] = useState(false);
 
     return (
         <ButtonBase
             onClick={() => onOpen(serviceAccount.catalogName)}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
             sx={{
-                'display': 'block',
+                'display': 'flex',
+                'flexDirection': 'column',
+                'alignItems': 'stretch',
                 'width': '100%',
                 'textAlign': 'left',
                 'p': 2,
@@ -79,7 +105,7 @@ function AccountCard({ serviceAccount, grants, onOpen }: AccountCardProps) {
                 },
             }}
         >
-            <Stack spacing={1.75}>
+            <Stack spacing={1.75} sx={{ flex: 1 }}>
                 {/* Identity */}
                 <Stack
                     direction="row"
@@ -110,47 +136,32 @@ function AccountCard({ serviceAccount, grants, onOpen }: AccountCardProps) {
                     </Box>
 
                     <Box sx={{ minWidth: 0, flex: 1 }}>
-                        <CatalogName
-                            catalogName={serviceAccount.catalogName}
+                        <Box
+                            component="span"
                             sx={{
+                                fontFamily: 'monospace',
+                                fontWeight: 600,
+                                color: 'text.primary',
                                 fontSize: 14,
                                 display: 'block',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                             }}
-                        />
-
-                        <Stack
-                            direction="row"
-                            spacing={0.75}
-                            sx={{ alignItems: 'center', mt: 0.5 }}
                         >
-                            <Box
-                                component="span"
-                                sx={{
-                                    width: 7,
-                                    height: 7,
-                                    flex: 'none',
-                                    borderRadius: '50%',
-                                    backgroundColor: (theme) =>
-                                        hasGrants
-                                            ? theme.palette.success.main
-                                            : diminishedTextColor[
-                                                  theme.palette.mode
-                                              ],
-                                }}
-                            />
-                            <Typography
-                                variant="caption"
-                                color="text.secondary"
-                            >
-                                {hasGrants
-                                    ? lastUsedSummary(serviceAccount.lastUsedAt)
-                                    : 'No access granted'}
-                            </Typography>
-                        </Stack>
+                            {splitCatalogName(serviceAccount.catalogName).leaf}
+                        </Box>
+
+                        <UsageIndicator
+                            lastUsedAt={serviceAccount.lastUsedAt}
+                            sx={{ mt: 0.5 }}
+                        />
                     </Box>
+
+                    <ExpiryWarning
+                        expiresAt={soonestExpiry(serviceAccount.tokens)}
+                        sx={{ flex: 'none' }}
+                    />
                 </Stack>
 
                 <Box
@@ -161,44 +172,40 @@ function AccountCard({ serviceAccount, grants, onOpen }: AccountCardProps) {
                 />
 
                 {/* Details */}
-                <Stack spacing={1.25}>
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}
-                    >
+                <Stack spacing={1.25} sx={{ flex: 1 }}>
+                    <Stack spacing={0.75} sx={{ flex: 1 }}>
                         <Typography component="span" sx={META_LABEL_SX}>
                             Access
                         </Typography>
 
                         {hasGrants ? (
-                            <Stack
-                                direction="row"
-                                spacing={0.75}
-                                sx={{
-                                    alignItems: 'center',
-                                    flexWrap: 'wrap',
-                                    justifyContent: 'flex-end',
-                                }}
-                            >
-                                {capabilities.map((capability) => (
-                                    <Chip
-                                        key={capability}
-                                        label={capability}
-                                        size="small"
-                                        color={capabilityColor(capability)}
-                                    />
+                            <GrantScroller maxHeight={62} hovered={hovered}>
+                                {grants.map((grant) => (
+                                    <Stack
+                                        key={grant.prefix}
+                                        direction="row"
+                                        spacing={0.75}
+                                        sx={{ alignItems: 'flex-start' }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                flex: 'none',
+                                                pt: '3px',
+                                                color: 'text.secondary',
+                                            }}
+                                        >
+                                            <Folder width={13} height={13} />
+                                        </Box>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{ fontFamily: 'monospace' }}
+                                        >
+                                            {slashBreaks(grant.prefix)}
+                                        </Typography>
+                                    </Stack>
                                 ))}
-                                <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                >
-                                    {`${grantCount} ${grantCount === 1 ? 'prefix' : 'prefixes'}`}
-                                </Typography>
-                            </Stack>
+                            </GrantScroller>
                         ) : (
                             <Stack
                                 direction="row"
@@ -248,28 +255,8 @@ function AccountCard({ serviceAccount, grants, onOpen }: AccountCardProps) {
                             </Typography>
                         </Stack>
                     </Stack>
-
-                    {/* <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Typography component="span" sx={META_LABEL_SX}>
-                            Created
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {DateTime.fromISO(
-                                serviceAccount.createdAt
-                            ).toLocaleString(DateTime.DATE_MED)}
-                        </Typography>
-                    </Stack> */}
                 </Stack>
             </Stack>
         </ButtonBase>
     );
 }
-
-export default AccountCard;

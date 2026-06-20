@@ -8,7 +8,7 @@ interface LifetimeSelectorProps {
 }
 
 // Row of selectable lifetime pills for an API key's `validFor`.
-function LifetimeSelector({ value, onChange }: LifetimeSelectorProps) {
+export function LifetimeSelector({ value, onChange }: LifetimeSelectorProps) {
     return (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {LIFETIME_OPTIONS.map((option) => (
@@ -25,5 +25,3 @@ function LifetimeSelector({ value, onChange }: LifetimeSelectorProps) {
         </Box>
     );
 }
-
-export default LifetimeSelector;

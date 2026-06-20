@@ -9,7 +9,7 @@ interface EmptyStateProps {
     onGuidedCreate: () => void;
 }
 
-function EmptyState({ onQuickCreate, onGuidedCreate }: EmptyStateProps) {
+export function EmptyState({ onQuickCreate, onGuidedCreate }: EmptyStateProps) {
     return (
         <Stack
             sx={{
@@ -69,5 +69,3 @@ function EmptyState({ onQuickCreate, onGuidedCreate }: EmptyStateProps) {
         </Stack>
     );
 }
-
-export default EmptyState;

@@ -12,10 +12,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { useServiceAccount } from 'src/api/gql/serviceAccounts';
 import { authenticatedRoutes } from 'src/app/routes';
-import CatalogName from 'src/components/admin/ServiceAccounts/CatalogName';
-import CreateApiKeyDialog from 'src/components/admin/ServiceAccounts/CreateApiKeyDialog';
-import ApiKeysSection from 'src/components/admin/ServiceAccounts/Details/ApiKeysSection';
-import GrantsSection from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
+import { CreateApiKeyDialog } from 'src/components/admin/ServiceAccounts/CreateApiKeyDialog';
+import { ApiKeysSection } from 'src/components/admin/ServiceAccounts/Details/ApiKeysSection';
+import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
+import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import {
     monogram,
     splitCatalogName,
@@ -48,7 +48,7 @@ function MetaItem({ label, children }: { label: string; children: ReactNode }) {
     );
 }
 
-function ServiceAccountDetails() {
+export function ServiceAccountDetails() {
     usePageTitle({
         header: authenticatedRoutes.admin.serviceAccounts.details.title,
     });
@@ -56,8 +56,7 @@ function ServiceAccountDetails() {
     const navigate = useNavigate();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const { serviceAccount, fetching, refetch } =
-        useServiceAccount(catalogName);
+    const { serviceAccount, fetching } = useServiceAccount(catalogName);
 
     const [createKeyOpen, setCreateKeyOpen] = useState(false);
 
@@ -92,7 +91,7 @@ function ServiceAccountDetails() {
             </Typography>
         );
     } else {
-        const { prefix } = splitCatalogName(serviceAccount.catalogName);
+        const { prefix, leaf } = splitCatalogName(serviceAccount.catalogName);
 
         body = (
             <>
@@ -120,31 +119,23 @@ function ServiceAccountDetails() {
                     </Box>
 
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <CatalogName
-                            catalogName={serviceAccount.catalogName}
-                            sx={{ fontSize: 20 }}
-                        />
-                        <Stack
-                            direction="row"
-                            spacing={1}
-                            sx={{ alignItems: 'center', mt: 0.75 }}
+                        <Box
+                            component="span"
+                            sx={{
+                                fontFamily: 'monospace',
+                                fontWeight: 600,
+                                color: 'text.primary',
+                                fontSize: 20,
+                                overflowWrap: 'anywhere',
+                            }}
                         >
-                            <Box
-                                component="span"
-                                sx={{
-                                    width: 7,
-                                    height: 7,
-                                    borderRadius: '50%',
-                                    backgroundColor: 'success.main',
-                                }}
-                            />
-                            <Typography
-                                variant="body2"
-                                color="text.secondary"
-                            >
-                                Active
-                            </Typography>
-                        </Stack>
+                            {leaf}
+                        </Box>
+                        <UsageIndicator
+                            lastUsedAt={serviceAccount.lastUsedAt}
+                            variant="body2"
+                            sx={{ mt: 0.75 }}
+                        />
                     </Box>
 
                     <Button
@@ -190,21 +181,18 @@ function ServiceAccountDetails() {
                         catalogName={serviceAccount.catalogName}
                         grants={serviceAccount.grants}
                         tokenCount={serviceAccount.tokens.length}
-                        onChanged={refetch}
                     />
                 </Box>
 
                 <ApiKeysSection
                     tokens={serviceAccount.tokens}
                     onCreateKey={() => setCreateKeyOpen(true)}
-                    onChanged={refetch}
                 />
 
                 <CreateApiKeyDialog
                     open={createKeyOpen}
                     catalogName={serviceAccount.catalogName}
                     onClose={() => setCreateKeyOpen(false)}
-                    onCreated={refetch}
                 />
             </>
         );
@@ -223,5 +211,3 @@ function ServiceAccountDetails() {
         </>
     );
 }
-
-export default ServiceAccountDetails;

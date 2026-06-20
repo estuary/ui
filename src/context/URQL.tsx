@@ -61,8 +61,19 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
                         RefreshTokenInfo: (_data) => null,
-                        ServiceAccount: (_data) => null,
-                        ServiceAccountTokenInfo: (_data) => null,
+                        // Normalized by stable identity so a mutation that
+                        // returns the updated account reconciles every cached
+                        // query (list + detail) by key — see updates below.
+                        ServiceAccount: (data) => data.catalogName as string,
+                        ServiceAccountTokenInfo: (data) => data.id as string,
+                        // Grants have no id of their own; keep them embedded
+                        // under their owning account.
+                        ServiceAccountGrant: (_data) => null,
+                        // The one-time token secret lives only on this result —
+                        // leave it un-normalized so it never lands in the cache.
+                        // Its nested `serviceAccount` still normalizes by
+                        // catalogName, so the new token merges into the account.
+                        CreateServiceAccountTokenResult: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
                     },
@@ -89,13 +100,13 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             revokeRefreshToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'refreshTokens');
                             },
+                            // Grant and token mutations return the updated
+                            // ServiceAccount, so the normalized cache (keyed by
+                            // catalogName) reconciles the list and detail queries
+                            // on its own. createServiceAccount still needs an
+                            // invalidation: it adds a new node to the connection,
+                            // which normalization can't do.
                             createServiceAccount(_result, _args, cache) {
-                                invalidateQuery(cache, 'serviceAccounts');
-                            },
-                            createServiceAccountToken(_result, _args, cache) {
-                                invalidateQuery(cache, 'serviceAccounts');
-                            },
-                            revokeServiceAccountToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'serviceAccounts');
                             },
                         },

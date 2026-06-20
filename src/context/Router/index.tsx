@@ -89,8 +89,10 @@ const MaterializationDetailsRoute = lazy(
 const MaterializationEditRoute = lazy(
     () => import('src/context/Router/MaterializationEdit')
 );
-const ServiceAccountDetailsRoute = lazy(
-    () => import('src/components/admin/ServiceAccounts/Details')
+const ServiceAccountDetailsRoute = lazy(() =>
+    import('src/components/admin/ServiceAccounts/Details').then((module) => ({
+        default: module.ServiceAccountDetails,
+    }))
 );
 
 const router = createBrowserRouter(

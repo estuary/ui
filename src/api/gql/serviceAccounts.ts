@@ -1,6 +1,6 @@
 import type { ServiceAccount } from 'src/gql-types/graphql';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { useMutation, useQuery } from 'urql';
 
@@ -12,31 +12,40 @@ const DEFAULT_SERVICE_ACCOUNTS: ServiceAccount[] = [];
 // generous page and shows them all.
 const SERVICE_ACCOUNTS_LIMIT = 100;
 
+// The ServiceAccount fields every query and entity-returning mutation selects.
+// Mutations return the updated account, so the normalized cache (keyed by
+// catalogName) reconciles the list and detail views without a refetch.
+export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
+    fragment ServiceAccountFields on ServiceAccount {
+        catalogName
+        createdAt
+        createdBy
+        updatedAt
+        lastUsedAt
+        grants {
+            prefix
+            capability
+            createdAt
+            detail
+            updatedAt
+        }
+        tokens {
+            id
+            detail
+            createdAt
+            createdBy
+            expiresAt
+            lastUsedAt
+        }
+    }
+`);
+
 const SERVICE_ACCOUNTS_QUERY = graphql(`
     query ServiceAccounts($first: Int) {
         serviceAccounts(first: $first) {
             edges {
                 node {
-                    catalogName
-                    createdAt
-                    createdBy
-                    updatedAt
-                    lastUsedAt
-                    grants {
-                        prefix
-                        capability
-                        createdAt
-                        detail
-                        updatedAt
-                    }
-                    tokens {
-                        id
-                        detail
-                        createdAt
-                        createdBy
-                        expiresAt
-                        lastUsedAt
-                    }
+                    ...ServiceAccountFields
                 }
             }
         }
@@ -66,7 +75,7 @@ export function useServiceAccounts() {
 const SERVICE_ACCOUNT_LOOKUP_LIMIT = 250;
 
 export function useServiceAccount(catalogName: string | null) {
-    const [{ fetching, data, error }, reexecuteQuery] = useQuery({
+    const [{ fetching, data, error }] = useQuery({
         query: SERVICE_ACCOUNTS_QUERY,
         variables: { first: SERVICE_ACCOUNT_LOOKUP_LIMIT },
         pause: !catalogName,
@@ -82,15 +91,7 @@ export function useServiceAccount(catalogName: string | null) {
         [data, catalogName]
     );
 
-    // Token mutations don't return the ServiceAccount type, so URQL won't
-    // invalidate this query automatically — callers refetch after minting or
-    // revoking a key.
-    const refetch = useCallback(
-        () => reexecuteQuery({ requestPolicy: 'network-only' }),
-        [reexecuteQuery]
-    );
-
-    return { serviceAccount, fetching, error, refetch };
+    return { serviceAccount, fetching, error };
 }
 
 // A service account is homed at `catalogName` (its management anchor) and
@@ -123,13 +124,18 @@ const CREATE_SERVICE_ACCOUNT_TOKEN = graphql(`
         ) {
             id
             secret
+            serviceAccount {
+                ...ServiceAccountFields
+            }
         }
     }
 `);
 
 const REVOKE_SERVICE_ACCOUNT_TOKEN = graphql(`
     mutation RevokeServiceAccountToken($id: Id!) {
-        revokeServiceAccountToken(id: $id)
+        revokeServiceAccountToken(id: $id) {
+            ...ServiceAccountFields
+        }
     }
 `);
 
@@ -146,13 +152,17 @@ const ADD_SERVICE_ACCOUNT_GRANT = graphql(`
             catalogName: $catalogName
             prefix: $prefix
             capability: $capability
-        )
+        ) {
+            ...ServiceAccountFields
+        }
     }
 `);
 
 const REMOVE_SERVICE_ACCOUNT_GRANT = graphql(`
     mutation RemoveServiceAccountGrant($catalogName: Name!, $prefix: Prefix!) {
-        removeServiceAccountGrant(catalogName: $catalogName, prefix: $prefix)
+        removeServiceAccountGrant(catalogName: $catalogName, prefix: $prefix) {
+            ...ServiceAccountFields
+        }
     }
 `);
 
@@ -160,7 +170,9 @@ const REMOVE_SERVICE_ACCOUNT_GRANT = graphql(`
 // last grant: a credential with no access left is worth retiring.
 const REVOKE_ALL_SERVICE_ACCOUNT_TOKENS = graphql(`
     mutation RevokeAllServiceAccountTokens($catalogName: Name!) {
-        revokeAllServiceAccountTokens(catalogName: $catalogName)
+        revokeAllServiceAccountTokens(catalogName: $catalogName) {
+            ...ServiceAccountFields
+        }
     }
 `);
 

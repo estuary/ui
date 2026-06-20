@@ -14,7 +14,7 @@ interface CapabilitySelectorProps {
 
 // Segmented read / write / admin control. Each option lights up in its own
 // capability color when selected.
-function CapabilitySelector({
+export function CapabilitySelector({
     value,
     onChange,
     size = 'small',
@@ -44,5 +44,3 @@ function CapabilitySelector({
         </OutlinedToggleButtonGroup>
     );
 }
-
-export default CapabilitySelector;

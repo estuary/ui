@@ -4,8 +4,10 @@ import { Box, ButtonBase, Stack } from '@mui/material';
 
 import { Lock } from 'iconoir-react';
 
-import CatalogName from 'src/components/admin/ServiceAccounts/CatalogName';
-import { monogram } from 'src/components/admin/ServiceAccounts/shared';
+import {
+    monogram,
+    splitCatalogName,
+} from 'src/components/admin/ServiceAccounts/shared';
 import { defaultOutline, defaultOutline_hovered } from 'src/context/Theme';
 
 interface CompactAccountCardProps {
@@ -16,7 +18,10 @@ interface CompactAccountCardProps {
 // A reduced-detail card for accounts with no access grants. Smaller and dimmed,
 // it shows only identity — these accounts can't do anything until granted
 // access, so they're de-emphasized and grouped at the bottom of the list.
-function CompactAccountCard({ serviceAccount, onOpen }: CompactAccountCardProps) {
+export function CompactAccountCard({
+    serviceAccount,
+    onOpen,
+}: CompactAccountCardProps) {
     return (
         <ButtonBase
             onClick={() => onOpen(serviceAccount.catalogName)}
@@ -65,9 +70,12 @@ function CompactAccountCard({ serviceAccount, onOpen }: CompactAccountCardProps)
                     {monogram(serviceAccount.catalogName)}
                 </Box>
 
-                <CatalogName
-                    catalogName={serviceAccount.catalogName}
+                <Box
+                    component="span"
                     sx={{
+                        fontFamily: 'monospace',
+                        fontWeight: 600,
+                        color: 'text.primary',
                         flex: 1,
                         minWidth: 0,
                         fontSize: 13,
@@ -75,7 +83,9 @@ function CompactAccountCard({ serviceAccount, onOpen }: CompactAccountCardProps)
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                     }}
-                />
+                >
+                    {splitCatalogName(serviceAccount.catalogName).leaf}
+                </Box>
 
                 <Box sx={{ display: 'flex', flex: 'none', color: 'text.secondary' }}>
                     <Lock width={14} height={14} />
@@ -84,5 +94,3 @@ function CompactAccountCard({ serviceAccount, onOpen }: CompactAccountCardProps)
         </ButtonBase>
     );
 }
-
-export default CompactAccountCard;

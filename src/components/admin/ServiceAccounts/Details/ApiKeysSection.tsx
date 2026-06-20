@@ -5,7 +5,6 @@ import { useState } from 'react';
 import {
     Box,
     Button,
-    Chip,
     Dialog,
     DialogActions,
     DialogContent,
@@ -19,12 +18,16 @@ import { Key, Plus, Trash } from 'iconoir-react';
 import { DateTime } from 'luxon';
 
 import { useRevokeServiceAccountToken } from 'src/api/gql/serviceAccounts';
+import {
+    ExpiryWarning,
+    tokenExpiry,
+} from 'src/components/admin/ServiceAccounts/ExpiryWarning';
+import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import AlertBox from 'src/components/shared/AlertBox';
 
 interface ApiKeysSectionProps {
     tokens: ServiceAccountTokenInfo[];
     onCreateKey: () => void;
-    onChanged: () => void;
 }
 
 function isExpired(expiresAt: string): boolean {
@@ -53,11 +56,7 @@ function recentlyUsedGraceMinutes(
     );
 }
 
-function ApiKeysSection({
-    tokens,
-    onCreateKey,
-    onChanged,
-}: ApiKeysSectionProps) {
+export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
     const [revokeTarget, setRevokeTarget] =
         useState<ServiceAccountTokenInfo | null>(null);
     const [revokeError, setRevokeError] = useState<string | null>(null);
@@ -65,24 +64,37 @@ function ApiKeysSection({
     const [{ fetching: revoking }, revokeServiceAccountToken] =
         useRevokeServiceAccountToken();
 
-    const handleRevoke = async () => {
-        if (!revokeTarget) {
-            return;
-        }
-
+    const revokeToken = async (token: ServiceAccountTokenInfo) => {
         setRevokeError(null);
 
-        const result = await revokeServiceAccountToken({
-            id: revokeTarget.id,
-        });
+        const result = await revokeServiceAccountToken({ id: token.id });
 
         if (result.error) {
+            // Surface the failure in the confirmation dialog — the expired-key
+            // path skips confirmation, so the error would otherwise be silent.
             setRevokeError(result.error.message);
+            setRevokeTarget(token);
             return;
         }
 
         setRevokeTarget(null);
-        onChanged();
+    };
+
+    // Expired keys are already inert, so revoking one skips the confirmation
+    // dialog; active keys open it first.
+    const requestRevoke = (token: ServiceAccountTokenInfo) => {
+        if (isExpired(token.expiresAt)) {
+            void revokeToken(token);
+        } else {
+            setRevokeError(null);
+            setRevokeTarget(token);
+        }
+    };
+
+    const handleConfirmRevoke = () => {
+        if (revokeTarget) {
+            void revokeToken(revokeTarget);
+        }
     };
 
     const graceMinutes = recentlyUsedGraceMinutes(revokeTarget?.lastUsedAt);
@@ -130,7 +142,7 @@ function ApiKeysSection({
                 </Stack>
             ) : (
                 tokens.map((token) => {
-                    const expired = isExpired(token.expiresAt);
+                    const expiryAlert = tokenExpiry(token.expiresAt);
 
                     return (
                         <Stack
@@ -178,39 +190,29 @@ function ApiKeysSection({
                                         justifyContent: 'flex-end',
                                     }}
                                 >
-                                    <Typography
-                                        variant="caption"
-                                        color="text.secondary"
-                                    >
-                                        {`Expires ${DateTime.fromISO(token.expiresAt).toLocaleString(DateTime.DATE_MED)}`}
-                                    </Typography>
-                                    {expired ? (
-                                        <Chip
-                                            label="Expired"
-                                            size="small"
-                                            color="error"
-                                            variant="outlined"
+                                    {expiryAlert ? (
+                                        <ExpiryWarning
+                                            expiresAt={token.expiresAt}
                                         />
-                                    ) : null}
+                                    ) : (
+                                        <Typography
+                                            variant="caption"
+                                            color="text.secondary"
+                                        >
+                                            {`Expires ${DateTime.fromISO(token.expiresAt).toLocaleString(DateTime.DATE_MED)}`}
+                                        </Typography>
+                                    )}
                                 </Stack>
-                                <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                    sx={{ display: 'block' }}
-                                >
-                                    {token.lastUsedAt
-                                        ? `Last used ${DateTime.fromISO(token.lastUsedAt).toRelative()}`
-                                        : 'Never used'}
-                                </Typography>
+                                <UsageIndicator
+                                    lastUsedAt={token.lastUsedAt}
+                                    sx={{ justifyContent: 'flex-end' }}
+                                />
                             </Box>
 
                             <IconButton
                                 size="small"
                                 aria-label="Revoke key"
-                                onClick={() => {
-                                    setRevokeError(null);
-                                    setRevokeTarget(token);
-                                }}
+                                onClick={() => requestRevoke(token)}
                             >
                                 <Trash width={17} height={17} />
                             </IconButton>
@@ -264,7 +266,7 @@ function ApiKeysSection({
                     <Button
                         variant="contained"
                         color="error"
-                        onClick={handleRevoke}
+                        onClick={handleConfirmRevoke}
                         disabled={revoking}
                         loading={revoking}
                     >
@@ -275,5 +277,3 @@ function ApiKeysSection({
         </Box>
     );
 }
-
-export default ApiKeysSection;

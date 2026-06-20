@@ -3,15 +3,14 @@ import { useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { Plus } from 'iconoir-react';
-
 import { useNavigate } from 'react-router-dom';
 
 import { useServiceAccounts } from 'src/api/gql/serviceAccounts';
 import { authenticatedRoutes } from 'src/app/routes';
-import AccountCard from 'src/components/admin/ServiceAccounts/AccountCard';
-import CompactAccountCard from 'src/components/admin/ServiceAccounts/CompactAccountCard';
+import { AccountCard } from 'src/components/admin/ServiceAccounts/AccountCard';
+import { CompactAccountCard } from 'src/components/admin/ServiceAccounts/CompactAccountCard';
 import { CreateServiceAccountDialog } from 'src/components/admin/ServiceAccounts/CreateDialog';
-import EmptyState from 'src/components/admin/ServiceAccounts/EmptyState';
+import { EmptyState } from 'src/components/admin/ServiceAccounts/EmptyState';
 import AlertBox from 'src/components/shared/AlertBox';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
@@ -110,7 +109,7 @@ export function ServiceAccountsList() {
                             sx={{
                                 display: 'grid',
                                 gridTemplateColumns:
-                                    'repeat(auto-fill, minmax(320px, 1fr))',
+                                    'repeat(auto-fit, minmax(320px, 1fr))',
                                 gap: 2,
                             }}
                         >
@@ -132,7 +131,7 @@ export function ServiceAccountsList() {
                                 color="text.secondary"
                                 sx={{ display: 'block', mb: 1 }}
                             >
-                                No access granted
+                                No access
                             </Typography>
                             <Box
                                 sx={{

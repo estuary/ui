@@ -28,9 +28,9 @@ import {
     useCreateServiceAccount,
     useCreateServiceAccountToken,
 } from 'src/api/gql/serviceAccounts';
-import CapabilitySelector from 'src/components/admin/ServiceAccounts/CapabilitySelector';
-import LifetimeSelector from 'src/components/admin/ServiceAccounts/LifetimeSelector';
-import SecretRevealModal from 'src/components/admin/ServiceAccounts/SecretRevealModal';
+import { CapabilitySelector } from 'src/components/admin/ServiceAccounts/CapabilitySelector';
+import { LifetimeSelector } from 'src/components/admin/ServiceAccounts/LifetimeSelector';
+import { SecretRevealModal } from 'src/components/admin/ServiceAccounts/SecretRevealModal';
 import {
     DEFAULT_LIFETIME,
     formatExpiryFromNow,

@@ -38,7 +38,7 @@ const META_LABEL_SX = {
 
 // Shows a freshly minted API key exactly once. The user must acknowledge they
 // stored it before they can dismiss the dialog (no close affordance otherwise).
-function SecretRevealModal({
+export function SecretRevealModal({
     open,
     secret,
     description,
@@ -158,5 +158,3 @@ function SecretRevealModal({
         </Dialog>
     );
 }
-
-export default SecretRevealModal;

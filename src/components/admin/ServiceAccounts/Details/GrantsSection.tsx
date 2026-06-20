@@ -23,7 +23,7 @@ import {
     useRemoveServiceAccountGrant,
     useRevokeAllServiceAccountTokens,
 } from 'src/api/gql/serviceAccounts';
-import GrantDialog from 'src/components/admin/ServiceAccounts/GrantDialog';
+import { GrantDialog } from 'src/components/admin/ServiceAccounts/GrantDialog';
 import { capabilityColor } from 'src/components/admin/ServiceAccounts/shared';
 import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
 import AlertBox from 'src/components/shared/AlertBox';
@@ -34,7 +34,6 @@ interface GrantsSectionProps {
     // Number of API keys the account owns, used to offer revoking them when the
     // last grant is removed.
     tokenCount: number;
-    onChanged: () => void;
 }
 
 interface GrantDialogState {
@@ -43,11 +42,10 @@ interface GrantDialogState {
     capability?: Capability;
 }
 
-function GrantsSection({
+export function GrantsSection({
     catalogName,
     grants,
     tokenCount,
-    onChanged,
 }: GrantsSectionProps) {
     const { leaves } = usePrefixLeaves();
 
@@ -97,7 +95,6 @@ function GrantsSection({
 
             if (revokeResult.error) {
                 // The grant is already gone; surface the partial failure.
-                onChanged();
                 setRemoveError(
                     `The grant was removed, but the API keys could not be revoked: ${revokeResult.error.message}`
                 );
@@ -106,7 +103,6 @@ function GrantsSection({
         }
 
         setRemoveTarget(null);
-        onChanged();
     };
 
     return (
@@ -215,7 +211,6 @@ function GrantsSection({
                 initialPrefix={dialog?.prefix}
                 initialCapability={dialog?.capability}
                 onClose={() => setDialog(null)}
-                onSaved={onChanged}
             />
 
             <Dialog
@@ -335,5 +330,3 @@ function GrantsSection({
         </Box>
     );
 }
-
-export default GrantsSection;
