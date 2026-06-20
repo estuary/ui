@@ -133,7 +133,7 @@ function GrantDialog({
                                     alignItems: 'center',
                                     px: 1.5,
                                     py: 1,
-                                    borderRadius: 1,
+                                    borderRadius: (theme) => theme.radius.sm,
                                     color: 'text.secondary',
                                     bgcolor: (theme) =>
                                         codeBackground[theme.palette.mode],

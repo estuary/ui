@@ -20,6 +20,13 @@ const SERVICE_ACCOUNTS_QUERY = graphql(`
                     createdBy
                     updatedAt
                     lastUsedAt
+                    grants {
+                        prefix
+                        capability
+                        createdAt
+                        detail
+                        updatedAt
+                    }
                     tokens {
                         id
                         detail
@@ -162,6 +169,14 @@ const REMOVE_SERVICE_ACCOUNT_GRANT = graphql(`
     }
 `);
 
+// Revokes every active token the account owns. Used when removing an account's
+// last grant: a credential with no access left is worth retiring.
+const REVOKE_ALL_SERVICE_ACCOUNT_TOKENS = graphql(`
+    mutation RevokeAllServiceAccountTokens($catalogName: Name!) {
+        revokeAllServiceAccountTokens(catalogName: $catalogName)
+    }
+`);
+
 export function useCreateServiceAccount() {
     return useMutation(CREATE_SERVICE_ACCOUNT);
 }
@@ -180,4 +195,8 @@ export function useAddServiceAccountGrant() {
 
 export function useRemoveServiceAccountGrant() {
     return useMutation(REMOVE_SERVICE_ACCOUNT_GRANT);
+}
+
+export function useRevokeAllServiceAccountTokens() {
+    return useMutation(REVOKE_ALL_SERVICE_ACCOUNT_TOKENS);
 }

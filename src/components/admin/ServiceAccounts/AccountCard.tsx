@@ -1,5 +1,4 @@
-import type { ServiceAccountGrant } from 'src/api/combinedGrantsExt';
-import type { ServiceAccount } from 'src/gql-types/graphql';
+import type { ServiceAccount, ServiceAccountGrant } from 'src/gql-types/graphql';
 import type { SxProps, Theme } from '@mui/material';
 
 import { Box, ButtonBase, Chip, Stack, Typography } from '@mui/material';
@@ -57,7 +56,7 @@ function AccountCard({ serviceAccount, grants, onOpen }: AccountCardProps) {
                 'width': '100%',
                 'textAlign': 'left',
                 'p': 2,
-                'borderRadius': 3,
+                'borderRadius': (theme) => theme.radius.lg,
                 'background': (theme) =>
                     hasGrants
                         ? semiTransparentBackground[theme.palette.mode]
@@ -88,7 +87,7 @@ function AccountCard({ serviceAccount, grants, onOpen }: AccountCardProps) {
                             width: 42,
                             height: 42,
                             flex: 'none',
-                            borderRadius: 2.5,
+                            borderRadius: (theme) => theme.radius.md,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
