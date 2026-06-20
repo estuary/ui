@@ -8,11 +8,13 @@ import { graphql } from 'src/gql-types';
 
 const DEFAULT_SERVICE_ACCOUNTS: ServiceAccount[] = [];
 
-export const SERVICE_ACCOUNTS_PAGE_SIZE = 10;
+// Service accounts are few per tenant in practice, so the list fetches a single
+// generous page and shows them all.
+const SERVICE_ACCOUNTS_LIMIT = 100;
 
 const SERVICE_ACCOUNTS_QUERY = graphql(`
-    query ServiceAccounts($first: Int, $after: String) {
-        serviceAccounts(first: $first, after: $after) {
+    query ServiceAccounts($first: Int) {
+        serviceAccounts(first: $first) {
             edges {
                 node {
                     catalogName
@@ -20,6 +22,13 @@ const SERVICE_ACCOUNTS_QUERY = graphql(`
                     createdBy
                     updatedAt
                     lastUsedAt
+                    grants {
+                        prefix
+                        capability
+                        createdAt
+                        detail
+                        updatedAt
+                    }
                     tokens {
                         id
                         detail
@@ -29,22 +38,15 @@ const SERVICE_ACCOUNTS_QUERY = graphql(`
                         lastUsedAt
                     }
                 }
-                cursor
-            }
-            pageInfo {
-                ...PageInfoFields
             }
         }
     }
 `);
 
-export function useServiceAccounts(afterCursor?: string) {
+export function useServiceAccounts() {
     const [{ fetching, data, error }] = useQuery({
         query: SERVICE_ACCOUNTS_QUERY,
-        variables: {
-            first: SERVICE_ACCOUNTS_PAGE_SIZE,
-            after: afterCursor,
-        },
+        variables: { first: SERVICE_ACCOUNTS_LIMIT },
     });
 
     const serviceAccounts = useMemo(
@@ -54,15 +56,7 @@ export function useServiceAccounts(afterCursor?: string) {
         [data]
     );
 
-    const pageInfo = data?.serviceAccounts?.pageInfo ?? null;
-
-    return {
-        serviceAccounts,
-        fetching,
-        error,
-        pageInfo,
-        pageSize: SERVICE_ACCOUNTS_PAGE_SIZE,
-    };
+    return { serviceAccounts, fetching, error };
 }
 
 // The schema exposes service accounts only as a paginated connection — there is
@@ -162,6 +156,14 @@ const REMOVE_SERVICE_ACCOUNT_GRANT = graphql(`
     }
 `);
 
+// Revokes every active token the account owns. Used when removing an account's
+// last grant: a credential with no access left is worth retiring.
+const REVOKE_ALL_SERVICE_ACCOUNT_TOKENS = graphql(`
+    mutation RevokeAllServiceAccountTokens($catalogName: Name!) {
+        revokeAllServiceAccountTokens(catalogName: $catalogName)
+    }
+`);
+
 export function useCreateServiceAccount() {
     return useMutation(CREATE_SERVICE_ACCOUNT);
 }
@@ -180,4 +182,8 @@ export function useAddServiceAccountGrant() {
 
 export function useRemoveServiceAccountGrant() {
     return useMutation(REMOVE_SERVICE_ACCOUNT_GRANT);
+}
+
+export function useRevokeAllServiceAccountTokens() {
+    return useMutation(REVOKE_ALL_SERVICE_ACCOUNT_TOKENS);
 }

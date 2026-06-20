@@ -1,14 +1,8 @@
 import { useState } from 'react';
 
-import {
-    Box,
-    Button,
-    IconButton,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
-import { NavArrowLeft, NavArrowRight, Plus } from 'iconoir-react';
+import { Plus } from 'iconoir-react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -20,22 +14,13 @@ import { CreateServiceAccountDialog } from 'src/components/admin/ServiceAccounts
 import EmptyState from 'src/components/admin/ServiceAccounts/EmptyState';
 import AlertBox from 'src/components/shared/AlertBox';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useServiceAccountGrantsByNames } from 'src/hooks/serviceAccounts/useServiceAccountGrants';
-import { useCursorPagination } from 'src/hooks/useCursorPagination';
 
 type CreateMode = 'quick' | 'guided';
 
 export function ServiceAccountsList() {
     const navigate = useNavigate();
 
-    const { currentPage, cursor, onPageChange } = useCursorPagination();
-    const { serviceAccounts, fetching, error, pageInfo, pageSize } =
-        useServiceAccounts(cursor);
-
-    const { grantsByName, fetching: grantsFetching } =
-        useServiceAccountGrantsByNames(
-            serviceAccounts.map((account) => account.catalogName)
-        );
+    const { serviceAccounts, fetching, error } = useServiceAccounts();
 
     const [createOpen, setCreateOpen] = useState(false);
     const [createMode, setCreateMode] = useState<CreateMode>('quick');
@@ -52,21 +37,14 @@ export function ServiceAccountsList() {
     };
 
     const hasAccounts = serviceAccounts.length > 0;
-    const from = currentPage * pageSize + 1;
-    const to = from + serviceAccounts.length - 1;
-
-    const hasGrants = (catalogName: string) =>
-        (grantsByName[catalogName]?.length ?? 0) > 0;
 
     // Accounts without any grants are de-emphasized and grouped at the bottom.
-    // Until grants finish loading we can't tell them apart, so keep everything
-    // in the main grid to avoid a flash of compact cards.
-    const grantedAccounts = grantsFetching
-        ? serviceAccounts
-        : serviceAccounts.filter((account) => hasGrants(account.catalogName));
-    const noAccessAccounts = grantsFetching
-        ? []
-        : serviceAccounts.filter((account) => !hasGrants(account.catalogName));
+    const grantedAccounts = serviceAccounts.filter(
+        (account) => account.grants.length > 0
+    );
+    const noAccessAccounts = serviceAccounts.filter(
+        (account) => account.grants.length === 0
+    );
 
     return (
         <Box>
@@ -140,9 +118,7 @@ export function ServiceAccountsList() {
                                 <AccountCard
                                     key={account.catalogName}
                                     serviceAccount={account}
-                                    grants={
-                                        grantsByName[account.catalogName] ?? []
-                                    }
+                                    grants={account.grants}
                                     onOpen={openDetail}
                                 />
                             ))}
@@ -178,42 +154,6 @@ export function ServiceAccountsList() {
                     ) : null}
                 </Stack>
             )}
-
-            {pageInfo && hasAccounts ? (
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{
-                        mt: 2,
-                        justifyContent: 'flex-end',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Typography variant="body2" color="text.secondary">
-                        {`${from}–${to}`}
-                    </Typography>
-                    <IconButton
-                        size="small"
-                        aria-label="Previous page"
-                        disabled={!pageInfo.hasPreviousPage}
-                        onClick={() =>
-                            onPageChange(null, currentPage - 1, pageInfo.endCursor)
-                        }
-                    >
-                        <NavArrowLeft />
-                    </IconButton>
-                    <IconButton
-                        size="small"
-                        aria-label="Next page"
-                        disabled={!pageInfo.hasNextPage}
-                        onClick={() =>
-                            onPageChange(null, currentPage + 1, pageInfo.endCursor)
-                        }
-                    >
-                        <NavArrowRight />
-                    </IconButton>
-                </Stack>
-            ) : null}
         </Box>
     );
 }

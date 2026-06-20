@@ -25,7 +25,6 @@ import { logoColors } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { useServiceAccountGrants } from 'src/hooks/serviceAccounts/useServiceAccountGrants';
 import usePageTitle from 'src/hooks/usePageTitle';
 
 const META_LABEL_SX = {
@@ -59,8 +58,6 @@ function ServiceAccountDetails() {
 
     const { serviceAccount, fetching, refetch } =
         useServiceAccount(catalogName);
-    const { grants, mutate: mutateGrants } =
-        useServiceAccountGrants(catalogName);
 
     const [createKeyOpen, setCreateKeyOpen] = useState(false);
 
@@ -109,7 +106,7 @@ function ServiceAccountDetails() {
                             width: 52,
                             height: 52,
                             flex: 'none',
-                            borderRadius: 3,
+                            borderRadius: (theme) => theme.radius.md,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -191,8 +188,9 @@ function ServiceAccountDetails() {
                 <Box sx={{ mb: 5 }}>
                     <GrantsSection
                         catalogName={serviceAccount.catalogName}
-                        grants={grants}
-                        onChanged={mutateGrants}
+                        grants={serviceAccount.grants}
+                        tokenCount={serviceAccount.tokens.length}
+                        onChanged={refetch}
                     />
                 </Box>
 

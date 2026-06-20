@@ -17,7 +17,7 @@ function LifetimeSelector({ value, onChange }: LifetimeSelectorProps) {
                     size="small"
                     variant={value === option.value ? 'contained' : 'outlined'}
                     onClick={() => onChange(option.value)}
-                    sx={{ borderRadius: 5 }}
+                    sx={{ borderRadius: (theme) => theme.radius.full }}
                 >
                     {option.label}
                 </Button>

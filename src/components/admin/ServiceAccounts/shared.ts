@@ -6,14 +6,16 @@ import { DateTime, Duration } from 'luxon';
 export type CapabilityColor = 'info' | 'primary' | 'warning';
 
 // How each capability reads. read is the gentlest (info), write is the working
-// default (primary), admin is the most privileged (warning).
-const CAPABILITY_COLOR: Record<Capability, CapabilityColor> = {
+// default (primary), admin is the most privileged (warning). Accepts a string
+// since grant capabilities come from the GraphQL `Capability` enum, which also
+// includes `none`.
+const CAPABILITY_COLOR: Record<string, CapabilityColor> = {
     read: 'info',
     write: 'primary',
     admin: 'warning',
 };
 
-export function capabilityColor(capability: Capability): CapabilityColor {
+export function capabilityColor(capability: string): CapabilityColor {
     return CAPABILITY_COLOR[capability] ?? 'info';
 }
 
@@ -74,5 +76,5 @@ export function monogram(catalogName: string): string {
     const { leaf } = splitCatalogName(catalogName);
     const alphanumeric = leaf.replace(/[^a-z0-9]/gi, '');
 
-    return (alphanumeric.slice(0, 2) || 'SA').toUpperCase();
+    return (alphanumeric.slice(0, 1) || 'SA').toUpperCase();
 }

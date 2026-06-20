@@ -1,7 +1,7 @@
 import type { Capability } from 'src/types';
 import type { SxProps, Theme } from '@mui/material';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
     Box,
@@ -11,16 +11,18 @@ import {
     DialogContent,
     FormControlLabel,
     IconButton,
+    InputAdornment,
     Stack,
     Step,
     StepLabel,
     Stepper,
     Switch,
     TextField,
+    Tooltip,
     Typography,
 } from '@mui/material';
 
-import { NavArrowLeft, Plus, Trash } from 'iconoir-react';
+import { NavArrowLeft, Plus, Refresh, Trash } from 'iconoir-react';
 
 import {
     useCreateServiceAccount,
@@ -40,6 +42,7 @@ import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/Lea
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import { codeBackground, defaultOutline } from 'src/context/Theme';
+import { generateAlliterativeName } from 'src/utils/alliterate';
 import { hasLength } from 'src/utils/misc-utils';
 
 const TITLE_ID = 'create-service-account';
@@ -72,7 +75,7 @@ const FULL_NAME_SX: SxProps<Theme> = {
     gap: 1,
     px: 1.5,
     py: 1.25,
-    borderRadius: 1,
+    borderRadius: (theme) => theme.radius.sm,
     bgcolor: (theme) => codeBackground[theme.palette.mode],
 };
 
@@ -104,13 +107,17 @@ export function CreateServiceAccountDialog({
     const [reveal, setReveal] = useState<RevealState | null>(null);
     const [createdName, setCreatedName] = useState<string | null>(null);
 
+    const nameInputRef = useRef<HTMLInputElement>(null);
+
+    const regenerateName = () => setName(generateAlliterativeName());
+
     useEffect(() => {
         if (!open) {
             return;
         }
 
         setLocalMode(mode);
-        setName('');
+        setName(generateAlliterativeName());
         setLocation(selectedTenant);
         setGrantOn(true);
         setQuickCapability('read');
@@ -224,11 +231,31 @@ export function CreateServiceAccountDialog({
                     event.target.value.replace(/[^a-z0-9-]/gi, '').toLowerCase()
                 )
             }
+            inputRef={nameInputRef}
+            autoFocus
             size="small"
             fullWidth
             required
             placeholder="banana-bot"
             helperText="Lowercase letters, numbers and dashes. Must be unique."
+            slotProps={{
+                input: {
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <Tooltip title="Generate a new name">
+                                <IconButton
+                                    size="small"
+                                    edge="end"
+                                    onClick={regenerateName}
+                                    aria-label="Generate a new name"
+                                >
+                                    <Refresh width={18} height={18} />
+                                </IconButton>
+                            </Tooltip>
+                        </InputAdornment>
+                    ),
+                },
+            }}
         />
     );
 
@@ -261,6 +288,11 @@ export function CreateServiceAccountDialog({
                 maxWidth="sm"
                 fullWidth
                 aria-labelledby={TITLE_ID}
+                slotProps={{
+                    transition: {
+                        onEntered: () => nameInputRef.current?.select(),
+                    },
+                }}
             >
                 <DialogTitleWithClose
                     id={TITLE_ID}
@@ -313,7 +345,7 @@ export function CreateServiceAccountDialog({
                                 <Box
                                     sx={{
                                         p: 2,
-                                        borderRadius: 1,
+                                        borderRadius: (theme) => theme.radius.md,
                                         border: (theme) =>
                                             defaultOutline[theme.palette.mode],
                                     }}

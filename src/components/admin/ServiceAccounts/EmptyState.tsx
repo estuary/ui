@@ -23,7 +23,7 @@ function EmptyState({ onQuickCreate, onGuidedCreate }: EmptyStateProps) {
                 sx={{
                     width: 88,
                     height: 88,
-                    borderRadius: 2.5,
+                    borderRadius: (theme) => theme.radius.xl,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

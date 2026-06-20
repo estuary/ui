@@ -68,7 +68,7 @@ function SecretRevealModal({
                                 width: 38,
                                 height: 38,
                                 flex: 'none',
-                                borderRadius: 2.5,
+                                borderRadius: (theme) => theme.radius.md,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',

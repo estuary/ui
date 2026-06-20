@@ -1,4 +1,4 @@
-import type { ServiceAccountGrant } from 'src/api/combinedGrantsExt';
+import type { ServiceAccountGrant } from 'src/gql-types/graphql';
 import type { Capability } from 'src/types';
 
 import { useState } from 'react';
@@ -6,10 +6,12 @@ import { useState } from 'react';
 import {
     Box,
     Button,
+    Checkbox,
     Chip,
     Dialog,
     DialogActions,
     DialogContent,
+    FormControlLabel,
     IconButton,
     Stack,
     Typography,
@@ -17,7 +19,10 @@ import {
 
 import { EditPencil, Folder, Lock, Plus, Trash } from 'iconoir-react';
 
-import { useRemoveServiceAccountGrant } from 'src/api/gql/serviceAccounts';
+import {
+    useRemoveServiceAccountGrant,
+    useRevokeAllServiceAccountTokens,
+} from 'src/api/gql/serviceAccounts';
 import GrantDialog from 'src/components/admin/ServiceAccounts/GrantDialog';
 import { capabilityColor } from 'src/components/admin/ServiceAccounts/shared';
 import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
@@ -26,6 +31,9 @@ import AlertBox from 'src/components/shared/AlertBox';
 interface GrantsSectionProps {
     catalogName: string;
     grants: ServiceAccountGrant[];
+    // Number of API keys the account owns, used to offer revoking them when the
+    // last grant is removed.
+    tokenCount: number;
     onChanged: () => void;
 }
 
@@ -35,16 +43,35 @@ interface GrantDialogState {
     capability?: Capability;
 }
 
-function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
+function GrantsSection({
+    catalogName,
+    grants,
+    tokenCount,
+    onChanged,
+}: GrantsSectionProps) {
     const { leaves } = usePrefixLeaves();
 
     const [dialog, setDialog] = useState<GrantDialogState | null>(null);
     const [removeTarget, setRemoveTarget] =
         useState<ServiceAccountGrant | null>(null);
+    const [revokeKeysToo, setRevokeKeysToo] = useState(false);
     const [removeError, setRemoveError] = useState<string | null>(null);
 
     const [{ fetching: removing }, removeServiceAccountGrant] =
         useRemoveServiceAccountGrant();
+    const [{ fetching: revoking }, revokeAllServiceAccountTokens] =
+        useRevokeAllServiceAccountTokens();
+
+    // Removing the only remaining grant leaves the account with no access.
+    const removingLastGrant = grants.length === 1;
+    const offerRevokeKeys = removingLastGrant && tokenCount > 0;
+    const busy = removing || revoking;
+
+    const openRemove = (grant: ServiceAccountGrant) => {
+        setRemoveError(null);
+        setRevokeKeysToo(false);
+        setRemoveTarget(grant);
+    };
 
     const handleRemove = async () => {
         if (!removeTarget) {
@@ -55,12 +82,27 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
 
         const result = await removeServiceAccountGrant({
             catalogName,
-            prefix: removeTarget.object_role,
+            prefix: removeTarget.prefix,
         });
 
         if (result.error) {
             setRemoveError(result.error.message);
             return;
+        }
+
+        if (offerRevokeKeys && revokeKeysToo) {
+            const revokeResult = await revokeAllServiceAccountTokens({
+                catalogName,
+            });
+
+            if (revokeResult.error) {
+                // The grant is already gone; surface the partial failure.
+                onChanged();
+                setRemoveError(
+                    `The grant was removed, but the API keys could not be revoked: ${revokeResult.error.message}`
+                );
+                return;
+            }
         }
 
         setRemoveTarget(null);
@@ -110,7 +152,7 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
             ) : (
                 grants.map((grant) => (
                     <Stack
-                        key={grant.id}
+                        key={grant.prefix}
                         direction="row"
                         spacing={1.75}
                         sx={{
@@ -134,7 +176,7 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
                                 whiteSpace: 'nowrap',
                             }}
                         >
-                            {grant.object_role}
+                            {grant.prefix}
                         </Typography>
                         <Chip
                             label={grant.capability}
@@ -147,8 +189,8 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
                             onClick={() =>
                                 setDialog({
                                     mode: 'edit',
-                                    prefix: grant.object_role,
-                                    capability: grant.capability,
+                                    prefix: grant.prefix,
+                                    capability: grant.capability as Capability,
                                 })
                             }
                         >
@@ -157,10 +199,7 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
                         <IconButton
                             size="small"
                             aria-label="Remove grant"
-                            onClick={() => {
-                                setRemoveError(null);
-                                setRemoveTarget(grant);
-                            }}
+                            onClick={() => openRemove(grant)}
                         >
                             <Trash width={17} height={17} />
                         </IconButton>
@@ -192,7 +231,7 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
                                 width: 36,
                                 height: 36,
                                 flex: 'none',
-                                borderRadius: 2,
+                                borderRadius: (theme) => theme.radius.md,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -202,27 +241,68 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
                         >
                             <Trash />
                         </Box>
-                        <Stack spacing={1}>
-                            <Typography variant="subtitle1">
-                                Remove access grant?
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                color="text.secondary"
-                            >
-                                This account will immediately lose access to{' '}
+                        <Stack spacing={1.5} sx={{ flex: 1, minWidth: 0 }}>
+                            <Box>
+                                <Typography variant="subtitle1">
+                                    Remove access grant?
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    This account will immediately lose access to{' '}
+                                    <Box
+                                        component="span"
+                                        sx={{
+                                            fontFamily: 'monospace',
+                                            color: 'text.primary',
+                                        }}
+                                    >
+                                        {removeTarget?.prefix}
+                                    </Box>
+                                    . Existing API keys will stop working for
+                                    this prefix.
+                                </Typography>
+                            </Box>
+
+                            {offerRevokeKeys ? (
                                 <Box
-                                    component="span"
                                     sx={{
-                                        fontFamily: 'monospace',
-                                        color: 'text.primary',
+                                        p: 1.5,
+                                        borderRadius: (theme) => theme.radius.md,
+                                        border: (theme) =>
+                                            `1px solid ${theme.palette.divider}`,
                                     }}
                                 >
-                                    {removeTarget?.object_role}
+                                    <FormControlLabel
+                                        sx={{ alignItems: 'flex-start', m: 0 }}
+                                        control={
+                                            <Checkbox
+                                                size="small"
+                                                checked={revokeKeysToo}
+                                                onChange={(event) =>
+                                                    setRevokeKeysToo(
+                                                        event.target.checked
+                                                    )
+                                                }
+                                                sx={{ pt: 0 }}
+                                            />
+                                        }
+                                        label={
+                                            <Typography variant="body2">
+                                                This is the account’s last grant.
+                                                Also revoke its{' '}
+                                                {tokenCount === 1
+                                                    ? '1 API key'
+                                                    : `${tokenCount} API keys`}{' '}
+                                                so the leftover credential can’t
+                                                be used.
+                                            </Typography>
+                                        }
+                                    />
                                 </Box>
-                                . Existing API keys will stop working for this
-                                prefix.
-                            </Typography>
+                            ) : null}
+
                             {removeError ? (
                                 <AlertBox severity="error" short>
                                     <Typography>{removeError}</Typography>
@@ -235,7 +315,7 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
                     <Button
                         variant="outlined"
                         onClick={() => setRemoveTarget(null)}
-                        disabled={removing}
+                        disabled={busy}
                     >
                         Cancel
                     </Button>
@@ -243,10 +323,12 @@ function GrantsSection({ catalogName, grants, onChanged }: GrantsSectionProps) {
                         variant="contained"
                         color="error"
                         onClick={handleRemove}
-                        disabled={removing}
-                        loading={removing}
+                        disabled={busy}
+                        loading={busy}
                     >
-                        Remove grant
+                        {revokeKeysToo && offerRevokeKeys
+                            ? 'Remove grant & revoke keys'
+                            : 'Remove grant'}
                     </Button>
                 </DialogActions>
             </Dialog>
