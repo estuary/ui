@@ -54,6 +54,7 @@ export const ListItemLink = ({ icon, title, link }: Props) => {
     );
 };
 
+
 /** @deprecated Prefer the named `ListItemLink` export */
 const ListItemLinkWrapper = ({ title, ...props }: Props) => {
     const intl = useIntl();
