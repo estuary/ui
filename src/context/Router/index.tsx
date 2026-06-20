@@ -89,6 +89,9 @@ const MaterializationDetailsRoute = lazy(
 const MaterializationEditRoute = lazy(
     () => import('src/context/Router/MaterializationEdit')
 );
+const ServiceAccountDetailsRoute = lazy(
+    () => import('src/components/admin/ServiceAccounts/Details')
+);
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -755,6 +758,18 @@ const router = createBrowserRouter(
                                 <Suspense fallback={null}>
                                     <ServiceAccounts />
                                 </Suspense>
+                            }
+                        />
+                        <Route
+                            path={`${authenticatedRoutes.admin.serviceAccounts.path}/${authenticatedRoutes.admin.serviceAccounts.details.path}`}
+                            element={
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <ServiceAccountDetailsRoute />
+                                    </Suspense>
+                                </ErrorBoundary>
                             }
                         />
                         <Route

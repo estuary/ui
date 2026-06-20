@@ -35,6 +35,11 @@ const admin = {
         title: 'routeTitle.admin.serviceAccounts',
         path: 'serviceAccounts',
         fullPath: '/admin/serviceAccounts',
+        details: {
+            title: 'routeTitle.admin.serviceAccounts.details',
+            path: 'details',
+            fullPath: '/admin/serviceAccounts/details',
+        },
     },
     settings: {
         title: 'routeTitle.admin.settings',

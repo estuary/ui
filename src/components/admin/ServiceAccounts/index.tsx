@@ -1,7 +1,7 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import { ServiceAccountsTable } from 'src/components/admin/ServiceAccounts/Table';
+import { ServiceAccountsList } from 'src/components/admin/ServiceAccounts/List';
 import AdminTabs from 'src/components/admin/Tabs';
 import usePageTitle from 'src/hooks/usePageTitle';
 
@@ -15,20 +15,7 @@ export function ServiceAccounts() {
             <AdminTabs />
 
             <Box sx={{ p: 2 }}>
-                <Stack sx={{ mb: 2 }}>
-                    <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        Service Accounts
-                    </Typography>
-
-                    <Typography>
-                        Service accounts provide non-login identities for CI/CD
-                        pipelines, AI agents, and other programmatic
-                        integrations, including the Kafka compatible API
-                        “dekaf”.
-                    </Typography>
-                </Stack>
-
-                <ServiceAccountsTable />
+                <ServiceAccountsList />
             </Box>
         </>
     );
