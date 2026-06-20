@@ -30,9 +30,6 @@ function JournalAlerts({
     ) {
         title = 'journals.tooManyBytesAndNoDocuments.title';
         message = 'journals.tooManyBytesAndNoDocuments.message';
-    } else if (journalData.data?.tooFewDocuments) {
-        title = 'journals.tooFewDocuments.title';
-        message = 'journals.tooFewDocuments.message';
     } else if (journalData.data?.tooManyBytes) {
         title = 'journals.tooManyBytes.title';
         message = 'journals.tooManyBytes.message';

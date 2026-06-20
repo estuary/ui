@@ -25,7 +25,6 @@ export interface LoadDocumentsProps {
 
 export interface LoadDocumentsResponse {
     documents: any[];
-    tooFewDocuments: boolean;
     tooManyBytes: boolean;
     meta?: {
         range: JournalByteRange;
