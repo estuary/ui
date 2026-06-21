@@ -38,6 +38,8 @@ export type Scalars = {
   NaiveDate: { input: any; output: any; }
   Name: { input: any; output: any; }
   Prefix: { input: any; output: any; }
+  /** A secret returned by the API, such as a bearer credential. The value is serialized as a string, but clients must treat it as sensitive: redact it from logs and UIs, and never pass it to a language model. */
+  Sensitive: { input: any; output: any; }
   /**
    * A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
    * Strings within GraphQL. UUIDs are used to assign unique identifiers to
@@ -558,7 +560,7 @@ export type Controller = {
 
 export type CreateBillingSetupIntentPayload = {
   __typename?: 'CreateBillingSetupIntentPayload';
-  clientSecret: Scalars['String']['output'];
+  clientSecret: Scalars['Sensitive']['output'];
 };
 
 export type CreateServiceAccountTokenResult = {
@@ -568,7 +570,7 @@ export type CreateServiceAccountTokenResult = {
    * The bearer credential, returned exactly once. Present it as an
    * `Authorization: Bearer` token or exchange it at `POST /api/v1/auth/token`.
    */
-  secret: Scalars['String']['output'];
+  secret: Scalars['Sensitive']['output'];
   /**
    * The owning account in its post-mint state, so the new token merges into
    * client caches without a follow-up query.
@@ -1754,7 +1756,7 @@ export type RefreshTokenInfoEdge = {
 export type RefreshTokenResult = {
   __typename?: 'RefreshTokenResult';
   id: Scalars['Id']['output'];
-  secret: Scalars['String']['output'];
+  secret: Scalars['Sensitive']['output'];
 };
 
 export type RepublishRequested = {
@@ -2265,7 +2267,7 @@ export type CreateRefreshTokenMutationVariables = Exact<{
 }>;
 
 
-export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: any, secret: string } };
+export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: any, secret: any } };
 
 export type RevokeRefreshTokenMutationVariables = Exact<{
   id: Scalars['Id']['input'];

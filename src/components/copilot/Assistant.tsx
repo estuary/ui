@@ -16,8 +16,11 @@ import { CopilotChat } from '@copilotkit/react-ui';
 import { Role, TextMessage } from '@copilotkit/runtime-client-gql';
 import { Sparks, Xmark } from 'iconoir-react';
 
+import DatabaseActions from 'src/components/copilot/DatabaseActions';
 import DataflowActions from 'src/components/copilot/DataflowActions';
 import DocsActions from 'src/components/copilot/DocsActions';
+import GraphQLActions from 'src/components/copilot/GraphQLActions';
+import KapaActions from 'src/components/copilot/KapaActions';
 import { ASSISTANT_INSTRUCTIONS } from 'src/components/copilot/shared';
 import TaskHealthActions from 'src/components/copilot/TaskHealthActions';
 import useCopilotPageContext from 'src/hooks/copilot/useCopilotPageContext';
@@ -43,6 +46,12 @@ function PromptBridge() {
     const clearPendingPrompt = useCopilotAssistantStore(
         (state) => state.clearPendingPrompt
     );
+    const pendingFreshPrompt = useCopilotAssistantStore(
+        (state) => state.pendingFreshPrompt
+    );
+    const clearPendingFreshPrompt = useCopilotAssistantStore(
+        (state) => state.clearPendingFreshPrompt
+    );
     const pendingOpener = useCopilotAssistantStore(
         (state) => state.pendingOpener
     );
@@ -56,6 +65,9 @@ function PromptBridge() {
     // starts (the provider is keyed on threadNonce).
     const openerAppended = useRef(false);
 
+    // Same guard for the "Get help" fresh-thread prompt.
+    const freshPromptAppended = useRef(false);
+
     useEffect(() => {
         if (!pendingPrompt) {
             return;
@@ -66,6 +78,31 @@ function PromptBridge() {
         );
         clearPendingPrompt();
     }, [pendingPrompt, appendMessage, clearPendingPrompt]);
+
+    useEffect(() => {
+        if (!pendingFreshPrompt || freshPromptAppended.current) {
+            return;
+        }
+
+        // The provider remounted (keyed on threadNonce) to clear the thread, so
+        // wait for the fresh runtime session before appending — an append fired
+        // before isAvailable is silently dropped. A USER message (no followUp
+        // flag) runs the model so the assistant answers immediately.
+        if (!isAvailable) {
+            return;
+        }
+
+        freshPromptAppended.current = true;
+        void appendMessage(
+            new TextMessage({ content: pendingFreshPrompt, role: Role.User })
+        );
+        clearPendingFreshPrompt();
+    }, [
+        pendingFreshPrompt,
+        isAvailable,
+        appendMessage,
+        clearPendingFreshPrompt,
+    ]);
 
     useEffect(() => {
         if (!pendingOpener || openerAppended.current) {
@@ -206,8 +243,11 @@ export default function CopilotAssistant() {
             >
                 <PageContext />
                 <DocsActions />
+                <KapaActions />
+                <GraphQLActions />
                 <TaskHealthActions />
                 <DataflowActions />
+                <DatabaseActions />
                 <PromptBridge />
                 <AssistantPanel />
             </CopilotKit>

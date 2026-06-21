@@ -14,6 +14,10 @@
 // The frontend points at it via VITE_COPILOT_RUNTIME_URL (default
 // http://localhost:4000/copilotkit) and is provider-agnostic.
 
+// Must be first: patches global fetch to sanitize Anthropic requests (dedupe
+// tool_use ids / disable parallel tool calls) before any adapter captures fetch.
+import './patch-fetch.mjs';
+
 import { createServer } from 'node:http';
 
 import Anthropic from '@anthropic-ai/sdk';
@@ -23,12 +27,51 @@ import {
     GoogleGenerativeAIAdapter,
     copilotRuntimeNodeHttpEndpoint,
 } from '@copilotkit/runtime';
+import pg from 'pg';
 
 const PORT = Number(process.env.COPILOT_RUNTIME_PORT ?? 4000);
 const ENDPOINT = '/copilotkit';
 // Vite dev server origin allowed to call this runtime.
 const ALLOWED_ORIGIN =
     process.env.COPILOT_ALLOWED_ORIGIN ?? 'http://localhost:3000';
+
+// Kapa knowledge retrieval via its server-side Query API. The runtime holds the
+// API key and proxies questions from the browser (the `searchEstuaryKnowledge`
+// action), so the key never reaches the SPA. All three values come from the Kapa
+// dashboard's Query API integration. If any is unset, the /kapa endpoint reports
+// it's not configured rather than failing the whole runtime — the rest of the
+// assistant still works.
+//
+// (The Hosted MCP Server is the eventual target — auto-registered tool, raw
+// chunks — but its endpoint is OAuth-only today, which a headless runtime can't
+// satisfy with a static key. Switch back once it offers API-key auth.)
+const KAPA_API_KEY = process.env.KAPA_API_KEY;
+const KAPA_PROJECT_ID = process.env.KAPA_PROJECT_ID;
+const KAPA_INTEGRATION_ID = process.env.KAPA_INTEGRATION_ID;
+const kapaConfigured = Boolean(
+    KAPA_API_KEY && KAPA_PROJECT_ID && KAPA_INTEGRATION_ID
+);
+
+// Reads and JSON-parses a request body. Resolves {} for an empty body.
+function readJsonBody(req) {
+    return new Promise((resolve, reject) => {
+        const chunks = [];
+        req.on('data', (chunk) => chunks.push(chunk));
+        req.on('end', () => {
+            const raw = Buffer.concat(chunks).toString('utf8');
+            if (!raw) {
+                resolve({});
+                return;
+            }
+            try {
+                resolve(JSON.parse(raw));
+            } catch (error) {
+                reject(error);
+            }
+        });
+        req.on('error', reject);
+    });
+}
 
 const GOOGLE_API_KEY = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
 
@@ -166,6 +209,162 @@ const server = createServer(async (req, res) => {
         return;
     }
 
+    // Kapa knowledge proxy: forwards a question to Kapa's server-side Query API
+    // (with the secret X-API-KEY) and returns the grounded answer + sources for
+    // the assistant to reason over and cite. Semantic retrieval across Estuary's
+    // docs + resolved support history, unlike the /docs proxy (single page).
+    if (req.url?.startsWith('/kapa')) {
+        const sendJson = (code, body) => {
+            res.writeHead(code, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(body));
+        };
+
+        if (req.method !== 'POST') {
+            sendJson(405, {
+                error: 'Use POST /kapa with a JSON body { query, threadId? }.',
+            });
+            return;
+        }
+
+        if (!kapaConfigured) {
+            sendJson(503, {
+                ok: false,
+                error: 'Kapa is not configured. Set KAPA_API_KEY, KAPA_PROJECT_ID, and KAPA_INTEGRATION_ID in dev/copilot-runtime/.env (see .env.example).',
+            });
+            return;
+        }
+
+        try {
+            const body = await readJsonBody(req);
+            const query =
+                typeof body.query === 'string' ? body.query.trim() : '';
+
+            if (!query) {
+                sendJson(400, { error: 'Missing "query" in request body.' });
+                return;
+            }
+
+            // A threadId continues an existing Kapa conversation; otherwise
+            // start a new thread on the project.
+            const kapaEndpoint = body.threadId
+                ? `https://api.kapa.ai/query/v1/threads/${encodeURIComponent(
+                      body.threadId
+                  )}/chat/`
+                : `https://api.kapa.ai/query/v1/projects/${encodeURIComponent(
+                      KAPA_PROJECT_ID
+                  )}/chat/`;
+
+            const kapaResponse = await fetch(kapaEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-API-KEY': KAPA_API_KEY,
+                },
+                body: JSON.stringify({
+                    integration_id: KAPA_INTEGRATION_ID,
+                    query,
+                }),
+            });
+
+            const text = await kapaResponse.text();
+
+            if (!kapaResponse.ok) {
+                sendJson(200, {
+                    ok: false,
+                    status: kapaResponse.status,
+                    error: `Kapa query failed (${kapaResponse.status}).`,
+                    detail: text.slice(0, 500),
+                });
+                return;
+            }
+
+            const data = JSON.parse(text);
+            // Return the grounded answer, its citable sources, and the thread id
+            // for follow-ups. (Response shape confirmed against the live API.)
+            const rawSources = data.relevant_sources ?? data.sources ?? [];
+            sendJson(200, {
+                ok: true,
+                answer: data.answer ?? null,
+                sources: rawSources.map((source) => ({
+                    title:
+                        source.title ?? source.source_url ?? source.url ?? null,
+                    url: source.source_url ?? source.url ?? null,
+                })),
+                threadId: data.thread_id ?? null,
+            });
+        } catch (error) {
+            sendJson(200, {
+                ok: false,
+                error: error instanceof Error ? error.message : String(error),
+            });
+        }
+        return;
+    }
+
+    // Run-SQL proxy (dev only): executes admin SQL the user reviewed and
+    // approved in the assistant's "run setup SQL" card. The browser sends the
+    // SQL plus the DB admin credentials the user typed into that card; the
+    // runtime connects with the `pg` driver and runs them. Those credentials
+    // live only in this request — they are never sent to the LLM. This exists
+    // because the browser can't speak the Postgres wire protocol, and the
+    // connector runs as a least-privilege user that can't perform these admin
+    // operations (CREATE PUBLICATION etc.) itself.
+    if (req.url?.startsWith('/run-sql')) {
+        const sendJson = (code, body) => {
+            res.writeHead(code, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(body));
+        };
+
+        if (req.method !== 'POST') {
+            sendJson(405, {
+                error: 'Use POST /run-sql with a JSON body { connection, sql }.',
+            });
+            return;
+        }
+
+        let client;
+        try {
+            const body = await readJsonBody(req);
+            const connection = body.connection ?? {};
+            const sql = typeof body.sql === 'string' ? body.sql.trim() : '';
+
+            if (!sql) {
+                sendJson(400, { ok: false, error: 'Missing "sql".' });
+                return;
+            }
+            if (!connection.host || !connection.database || !connection.user) {
+                sendJson(400, {
+                    ok: false,
+                    error: 'Connection needs at least host, database, and user.',
+                });
+                return;
+            }
+
+            client = new pg.Client({
+                host: connection.host,
+                port: Number(connection.port) || 5432,
+                database: connection.database,
+                user: connection.user,
+                password: connection.password,
+                connectionTimeoutMillis: 10000,
+            });
+
+            await client.connect();
+            await client.query(sql);
+            sendJson(200, { ok: true });
+        } catch (error) {
+            sendJson(200, {
+                ok: false,
+                error: error instanceof Error ? error.message : String(error),
+            });
+        } finally {
+            if (client) {
+                await client.end().catch(() => {});
+            }
+        }
+        return;
+    }
+
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not found');
 });
@@ -175,4 +374,9 @@ server.listen(PORT, () => {
         `CopilotKit runtime listening on http://localhost:${PORT}${ENDPOINT}`
     );
     console.log(`Provider: ${provider} | Model: ${modelLabel}`);
+    console.log(
+        `Kapa knowledge retrieval: ${
+            kapaConfigured ? 'enabled' : 'disabled (set KAPA_* in .env)'
+        }`
+    );
 });

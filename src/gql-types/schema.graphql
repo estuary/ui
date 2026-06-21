@@ -579,7 +579,7 @@ type Controller {
 }
 
 type CreateBillingSetupIntentPayload {
-  clientSecret: String!
+  clientSecret: Sensitive!
 }
 
 type CreateServiceAccountTokenResult {
@@ -589,7 +589,7 @@ type CreateServiceAccountTokenResult {
   The bearer credential, returned exactly once. Present it as an
   `Authorization: Bearer` token or exchange it at `POST /api/v1/auth/token`.
   """
-  secret: String!
+  secret: Sensitive!
 
   """
   The owning account in its post-mint state, so the new token merges into
@@ -1621,7 +1621,7 @@ type RefreshTokenInfoEdge {
 
 type RefreshTokenResult {
   id: Id!
-  secret: String!
+  secret: Sensitive!
 }
 
 type RepublishRequested {
@@ -1641,6 +1641,11 @@ type RepublishRequested {
   """
   receivedAt: DateTime!
 }
+
+"""
+A secret returned by the API, such as a bearer credential. The value is serialized as a string, but clients must treat it as sensitive: redact it from logs and UIs, and never pass it to a language model.
+"""
+scalar Sensitive
 
 type ServiceAccount {
   catalogName: Name!
