@@ -193,6 +193,19 @@ export default function AssistantTerminal() {
         }
     }, [messages, isLoading, open]);
 
+    // The height transition resizes the viewport after the render above, so
+    // re-pin to the bottom once it settles — collapsing should return to the
+    // prompt line, not leave the view scrolled mid-transcript.
+    useEffect(() => {
+        const id = window.setTimeout(() => {
+            const node = scrollRef.current;
+            if (node) {
+                node.scrollTop = node.scrollHeight;
+            }
+        }, 240);
+        return () => window.clearTimeout(id);
+    }, [open]);
+
     useEffect(() => {
         if (open && !isLoading) {
             const id = window.setTimeout(() => inputRef.current?.focus(), 240);
