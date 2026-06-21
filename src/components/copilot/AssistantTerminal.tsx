@@ -252,6 +252,8 @@ export default function AssistantTerminal() {
                 sx={{
                     height: '100%',
                     overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
                     px: 2,
                     py: 1.25,
                     fontFamily: TERMINAL_FONT,
@@ -260,60 +262,66 @@ export default function AssistantTerminal() {
                     color: theme.palette.text.primary,
                 }}
             >
-                {messageNodes}
+                {/* Anchor content to the bottom: the auto top margin fills the
+                    space above when the transcript is short (so the prompt sits
+                    at the bottom edge / top of the content area), and collapses
+                    to 0 so the area scrolls normally once it overflows. */}
+                <Box sx={{ mt: 'auto', flexShrink: 0 }}>
+                    {messageNodes}
 
-                {isLoading ? (
-                    <Box
-                        component="span"
-                        sx={{
-                            'color': TERMINAL_PROMPT,
-                            'animation': 'cpkBlink 1s steps(2) infinite',
-                            '@keyframes cpkBlink': {
-                                '50%': { opacity: 0 },
-                            },
-                        }}
-                    >
-                        ▌
-                    </Box>
-                ) : null}
+                    {isLoading ? (
+                        <Box
+                            component="span"
+                            sx={{
+                                'color': TERMINAL_PROMPT,
+                                'animation': 'cpkBlink 1s steps(2) infinite',
+                                '@keyframes cpkBlink': {
+                                    '50%': { opacity: 0 },
+                                },
+                            }}
+                        >
+                            ▌
+                        </Box>
+                    ) : null}
 
-                <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
-                    <Box
-                        component="span"
-                        sx={{
-                            color: TERMINAL_PROMPT,
-                            userSelect: 'none',
-                            alignSelf: 'flex-start',
-                        }}
-                    >
-                        ❯
+                    <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
+                        <Box
+                            component="span"
+                            sx={{
+                                color: TERMINAL_PROMPT,
+                                userSelect: 'none',
+                                alignSelf: 'flex-start',
+                            }}
+                        >
+                            ❯
+                        </Box>
+                        <InputBase
+                            inputRef={inputRef}
+                            value={draft}
+                            onChange={(event) => setDraft(event.target.value)}
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter' && !event.shiftKey) {
+                                    event.preventDefault();
+                                    submit();
+                                }
+                            }}
+                            placeholder="type a command…"
+                            multiline
+                            maxRows={6}
+                            sx={{
+                                'flex': 1,
+                                'color': theme.palette.text.primary,
+                                'fontFamily': TERMINAL_FONT,
+                                'fontSize': 13,
+                                'lineHeight': 1.6,
+                                'p': 0,
+                                '& textarea::placeholder': {
+                                    color: dim,
+                                    opacity: 1,
+                                },
+                            }}
+                        />
                     </Box>
-                    <InputBase
-                        inputRef={inputRef}
-                        value={draft}
-                        onChange={(event) => setDraft(event.target.value)}
-                        onKeyDown={(event) => {
-                            if (event.key === 'Enter' && !event.shiftKey) {
-                                event.preventDefault();
-                                submit();
-                            }
-                        }}
-                        placeholder="type a command…"
-                        multiline
-                        maxRows={6}
-                        sx={{
-                            'flex': 1,
-                            'color': theme.palette.text.primary,
-                            'fontFamily': TERMINAL_FONT,
-                            'fontSize': 13,
-                            'lineHeight': 1.6,
-                            'p': 0,
-                            '& textarea::placeholder': {
-                                color: dim,
-                                opacity: 1,
-                            },
-                        }}
-                    />
                 </Box>
             </Box>
 
