@@ -44,11 +44,7 @@ export function CompactAccountCard({
                 },
             }}
         >
-            <Stack
-                direction="row"
-                spacing={1.25}
-                sx={{ alignItems: 'center' }}
-            >
+            <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
                 <Box
                     sx={{
                         width: 32,
@@ -87,7 +83,13 @@ export function CompactAccountCard({
                     {splitCatalogName(serviceAccount.catalogName).leaf}
                 </Box>
 
-                <Box sx={{ display: 'flex', flex: 'none', color: 'text.secondary' }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flex: 'none',
+                        color: 'text.secondary',
+                    }}
+                >
                     <Lock width={14} height={14} />
                 </Box>
             </Stack>

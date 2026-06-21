@@ -1,5 +1,5 @@
-import type { Capability } from 'src/types';
 import type { SxProps, Theme } from '@mui/material';
+import type { Capability } from 'src/types';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -37,9 +37,9 @@ import {
 } from 'src/components/admin/ServiceAccounts/shared';
 import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
 import AlertBox from 'src/components/shared/AlertBox';
+import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
-import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import { codeBackground, defaultOutline } from 'src/context/Theme';
 import { generateAlliterativeName } from 'src/utils/alliterate';
@@ -137,7 +137,9 @@ export function CreateServiceAccountDialog({
 
     const updateGuidedGrant = (index: number, patch: Partial<GuidedGrant>) => {
         setGuidedGrants((prev) =>
-            prev.map((grant, i) => (i === index ? { ...grant, ...patch } : grant))
+            prev.map((grant, i) =>
+                i === index ? { ...grant, ...patch } : grant
+            )
         );
     };
 
@@ -345,7 +347,8 @@ export function CreateServiceAccountDialog({
                                 <Box
                                     sx={{
                                         p: 2,
-                                        borderRadius: (theme) => theme.radius.md,
+                                        borderRadius: (theme) =>
+                                            theme.radius.md,
                                         border: (theme) =>
                                             defaultOutline[theme.palette.mode],
                                     }}
@@ -400,7 +403,10 @@ export function CreateServiceAccountDialog({
                                             <Typography
                                                 variant="caption"
                                                 color="text.secondary"
-                                                sx={{ display: 'block', mt: 1.5 }}
+                                                sx={{
+                                                    display: 'block',
+                                                    mt: 1.5,
+                                                }}
                                             >
                                                 Quick setup grants the same
                                                 prefix the account lives under.
@@ -442,8 +448,8 @@ export function CreateServiceAccountDialog({
                                             color="text.secondary"
                                         >
                                             Grant this account access to one or
-                                            more catalog prefixes. You can change
-                                            these anytime.
+                                            more catalog prefixes. You can
+                                            change these anytime.
                                         </Typography>
 
                                         {guidedGrants.map((grant, index) => (

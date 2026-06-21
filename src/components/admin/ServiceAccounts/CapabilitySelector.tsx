@@ -1,9 +1,11 @@
 import type { Capability } from 'src/types';
 
+import {
+    CAPABILITY_OPTIONS,
+    capabilityColor,
+} from 'src/components/admin/ServiceAccounts/shared';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
-
-import { CAPABILITY_OPTIONS, capabilityColor } from 'src/components/admin/ServiceAccounts/shared';
 
 interface CapabilitySelectorProps {
     value: Capability;

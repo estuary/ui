@@ -59,9 +59,7 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
             maxWidth="xs"
             fullWidth
         >
-            <DialogTitle>
-                Remove Personal Token
-            </DialogTitle>
+            <DialogTitle>Remove Personal Token</DialogTitle>
             <DialogContent>
                 <Stack spacing={1}>
                     {error ? (

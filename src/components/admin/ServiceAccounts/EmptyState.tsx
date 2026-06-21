@@ -40,10 +40,7 @@ export function EmptyState({ onQuickCreate, onGuidedCreate }: EmptyStateProps) {
                 No service accounts yet
             </Typography>
 
-            <Typography
-                color="text.secondary"
-                sx={{ maxWidth: 440, mb: 3.5 }}
-            >
+            <Typography color="text.secondary" sx={{ maxWidth: 440, mb: 3.5 }}>
                 Create a non-login identity to give pipelines, agents and
                 integrations scoped, programmatic access to your catalog — with
                 API keys you can rotate and revoke anytime.

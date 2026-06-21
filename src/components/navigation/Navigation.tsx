@@ -163,271 +163,268 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 </Box>
 
                 <Box sx={{ pb: 1 }}>
-                        <Tooltip
-                            title={
-                                !open
-                                    ? intl.formatMessage({
-                                          id: 'navigation.tooltip.expand',
-                                      })
-                                    : null
-                            }
-                            placement="right-end"
-                            enterDelay={open ? 1000 : undefined}
+                    <Tooltip
+                        title={
+                            !open
+                                ? intl.formatMessage({
+                                      id: 'navigation.tooltip.expand',
+                                  })
+                                : null
+                        }
+                        placement="right-end"
+                        enterDelay={open ? 1000 : undefined}
+                    >
+                        <ListItemButton
+                            component="a"
+                            onClick={openNavigation}
+                            sx={{ mx: 1, my: 0.25 }}
                         >
+                            <ListItemIcon>
+                                <FastArrowLeft
+                                    style={{
+                                        transform: open
+                                            ? 'scaleX(1)'
+                                            : 'scaleX(-1)',
+                                        transition: 'all 50ms ease-in-out',
+                                    }}
+                                />
+                            </ListItemIcon>
+
+                            <ListItemText
+                                primary={intl.formatMessage({
+                                    id: 'navigation.collapse',
+                                })}
+                                sx={{
+                                    display: !open ? 'none' : undefined,
+                                }}
+                            />
+                        </ListItemButton>
+                    </Tooltip>
+                    <ListItemLink
+                        icon={<HelpCircle />}
+                        title="helpMenu.tooltip"
+                        link={(e: React.MouseEvent<HTMLElement>) =>
+                            setHelpAnchor(e.currentTarget)
+                        }
+                        isOpen={open}
+                    />
+                    <HelpMenu
+                        anchorEl={helpAnchor}
+                        onClose={() => setHelpAnchor(null)}
+                    />
+
+                    {userDetails ? (
+                        <>
                             <ListItemButton
-                                component="a"
-                                onClick={openNavigation}
+                                onClick={(e) => setMenuAnchor(e.currentTarget)}
                                 sx={{ mx: 1, my: 0.25 }}
                             >
-                                <ListItemIcon>
-                                    <FastArrowLeft
-                                        style={{
-                                            transform: open
-                                                ? 'scaleX(1)'
-                                                : 'scaleX(-1)',
-                                            transition: 'all 50ms ease-in-out',
-                                        }}
-                                    />
-                                </ListItemIcon>
-
+                                <UserAvatar
+                                    userEmail={userDetails.email}
+                                    userName={userDetails.userName}
+                                    avatarUrl={userDetails.avatar}
+                                    size={20}
+                                />
                                 <ListItemText
-                                    primary={intl.formatMessage({
-                                        id: 'navigation.collapse',
-                                    })}
-                                    sx={{
-                                        display: !open ? 'none' : undefined,
+                                    primary={userDetails.email}
+                                    primaryTypographyProps={{
+                                        fontSize: 12,
+                                        fontWeight: 500,
+                                        lineHeight: 1.3,
+                                        noWrap: true,
                                     }}
                                 />
                             </ListItemButton>
-                        </Tooltip>
-                        <ListItemLink
-                            icon={<HelpCircle />}
-                            title="helpMenu.tooltip"
-                            link={(e: React.MouseEvent<HTMLElement>) =>
-                                setHelpAnchor(e.currentTarget)
-                            }
-                            isOpen={open}
-                        />
-                        <HelpMenu
-                            anchorEl={helpAnchor}
-                            onClose={() => setHelpAnchor(null)}
-                        />
 
-                        {userDetails ? (
-                            <>
-                                <ListItemButton
-                                    onClick={(e) =>
-                                        setMenuAnchor(e.currentTarget)
-                                    }
-                                    sx={{ mx: 1, my: 0.25 }}
+                            <Menu
+                                anchorEl={menuAnchor}
+                                open={menuOpen}
+                                onClose={() => setMenuAnchor(null)}
+                                onClick={() => setMenuAnchor(null)}
+                                anchorOrigin={{
+                                    horizontal: 'left',
+                                    vertical: 'top',
+                                }}
+                                transformOrigin={{
+                                    horizontal: 'left',
+                                    vertical: 'bottom',
+                                }}
+                            >
+                                <MenuItem
+                                    disabled
+                                    sx={{ opacity: '1 !important' }}
                                 >
-                                    <UserAvatar
-                                        userEmail={userDetails.email}
-                                        userName={userDetails.userName}
-                                        avatarUrl={userDetails.avatar}
-                                        size={20}
-                                    />
-                                    <ListItemText
-                                        primary={userDetails.email}
-                                        primaryTypographyProps={{
-                                            fontSize: 12,
-                                            fontWeight: 500,
-                                            lineHeight: 1.3,
-                                            noWrap: true,
-                                        }}
-                                    />
-                                </ListItemButton>
+                                    <Stack spacing={0}>
+                                        <Typography
+                                            sx={{
+                                                fontSize: 13,
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            {userDetails.userName ??
+                                                userDetails.email}
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: 'text.secondary',
+                                            }}
+                                        >
+                                            {userDetails.email}
+                                        </Typography>
+                                    </Stack>
+                                </MenuItem>
 
-                                <Menu
-                                    anchorEl={menuAnchor}
-                                    open={menuOpen}
-                                    onClose={() => setMenuAnchor(null)}
-                                    onClick={() => setMenuAnchor(null)}
-                                    anchorOrigin={{
-                                        horizontal: 'left',
-                                        vertical: 'top',
+                                <Divider />
+
+                                <MenuItem
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        colorMode.toggleColorMode();
                                     }}
-                                    transformOrigin={{
-                                        horizontal: 'left',
-                                        vertical: 'bottom',
-                                    }}
-                                >
-                                    <MenuItem
-                                        disabled
-                                        sx={{ opacity: '1 !important' }}
-                                    >
-                                        <Stack spacing={0}>
-                                            <Typography
-                                                sx={{
-                                                    fontSize: 13,
-                                                    fontWeight: 500,
-                                                }}
-                                            >
-                                                {userDetails.userName ??
-                                                    userDetails.email}
-                                            </Typography>
-                                            <Typography
-                                                variant="caption"
-                                                sx={{
-                                                    color: 'text.secondary',
-                                                }}
-                                            >
-                                                {userDetails.email}
-                                            </Typography>
-                                        </Stack>
-                                    </MenuItem>
-
-                                    <Divider />
-
-                                    <MenuItem
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            colorMode.toggleColorMode();
-                                        }}
-                                    >
-                                        <ListItemIcon>
-                                            {theme.palette.mode === 'dark' ? (
-                                                <SunLight />
-                                            ) : (
-                                                <HalfMoon />
-                                            )}
-                                        </ListItemIcon>
-                                        <FormattedMessage
-                                            id={
-                                                theme.palette.mode === 'dark'
-                                                    ? 'modeSwitch.label.light'
-                                                    : 'modeSwitch.label.dark'
-                                            }
-                                        />
-                                    </MenuItem>
-                                    <Divider />
-
-                                    <MenuItem
-                                        onClick={() => {
-                                            void supabaseClient.auth.signOut();
-                                        }}
-                                    >
-                                        <ListItemIcon>
-                                            <LogOut />
-                                        </ListItemIcon>
-                                        <FormattedMessage id="cta.logout" />
-                                    </MenuItem>
-                                </Menu>
-
-                                <ListItemButton
-                                    onClick={(e) =>
-                                        hasSupportAccess
-                                            ? setOrgDialogOpen(true)
-                                            : setOrgAnchor(e.currentTarget)
-                                    }
-                                    sx={{ mx: 1, my: 0.25 }}
                                 >
                                     <ListItemIcon>
-                                        <Building />
+                                        {theme.palette.mode === 'dark' ? (
+                                            <SunLight />
+                                        ) : (
+                                            <HalfMoon />
+                                        )}
                                     </ListItemIcon>
-                                    <ListItemText
-                                        primary={tenantLabel}
-                                        primaryTypographyProps={{
-                                            fontSize: 12,
-                                        }}
+                                    <FormattedMessage
+                                        id={
+                                            theme.palette.mode === 'dark'
+                                                ? 'modeSwitch.label.light'
+                                                : 'modeSwitch.label.dark'
+                                        }
                                     />
-                                </ListItemButton>
+                                </MenuItem>
+                                <Divider />
 
-                                <Popover
-                                    open={orgOpen}
-                                    anchorEl={orgAnchor}
-                                    onClose={() => setOrgAnchor(null)}
-                                    anchorOrigin={{
-                                        horizontal: 'left',
-                                        vertical: 'top',
+                                <MenuItem
+                                    onClick={() => {
+                                        void supabaseClient.auth.signOut();
                                     }}
-                                    transformOrigin={{
-                                        horizontal: 'left',
-                                        vertical: 'bottom',
+                                >
+                                    <ListItemIcon>
+                                        <LogOut />
+                                    </ListItemIcon>
+                                    <FormattedMessage id="cta.logout" />
+                                </MenuItem>
+                            </Menu>
+
+                            <ListItemButton
+                                onClick={(e) =>
+                                    hasSupportAccess
+                                        ? setOrgDialogOpen(true)
+                                        : setOrgAnchor(e.currentTarget)
+                                }
+                                sx={{ mx: 1, my: 0.25 }}
+                            >
+                                <ListItemIcon>
+                                    <Building />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={tenantLabel}
+                                    primaryTypographyProps={{
+                                        fontSize: 12,
                                     }}
-                                    slotProps={{
-                                        paper: {
-                                            sx: {
-                                                width: 240,
-                                                p: 1,
-                                                borderRadius: 2,
-                                            },
+                                />
+                            </ListItemButton>
+
+                            <Popover
+                                open={orgOpen}
+                                anchorEl={orgAnchor}
+                                onClose={() => setOrgAnchor(null)}
+                                anchorOrigin={{
+                                    horizontal: 'left',
+                                    vertical: 'top',
+                                }}
+                                transformOrigin={{
+                                    horizontal: 'left',
+                                    vertical: 'bottom',
+                                }}
+                                slotProps={{
+                                    paper: {
+                                        sx: {
+                                            width: 240,
+                                            p: 1,
+                                            borderRadius: 2,
                                         },
+                                    },
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        px: 1,
+                                        pt: 0.5,
+                                        pb: 1,
+                                        fontSize: 11,
+                                        fontWeight: 600,
+                                        textTransform: 'uppercase',
+                                        letterSpacing: 0.5,
+                                        color: 'text.secondary',
                                     }}
                                 >
-                                    <Typography
-                                        sx={{
-                                            px: 1,
-                                            pt: 0.5,
-                                            pb: 1,
-                                            fontSize: 11,
-                                            fontWeight: 600,
-                                            textTransform: 'uppercase',
-                                            letterSpacing: 0.5,
-                                            color: 'text.secondary',
-                                        }}
-                                    >
-                                        <FormattedMessage id="tenant.organization" />
-                                    </Typography>
+                                    <FormattedMessage id="tenant.organization" />
+                                </Typography>
 
-                                    {tenantNames.map((tenant) => {
-                                        const label = tenant.replace(/\/$/, '');
-                                        const isSelected =
-                                            tenant === selectedTenant;
+                                {tenantNames.map((tenant) => {
+                                    const label = tenant.replace(/\/$/, '');
+                                    const isSelected =
+                                        tenant === selectedTenant;
 
-                                        return (
-                                            <MenuItem
-                                                key={tenant}
-                                                selected={isSelected}
-                                                onClick={() => {
-                                                    setSelectedTenant(tenant);
-                                                    setOrgAnchor(null);
-                                                }}
-                                                sx={{
-                                                    borderRadius: 1,
-                                                    fontSize: 13,
-                                                    py: 0.75,
-                                                    justifyContent:
-                                                        'space-between',
-                                                }}
-                                            >
-                                                {label}
-
-                                                {isSelected ? <Check /> : null}
-                                            </MenuItem>
-                                        );
-                                    })}
-                                </Popover>
-
-                                <Dialog
-                                    open={orgDialogOpen}
-                                    onClose={() => setOrgDialogOpen(false)}
-                                    fullWidth
-                                    maxWidth="xs"
-                                >
-                                    <DialogTitle>
-                                        <FormattedMessage id="tenant.organization" />
-                                    </DialogTitle>
-                                    <DialogContent>
-                                        <PrefixSelector
-                                            disabled={false}
-                                            error={false}
-                                            label={intl.formatMessage({
-                                                id: 'common.tenant',
-                                            })}
-                                            labelId="org-switcher"
-                                            onChange={(newValue) => {
-                                                setSelectedTenant(newValue);
-                                                setOrgDialogOpen(false);
+                                    return (
+                                        <MenuItem
+                                            key={tenant}
+                                            selected={isSelected}
+                                            onClick={() => {
+                                                setSelectedTenant(tenant);
+                                                setOrgAnchor(null);
                                             }}
-                                            options={allPrefixes}
-                                            value={selectedTenant}
-                                            variantString="outlined"
-                                        />
-                                    </DialogContent>
-                                </Dialog>
-                            </>
-                        ) : null}
+                                            sx={{
+                                                borderRadius: 1,
+                                                fontSize: 13,
+                                                py: 0.75,
+                                                justifyContent: 'space-between',
+                                            }}
+                                        >
+                                            {label}
+
+                                            {isSelected ? <Check /> : null}
+                                        </MenuItem>
+                                    );
+                                })}
+                            </Popover>
+
+                            <Dialog
+                                open={orgDialogOpen}
+                                onClose={() => setOrgDialogOpen(false)}
+                                fullWidth
+                                maxWidth="xs"
+                            >
+                                <DialogTitle>
+                                    <FormattedMessage id="tenant.organization" />
+                                </DialogTitle>
+                                <DialogContent>
+                                    <PrefixSelector
+                                        disabled={false}
+                                        error={false}
+                                        label={intl.formatMessage({
+                                            id: 'common.tenant',
+                                        })}
+                                        labelId="org-switcher"
+                                        onChange={(newValue) => {
+                                            setSelectedTenant(newValue);
+                                            setOrgDialogOpen(false);
+                                        }}
+                                        options={allPrefixes}
+                                        value={selectedTenant}
+                                        variantString="outlined"
+                                    />
+                                </DialogContent>
+                            </Dialog>
+                        </>
+                    ) : null}
                 </Box>
             </Stack>
         </MuiDrawer>

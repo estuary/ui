@@ -62,9 +62,7 @@ function Row({ row }: RowProps) {
             </TableCell>
 
             <TableCell sx={row.expired ? { opacity: 0.5 } : undefined}>
-                {row.expired ? (
-                    <Typography>Expired</Typography>
-                ) : null}
+                {row.expired ? <Typography>Expired</Typography> : null}
             </TableCell>
 
             <TableCell>
@@ -152,12 +150,8 @@ export function RefreshTokenTable() {
                             <TableCell>
                                 <FormattedMessage id="entityTable.data.created" />
                             </TableCell>
-                            <TableCell>
-                                Label
-                            </TableCell>
-                            <TableCell>
-                                Uses
-                            </TableCell>
+                            <TableCell>Label</TableCell>
+                            <TableCell>Uses</TableCell>
                             <TableCell sx={{ width: 100 }} />
                             <TableCell sx={{ width: 125 }} />
                         </TableRow>

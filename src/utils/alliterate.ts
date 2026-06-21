@@ -18,7 +18,10 @@ function randomItem<T>(arr: T[]): T {
 
 function pickPair(): [string, string] {
     const letter = randomItem(LETTERS);
-    return [randomItem(words.modifiers[letter]), randomItem(words.objects[letter])];
+    return [
+        randomItem(words.modifiers[letter]),
+        randomItem(words.objects[letter]),
+    ];
 }
 
 // e.g. "frolicking ferret"

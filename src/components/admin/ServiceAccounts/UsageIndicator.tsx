@@ -78,10 +78,7 @@ export function UsageIndicator({
         <Stack
             direction="row"
             spacing={0.75}
-            sx={[
-                { alignItems: 'center' },
-                ...(Array.isArray(sx) ? sx : [sx]),
-            ]}
+            sx={[{ alignItems: 'center' }, ...(Array.isArray(sx) ? sx : [sx])]}
         >
             <Box
                 component="span"

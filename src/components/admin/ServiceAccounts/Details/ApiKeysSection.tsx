@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 
 import { Key, Plus, Trash } from 'iconoir-react';
-
 import { DateTime } from 'luxon';
 
 import { useRevokeServiceAccountToken } from 'src/api/gql/serviceAccounts';
@@ -125,8 +124,8 @@ export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
                 <Box>
                     <Typography variant="subtitle1">API keys</Typography>
                     <Typography variant="caption" color="text.secondary">
-                        Secrets are shown once at creation. Rotate or revoke them
-                        anytime.
+                        Secrets are shown once at creation. Rotate or revoke
+                        them anytime.
                     </Typography>
                 </Box>
                 <Button
@@ -143,7 +142,11 @@ export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
                 <Stack
                     direction="row"
                     spacing={1.5}
-                    sx={{ alignItems: 'center', py: 2, color: 'text.secondary' }}
+                    sx={{
+                        alignItems: 'center',
+                        py: 2,
+                        color: 'text.secondary',
+                    }}
                 >
                     <Key />
                     <Typography variant="body2">
@@ -174,7 +177,10 @@ export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
                             }}
                         >
                             <Box
-                                sx={{ display: 'flex', color: 'text.secondary' }}
+                                sx={{
+                                    display: 'flex',
+                                    color: 'text.secondary',
+                                }}
                             >
                                 <Key />
                             </Box>

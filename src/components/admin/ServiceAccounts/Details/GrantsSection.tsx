@@ -137,7 +137,11 @@ export function GrantsSection({
                 <Stack
                     direction="row"
                     spacing={1.5}
-                    sx={{ alignItems: 'center', py: 2, color: 'text.secondary' }}
+                    sx={{
+                        alignItems: 'center',
+                        py: 2,
+                        color: 'text.secondary',
+                    }}
                 >
                     <Lock />
                     <Typography variant="body2">
@@ -230,7 +234,8 @@ export function GrantsSection({
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                bgcolor: (theme) => theme.palette.error.alpha_12,
+                                bgcolor: (theme) =>
+                                    theme.palette.error.alpha_12,
                                 color: 'error.main',
                             }}
                         >
@@ -264,7 +269,8 @@ export function GrantsSection({
                                 <Box
                                     sx={{
                                         p: 1.5,
-                                        borderRadius: (theme) => theme.radius.md,
+                                        borderRadius: (theme) =>
+                                            theme.radius.md,
                                         border: (theme) =>
                                             `1px solid ${theme.palette.divider}`,
                                     }}
@@ -285,8 +291,8 @@ export function GrantsSection({
                                         }
                                         label={
                                             <Typography variant="body2">
-                                                This is the account’s last grant.
-                                                Also revoke its{' '}
+                                                This is the account’s last
+                                                grant. Also revoke its{' '}
                                                 {tokenCount === 1
                                                     ? '1 API key'
                                                     : `${tokenCount} API keys`}{' '}

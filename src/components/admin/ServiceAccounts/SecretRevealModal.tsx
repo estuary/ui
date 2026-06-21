@@ -83,16 +83,17 @@ export function SecretRevealModal({
                             <Typography variant="h6">
                                 API key created
                             </Typography>
-                            <Typography
-                                variant="body2"
-                                color="text.secondary"
-                            >
+                            <Typography variant="body2" color="text.secondary">
                                 {description}
                             </Typography>
                         </Box>
                     </Stack>
 
-                    <AlertBox severity="warning" title="Copy your key now" short>
+                    <AlertBox
+                        severity="warning"
+                        title="Copy your key now"
+                        short
+                    >
                         <Typography>
                             This secret will not be shown again. Store it
                             somewhere safe before closing this dialog. Use it as

@@ -4,10 +4,8 @@ import { useState } from 'react';
 
 import { Box, Button, Stack, Typography } from '@mui/material';
 
-import { NavArrowLeft, Plus } from 'iconoir-react';
-
+import { NavArrowLeft } from 'iconoir-react';
 import { DateTime } from 'luxon';
-
 import { useNavigate } from 'react-router-dom';
 
 import { useServiceAccount } from 'src/api/gql/serviceAccounts';
@@ -15,11 +13,11 @@ import { authenticatedRoutes } from 'src/app/routes';
 import { CreateApiKeyDialog } from 'src/components/admin/ServiceAccounts/CreateApiKeyDialog';
 import { ApiKeysSection } from 'src/components/admin/ServiceAccounts/Details/ApiKeysSection';
 import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
-import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import {
     monogram,
     splitCatalogName,
 } from 'src/components/admin/ServiceAccounts/shared';
+import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import AdminTabs from 'src/components/admin/Tabs';
 import { logoColors } from 'src/context/Theme';
 import useGlobalSearchParams, {
@@ -137,21 +135,9 @@ export function ServiceAccountDetails() {
                             sx={{ mt: 0.75 }}
                         />
                     </Box>
-
-                    <Button
-                        variant="contained"
-                        startIcon={<Plus />}
-                        onClick={() => setCreateKeyOpen(true)}
-                        sx={{ flex: 'none' }}
-                    >
-                        Create API key
-                    </Button>
                 </Stack>
 
-                <Stack
-                    direction="row"
-                    sx={{ flexWrap: 'wrap', gap: 6, mb: 5 }}
-                >
+                <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 6, mb: 5 }}>
                     <MetaItem label="Location">
                         <Box component="span" sx={{ fontFamily: 'monospace' }}>
                             {prefix}
