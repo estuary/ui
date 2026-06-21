@@ -33,16 +33,34 @@ const TERMINAL_PROMPT = '#56d364';
 const TERMINAL_FONT =
     "'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace";
 
+// Tool calls that need explicit human approval keep their interactive card.
+// Every other (read-only) tool call renders as a plain inline text line rather
+// than a status card, so the transcript reads like terminal output.
+const HITL_ACTIONS = new Set([
+    'runGraphQLMutation',
+    'runSetupSql',
+    'collectConnectorConfig',
+]);
+
+const toolCallName = (call: any): string =>
+    call?.function?.name ?? call?.name ?? 'tool call';
+
 // Renders a single chat message terminal-style: user turns as a `❯` prompt line,
-// assistant turns as plain output, plus any attached generative UI (tool calls /
-// approval cards) below the text.
+// assistant turns as plain output. Tool calls show as dim inline lines; only
+// approval-required tool calls also render their interactive card.
 function MessageLine({ message }: { message: any }) {
     const theme = useTheme();
     const content = typeof message?.content === 'string' ? message.content : '';
-    const generativeUI = message?.generativeUI?.();
     const isUser = message?.role === 'user';
+    const toolCalls: any[] = Array.isArray(message?.toolCalls)
+        ? message.toolCalls
+        : [];
+    const needsApproval = toolCalls.some((call) =>
+        HITL_ACTIONS.has(toolCallName(call))
+    );
+    const generativeUI = needsApproval ? message?.generativeUI?.() : null;
 
-    if (!content && !generativeUI) {
+    if (!content && toolCalls.length === 0 && !generativeUI) {
         return null;
     }
 
@@ -79,8 +97,28 @@ function MessageLine({ message }: { message: any }) {
                     {content}
                 </Box>
             ) : null}
+            {toolCalls.map((call, index) => (
+                <Box
+                    key={call?.id ?? index}
+                    sx={{
+                        display: 'flex',
+                        gap: 1,
+                        py: 0.25,
+                        color: theme.palette.text.secondary,
+                    }}
+                >
+                    <Box component="span" sx={{ userSelect: 'none' }}>
+                        ⏺
+                    </Box>
+                    <Box component="span" sx={{ wordBreak: 'break-word' }}>
+                        {toolCallName(call)}
+                    </Box>
+                </Box>
+            ))}
             {generativeUI ? (
-                <Box sx={{ mt: content ? 1 : 0 }}>{generativeUI}</Box>
+                <Box sx={{ mt: content || toolCalls.length ? 1 : 0 }}>
+                    {generativeUI}
+                </Box>
             ) : null}
         </Box>
     );
@@ -100,7 +138,8 @@ export default function AssistantTerminal() {
         instructions: ASSISTANT_INSTRUCTIONS,
         available: 'enabled',
     });
-    const { messages, sendMessage, isLoading } = useCopilotChatHeadless_c();
+    const { messages, sendMessage, isLoading, stopGeneration } =
+        useCopilotChatHeadless_c();
 
     const [draft, setDraft] = useState('');
     const [expandedHeight, setExpandedHeight] = useState(() =>
@@ -144,12 +183,28 @@ export default function AssistantTerminal() {
     }, [messages, isLoading, open]);
 
     useEffect(() => {
-        if (open) {
+        if (open && !isLoading) {
             const id = window.setTimeout(() => inputRef.current?.focus(), 240);
             return () => window.clearTimeout(id);
         }
         return undefined;
-    }, [open]);
+    }, [open, isLoading]);
+
+    // While a response is streaming, Esc interrupts it (mirrors the
+    // "esc to interrupt" hint shown in place of the prompt).
+    useEffect(() => {
+        if (!isLoading) {
+            return undefined;
+        }
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                stopGeneration();
+            }
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [isLoading, stopGeneration]);
 
     // Cmd/Ctrl+K toggles the terminal from anywhere in the app.
     useEffect(() => {
@@ -271,57 +326,75 @@ export default function AssistantTerminal() {
 
                     {isLoading ? (
                         <Box
-                            component="span"
                             sx={{
-                                'color': TERMINAL_PROMPT,
-                                'animation': 'cpkBlink 1s steps(2) infinite',
-                                '@keyframes cpkBlink': {
-                                    '50%': { opacity: 0 },
-                                },
-                            }}
-                        >
-                            ▌
-                        </Box>
-                    ) : null}
-
-                    <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
-                        <Box
-                            component="span"
-                            sx={{
-                                color: TERMINAL_PROMPT,
+                                display: 'flex',
+                                gap: 1,
+                                py: 0.5,
                                 userSelect: 'none',
-                                alignSelf: 'flex-start',
                             }}
                         >
-                            ❯
+                            <Box
+                                component="span"
+                                sx={{
+                                    'color': TERMINAL_PROMPT,
+                                    'animation':
+                                        'cpkBlink 1s steps(2) infinite',
+                                    '@keyframes cpkBlink': {
+                                        '50%': { opacity: 0 },
+                                    },
+                                }}
+                            >
+                                ▌
+                            </Box>
+                            <Box component="span" sx={{ color: dim }}>
+                                esc to interrupt
+                            </Box>
                         </Box>
-                        <InputBase
-                            inputRef={inputRef}
-                            value={draft}
-                            onChange={(event) => setDraft(event.target.value)}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter' && !event.shiftKey) {
-                                    event.preventDefault();
-                                    submit();
+                    ) : (
+                        <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: TERMINAL_PROMPT,
+                                    userSelect: 'none',
+                                    alignSelf: 'flex-start',
+                                }}
+                            >
+                                ❯
+                            </Box>
+                            <InputBase
+                                inputRef={inputRef}
+                                value={draft}
+                                onChange={(event) =>
+                                    setDraft(event.target.value)
                                 }
-                            }}
-                            placeholder="type a command…"
-                            multiline
-                            maxRows={6}
-                            sx={{
-                                'flex': 1,
-                                'color': theme.palette.text.primary,
-                                'fontFamily': TERMINAL_FONT,
-                                'fontSize': 13,
-                                'lineHeight': 1.6,
-                                'p': 0,
-                                '& textarea::placeholder': {
-                                    color: dim,
-                                    opacity: 1,
-                                },
-                            }}
-                        />
-                    </Box>
+                                onKeyDown={(event) => {
+                                    if (
+                                        event.key === 'Enter' &&
+                                        !event.shiftKey
+                                    ) {
+                                        event.preventDefault();
+                                        submit();
+                                    }
+                                }}
+                                placeholder="type a command…"
+                                multiline
+                                maxRows={6}
+                                sx={{
+                                    'flex': 1,
+                                    'color': theme.palette.text.primary,
+                                    'fontFamily': TERMINAL_FONT,
+                                    'fontSize': 13,
+                                    'lineHeight': 1.6,
+                                    'p': 0,
+                                    '& textarea::placeholder': {
+                                        color: dim,
+                                        opacity: 1,
+                                    },
+                                }}
+                            />
+                        </Box>
+                    )}
                 </Box>
             </Box>
 
