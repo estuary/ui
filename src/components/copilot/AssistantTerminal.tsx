@@ -21,7 +21,11 @@ import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 // page content down (the side nav stays put). Uses the app's own dark
 // background and no separating borders, so it reads as part of the chrome.
 
-const PANEL_HEIGHT = '21vh';
+// Default expanded height, as a fraction of the viewport; the user can drag the
+// bottom edge to resize, clamped to [MIN_EXPANDED_HEIGHT, MAX_EXPANDED_RATIO].
+const DEFAULT_EXPANDED_RATIO = 0.21;
+const MIN_EXPANDED_HEIGHT = 80;
+const MAX_EXPANDED_RATIO = 0.85;
 // Height of the prompt line when collapsed; sized to read like the top bar it
 // replaces.
 const COLLAPSED_HEIGHT = 48;
@@ -99,8 +103,36 @@ export default function AssistantTerminal() {
     const { messages, sendMessage, isLoading } = useCopilotChatHeadless_c();
 
     const [draft, setDraft] = useState('');
+    const [expandedHeight, setExpandedHeight] = useState(() =>
+        Math.round(window.innerHeight * DEFAULT_EXPANDED_RATIO)
+    );
+    const [dragging, setDragging] = useState(false);
+    const outerRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+
+    // Drag the bottom edge to resize the expanded panel.
+    const startDrag = (event: React.MouseEvent) => {
+        event.preventDefault();
+        const top = outerRef.current?.getBoundingClientRect().top ?? 0;
+        const max = Math.round(window.innerHeight * MAX_EXPANDED_RATIO);
+        setDragging(true);
+
+        const onMove = (moveEvent: MouseEvent) => {
+            const next = moveEvent.clientY - top;
+            setExpandedHeight(
+                Math.min(Math.max(next, MIN_EXPANDED_HEIGHT), max)
+            );
+        };
+        const onUp = () => {
+            setDragging(false);
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onUp);
+        };
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+    };
 
     // Keep the prompt line (the last line) in view as messages stream and when
     // the panel toggles — collapsed, this is what pins the area to the prompt.
@@ -166,11 +198,19 @@ export default function AssistantTerminal() {
         } as any);
     };
 
+    // Render only the conversation turns. Tool-result messages (role 'tool')
+    // carry raw JSON tool output, which should not surface in the transcript.
     const messageNodes = useMemo(
         () =>
-            (messages ?? []).map((message: any) => (
-                <MessageLine key={message.id} message={message} />
-            )),
+            (messages ?? [])
+                .filter(
+                    (message: any) =>
+                        message?.role === 'user' ||
+                        message?.role === 'assistant'
+                )
+                .map((message: any) => (
+                    <MessageLine key={message.id} message={message} />
+                )),
         [messages]
     );
 
@@ -178,11 +218,12 @@ export default function AssistantTerminal() {
 
     return (
         <Box
+            ref={outerRef}
             sx={{
                 position: 'relative',
                 overflow: 'hidden',
-                height: open ? PANEL_HEIGHT : COLLAPSED_HEIGHT,
-                transition: 'height 220ms ease',
+                height: open ? expandedHeight : COLLAPSED_HEIGHT,
+                transition: dragging ? 'none' : 'height 220ms ease',
                 background: theme.palette.background.default,
                 borderLeft: `1px solid ${theme.palette.divider}`,
             }}
@@ -275,6 +316,24 @@ export default function AssistantTerminal() {
                     />
                 </Box>
             </Box>
+
+            {open ? (
+                <Box
+                    onMouseDown={startDrag}
+                    sx={{
+                        'position': 'absolute',
+                        'left': 0,
+                        'right': 0,
+                        'bottom': 0,
+                        'height': 6,
+                        'cursor': 'ns-resize',
+                        'zIndex': 2,
+                        '&:hover': {
+                            background: theme.palette.divider,
+                        },
+                    }}
+                />
+            ) : null}
         </Box>
     );
 }
