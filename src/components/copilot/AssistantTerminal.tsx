@@ -184,6 +184,7 @@ export default function AssistantTerminal() {
                 height: open ? PANEL_HEIGHT : COLLAPSED_HEIGHT,
                 transition: 'height 220ms ease',
                 background: theme.palette.background.default,
+                borderLeft: `1px solid ${theme.palette.divider}`,
             }}
         >
             {/* App chrome that used to live in the top bar; kept out of the text
