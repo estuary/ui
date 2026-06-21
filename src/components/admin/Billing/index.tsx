@@ -19,7 +19,7 @@ import BillingLoadError from 'src/components/admin/Billing/LoadError';
 import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
-import TenantOptions from 'src/components/admin/Billing/TenantOptions';
+import useTenantChangeReset from 'src/components/admin/Billing/TenantOptions';
 import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
 import GraphStateWrapper from 'src/components/graphs/states/Wrapper';
@@ -49,6 +49,8 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         header: routeTitle,
         headerLink: 'https://www.estuary.dev/pricing/',
     });
+
+    useTenantChangeReset();
 
     const intl = useIntl();
 
@@ -137,13 +139,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     </Typography>
 
                     <PricingTierDetails />
-                </Grid>
-
-                <Grid
-                    size={{ xs: 12, md: 3 }}
-                    sx={{ display: 'flex', alignItems: 'end' }}
-                >
-                    <TenantOptions />
                 </Grid>
             </Grid>
 

@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 
 import { HalfMoon, SunLight } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useColorMode } from 'src/context/Theme';
 
@@ -42,7 +42,9 @@ function ModeSwitch() {
                 </ListItemIcon>
 
                 <ListItemText>
-                    <FormattedMessage id="modeSwitch.label" />
+                    {theme.palette.mode === 'dark'
+                        ? intl.formatMessage({ id: 'modeSwitch.label.dark' })
+                        : intl.formatMessage({ id: 'modeSwitch.label.light' })}
                 </ListItemText>
             </ListItemButton>
         </Tooltip>

@@ -31,6 +31,16 @@ const admin = {
             fullPath: '/admin/billing/paymentMethod/new',
         },
     },
+    serviceAccounts: {
+        title: 'routeTitle.admin.serviceAccounts',
+        path: 'serviceAccounts',
+        fullPath: '/admin/serviceAccounts',
+        details: {
+            title: 'routeTitle.admin.serviceAccounts.details',
+            path: 'details',
+            fullPath: '/admin/serviceAccounts/details',
+        },
+    },
     settings: {
         title: 'routeTitle.admin.settings',
         path: 'settings',
@@ -154,6 +164,15 @@ const express = {
     },
 };
 
+const flowctl = {
+    accessToken: {
+        title: 'routeTitle.flowctl.accessToken',
+        path: 'accessToken',
+        fullPath: '/flowctl/accessToken',
+    },
+    path: 'flowctl',
+};
+
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
@@ -235,6 +254,16 @@ const pageNotFound = {
     path: '*',
 };
 
+const settings = {
+    title: 'routeTitle.settings',
+    path: 'settings',
+    personalTokens: {
+        title: 'routeTitle.settings.personalTokens',
+        path: 'personalTokens',
+        fullPath: '/settings/personalTokens',
+    },
+};
+
 const user = {
     title: 'routeTitle.user',
     path: 'user',
@@ -264,11 +293,13 @@ export const authenticatedRoutes = {
     collections,
     dataPlaneAuth,
     express,
+    flowctl,
     home,
     materializations,
     marketplace: marketplace.authenticated,
     user,
     pageNotFound,
+    settings,
     beta,
 };
 

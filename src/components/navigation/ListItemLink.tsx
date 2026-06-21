@@ -1,6 +1,7 @@
-import type { ReactElement } from 'react';
+import type { ReactNode } from 'react';
 
 import {
+    Badge,
     ListItemButton,
     ListItemIcon,
     ListItemText,
@@ -8,59 +9,56 @@ import {
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
-import { Link, useMatch, useResolvedPath } from 'react-router-dom';
+
+import RouterLink from 'src/components/navigation/RouterLink';
 
 interface Props {
-    icon: ReactElement;
+    icon: ReactNode;
     title: string;
-    link: string;
+    link: string | any;
+    isOpen?: boolean;
+    badgeContent?: number;
+    tooltipDelay?: number;
 }
 
-export const ListItemLink = ({ icon, title, link }: Props) => {
-    const resolved = useResolvedPath(link);
-    const selected = Boolean(
-        useMatch({
-            path: resolved.pathname,
-            end: false, // `end: false` matches nested routes e.g. `/admin/billing`
-        })
-    );
+const ListItemLink = ({
+    icon,
+    title,
+    link,
+    isOpen,
+    badgeContent,
+    tooltipDelay,
+}: Props) => {
+    const intl = useIntl();
+
+    const translatedTitle = intl.formatMessage({
+        id: title,
+    });
 
     return (
         <li>
-            <Tooltip title={title} placement="right-end">
+            <Tooltip
+                title={!isOpen ? translatedTitle : ''}
+                placement="right"
+                enterDelay={tooltipDelay ? tooltipDelay : undefined}
+            >
                 <ListItemButton
-                    component={Link}
-                    to={link}
-                    selected={selected}
-                    disableGutters
-                    sx={{
-                        whiteSpace: 'nowrap',
-                        px: 1.5,
-                    }}
+                    {...(typeof link === 'string'
+                        ? { component: RouterLink, to: link }
+                        : { onClick: link })}
+                    sx={{ mx: 1, my: 0.25 }}
                 >
-                    <ListItemIcon
-                        sx={{
-                            minWidth: 36,
-                            color: (theme) => theme.palette.text.primary,
-                        }}
-                    >
-                        {icon}
-                    </ListItemIcon>
+                    {icon ? (
+                        <ListItemIcon>
+                            <Badge badgeContent={badgeContent}>{icon}</Badge>
+                        </ListItemIcon>
+                    ) : null}
 
-                    <ListItemText primary={title} />
+                    <ListItemText primary={translatedTitle} />
                 </ListItemButton>
             </Tooltip>
         </li>
     );
 };
 
-/** @deprecated Prefer the named `ListItemLink` export */
-const ListItemLinkWrapper = ({ title, ...props }: Props) => {
-    const intl = useIntl();
-
-    return (
-        <ListItemLink {...props} title={intl.formatMessage({ id: title })} />
-    );
-};
-
-export default ListItemLinkWrapper;
+export default ListItemLink;

@@ -91,12 +91,43 @@ declare module '@mui/material/Typography' {
     }
 }
 
-// Navigation Width
-export enum NavWidths {
-    MOBILE = 0,
-    RAIL = 48,
-    FULL = 200,
+// Border-radius scale. Roundness tracks an element's size and prominence:
+// larger, more container-like surfaces get more rounding, small controls get
+// less, and `full` fully rounds pills/toggles. Values are px strings so they
+// read literally in `sx`/`styled` `borderRadius` — a *number* there is
+// multiplied by `theme.shape.borderRadius`, a string is used as-is. When
+// nesting a rounded element in the corner of another, keep corners concentric:
+// inner radius = outer radius − padding.
+export interface RadiusScale {
+    /** 4px — small insets: code strips, option panels, compact tiles */
+    sm: string;
+    /** 8px — monogram/icon tiles, settings panels */
+    md: string;
+    /** 12px — cards */
+    lg: string;
+    /** 16px — large or prominent surfaces (page containers, hero blocks) */
+    xl: string;
+    /** Fully rounded — pills, toggle buttons */
+    full: string;
 }
+
+declare module '@mui/material/styles' {
+    interface Theme {
+        radius: RadiusScale;
+    }
+    interface ThemeOptions {
+        radius?: RadiusScale;
+    }
+}
+
+// Navigation Width
+export const NavWidths = {
+    MOBILE: 0,
+    RAIL: 54,
+    FULL: 170,
+} as const;
+
+export type NavWidths = (typeof NavWidths)[keyof typeof NavWidths];
 
 // Colors
 export const sample_blue = {
@@ -998,9 +1029,22 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     fontSize: 14,
-                    borderRadius: 4,
+                    borderRadius: 8,
                     textTransform: 'none',
                 },
+            },
+        },
+        MuiIconButton: {
+            styleOverrides: {
+                root: {
+                    fontSize: 14,
+                    borderRadius: 8,
+                },
+            },
+        },
+        MuiLink: {
+            defaultProps: {
+                underline: 'hover' as const,
             },
         },
         MuiCheckbox: {
@@ -1061,6 +1105,13 @@ const themeSettings = createTheme({
     },
     shape: {
         borderRadius: 2,
+    },
+    radius: {
+        sm: '4px',
+        md: '8px',
+        lg: '12px',
+        xl: '16px',
+        full: '9999px',
     },
     typography: {
         fontFamily: [
@@ -1148,14 +1199,51 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     },
                 },
                 MuiAppBar: {
+                    defaultProps: {
+                        position: 'static' as const,
+                        elevation: 0,
+                    },
                     styleOverrides: {
                         root: {
-                            background:
-                                palette.mode === 'dark'
-                                    ? sample_grey[800]
-                                    : 'white',
+                            background: palette.background?.default,
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiDrawer: {
+                    styleOverrides: {
+                        paper: {
+                            background: palette.background?.default,
+                            border: 0,
+                        },
+                    },
+                },
+                MuiListItemButton: {
+                    styleOverrides: {
+                        root: {
+                            gap: 8,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            padding: '6px 8px',
+                            borderRadius: 8,
+                        },
+                    },
+                },
+                MuiListItemIcon: {
+                    styleOverrides: {
+                        root: {
+                            minWidth: 'auto',
+                            color: 'inherit',
+                        },
+                    },
+                },
+                MuiListItemText: {
+                    styleOverrides: {
+                        primary: {
+                            fontSize: 13,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                         },
                     },
                 },

@@ -8,9 +8,11 @@ import MenuItem from '@mui/material/MenuItem';
 
 import { useShallow } from 'zustand/react/shallow';
 
-import { LogOut, Mail, ProfileCircle } from 'iconoir-react';
+import { Key, LogOut, Mail, ProfileCircle } from 'iconoir-react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import { Link } from 'react-router-dom';
 
+import { authenticatedRoutes } from 'src/app/routes';
 import IconMenu from 'src/components/menus/IconMenu';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -75,6 +77,17 @@ const UserMenu = ({ iconColor }: Props) => {
                 </MenuItem>
 
                 <Divider />
+
+                <MenuItem
+                    component={Link}
+                    to={authenticatedRoutes.settings.personalTokens.fullPath}
+                >
+                    <ListItemIcon>
+                        <Key style={{ color: iconColor }} />
+                    </ListItemIcon>
+
+                    <FormattedMessage id="accountMenu.personalTokens" />
+                </MenuItem>
 
                 <MenuItem
                     onClick={() => {
