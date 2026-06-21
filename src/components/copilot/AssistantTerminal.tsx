@@ -29,6 +29,10 @@ const MAX_EXPANDED_RATIO = 0.85;
 // Height of the prompt line when collapsed; sized to read like the top bar it
 // replaces.
 const COLLAPSED_HEIGHT = 48;
+// Collapsed height once there's something to summarize: the bar grows to two
+// lines — the agent activity summary above, the prompt (or "esc to interrupt")
+// below — so a submit from the collapsed bar shows both without expanding.
+const COLLAPSED_HEIGHT_TWO_LINE = 78;
 const TERMINAL_PROMPT = '#56d364';
 const TERMINAL_FONT =
     "'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace";
@@ -338,7 +342,7 @@ export default function AssistantTerminal() {
             }
             break;
         }
-        return 'thinking…';
+        return '';
     }, [messages, completedToolCallIds]);
 
     // An approval card can't be acted on while collapsed, so pop the panel open
@@ -370,13 +374,28 @@ export default function AssistantTerminal() {
 
     const dim = theme.palette.text.secondary;
 
+    // The green block cursor, blinking, used to mark live streaming output.
+    const blinkingCursorSx = {
+        'color': TERMINAL_PROMPT,
+        'animation': 'cpkBlink 1s steps(2) infinite',
+        '@keyframes cpkBlink': { '50%': { opacity: 0 } },
+    };
+
+    // Collapsed, the bar grows to two lines whenever there's agent activity to
+    // summarize (mid-response, or a prior reply to recap); otherwise it's the
+    // single prompt line.
+    const hasSummary = isLoading || activitySummary !== '';
+    const collapsedHeight = hasSummary
+        ? COLLAPSED_HEIGHT_TWO_LINE
+        : COLLAPSED_HEIGHT;
+
     return (
         <Box
             ref={outerRef}
             sx={{
                 position: 'relative',
                 overflow: 'hidden',
-                height: open ? expandedHeight : COLLAPSED_HEIGHT,
+                height: open ? expandedHeight : collapsedHeight,
                 transition: dragging ? 'none' : 'height 220ms ease',
                 background: theme.palette.background.default,
                 borderLeft: `1px solid ${theme.palette.divider}`,
@@ -423,7 +442,42 @@ export default function AssistantTerminal() {
                     at the bottom edge / top of the content area), and collapses
                     to 0 so the area scrolls normally once it overflows. */}
                 <Box sx={{ mt: 'auto', flexShrink: 0 }}>
-                    {messageNodes}
+                    {/* The full transcript only when expanded; collapsed, it's
+                        replaced by the single summary line below. */}
+                    {open ? messageNodes : null}
+
+                    {/* Collapsed activity summary: a dim one-line recap of what
+                        the agent is doing (in-flight tool call or the tail of
+                        the streamed reply), shown above the prompt line. */}
+                    {!open && (isLoading || activitySummary) ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                gap: 1,
+                                py: 0.5,
+                                color: dim,
+                                userSelect: 'none',
+                                minWidth: 0,
+                            }}
+                        >
+                            <Box
+                                component="span"
+                                sx={isLoading ? blinkingCursorSx : undefined}
+                            >
+                                ▌
+                            </Box>
+                            <Box
+                                component="span"
+                                sx={{
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                }}
+                            >
+                                {activitySummary || 'thinking…'}
+                            </Box>
+                        </Box>
+                    ) : null}
 
                     {isLoading ? (
                         <Box
@@ -432,35 +486,24 @@ export default function AssistantTerminal() {
                                 gap: 1,
                                 py: 0.5,
                                 userSelect: 'none',
-                                minWidth: 0,
                             }}
                         >
+                            {/* Expanded, the blinking cursor marks streaming
+                                output here; collapsed it lives on the summary
+                                line above, so this slot just holds the column
+                                so "esc to interrupt" aligns with the summary. */}
                             <Box
                                 component="span"
-                                sx={{
-                                    'color': TERMINAL_PROMPT,
-                                    'animation':
-                                        'cpkBlink 1s steps(2) infinite',
-                                    '@keyframes cpkBlink': {
-                                        '50%': { opacity: 0 },
-                                    },
-                                }}
+                                sx={
+                                    open
+                                        ? blinkingCursorSx
+                                        : { visibility: 'hidden' }
+                                }
                             >
                                 ▌
                             </Box>
-                            {/* Expanded, the transcript is visible so the hint
-                                is enough; collapsed, this line is all the user
-                                sees, so surface what the agent is doing. */}
-                            <Box
-                                component="span"
-                                sx={{
-                                    color: dim,
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
-                            >
-                                {open ? 'esc to interrupt' : activitySummary}
+                            <Box component="span" sx={{ color: dim }}>
+                                esc to interrupt
                             </Box>
                         </Box>
                     ) : awaitingApproval ? (
