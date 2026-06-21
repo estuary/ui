@@ -363,7 +363,9 @@ export default function AssistantTerminal() {
                 onClick={() => inputRef.current?.focus()}
                 sx={{
                     height: '100%',
-                    overflowY: 'auto',
+                    // Collapsed, the panel is a fixed prompt line — lock scrolling
+                    // so it can't be dragged up to reveal the transcript.
+                    overflowY: open ? 'auto' : 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
                     px: 2,
