@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, InputBase, useMediaQuery, useTheme } from '@mui/material';
 
@@ -41,6 +41,9 @@ const STATUS_AREA_WIDTH = 460;
 // lines — the agent activity summary above, the prompt below — so the user can
 // type without expanding the whole transcript.
 const COLLAPSED_HEIGHT_TWO_LINE = 78;
+// Height of the gradient that fades the transcript at an edge with content
+// scrolled past it (top and/or bottom), so it dissolves rather than hard-cuts.
+const SCROLL_FADE_HEIGHT = 28;
 const TERMINAL_PROMPT = '#56d364';
 
 // Tool calls that need explicit human approval keep their interactive card.
@@ -169,9 +172,30 @@ export default function AssistantTerminal() {
     // Collapsed, the bar shows just the agent activity summary until the user
     // focuses it; focusing reveals the prompt line beneath the summary.
     const [focused, setFocused] = useState(false);
+    // Whether the transcript has content scrolled past the top/bottom edge —
+    // each edge fades only while it hides something, so the pinned newest line
+    // (and the prompt below it) stay crisp.
+    const [fadeTop, setFadeTop] = useState(false);
+    const [fadeBottom, setFadeBottom] = useState(false);
     const outerRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    // Whether the transcript is scrolled to (near) the bottom. We only auto-pin
+    // to the newest line while this holds, so scrolling up to read history isn't
+    // yanked back down by each streamed token.
+    const atBottomRef = useRef(true);
+
+    const updateFades = useCallback(() => {
+        const node = scrollRef.current;
+        if (!node) {
+            return;
+        }
+        const { scrollTop, scrollHeight, clientHeight } = node;
+        const distanceFromBottom = scrollHeight - clientHeight - scrollTop;
+        atBottomRef.current = distanceFromBottom <= 4;
+        setFadeTop(scrollTop > 4);
+        setFadeBottom(distanceFromBottom > 4);
+    }, []);
 
     // Drag the bottom edge to resize the expanded panel.
     const startDrag = (event: React.MouseEvent) => {
@@ -196,14 +220,15 @@ export default function AssistantTerminal() {
         window.addEventListener('mouseup', onUp);
     };
 
-    // Keep the prompt line (the last line) in view as messages stream and when
-    // the panel toggles — collapsed, this is what pins the area to the prompt.
+    // Follow the newest line as messages stream — but only while the user is
+    // already at the bottom, so scrolling up to read history stays put.
     useEffect(() => {
         const node = scrollRef.current;
-        if (node) {
+        if (node && atBottomRef.current) {
             node.scrollTop = node.scrollHeight;
         }
-    }, [messages, isLoading, open]);
+        updateFades();
+    }, [messages, isLoading, open, updateFades]);
 
     // The height transition resizes the viewport after the render above, so
     // re-pin to the bottom once it settles — collapsing should return to the
@@ -214,9 +239,18 @@ export default function AssistantTerminal() {
             if (node) {
                 node.scrollTop = node.scrollHeight;
             }
+            updateFades();
         }, 240);
         return () => window.clearTimeout(id);
-    }, [open]);
+    }, [open, updateFades]);
+
+    // Recompute the edge fades on mount and when the viewport resizes (the
+    // transcript may start or stop overflowing).
+    useEffect(() => {
+        updateFades();
+        window.addEventListener('resize', updateFades);
+        return () => window.removeEventListener('resize', updateFades);
+    }, [updateFades]);
 
     useEffect(() => {
         if (open && !isLoading) {
@@ -397,7 +431,7 @@ export default function AssistantTerminal() {
         [messages, completedToolCallIds]
     );
 
-    const dim = theme.palette.text.secondary;
+    const dim = theme.palette.text.disabled;
 
     // The green block cursor, blinking, used to mark live streaming output.
     const blinkingCursorSx = {
@@ -417,6 +451,17 @@ export default function AssistantTerminal() {
     const collapsedHeight = collapsedTwoLine
         ? COLLAPSED_HEIGHT_TWO_LINE
         : COLLAPSED_HEIGHT;
+
+    // Fade the transcript into the background at any edge hiding scrolled-past
+    // content. Only when expanded; collapsed is a fixed line or two.
+    const fade = `${SCROLL_FADE_HEIGHT}px`;
+    const fadeMask = open
+        ? `linear-gradient(to bottom, ${
+              fadeTop ? 'transparent' : '#000'
+          }, #000 ${fade}, #000 calc(100% - ${fade}), ${
+              fadeBottom ? 'transparent' : '#000'
+          })`
+        : undefined;
 
     // One-line recap of what the agent is doing: an in-flight tool call or the
     // tail of the streamed reply, with the blinking cursor while it streams.
@@ -472,7 +517,7 @@ export default function AssistantTerminal() {
                         submit();
                     }
                 }}
-                placeholder="type a command…"
+                placeholder={focused ? '' : 'type a command…'}
                 multiline
                 maxRows={6}
                 sx={{
@@ -546,6 +591,7 @@ export default function AssistantTerminal() {
 
             <Box
                 ref={scrollRef}
+                onScroll={updateFades}
                 onClick={() => {
                     // Clicking the collapsed bar reveals the prompt (focused)
                     // beneath the summary; the effect then moves the caret in.
@@ -566,6 +612,9 @@ export default function AssistantTerminal() {
                     // runs underneath it.
                     pr: showStatus ? `${STATUS_AREA_WIDTH}px` : 2,
                     py: 1.25,
+                    // Dissolve the transcript at edges that hide scrolled content.
+                    maskImage: fadeMask,
+                    WebkitMaskImage: fadeMask,
                     fontFamily: TERMINAL_FONT,
                     fontSize: 13,
                     lineHeight: 1.6,
