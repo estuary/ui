@@ -7,6 +7,7 @@ import {
     useCopilotChatHeadless_c,
 } from '@copilotkit/react-core';
 
+import { AssistantMarkdown } from 'src/components/copilot/AssistantMarkdown';
 import { EntityHealthStrip } from 'src/components/copilot/EntityHealthStrip';
 import {
     ASSISTANT_INSTRUCTIONS,
@@ -112,11 +113,7 @@ function MessageLine({
 
     return (
         <Box sx={{ py: 0.5, color: theme.palette.text.primary }}>
-            {content ? (
-                <Box sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                    {content}
-                </Box>
-            ) : null}
+            {content ? <AssistantMarkdown>{content}</AssistantMarkdown> : null}
             {activeToolCalls.map((call, index) => (
                 <Box
                     key={call?.id ?? index}
