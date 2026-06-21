@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 
+import { usePostHog } from '@posthog/react';
 import { useShallow } from 'zustand/react/shallow';
 
 import {
@@ -39,6 +40,8 @@ import {
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import { AGENT_SKILLS_URL } from 'src/components/AgentSkills/shared';
+import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
 import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
 import { HelpMenu } from 'src/components/menus/HelpMenu';
 import ListItemLink from 'src/components/navigation/ListItemLink';
@@ -63,6 +66,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
     const theme = useTheme();
     const colorMode = useColorMode();
+    const postHog = usePostHog();
     const userDetails = useUserStore(useShallow((state) => state.userDetails));
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
@@ -200,6 +204,21 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                             />
                         </ListItemButton>
                     </Tooltip>
+                    <ListItemLink
+                        icon={<SparkleIcon />}
+                        title="agentSkills.pill.label"
+                        link={() => {
+                            postHog.capture('AgentSkills:Click', {
+                                source: 'sidebar',
+                            });
+                            window.open(
+                                AGENT_SKILLS_URL,
+                                '_blank',
+                                'noopener,noreferrer'
+                            );
+                        }}
+                        isOpen={open}
+                    />
                     <ListItemLink
                         icon={<HelpCircle />}
                         title="helpMenu.tooltip"

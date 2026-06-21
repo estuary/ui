@@ -1,7 +1,6 @@
 import { Stack, Toolbar } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 
-import { HeaderPill } from 'src/components/AgentSkills/HeaderPill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
 import CompanyMark from 'src/components/graphics/CompanyMark';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
@@ -29,7 +28,6 @@ const Topbar = ({ navigationOpen = true }: TopbarProps) => {
                     spacing={2}
                     sx={{ alignItems: 'center' }}
                 >
-                    <HeaderPill />
                     <UpdateAlert />
                     <SidePanelDocsOpenButton />
                 </Stack>
