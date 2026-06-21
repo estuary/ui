@@ -267,9 +267,9 @@ export default function AssistantTerminal() {
             return;
         }
         setDraft('');
-        // Typing into the collapsed prompt line should expand the terminal so
-        // the answer is visible.
-        useCopilotAssistantStore.getState().setOpen(true);
+        // Stay in whatever size we're in: submitting from the collapsed prompt
+        // line keeps it collapsed and shows a one-line activity summary while
+        // the agent works, rather than expanding the transcript.
         void sendMessage({
             id: crypto.randomUUID(),
             role: 'user',
@@ -306,6 +306,48 @@ export default function AssistantTerminal() {
             ),
         [messages, completedToolCallIds]
     );
+
+    // A one-line summary of what the agent is currently doing, shown on the
+    // collapsed prompt line in place of the input while a response streams: the
+    // name of an in-flight tool call, or the tail of the latest assistant text.
+    const activitySummary = useMemo(() => {
+        const list = messages ?? [];
+        for (let i = list.length - 1; i >= 0; i -= 1) {
+            const message: any = list[i];
+            if (message?.role !== 'assistant') {
+                continue;
+            }
+            const calls: any[] = Array.isArray(message.toolCalls)
+                ? message.toolCalls
+                : [];
+            const active = calls.filter(
+                (call) => !completedToolCallIds.has(call?.id)
+            );
+            if (active.length) {
+                return toolCallName(active[active.length - 1]);
+            }
+            const content =
+                typeof message.content === 'string'
+                    ? message.content.trim()
+                    : '';
+            if (content) {
+                const lastLine = content.split('\n').pop() ?? content;
+                return lastLine.length > 80
+                    ? `…${lastLine.slice(-80)}`
+                    : lastLine;
+            }
+            break;
+        }
+        return 'thinking…';
+    }, [messages, completedToolCallIds]);
+
+    // An approval card can't be acted on while collapsed, so pop the panel open
+    // when one appears — the rest of the time we honor the collapsed state.
+    useEffect(() => {
+        if (awaitingApproval && !open) {
+            useCopilotAssistantStore.getState().setOpen(true);
+        }
+    }, [awaitingApproval, open]);
 
     // Render only the conversation turns; tool-result messages are excluded.
     const messageNodes = useMemo(
@@ -390,6 +432,7 @@ export default function AssistantTerminal() {
                                 gap: 1,
                                 py: 0.5,
                                 userSelect: 'none',
+                                minWidth: 0,
                             }}
                         >
                             <Box
@@ -405,8 +448,19 @@ export default function AssistantTerminal() {
                             >
                                 ▌
                             </Box>
-                            <Box component="span" sx={{ color: dim }}>
-                                esc to interrupt
+                            {/* Expanded, the transcript is visible so the hint
+                                is enough; collapsed, this line is all the user
+                                sees, so surface what the agent is doing. */}
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: dim,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                }}
+                            >
+                                {open ? 'esc to interrupt' : activitySummary}
                             </Box>
                         </Box>
                     ) : awaitingApproval ? (
