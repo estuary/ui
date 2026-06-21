@@ -12,43 +12,35 @@ import {
 import useOnFieldActionClick from 'src/hooks/fieldSelection/useOnFieldActionClick';
 import { useFormStateStore_isIdle } from 'src/stores/FormState/hooks';
 
-export default function FieldActionButton({
+export function FieldActionButton({
     bindingUUID,
     disabled,
     field,
-    labelId,
+    label,
     outcome,
     selection,
     tooltipProps,
     ...props
-}: FieldActionButtonProps) {
-    const intl = useIntl();
-
+}: Omit<FieldActionButtonProps, 'labelId'> & { label: string }) {
     const formIdle = useFormStateStore_isIdle();
 
     const updateSingleSelection = useOnFieldActionClick(bindingUUID, field);
 
     if (tooltipProps && disabled && formIdle) {
-        const tooltipReasonId =
+        const tooltipReason =
             (outcome.select && !outcome.reject) ||
             (!outcome.select && outcome.reject)
                 ? fieldOutcomeMessages[
                       outcome.select?.reason?.type ??
                           outcome.reject?.reason?.type ??
                           ''
-                  ]?.translatedId
+                  ]?.tooltip
                 : '';
 
         return (
             <Tooltip
                 {...tooltipProps}
-                title={
-                    tooltipReasonId.length > 0
-                        ? intl.formatMessage({
-                              id: tooltipReasonId,
-                          })
-                        : null
-                }
+                title={tooltipReason.length > 0 ? tooltipReason : null}
             >
                 <span className={TOGGLE_BUTTON_CLASS}>
                     <OutlinedToggleButton
@@ -58,7 +50,7 @@ export default function FieldActionButton({
                             updateSingleSelection(value, selection, outcome)
                         }
                     >
-                        {intl.formatMessage({ id: labelId })}
+                        {label}
                     </OutlinedToggleButton>
                 </span>
             </Tooltip>
@@ -74,7 +66,22 @@ export default function FieldActionButton({
                 updateSingleSelection(value, selection, outcome)
             }
         >
-            {intl.formatMessage({ id: labelId })}
+            {label}
         </OutlinedToggleButton>
+    );
+}
+
+/** @deprecated Prefer the named `FieldActionButton` export */
+export default function FieldActionButtonWrapper({
+    labelId,
+    ...props
+}: FieldActionButtonProps) {
+    const intl = useIntl();
+
+    return (
+        <FieldActionButton
+            {...props}
+            label={intl.formatMessage({ id: labelId })}
+        />
     );
 }

@@ -39,12 +39,9 @@ function RelatedEntities({
                 disabled
                 stripPath={false}
                 values={[
-                    intl.formatMessage({
-                        id:
-                            entities === null
-                                ? 'common.loading'
-                                : 'common.missing',
-                    }),
+                    entities === null
+                        ? intl.formatMessage({ id: 'common.loading' })
+                        : 'N/A',
                 ]}
                 maxChips={1}
             />

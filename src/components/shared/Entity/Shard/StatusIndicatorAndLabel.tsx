@@ -2,17 +2,24 @@ import type { TaskShardDetails } from 'src/stores/ShardDetail/types';
 
 import { Box, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 interface Props {
     shard: TaskShardDetails;
     smallMargin?: boolean;
+    label: string;
+    note?: string;
 }
 
 const INDICATOR_SIZE = 16;
 
-function StatusIndicatorAndLabel({ shard, smallMargin }: Props) {
-    const { id, color, disabled, messageId, messageNoteId } = shard;
+export function StatusIndicatorAndLabel({
+    shard,
+    smallMargin,
+    label,
+    note,
+}: Props) {
+    const { id, color, disabled } = shard;
 
     const INDICATOR_MARGIN = smallMargin ? 4 : 12;
     const NOTES_INDENT = INDICATOR_SIZE + INDICATOR_MARGIN;
@@ -34,11 +41,11 @@ function StatusIndicatorAndLabel({ shard, smallMargin }: Props) {
                 />
 
                 <Typography component="span" sx={{ verticalAlign: 'middle' }}>
-                    <FormattedMessage id={messageId} />
+                    {label}
                 </Typography>
             </Box>
 
-            {messageNoteId ? (
+            {note ? (
                 <Typography
                     component="span"
                     style={{
@@ -46,11 +53,35 @@ function StatusIndicatorAndLabel({ shard, smallMargin }: Props) {
                         verticalAlign: 'middle',
                     }}
                 >
-                    <FormattedMessage id={messageNoteId} />
+                    {note}
                 </Typography>
             ) : null}
         </Stack>
     );
 }
 
-export default StatusIndicatorAndLabel;
+/** @deprecated Prefer the named `StatusIndicatorAndLabel` export */
+function StatusIndicatorAndLabelWrapper({
+    shard,
+    ...props
+}: {
+    shard: TaskShardDetails;
+    smallMargin?: boolean;
+}) {
+    const intl = useIntl();
+
+    return (
+        <StatusIndicatorAndLabel
+            {...props}
+            shard={shard}
+            label={intl.formatMessage({ id: shard.messageId })}
+            note={
+                shard.messageNoteId
+                    ? intl.formatMessage({ id: shard.messageNoteId })
+                    : undefined
+            }
+        />
+    );
+}
+
+export default StatusIndicatorAndLabelWrapper;

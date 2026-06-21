@@ -13,14 +13,12 @@ import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
-function GroupedRowActionButton({
-    messageIntlKey,
+export function GroupedRowActionButton({
+    message,
     renderConfirmationMessage,
     renderProgress,
     selectableTableStoreName,
-}: GroupedRowActionButtonProps) {
-    const intl = useIntl();
-
+}: Omit<GroupedRowActionButtonProps, 'messageIntlKey'> & { message: string }) {
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState(false);
@@ -87,9 +85,7 @@ function GroupedRowActionButton({
 
     return (
         <>
-            <Button onClick={() => handlers.action()}>
-                {intl.formatMessage({ id: messageIntlKey })}
-            </Button>
+            <Button onClick={() => handlers.action()}>{message}</Button>
 
             <Dialog open={showProgress} maxWidth="md">
                 {targets.length > 0 ? (
@@ -104,4 +100,19 @@ function GroupedRowActionButton({
     );
 }
 
-export default GroupedRowActionButton;
+/** @deprecated Prefer the named `GroupedRowActionButton` export */
+function GroupedRowActionButtonWrapper({
+    messageIntlKey,
+    ...props
+}: GroupedRowActionButtonProps) {
+    const intl = useIntl();
+
+    return (
+        <GroupedRowActionButton
+            {...props}
+            message={intl.formatMessage({ id: messageIntlKey })}
+        />
+    );
+}
+
+export default GroupedRowActionButtonWrapper;

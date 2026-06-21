@@ -12,28 +12,23 @@ interface Props {
     title?: string;
 }
 
-function SectionError({
+export function SectionError({
     config,
     configEmptyMessage,
     errorMessage,
     errors,
     title,
 }: Props) {
-    const intl = useIntl();
     const filteredErrorsList: any[] = [];
 
     if (config && isEmpty(config)) {
         filteredErrorsList.push({
-            title: intl.formatMessage({
-                id: configEmptyMessage,
-            }),
+            title: configEmptyMessage,
         });
     } else if (hasLength(errors)) {
         if (errorMessage) {
             filteredErrorsList.push({
-                title: intl.formatMessage({
-                    id: errorMessage,
-                }),
+                title: errorMessage,
             });
         } else {
             errors.forEach((error: any) => {
@@ -44,12 +39,28 @@ function SectionError({
         }
     }
 
+    return <KeyValueList data={filteredErrorsList} sectionTitle={title} />;
+}
+
+/** @deprecated Prefer the named `SectionError` export */
+function SectionErrorWrapper({
+    configEmptyMessage,
+    errorMessage,
+    title,
+    ...props
+}: Props) {
+    const intl = useIntl();
+
+    const localize = (id?: string) => (id ? intl.formatMessage({ id }) : id);
+
     return (
-        <KeyValueList
-            data={filteredErrorsList}
-            sectionTitle={intl.formatMessage({ id: title })}
+        <SectionError
+            {...props}
+            configEmptyMessage={localize(configEmptyMessage)}
+            errorMessage={localize(errorMessage)}
+            title={localize(title)}
         />
     );
 }
 
-export default SectionError;
+export default SectionErrorWrapper;

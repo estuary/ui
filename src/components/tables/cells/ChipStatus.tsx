@@ -6,19 +6,17 @@ import { useIntl } from 'react-intl';
 
 import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
 
-function ChipStatus({
-    messageId,
+export function ChipStatus({
+    message,
     color,
     TableCellProps = {},
-}: ChipStatusProps) {
-    const intl = useIntl();
-
+}: Omit<ChipStatusProps, 'messageId'> & { message: string }) {
     return (
         <TableCell {...TableCellProps}>
             <OutlinedChip
                 component="span"
                 color={color}
-                label={intl.formatMessage({ id: messageId })}
+                label={message}
                 size="small"
                 variant="outlined"
             />
@@ -26,4 +24,16 @@ function ChipStatus({
     );
 }
 
-export default ChipStatus;
+/** @deprecated Prefer the named `ChipStatus` export */
+function ChipStatusWrapper({ messageId, ...props }: ChipStatusProps) {
+    const intl = useIntl();
+
+    return (
+        <ChipStatus
+            {...props}
+            message={intl.formatMessage({ id: messageId })}
+        />
+    );
+}
+
+export default ChipStatusWrapper;

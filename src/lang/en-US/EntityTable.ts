@@ -14,7 +14,6 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.actions': `Actions`,
     'entityTable.data.writesTo': `${Data['data.writes_to']}`,
     'entityTable.data.readsFrom': `${Data['data.reads_from']}`,
-    'entityTable.data.status': `Status`,
     'entityTable.data.userFullName': `Name`,
     'entityTable.data.capability': `Capability`,
     'entityTable.data.detail': `Detail`,

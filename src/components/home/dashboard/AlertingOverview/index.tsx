@@ -18,7 +18,7 @@ import { gql, useQuery } from 'urql';
 import AlertSummary from 'src/components/home/dashboard/AlertingOverview/AlertSummary';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 
 // TODO (GQL) - would like to limit the alertDetails/arguments data
 const alertingOverviewQuery = gql<

@@ -37,7 +37,6 @@ export enum SchemaEvolutionStoreNames {
 export enum SelectTableStoreNames {
     ACCESS_GRANTS_USERS = 'AccessGrants-Users',
     ACCESS_GRANTS_PREFIXES = 'AccessGrants-Prefixes',
-    BILLING = 'Billing-Table',
     CAPTURE = 'Captures-Table',
     COLLECTION = 'Collections-Table',
     DATA_PLANE = 'Data-Plane-Table',
@@ -45,7 +44,6 @@ export enum SelectTableStoreNames {
     CONNECTOR = 'Connectors-Table',
     MATERIALIZATION = 'Materializations-Table',
     PREFIX_ALERTS = 'Prefix-Alert-Table',
-    REFRESH_TOKENS = 'Refresh-Tokens-Table',
     STORAGE_MAPPINGS = 'Storage-Mappings-Table',
 }
 

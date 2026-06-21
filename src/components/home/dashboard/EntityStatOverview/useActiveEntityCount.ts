@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import { getLiveSpecShards } from 'src/api/liveSpecsExt';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 import { hasLength, RESPONSE_DATA_LIMIT } from 'src/utils/misc-utils';
 
 export default function useActiveEntityCount(entityType: Entity) {
