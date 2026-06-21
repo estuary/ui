@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Box, InputBase, Stack, useTheme } from '@mui/material';
+import { Box, InputBase, useTheme } from '@mui/material';
 
 import {
     useCopilotAdditionalInstructions,
@@ -14,15 +14,16 @@ import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 
 // A fully custom, headless terminal console for the assistant (driven by
 // useCopilotChatHeadless_c — unlocked by the free public license key). It sits
-// at the top of the content column. Collapsed, it shows only its prompt line —
-// the "bottom" of the terminal — in place of the old top bar; expanding reveals
-// the transcript above and pushes the page content down (the side nav stays
-// put). Uses the app's own dark background and no separating borders, so it
-// reads as a seamless extension of the chrome.
+// at the top of the content column as a single scrolling text area whose last
+// line is the live prompt. Collapsed, the area is pinned to the bottom so only
+// that prompt line shows in place of the old top bar; expanding (Enter or
+// Cmd/Ctrl+K) grows it downward, revealing the transcript above and pushing the
+// page content down (the side nav stays put). Uses the app's own dark
+// background and no separating borders, so it reads as part of the chrome.
 
 const PANEL_HEIGHT = '21vh';
-// Height of the always-visible prompt line when collapsed; sized to read like
-// the top bar it replaces.
+// Height of the prompt line when collapsed; sized to read like the top bar it
+// replaces.
 const COLLAPSED_HEIGHT = 48;
 const TERMINAL_PROMPT = '#56d364';
 const TERMINAL_FONT =
@@ -101,12 +102,14 @@ export default function AssistantTerminal() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
+    // Keep the prompt line (the last line) in view as messages stream and when
+    // the panel toggles — collapsed, this is what pins the area to the prompt.
     useEffect(() => {
         const node = scrollRef.current;
         if (node) {
             node.scrollTop = node.scrollHeight;
         }
-    }, [messages, isLoading]);
+    }, [messages, isLoading, open]);
 
     useEffect(() => {
         if (open) {
@@ -176,66 +179,69 @@ export default function AssistantTerminal() {
     return (
         <Box
             sx={{
+                position: 'relative',
                 overflow: 'hidden',
                 height: open ? PANEL_HEIGHT : COLLAPSED_HEIGHT,
                 transition: 'height 220ms ease',
                 background: theme.palette.background.default,
             }}
         >
-            <Stack sx={{ height: '100%', fontFamily: TERMINAL_FONT }}>
-                <Box
-                    ref={scrollRef}
-                    sx={{
-                        flex: 1,
-                        minHeight: 0,
-                        overflowY: 'auto',
-                        display: open ? 'block' : 'none',
-                        px: 2,
-                        py: 1.5,
-                        fontFamily: TERMINAL_FONT,
-                        fontSize: 13,
-                        lineHeight: 1.6,
-                        color: theme.palette.text.primary,
-                    }}
-                >
-                    {messageNodes}
+            {/* App chrome that used to live in the top bar; kept out of the text
+                flow as a corner overlay. Both are conditional, so usually hidden. */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    zIndex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: COLLAPSED_HEIGHT,
+                    pr: 1,
+                }}
+            >
+                <UpdateAlert />
+                <SidePanelDocsOpenButton />
+            </Box>
 
-                    {isLoading ? (
-                        <Box
-                            component="span"
-                            sx={{
-                                'color': TERMINAL_PROMPT,
-                                'animation': 'cpkBlink 1s steps(2) infinite',
-                                '@keyframes cpkBlink': {
-                                    '50%': { opacity: 0 },
-                                },
-                            }}
-                        >
-                            ▌
-                        </Box>
-                    ) : null}
-                </Box>
+            <Box
+                ref={scrollRef}
+                onClick={() => inputRef.current?.focus()}
+                sx={{
+                    height: '100%',
+                    overflowY: 'auto',
+                    px: 2,
+                    py: 1.25,
+                    fontFamily: TERMINAL_FONT,
+                    fontSize: 13,
+                    lineHeight: 1.6,
+                    color: theme.palette.text.primary,
+                }}
+            >
+                {messageNodes}
 
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        px: 2,
-                        py: 1.25,
-                        flexShrink: 0,
-                    }}
-                >
+                {isLoading ? (
+                    <Box
+                        component="span"
+                        sx={{
+                            'color': TERMINAL_PROMPT,
+                            'animation': 'cpkBlink 1s steps(2) infinite',
+                            '@keyframes cpkBlink': {
+                                '50%': { opacity: 0 },
+                            },
+                        }}
+                    >
+                        ▌
+                    </Box>
+                ) : null}
+
+                <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
                     <Box
                         component="span"
                         sx={{
                             color: TERMINAL_PROMPT,
-                            fontFamily: TERMINAL_FONT,
-                            fontSize: 13,
-                            lineHeight: 1.6,
                             userSelect: 'none',
                             alignSelf: 'flex-start',
-                            pt: '1px',
                         }}
                     >
                         ❯
@@ -266,16 +272,8 @@ export default function AssistantTerminal() {
                             },
                         }}
                     />
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{ alignItems: 'center', flexShrink: 0 }}
-                    >
-                        <UpdateAlert />
-                        <SidePanelDocsOpenButton />
-                    </Stack>
                 </Box>
-            </Stack>
+            </Box>
         </Box>
     );
 }
