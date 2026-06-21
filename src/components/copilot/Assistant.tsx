@@ -1,27 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-import {
-    Box,
-    Drawer,
-    Fab,
-    GlobalStyles,
-    IconButton,
-    Stack,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { GlobalStyles } from '@mui/material';
 
 import { CopilotKit, useCopilotChat } from '@copilotkit/react-core';
-import { CopilotChat } from '@copilotkit/react-ui';
 import { Role, TextMessage } from '@copilotkit/runtime-client-gql';
-import { Sparks, Xmark } from 'iconoir-react';
 
+import AssistantTerminal from 'src/components/copilot/AssistantTerminal';
 import DatabaseActions from 'src/components/copilot/DatabaseActions';
 import DataflowActions from 'src/components/copilot/DataflowActions';
 import DocsActions from 'src/components/copilot/DocsActions';
 import GraphQLActions from 'src/components/copilot/GraphQLActions';
 import KapaActions from 'src/components/copilot/KapaActions';
-import { ASSISTANT_INSTRUCTIONS } from 'src/components/copilot/shared';
 import TaskHealthActions from 'src/components/copilot/TaskHealthActions';
 import useCopilotPageContext from 'src/hooks/copilot/useCopilotPageContext';
 import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
@@ -29,23 +18,18 @@ import { getCopilotSettings } from 'src/utils/env-utils';
 
 import '@copilotkit/react-ui/styles.css';
 
-const { runtimeUrl } = getCopilotSettings();
-
-const DRAWER_WIDTH = 440;
+const { runtimeUrl, licenseKey } = getCopilotSettings();
 
 // Bridges queued messages from the store into the chat. Mounted at provider
 // level so it works even when the panel was closed when triggered.
-// - pendingPrompt: a visible USER message that runs the model ("Explain this…").
+// - pendingFreshPrompt: a USER message in a freshly remounted thread ("Get help"
+//   on an error), which runs the model so the assistant answers immediately.
 // - pendingOpener: an ASSISTANT message appended WITHOUT running the model, so a
 //   flow like "New Dataflow" opens with the agent already asking its first
 //   question and no synthetic user prompt is shown.
+// (pendingPrompt — used by the Explain-this-log button — is handled inside
+// AssistantTerminal, which sends it through the headless chat the panel renders.)
 function PromptBridge() {
-    const pendingPrompt = useCopilotAssistantStore(
-        (state) => state.pendingPrompt
-    );
-    const clearPendingPrompt = useCopilotAssistantStore(
-        (state) => state.clearPendingPrompt
-    );
     const pendingFreshPrompt = useCopilotAssistantStore(
         (state) => state.pendingFreshPrompt
     );
@@ -67,17 +51,6 @@ function PromptBridge() {
 
     // Same guard for the "Get help" fresh-thread prompt.
     const freshPromptAppended = useRef(false);
-
-    useEffect(() => {
-        if (!pendingPrompt) {
-            return;
-        }
-
-        void appendMessage(
-            new TextMessage({ content: pendingPrompt, role: Role.User })
-        );
-        clearPendingPrompt();
-    }, [pendingPrompt, appendMessage, clearPendingPrompt]);
 
     useEffect(() => {
         if (!pendingFreshPrompt || freshPromptAppended.current) {
@@ -136,91 +109,9 @@ function PageContext() {
     return null;
 }
 
-function AssistantPanel() {
-    const theme = useTheme();
-    const open = useCopilotAssistantStore((state) => state.open);
-    const setOpen = useCopilotAssistantStore((state) => state.setOpen);
-
-    return (
-        <>
-            <Fab
-                color="primary"
-                aria-label="Open Flow assistant"
-                onClick={() => setOpen(true)}
-                sx={{
-                    position: 'fixed',
-                    bottom: 24,
-                    right: 24,
-                    zIndex: theme.zIndex.speedDial,
-                }}
-            >
-                <Sparks />
-            </Fab>
-
-            <Drawer
-                anchor="right"
-                open={open}
-                onClose={() => setOpen(false)}
-                slotProps={{
-                    paper: { sx: { width: DRAWER_WIDTH, maxWidth: '100vw' } },
-                }}
-            >
-                <Stack sx={{ height: '100%' }}>
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        sx={{ px: 2, py: 1.5 }}
-                    >
-                        <Typography variant="h6">Flow assistant</Typography>
-
-                        <IconButton
-                            aria-label="Close Flow assistant"
-                            onClick={() => setOpen(false)}
-                        >
-                            <Xmark />
-                        </IconButton>
-                    </Stack>
-
-                    <Box
-                        sx={{
-                            'flex': 1,
-                            'minHeight': 0,
-                            // Match the CopilotKit chat to the MUI theme.
-                            '--copilot-kit-primary-color':
-                                theme.palette.primary.main,
-                            '--copilot-kit-contrast-color':
-                                theme.palette.primary.contrastText,
-                            '--copilot-kit-background-color':
-                                theme.palette.background.paper,
-                            // Input field bg — defaults to white, which leaves
-                            // the light text unreadable in dark mode.
-                            '--copilot-kit-input-background-color':
-                                theme.palette.background.default,
-                            '--copilot-kit-secondary-color':
-                                theme.palette.background.default,
-                            '--copilot-kit-secondary-contrast-color':
-                                theme.palette.text.primary,
-                            '--copilot-kit-separator-color':
-                                theme.palette.divider,
-                            '& .copilotKitChat': { height: '100%' },
-                        }}
-                    >
-                        <CopilotChat
-                            instructions={ASSISTANT_INSTRUCTIONS}
-                            labels={{
-                                title: 'Flow assistant',
-                            }}
-                        />
-                    </Box>
-                </Stack>
-            </Drawer>
-        </>
-    );
-}
-
 // Top-level assistant: CopilotKit provider + readable page context + prompt
-// bridge + the floating panel. Mounted inside the authenticated layout.
+// bridge + the terminal console. Mounted in the authenticated layout's header
+// row so the terminal can push page content down as it expands.
 export default function CopilotAssistant() {
     // Bumped by openWithOpener (the "New Dataflow" button). Used as the provider
     // `key` so each new interview remounts CopilotKit with a fresh, empty
@@ -239,6 +130,7 @@ export default function CopilotAssistant() {
             <CopilotKit
                 key={`thread-${threadNonce}`}
                 runtimeUrl={runtimeUrl}
+                publicLicenseKey={licenseKey}
                 showDevConsole={false}
             >
                 <PageContext />
@@ -249,7 +141,7 @@ export default function CopilotAssistant() {
                 <DataflowActions />
                 <DatabaseActions />
                 <PromptBridge />
-                <AssistantPanel />
+                <AssistantTerminal />
             </CopilotKit>
         </>
     );

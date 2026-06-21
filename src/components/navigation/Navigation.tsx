@@ -42,6 +42,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { authenticatedRoutes } from 'src/app/routes';
 import { AGENT_SKILLS_URL } from 'src/components/AgentSkills/shared';
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
+import CompanyLogo from 'src/components/graphics/CompanyLogo';
+import CompanyMark from 'src/components/graphics/CompanyMark';
 import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
 import { HelpMenu } from 'src/components/menus/HelpMenu';
 import ListItemLink from 'src/components/navigation/ListItemLink';
@@ -133,6 +135,18 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                 }}
             >
                 <Box>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: open ? 'flex-start' : 'center',
+                            height: 48,
+                            px: open ? 2.5 : 0,
+                        }}
+                    >
+                        {open ? <CompanyLogo /> : <CompanyMark />}
+                    </Box>
+
                     <List
                         aria-label={intl.formatMessage({
                             id: 'navigation.ariaLabel',

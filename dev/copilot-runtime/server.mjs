@@ -139,7 +139,9 @@ const server = createServer(async (req, res) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader(
         'Access-Control-Allow-Headers',
-        'Content-Type, X-CopilotKit-Runtime-Client-GQL-Version'
+        // The public license key makes CopilotKit attach X-CopilotCloud-Public-Api-Key;
+        // the preflight rejects the request unless that header is allowed here.
+        'Content-Type, X-CopilotKit-Runtime-Client-GQL-Version, X-CopilotCloud-Public-Api-Key'
     );
 
     if (req.method === 'OPTIONS') {

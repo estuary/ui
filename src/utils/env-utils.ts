@@ -188,6 +188,13 @@ export const getCopilotSettings = () => {
         runtimeUrl:
             import.meta.env.VITE_COPILOT_RUNTIME_URL ??
             'http://localhost:4000/copilotkit',
+        // Free public license key (ck_pub_…) from dashboard.operations.copilotkit.ai.
+        // Unlocks the premium Headless UI feature (useCopilotChatHeadless_c) while
+        // still using the self-hosted runtimeUrl above — it's a feature gate, not
+        // a Cloud-routing switch. Unset = widget-based chat.
+        licenseKey: import.meta.env.VITE_COPILOT_LICENSE_KEY as
+            | string
+            | undefined,
     };
 };
 
