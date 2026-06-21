@@ -29,9 +29,9 @@ const MAX_EXPANDED_RATIO = 0.85;
 // Height of the prompt line when collapsed; sized to read like the top bar it
 // replaces.
 const COLLAPSED_HEIGHT = 48;
-// Collapsed height once there's something to summarize: the bar grows to two
-// lines — the agent activity summary above, the prompt (or "esc to interrupt")
-// below — so a submit from the collapsed bar shows both without expanding.
+// Collapsed height once focused with a summary present: the bar grows to two
+// lines — the agent activity summary above, the prompt below — so the user can
+// type without expanding the whole transcript.
 const COLLAPSED_HEIGHT_TWO_LINE = 78;
 const TERMINAL_PROMPT = '#56d364';
 const TERMINAL_FONT =
@@ -161,6 +161,9 @@ export default function AssistantTerminal() {
         Math.round(window.innerHeight * DEFAULT_EXPANDED_RATIO)
     );
     const [dragging, setDragging] = useState(false);
+    // Collapsed, the bar shows just the agent activity summary until the user
+    // focuses it; focusing reveals the prompt line beneath the summary.
+    const [focused, setFocused] = useState(false);
     const outerRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -218,6 +221,22 @@ export default function AssistantTerminal() {
         return undefined;
     }, [open, isLoading]);
 
+    // Toggling the panel resets the collapsed focus state, so collapsing always
+    // returns to the summary line and expanding hands off to the effect above.
+    useEffect(() => {
+        setFocused(false);
+    }, [open]);
+
+    // When the user focuses the collapsed bar, the prompt line mounts on the
+    // next render; move the caret into it once it's there.
+    useEffect(() => {
+        if (focused && !open) {
+            const id = window.setTimeout(() => inputRef.current?.focus(), 0);
+            return () => window.clearTimeout(id);
+        }
+        return undefined;
+    }, [focused, open]);
+
     // While a response is streaming, Esc interrupts it (mirrors the
     // "esc to interrupt" hint shown in place of the prompt).
     useEffect(() => {
@@ -271,9 +290,10 @@ export default function AssistantTerminal() {
             return;
         }
         setDraft('');
-        // Stay in whatever size we're in: submitting from the collapsed prompt
-        // line keeps it collapsed and shows a one-line activity summary while
-        // the agent works, rather than expanding the transcript.
+        // Submitting keeps the panel at its current size and drops focus, so
+        // the collapsed bar falls back to the one-line activity summary while
+        // the agent works rather than expanding the transcript.
+        setFocused(false);
         void sendMessage({
             id: crypto.randomUUID(),
             role: 'user',
@@ -381,13 +401,109 @@ export default function AssistantTerminal() {
         '@keyframes cpkBlink': { '50%': { opacity: 0 } },
     };
 
-    // Collapsed, the bar grows to two lines whenever there's agent activity to
-    // summarize (mid-response, or a prior reply to recap); otherwise it's the
-    // single prompt line.
+    // Collapsed layout. Unfocused, the bar is the single activity summary line
+    // (mid-response, or a prior reply to recap). Focusing reveals the prompt
+    // beneath it — a second line — so the user can type without expanding. With
+    // no summary yet (fresh, idle) the prompt is the only line, focused or not.
     const hasSummary = isLoading || activitySummary !== '';
-    const collapsedHeight = hasSummary
+    const showCollapsedPrompt =
+        !isLoading && !awaitingApproval && (focused || !hasSummary);
+    const collapsedTwoLine = hasSummary && showCollapsedPrompt;
+    const collapsedHeight = collapsedTwoLine
         ? COLLAPSED_HEIGHT_TWO_LINE
         : COLLAPSED_HEIGHT;
+
+    // One-line recap of what the agent is doing: an in-flight tool call or the
+    // tail of the streamed reply, with the blinking cursor while it streams.
+    const summaryLine = (
+        <Box
+            sx={{
+                display: 'flex',
+                gap: 1,
+                py: 0.5,
+                color: dim,
+                userSelect: 'none',
+                minWidth: 0,
+            }}
+        >
+            <Box component="span" sx={isLoading ? blinkingCursorSx : undefined}>
+                ▌
+            </Box>
+            <Box
+                component="span"
+                sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                }}
+            >
+                {activitySummary || 'thinking…'}
+            </Box>
+        </Box>
+    );
+
+    // The editable prompt line. Focus/blur drive the collapsed two-line state.
+    const promptLine = (
+        <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
+            <Box
+                component="span"
+                sx={{
+                    color: TERMINAL_PROMPT,
+                    userSelect: 'none',
+                    alignSelf: 'flex-start',
+                }}
+            >
+                ❯
+            </Box>
+            <InputBase
+                inputRef={inputRef}
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
+                        submit();
+                    }
+                }}
+                placeholder="type a command…"
+                multiline
+                maxRows={6}
+                sx={{
+                    'flex': 1,
+                    'color': theme.palette.text.primary,
+                    'fontFamily': TERMINAL_FONT,
+                    'fontSize': 13,
+                    'lineHeight': 1.6,
+                    'p': 0,
+                    '& textarea::placeholder': {
+                        color: dim,
+                        opacity: 1,
+                    },
+                }}
+            />
+        </Box>
+    );
+
+    // Expanded streaming hint and approval hint (collapsed shows the summary
+    // line instead of these).
+    const escLine = (
+        <Box sx={{ display: 'flex', gap: 1, py: 0.5, userSelect: 'none' }}>
+            <Box component="span" sx={blinkingCursorSx}>
+                ▌
+            </Box>
+            <Box component="span" sx={{ color: dim }}>
+                esc to interrupt
+            </Box>
+        </Box>
+    );
+
+    const approvalHint = (
+        <Box sx={{ py: 0.5, color: dim, userSelect: 'none' }}>
+            approve or cancel the request above to continue
+        </Box>
+    );
 
     return (
         <Box
@@ -421,7 +537,14 @@ export default function AssistantTerminal() {
 
             <Box
                 ref={scrollRef}
-                onClick={() => inputRef.current?.focus()}
+                onClick={() => {
+                    // Clicking the collapsed bar reveals the prompt (focused)
+                    // beneath the summary; the effect then moves the caret in.
+                    if (!open) {
+                        setFocused(true);
+                    }
+                    inputRef.current?.focus();
+                }}
                 sx={{
                     height: '100%',
                     // Collapsed, the panel is a fixed prompt line — lock scrolling
@@ -442,124 +565,25 @@ export default function AssistantTerminal() {
                     at the bottom edge / top of the content area), and collapses
                     to 0 so the area scrolls normally once it overflows. */}
                 <Box sx={{ mt: 'auto', flexShrink: 0 }}>
-                    {/* The full transcript only when expanded; collapsed, it's
-                        replaced by the single summary line below. */}
-                    {open ? messageNodes : null}
-
-                    {/* Collapsed activity summary: a dim one-line recap of what
-                        the agent is doing (in-flight tool call or the tail of
-                        the streamed reply), shown above the prompt line. */}
-                    {!open && (isLoading || activitySummary) ? (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                gap: 1,
-                                py: 0.5,
-                                color: dim,
-                                userSelect: 'none',
-                                minWidth: 0,
-                            }}
-                        >
-                            <Box
-                                component="span"
-                                sx={isLoading ? blinkingCursorSx : undefined}
-                            >
-                                ▌
-                            </Box>
-                            <Box
-                                component="span"
-                                sx={{
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
-                            >
-                                {activitySummary || 'thinking…'}
-                            </Box>
-                        </Box>
-                    ) : null}
-
-                    {isLoading ? (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                gap: 1,
-                                py: 0.5,
-                                userSelect: 'none',
-                            }}
-                        >
-                            {/* Expanded, the blinking cursor marks streaming
-                                output here; collapsed it lives on the summary
-                                line above, so this slot just holds the column
-                                so "esc to interrupt" aligns with the summary. */}
-                            <Box
-                                component="span"
-                                sx={
-                                    open
-                                        ? blinkingCursorSx
-                                        : { visibility: 'hidden' }
-                                }
-                            >
-                                ▌
-                            </Box>
-                            <Box component="span" sx={{ color: dim }}>
-                                esc to interrupt
-                            </Box>
-                        </Box>
-                    ) : awaitingApproval ? (
-                        <Box
-                            sx={{
-                                py: 0.5,
-                                color: dim,
-                                userSelect: 'none',
-                            }}
-                        >
-                            approve or cancel the request above to continue
-                        </Box>
+                    {open ? (
+                        <>
+                            {/* Expanded: the full transcript, then the live
+                                hint or the editable prompt. */}
+                            {messageNodes}
+                            {isLoading
+                                ? escLine
+                                : awaitingApproval
+                                  ? approvalHint
+                                  : promptLine}
+                        </>
                     ) : (
-                        <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
-                            <Box
-                                component="span"
-                                sx={{
-                                    color: TERMINAL_PROMPT,
-                                    userSelect: 'none',
-                                    alignSelf: 'flex-start',
-                                }}
-                            >
-                                ❯
-                            </Box>
-                            <InputBase
-                                inputRef={inputRef}
-                                value={draft}
-                                onChange={(event) =>
-                                    setDraft(event.target.value)
-                                }
-                                onKeyDown={(event) => {
-                                    if (
-                                        event.key === 'Enter' &&
-                                        !event.shiftKey
-                                    ) {
-                                        event.preventDefault();
-                                        submit();
-                                    }
-                                }}
-                                placeholder="type a command…"
-                                multiline
-                                maxRows={6}
-                                sx={{
-                                    'flex': 1,
-                                    'color': theme.palette.text.primary,
-                                    'fontFamily': TERMINAL_FONT,
-                                    'fontSize': 13,
-                                    'lineHeight': 1.6,
-                                    'p': 0,
-                                    '& textarea::placeholder': {
-                                        color: dim,
-                                        opacity: 1,
-                                    },
-                                }}
-                            />
-                        </Box>
+                        <>
+                            {/* Collapsed: the activity summary, plus the prompt
+                                only once focused (or when there's nothing to
+                                summarize yet). */}
+                            {hasSummary ? summaryLine : null}
+                            {showCollapsedPrompt ? promptLine : null}
+                        </>
                     )}
                 </Box>
             </Box>
