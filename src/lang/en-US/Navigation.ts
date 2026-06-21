@@ -2,15 +2,17 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Navigation: Record<string, string> = {
+    'navigation.ariaLabel': `Main Navigation`,
     'navigation.toggle.ariaLabel': `Toggle Navigation`,
-    'navigation.expand': `Expand Navigation`,
-    'navigation.collapse': `Collapse Navigation`,
+    'navigation.tooltip.expand': `Expand Navigation`,
+    'navigation.tooltip.collapse': `Collapse Navigation`,
+    'navigation.collapse': `Collapse`,
 
     // Header
     'mainMenu.tooltip': `Open Main Menu`,
 
     'helpMenu.ariaLabel': `Open Help Menu`,
-    'helpMenu.tooltip': `Helpful Links`,
+    'helpMenu.tooltip': `Help`,
     'helpMenu.docs': `Docs`,
     'helpMenu.docs.link': `https://docs.estuary.dev/`,
     'helpMenu.slack': `Estuary Slack`,
@@ -28,7 +30,10 @@ export const Navigation: Record<string, string> = {
     'accountMenu.emailVerified': `verified`,
     'accountMenu.personalTokens': `Personal Tokens`,
 
-    'modeSwitch.label': `Toggle Color Mode`,
+    'modeSwitch.label.light': `Light mode`,
+    'modeSwitch.label.dark': `Dark mode`,
+
+    'tenant.organization': `Organization`,
 
     'updateAlert.cta': `Update`,
     'updateAlert.title': `Dashboard Updated`,

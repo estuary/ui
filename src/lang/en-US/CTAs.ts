@@ -9,6 +9,7 @@ export const CTAs: Record<string, string> = {
     'cta.edit': `Edit`,
     'cta.login': `Login`,
     'cta.logout': `Logout`,
+    'cta.new': `New`,
     'cta.materialize': `Materialize`,
     'cta.register': `Sign up`,
     'cta.registerFinish': `Complete Registration`,
