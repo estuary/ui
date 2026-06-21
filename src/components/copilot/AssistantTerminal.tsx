@@ -48,7 +48,13 @@ const toolCallName = (call: any): string =>
 // Renders a single chat message terminal-style: user turns as a `❯` prompt line,
 // assistant turns as plain output. Tool calls show as dim inline lines; only
 // approval-required tool calls also render their interactive card.
-function MessageLine({ message }: { message: any }) {
+function MessageLine({
+    message,
+    completedToolCallIds,
+}: {
+    message: any;
+    completedToolCallIds: Set<string>;
+}) {
     const theme = useTheme();
     const content = typeof message?.content === 'string' ? message.content : '';
     const isUser = message?.role === 'user';
@@ -59,8 +65,13 @@ function MessageLine({ message }: { message: any }) {
         HITL_ACTIONS.has(toolCallName(call))
     );
     const generativeUI = needsApproval ? message?.generativeUI?.() : null;
+    // Show only tool calls that are still running; once a tool result arrives
+    // the call is complete and its line drops out of the transcript.
+    const activeToolCalls = toolCalls.filter(
+        (call) => !completedToolCallIds.has(call?.id)
+    );
 
-    if (!content && toolCalls.length === 0 && !generativeUI) {
+    if (!content && activeToolCalls.length === 0 && !generativeUI) {
         return null;
     }
 
@@ -97,7 +108,7 @@ function MessageLine({ message }: { message: any }) {
                     {content}
                 </Box>
             ) : null}
-            {toolCalls.map((call, index) => (
+            {activeToolCalls.map((call, index) => (
                 <Box
                     key={call?.id ?? index}
                     sx={{
@@ -116,7 +127,7 @@ function MessageLine({ message }: { message: any }) {
                 </Box>
             ))}
             {generativeUI ? (
-                <Box sx={{ mt: content || toolCalls.length ? 1 : 0 }}>
+                <Box sx={{ mt: content || activeToolCalls.length ? 1 : 0 }}>
                     {generativeUI}
                 </Box>
             ) : null}
@@ -253,8 +264,20 @@ export default function AssistantTerminal() {
         } as any);
     };
 
-    // Render only the conversation turns. Tool-result messages (role 'tool')
-    // carry raw JSON tool output, which should not surface in the transcript.
+    // A tool call is complete once a matching tool-result message exists. Those
+    // result messages (role 'tool') carry raw JSON we never render, but we use
+    // their ids to drop completed tool calls from the transcript.
+    const completedToolCallIds = useMemo(() => {
+        const ids = new Set<string>();
+        (messages ?? []).forEach((message: any) => {
+            if (message?.role === 'tool' && message?.toolCallId) {
+                ids.add(message.toolCallId);
+            }
+        });
+        return ids;
+    }, [messages]);
+
+    // Render only the conversation turns; tool-result messages are excluded.
     const messageNodes = useMemo(
         () =>
             (messages ?? [])
@@ -264,9 +287,13 @@ export default function AssistantTerminal() {
                         message?.role === 'assistant'
                 )
                 .map((message: any) => (
-                    <MessageLine key={message.id} message={message} />
+                    <MessageLine
+                        key={message.id}
+                        message={message}
+                        completedToolCallIds={completedToolCallIds}
+                    />
                 )),
-        [messages]
+        [messages, completedToolCallIds]
     );
 
     const dim = theme.palette.text.secondary;
