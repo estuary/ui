@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Box, InputBase, useTheme } from '@mui/material';
+import { Box, InputBase, useMediaQuery, useTheme } from '@mui/material';
 
 import {
     useCopilotAdditionalInstructions,
     useCopilotChatHeadless_c,
 } from '@copilotkit/react-core';
 
+import { EntityHealthStrip } from 'src/components/copilot/EntityHealthStrip';
 import { ASSISTANT_INSTRUCTIONS } from 'src/components/copilot/shared';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
@@ -29,6 +30,9 @@ const MAX_EXPANDED_RATIO = 0.85;
 // Height of the prompt line when collapsed; sized to read like the top bar it
 // replaces.
 const COLLAPSED_HEIGHT = 48;
+// Width reserved at the top-right for the entity health strip plus the chrome
+// buttons; the terminal text is padded to clear it so the two never overlap.
+const STATUS_AREA_WIDTH = 460;
 // Collapsed height once focused with a summary present: the bar grows to two
 // lines — the agent activity summary above, the prompt below — so the user can
 // type without expanding the whole transcript.
@@ -141,6 +145,9 @@ function MessageLine({
 
 export default function AssistantTerminal() {
     const theme = useTheme();
+    // The health strip needs real horizontal room; hide it (and drop the
+    // reserved padding) on narrow viewports.
+    const showStatus = useMediaQuery(theme.breakpoints.up('lg'));
     const open = useCopilotAssistantStore((state) => state.open);
     const pendingPrompt = useCopilotAssistantStore(
         (state) => state.pendingPrompt
@@ -517,8 +524,10 @@ export default function AssistantTerminal() {
                 borderLeft: `1px solid ${theme.palette.divider}`,
             }}
         >
-            {/* App chrome that used to live in the top bar; kept out of the text
-                flow as a corner overlay. Both are conditional, so usually hidden. */}
+            {/* Top-right corner overlay: the entity health strip alongside the
+                app chrome (update alert, docs toggle) that used to live in the
+                top bar. Pinned at the collapsed height so it stays put as the
+                terminal expands; the text area is padded to clear it. */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -527,10 +536,12 @@ export default function AssistantTerminal() {
                     zIndex: 1,
                     display: 'flex',
                     alignItems: 'center',
+                    gap: 1.5,
                     height: COLLAPSED_HEIGHT,
                     pr: 1,
                 }}
             >
+                {showStatus ? <EntityHealthStrip /> : null}
                 <UpdateAlert />
                 <SidePanelDocsOpenButton />
             </Box>
@@ -552,7 +563,10 @@ export default function AssistantTerminal() {
                     overflowY: open ? 'auto' : 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
-                    px: 2,
+                    pl: 2,
+                    // Clear the top-right health strip so terminal text never
+                    // runs underneath it.
+                    pr: showStatus ? `${STATUS_AREA_WIDTH}px` : 2,
                     py: 1.25,
                     fontFamily: TERMINAL_FONT,
                     fontSize: 13,
