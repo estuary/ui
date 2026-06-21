@@ -362,6 +362,7 @@ export type CapabilityBit =
   | 'DeleteGrant'
   | 'JournalAppend'
   | 'JournalRead'
+  | 'ManageServiceAccount'
   | 'ModifyDataPlanePrivateNetworking'
   | 'SpecEdit'
   | 'ViewDataPlanePrivateNetworking';
@@ -558,6 +559,21 @@ export type Controller = {
 export type CreateBillingSetupIntentPayload = {
   __typename?: 'CreateBillingSetupIntentPayload';
   clientSecret: Scalars['String']['output'];
+};
+
+export type CreateServiceAccountTokenResult = {
+  __typename?: 'CreateServiceAccountTokenResult';
+  id: Scalars['Id']['output'];
+  /**
+   * The bearer credential, returned exactly once. Present it as an
+   * `Authorization: Bearer` token or exchange it at `POST /api/v1/auth/token`.
+   */
+  secret: Scalars['String']['output'];
+  /**
+   * The owning account in its post-mint state, so the new token merges into
+   * client caches without a follow-up query.
+   */
+  serviceAccount: ServiceAccount;
 };
 
 /** Result of creating a storage mapping. */
@@ -1017,6 +1033,17 @@ export type LockFailure = {
 export type MutationRoot = {
   __typename?: 'MutationRoot';
   /**
+   * Add a user_grant to a service account.
+   *
+   * The caller must manage the service account (ManageServiceAccount on its
+   * catalog name) AND have CreateGrant on the granted prefix. The second
+   * requirement prevents a caller from extending an account's access beyond
+   * what they could grant anyone. (Human-user grant creation still lives in
+   * PostgREST; when it migrates to GraphQL it should gate on this same
+   * CreateGrant capability.)
+   */
+  addServiceAccountGrant: ServiceAccount;
+  /**
    * Creates a new alert subscription. Returns an error if there is already
    * an existing subscription for the same prefix and email address.
    */
@@ -1031,6 +1058,34 @@ export type MutationRoot = {
   createInviteLink: InviteLink;
   /** Create a refresh token for the authenticated user. */
   createRefreshToken: RefreshTokenResult;
+  /**
+   * Create a service account homed at the specified catalog name, seeded
+   * with the given user_grants.
+   *
+   * `catalogName` is a management anchor: admins of a prefix covering it
+   * may manage the account. It determines who may manage the account, not
+   * what the account may access. Access is determined solely by the
+   * account's user_grants, which may span multiple prefixes.
+   *
+   * The caller must have ManageServiceAccount on the catalog name AND
+   * CreateGrant on each granted prefix. Creates an auth.users row, an
+   * internal.service_accounts row, and a user_grants row per requested
+   * grant.
+   */
+  createServiceAccount: ServiceAccount;
+  /**
+   * Mint a credential for a service account.
+   *
+   * The credential is a multi-use refresh token owned by the account: its
+   * secret never rotates and its validity window of `valid_for` slides with
+   * use, like any refresh token. Returns the token id and the bearer secret,
+   * which is returned exactly once and cannot be retrieved again. Present it
+   * as an `Authorization: Bearer` credential or exchange it for a 1-hour
+   * access token via `POST /api/v1/auth/token`.
+   *
+   * The caller must have ManageServiceAccount on the account's catalog name.
+   */
+  createServiceAccountToken: CreateServiceAccountTokenResult;
   /**
    * Create a storage mapping for the given catalog prefix.
    *
@@ -1056,6 +1111,43 @@ export type MutationRoot = {
    */
   redeemInviteLink: RedeemInviteLinkResult;
   /**
+   * Remove ALL user_grants from a service account, stripping its access in
+   * one call and returning the account with `grants: []`.
+   *
+   * The caller must manage the service account (ManageServiceAccount on its
+   * catalog name). As with removeServiceAccountGrant, no capability on the
+   * grants' prefixes is required: removal only narrows access, so a manager
+   * may clear grants to prefixes they don't themselves administer. Clearing
+   * an account that already has no grants is an idempotent no-op.
+   */
+  removeAllServiceAccountGrants: ServiceAccount;
+  /**
+   * Remove a user_grant from a service account, returning the account in its
+   * post-removal state.
+   *
+   * The caller must manage the service account (ManageServiceAccount on its
+   * catalog name). Unlike addServiceAccountGrant, no capability on the
+   * grant's prefix is required: removal only ever narrows the account's
+   * access, so managers may remove ANY grant — including grants to
+   * prefixes they don't themselves administer.
+   *
+   * Removal is idempotent: removing a grant the account doesn't hold is a
+   * no-op that returns the unchanged account rather than an error.
+   */
+  removeServiceAccountGrant: ServiceAccount;
+  /**
+   * Revoke ALL of a service account's tokens at once — the credential kill
+   * switch — returning the account with no active tokens.
+   *
+   * The caller must have ManageServiceAccount on the account's catalog name.
+   * Like revokeServiceAccountToken, each token is made inert by zeroing its
+   * `valid_for` interval (preserving the audit trail) rather than deleted;
+   * already-revoked tokens are skipped. A service account's user_id only ever
+   * owns its own minted credentials, so this targets exactly those. An
+   * account with no active tokens is an idempotent no-op.
+   */
+  revokeAllServiceAccountTokens: ServiceAccount;
+  /**
    * Revoke a refresh token owned by the authenticated user.
    *
    * Rather than deleting the row, we zero its `valid_for` interval, which
@@ -1063,6 +1155,20 @@ export type MutationRoot = {
    * Already-zeroed (revoked) tokens are treated as not found.
    */
   revokeRefreshToken: Scalars['Boolean']['output'];
+  /**
+   * Revoke a service-account token, returning the owning account in its
+   * post-revocation state.
+   *
+   * The caller must have ManageServiceAccount capability on the owning service
+   * account's catalog name. The account is resolved from the token id.
+   *
+   * Rather than deleting the row, we zero its `valid_for` interval, which
+   * makes the token inert (it fails the exchange's expiry check and is
+   * excluded from listings) while preserving the audit trail. Revocation is
+   * idempotent: revoking an already-inert token is a no-op that still returns
+   * the account. Only an id that maps to no service-account token errors.
+   */
+  revokeServiceAccountToken: ServiceAccount;
   setBillingPaymentMethod: BillingPaymentMethodPayload;
   /**
    * Check storage health for a given catalog prefix and storage definition.
@@ -1123,6 +1229,13 @@ export type MutationRoot = {
 };
 
 
+export type MutationRootAddServiceAccountGrantArgs = {
+  capability: Capability;
+  catalogName: Scalars['Name']['input'];
+  prefix: Scalars['Prefix']['input'];
+};
+
+
 export type MutationRootCreateAlertSubscriptionArgs = {
   alertTypes?: InputMaybe<Array<AlertType>>;
   detail?: InputMaybe<Scalars['String']['input']>;
@@ -1148,6 +1261,19 @@ export type MutationRootCreateRefreshTokenArgs = {
   detail?: InputMaybe<Scalars['String']['input']>;
   multiUse?: Scalars['Boolean']['input'];
   validFor?: Scalars['String']['input'];
+};
+
+
+export type MutationRootCreateServiceAccountArgs = {
+  catalogName: Scalars['Name']['input'];
+  grants: Array<ServiceAccountGrantInput>;
+};
+
+
+export type MutationRootCreateServiceAccountTokenArgs = {
+  catalogName: Scalars['Name']['input'];
+  detail: Scalars['String']['input'];
+  validFor: Scalars['String']['input'];
 };
 
 
@@ -1180,7 +1306,28 @@ export type MutationRootRedeemInviteLinkArgs = {
 };
 
 
+export type MutationRootRemoveAllServiceAccountGrantsArgs = {
+  catalogName: Scalars['Name']['input'];
+};
+
+
+export type MutationRootRemoveServiceAccountGrantArgs = {
+  catalogName: Scalars['Name']['input'];
+  prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootRevokeAllServiceAccountTokensArgs = {
+  catalogName: Scalars['Name']['input'];
+};
+
+
 export type MutationRootRevokeRefreshTokenArgs = {
+  id: Scalars['Id']['input'];
+};
+
+
+export type MutationRootRevokeServiceAccountTokenArgs = {
   id: Scalars['Id']['input'];
 };
 
@@ -1454,6 +1601,7 @@ export type QueryRoot = {
   prefixes: PrefixRefConnection;
   /** List refresh tokens owned by the authenticated user. */
   refreshTokens: RefreshTokenInfoConnection;
+  serviceAccounts: ServiceAccountConnection;
   /**
    * Returns storage mappings accessible to the current user.
    *
@@ -1543,6 +1691,12 @@ export type QueryRootRefreshTokensArgs = {
 };
 
 
+export type QueryRootServiceAccountsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryRootStorageMappingsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -1616,6 +1770,77 @@ export type RepublishRequested = {
   reason: Scalars['String']['output'];
   /** Informational only, timestamp of when the controller observed the `Republish` request. */
   receivedAt: Scalars['DateTime']['output'];
+};
+
+export type ServiceAccount = {
+  __typename?: 'ServiceAccount';
+  catalogName: Scalars['Name']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  /**
+   * Email of the user who created the account. Null if that user has since
+   * been deleted or has no email on file.
+   */
+  createdByEmail?: Maybe<Scalars['String']['output']>;
+  grants: Array<ServiceAccountGrant>;
+  lastUsedAt?: Maybe<Scalars['DateTime']['output']>;
+  tokens: Array<ServiceAccountTokenInfo>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ServiceAccountConnection = {
+  __typename?: 'ServiceAccountConnection';
+  /** A list of edges. */
+  edges: Array<ServiceAccountEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type ServiceAccountEdge = {
+  __typename?: 'ServiceAccountEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: ServiceAccount;
+};
+
+/**
+ * A user_grant held by a service account: the prefix it may act on and the
+ * capability it holds there. An account's access is the union of its grants,
+ * which may span multiple prefixes independent of its catalog_name anchor.
+ */
+export type ServiceAccountGrant = {
+  __typename?: 'ServiceAccountGrant';
+  capability: Capability;
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  prefix: Scalars['Prefix']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+/** A user_grant to seed a service account with at creation time. */
+export type ServiceAccountGrantInput = {
+  capability: Capability;
+  prefix: Scalars['Prefix']['input'];
+};
+
+/**
+ * A service-account credential: a multi-use refresh token owned by the account
+ * and minted by an administrator. The secret itself is returned only once at
+ * creation (see [`CreateServiceAccountTokenResult`]).
+ */
+export type ServiceAccountTokenInfo = {
+  __typename?: 'ServiceAccountTokenInfo';
+  createdAt: Scalars['DateTime']['output'];
+  /**
+   * Email of the user who minted the token. Null if that user has since
+   * been deleted or has no email on file.
+   */
+  createdByEmail?: Maybe<Scalars['String']['output']>;
+  detail?: Maybe<Scalars['String']['output']>;
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['Id']['output'];
+  lastUsedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 /** The shape of a connector status, which matches that of an ops::Log. */
