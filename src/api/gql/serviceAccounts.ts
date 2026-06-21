@@ -19,7 +19,7 @@ export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
     fragment ServiceAccountFields on ServiceAccount {
         catalogName
         createdAt
-        createdBy
+        createdByEmail
         updatedAt
         lastUsedAt
         grants {
@@ -33,7 +33,7 @@ export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
             id
             detail
             createdAt
-            createdBy
+            createdByEmail
             expiresAt
             lastUsedAt
         }
@@ -104,7 +104,6 @@ const CREATE_SERVICE_ACCOUNT = graphql(`
         createServiceAccount(catalogName: $catalogName, grants: $grants) {
             catalogName
             createdAt
-            createdBy
         }
     }
 `);

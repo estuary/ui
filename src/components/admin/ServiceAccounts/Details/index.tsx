@@ -162,6 +162,9 @@ export function ServiceAccountDetails() {
                             serviceAccount.createdAt
                         ).toLocaleString(DateTime.DATE_MED)}
                     </MetaItem>
+                    <MetaItem label="Created by">
+                        {serviceAccount.createdByEmail ?? 'Unknown'}
+                    </MetaItem>
                     <MetaItem label="Last used">
                         {serviceAccount.lastUsedAt
                             ? DateTime.fromISO(

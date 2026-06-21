@@ -1,6 +1,6 @@
 import type { ServiceAccountTokenInfo } from 'src/gql-types/graphql';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
     Box,
@@ -100,6 +100,17 @@ export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
     const graceMinutes = recentlyUsedGraceMinutes(revokeTarget?.lastUsedAt);
     const revokeLabel = revokeTarget?.detail ?? 'Unnamed key';
 
+    // Surface the keys expiring soonest at the top.
+    const sortedTokens = useMemo(
+        () =>
+            [...tokens].sort(
+                (a, b) =>
+                    DateTime.fromISO(a.expiresAt).toMillis() -
+                    DateTime.fromISO(b.expiresAt).toMillis()
+            ),
+        [tokens]
+    );
+
     return (
         <Box>
             <Stack
@@ -141,8 +152,14 @@ export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
                     </Typography>
                 </Stack>
             ) : (
-                tokens.map((token) => {
+                sortedTokens.map((token) => {
                     const expiryAlert = tokenExpiry(token.expiresAt);
+                    const createdDate = DateTime.fromISO(
+                        token.createdAt
+                    ).toLocaleString(DateTime.DATE_MED);
+                    const createdLabel = token.createdByEmail
+                        ? `Created on ${createdDate} by ${token.createdByEmail}`
+                        : `Created on ${createdDate}`;
 
                     return (
                         <Stack
@@ -177,7 +194,7 @@ export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
                                     variant="caption"
                                     color="text.secondary"
                                 >
-                                    {`Created ${DateTime.fromISO(token.createdAt).toLocaleString(DateTime.DATE_MED)}`}
+                                    {createdLabel}
                                 </Typography>
                             </Box>
 

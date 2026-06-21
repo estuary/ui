@@ -101,7 +101,6 @@ export function AccountCard({
                     borderStyle: hasGrants ? 'solid' : 'dashed',
                     boxShadow: hasGrants ? defaultBoxShadow : undefined,
                     opacity: hasGrants ? 1 : 0.85,
-                    transform: hasGrants ? 'translateY(-2px)' : undefined,
                 },
             }}
         >

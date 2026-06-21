@@ -1645,7 +1645,12 @@ type RepublishRequested {
 type ServiceAccount {
   catalogName: Name!
   createdAt: DateTime!
-  createdBy: UUID!
+
+  """
+  Email of the user who created the account. Null if that user has since
+  been deleted or has no email on file.
+  """
+  createdByEmail: String
   grants: [ServiceAccountGrant!]!
   lastUsedAt: DateTime
   tokens: [ServiceAccountTokenInfo!]!
@@ -1695,7 +1700,12 @@ creation (see [`CreateServiceAccountTokenResult`]).
 """
 type ServiceAccountTokenInfo {
   createdAt: DateTime!
-  createdBy: UUID!
+
+  """
+  Email of the user who minted the token. Null if that user has since
+  been deleted or has no email on file.
+  """
+  createdByEmail: String
   detail: String
   expiresAt: DateTime!
   id: Id!
