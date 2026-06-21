@@ -1,6 +1,10 @@
 // System instructions and prompt builders for the in-dashboard assistant (v1:
 // explain log messages, explain Flow features, give connector setup steps).
 
+// Monospace stack shared by the terminal panel and its top-bar health strip.
+export const TERMINAL_FONT =
+    "'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace";
+
 export const ASSISTANT_INSTRUCTIONS = `You are the Estuary Flow assistant, embedded in the Flow web dashboard. Flow is a real-time data-movement platform: users build "captures" (sources), "collections", and "materializations" (destinations) from connectors.
 
 Help the user with three things:

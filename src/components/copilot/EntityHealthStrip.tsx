@@ -12,6 +12,7 @@ import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
 import { gql, useQuery } from 'urql';
 
+import { TERMINAL_FONT } from 'src/components/copilot/shared';
 import useActiveEntityCount from 'src/components/home/dashboard/EntityStatOverview/useActiveEntityCount';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
 import { useTenantStore } from 'src/stores/Tenant';
@@ -84,7 +85,6 @@ function HealthItem({
     const { count, indeterminate, isLoading } =
         useActiveEntityCount(entityType);
     const {
-        Icon,
         termId,
         routes: { viewAll },
     } = ENTITY_SETTINGS[entityType];
@@ -132,17 +132,19 @@ function HealthItem({
                         background: dotColor,
                     }}
                 />
-                <Icon
-                    style={{ fontSize: 14, color: theme.palette.text.secondary }}
-                />
                 <Typography
                     noWrap
-                    sx={{ fontSize: 13, color: theme.palette.text.secondary }}
+                    sx={{
+                        fontFamily: TERMINAL_FONT,
+                        fontSize: 13,
+                        color: theme.palette.text.secondary,
+                    }}
                 >
                     {label}
                 </Typography>
                 <Typography
                     sx={{
+                        fontFamily: TERMINAL_FONT,
                         fontSize: 13,
                         fontWeight: 600,
                         color: theme.palette.text.primary,

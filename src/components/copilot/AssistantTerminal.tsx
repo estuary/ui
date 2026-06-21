@@ -8,7 +8,10 @@ import {
 } from '@copilotkit/react-core';
 
 import { EntityHealthStrip } from 'src/components/copilot/EntityHealthStrip';
-import { ASSISTANT_INSTRUCTIONS } from 'src/components/copilot/shared';
+import {
+    ASSISTANT_INSTRUCTIONS,
+    TERMINAL_FONT,
+} from 'src/components/copilot/shared';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
 import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
@@ -38,8 +41,6 @@ const STATUS_AREA_WIDTH = 460;
 // type without expanding the whole transcript.
 const COLLAPSED_HEIGHT_TWO_LINE = 78;
 const TERMINAL_PROMPT = '#56d364';
-const TERMINAL_FONT =
-    "'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace";
 
 // Tool calls that need explicit human approval keep their interactive card.
 // Every other (read-only) tool call renders as a plain inline text line rather
