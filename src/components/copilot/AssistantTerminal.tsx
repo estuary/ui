@@ -277,6 +277,23 @@ export default function AssistantTerminal() {
         return ids;
     }, [messages]);
 
+    // An approval card is open while one of its tool calls is still awaiting a
+    // result. The input is blocked during this window — sending a new prompt
+    // would strand the unanswered tool call and error the run.
+    const awaitingApproval = useMemo(
+        () =>
+            (messages ?? []).some(
+                (message: any) =>
+                    Array.isArray(message?.toolCalls) &&
+                    message.toolCalls.some(
+                        (call: any) =>
+                            HITL_ACTIONS.has(toolCallName(call)) &&
+                            !completedToolCallIds.has(call?.id)
+                    )
+            ),
+        [messages, completedToolCallIds]
+    );
+
     // Render only the conversation turns; tool-result messages are excluded.
     const messageNodes = useMemo(
         () =>
@@ -376,6 +393,16 @@ export default function AssistantTerminal() {
                             <Box component="span" sx={{ color: dim }}>
                                 esc to interrupt
                             </Box>
+                        </Box>
+                    ) : awaitingApproval ? (
+                        <Box
+                            sx={{
+                                py: 0.5,
+                                color: dim,
+                                userSelect: 'none',
+                            }}
+                        >
+                            approve or cancel the request above to continue
                         </Box>
                     ) : (
                         <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
