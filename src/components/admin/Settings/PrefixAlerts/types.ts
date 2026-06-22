@@ -28,12 +28,7 @@ export interface AlertSubscriptionResponse
     id: string;
 }
 
-// TODO: Remove and replace type with instance of SubscriptionDependentProps.
-export interface AlertTypeFieldProps {
-    subscription: MutableAlertSubscription;
-}
-
-export interface AlertTypeSelectorProps extends AlertTypeFieldProps {
+export interface AlertTypeSelectorProps extends SubscriptionDependentProps {
     options: AlertTypeInfo[];
 }
 
