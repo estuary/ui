@@ -58,6 +58,11 @@ export default function CopilotAssistant() {
                 runtimeUrl={runtimeUrl}
                 publicLicenseKey={licenseKey}
                 showDevConsole={false}
+                // The runtime is mounted single-route (copilotRuntimeNodeHttpEndpoint).
+                // Pin the client to the matching transport: left unset it auto-detects,
+                // mis-lands on REST, and polls a /threads endpoint the single-route mount
+                // doesn't serve (405s on a timer) — a suspected cause of duplicated messages.
+                useSingleEndpoint
             >
                 <PageContext />
                 <DocsActions />

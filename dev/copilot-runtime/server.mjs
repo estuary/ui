@@ -13,6 +13,24 @@
 //
 // The frontend points at it via VITE_COPILOT_RUNTIME_URL (default
 // http://localhost:4000/copilotkit) and is provider-agnostic.
+//
+// Transport & the /threads handler:
+// copilotRuntimeNodeHttpEndpoint mounts the runtime in CopilotKit's
+// "single-route" mode — one endpoint that speaks a method-call protocol
+// (POST { method, params, body }, where method is one of agent/run,
+// agent/connect, agent/stop, info, transcribe). Two consequences, both handled
+// deliberately:
+//   1. The React <CopilotKit> provider is pinned with `useSingleEndpoint` so the
+//      client speaks this same protocol instead of auto-negotiating the REST
+//      surface — the documented pairing for a single-route server.
+//   2. The headless client still polls GET /copilotkit/threads — a thread-history
+//      feature that, per CopilotKit's docs, only works in "Intelligence mode" (a
+//      managed-cloud / persistent-runner setup we don't use). Against single-route
+//      it 404/405s on a timer. We don't want thread persistence here, so the
+//      /threads handler below answers those reads with empty, well-formed payloads
+//      — turning an expected-but-noisy failure into a clean no-op. (Those failing
+//      reloads were also a suspected contributor to a duplicated-message glitch in
+//      the transcript.)
 
 // Must be first: patches global fetch to sanitize Anthropic requests (dedupe
 // tool_use ids / disable parallel tool calls) before any adapter captures fetch.
@@ -262,6 +280,34 @@ const server = createServer(async (req, res) => {
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
+        return;
+    }
+
+    // Thread reads from the headless client: the single-route mount doesn't serve
+    // the thread REST surface (see the header note on transport), so these would
+    // 404/405 on a timer. We don't use thread persistence, so answer them with
+    // empty, well-formed payloads (shapes taken from the runtime's InMemory thread
+    // handler) — a clean no-op. Must sit before the ENDPOINT forward below, since
+    // /copilotkit/threads also startsWith ENDPOINT.
+    if (req.url?.startsWith(`${ENDPOINT}/threads`)) {
+        const sendJson = (code, body) => {
+            res.writeHead(code, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(body));
+        };
+        const path = req.url.split('?')[0];
+        if (req.method === 'DELETE') {
+            // Clear-threads in the InMemory fallback returns 204.
+            res.writeHead(204);
+            res.end();
+        } else if (path.endsWith('/messages')) {
+            sendJson(200, { messages: [] });
+        } else if (path.endsWith('/events')) {
+            sendJson(200, { events: [] });
+        } else if (path.endsWith('/state')) {
+            sendJson(200, { state: null });
+        } else {
+            sendJson(200, { threads: [], nextCursor: null });
+        }
         return;
     }
 

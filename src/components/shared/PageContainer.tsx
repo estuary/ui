@@ -9,6 +9,7 @@ import { Building } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import { SidePanelDocsOpenButton } from 'src/components/sidePanelDocs/OpenButton';
 import { paperBackground } from 'src/context/Theme';
 import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 import useNotificationStore, {
@@ -188,6 +189,16 @@ function PageContainer({
                             {intl.formatMessage({ id: header })}
                         </Box>
                     </Typography>
+
+                    {/* Docs toggle, pushed to the trailing edge. Stop the
+                    mousedown from reaching the bar's resize handler so clicking
+                    the button opens docs rather than starting a terminal drag. */}
+                    <Box
+                        onMouseDown={(event) => event.stopPropagation()}
+                        sx={{ ml: 'auto' }}
+                    >
+                        <SidePanelDocsOpenButton />
+                    </Box>
                 </Paper>
             ) : null}
 

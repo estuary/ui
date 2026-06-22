@@ -1,15 +1,6 @@
-import {
-    Box,
-    Button,
-    Collapse,
-    Divider,
-    Tooltip,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material';
+import { Button, useMediaQuery, useTheme } from '@mui/material';
 
 import { SidebarCollapse } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
 
 import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
 import { logRocketEvent } from 'src/services/shared';
@@ -17,7 +8,7 @@ import { CustomEvents } from 'src/services/types';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
 import { hasLength } from 'src/utils/misc-utils';
 
-function SidePanelDocsOpenButton() {
+export function SidePanelDocsOpenButton() {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -26,43 +17,29 @@ function SidePanelDocsOpenButton() {
     const docsURL = useSidePanelDocsStore((state) => state.url);
     const showButton = !showDocs && !belowMd && hasLength(docsURL);
 
+    if (!showButton) {
+        return null;
+    }
     return (
-        <Collapse in={showButton} orientation="horizontal" collapsedSize={0}>
-            <Box sx={{ display: 'flex' }}>
-                <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ ml: 1, mr: 2 }}
+        <Button
+            size="small"
+            variant="text"
+            sx={{ my: 0, py: 0 }}
+            onClick={() => {
+                logRocketEvent(CustomEvents.HELP_DOCS, {
+                    show: true,
+                });
+                setShowDocs(true);
+            }}
+            endIcon={
+                <SidebarCollapse
+                    style={{
+                        fontSize: 12,
+                    }}
                 />
-
-                <Tooltip
-                    arrow
-                    placement="bottom-end"
-                    title={<FormattedMessage id="docs.cta.expand.tooltip" />}
-                >
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => {
-                            logRocketEvent(CustomEvents.HELP_DOCS, {
-                                show: true,
-                            });
-                            setShowDocs(true);
-                        }}
-                        endIcon={
-                            <SidebarCollapse
-                                style={{
-                                    fontSize: 13,
-                                }}
-                            />
-                        }
-                    >
-                        <FormattedMessage id="docs.cta.expand" />
-                    </Button>
-                </Tooltip>
-            </Box>
-        </Collapse>
+            }
+        >
+            Connector Docs
+        </Button>
     );
 }
-
-export default SidePanelDocsOpenButton;

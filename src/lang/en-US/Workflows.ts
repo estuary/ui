@@ -440,9 +440,6 @@ export const Workflows: Record<string, string> = {
     'docs.iframe.disabled.title': `Connector documentation disabled`,
     'docs.iframe.disabled.message': `We cannot open 3rd party documentation inline. To view you must open {docLink} in a new window.`,
     'docs.iframe.disabled.message.docLink': `connector help`,
-    'docs.cta.expand': `Help`,
-    'docs.cta.expand.tooltip': `Expand Connector Help`,
-    'docs.cta.expand.disabled': `Open 3rd party docs in new window`,
 
     // Schema Editor for Collections
     'schemaEditor.fields.label': `Schema`,

@@ -21,7 +21,6 @@ import { useCopilotChatHeadless_c } from '@copilotkit/react-core';
 import { AssistantMarkdown } from 'src/components/copilot/AssistantMarkdown';
 import { EntityHealthStrip } from 'src/components/copilot/EntityHealthStrip';
 import { TERMINAL_FONT } from 'src/components/copilot/shared';
-import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
 import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 
@@ -66,9 +65,7 @@ const TYPE_MAX_LAG_FRAMES = 90;
 // shown. Messages that are already complete when first rendered (transcript
 // history) mount fully revealed and never animate.
 function useTypewriter(text: string, animate: boolean): string {
-    const [revealed, setRevealed] = useState(() =>
-        animate ? 0 : text.length
-    );
+    const [revealed, setRevealed] = useState(() => (animate ? 0 : text.length));
     const revealedRef = useRef(revealed);
     revealedRef.current = revealed;
     // Once a message has begun streaming we keep typing it to the end even after
@@ -181,7 +178,16 @@ function MessageLine({
                 sx={{
                     display: 'flex',
                     gap: 1,
-                    py: 1,
+                    my: 1,
+                    // Subtly band each past prompt so the user's turns read as
+                    // distinct from the agent's output while scrolling history.
+                    // The negative inline margin bleeds the highlight into the
+                    // padding gutter while the `❯` stays aligned with the agent
+                    // bullet.
+                    px: 0.5,
+                    mx: -0.5,
+                    // borderRadius: theme.radius.sm,
+                    backgroundColor: theme.palette.action.hover,
                     color: theme.palette.text.primary,
                 }}
             >
@@ -202,20 +208,46 @@ function MessageLine({
     }
 
     return (
-        <Box sx={{ py: 1, lineHeight: 1.45, color: theme.palette.text.primary }}>
-            {displayed ? <AssistantMarkdown>{displayed}</AssistantMarkdown> : null}
-            {pendingMarker ? (
-                <Box
-                    sx={{
-                        mt: content ? 1 : 0,
-                        color: theme.palette.text.disabled,
-                        userSelect: 'none',
-                    }}
-                >
-                    ▸ {pendingMarker} — complete the form on the right to
-                    continue
-                </Box>
-            ) : null}
+        <Box
+            sx={{
+                display: 'flex',
+                gap: 1,
+                py: 1,
+                lineHeight: 1.45,
+                color: theme.palette.text.primary,
+            }}
+        >
+            {/* A dim bullet marks each agent turn and insets its text to align
+                with the user prompt's `❯`, so the transcript reads as a column
+                of alternating markers. The top margin matches the leading
+                paragraph's so the bullet lines up with the first line of text. */}
+            <Box
+                component="span"
+                sx={{
+                    mt: 0.4,
+                    color: theme.palette.text.disabled,
+                    userSelect: 'none',
+                }}
+            >
+                •
+            </Box>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+                {displayed ? (
+                    <AssistantMarkdown>{displayed}</AssistantMarkdown>
+                ) : null}
+                {pendingMarker ? (
+                    <Box
+                        sx={{
+                            mt: content ? 1 : 0,
+                            color: theme.palette.text.disabled,
+                            userSelect: 'none',
+                        }}
+                    >
+                        ▸ {pendingMarker} — complete the form on the right to
+                        continue
+                    </Box>
+                ) : null}
+            </Box>
         </Box>
     );
 }
@@ -917,8 +949,8 @@ export default function AssistantTerminal() {
                     </Box>
                 ) : (
                     /* Top-right corner overlay: the entity health strip alongside the
-                   app chrome (update alert, docs toggle) that used to live in the
-                   top bar. Pinned at the collapsed height so it stays put as the
+                   app chrome (update alert) that used to live in the top bar.
+                   Pinned at the collapsed height so it stays put as the
                    terminal expands; the text area is padded to clear it. */
                     <Box
                         ref={statusRef}
@@ -946,7 +978,6 @@ export default function AssistantTerminal() {
                             <EntityHealthStrip vertical={open} />
                         ) : null}
                         <UpdateAlert />
-                        <SidePanelDocsOpenButton />
                     </Box>
                 )}
 
