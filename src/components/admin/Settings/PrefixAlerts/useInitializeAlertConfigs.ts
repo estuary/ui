@@ -50,11 +50,12 @@ export function useInitializeAlertConfigs() {
             debouncedPrefix === catalogPrefix &&
             !settingsDefined &&
             !fetching &&
-            data?.alertConfigs &&
-            data.alertConfigs.edges.length > 0
+            data?.alertConfigs
         ) {
             setGlobalPrefixSettings(
-                data.alertConfigs.edges[0].node.effective.config
+                data.alertConfigs.edges.length > 0
+                    ? data.alertConfigs.edges[0].node.effective.config
+                    : {}
             );
         }
     }, [
@@ -66,5 +67,5 @@ export function useInitializeAlertConfigs() {
         settingsDefined,
     ]);
 
-    return { loading: fetching || !data };
+    return { loading: fetching || !data || debouncedPrefix !== catalogPrefix };
 }

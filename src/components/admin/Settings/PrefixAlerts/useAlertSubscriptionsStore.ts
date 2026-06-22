@@ -159,6 +159,12 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
             setGlobalPrefixSettings: (value, targetSetting) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
+                        if (isEmpty(value) && !targetSetting) {
+                            state.mutableSubscriptionMetadata.settings = {};
+
+                            return;
+                        }
+
                         state.mutableSubscriptionMetadata.settings =
                             isEmpty(value) && targetSetting
                                 ? omit(
@@ -338,13 +344,16 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             return;
                         }
 
-                        state.mutableSubscriptionMetadata.subscriptions =
-                            state.mutableSubscriptionMetadata.subscriptions.map(
-                                (subscription) => ({
-                                    ...subscription,
-                                    catalogPrefix: state.catalogPrefix,
-                                })
-                            );
+                        state.mutableSubscriptionMetadata = {
+                            settings: {},
+                            subscriptions:
+                                state.mutableSubscriptionMetadata.subscriptions.map(
+                                    (subscription) => ({
+                                        ...subscription,
+                                        catalogPrefix: state.catalogPrefix,
+                                    })
+                                ),
+                        };
                     }),
                     false,
                     'subscribed prefix set'
