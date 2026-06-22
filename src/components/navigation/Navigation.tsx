@@ -20,9 +20,9 @@ import {
 } from '@mui/material';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 
-import { usePostHog } from '@posthog/react';
 import { useShallow } from 'zustand/react/shallow';
 
+import { usePostHog } from '@posthog/react';
 import {
     Building,
     Check,
@@ -146,7 +146,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                             // used to rest it (~16px) without the jump.
                             justifyContent: 'flex-start',
                             height: 48,
-                            px: open ? 2.5 : 2,
+                            px: 2,
                         }}
                     >
                         {open ? <CompanyLogo /> : <CompanyMark />}
