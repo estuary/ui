@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -7,7 +5,6 @@ import { useIntl } from 'react-intl';
 import DataMovementSetting from 'src/components/admin/Settings/PrefixAlerts/Dialog/GlobalSettings/DataMovementSetting';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { defaultOutline } from 'src/context/Theme';
-import { hasOwnProperty } from 'src/utils/misc-utils';
 import { AlertConfigKeys } from 'src/utils/notification-utils';
 
 const GlobalSettings = () => {
@@ -18,14 +15,6 @@ const GlobalSettings = () => {
     );
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
-    );
-
-    const targetGlobalSettings = useMemo(
-        () =>
-            hasOwnProperty(mutableSubscriptionMetadata, catalogPrefix)
-                ? mutableSubscriptionMetadata[catalogPrefix].settings
-                : {},
-        [catalogPrefix, mutableSubscriptionMetadata]
     );
 
     return (
@@ -55,7 +44,7 @@ const GlobalSettings = () => {
 
             <DataMovementSetting
                 config={
-                    targetGlobalSettings?.[
+                    mutableSubscriptionMetadata.settings?.[
                         AlertConfigKeys.DATA_MOVEMENT_STALLED
                     ]
                 }

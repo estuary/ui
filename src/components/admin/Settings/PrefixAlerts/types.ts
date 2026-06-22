@@ -20,7 +20,6 @@ export interface AlertSubscriptionDialogProps extends PrefixFieldProps {
     headerId: string;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
-    enableDeletion?: boolean;
 }
 
 export interface AlertSubscriptionResponse

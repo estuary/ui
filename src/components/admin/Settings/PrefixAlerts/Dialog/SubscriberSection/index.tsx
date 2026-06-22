@@ -11,16 +11,12 @@ import SubscriberInfo from 'src/components/admin/Settings/PrefixAlerts/Dialog/Su
 import SummaryEmpty from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/SummaryEmpty';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useGetAlertTypes } from 'src/context/AlertType';
-import { hasOwnProperty } from 'src/utils/misc-utils';
 
 const SubscriberSection = () => {
     const intl = useIntl();
 
     const [{ fetching, data, error }] = useGetAlertTypes();
 
-    const catalogPrefix = useAlertSubscriptionsStore(
-        (state) => state.catalogPrefix
-    );
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
     );
@@ -32,17 +28,15 @@ const SubscriberSection = () => {
         (state) => state.initializeAlertTypeOptions
     );
 
-    const targetSubscriptionMetadata: SubscriptionMetadata = useMemo(() => {
-        if (hasOwnProperty(mutableSubscriptionMetadata, catalogPrefix)) {
-            return {
-                ...mutableSubscriptionMetadata[catalogPrefix],
-                subscriptions: mutableSubscriptionMetadata[
-                    catalogPrefix
-                ].subscriptions.filter(({ deleted }) => !deleted),
-            };
-        }
-        return { settings: {}, subscriptions: [] };
-    }, [catalogPrefix, mutableSubscriptionMetadata]);
+    const targetSubscriptionMetadata: SubscriptionMetadata = useMemo(
+        () => ({
+            ...mutableSubscriptionMetadata,
+            subscriptions: mutableSubscriptionMetadata.subscriptions.filter(
+                ({ deleted }) => !deleted
+            ),
+        }),
+        [mutableSubscriptionMetadata]
+    );
 
     useEffect(() => {
         if (error) {

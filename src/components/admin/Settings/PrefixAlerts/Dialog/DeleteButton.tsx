@@ -8,7 +8,6 @@ import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
-import { hasOwnProperty } from 'src/utils/misc-utils';
 
 const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     const intl = useIntl();
@@ -26,12 +25,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     );
 
     const disabled = useMemo(() => {
-        const subscriptions = hasOwnProperty(
-            mutableSubscriptionMetadata,
-            catalogPrefix
-        )
-            ? mutableSubscriptionMetadata[catalogPrefix].subscriptions
-            : [];
+        const { subscriptions } = mutableSubscriptionMetadata;
 
         const emptyEmailExists = subscriptions.some(
             ({ email }) => email.length === 0

@@ -8,7 +8,6 @@ import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
-import { hasOwnProperty } from 'src/utils/misc-utils';
 
 const SaveButton = ({ closeDialog }: DialogActionProps) => {
     const intl = useIntl();
@@ -22,12 +21,9 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
         (state) => state.catalogPrefix
     );
     const emptyEmailExists = useAlertSubscriptionsStore((state) =>
-        state.catalogPrefix.length > 0 &&
-        hasOwnProperty(state.mutableSubscriptionMetadata, state.catalogPrefix)
-            ? state.mutableSubscriptionMetadata[
-                  state.catalogPrefix
-              ].subscriptions.some(({ email }) => email.length === 0)
-            : false
+        state.mutableSubscriptionMetadata.subscriptions.some(
+            ({ email }) => email.length === 0
+        )
     );
 
     const disabled = useMemo(

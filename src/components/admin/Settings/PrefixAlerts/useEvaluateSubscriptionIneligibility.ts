@@ -1,25 +1,14 @@
 import { useMemo } from 'react';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { hasOwnProperty } from 'src/utils/misc-utils';
 
 export function useEvaluateSubscriptionIneligibility() {
-    const catalogPrefix = useAlertSubscriptionsStore(
-        (state) => state.catalogPrefix
-    );
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
     );
 
     return useMemo(() => {
-        if (!hasOwnProperty(mutableSubscriptionMetadata, catalogPrefix)) {
-            return {
-                duplicateSubscriptionEmails: [],
-                emptyEmailDetected: false,
-            };
-        }
-
-        const { subscriptions } = mutableSubscriptionMetadata[catalogPrefix];
+        const { subscriptions } = mutableSubscriptionMetadata;
 
         const emptyEmailDetected = subscriptions.some(
             (subscription) => subscription.email.length === 0
@@ -42,5 +31,5 @@ export function useEvaluateSubscriptionIneligibility() {
             duplicateSubscriptionEmails,
             emptyEmailDetected,
         };
-    }, [catalogPrefix, mutableSubscriptionMetadata]);
+    }, [mutableSubscriptionMetadata]);
 }

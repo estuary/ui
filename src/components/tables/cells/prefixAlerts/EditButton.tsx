@@ -32,7 +32,6 @@ function AlertEditButton({
 
             <AlertSubscriptionDialog
                 descriptionId="alerts.config.dialog.update.description"
-                enableDeletion
                 headerId="alerts.config.dialog.update.header"
                 open={open}
                 setOpen={setOpen}

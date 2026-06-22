@@ -11,7 +11,7 @@ import { useDeleteAlertSubscription } from 'src/components/admin/Settings/Prefix
 import { useUpsertAlertConfig } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertConfig';
 import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
 import { BASE_ERROR } from 'src/services/supabase';
-import { hasOwnProperty, isPromiseFulfilledResult } from 'src/utils/misc-utils';
+import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 export function useModifyAlertMetadata(
     closeDialog: () => void,
@@ -47,33 +47,23 @@ export function useModifyAlertMetadata(
             return Promise.reject('Catalog prefix undefined.');
         }
 
-        if (
-            !hasOwnProperty(mutableSubscriptionMetadata, catalogPrefix) ||
-            mutableSubscriptionMetadata[catalogPrefix].subscriptions.length ===
-                0
-        ) {
+        if (mutableSubscriptionMetadata.subscriptions.length === 0) {
             // TODO: Add LogRocket event for this success scenario.
             return Promise.resolve();
         }
 
         const subscriptionQueries: Promise<AlertSubscriptionResponse>[] =
-            mutableSubscriptionMetadata[catalogPrefix].subscriptions.map(
-                (subscription) => {
-                    const {
-                        alertTypes,
-                        catalogPrefix: prefix,
-                        email,
-                    } = subscription;
+            mutableSubscriptionMetadata.subscriptions.map((subscription) => {
+                const { alertTypes, email } = subscription;
 
-                    return deletionTrigger || subscription.deleted
-                        ? deleteSubscription({ email, prefix })
-                        : upsertSubscription({
-                              alertTypes,
-                              email,
-                              prefix,
-                          });
-                }
-            );
+                return deletionTrigger || subscription.deleted
+                    ? deleteSubscription({ email, prefix: catalogPrefix })
+                    : upsertSubscription({
+                          alertTypes,
+                          email,
+                          prefix: catalogPrefix,
+                      });
+            });
 
         const serverErrors: (PostgrestError | CombinedError)[] = [];
 
@@ -122,7 +112,7 @@ export function useModifyAlertMetadata(
 
         const configResponse = await upsertConfig({
             catalogPrefixOrName: catalogPrefix,
-            config: mutableSubscriptionMetadata[catalogPrefix].settings,
+            config: mutableSubscriptionMetadata.settings,
         });
 
         if (configResponse?.error || configResponse?.invalid) {
