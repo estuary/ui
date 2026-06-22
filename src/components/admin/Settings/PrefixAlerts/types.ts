@@ -71,6 +71,7 @@ export interface MutableAlertSubscription extends ReducedAlertSubscription {
     id: string;
     viewing: boolean;
     deleted?: boolean;
+    emailErrorsExist?: boolean;
 }
 
 export interface PrefixFieldProps {

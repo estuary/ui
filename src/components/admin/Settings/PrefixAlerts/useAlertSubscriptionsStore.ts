@@ -23,7 +23,6 @@ interface AlertSubscriptionState {
     alertTypeOptions: AlertTypeInfo[];
     alertTypeOptionsFetching: boolean;
     catalogPrefix: string;
-    emailErrorsExist: boolean;
     initializationError: CombinedError | PostgrestError | null | undefined;
     initializeAlertTypeOptions: (
         values: AlertTypeInfo[],
@@ -36,10 +35,6 @@ interface AlertSubscriptionState {
     mutableSubscriptionMetadata: SubscriptionMetadata;
     prefixErrorsExist: boolean;
     saveErrors: (CombinedError | PostgrestError | null | undefined)[];
-    subscription: Pick<
-        ReducedAlertSubscription,
-        'alertTypes' | 'catalogPrefix' | 'email'
-    >;
     subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
     setAlertTypes: (
@@ -47,9 +42,7 @@ interface AlertSubscriptionState {
         catalogPrefix?: string,
         email?: string
     ) => void;
-    setEmailErrorsExist: (
-        value: AlertSubscriptionState['emailErrorsExist']
-    ) => void;
+    setEmailErrorsExist: (value: boolean, subscriptionId: string) => void;
     setGlobalPrefixSettings: (value: Schema, targetSetting?: string) => void;
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
@@ -87,23 +80,19 @@ const getInitialState = (): Pick<
     | 'alertTypeOptions'
     | 'alertTypeOptionsFetching'
     | 'catalogPrefix'
-    | 'emailErrorsExist'
     | 'initializationError'
     | 'mutableSubscriptionMetadata'
     | 'prefixErrorsExist'
     | 'saveErrors'
-    | 'subscription'
     | 'subscriptionMetadata'
 > => ({
     alertTypeOptions: [],
     alertTypeOptionsFetching: false,
     catalogPrefix: '',
-    emailErrorsExist: false,
     initializationError: null,
     mutableSubscriptionMetadata: { settings: {}, subscriptions: [] },
     prefixErrorsExist: false,
     saveErrors: [],
-    subscription: { alertTypes: [], catalogPrefix: '', email: '' },
     subscriptionMetadata: {},
 });
 
@@ -274,10 +263,22 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'alert types set'
                 ),
 
-            setEmailErrorsExist: (value) =>
+            setEmailErrorsExist: (value, subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.emailErrorsExist = value;
+                        const subscriptionIndex =
+                            state.mutableSubscriptionMetadata.subscriptions.findIndex(
+                                (subscription) =>
+                                    subscription.id === subscriptionId
+                            );
+
+                        if (subscriptionIndex === -1) {
+                            return;
+                        }
+
+                        state.mutableSubscriptionMetadata.subscriptions[
+                            subscriptionIndex
+                        ].emailErrorsExist = value;
                     }),
                     false,
                     'email errors exist set'
@@ -325,10 +326,10 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
             setSubscribedPrefix: (value, errors) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.subscription.catalogPrefix = value;
                         state.catalogPrefix = value.endsWith('/')
                             ? value
                             : `${value}/`;
+
                         state.prefixErrorsExist = Boolean(errors);
 
                         if (

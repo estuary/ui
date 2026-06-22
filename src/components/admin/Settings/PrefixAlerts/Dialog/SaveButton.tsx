@@ -14,7 +14,11 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
     const { loading, onClick } = useModifyAlertMetadata(closeDialog);
 
     const errorsExist = useAlertSubscriptionsStore(
-        (state) => state.emailErrorsExist || state.prefixErrorsExist
+        (state) =>
+            state.prefixErrorsExist ||
+            state.mutableSubscriptionMetadata.subscriptions.some(
+                ({ emailErrorsExist }) => emailErrorsExist
+            )
     );
 
     const catalogPrefix = useAlertSubscriptionsStore(

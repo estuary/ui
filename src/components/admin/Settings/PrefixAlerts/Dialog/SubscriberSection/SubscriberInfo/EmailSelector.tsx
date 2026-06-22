@@ -73,8 +73,8 @@ function EmailSelector({
     );
 
     useEffect(() => {
-        setEmailErrorsExist(inputErrorExists);
-    }, [inputErrorExists, setEmailErrorsExist]);
+        setEmailErrorsExist(inputErrorExists, subscriptionId);
+    }, [inputErrorExists, setEmailErrorsExist, subscriptionId]);
 
     return (
         <FormControl fullWidth>
