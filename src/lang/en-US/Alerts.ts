@@ -7,6 +7,7 @@ export const Alerts: Record<string, string> = {
     'alerts.config.dialog.cta.addSubscriber': `Add Recipient`,
     'alerts.config.dialog.cta.deleteAll': `Delete Prefix Alerts`,
     'alerts.config.dialog.emailSelector.inputError': `Email is incorrectly formatted.`,
+    'alerts.config.dialog.emailSelector.duplicationError': `Email is used by another subscription to this prefix.`,
     'alerts.config.dialog.error.generic': `An issue was encountered {operation} an alert subscription.`,
     'alerts.config.dialog.error.term.delete': `deleting`,
     'alerts.config.dialog.error.term.modify': `creating or updating`,

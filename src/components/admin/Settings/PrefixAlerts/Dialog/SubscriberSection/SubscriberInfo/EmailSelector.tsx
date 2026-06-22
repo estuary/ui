@@ -76,6 +76,9 @@ function EmailSelector({
         setEmailErrorsExist(inputErrorExists, subscriptionId);
     }, [inputErrorExists, setEmailErrorsExist, subscriptionId]);
 
+    const duplicateEmailDetected =
+        duplicateSubscriptionEmails.includes(subscribedEmail);
+
     return (
         <FormControl fullWidth>
             <Autocomplete
@@ -83,7 +86,7 @@ function EmailSelector({
                     Boolean(serverError) ||
                     (emptyEmailDetected && subscribedEmail.length > 0) ||
                     (duplicateSubscriptionEmails.length > 0 &&
-                        !duplicateSubscriptionEmails.includes(subscribedEmail))
+                        !duplicateEmailDetected)
                 }
                 filterOptions={(options) =>
                     options.filter((option) => {
@@ -160,10 +163,7 @@ function EmailSelector({
                 }: AutocompleteRenderInputParams) => (
                     <TextField
                         {...params}
-                        error={
-                            inputErrorExists ||
-                            duplicateSubscriptionEmails.includes(inputValue)
-                        }
+                        error={inputErrorExists || duplicateEmailDetected}
                         label={intl.formatMessage({
                             id: 'data.email',
                         })}
@@ -233,9 +233,17 @@ function EmailSelector({
             />
 
             {inputErrorExists ? (
-                <FormHelperText error={inputErrorExists}>
+                <FormHelperText error>
                     {intl.formatMessage({
                         id: 'alerts.config.dialog.emailSelector.inputError',
+                    })}
+                </FormHelperText>
+            ) : null}
+
+            {duplicateEmailDetected ? (
+                <FormHelperText error>
+                    {intl.formatMessage({
+                        id: 'alerts.config.dialog.emailSelector.duplicationError',
                     })}
                 </FormHelperText>
             ) : null}
