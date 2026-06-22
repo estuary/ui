@@ -6,8 +6,6 @@ import { useQuery } from 'urql';
 import { AlertConfigQuery } from 'src/api/alerts';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
-// TODO: Figure out the best way to display a loading state for each global
-//   setting component.
 export function useInitializeAlertConfigs() {
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
@@ -67,4 +65,6 @@ export function useInitializeAlertConfigs() {
         setGlobalPrefixSettings,
         settingsDefined,
     ]);
+
+    return { loading: fetching || !data };
 }

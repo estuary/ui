@@ -62,6 +62,7 @@ interface GlobalSettingConfig<T> {
 
 export interface GlobalSettingProps<T> {
     config: GlobalSettingConfig<T> | undefined;
+    loading: boolean;
     prefix: string;
     targetSetting: AlertConfigKeys;
 }

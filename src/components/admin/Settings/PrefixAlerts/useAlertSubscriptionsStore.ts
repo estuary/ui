@@ -29,7 +29,6 @@ interface AlertSubscriptionState {
         values: AlertTypeInfo[],
         fetching: boolean
     ) => void;
-    initializeMutableSubscriptionMetadata: (catalogPrefix: string) => void;
     markSubscriptionForDeletion: (
         catalogPrefix: string,
         subscriptionId: string
@@ -175,31 +174,6 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     }),
                     false,
                     'global prefix settings set'
-                ),
-
-            initializeMutableSubscriptionMetadata: () =>
-                set(
-                    produce((state: AlertSubscriptionState) => {
-                        if (
-                            state.catalogPrefix.length === 0 ||
-                            !hasOwnProperty(
-                                state.subscriptionMetadata,
-                                state.catalogPrefix
-                            )
-                        ) {
-                            // state.mutableSubscriptionMetadata = {
-                            //     settings: {},
-                            //     subscriptions: [],
-                            // };
-
-                            return;
-                        }
-
-                        state.mutableSubscriptionMetadata =
-                            state.subscriptionMetadata[state.catalogPrefix];
-                    }),
-                    false,
-                    'mutable subscription metadata initialized'
                 ),
 
             markSubscriptionForDeletion: (_catalogPrefix, subscriptionId) =>

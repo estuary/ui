@@ -19,7 +19,6 @@ import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveBu
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
 import SubscriberSection from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/index';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useInitializeAlertConfigs } from 'src/components/admin/Settings/PrefixAlerts/useInitializeAlertConfigs';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 
@@ -33,8 +32,6 @@ const AlertSubscriptionDialog = ({
     staticPrefix,
 }: AlertSubscriptionDialogProps) => {
     const intl = useIntl();
-
-    useInitializeAlertConfigs();
 
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
