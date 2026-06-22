@@ -29,7 +29,16 @@ interface CopilotAssistantState {
     // message thread — the version's reset()/setMessages don't reliably clear
     // the v2 store.
     threadNonce: number;
+    // Expanded terminal height in px, shared so the page-content breadcrumb bar
+    // (which lives in a separate subtree) can resize the terminal alongside the
+    // terminal's own bottom-edge handle. `resizingTerminal` is set by whichever
+    // handle is being dragged so the terminal can suppress its height transition
+    // and track the cursor without easing.
+    expandedHeight: number;
+    resizingTerminal: boolean;
     setOpen: (open: boolean) => void;
+    setExpandedHeight: (height: number) => void;
+    setResizingTerminal: (resizing: boolean) => void;
     openWithPrompt: (prompt: string) => void;
     openWithPromptInNewThread: (prompt: string) => void;
     openWithOpener: (message: string) => void;
@@ -37,6 +46,18 @@ interface CopilotAssistantState {
     clearPendingFreshPrompt: () => void;
     clearPendingOpener: () => void;
 }
+
+// Default expanded height as a fraction of the viewport; a drag (terminal edge
+// or breadcrumb) clamps to [MIN_EXPANDED_HEIGHT, MAX_EXPANDED_RATIO].
+const DEFAULT_EXPANDED_RATIO = 0.21;
+const MIN_EXPANDED_HEIGHT = 80;
+const MAX_EXPANDED_RATIO = 0.85;
+
+const clampExpandedHeight = (height: number): number =>
+    Math.min(
+        Math.max(height, MIN_EXPANDED_HEIGHT),
+        Math.round(window.innerHeight * MAX_EXPANDED_RATIO)
+    );
 
 export const useCopilotAssistantStore = create<CopilotAssistantState>()(
     devtools(
@@ -46,6 +67,10 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
             pendingFreshPrompt: null,
             pendingOpener: null,
             threadNonce: 0,
+            expandedHeight: clampExpandedHeight(
+                Math.round(window.innerHeight * DEFAULT_EXPANDED_RATIO)
+            ),
+            resizingTerminal: false,
 
             setOpen: (open) => {
                 set(
@@ -54,6 +79,26 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                     }),
                     false,
                     'Copilot Assistant Open Updated'
+                );
+            },
+
+            setExpandedHeight: (height) => {
+                set(
+                    produce((state: CopilotAssistantState) => {
+                        state.expandedHeight = clampExpandedHeight(height);
+                    }),
+                    false,
+                    'Copilot Assistant Expanded Height Updated'
+                );
+            },
+
+            setResizingTerminal: (resizing) => {
+                set(
+                    produce((state: CopilotAssistantState) => {
+                        state.resizingTerminal = resizing;
+                    }),
+                    false,
+                    'Copilot Assistant Resizing Terminal Updated'
                 );
             },
 

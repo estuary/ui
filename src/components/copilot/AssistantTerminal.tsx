@@ -26,11 +26,10 @@ import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 // page content down (the side nav stays put). Uses the app's own dark
 // background and no separating borders, so it reads as part of the chrome.
 
-// Default expanded height, as a fraction of the viewport; the user can drag the
-// bottom edge to resize, clamped to [MIN_EXPANDED_HEIGHT, MAX_EXPANDED_RATIO].
-const DEFAULT_EXPANDED_RATIO = 0.21;
-const MIN_EXPANDED_HEIGHT = 80;
-const MAX_EXPANDED_RATIO = 0.85;
+// The expanded height (and the clamp applied while dragging the terminal's
+// bottom edge or the breadcrumb bar) lives in the store, since the breadcrumb
+// resize handle sits in a separate subtree. See useCopilotAssistantStore.
+
 // Height of the prompt line when collapsed; sized to read like the top bar it
 // replaces.
 const COLLAPSED_HEIGHT = 48;
@@ -126,6 +125,20 @@ export default function AssistantTerminal() {
     const clearPendingPrompt = useCopilotAssistantStore(
         (state) => state.clearPendingPrompt
     );
+    // Expanded height and the in-progress-resize flag are shared so the
+    // breadcrumb bar (a separate subtree) can resize the terminal too.
+    const expandedHeight = useCopilotAssistantStore(
+        (state) => state.expandedHeight
+    );
+    const resizing = useCopilotAssistantStore(
+        (state) => state.resizingTerminal
+    );
+    const setExpandedHeight = useCopilotAssistantStore(
+        (state) => state.setExpandedHeight
+    );
+    const setResizingTerminal = useCopilotAssistantStore(
+        (state) => state.setResizingTerminal
+    );
 
     useCopilotAdditionalInstructions({
         instructions: ASSISTANT_INSTRUCTIONS,
@@ -135,10 +148,6 @@ export default function AssistantTerminal() {
         useCopilotChatHeadless_c();
 
     const [draft, setDraft] = useState('');
-    const [expandedHeight, setExpandedHeight] = useState(() =>
-        Math.round(window.innerHeight * DEFAULT_EXPANDED_RATIO)
-    );
-    const [dragging, setDragging] = useState(false);
     // Collapsed, the bar shows just the agent activity summary until the user
     // focuses it; focusing reveals the prompt line beneath the summary.
     const [focused, setFocused] = useState(false);
@@ -148,10 +157,6 @@ export default function AssistantTerminal() {
     // focus/submit reveals slide the prompt in beneath the summary. See `mt` on
     // the content box.
     const [collapseSettled, setCollapseSettled] = useState(true);
-    // Whether the collapsed prompt row has finished revealing/collapsing. The
-    // "type a command…" placeholder is held back until this settles, so it
-    // doesn't flash while the row slides in or out.
-    const [promptSettled, setPromptSettled] = useState(true);
     // Whether the transcript has content scrolled past the top/bottom edge —
     // each edge fades only while it hides something, so the pinned newest line
     // (and the prompt below it) stay crisp.
@@ -177,21 +182,18 @@ export default function AssistantTerminal() {
         setFadeBottom(distanceFromBottom > 4);
     }, []);
 
-    // Drag the bottom edge to resize the expanded panel.
+    // Drag the bottom edge to resize the expanded panel; the store clamps the
+    // height to its allowed range.
     const startDrag = (event: React.MouseEvent) => {
         event.preventDefault();
         const top = outerRef.current?.getBoundingClientRect().top ?? 0;
-        const max = Math.round(window.innerHeight * MAX_EXPANDED_RATIO);
-        setDragging(true);
+        setResizingTerminal(true);
 
         const onMove = (moveEvent: MouseEvent) => {
-            const next = moveEvent.clientY - top;
-            setExpandedHeight(
-                Math.min(Math.max(next, MIN_EXPANDED_HEIGHT), max)
-            );
+            setExpandedHeight(moveEvent.clientY - top);
         };
         const onUp = () => {
-            setDragging(false);
+            setResizingTerminal(false);
             window.removeEventListener('mousemove', onMove);
             window.removeEventListener('mouseup', onUp);
         };
@@ -470,16 +472,6 @@ export default function AssistantTerminal() {
         ? COLLAPSED_HEIGHT_TWO_LINE
         : COLLAPSED_HEIGHT;
 
-    // Hold the placeholder back until the prompt row settles after a reveal,
-    // collapse, or panel resize — otherwise "type a command…" flashes while the
-    // row is still sliding. Keyed on the row's reveal state and the panel's
-    // open/collapsed state, the two things that animate the row's size.
-    useEffect(() => {
-        setPromptSettled(false);
-        const id = window.setTimeout(() => setPromptSettled(true), 240);
-        return () => window.clearTimeout(id);
-    }, [promptRevealed, open]);
-
     // Fade the transcript into the background at any edge hiding scrolled-past
     // content. Only when expanded; collapsed is a fixed line or two.
     const fade = `${SCROLL_FADE_HEIGHT}px`;
@@ -491,8 +483,8 @@ export default function AssistantTerminal() {
           })`
         : undefined;
 
-    // One-line recap of what the agent is doing: an in-flight tool call or the
-    // tail of the streamed reply, with the blinking cursor while it streams.
+    // One-line recap of what the agent is doing: the tail of the streamed
+    // reply, with the blinking cursor while it streams.
     const summaryLine = (
         <Box
             sx={{
@@ -501,7 +493,7 @@ export default function AssistantTerminal() {
                 py: 0.5,
                 // The recap is the agent's own message text, so keep it readable;
                 // only the leading marker is muted (dim is reserved for the
-                // prompt placeholder and the esc/approval hints).
+                // esc/approval hints).
                 color: theme.palette.text.secondary,
                 userSelect: 'none',
                 minWidth: 0,
@@ -553,7 +545,6 @@ export default function AssistantTerminal() {
                         submit();
                     }
                 }}
-                placeholder={promptSettled ? 'type a command…' : ''}
                 multiline
                 maxRows={6}
                 sx={{
@@ -569,10 +560,6 @@ export default function AssistantTerminal() {
                     'p': 0,
                     '& .MuiInputBase-input': {
                         p: 0,
-                    },
-                    '& textarea::placeholder': {
-                        color: dim,
-                        opacity: 1,
                     },
                 }}
             />
@@ -616,7 +603,7 @@ export default function AssistantTerminal() {
                 position: 'relative',
                 overflow: 'hidden',
                 height: open ? expandedHeight : collapsedHeight,
-                transition: dragging ? 'none' : 'height 220ms ease',
+                transition: resizing ? 'none' : 'height 220ms ease',
                 background: theme.palette.background.default,
             }}
         >
@@ -731,7 +718,7 @@ export default function AssistantTerminal() {
                                     gridTemplateRows: promptRevealed
                                         ? '1fr'
                                         : '0fr',
-                                    transition: dragging
+                                    transition: resizing
                                         ? 'none'
                                         : 'grid-template-rows 220ms ease',
                                 }}
@@ -749,16 +736,13 @@ export default function AssistantTerminal() {
                 <Box
                     onMouseDown={startDrag}
                     sx={{
-                        'position': 'absolute',
-                        'left': 0,
-                        'right': 0,
-                        'bottom': 0,
-                        'height': 6,
-                        'cursor': 'ns-resize',
-                        'zIndex': 2,
-                        '&:hover': {
-                            background: theme.palette.divider,
-                        },
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        height: 6,
+                        cursor: 'ns-resize',
+                        zIndex: 2,
                     }}
                 />
             ) : null}

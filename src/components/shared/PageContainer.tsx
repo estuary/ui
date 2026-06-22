@@ -10,6 +10,7 @@ import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import { paperBackground } from 'src/context/Theme';
+import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
@@ -46,6 +47,36 @@ function PageContainer({
     const [displayAlert, setDisplayAlert] = useState(false);
 
     useEffect(() => setDisplayAlert(!!notification), [notification]);
+
+    const terminalOpen = useCopilotAssistantStore((state) => state.open);
+
+    // Drag the breadcrumb bar to resize the assistant terminal that sits
+    // directly above it in the content column — a larger grab target than the
+    // terminal's own bottom edge. Active only while the terminal is expanded;
+    // the store clamps the height. Relative drag (track the delta from the grab
+    // point) keeps the bar under the cursor as the terminal grows and shrinks.
+    const startTerminalResize = (event: React.MouseEvent) => {
+        if (!terminalOpen) {
+            return;
+        }
+        event.preventDefault();
+        const { expandedHeight, setExpandedHeight, setResizingTerminal } =
+            useCopilotAssistantStore.getState();
+        const startY = event.clientY;
+        setResizingTerminal(true);
+
+        const onMove = (moveEvent: MouseEvent) => {
+            setExpandedHeight(expandedHeight + (moveEvent.clientY - startY));
+        };
+        const onUp = () => {
+            setResizingTerminal(false);
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onUp);
+        };
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+    };
 
     const handlers = {
         notificationClose: (notificationBeingClosed?: Notification) => {
@@ -128,6 +159,7 @@ function PageContainer({
 
             {header ? (
                 <Paper
+                    onMouseDown={startTerminalResize}
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -142,6 +174,10 @@ function PageContainer({
                         borderBottom: '1px solid',
                         borderColor: 'divider',
                         background: backgroundMixin,
+                        // While the terminal is expanded the bar doubles as its
+                        // resize handle; no hover restyle, just the resize cursor.
+                        cursor: terminalOpen ? 'ns-resize' : undefined,
+                        userSelect: terminalOpen ? 'none' : undefined,
                     }}
                 >
                     <Building />
