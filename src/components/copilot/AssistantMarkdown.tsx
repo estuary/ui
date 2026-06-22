@@ -41,7 +41,7 @@ const markdownOptions = {
             component: (props: MdProps) => (
                 <Box
                     component="p"
-                    sx={{ my: 0.75, overflowWrap: 'anywhere' }}
+                    sx={{ my: 0.4, overflowWrap: 'anywhere' }}
                     {...props}
                 />
             ),
@@ -74,7 +74,7 @@ const markdownOptions = {
             component: (props: MdProps) => (
                 <Box
                     component="ul"
-                    sx={{ my: 0.5, pl: 2.5, listStyleType: 'disc' }}
+                    sx={{ my: 0.35, pl: 2.5, listStyleType: 'disc' }}
                     {...props}
                 />
             ),
@@ -83,7 +83,7 @@ const markdownOptions = {
             component: (props: MdProps) => (
                 <Box
                     component="ol"
-                    sx={{ my: 0.5, pl: 2.5, listStyleType: 'decimal' }}
+                    sx={{ my: 0.35, pl: 2.5, listStyleType: 'decimal' }}
                     {...props}
                 />
             ),
@@ -92,7 +92,7 @@ const markdownOptions = {
             component: (props: MdProps) => (
                 <Box
                     component="li"
-                    sx={{ my: 0.25, display: 'list-item' }}
+                    sx={{ my: 0.15, display: 'list-item' }}
                     {...props}
                 />
             ),

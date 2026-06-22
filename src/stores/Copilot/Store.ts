@@ -10,12 +10,9 @@ import { devtoolsOptions } from 'src/utils/store-utils';
 // authenticated layout. A bridge component inside the CopilotKit provider
 // consumes the pending values and appends the corresponding chat message.
 //
-// Three trigger styles:
+// Two trigger styles:
 // - openWithPrompt: appends a visible USER message and runs the model in the
 //   CURRENT thread (used by "Explain this log" etc.).
-// - openWithOpener: clears the thread (provider remount) then appends an
-//   ASSISTANT message WITHOUT running the model (used by "New Dataflow", so the
-//   panel opens with the agent already asking its first question).
 // - openWithPromptInNewThread: clears the thread (provider remount) then appends
 //   a visible USER message and runs the model (used by "Get help" on an error,
 //   so each help request starts from a clean conversation).
@@ -23,11 +20,9 @@ interface CopilotAssistantState {
     open: boolean;
     pendingPrompt: string | null;
     pendingFreshPrompt: string | null;
-    pendingOpener: string | null;
-    // Bumped by openWithOpener / openWithPromptInNewThread; used as the
-    // CopilotKit provider `key` so the panel remounts with a fresh (empty)
-    // message thread — the version's reset()/setMessages don't reliably clear
-    // the v2 store.
+    // Bumped by openWithPromptInNewThread; used as the CopilotKit provider `key`
+    // so the panel remounts with a fresh (empty) message thread — the version's
+    // reset()/setMessages don't reliably clear the v2 store.
     threadNonce: number;
     // Expanded terminal height in px, shared so the page-content breadcrumb bar
     // (which lives in a separate subtree) can resize the terminal alongside the
@@ -45,10 +40,8 @@ interface CopilotAssistantState {
     setAssistantEnabled: (enabled: boolean) => void;
     openWithPrompt: (prompt: string) => void;
     openWithPromptInNewThread: (prompt: string) => void;
-    openWithOpener: (message: string) => void;
     clearPendingPrompt: () => void;
     clearPendingFreshPrompt: () => void;
-    clearPendingOpener: () => void;
 }
 
 // Default expanded height as a fraction of the viewport; a drag (terminal edge
@@ -70,7 +63,6 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                 open: false,
                 pendingPrompt: null,
                 pendingFreshPrompt: null,
-                pendingOpener: null,
                 threadNonce: 0,
                 expandedHeight: clampExpandedHeight(
                     Math.round(window.innerHeight * DEFAULT_EXPANDED_RATIO)
@@ -148,20 +140,6 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                     );
                 },
 
-                openWithOpener: (message) => {
-                    set(
-                        produce((state: CopilotAssistantState) => {
-                            state.open = true;
-                            state.pendingOpener = message;
-                            // Remount the CopilotKit provider (via its `key`) so the
-                            // new interview starts from an empty message thread.
-                            state.threadNonce += 1;
-                        }),
-                        false,
-                        'Copilot Assistant Opened With Opener'
-                    );
-                },
-
                 clearPendingPrompt: () => {
                     set(
                         produce((state: CopilotAssistantState) => {
@@ -179,16 +157,6 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                         }),
                         false,
                         'Copilot Assistant Pending Fresh Prompt Cleared'
-                    );
-                },
-
-                clearPendingOpener: () => {
-                    set(
-                        produce((state: CopilotAssistantState) => {
-                            state.pendingOpener = null;
-                        }),
-                        false,
-                        'Copilot Assistant Pending Opener Cleared'
                     );
                 },
             }),

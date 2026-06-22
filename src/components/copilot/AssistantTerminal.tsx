@@ -53,6 +53,56 @@ const COLLAPSED_HEIGHT_TWO_LINE = 78;
 const SCROLL_FADE_HEIGHT = 28;
 const TERMINAL_PROMPT = '#56d364';
 
+// Typewriter reveal for streamed assistant text: a steady base cadence
+// (~120 chars/sec at 60fps) so replies type in rather than popping in whole,
+// plus a catch-up term that clears any backlog within ~1.5s so the reveal never
+// lags far behind a fast stream or a response that lands all at once.
+const TYPE_CHARS_PER_FRAME = 2;
+const TYPE_MAX_LAG_FRAMES = 90;
+
+// Reveals `text` a few characters per frame so streamed assistant output types
+// in. While the model is still producing tokens the target grows; the reveal
+// catches up to it and keeps going after streaming stops until the full text is
+// shown. Messages that are already complete when first rendered (transcript
+// history) mount fully revealed and never animate.
+function useTypewriter(text: string, animate: boolean): string {
+    const [revealed, setRevealed] = useState(() =>
+        animate ? 0 : text.length
+    );
+    const revealedRef = useRef(revealed);
+    revealedRef.current = revealed;
+    // Once a message has begun streaming we keep typing it to the end even after
+    // `animate` flips false (the model finished), so the tail still types in
+    // rather than snapping to full.
+    const startedRef = useRef(animate);
+    if (animate) {
+        startedRef.current = true;
+    }
+
+    useEffect(() => {
+        if (!startedRef.current || revealedRef.current >= text.length) {
+            return undefined;
+        }
+        let frame = 0;
+        const tick = () => {
+            const remaining = text.length - revealedRef.current;
+            if (remaining <= 0) {
+                return;
+            }
+            const step = Math.max(
+                TYPE_CHARS_PER_FRAME,
+                Math.ceil(remaining / TYPE_MAX_LAG_FRAMES)
+            );
+            setRevealed((current) => Math.min(text.length, current + step));
+            frame = window.requestAnimationFrame(tick);
+        };
+        frame = window.requestAnimationFrame(tick);
+        return () => window.cancelAnimationFrame(frame);
+    }, [text]);
+
+    return startedRef.current ? text.slice(0, revealed) : text;
+}
+
 // Tool calls that need explicit human approval keep their interactive card.
 // Every other (read-only) tool call renders as a plain inline text line rather
 // than a status card, so the transcript reads like terminal output.
@@ -81,6 +131,8 @@ function MessageLine({
     message,
     markPending,
     completedToolCallIds,
+    streaming,
+    onReveal,
 }: {
     message: any;
     // The live HITL form is hosted in the side panel (wide viewports), so leave a
@@ -88,10 +140,22 @@ function MessageLine({
     // a modal that's self-evident, so no pointer is shown there.
     markPending: boolean;
     completedToolCallIds: Set<string>;
+    // True for the assistant message the model is actively streaming, so its
+    // text types in. False for finished turns and user turns, which render whole.
+    streaming: boolean;
+    // Called after each reveal so the transcript can follow the growing text
+    // while it's pinned to the bottom.
+    onReveal: () => void;
 }) {
     const theme = useTheme();
     const content = typeof message?.content === 'string' ? message.content : '';
     const isUser = message?.role === 'user';
+    // Type assistant turns in; user turns render whole. The reveal grows the
+    // line's height, so re-pin the transcript after each step.
+    const displayed = useTypewriter(content, !isUser && streaming);
+    useLayoutEffect(() => {
+        onReveal();
+    }, [displayed, onReveal]);
     const toolCalls: any[] = Array.isArray(message?.toolCalls)
         ? message.toolCalls
         : [];
@@ -117,7 +181,7 @@ function MessageLine({
                 sx={{
                     display: 'flex',
                     gap: 1,
-                    py: 0.5,
+                    py: 1,
                     color: theme.palette.text.primary,
                 }}
             >
@@ -138,8 +202,8 @@ function MessageLine({
     }
 
     return (
-        <Box sx={{ py: 0.5, color: theme.palette.text.primary }}>
-            {content ? <AssistantMarkdown>{content}</AssistantMarkdown> : null}
+        <Box sx={{ py: 1, lineHeight: 1.45, color: theme.palette.text.primary }}>
+            {displayed ? <AssistantMarkdown>{displayed}</AssistantMarkdown> : null}
             {pendingMarker ? (
                 <Box
                     sx={{
@@ -169,6 +233,12 @@ export default function AssistantTerminal() {
     const clearPendingPrompt = useCopilotAssistantStore(
         (state) => state.clearPendingPrompt
     );
+    const pendingFreshPrompt = useCopilotAssistantStore(
+        (state) => state.pendingFreshPrompt
+    );
+    const clearPendingFreshPrompt = useCopilotAssistantStore(
+        (state) => state.clearPendingFreshPrompt
+    );
     // Expanded height and the in-progress-resize flag are shared so the
     // breadcrumb bar (a separate subtree) can resize the terminal too.
     const expandedHeight = useCopilotAssistantStore(
@@ -187,7 +257,7 @@ export default function AssistantTerminal() {
     // The system prompt is injected by the runtime (server.mjs), not the client,
     // so it stays out of the bundle and can't be stripped — no instructions are
     // sent from here.
-    const { messages, sendMessage, isLoading, stopGeneration } =
+    const { messages, sendMessage, isLoading, stopGeneration, isAvailable } =
         useCopilotChatHeadless_c();
 
     const [draft, setDraft] = useState('');
@@ -239,6 +309,15 @@ export default function AssistantTerminal() {
         atBottomRef.current = distanceFromBottom <= 4;
         setFadeTop(scrollTop > 4);
         setFadeBottom(distanceFromBottom > 4);
+    }, []);
+
+    // Follow the newest line as the typewriter reveals more text — but only while
+    // the user is already at the bottom, so reading history isn't yanked down.
+    const pinToBottom = useCallback(() => {
+        const node = scrollRef.current;
+        if (node && atBottomRef.current) {
+            node.scrollTop = node.scrollHeight;
+        }
     }, []);
 
     // Drag the bottom edge to resize the expanded panel; the store clamps the
@@ -395,8 +474,7 @@ export default function AssistantTerminal() {
     }, []);
 
     // Prompts queued via the store (e.g. the Explain-this-log button) arrive as
-    // pendingPrompt. Send them through the same headless chat the panel renders
-    // — the legacy appendMessage path does not feed useCopilotChatHeadless_c.
+    // pendingPrompt; send them through the headless chat the panel renders.
     useEffect(() => {
         if (!pendingPrompt) {
             return;
@@ -408,6 +486,26 @@ export default function AssistantTerminal() {
         } as any);
         clearPendingPrompt();
     }, [pendingPrompt, sendMessage, clearPendingPrompt]);
+
+    // "Get help" on an error queues a prompt and bumps threadNonce to remount the
+    // provider for a clean thread — so this terminal remounts with it. Send the
+    // prompt once the fresh runtime session is ready: a send fired before
+    // isAvailable is silently dropped. The ref guards StrictMode's double-effect
+    // and resets on the remount, which is exactly when the next help request
+    // starts.
+    const freshPromptSent = useRef(false);
+    useEffect(() => {
+        if (!pendingFreshPrompt || freshPromptSent.current || !isAvailable) {
+            return;
+        }
+        freshPromptSent.current = true;
+        void sendMessage({
+            id: crypto.randomUUID(),
+            role: 'user',
+            content: pendingFreshPrompt,
+        } as any);
+        clearPendingFreshPrompt();
+    }, [pendingFreshPrompt, isAvailable, sendMessage, clearPendingFreshPrompt]);
 
     const submit = () => {
         const text = draft.trim();
@@ -588,6 +686,18 @@ export default function AssistantTerminal() {
         return () => observer.disconnect();
     }, [showFormInPanel, showStatus]);
 
+    // The assistant message the model is actively streaming — the last turn,
+    // when it's an assistant turn and a response is in flight. Only this one
+    // types in; every earlier turn is already complete and renders whole.
+    const streamingMessageId = useMemo(() => {
+        if (!isLoading) {
+            return null;
+        }
+        const list = messages ?? [];
+        const last = list[list.length - 1];
+        return last?.role === 'assistant' ? last.id : null;
+    }, [messages, isLoading]);
+
     // Render only the conversation turns; tool-result messages are excluded.
     const messageNodes = useMemo(
         () =>
@@ -603,9 +713,17 @@ export default function AssistantTerminal() {
                         message={message}
                         markPending={usePanel}
                         completedToolCallIds={completedToolCallIds}
+                        streaming={message.id === streamingMessageId}
+                        onReveal={pinToBottom}
                     />
                 )),
-        [messages, usePanel, completedToolCallIds]
+        [
+            messages,
+            usePanel,
+            completedToolCallIds,
+            streamingMessageId,
+            pinToBottom,
+        ]
     );
 
     const dim = theme.palette.text.disabled;

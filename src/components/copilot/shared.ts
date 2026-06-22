@@ -1,18 +1,12 @@
 // Prompt builders for the in-dashboard assistant's button-driven entry points
-// (explain log messages, explain Flow features, connector setup, error help) and
-// the New Dataflow opener. These build user-message content. The assistant's
-// SYSTEM PROMPT is NOT here — it's injected server-side by the runtime
+// (explain log messages, explain Flow features, connector setup, error help).
+// These build user-message content. The assistant's SYSTEM PROMPT is NOT here —
+// it's injected server-side by the runtime
 // (dev/copilot-runtime/system-prompt.mjs) so it stays out of the bundle.
 
 // Monospace stack shared by the terminal panel and its top-bar health strip.
 export const TERMINAL_FONT =
     "'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace";
-
-// The agent's opening question, appended (as an assistant message, no model
-// call) when the "New Dataflow" button launches the interview — so the panel
-// opens with the agent already asking, and no synthetic user prompt is shown.
-export const NEW_DATAFLOW_OPENER =
-    'Let\'s set up a new dataflow. What system do you want to capture data from? (For example: PostgreSQL, MySQL, MongoDB — or "Hello World" to try a synthetic test source.)';
 
 export const buildLogExplanationPrompt = (
     message: string,
