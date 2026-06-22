@@ -139,9 +139,14 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: open ? 'flex-start' : 'center',
+                            // Stay left-anchored in both states: the drawer width
+                            // animates on collapse, so centering would fling the
+                            // mark to the middle of the still-wide rail and snap
+                            // it back. px keeps the collapsed mark where centering
+                            // used to rest it (~16px) without the jump.
+                            justifyContent: 'flex-start',
                             height: 48,
-                            px: open ? 2.5 : 0,
+                            px: open ? 2.5 : 2,
                         }}
                     >
                         {open ? <CompanyLogo /> : <CompanyMark />}
