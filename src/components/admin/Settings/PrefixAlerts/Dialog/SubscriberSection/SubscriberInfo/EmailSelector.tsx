@@ -160,7 +160,10 @@ function EmailSelector({
                 }: AutocompleteRenderInputParams) => (
                     <TextField
                         {...params}
-                        error={inputErrorExists}
+                        error={
+                            inputErrorExists ||
+                            duplicateSubscriptionEmails.includes(inputValue)
+                        }
                         label={intl.formatMessage({
                             id: 'data.email',
                         })}
