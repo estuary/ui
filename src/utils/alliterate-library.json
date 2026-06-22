@@ -357,12 +357,7 @@
             "plummeting",
             "pussyfooting"
         ],
-        "ph": [
-            "philosophizing",
-            "phenomenal",
-            "photogenic",
-            "phantasmal"
-        ],
+        "ph": ["philosophizing", "phenomenal", "photogenic", "phantasmal"],
         "q": [
             "quirky",
             "quick",
@@ -459,13 +454,7 @@
             "trapezing",
             "trotting"
         ],
-        "th": [
-            "thrilling",
-            "thundering",
-            "thoughtful",
-            "thriving",
-            "thumping"
-        ],
+        "th": ["thrilling", "thundering", "thoughtful", "thriving", "thumping"],
         "u": [
             "upbeat",
             "unique",
@@ -501,8 +490,7 @@
             "vanishing",
             "vexing",
             "voyaging",
-            "vibrating",
-            "vrooming"
+            "vibrating"
         ],
         "w": [
             "wacky",
@@ -717,7 +705,6 @@
             "eel",
             "egret",
             "eider",
-            "eland",
             "elderberry",
             "elephant",
             "elk",
@@ -728,14 +715,10 @@
             "edelweiss",
             "eggplant",
             "eft",
-            "elephant-seal",
-            "emperor-penguin",
-            "emperor-moth",
             "euphorbia",
             "ewe",
             "eelgrass",
             "eglantine",
-            "elephant-shrew",
             "euglena",
             "eulachon"
         ],
@@ -1181,11 +1164,7 @@
             "pumpkin",
             "python"
         ],
-        "ph": [
-            "pheasant",
-            "phlox",
-            "phoenix"
-        ],
+        "ph": ["pheasant", "phlox", "phoenix"],
         "q": [
             "quail",
             "quince",
@@ -1294,12 +1273,7 @@
             "spaniel",
             "stoat"
         ],
-        "sh": [
-            "shark",
-            "sheep",
-            "shrew",
-            "shrimp"
-        ],
+        "sh": ["shark", "sheep", "shrew", "shrimp"],
         "t": [
             "tamarin",
             "tang",
@@ -1344,13 +1318,7 @@
             "tsetse-fly",
             "turbot"
         ],
-        "th": [
-            "thistle",
-            "thrasher",
-            "thrush",
-            "thyme",
-            "thornbill"
-        ],
+        "th": ["thistle", "thrasher", "thrush", "thyme", "thornbill"],
         "u": [
             "uakari",
             "unicornfish",

@@ -83,7 +83,9 @@ const renderArg = (arg: any): string => {
     const base = `${arg.name}: ${renderTypeRef(arg.type)}`;
     const withDefault =
         arg.defaultValue != null ? `${base} = ${arg.defaultValue}` : base;
-    return arg.description ? `${withDefault} — ${arg.description}` : withDefault;
+    return arg.description
+        ? `${withDefault} — ${arg.description}`
+        : withDefault;
 };
 
 const DESCRIBE_TYPE_DOC = parse(`
@@ -455,9 +457,7 @@ function MutationApprovalCard({
         <Box
             sx={{
                 p: 2,
-                my: 1,
-                borderRadius: 1,
-                border: `1px solid ${theme.palette.divider}`,
+                // my: 1,
                 background: theme.palette.background.default,
             }}
         >
@@ -562,9 +562,7 @@ function MutationApprovalCard({
                         onClick={() => setShowDetails((prev) => !prev)}
                         sx={{ px: 0 }}
                     >
-                        {showDetails
-                            ? 'Hide technical details'
-                            : 'Show technical details'}
+                        {showDetails ? 'Hide query' : 'Show query'}
                     </Button>
 
                     <Collapse in={showDetails}>

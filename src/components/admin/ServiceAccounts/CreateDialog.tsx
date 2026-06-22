@@ -44,6 +44,7 @@ import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButto
 import { codeBackground, defaultOutline } from 'src/context/Theme';
 import { generateAlliterativeName } from 'src/utils/alliterate';
 import { hasLength } from 'src/utils/misc-utils';
+import { stringToColor } from 'src/utils/stableColor';
 
 const TITLE_ID = 'create-service-account';
 const GUIDED_STEPS = ['Identity', 'Access', 'API key'];
@@ -132,7 +133,10 @@ export function CreateServiceAccountDialog({
     }, [open, mode, selectedTenant]);
 
     const catalogName = `${location}${name}`;
-    const namePreview = `${location}${name || 'service-account'}`;
+    const namePreview = `${location}/${name || 'service-account'}`.replace(
+        /\/\//g,
+        '/'
+    );
     const identityComplete = hasLength(name) && hasLength(location);
 
     const updateGuidedGrant = (index: number, patch: Partial<GuidedGrant>) => {
@@ -276,7 +280,13 @@ export function CreateServiceAccountDialog({
             <Typography variant="caption" color="text.secondary">
                 Full name
             </Typography>
-            <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+            <Typography
+                variant="body2"
+                sx={{
+                    fontFamily: 'monospace',
+                    color: stringToColor(namePreview),
+                }}
+            >
                 {namePreview}
             </Typography>
         </Box>

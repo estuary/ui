@@ -15,11 +15,11 @@ import { ApiKeysSection } from 'src/components/admin/ServiceAccounts/Details/Api
 import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
 import {
     monogram,
+    monogramColor,
     splitCatalogName,
 } from 'src/components/admin/ServiceAccounts/shared';
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import AdminTabs from 'src/components/admin/Tabs';
-import { logoColors } from 'src/context/Theme';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -110,7 +110,9 @@ export function ServiceAccountDetails() {
                             fontSize: 17,
                             fontWeight: 700,
                             color: '#06121f',
-                            background: `linear-gradient(135deg, ${logoColors.purple}, ${logoColors.teal})`,
+                            background: monogramColor(
+                                serviceAccount.catalogName
+                            ),
                         }}
                     >
                         {monogram(serviceAccount.catalogName)}

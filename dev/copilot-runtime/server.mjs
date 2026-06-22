@@ -27,7 +27,11 @@ import {
     GoogleGenerativeAIAdapter,
     copilotRuntimeNodeHttpEndpoint,
 } from '@copilotkit/runtime';
+import { Client as McpClient } from '@modelcontextprotocol/sdk/client/index.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import pg from 'pg';
+
+import { SYSTEM_PROMPT } from './system-prompt.mjs';
 
 const PORT = Number(process.env.COPILOT_RUNTIME_PORT ?? 4000);
 const ENDPOINT = '/copilotkit';
@@ -35,22 +39,94 @@ const ENDPOINT = '/copilotkit';
 const ALLOWED_ORIGIN =
     process.env.COPILOT_ALLOWED_ORIGIN ?? 'http://localhost:3000';
 
-// Kapa knowledge retrieval via its server-side Query API. The runtime holds the
-// API key and proxies questions from the browser (the `searchEstuaryKnowledge`
-// action), so the key never reaches the SPA. All three values come from the Kapa
-// dashboard's Query API integration. If any is unset, the /kapa endpoint reports
-// it's not configured rather than failing the whole runtime — the rest of the
-// assistant still works.
-//
-// (The Hosted MCP Server is the eventual target — auto-registered tool, raw
-// chunks — but its endpoint is OAuth-only today, which a headless runtime can't
-// satisfy with a static key. Switch back once it offers API-key auth.)
+// Kapa knowledge retrieval. Two server-side paths, so the key never reaches the
+// SPA; each is independently optional (leave its vars unset to disable it):
+//   1. Query API (KAPA_PROJECT_ID + KAPA_INTEGRATION_ID): the /kapa proxy below
+//      forwards the browser's `searchEstuaryKnowledge` action to Kapa's grounded
+//      chat endpoint and returns the answer + sources.
+//   2. Hosted MCP server (KAPA_MCP_ENDPOINT): the runtime connects to Kapa's
+//      Streamable-HTTP MCP server with the project API key in the Authorization
+//      header, and CopilotKit auto-registers its tools for the model to call.
+//      This is the eventual target (auto-registered tools, raw chunks); it was
+//      OAuth-only before, but now accepts API-key (Bearer) auth on this endpoint,
+//      which a headless runtime can use.
 const KAPA_API_KEY = process.env.KAPA_API_KEY;
 const KAPA_PROJECT_ID = process.env.KAPA_PROJECT_ID;
 const KAPA_INTEGRATION_ID = process.env.KAPA_INTEGRATION_ID;
+const KAPA_MCP_ENDPOINT = process.env.KAPA_MCP_ENDPOINT;
 const kapaConfigured = Boolean(
     KAPA_API_KEY && KAPA_PROJECT_ID && KAPA_INTEGRATION_ID
 );
+const kapaMcpConfigured = Boolean(KAPA_MCP_ENDPOINT && KAPA_API_KEY);
+
+// Factory CopilotKit calls for the configured Kapa MCP server. Built on the
+// official MCP SDK (Streamable HTTP, API key in the Authorization header) and
+// adapted to CopilotKit's MCPClient shape: CopilotKit reads each tool's
+// parameters from `schema.parameters.jsonSchema`, while the SDK exposes the raw
+// JSON Schema as `inputSchema` — so map between the two and forward calls
+// through callTool. A connect/list failure degrades to no MCP tools rather than
+// breaking the whole assistant.
+async function createKapaMcpClient({ endpoint, apiKey }) {
+    const client = new McpClient(
+        { name: 'estuary-copilot-runtime', version: '1.0.0' },
+        { capabilities: {} }
+    );
+
+    try {
+        const transport = new StreamableHTTPClientTransport(
+            new URL(endpoint),
+            { requestInit: { headers: { Authorization: `Bearer ${apiKey}` } } }
+        );
+        await client.connect(transport);
+    } catch (error) {
+        console.error(
+            `Kapa MCP connect failed (${endpoint}); continuing without its tools:`,
+            error instanceof Error ? error.message : error
+        );
+        return { tools: async () => ({}) };
+    }
+
+    return {
+        async tools() {
+            try {
+                const { tools } = await client.listTools();
+                return Object.fromEntries(
+                    tools.map((tool) => [
+                        tool.name,
+                        {
+                            description: tool.description,
+                            schema: {
+                                parameters: { jsonSchema: tool.inputSchema },
+                            },
+                            execute: async (params) => {
+                                const result = await client.callTool({
+                                    name: tool.name,
+                                    arguments: params ?? {},
+                                });
+                                // callTool returns { content: [{ type, text }] };
+                                // hand the model the text parts to ground on.
+                                const text = (result?.content ?? [])
+                                    .filter((part) => part?.type === 'text')
+                                    .map((part) => part.text)
+                                    .join('\n\n');
+                                return text || JSON.stringify(result);
+                            },
+                        },
+                    ])
+                );
+            } catch (error) {
+                console.error(
+                    'Kapa MCP listTools failed:',
+                    error instanceof Error ? error.message : error
+                );
+                return {};
+            }
+        },
+        async close() {
+            await client.close().catch(() => {});
+        },
+    };
+}
 
 // Reads and JSON-parses a request body. Resolves {} for an empty body.
 function readJsonBody(req) {
@@ -125,7 +201,46 @@ if (provider === 'google') {
     });
 }
 
-const runtime = new CopilotRuntime();
+// Inject the system prompt server-side. CopilotKit normally takes the system
+// message from the frontend's `instructions`; doing it here instead keeps the
+// prompt out of the SPA bundle and un-strippable — we drop any client-supplied
+// system/developer message and prepend our own, so a tampered client can't
+// remove or override it. The runtime keeps its message classes internal (not
+// exported), so clone the class off an existing message instance.
+serviceAdapter = new Proxy(serviceAdapter, {
+    get(target, prop, receiver) {
+        if (prop !== 'process') {
+            const value = Reflect.get(target, prop, receiver);
+            return typeof value === 'function' ? value.bind(target) : value;
+        }
+        return async (request) => {
+            const sample = request.messages.find((m) => m.isTextMessage?.());
+            if (sample) {
+                const TextMessage = sample.constructor;
+                const system = new TextMessage({
+                    role: 'system',
+                    content: SYSTEM_PROMPT,
+                });
+                const rest = request.messages.filter(
+                    (m) =>
+                        !(
+                            m.isTextMessage?.() &&
+                            (m.role === 'system' || m.role === 'developer')
+                        )
+                );
+                request = { ...request, messages: [system, ...rest] };
+            }
+            return target.process(request);
+        };
+    },
+});
+
+const runtime = kapaMcpConfigured
+    ? new CopilotRuntime({
+          mcpServers: [{ endpoint: KAPA_MCP_ENDPOINT, apiKey: KAPA_API_KEY }],
+          createMCPClient: createKapaMcpClient,
+      })
+    : new CopilotRuntime();
 
 const handler = copilotRuntimeNodeHttpEndpoint({
     endpoint: ENDPOINT,
@@ -379,6 +494,13 @@ server.listen(PORT, () => {
     console.log(
         `Kapa knowledge retrieval: ${
             kapaConfigured ? 'enabled' : 'disabled (set KAPA_* in .env)'
+        }`
+    );
+    console.log(
+        `Kapa MCP server: ${
+            kapaMcpConfigured
+                ? `enabled (${KAPA_MCP_ENDPOINT})`
+                : 'disabled (set KAPA_MCP_ENDPOINT in .env)'
         }`
     );
 });

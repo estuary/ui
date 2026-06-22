@@ -223,13 +223,6 @@ export const logoColors = {
     teal: '#75d4d5',
 };
 
-// Breakpoints
-const xl = 1600;
-const lg = 1440;
-const md = 900;
-const sm = 650;
-const xs = 0;
-
 // Color Palettes
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
@@ -978,15 +971,6 @@ const standardTransitionDuration = 300;
 const standardTransitionEasing = 'ease-in-out';
 
 const themeSettings = createTheme({
-    breakpoints: {
-        values: {
-            lg,
-            md,
-            sm,
-            xl,
-            xs,
-        },
-    },
     components: {
         MuiAlert: {
             styleOverrides: {
@@ -998,10 +982,12 @@ const themeSettings = createTheme({
         MuiCssBaseline: {
             styleOverrides: {
                 'body': {
-                    minWidth: sm,
+                    // Floor the usable app width; below this the layout scrolls
+                    // horizontally rather than compressing further.
+                    minWidth: 650,
                 },
                 'body.loginPage': {
-                    minWidth: xs,
+                    minWidth: 0,
                 },
             },
         },

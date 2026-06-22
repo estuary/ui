@@ -12,10 +12,10 @@ import {
 import { useCopilotAction, useHumanInTheLoop } from '@copilotkit/react-core';
 import { useClient } from 'urql';
 
-import { CONNECTOR_TAG_QUERY, CONNECTORS_QUERY } from 'src/api/gql/connectors';
 import { getDataPlaneOptions } from 'src/api/dataPlanes';
-import { createEntityDraft } from 'src/api/drafts';
 import { discover } from 'src/api/discovers';
+import { createEntityDraft } from 'src/api/drafts';
+import { CONNECTOR_TAG_QUERY, CONNECTORS_QUERY } from 'src/api/gql/connectors';
 import { encryptConfig } from 'src/api/oauth';
 import { createPublication } from 'src/api/publications';
 import { supabaseClient } from 'src/context/GlobalProviders';
@@ -43,7 +43,10 @@ const delay = (ms: number) =>
 async function pollJob(
     table: string,
     id: string,
-    { tries = 80, intervalMs = 1500 }: { tries?: number; intervalMs?: number } = {}
+    {
+        tries = 80,
+        intervalMs = 1500,
+    }: { tries?: number; intervalMs?: number } = {}
 ): Promise<{ success: boolean; row: any; timedOut?: boolean }> {
     for (let attempt = 0; attempt < tries; attempt += 1) {
         const payload = await supabaseClient
@@ -71,7 +74,10 @@ async function resolveDataPlaneName(
 ): Promise<string | undefined> {
     try {
         const { storageMappings } = useEntitiesStore.getState();
-        const { dataPlaneNames } = getDataPlaneInfo(storageMappings, catalogName);
+        const { dataPlaneNames } = getDataPlaneInfo(
+            storageMappings,
+            catalogName
+        );
         if (dataPlaneNames.length > 0) {
             return dataPlaneNames[0];
         }
@@ -135,6 +141,7 @@ function ConnectorConfigForm({
     const [values, setValues] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
     const [submitted, setSubmitted] = useState(false);
+    const [cancelled, setCancelled] = useState(false);
 
     // Fetch the connector's endpoint schema once and derive the form fields.
     useEffect(() => {
@@ -149,7 +156,8 @@ function ConnectorConfigForm({
                 if (cancelled) {
                     return;
                 }
-                const schema: any = result.data?.connectorSpec?.endpointSpecSchema;
+                const schema: any =
+                    result.data?.connectorSpec?.endpointSpecSchema;
                 const properties = schema?.properties ?? {};
                 const required: string[] = schema?.required ?? [];
                 const derived: ConfigField[] = Object.entries(properties)
@@ -199,6 +207,30 @@ function ConnectorConfigForm({
             }.`
         );
     };
+
+    const cancel = () => {
+        setCancelled(true);
+        respond?.(
+            `The user cancelled configuring ${connectorTitle} and did not provide its configuration.`
+        );
+    };
+
+    if (cancelled) {
+        return (
+            <Box
+                sx={{
+                    p: 1.5,
+                    my: 1,
+                    borderRadius: 1,
+                    border: `1px solid ${theme.palette.divider}`,
+                }}
+            >
+                <Typography variant="body2" color="text.secondary">
+                    Cancelled — {connectorTitle} was not configured.
+                </Typography>
+            </Box>
+        );
+    }
 
     if (status === 'complete' || submitted) {
         return (
@@ -262,9 +294,18 @@ function ConnectorConfigForm({
                         ))
                     )}
 
-                    <Button variant="contained" size="small" onClick={submit}>
-                        Save configuration
-                    </Button>
+                    <Stack direction="row" spacing={1}>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            onClick={submit}
+                        >
+                            Save configuration
+                        </Button>
+                        <Button size="small" onClick={cancel}>
+                            Cancel
+                        </Button>
+                    </Stack>
                 </Stack>
             )}
         </Box>

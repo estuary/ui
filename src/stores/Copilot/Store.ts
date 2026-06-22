@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 
 import produce from 'immer';
 
@@ -36,9 +36,13 @@ interface CopilotAssistantState {
     // and track the cursor without easing.
     expandedHeight: number;
     resizingTerminal: boolean;
+    // Whether the in-dashboard assistant is enabled. Persisted (per browser) and
+    // toggled from Admin → Settings; when false, the layout doesn't mount it.
+    assistantEnabled: boolean;
     setOpen: (open: boolean) => void;
     setExpandedHeight: (height: number) => void;
     setResizingTerminal: (resizing: boolean) => void;
+    setAssistantEnabled: (enabled: boolean) => void;
     openWithPrompt: (prompt: string) => void;
     openWithPromptInNewThread: (prompt: string) => void;
     openWithOpener: (message: string) => void;
@@ -60,117 +64,143 @@ const clampExpandedHeight = (height: number): number =>
     );
 
 export const useCopilotAssistantStore = create<CopilotAssistantState>()(
-    devtools(
-        (set) => ({
-            open: false,
-            pendingPrompt: null,
-            pendingFreshPrompt: null,
-            pendingOpener: null,
-            threadNonce: 0,
-            expandedHeight: clampExpandedHeight(
-                Math.round(window.innerHeight * DEFAULT_EXPANDED_RATIO)
-            ),
-            resizingTerminal: false,
+    persist(
+        devtools(
+            (set) => ({
+                open: false,
+                pendingPrompt: null,
+                pendingFreshPrompt: null,
+                pendingOpener: null,
+                threadNonce: 0,
+                expandedHeight: clampExpandedHeight(
+                    Math.round(window.innerHeight * DEFAULT_EXPANDED_RATIO)
+                ),
+                resizingTerminal: false,
+                assistantEnabled: true,
 
-            setOpen: (open) => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.open = open;
-                    }),
-                    false,
-                    'Copilot Assistant Open Updated'
-                );
-            },
+                setOpen: (open) => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.open = open;
+                        }),
+                        false,
+                        'Copilot Assistant Open Updated'
+                    );
+                },
 
-            setExpandedHeight: (height) => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.expandedHeight = clampExpandedHeight(height);
-                    }),
-                    false,
-                    'Copilot Assistant Expanded Height Updated'
-                );
-            },
+                setExpandedHeight: (height) => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.expandedHeight = clampExpandedHeight(height);
+                        }),
+                        false,
+                        'Copilot Assistant Expanded Height Updated'
+                    );
+                },
 
-            setResizingTerminal: (resizing) => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.resizingTerminal = resizing;
-                    }),
-                    false,
-                    'Copilot Assistant Resizing Terminal Updated'
-                );
-            },
+                setResizingTerminal: (resizing) => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.resizingTerminal = resizing;
+                        }),
+                        false,
+                        'Copilot Assistant Resizing Terminal Updated'
+                    );
+                },
 
-            openWithPrompt: (prompt) => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.open = true;
-                        state.pendingPrompt = prompt;
-                    }),
-                    false,
-                    'Copilot Assistant Opened With Prompt'
-                );
-            },
+                setAssistantEnabled: (enabled) => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.assistantEnabled = enabled;
+                            // Collapse on disable so re-enabling brings the
+                            // terminal back as the collapsed bar, not expanded.
+                            if (!enabled) {
+                                state.open = false;
+                            }
+                        }),
+                        false,
+                        'Copilot Assistant Enabled Updated'
+                    );
+                },
 
-            openWithPromptInNewThread: (prompt) => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.open = true;
-                        state.pendingFreshPrompt = prompt;
-                        // Remount the provider (via its `key`) so the help
-                        // request starts from an empty thread.
-                        state.threadNonce += 1;
-                    }),
-                    false,
-                    'Copilot Assistant Opened With Prompt In New Thread'
-                );
-            },
+                openWithPrompt: (prompt) => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.open = true;
+                            state.pendingPrompt = prompt;
+                        }),
+                        false,
+                        'Copilot Assistant Opened With Prompt'
+                    );
+                },
 
-            openWithOpener: (message) => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.open = true;
-                        state.pendingOpener = message;
-                        // Remount the CopilotKit provider (via its `key`) so the
-                        // new interview starts from an empty message thread.
-                        state.threadNonce += 1;
-                    }),
-                    false,
-                    'Copilot Assistant Opened With Opener'
-                );
-            },
+                openWithPromptInNewThread: (prompt) => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.open = true;
+                            state.pendingFreshPrompt = prompt;
+                            // Remount the provider (via its `key`) so the help
+                            // request starts from an empty thread.
+                            state.threadNonce += 1;
+                        }),
+                        false,
+                        'Copilot Assistant Opened With Prompt In New Thread'
+                    );
+                },
 
-            clearPendingPrompt: () => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.pendingPrompt = null;
-                    }),
-                    false,
-                    'Copilot Assistant Pending Prompt Cleared'
-                );
-            },
+                openWithOpener: (message) => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.open = true;
+                            state.pendingOpener = message;
+                            // Remount the CopilotKit provider (via its `key`) so the
+                            // new interview starts from an empty message thread.
+                            state.threadNonce += 1;
+                        }),
+                        false,
+                        'Copilot Assistant Opened With Opener'
+                    );
+                },
 
-            clearPendingFreshPrompt: () => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.pendingFreshPrompt = null;
-                    }),
-                    false,
-                    'Copilot Assistant Pending Fresh Prompt Cleared'
-                );
-            },
+                clearPendingPrompt: () => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.pendingPrompt = null;
+                        }),
+                        false,
+                        'Copilot Assistant Pending Prompt Cleared'
+                    );
+                },
 
-            clearPendingOpener: () => {
-                set(
-                    produce((state: CopilotAssistantState) => {
-                        state.pendingOpener = null;
-                    }),
-                    false,
-                    'Copilot Assistant Pending Opener Cleared'
-                );
-            },
-        }),
-        devtoolsOptions('copilot-assistant')
+                clearPendingFreshPrompt: () => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.pendingFreshPrompt = null;
+                        }),
+                        false,
+                        'Copilot Assistant Pending Fresh Prompt Cleared'
+                    );
+                },
+
+                clearPendingOpener: () => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.pendingOpener = null;
+                        }),
+                        false,
+                        'Copilot Assistant Pending Opener Cleared'
+                    );
+                },
+            }),
+            devtoolsOptions('copilot-assistant')
+        ),
+        {
+            // Only the enable flag is durable; the rest is ephemeral UI state.
+            name: 'estuary.copilot-assistant-settings',
+            version: 0,
+            partialize: (state) => ({
+                assistantEnabled: state.assistantEnabled,
+            }),
+        }
     )
 );

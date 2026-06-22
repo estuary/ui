@@ -1,6 +1,7 @@
 import { Divider, Stack } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import AssistantSettings from 'src/components/admin/Settings/AssistantSettings';
 import DataPlanes from 'src/components/admin/Settings/DataPlanes';
 import PrefixAlerts from 'src/components/admin/Settings/PrefixAlerts';
 import { StorageMappings } from 'src/components/admin/Settings/StorageMappings';
@@ -16,7 +17,13 @@ function Settings() {
         <>
             <AdminTabs />
 
-            <PrefixAlerts />
+            <AssistantSettings />
+
+            <Stack>
+                <Divider sx={{ mt: 2, mb: 4 }} />
+
+                <PrefixAlerts />
+            </Stack>
 
             <Stack>
                 <Divider sx={{ mt: 2, mb: 4 }} />

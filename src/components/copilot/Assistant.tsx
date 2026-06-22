@@ -5,6 +5,7 @@ import { GlobalStyles } from '@mui/material';
 import { CopilotKit, useCopilotChat } from '@copilotkit/react-core';
 import { Role, TextMessage } from '@copilotkit/runtime-client-gql';
 
+import { AssistantStatusBar } from 'src/components/copilot/AssistantStatusBar';
 import AssistantTerminal from 'src/components/copilot/AssistantTerminal';
 import DatabaseActions from 'src/components/copilot/DatabaseActions';
 import DataflowActions from 'src/components/copilot/DataflowActions';
@@ -118,6 +119,17 @@ export default function CopilotAssistant() {
     // message thread — the version's reset()/setMessages don't reliably clear
     // the v2 store, so a remount is the dependable way to start clean.
     const threadNonce = useCopilotAssistantStore((state) => state.threadNonce);
+    const assistantEnabled = useCopilotAssistantStore(
+        (state) => state.assistantEnabled
+    );
+
+    // Disabled: skip the CopilotKit provider, actions, and terminal entirely, but
+    // keep the top-bar chrome (entity health strip, update alert, docs toggle)
+    // that the terminal otherwise hosts — turning the chat off shouldn't drop the
+    // status indicators.
+    if (!assistantEnabled) {
+        return <AssistantStatusBar />;
+    }
 
     return (
         <>

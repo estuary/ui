@@ -157,11 +157,24 @@ function HealthItem({
     );
 }
 
-export function EntityHealthStrip() {
+export function EntityHealthStrip({
+    vertical = false,
+}: {
+    // Laid out as a single row by default (the collapsed top bar); stacked into a
+    // column when the terminal is expanded and there's vertical room.
+    vertical?: boolean;
+}) {
     const { countsByType, fetching } = useActiveAlertCountsByType();
 
     return (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: vertical ? 'column' : 'row',
+                alignItems: vertical ? 'flex-start' : 'center',
+                gap: vertical ? 0.5 : 1.5,
+            }}
+        >
             {HEALTH_ENTITY_TYPES.map((entityType) => (
                 <HealthItem
                     key={entityType}

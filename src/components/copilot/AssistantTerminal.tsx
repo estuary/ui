@@ -1,18 +1,26 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-import { Box, InputBase, useMediaQuery, useTheme } from '@mui/material';
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
 import {
-    useCopilotAdditionalInstructions,
-    useCopilotChatHeadless_c,
-} from '@copilotkit/react-core';
+    Box,
+    Dialog,
+    DialogContent,
+    InputBase,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
+
+import { useCopilotChatHeadless_c } from '@copilotkit/react-core';
 
 import { AssistantMarkdown } from 'src/components/copilot/AssistantMarkdown';
 import { EntityHealthStrip } from 'src/components/copilot/EntityHealthStrip';
-import {
-    ASSISTANT_INSTRUCTIONS,
-    TERMINAL_FONT,
-} from 'src/components/copilot/shared';
+import { TERMINAL_FONT } from 'src/components/copilot/shared';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { UpdateAlert } from 'src/components/UpdateAlert';
 import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
@@ -54,6 +62,14 @@ const HITL_ACTIONS = new Set([
     'collectConnectorConfig',
 ]);
 
+// Short, human labels for the transcript pointer shown while a form is hosted in
+// the side panel (see MessageLine's pending marker).
+const HITL_LABELS: Record<string, string> = {
+    runGraphQLMutation: 'account change',
+    runSetupSql: 'setup SQL',
+    collectConnectorConfig: 'connector setup',
+};
+
 const toolCallName = (call: any): string =>
     call?.function?.name ?? call?.name ?? 'tool call';
 
@@ -61,19 +77,37 @@ const toolCallName = (call: any): string =>
 // assistant turns as plain output. Read-only tool calls are not shown — the
 // steady "thinking…" indicator stands in for them; only approval-required tool
 // calls surface, via their interactive card.
-function MessageLine({ message }: { message: any }) {
+function MessageLine({
+    message,
+    markPending,
+    completedToolCallIds,
+}: {
+    message: any;
+    // The live HITL form is hosted in the side panel (wide viewports), so leave a
+    // muted pointer in the transcript while it awaits input. Narrow viewports use
+    // a modal that's self-evident, so no pointer is shown there.
+    markPending: boolean;
+    completedToolCallIds: Set<string>;
+}) {
     const theme = useTheme();
     const content = typeof message?.content === 'string' ? message.content : '';
     const isUser = message?.role === 'user';
     const toolCalls: any[] = Array.isArray(message?.toolCalls)
         ? message.toolCalls
         : [];
-    const needsApproval = toolCalls.some((call) =>
+    const hitlCalls = toolCalls.filter((call) =>
         HITL_ACTIONS.has(toolCallName(call))
     );
-    const generativeUI = needsApproval ? message?.generativeUI?.() : null;
+    const pendingHitl = hitlCalls.some(
+        (call) => !completedToolCallIds.has(call?.id)
+    );
 
-    if (!content && !generativeUI) {
+    const pendingMarker =
+        markPending && pendingHitl
+            ? (HITL_LABELS[toolCallName(hitlCalls[0])] ?? 'a request')
+            : null;
+
+    if (!content && !pendingMarker) {
         return null;
     }
 
@@ -106,8 +140,17 @@ function MessageLine({ message }: { message: any }) {
     return (
         <Box sx={{ py: 0.5, color: theme.palette.text.primary }}>
             {content ? <AssistantMarkdown>{content}</AssistantMarkdown> : null}
-            {generativeUI ? (
-                <Box sx={{ mt: content ? 1 : 0 }}>{generativeUI}</Box>
+            {pendingMarker ? (
+                <Box
+                    sx={{
+                        mt: content ? 1 : 0,
+                        color: theme.palette.text.disabled,
+                        userSelect: 'none',
+                    }}
+                >
+                    ▸ {pendingMarker} — complete the form on the right to
+                    continue
+                </Box>
             ) : null}
         </Box>
     );
@@ -115,9 +158,10 @@ function MessageLine({ message }: { message: any }) {
 
 export default function AssistantTerminal() {
     const theme = useTheme();
-    // The health strip needs real horizontal room; hide it (and drop the
-    // reserved padding) on narrow viewports.
-    const showStatus = useMediaQuery(theme.breakpoints.up('lg'));
+    // The health strip needs some horizontal room; hide it (and drop the reserved
+    // padding) below `md`. The HITL side panel needs more, so it has a separate,
+    // higher breakpoint — see `usePanel` below.
+    const showStatus = useMediaQuery(theme.breakpoints.up('md'));
     const open = useCopilotAssistantStore((state) => state.open);
     const pendingPrompt = useCopilotAssistantStore(
         (state) => state.pendingPrompt
@@ -140,10 +184,9 @@ export default function AssistantTerminal() {
         (state) => state.setResizingTerminal
     );
 
-    useCopilotAdditionalInstructions({
-        instructions: ASSISTANT_INSTRUCTIONS,
-        available: 'enabled',
-    });
+    // The system prompt is injected by the runtime (server.mjs), not the client,
+    // so it stays out of the bundle and can't be stripped — no instructions are
+    // sent from here.
     const { messages, sendMessage, isLoading, stopGeneration } =
         useCopilotChatHeadless_c();
 
@@ -162,9 +205,25 @@ export default function AssistantTerminal() {
     // (and the prompt below it) stay crisp.
     const [fadeTop, setFadeTop] = useState(false);
     const [fadeBottom, setFadeBottom] = useState(false);
+    // Measured width of the status overlay; the transcript reserves this much on
+    // the right rather than a fixed amount. Falls back to the full reserve until
+    // measured so text never starts underneath it.
+    const [statusWidth, setStatusWidth] = useState(STATUS_AREA_WIDTH);
     const outerRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    // The side-panel HITL host and its content; the terminal grows to fit the
+    // measured form so the whole thing is visible without scrolling.
+    const hitlPanelRef = useRef<HTMLDivElement>(null);
+    const hitlContentRef = useRef<HTMLDivElement>(null);
+    // The expanded height before a form took over, restored when it closes; and
+    // whether the user resized mid-form, in which case auto-fit/restore back off.
+    const preHitlHeightRef = useRef<number | null>(null);
+    const userResizedDuringHitlRef = useRef(false);
+    // The top-right status overlay (health strip + chrome); its measured width
+    // sets how much right-edge room the transcript reserves, so the terminal text
+    // reclaims whatever the overlay doesn't use (notably when it stacks narrow).
+    const statusRef = useRef<HTMLDivElement>(null);
     // Whether the transcript is scrolled to (near) the bottom. We only auto-pin
     // to the newest line while this holds, so scrolling up to read history isn't
     // yanked back down by each streamed token.
@@ -383,19 +442,44 @@ export default function AssistantTerminal() {
     // An approval card is open while one of its tool calls is still awaiting a
     // result. The input is blocked during this window — sending a new prompt
     // would strand the unanswered tool call and error the run.
-    const awaitingApproval = useMemo(
-        () =>
-            (messages ?? []).some(
-                (message: any) =>
-                    Array.isArray(message?.toolCalls) &&
-                    message.toolCalls.some(
-                        (call: any) =>
-                            HITL_ACTIONS.has(toolCallName(call)) &&
-                            !completedToolCallIds.has(call?.id)
-                    )
-            ),
-        [messages, completedToolCallIds]
-    );
+    // The most recent HITL tool call still awaiting a result, if any. While one
+    // exists the input is blocked (sending a new prompt would strand the
+    // unanswered tool call and error the run) and — on wide viewports — its form
+    // is hosted in the side panel.
+    const pendingApproval = useMemo(() => {
+        const list = messages ?? [];
+        for (let i = list.length - 1; i >= 0; i -= 1) {
+            const message: any = list[i];
+            const calls: any[] = Array.isArray(message?.toolCalls)
+                ? message.toolCalls
+                : [];
+            const pendingCall = calls.find(
+                (call) =>
+                    HITL_ACTIONS.has(toolCallName(call)) &&
+                    !completedToolCallIds.has(call?.id)
+            );
+            if (pendingCall) {
+                return { message, name: toolCallName(pendingCall) };
+            }
+        }
+        return null;
+    }, [messages, completedToolCallIds]);
+
+    const awaitingApproval = pendingApproval != null;
+
+    // The pending form is hosted in one place at a time: the side panel when
+    // there's room for it (wide viewport AND the terminal expanded), otherwise a
+    // modal — covering narrower viewports and the collapsed terminal, where the
+    // panel would be clipped to the bar height. It's never rendered inline in the
+    // transcript. The panel needs more width than the health strip does, so it
+    // has its own (higher) breakpoint: the strip shows from `md`, the form only
+    // earns the side panel from `lg` and falls back to the modal below that.
+    const usePanel = useMediaQuery(theme.breakpoints.up('lg'));
+    const pendingApprovalUI = pendingApproval
+        ? pendingApproval.message?.generativeUI?.()
+        : null;
+    const showFormInPanel = usePanel && open && pendingApprovalUI != null;
+    const showFormInModal = pendingApprovalUI != null && !showFormInPanel;
 
     // A one-line recap of the latest assistant text, shown on the collapsed
     // prompt line in place of the input while a response streams. Tool calls are
@@ -422,13 +506,87 @@ export default function AssistantTerminal() {
         return '';
     }, [messages]);
 
-    // An approval card can't be acted on while collapsed, so pop the panel open
-    // when one appears — the rest of the time we honor the collapsed state.
+    // When the side-panel form appears, remember the terminal height so it can be
+    // restored once the form closes; the auto-fit effect below grows the terminal
+    // to the form from there. On close, restore the prior height — unless the user
+    // resized mid-form, in which case leave their size alone. (When there's no
+    // room for the panel — narrow viewport or collapsed terminal — the form is
+    // hosted in a modal, which manages itself; the terminal is left untouched.)
+    const wasShowingPanelForm = useRef(false);
     useEffect(() => {
-        if (awaitingApproval && !open) {
-            useCopilotAssistantStore.getState().setOpen(true);
+        const store = useCopilotAssistantStore.getState();
+        if (showFormInPanel && !wasShowingPanelForm.current) {
+            preHitlHeightRef.current = store.expandedHeight;
+            userResizedDuringHitlRef.current = false;
+        } else if (!showFormInPanel && wasShowingPanelForm.current) {
+            if (
+                preHitlHeightRef.current != null &&
+                !userResizedDuringHitlRef.current
+            ) {
+                store.setExpandedHeight(preHitlHeightRef.current);
+            }
+            preHitlHeightRef.current = null;
         }
-    }, [awaitingApproval, open]);
+        wasShowingPanelForm.current = showFormInPanel;
+    }, [showFormInPanel]);
+
+    // If the user drags the resize handle while the panel form is up, they've
+    // taken over the height — stop auto-fitting and don't restore on close.
+    useEffect(() => {
+        if (resizing && showFormInPanel) {
+            userResizedDuringHitlRef.current = true;
+        }
+    }, [resizing, showFormInPanel]);
+
+    // Grow the terminal to fit the panel-hosted form as it renders (the connector
+    // form, for one, streams its fields in after the schema loads). Grow-only:
+    // the store clamps to a max height, past which the panel scrolls; shrinking
+    // back is left to the close-restore above so the terminal doesn't twitch as
+    // the form changes.
+    useEffect(() => {
+        if (!showFormInPanel) {
+            return undefined;
+        }
+        const content = hitlContentRef.current;
+        if (!content || typeof ResizeObserver === 'undefined') {
+            return undefined;
+        }
+        const fit = () => {
+            if (userResizedDuringHitlRef.current) {
+                return;
+            }
+            const panel = hitlPanelRef.current;
+            const store = useCopilotAssistantStore.getState();
+            if (panel && panel.scrollHeight > store.expandedHeight + 1) {
+                store.setExpandedHeight(panel.scrollHeight);
+            }
+        };
+        const observer = new ResizeObserver(fit);
+        observer.observe(content);
+        fit();
+        return () => observer.disconnect();
+    }, [showFormInPanel]);
+
+    // Track the status overlay's actual width so the transcript reserves only as
+    // much right-edge room as it needs — the strip is much narrower stacked
+    // (expanded) than in a row (collapsed), and that freed width goes to the
+    // terminal text. The side-panel form keeps the full reserve, so skip measuring
+    // then. Measured in a layout effect so the first paint already has the right
+    // padding (no reflow on mount).
+    useLayoutEffect(() => {
+        if (showFormInPanel || !showStatus) {
+            return undefined;
+        }
+        const node = statusRef.current;
+        if (!node || typeof ResizeObserver === 'undefined') {
+            return undefined;
+        }
+        const measure = () => setStatusWidth(node.offsetWidth);
+        const observer = new ResizeObserver(measure);
+        observer.observe(node);
+        measure();
+        return () => observer.disconnect();
+    }, [showFormInPanel, showStatus]);
 
     // Render only the conversation turns; tool-result messages are excluded.
     const messageNodes = useMemo(
@@ -440,9 +598,14 @@ export default function AssistantTerminal() {
                         message?.role === 'assistant'
                 )
                 .map((message: any) => (
-                    <MessageLine key={message.id} message={message} />
+                    <MessageLine
+                        key={message.id}
+                        message={message}
+                        markPending={usePanel}
+                        completedToolCallIds={completedToolCallIds}
+                    />
                 )),
-        [messages]
+        [messages, usePanel, completedToolCallIds]
     );
 
     const dim = theme.palette.text.disabled;
@@ -592,86 +755,137 @@ export default function AssistantTerminal() {
 
     const approvalHint = (
         <Box sx={{ py: 0.5, color: dim, userSelect: 'none' }}>
-            approve or cancel the request above to continue
+            {usePanel
+                ? 'complete the form on the right to continue'
+                : 'complete the form to continue'}
         </Box>
     );
 
     return (
-        <Box
-            ref={outerRef}
-            sx={{
-                position: 'relative',
-                overflow: 'hidden',
-                height: open ? expandedHeight : collapsedHeight,
-                transition: resizing ? 'none' : 'height 220ms ease',
-                background: theme.palette.background.default,
-            }}
-        >
-            {/* Top-right corner overlay: the entity health strip alongside the
-                app chrome (update alert, docs toggle) that used to live in the
-                top bar. Pinned at the collapsed height so it stays put as the
-                terminal expands; the text area is padded to clear it. */}
+        <>
             <Box
+                ref={outerRef}
                 sx={{
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    zIndex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    height: COLLAPSED_HEIGHT,
-                    pr: 1,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    height: open ? expandedHeight : collapsedHeight,
+                    transition: resizing ? 'none' : 'height 220ms ease',
+                    background: theme.palette.background.default,
                 }}
             >
-                {showStatus ? <EntityHealthStrip /> : null}
-                <UpdateAlert />
-                <SidePanelDocsOpenButton />
-            </Box>
+                {showFormInPanel ? (
+                    /* A HITL form is awaiting input — host it in the side panel,
+                   temporarily replacing the entity health strip and chrome. It
+                   fills the reserved right-hand column (the transcript text is
+                   already padded clear of it) and scrolls within the expanded
+                   terminal. */
+                    <Box
+                        ref={hitlPanelRef}
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            width: STATUS_AREA_WIDTH,
+                            zIndex: 1,
+                            overflowY: 'auto',
+                            px: 1.5,
+                            py: 1,
+                            borderLeft: `1px solid ${theme.palette.divider}`,
+                            background: theme.palette.background.default,
+                        }}
+                    >
+                        <Box ref={hitlContentRef}>{pendingApprovalUI}</Box>
+                    </Box>
+                ) : (
+                    /* Top-right corner overlay: the entity health strip alongside the
+                   app chrome (update alert, docs toggle) that used to live in the
+                   top bar. Pinned at the collapsed height so it stays put as the
+                   terminal expands; the text area is padded to clear it. */
+                    <Box
+                        ref={statusRef}
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            zIndex: 1,
+                            display: 'flex',
+                            // Expanded, the health items stack vertically in the
+                            // corner, so top-align the chrome beside them and let
+                            // the box grow past the collapsed bar height.
+                            // Collapsed, it's a single row centered in the bar.
+                            alignItems: open ? 'flex-start' : 'center',
+                            gap: 1.5,
+                            height: open ? 'auto' : COLLAPSED_HEIGHT,
+                            pt: open ? 1 : 0,
+                            pr: 1,
+                            // Hug the content so its measured width (which sets the
+                            // transcript's right reserve) is only what's needed.
+                            width: 'fit-content',
+                        }}
+                    >
+                        {showStatus ? (
+                            <EntityHealthStrip vertical={open} />
+                        ) : null}
+                        <UpdateAlert />
+                        <SidePanelDocsOpenButton />
+                    </Box>
+                )}
 
-            <Box
-                ref={scrollRef}
-                onScroll={updateFades}
-                onClick={() => {
-                    // Clicking the collapsed bar reveals the prompt (focused)
-                    // beneath the summary; the effect then moves the caret in.
-                    // preventScroll: the box's height animation does the reveal —
-                    // letting the browser scroll the input into view instead
-                    // would yank the summary up before it settles back down.
-                    if (!open) {
-                        setFocused(true);
-                    }
-                    inputRef.current?.focus({ preventScroll: true });
-                }}
-                sx={{
-                    height: '100%',
-                    // Collapsed and blurred, the whole bar is a click target that
-                    // reveals the prompt, so flag it with a pointer; once focused
-                    // or expanded it's a text surface and keeps its natural cursor
-                    // (caret in the input, text selection in the transcript).
-                    cursor: !open && !focused ? 'pointer' : undefined,
-                    // Collapsed, the panel is a fixed prompt line — lock scrolling
-                    // so it can't be dragged up to reveal the transcript.
-                    overflowY: open ? 'auto' : 'hidden',
-                    // overflowY: 'visible',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    pl: 2,
-                    // Clear the top-right health strip so terminal text never
-                    // runs underneath it.
-                    pr: showStatus ? `${STATUS_AREA_WIDTH}px` : 2,
-                    py: 1.25,
-                    // Dissolve the transcript at edges that hide scrolled content.
-                    maskImage: fadeMask,
-                    WebkitMaskImage: fadeMask,
-                    fontFamily: TERMINAL_FONT,
-                    fontSize: 13,
-                    lineHeight: 1.6,
-                    color: theme.palette.text.primary,
-                    // backgroundColor: 'darkgreen',
-                }}
-            >
-                {/* Content anchoring switches with the panel's motion. While the
+                <Box
+                    ref={scrollRef}
+                    onScroll={updateFades}
+                    onClick={() => {
+                        // A drag to select transcript text also fires a click on
+                        // release; focusing the input then would move the caret into
+                        // it and clear the selection. Leave focus alone when the user
+                        // has just selected something.
+                        if (window.getSelection()?.toString()) {
+                            return;
+                        }
+                        // Clicking the collapsed bar reveals the prompt (focused)
+                        // beneath the summary; the effect then moves the caret in.
+                        // preventScroll: the box's height animation does the reveal —
+                        // letting the browser scroll the input into view instead
+                        // would yank the summary up before it settles back down.
+                        if (!open) {
+                            setFocused(true);
+                        }
+                        inputRef.current?.focus({ preventScroll: true });
+                    }}
+                    sx={{
+                        height: '100%',
+                        // Collapsed and blurred, the whole bar is a click target that
+                        // reveals the prompt, so flag it with a pointer; once focused
+                        // or expanded it's a text surface and keeps its natural cursor
+                        // (caret in the input, text selection in the transcript).
+                        cursor: !open && !focused ? 'pointer' : undefined,
+                        // Collapsed, the panel is a fixed prompt line — lock scrolling
+                        // so it can't be dragged up to reveal the transcript.
+                        overflowY: open ? 'auto' : 'hidden',
+                        // overflowY: 'visible',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        pl: 2,
+                        // Clear the top-right health strip so terminal text never
+                        // runs underneath it.
+                        pr: showFormInPanel
+                            ? `${STATUS_AREA_WIDTH}px`
+                            : showStatus
+                              ? `${statusWidth + 16}px`
+                              : 2,
+                        py: 1.25,
+                        // Dissolve the transcript at edges that hide scrolled content.
+                        maskImage: fadeMask,
+                        WebkitMaskImage: fadeMask,
+                        fontFamily: TERMINAL_FONT,
+                        fontSize: 13,
+                        lineHeight: 1.6,
+                        color: theme.palette.text.primary,
+                        // backgroundColor: 'darkgreen',
+                    }}
+                >
+                    {/* Content anchoring switches with the panel's motion. While the
                     panel is open, or while a collapse is still animating, the auto
                     top margin bottom-anchors the content: a short transcript sits
                     at the bottom edge and the summary line rides smoothly up with
@@ -681,71 +895,93 @@ export default function AssistantTerminal() {
                     the prompt in or out beneath the pinned summary line. The flip
                     is invisible because at the settled collapsed height the
                     content already fills the row. */}
-                <Box
-                    sx={{
-                        mt: open || !collapseSettled ? 'auto' : 0,
-                        flexShrink: 0,
-                    }}
-                >
-                    {open || !collapseSettled ? (
-                        <>
-                            {/* Expanded — and held through the collapse animation:
+                    <Box
+                        sx={{
+                            mt: open || !collapseSettled ? 'auto' : 0,
+                            flexShrink: 0,
+                        }}
+                    >
+                        {open || !collapseSettled ? (
+                            <>
+                                {/* Expanded — and held through the collapse animation:
                                 the full transcript, then the live hint or the
                                 editable prompt. Keeping it mounted while the panel
                                 shrinks lets the prior turns clip away with the
                                 closing edge instead of disappearing at once; the
                                 swap to the one-line summary waits for the height to
                                 settle (collapseSettled). */}
-                            {messageNodes}
-                            {isLoading
-                                ? thinkingLine
-                                : awaitingApproval
-                                  ? approvalHint
-                                  : promptLine}
-                        </>
-                    ) : (
-                        <>
-                            {/* Collapsed: the activity summary (when there's one
+                                {messageNodes}
+                                {isLoading
+                                    ? thinkingLine
+                                    : awaitingApproval
+                                      ? approvalHint
+                                      : promptLine}
+                            </>
+                        ) : (
+                            <>
+                                {/* Collapsed: the activity summary (when there's one
                                 to recap) above the prompt. The prompt stays
                                 mounted and is shown or hidden by animating its
                                 grid row between full and zero height, in step
                                 with the bar's own height, so blurring slides it
                                 out of view rather than removing it mid-collapse. */}
-                            {hasSummary ? summaryLine : null}
-                            <Box
-                                sx={{
-                                    display: 'grid',
-                                    gridTemplateRows: promptRevealed
-                                        ? '1fr'
-                                        : '0fr',
-                                    transition: resizing
-                                        ? 'none'
-                                        : 'grid-template-rows 220ms ease',
-                                }}
-                            >
-                                <Box sx={{ minHeight: 0, overflow: 'hidden' }}>
-                                    {promptLine}
+                                {hasSummary ? summaryLine : null}
+                                <Box
+                                    sx={{
+                                        display: 'grid',
+                                        gridTemplateRows: promptRevealed
+                                            ? '1fr'
+                                            : '0fr',
+                                        transition: resizing
+                                            ? 'none'
+                                            : 'grid-template-rows 220ms ease',
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            minHeight: 0,
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        {promptLine}
+                                    </Box>
                                 </Box>
-                            </Box>
-                        </>
-                    )}
+                            </>
+                        )}
+                    </Box>
                 </Box>
+
+                {open ? (
+                    <Box
+                        onMouseDown={startDrag}
+                        sx={{
+                            position: 'absolute',
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            height: 6,
+                            cursor: 'ns-resize',
+                            zIndex: 2,
+                        }}
+                    />
+                ) : null}
             </Box>
 
-            {open ? (
-                <Box
-                    onMouseDown={startDrag}
-                    sx={{
-                        position: 'absolute',
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        height: 6,
-                        cursor: 'ns-resize',
-                        zIndex: 2,
-                    }}
-                />
-            ) : null}
-        </Box>
+            {/* Narrow viewports have no room for the side panel, so a pending form is
+            hosted in a modal instead. It can't be dismissed by backdrop/escape —
+            the tool call needs an answer — so the user resolves it via the form's
+            own controls (each form has a Cancel); it closes when the form
+            responds and the pending tool call clears. */}
+            <Dialog
+                open={showFormInModal}
+                disableEscapeKeyDown
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogContent sx={{ p: 1.5 }}>
+                    {showFormInModal ? pendingApprovalUI : null}
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
