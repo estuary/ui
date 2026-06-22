@@ -326,11 +326,14 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                         state.prefixErrorsExist = Boolean(errors);
 
                         if (
-                            value.length > 0 &&
-                            hasOwnProperty(state.subscriptionMetadata, value)
+                            state.catalogPrefix.length > 0 &&
+                            hasOwnProperty(
+                                state.subscriptionMetadata,
+                                state.catalogPrefix
+                            )
                         ) {
                             state.mutableSubscriptionMetadata =
-                                state.subscriptionMetadata[value];
+                                state.subscriptionMetadata[state.catalogPrefix];
 
                             return;
                         }
