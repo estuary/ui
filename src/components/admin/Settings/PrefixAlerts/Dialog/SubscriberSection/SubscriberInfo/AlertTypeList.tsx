@@ -15,7 +15,11 @@ import { Lock } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
+import {
+    defaultOutline,
+    defaultOutlineColor_hovered,
+    diminishedTextColor,
+} from 'src/context/Theme';
 
 const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
     const intl = useIntl();
@@ -47,15 +51,24 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                         <ListItem
                             key={`${alertType}-${index}`}
                             dense
-                            style={{
-                                backgroundColor: selected
+                            sx={{
+                                'backgroundColor': selected
                                     ? theme.palette.primary.alpha_05
                                     : undefined,
-                                border: selected
+                                'border': selected
                                     ? `1px solid ${theme.palette.primary.alpha_50}`
                                     : defaultOutline[theme.palette.mode],
-                                borderRadius: '6px',
-                                marginBottom: 6,
+                                'borderRadius': '6px',
+                                'marginBottom': '6px',
+                                '&:hover': {
+                                    borderColor: isSystem
+                                        ? undefined
+                                        : selected
+                                          ? theme.palette.primary.main
+                                          : defaultOutlineColor_hovered[
+                                                theme.palette.mode
+                                            ],
+                                },
                             }}
                         >
                             <FormControl fullWidth>
