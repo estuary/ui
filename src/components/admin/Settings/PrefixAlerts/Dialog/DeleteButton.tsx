@@ -27,6 +27,9 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
     );
+    const subscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.subscriptionMetadata
+    );
 
     const disabled = useMemo(() => {
         const { subscriptions } = mutableSubscriptionMetadata;
@@ -40,9 +43,16 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
                 loading ||
                 catalogPrefix.length === 0 ||
                 subscriptions.length === 0 ||
-                emptyEmailExists
+                emptyEmailExists ||
+                !Object.keys(subscriptionMetadata).includes(catalogPrefix)
         );
-    }, [catalogPrefix, errorsExist, loading, mutableSubscriptionMetadata]);
+    }, [
+        catalogPrefix,
+        errorsExist,
+        loading,
+        mutableSubscriptionMetadata,
+        subscriptionMetadata,
+    ]);
 
     return (
         <Button
