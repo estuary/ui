@@ -27,29 +27,34 @@ import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 // A fully custom, headless terminal console for the assistant (driven by
 // useCopilotChatHeadless_c — unlocked by the free public license key). It sits
 // at the top of the content column as a single scrolling text area whose last
-// line is the live prompt. Collapsed, the area is pinned to the bottom so only
-// that prompt line shows in place of the old top bar; expanding (Enter or
-// Cmd/Ctrl+K) grows it downward, revealing the transcript above and pushing the
-// page content down (the side nav stays put). Uses the app's own dark
-// background and no separating borders, so it reads as part of the chrome.
+// line is the live prompt. Collapsed, it's a short window pinned to the bottom
+// of the transcript — the newest output above the prompt — in place of the old
+// top bar; expanding (Enter or Cmd/Ctrl+K) grows it downward, revealing the
+// full transcript and pushing the page content down (the side nav stays put).
+// Uses the app's own dark background and no separating borders, so it reads as
+// part of the chrome.
 
 // The expanded height (and the clamp applied while dragging the terminal's
 // bottom edge or the breadcrumb bar) lives in the store, since the breadcrumb
 // resize handle sits in a separate subtree. See useCopilotAssistantStore.
 
-// Height of the prompt line when collapsed; sized to read like the top bar it
-// replaces.
+// Height of the terminal when collapsed and idle: a short window onto the bottom
+// of the live transcript, showing the tail of the conversation with the input
+// hidden. Sized to read like the top bar it replaces.
 const COLLAPSED_HEIGHT = 48;
 // Width reserved at the top-right for the entity health strip plus the chrome
 // buttons; the terminal text is padded to clear it so the two never overlap.
 const STATUS_AREA_WIDTH = 460;
-// Collapsed height once focused with a summary present: the bar grows to two
-// lines — the agent activity summary above, the prompt below — so the user can
-// type without expanding the whole transcript.
+// Collapsed height while the bar is engaged — focused, or the agent working or
+// awaiting input: it grows by a line to reveal the live-line row (the editable
+// prompt, or the thinking/approval status) beneath the transcript tail.
 const COLLAPSED_HEIGHT_TWO_LINE = 78;
 // Height of the gradient that fades the transcript at an edge with content
 // scrolled past it (top and/or bottom), so it dissolves rather than hard-cuts.
 const SCROLL_FADE_HEIGHT = 28;
+// Collapsed, the bar is only a line or two tall, so a shorter top fade dissolves
+// the clipped older turns without eating into the newest line.
+const COLLAPSED_FADE_HEIGHT = 20;
 const TERMINAL_PROMPT = '#56d364';
 
 // Every turn — user or agent — lays out on the same two-column grid: a
@@ -310,15 +315,9 @@ export default function AssistantTerminal() {
         useCopilotChatHeadless_c();
 
     const [draft, setDraft] = useState('');
-    // Collapsed, the bar shows just the agent activity summary until the user
-    // focuses it; focusing reveals the prompt line beneath the summary.
+    // Whether the collapsed prompt is focused. Drives only the bar's cursor
+    // affordance — a pointer when blurred, signalling "click to type".
     const [focused, setFocused] = useState(false);
-    // Whether a collapse has finished animating. While the panel is resizing
-    // between sizes the content stays bottom-anchored (rides smoothly with the
-    // moving edge); once settled and collapsed it flips to top-anchored so the
-    // focus/submit reveals slide the prompt in beneath the summary. See `mt` on
-    // the content box.
-    const [collapseSettled, setCollapseSettled] = useState(true);
     // Whether the transcript has content scrolled past the top/bottom edge —
     // each edge fades only while it hides something, so the pinned newest line
     // (and the prompt below it) stay crisp.
@@ -360,11 +359,14 @@ export default function AssistantTerminal() {
         setFadeBottom(distanceFromBottom > 4);
     }, []);
 
-    // Follow the newest line as the typewriter reveals more text — but only while
-    // the user is already at the bottom, so reading history isn't yanked down.
+    // Follow the newest line as the typewriter reveals more text. Collapsed, the
+    // transcript can't be scrolled, so always pin it to the bottom; expanded,
+    // only while the user is already at the bottom, so reading history isn't
+    // yanked down.
     const pinToBottom = useCallback(() => {
         const node = scrollRef.current;
-        if (node && atBottomRef.current) {
+        const collapsed = !useCopilotAssistantStore.getState().open;
+        if (node && (collapsed || atBottomRef.current)) {
             node.scrollTop = node.scrollHeight;
         }
     }, []);
@@ -389,23 +391,31 @@ export default function AssistantTerminal() {
         window.addEventListener('mouseup', onUp);
     };
 
-    // Follow the newest line as messages stream — but only while the user is
-    // already at the bottom, so scrolling up to read history stays put.
+    // Follow the newest line as messages stream. Collapsed, the transcript can't
+    // be scrolled, so always pin it to the bottom; expanded, only while the user
+    // is already at the bottom, so scrolling up to read history stays put.
     useEffect(() => {
         const node = scrollRef.current;
-        if (node && atBottomRef.current) {
+        if (node && (!open || atBottomRef.current)) {
             node.scrollTop = node.scrollHeight;
         }
         updateFades();
     }, [messages, isLoading, open, updateFades]);
 
-    // Keep the transcript pinned to its newest line while the panel animates
-    // between sizes. The CSS height transition resizes the viewport continuously
+    // Keep the transcript pinned to its newest line while the bar's height
+    // animates. The CSS height transition resizes the viewport continuously
     // without firing scroll events, so re-pin every frame for the length of the
-    // transition: collapsing then clips the older turns up and away behind the
-    // shrinking top edge while the newest line and the prompt ride the bottom
-    // down, instead of the view drifting mid-transcript.
+    // transition, instead of letting the view drift mid-transcript. This fires on
+    // any expand/collapse, and — while collapsed — when the live-line row reveals
+    // or hides with focus or the agent's activity. Expanded, focus/activity
+    // changes are ignored so scrolling up to read history isn't yanked back down.
+    const prevOpenRef = useRef(open);
     useEffect(() => {
+        const openChanged = prevOpenRef.current !== open;
+        prevOpenRef.current = open;
+        if (open && !openChanged) {
+            return undefined;
+        }
         const node = scrollRef.current;
         if (!node) {
             return undefined;
@@ -425,20 +435,7 @@ export default function AssistantTerminal() {
         };
         frame = window.requestAnimationFrame(pin);
         return () => window.cancelAnimationFrame(frame);
-    }, [open, updateFades]);
-
-    // Track when a size change has settled so the content can switch anchoring
-    // (see `mt` on the content box). Any open/collapse toggle marks the panel
-    // as animating; a collapse then settles once its height transition lands.
-    // Expanding stays bottom-anchored throughout, so it never re-settles.
-    useEffect(() => {
-        setCollapseSettled(false);
-        if (open) {
-            return undefined;
-        }
-        const id = window.setTimeout(() => setCollapseSettled(true), 240);
-        return () => window.clearTimeout(id);
-    }, [open]);
+    }, [open, focused, isLoading, updateFades]);
 
     // Recompute the edge fades on mount and when the viewport resizes (the
     // transcript may start or stop overflowing).
@@ -458,37 +455,6 @@ export default function AssistantTerminal() {
         }
         return undefined;
     }, [open, isLoading]);
-
-    // Expanding clears the collapsed focus state and hands the caret to the
-    // effect above, which focuses the expanded input once the panel settles.
-    // Collapsing leaves `focused` untouched: closing the panel while the prompt
-    // is focused keeps the bar in its two-line shape so the user can keep
-    // typing, and the effect below restores the caret after the collapsed
-    // prompt remounts.
-    useEffect(() => {
-        if (open) {
-            setFocused(false);
-        }
-    }, [open]);
-
-    // Move the caret into the collapsed prompt whenever the bar is focused and
-    // closed. This covers two paths: focusing the collapsed bar (its grid row
-    // reveals and the caret drops in), and collapsing a panel whose prompt was
-    // focused — the prompt remounts in the collapsed grid once the height
-    // settles, dropping DOM focus, so re-running on collapseSettled restores it.
-    // preventScroll keeps the bar's height animation in charge of the reveal;
-    // without it the browser scrolls the still-offscreen input into view and
-    // snaps the summary up before the panel finishes growing.
-    useEffect(() => {
-        if (focused && !open) {
-            const id = window.setTimeout(
-                () => inputRef.current?.focus({ preventScroll: true }),
-                0
-            );
-            return () => window.clearTimeout(id);
-        }
-        return undefined;
-    }, [focused, open, collapseSettled]);
 
     // While a response is streaming, Esc interrupts it (mirrors the
     // "esc to interrupt" hint shown in place of the prompt).
@@ -562,10 +528,9 @@ export default function AssistantTerminal() {
             return;
         }
         setDraft('');
-        // Stay engaged after sending. Keeping focus holds the collapsed bar in
-        // its two-line shape — the prompt on the bottom line — while the reply
-        // streams into the summary line above it, so submitting slides the
-        // response in above the prompt instead of dropping back to one line.
+        // The reply streams into the transcript above; the live indicator stands
+        // in for the prompt while it streams, and the prompt returns when it's
+        // done.
         void sendMessage({
             id: crypto.randomUUID(),
             role: 'user',
@@ -627,31 +592,6 @@ export default function AssistantTerminal() {
         : null;
     const showFormInPanel = usePanel && open && pendingApprovalUI != null;
     const showFormInModal = pendingApprovalUI != null && !showFormInPanel;
-
-    // A one-line recap of the latest assistant text, shown on the collapsed
-    // prompt line in place of the input while a response streams. Tool calls are
-    // deliberately not summarized — when the agent is working but hasn't produced
-    // text yet this returns '' and the bar falls back to the "thinking…"
-    // indicator. The line is returned whole; the summary box trims it with a
-    // trailing ellipsis only when it's too wide to fit.
-    const activitySummary = useMemo(() => {
-        const list = messages ?? [];
-        for (let i = list.length - 1; i >= 0; i -= 1) {
-            const message: any = list[i];
-            if (message?.role !== 'assistant') {
-                continue;
-            }
-            const content =
-                typeof message.content === 'string'
-                    ? message.content.trim()
-                    : '';
-            if (content) {
-                return content.split('\n').pop() ?? content;
-            }
-            break;
-        }
-        return '';
-    }, [messages]);
 
     // When the side-panel form appears, remember the terminal height so it can be
     // restored once the form closes; the auto-fit effect below grows the terminal
@@ -784,26 +724,29 @@ export default function AssistantTerminal() {
         '@keyframes cpkBlink': { '50%': { opacity: 0 } },
     };
 
-    // Collapsed layout, driven by focus. Engaged (focused) the bar is two lines
-    // — the agent activity summary above, the editable prompt below — and holds
-    // that shape while a reply streams, so submitting reveals the response above
-    // the prompt. Disengaged (blurred) it falls back to one line: the activity
-    // summary if there's one to recap, otherwise the prompt. Fresh and idle (no
-    // summary yet) the prompt is the only line.
-    const hasSummary = isLoading || activitySummary !== '';
-    // The collapsed prompt is always mounted; this is whether its row is revealed
-    // (expanded) versus collapsed to zero height. Revealed when the bar is
-    // focused, or when there's no summary to recap so the prompt is the only line.
-    // Animating the row — rather than mounting/unmounting — lets a blur slide the
-    // prompt out of view instead of deleting it mid-collapse.
-    const promptRevealed = !awaitingApproval && (focused || !hasSummary);
-    const collapsedTwoLine = hasSummary && promptRevealed;
-    const collapsedHeight = collapsedTwoLine
-        ? COLLAPSED_HEIGHT_TWO_LINE
-        : COLLAPSED_HEIGHT;
+    // Collapsed, the terminal is a window onto the bottom of the live transcript;
+    // the full history stays mounted and pinned to its newest line. The live-line
+    // row (the prompt, or the thinking/approval status) reveals only while the bar
+    // is engaged — focused, or the agent working or awaiting approval — or when
+    // there's no transcript yet, so the prompt is the only thing to show. Idle and
+    // blurred it collapses away: the bar shrinks and the page content rises over
+    // where the input was, leaving just the transcript tail.
+    const hasTranscript = messageNodes.length > 0;
+    const liveLineRevealed =
+        open || focused || isLoading || awaitingApproval || !hasTranscript;
+    // Two lines only when the transcript tail and the live-line row both show; a
+    // single line otherwise (just the tail when blurred, or just the prompt when
+    // there's no transcript yet).
+    const collapsedHeight =
+        hasTranscript && liveLineRevealed
+            ? COLLAPSED_HEIGHT_TWO_LINE
+            : COLLAPSED_HEIGHT;
 
     // Fade the transcript into the background at any edge hiding scrolled-past
-    // content. Only when expanded; collapsed is a fixed line or two.
+    // content. Expanded, fade whichever edge is hiding content. Collapsed, the
+    // bar shows the bottom slice of the transcript pinned to its newest line, so
+    // always dissolve the top edge where the older turns clip away while keeping
+    // the bottom (the prompt) crisp.
     const fade = `${SCROLL_FADE_HEIGHT}px`;
     const fadeMask = open
         ? `linear-gradient(to bottom, ${
@@ -811,46 +754,9 @@ export default function AssistantTerminal() {
           }, #000 ${fade}, #000 calc(100% - ${fade}), ${
               fadeBottom ? 'transparent' : '#000'
           })`
-        : undefined;
+        : `linear-gradient(to bottom, transparent, #000 ${COLLAPSED_FADE_HEIGHT}px)`;
 
-    // One-line recap of what the agent is doing: the tail of the streamed
-    // reply, with the blinking cursor while it streams.
-    const summaryLine = (
-        <Box
-            sx={{
-                display: 'flex',
-                gap: 1,
-                py: 0.5,
-                // The recap is the agent's own message text, so keep it readable;
-                // only the leading marker is muted (dim is reserved for the
-                // esc/approval hints).
-                color: theme.palette.text.secondary,
-                userSelect: 'none',
-                minWidth: 0,
-            }}
-        >
-            {/* A blinking cursor marks live streaming output; once the reply
-                settles there's nothing to stream, so the marker drops out and
-                the recap text stands on its own. */}
-            {isLoading ? (
-                <Box component="span" sx={blinkingCursorSx}>
-                    ▌
-                </Box>
-            ) : null}
-            <Box
-                component="span"
-                sx={{
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                }}
-            >
-                {activitySummary || 'thinking…'}
-            </Box>
-        </Box>
-    );
-
-    // The editable prompt line. Focus/blur drive the collapsed two-line state.
+    // The editable prompt line. Focus/blur drive the collapsed bar's cursor.
     const promptLine = (
         <Box sx={{ ...turnGridSx, py: 0.5 }}>
             <Box
@@ -899,10 +805,10 @@ export default function AssistantTerminal() {
         </Box>
     );
 
-    // Expanded working indicator and approval hint (collapsed shows the summary
-    // line instead of these). A steady "thinking…" with the blinking cursor
-    // stands in for the read-only tool calls — those popped in and out of the
-    // transcript as each one started and finished; the esc hint trails it.
+    // The working indicator and approval hint that share the live-line row with
+    // the prompt. A steady "thinking…" with the blinking cursor stands in for the
+    // read-only tool calls — those popped in and out of the transcript as each one
+    // started and finished; the esc hint trails it.
     const thinkingLine = (
         <Box
             sx={{
@@ -1012,11 +918,10 @@ export default function AssistantTerminal() {
                         if (window.getSelection()?.toString()) {
                             return;
                         }
-                        // Clicking the collapsed bar reveals the prompt (focused)
-                        // beneath the summary; the effect then moves the caret in.
-                        // preventScroll: the box's height animation does the reveal —
-                        // letting the browser scroll the input into view instead
-                        // would yank the summary up before it settles back down.
+                        // Clicking anywhere on the collapsed bar drops the caret into
+                        // the prompt. preventScroll keeps the click from scrolling the
+                        // transcript: it's already pinned to the bottom where the
+                        // prompt sits.
                         if (!open) {
                             setFocused(true);
                         }
@@ -1054,69 +959,39 @@ export default function AssistantTerminal() {
                         // backgroundColor: 'darkgreen',
                     }}
                 >
-                    {/* Content anchoring switches with the panel's motion. While the
-                    panel is open, or while a collapse is still animating, the auto
-                    top margin bottom-anchors the content: a short transcript sits
-                    at the bottom edge and the summary line rides smoothly up with
-                    the shrinking panel instead of snapping to the top. Once a
-                    collapse settles the margin drops to 0 and the content
-                    top-anchors, so focusing or blurring the collapsed bar slides
-                    the prompt in or out beneath the pinned summary line. The flip
-                    is invisible because at the settled collapsed height the
-                    content already fills the row. */}
-                    <Box
-                        sx={{
-                            mt: open || !collapseSettled ? 'auto' : 0,
-                            flexShrink: 0,
-                        }}
-                    >
-                        {open || !collapseSettled ? (
-                            <>
-                                {/* Expanded — and held through the collapse animation:
-                                the full transcript, then the live hint or the
-                                editable prompt. Keeping it mounted while the panel
-                                shrinks lets the prior turns clip away with the
-                                closing edge instead of disappearing at once; the
-                                swap to the one-line summary waits for the height to
-                                settle (collapseSettled). */}
-                                {messageNodes}
+                    {/* The content is bottom-anchored: a short transcript sits at
+                    the bottom edge, and collapsing rides the newest line down with
+                    the shrinking panel. The full message history is always mounted
+                    — collapsed, the bar clips it to a short window pinned to the
+                    bottom. */}
+                    <Box sx={{ mt: 'auto', flexShrink: 0 }}>
+                        {messageNodes}
+                        {/* The live-line row: the thinking indicator, the approval
+                        hint, or the editable prompt. It reveals/hides by animating
+                        its grid row between full and zero height, in step with the
+                        bar's own height — so collapsing then blurring slides the
+                        prompt out of view (and raises the page content over where
+                        it was) rather than dropping it abruptly. Expanded, and
+                        whenever the agent is working, it stays revealed. */}
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateRows: liveLineRevealed
+                                    ? '1fr'
+                                    : '0fr',
+                                transition: resizing
+                                    ? 'none'
+                                    : 'grid-template-rows 220ms ease',
+                            }}
+                        >
+                            <Box sx={{ minHeight: 0, overflow: 'hidden' }}>
                                 {isLoading
                                     ? thinkingLine
                                     : awaitingApproval
                                       ? approvalHint
                                       : promptLine}
-                            </>
-                        ) : (
-                            <>
-                                {/* Collapsed: the activity summary (when there's one
-                                to recap) above the prompt. The prompt stays
-                                mounted and is shown or hidden by animating its
-                                grid row between full and zero height, in step
-                                with the bar's own height, so blurring slides it
-                                out of view rather than removing it mid-collapse. */}
-                                {hasSummary ? summaryLine : null}
-                                <Box
-                                    sx={{
-                                        display: 'grid',
-                                        gridTemplateRows: promptRevealed
-                                            ? '1fr'
-                                            : '0fr',
-                                        transition: resizing
-                                            ? 'none'
-                                            : 'grid-template-rows 220ms ease',
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            minHeight: 0,
-                                            overflow: 'hidden',
-                                        }}
-                                    >
-                                        {promptLine}
-                                    </Box>
-                                </Box>
-                            </>
-                        )}
+                            </Box>
+                        </Box>
                     </Box>
                 </Box>
 
