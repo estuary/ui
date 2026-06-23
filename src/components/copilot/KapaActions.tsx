@@ -19,8 +19,12 @@ export default function KapaActions() {
 
     useCopilotAction({
         name: 'searchEstuaryKnowledge',
-        description:
-            "Search Estuary's knowledge base (product docs and resolved support questions) for an answer grounded in real sources. Use this to diagnose errors and explain Estuary/Flow behavior — especially anything you are not fully certain about. Returns { answer, sources }: base your reply on the answer and cite the source URLs. Prefer this over prior knowledge.",
+        description: `Search Estuary's knowledge base (product docs and resolved support questions) 
+            for an answer grounded in real sources. Use this to diagnose errors and explain 
+            Estuary/Flow behavior — especially anything you are not fully certain about. 
+            Returns { answer, sources }: base your reply on the answer and cite the source URLs. 
+            Prefer this over prior knowledge. Keep the final user-facing reply very short: 
+            answer directly in 1-3 sentences or 2-3 bullets, and link to sources for detail.`,
         parameters: [
             {
                 name: 'query',

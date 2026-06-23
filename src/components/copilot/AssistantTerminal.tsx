@@ -41,7 +41,7 @@ import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 // Height of the terminal when collapsed and idle: a short window onto the bottom
 // of the live transcript, showing the tail of the conversation with the input
 // hidden. Sized to read like the top bar it replaces.
-const COLLAPSED_HEIGHT = 70;
+const COLLAPSED_HEIGHT = 48;
 // Width reserved at the top-right for the entity health strip plus the chrome
 // buttons; the terminal text is padded to clear it so the two never overlap.
 const STATUS_AREA_WIDTH = 460;
@@ -73,18 +73,23 @@ const turnGridSx = {
 } as const;
 
 // Typewriter reveal for streamed assistant text: a steady base cadence
-// (~120 chars/sec at 60fps) so replies type in rather than popping in whole,
+// (~60 chars/sec at 60fps) so replies type in rather than popping in whole,
 // plus a catch-up term that clears any backlog within ~1.5s so the reveal never
 // lags far behind a fast stream or a response that lands all at once.
-const TYPE_CHARS_PER_FRAME = 2;
+const TYPE_CHARS_PER_FRAME = 1;
 const TYPE_MAX_LAG_FRAMES = 90;
+const WELCOME_TYPE_DELAY_MS = 5000;
 
 // Reveals `text` a few characters per frame so streamed assistant output types
 // in. While the model is still producing tokens the target grows; the reveal
 // catches up to it and keeps going after streaming stops until the full text is
 // shown. Messages that are already complete when first rendered (transcript
 // history) mount fully revealed and never animate.
-function useTypewriter(text: string, animate: boolean): string {
+function useTypewriter(
+    text: string,
+    animate: boolean,
+    startDelayMs = 0
+): string {
     const [revealed, setRevealed] = useState(() => (animate ? 0 : text.length));
     const revealedRef = useRef(revealed);
     revealedRef.current = revealed;
@@ -101,6 +106,7 @@ function useTypewriter(text: string, animate: boolean): string {
             return undefined;
         }
         let frame = 0;
+        let timeout = 0;
         const tick = () => {
             const remaining = text.length - revealedRef.current;
             if (remaining <= 0) {
@@ -113,9 +119,21 @@ function useTypewriter(text: string, animate: boolean): string {
             setRevealed((current) => Math.min(text.length, current + step));
             frame = window.requestAnimationFrame(tick);
         };
-        frame = window.requestAnimationFrame(tick);
-        return () => window.cancelAnimationFrame(frame);
-    }, [text]);
+        const start = () => {
+            frame = window.requestAnimationFrame(tick);
+        };
+
+        if (startDelayMs > 0 && revealedRef.current === 0) {
+            timeout = window.setTimeout(start, startDelayMs);
+        } else {
+            start();
+        }
+
+        return () => {
+            window.clearTimeout(timeout);
+            window.cancelAnimationFrame(frame);
+        };
+    }, [text, startDelayMs]);
 
     return startedRef.current ? text.slice(0, revealed) : text;
 }
@@ -137,6 +155,13 @@ const HITL_LABELS: Record<string, string> = {
     collectConnectorConfig: 'connector setup',
 };
 
+const TOOL_LABELS: Record<string, string> = {
+    lookupEstuaryDocs: 'Search docs',
+    searchEstuaryKnowledge: 'Search knowledge',
+};
+
+const HIDDEN_TOOL_CALLS = new Set(['searchEstuaryKnowledge']);
+
 const toolCallName = (call: any): string =>
     call?.function?.name ?? call?.name ?? 'tool call';
 
@@ -147,15 +172,14 @@ const WELCOME_MESSAGE = {
 };
 
 // Renders a single chat message terminal-style: user turns as a `❯` prompt line,
-// assistant turns as plain output. Read-only tool calls are not shown — the
-// steady "thinking…" indicator stands in for them; only approval-required tool
-// calls surface, via their interactive card.
+// assistant turns as plain output, and tool calls as muted transcript entries.
 function MessageLine({
     message,
     markPending,
     showAgentBullet,
     completedToolCallIds,
-    streaming,
+    animateText,
+    typewriterDelayMs = 0,
     onReveal,
 }: {
     message: any;
@@ -165,9 +189,10 @@ function MessageLine({
     markPending: boolean;
     showAgentBullet: boolean;
     completedToolCallIds: Set<string>;
-    // True for the assistant message the model is actively streaming, so its
-    // text types in. False for finished turns and user turns, which render whole.
-    streaming: boolean;
+    // True for assistant text that should type in. False for finished turns and
+    // user turns, which render whole.
+    animateText: boolean;
+    typewriterDelayMs?: number;
     // Called after each reveal so the transcript can follow the growing text
     // while it's pinned to the bottom.
     onReveal: () => void;
@@ -177,26 +202,21 @@ function MessageLine({
     const isUser = message?.role === 'user';
     // Type assistant turns in; user turns render whole. The reveal grows the
     // line's height, so re-pin the transcript after each step.
-    const displayed = useTypewriter(content, !isUser && streaming);
+    const displayed = useTypewriter(
+        content,
+        !isUser && animateText,
+        typewriterDelayMs
+    );
     useLayoutEffect(() => {
         onReveal();
     }, [displayed, onReveal]);
     const toolCalls: any[] = Array.isArray(message?.toolCalls)
         ? message.toolCalls
         : [];
-    const hitlCalls = toolCalls.filter((call) =>
-        HITL_ACTIONS.has(toolCallName(call))
+    const visibleToolCalls = toolCalls.filter(
+        (call) => !HIDDEN_TOOL_CALLS.has(toolCallName(call))
     );
-    const pendingHitl = hitlCalls.some(
-        (call) => !completedToolCallIds.has(call?.id)
-    );
-
-    const pendingMarker =
-        markPending && pendingHitl
-            ? (HITL_LABELS[toolCallName(hitlCalls[0])] ?? 'a request')
-            : null;
-
-    if (!content && !pendingMarker) {
+    if (!content && visibleToolCalls.length === 0) {
         return null;
     }
 
@@ -254,7 +274,7 @@ function MessageLine({
                     component="span"
                     sx={{
                         justifySelf: 'center',
-                        mt: -0.3,
+                        mt: -0.1,
                         fontSize: '1.8em',
                         lineHeight: 1,
                         color: theme.palette.text.primary,
@@ -270,18 +290,30 @@ function MessageLine({
                 {displayed ? (
                     <AssistantMarkdown>{displayed}</AssistantMarkdown>
                 ) : null}
-                {pendingMarker ? (
-                    <Box
-                        sx={{
-                            mt: content ? 1 : 0,
-                            color: theme.palette.text.disabled,
-                            userSelect: 'none',
-                        }}
-                    >
-                        ▸ {pendingMarker} — complete the form on the right to
-                        continue
-                    </Box>
-                ) : null}
+                {visibleToolCalls.map((call, index) => {
+                    const name = toolCallName(call);
+                    const completed = completedToolCallIds.has(call?.id);
+                    const label =
+                        TOOL_LABELS[name] ?? HITL_LABELS[name] ?? name;
+                    const pendingHitl =
+                        markPending && HITL_ACTIONS.has(name) && !completed;
+
+                    return (
+                        <Box
+                            key={call?.id ?? `${name}-${index}`}
+                            sx={{
+                                mt: content || index > 0 ? 1 : 0,
+                                color: theme.palette.text.disabled,
+                                userSelect: 'none',
+                            }}
+                        >
+                            {completed ? '✓' : '▸'} {label}
+                            {pendingHitl
+                                ? ' — complete the form on the right to continue'
+                                : null}
+                        </Box>
+                    );
+                })}
             </Box>
         </Box>
     );
@@ -749,10 +781,8 @@ export default function AssistantTerminal() {
             (message: any) =>
                 message?.role === 'user' || message?.role === 'assistant'
         );
-        const displayMessages =
-            conversationMessages.length > 0
-                ? conversationMessages
-                : [WELCOME_MESSAGE];
+        const welcomeWithoutHistory = conversationMessages.length === 0;
+        const displayMessages = [WELCOME_MESSAGE, ...conversationMessages];
 
         return displayMessages.map((message: any) => (
             <MessageLine
@@ -761,7 +791,15 @@ export default function AssistantTerminal() {
                 markPending={usePanel}
                 showAgentBullet={open}
                 completedToolCallIds={completedToolCallIds}
-                streaming={message.id === streamingMessageId}
+                animateText={
+                    message.id === streamingMessageId ||
+                    (message.id === WELCOME_MESSAGE.id && welcomeWithoutHistory)
+                }
+                typewriterDelayMs={
+                    message.id === WELCOME_MESSAGE.id && welcomeWithoutHistory
+                        ? WELCOME_TYPE_DELAY_MS
+                        : 0
+                }
                 onReveal={pinToBottom}
             />
         ));
@@ -953,26 +991,22 @@ export default function AssistantTerminal() {
                         <Box ref={hitlContentRef}>{pendingApprovalUI}</Box>
                     </Box>
                 ) : (
-                    /* Top-right corner overlay: the entity health strip alongside the
-                   app chrome (update alert) that used to live in the top bar.
-                   Pinned at the collapsed height so it stays put as the
-                   terminal expands; the text area is padded to clear it. */
+                    /* Top-right window overlay: the entity health strip alongside
+                   the app chrome (update alert) that used to live in the top
+                   bar. It stays pinned to the viewport as the terminal expands;
+                   the text area is padded to clear it. */
                     <Box
                         ref={statusRef}
                         sx={{
                             position: 'absolute',
                             top: 0,
                             right: 0,
-                            zIndex: 1,
+                            zIndex: (theme) => theme.zIndex.appBar + 1,
                             display: 'flex',
-                            // Expanded, the health items stack vertically in the
-                            // corner, so top-align the chrome beside them and let
-                            // the box grow past the collapsed bar height.
-                            // Collapsed, it's a single row centered in the bar.
                             alignItems: open ? 'flex-start' : 'center',
-                            gap: 1.5,
+                            gap: 1,
                             height: open ? 'auto' : COLLAPSED_HEIGHT,
-                            pt: open ? 1 : 0,
+                            // pt: open ? 1 : 0,
                             pr: 1,
                             // Hug the content so its measured width (which sets the
                             // transcript's right reserve) is only what's needed.

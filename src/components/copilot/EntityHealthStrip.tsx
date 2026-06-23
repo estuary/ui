@@ -6,7 +6,7 @@ import type {
 
 import { useMemo } from 'react';
 
-import { Box, ButtonBase, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, ButtonBase, Typography, useTheme } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router';
@@ -82,8 +82,7 @@ function HealthItem({
     const intl = useIntl();
     const navigate = useNavigate();
 
-    const { count, indeterminate, isLoading } =
-        useActiveEntityCount(entityType);
+    const { count, isLoading } = useActiveEntityCount(entityType);
     const {
         termId,
         routes: { viewAll },
@@ -99,61 +98,43 @@ function HealthItem({
             : theme.palette.text.disabled;
 
     const label = intl.formatMessage({ id: termId });
-    const countLabel = loading ? '…' : indeterminate ? `${count}+` : `${count}`;
-    const tooltip =
-        alertCount > 0
-            ? `${label}: ${alertCount} active alert${alertCount === 1 ? '' : 's'}`
-            : `${label}: ${countLabel} active, no alerts`;
-
     return (
-        <Tooltip title={tooltip} placement="bottom">
-            <ButtonBase
-                onClick={() => navigate(viewAll)}
+        <ButtonBase
+            onClick={() => navigate(viewAll)}
+            sx={{
+                'display': 'flex',
+                'alignItems': 'center',
+                'gap': 0.75,
+                'borderRadius': 1,
+                'px': 0.75,
+                'py': 0.25,
+                'minWidth': 0,
+                '&:hover': {
+                    background: theme.palette.action.hover,
+                },
+            }}
+        >
+            <Box
+                component="span"
                 sx={{
-                    'display': 'flex',
-                    'alignItems': 'center',
-                    'gap': 0.75,
-                    'borderRadius': 1,
-                    'px': 0.75,
-                    'py': 0.25,
-                    'minWidth': 0,
-                    '&:hover': {
-                        background: theme.palette.action.hover,
-                    },
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    flexShrink: 0,
+                    background: dotColor,
+                }}
+            />
+            <Typography
+                noWrap
+                sx={{
+                    fontFamily: TERMINAL_FONT,
+                    fontSize: 13,
+                    color: theme.palette.text.secondary,
                 }}
             >
-                <Box
-                    component="span"
-                    sx={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        flexShrink: 0,
-                        background: dotColor,
-                    }}
-                />
-                <Typography
-                    noWrap
-                    sx={{
-                        fontFamily: TERMINAL_FONT,
-                        fontSize: 13,
-                        color: theme.palette.text.secondary,
-                    }}
-                >
-                    {label}
-                </Typography>
-                <Typography
-                    sx={{
-                        fontFamily: TERMINAL_FONT,
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: theme.palette.text.primary,
-                    }}
-                >
-                    {countLabel}
-                </Typography>
-            </ButtonBase>
-        </Tooltip>
+                {label}
+            </Typography>
+        </ButtonBase>
     );
 }
 
