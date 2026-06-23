@@ -30,8 +30,10 @@ function PageContext() {
 export default function CopilotAssistant() {
     // Bumped by openWithPromptInNewThread (the "Get help" button). Used as the
     // provider `key` so each new help request remounts CopilotKit with a fresh,
-    // empty message thread — the version's reset()/setMessages don't reliably
-    // clear the v2 store, so a remount is the dependable way to start clean.
+    // empty message thread. (The terminal's own `/clear` empties the thread in
+    // place via the headless hook's reset(); the remount remains here only for
+    // the new-thread help flow, which also has to queue a prompt onto the fresh
+    // thread.)
     const threadNonce = useCopilotAssistantStore((state) => state.threadNonce);
     const assistantEnabled = useCopilotAssistantStore(
         (state) => state.assistantEnabled

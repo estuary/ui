@@ -21,8 +21,9 @@ interface CopilotAssistantState {
     pendingPrompt: string | null;
     pendingFreshPrompt: string | null;
     // Bumped by openWithPromptInNewThread; used as the CopilotKit provider `key`
-    // so the panel remounts with a fresh (empty) message thread — the version's
-    // reset()/setMessages don't reliably clear the v2 store.
+    // so the panel remounts with a fresh (empty) message thread for a new help
+    // request. (Plain `/clear` empties the thread in place via the headless
+    // hook's reset() and does not touch this.)
     threadNonce: number;
     // Expanded terminal height in px, shared so the page-content breadcrumb bar
     // (which lives in a separate subtree) can resize the terminal alongside the
@@ -138,9 +139,6 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                             state.pendingPrompt = null;
                             state.pendingFreshPrompt = null;
                             state.kapaSearchInFlight = false;
-                            // Remount CopilotKit for a clean thread; setMessages
-                            // and reset have been unreliable with the v2 store.
-                            state.threadNonce += 1;
                         }),
                         false,
                         'Copilot Assistant Chat Context Cleared'

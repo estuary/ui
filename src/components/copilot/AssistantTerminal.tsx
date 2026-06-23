@@ -67,9 +67,17 @@ const TERMINAL_PROMPT = '#56d364';
 // hold the largest marker (the 1.8em bullet, ~1.8ch in the monospace face).
 const turnGridSx = {
     display: 'grid',
-    gridTemplateColumns: '1.9em 1fr',
-    columnGap: 0.5,
+    gridTemplateColumns: '1.5em 1fr',
+    columnGap: 1.2,
     alignItems: 'start',
+} as const;
+
+// A green block cursor that blinks, marking a spot where output is imminent or
+// in progress: the welcome line's pre-type pause and the live "thinking" line.
+const blinkingCursorSx = {
+    'color': TERMINAL_PROMPT,
+    'animation': 'cpkBlink 1s steps(2) infinite',
+    '@keyframes cpkBlink': { '50%': { opacity: 0 } },
 } as const;
 
 // Typewriter reveal for streamed assistant text: a steady base cadence
@@ -78,9 +86,13 @@ const turnGridSx = {
 // lags far behind a fast stream or a response that lands all at once. Lower
 // TYPE_CHARS_PER_FRAME to type slower; raise TYPE_MAX_LAG_FRAMES to drain
 // bursts more gently.
-const TYPE_CHARS_PER_FRAME = 0.5;
+const TYPE_CHARS_PER_FRAME = 0.4;
 const TYPE_MAX_LAG_FRAMES = 180;
+// How long the welcome line holds — blinking a cursor — before it types in. The
+// first paint of a session waits longer (the assistant "waking up"); a `/clear`
+// retype is shorter so it feels responsive to the command just entered.
 const WELCOME_TYPE_DELAY_MS = 2000;
+const WELCOME_RETYPE_DELAY_MS = 1200;
 
 // Reveals `text` a few characters per frame so streamed assistant output types
 // in. While the model is still producing tokens the target grows; the reveal
@@ -91,7 +103,7 @@ function useTypewriter(
     text: string,
     animate: boolean,
     startDelayMs = 0
-): string {
+): { text: string; waiting: boolean } {
     const [revealed, setRevealed] = useState(() => (animate ? 0 : text.length));
     const revealedRef = useRef(revealed);
     revealedRef.current = revealed;
@@ -102,6 +114,12 @@ function useTypewriter(
     if (animate) {
         startedRef.current = true;
     }
+    // True while we hold through the start delay before the first character is
+    // revealed, so the caller can blink a cursor in the gap rather than show an
+    // empty line.
+    const [waiting, setWaiting] = useState(
+        () => animate && startDelayMs > 0 && revealed === 0
+    );
 
     useEffect(() => {
         if (!startedRef.current || revealedRef.current >= text.length) {
@@ -126,12 +144,15 @@ function useTypewriter(
             frame = window.requestAnimationFrame(tick);
         };
         const start = () => {
+            setWaiting(false);
             frame = window.requestAnimationFrame(tick);
         };
 
         if (startDelayMs > 0 && revealedRef.current === 0) {
+            setWaiting(true);
             timeout = window.setTimeout(start, startDelayMs);
         } else {
+            setWaiting(false);
             start();
         }
 
@@ -141,7 +162,10 @@ function useTypewriter(
         };
     }, [text, startDelayMs]);
 
-    return startedRef.current ? text.slice(0, revealed) : text;
+    return {
+        text: startedRef.current ? text.slice(0, revealed) : text,
+        waiting,
+    };
 }
 
 // Tool calls that need explicit human approval keep their interactive card.
@@ -166,7 +190,11 @@ const TOOL_LABELS: Record<string, string> = {
     searchEstuaryKnowledge: 'Search knowledge',
 };
 
-const HIDDEN_TOOL_CALLS = new Set(['searchEstuaryKnowledge']);
+const HIDDEN_TOOL_CALLS = new Set([
+    'searchEstuaryKnowledge',
+    'runGraphQLQuery',
+    'describeGraphQLType',
+]);
 
 const toolCallName = (call: any): string =>
     call?.function?.name ?? call?.name ?? 'tool call';
@@ -208,14 +236,14 @@ function MessageLine({
     const isUser = message?.role === 'user';
     // Type assistant turns in; user turns render whole. The reveal grows the
     // line's height, so re-pin the transcript after each step.
-    const displayed = useTypewriter(
+    const { text: displayed, waiting } = useTypewriter(
         content,
         !isUser && animateText,
         typewriterDelayMs
     );
     useLayoutEffect(() => {
         onReveal();
-    }, [displayed, onReveal]);
+    }, [displayed, waiting, onReveal]);
     const toolCalls: any[] = Array.isArray(message?.toolCalls)
         ? message.toolCalls
         : [];
@@ -231,7 +259,7 @@ function MessageLine({
             <Box
                 sx={{
                     ...turnGridSx,
-                    // my: 1,
+                    // ml: 1,
                     // Subtly band each past prompt so the user's turns read as
                     // distinct from the agent's output while scrolling history.
                     backgroundColor: theme.palette.action.hover,
@@ -271,17 +299,29 @@ function MessageLine({
                 color: theme.palette.text.primary,
             }}
         >
-            {/* A bullet marks each agent turn, centered in the shared marker
-                column so it lines up with the user prompt's `❯` above and below
-                it. The top margin optically centers the oversized glyph on the
-                first line of text. */}
-            {showAgentBullet ? (
+            {/* Marker column. While the welcome line holds before typing, a
+                blinking cursor sits here in the marker slot. Otherwise a bullet
+                marks each agent turn, centered in the shared marker column so it
+                lines up with the user prompt's `❯` above and below it. The top
+                margin optically centers the oversized glyph on the first line. */}
+            {waiting ? (
+                <Box
+                    component="span"
+                    sx={{
+                        ...blinkingCursorSx,
+                        justifySelf: 'center',
+                        userSelect: 'none',
+                    }}
+                >
+                    ▌
+                </Box>
+            ) : showAgentBullet ? (
                 <Box
                     component="span"
                     sx={{
                         justifySelf: 'center',
-                        mt: -0.1,
-                        fontSize: '1.8em',
+                        mt: 0.2,
+                        fontSize: '1.4em',
                         lineHeight: 1,
                         color: theme.palette.text.primary,
                         userSelect: 'none',
@@ -365,8 +405,14 @@ export default function AssistantTerminal() {
     // The system prompt is injected by the runtime (server.mjs), not the client,
     // so it stays out of the bundle and can't be stripped — no instructions are
     // sent from here.
-    const { messages, sendMessage, isLoading, stopGeneration, isAvailable } =
-        useCopilotChatHeadless_c();
+    const {
+        messages,
+        sendMessage,
+        isLoading,
+        stopGeneration,
+        isAvailable,
+        reset,
+    } = useCopilotChatHeadless_c();
     const assistantWorking = isLoading || kapaSearchInFlight;
 
     const [draft, setDraft] = useState('');
@@ -427,6 +473,17 @@ export default function AssistantTerminal() {
         const node = scrollRef.current;
         const collapsed = !useCopilotAssistantStore.getState().open;
         if (node && (collapsed || atBottomRef.current)) {
+            node.scrollTop = node.scrollHeight;
+        }
+    }, []);
+
+    // The prompt is the last line of the transcript, so scrolling up to read
+    // history can push it out of view. Typing means the user wants the prompt —
+    // snap to the bottom so they can see what they're entering.
+    const handleDraftChange = useCallback((value: string) => {
+        setDraft(value);
+        const node = scrollRef.current;
+        if (node && !atBottomRef.current) {
             node.scrollTop = node.scrollHeight;
         }
     }, []);
@@ -604,6 +661,11 @@ export default function AssistantTerminal() {
 
         switch (command?.toLowerCase()) {
             case '/clear':
+                // Clear in place via the headless hook rather than remounting the
+                // provider — the input stays mounted and keeps focus, so the user
+                // can keep typing. clearChatContext() only resets our own pending
+                // flags now (no thread remount).
+                reset();
                 useCopilotAssistantStore.getState().clearChatContext();
                 return true;
             default:
@@ -779,38 +841,71 @@ export default function AssistantTerminal() {
         return last?.role === 'assistant' ? last.id : null;
     }, [messages, assistantWorking]);
 
-    // Render only the conversation turns; tool-result messages are excluded. The
-    // welcome row is UI-only: it gives the collapsed empty terminal an agent
-    // message to show without adding anything to CopilotKit's chat context.
+    // Conversation turns only (tool-result messages excluded). The welcome row is
+    // UI-only: it gives the collapsed empty terminal an agent message to show
+    // without adding anything to CopilotKit's chat context.
+    const conversationMessages = useMemo(
+        () =>
+            (messages ?? []).filter(
+                (message: any) =>
+                    message?.role === 'user' || message?.role === 'assistant'
+            ),
+        [messages]
+    );
+    const welcomeWithoutHistory = conversationMessages.length === 0;
+
+    // Re-type the welcome line whenever the thread goes from having turns back to
+    // empty (a `/clear`). Its id is stable, so the line would otherwise keep its
+    // fully revealed state and snap to full; bumping a run id into its key
+    // remounts it so the typewriter re-initialises from zero. useLayoutEffect so
+    // the remount lands before paint — no flash of the old, fully revealed line.
+    const [welcomeRunId, setWelcomeRunId] = useState(0);
+    const hadHistoryRef = useRef(!welcomeWithoutHistory);
+    useLayoutEffect(() => {
+        if (hadHistoryRef.current && welcomeWithoutHistory) {
+            setWelcomeRunId((id) => id + 1);
+        }
+        hadHistoryRef.current = !welcomeWithoutHistory;
+    }, [welcomeWithoutHistory]);
+
     const messageNodes = useMemo(() => {
-        const conversationMessages = (messages ?? []).filter(
-            (message: any) =>
-                message?.role === 'user' || message?.role === 'assistant'
-        );
-        const welcomeWithoutHistory = conversationMessages.length === 0;
         const displayMessages = [WELCOME_MESSAGE, ...conversationMessages];
 
-        return displayMessages.map((message: any) => (
-            <MessageLine
-                key={message.id}
-                message={message}
-                markPending={usePanel}
-                showAgentBullet={open}
-                completedToolCallIds={completedToolCallIds}
-                animateText={
-                    message.id === streamingMessageId ||
-                    (message.id === WELCOME_MESSAGE.id && welcomeWithoutHistory)
-                }
-                typewriterDelayMs={
-                    message.id === WELCOME_MESSAGE.id && welcomeWithoutHistory
-                        ? WELCOME_TYPE_DELAY_MS
-                        : 0
-                }
-                onReveal={pinToBottom}
-            />
-        ));
+        return displayMessages.map((message: any) => {
+            const isWelcome = message.id === WELCOME_MESSAGE.id;
+            return (
+                <MessageLine
+                    // Bump the welcome key on each clear so it remounts and retypes;
+                    // a fresh first load (welcomeRunId 0) types in after the longer
+                    // intro delay, a post-clear retype starts immediately.
+                    key={
+                        isWelcome ? `${message.id}-${welcomeRunId}` : message.id
+                    }
+                    message={message}
+                    markPending={usePanel}
+                    // The welcome line opens the transcript, so it reads as an
+                    // intro rather than one turn among many — no bullet on it.
+                    showAgentBullet={open && !isWelcome}
+                    completedToolCallIds={completedToolCallIds}
+                    animateText={
+                        message.id === streamingMessageId ||
+                        (isWelcome && welcomeWithoutHistory)
+                    }
+                    typewriterDelayMs={
+                        isWelcome && welcomeWithoutHistory
+                            ? welcomeRunId > 0
+                                ? WELCOME_RETYPE_DELAY_MS
+                                : WELCOME_TYPE_DELAY_MS
+                            : 0
+                    }
+                    onReveal={pinToBottom}
+                />
+            );
+        });
     }, [
-        messages,
+        conversationMessages,
+        welcomeWithoutHistory,
+        welcomeRunId,
         usePanel,
         open,
         completedToolCallIds,
@@ -819,13 +914,6 @@ export default function AssistantTerminal() {
     ]);
 
     const dim = theme.palette.text.disabled;
-
-    // The green block cursor, blinking, used to mark live streaming output.
-    const blinkingCursorSx = {
-        'color': TERMINAL_PROMPT,
-        'animation': 'cpkBlink 1s steps(2) infinite',
-        '@keyframes cpkBlink': { '50%': { opacity: 0 } },
-    };
 
     // Collapsed, the terminal is a window onto the bottom of the live transcript;
     // the full history stays mounted and pinned to its newest line. The live-line
@@ -886,7 +974,7 @@ export default function AssistantTerminal() {
             <InputBase
                 inputRef={inputRef}
                 value={draft}
-                onChange={(event) => setDraft(event.target.value)}
+                onChange={(event) => handleDraftChange(event.target.value)}
                 onFocus={() => setFocused(true)}
                 onBlur={() => {
                     if (mouseDownInCollapsedTranscriptRef.current) {
