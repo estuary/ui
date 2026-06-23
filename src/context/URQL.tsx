@@ -61,6 +61,8 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
                         RefreshTokenInfo: (_data) => null,
+                        ServiceAccount: (_data) => null,
+                        ServiceAccountTokenInfo: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
                     },
@@ -86,6 +88,15 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             revokeRefreshToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'refreshTokens');
+                            },
+                            createServiceAccount(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
+                            },
+                            createServiceAccountToken(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
+                            },
+                            revokeServiceAccountToken(_result, _args, cache) {
+                                invalidateQuery(cache, 'serviceAccounts');
                             },
                         },
                     },
