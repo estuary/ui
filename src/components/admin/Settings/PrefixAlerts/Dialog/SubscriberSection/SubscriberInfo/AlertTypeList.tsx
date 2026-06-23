@@ -41,13 +41,19 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                     const { alertType, description, displayName, isSystem } =
                         option;
                     const alertTypes = subscription?.alertTypes ?? [];
+                    const selected = alertTypes.includes(alertType);
 
                     return (
                         <ListItem
                             key={`${alertType}-${index}`}
                             dense
                             style={{
-                                border: defaultOutline[theme.palette.mode],
+                                backgroundColor: selected
+                                    ? theme.palette.primary.alpha_05
+                                    : undefined,
+                                border: selected
+                                    ? `1px solid ${theme.palette.primary.alpha_50}`
+                                    : defaultOutline[theme.palette.mode],
                                 borderRadius: '6px',
                                 marginBottom: 6,
                             }}
@@ -56,9 +62,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                 <FormControlLabel
                                     control={
                                         <Checkbox
-                                            checked={alertTypes.includes(
-                                                alertType
-                                            )}
+                                            checked={selected}
                                             onChange={(event) => {
                                                 setSingleAlertType(
                                                     option.alertType,
