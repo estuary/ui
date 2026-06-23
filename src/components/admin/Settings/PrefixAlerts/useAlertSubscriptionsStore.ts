@@ -281,6 +281,18 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             return;
                         }
 
+                        const systemAlertTypes = state.alertTypeOptions
+                            .filter(({ isSystem }) => isSystem)
+                            .map(({ alertType }) => alertType);
+
+                        if (
+                            systemAlertTypes.some(
+                                (alertType) => alertType === value
+                            )
+                        ) {
+                            return;
+                        }
+
                         const targetSubscriptions =
                             state.mutableSubscriptionMetadata.subscriptions;
 
