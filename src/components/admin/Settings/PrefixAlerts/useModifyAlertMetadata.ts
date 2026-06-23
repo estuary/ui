@@ -10,6 +10,7 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
 import { useUpsertAlertConfig } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertConfig';
 import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
+import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
@@ -43,12 +44,20 @@ export function useModifyAlertMetadata(
         setServerError([]);
 
         if (catalogPrefix.length === 0) {
-            // TODO: Add LogRocket event for this error scenario.
+            logRocketEvent('AlertSubscription', {
+                error: 'catalog prefix undefined',
+                operation: 'save',
+            });
+
             return Promise.reject('Catalog prefix undefined.');
         }
 
         if (mutableSubscriptionMetadata.subscriptions.length === 0) {
-            // TODO: Add LogRocket event for this success scenario.
+            logRocketEvent('AlertSubscription', {
+                skipped: true,
+                operation: 'save',
+            });
+
             return Promise.resolve();
         }
 
@@ -72,7 +81,11 @@ export function useModifyAlertMetadata(
                 responses.forEach((response) => {
                     if (isPromiseFulfilledResult(response)) {
                         if (!response.value) {
-                            // TODO: Add LogRocket event for this error scenario.
+                            logRocketEvent('AlertSubscription', {
+                                error: true,
+                                missingResponseValue: !response.value,
+                            });
+
                             return;
                         }
 
@@ -101,12 +114,17 @@ export function useModifyAlertMetadata(
                             serverErrors.push(serverError);
                         }
                     } else {
-                        // TODO: Add LogRocket event for this error scenario.
+                        logRocketEvent('AlertSubscription', {
+                            error: String(response),
+                            response: String(response),
+                        });
                     }
                 });
             },
-            () => {
-                // TODO: Add LogRocket event for this error scenario.
+            (error) => {
+                logRocketEvent('AlertSubscription', {
+                    error: String(error),
+                });
             }
         );
 
