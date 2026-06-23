@@ -37,17 +37,18 @@ interface AlertSubscriptionState {
     saveErrors: (CombinedError | PostgrestError | null | undefined)[];
     subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
-    setAlertTypes: (
-        values: AlertTypeInfo[],
-        catalogPrefix?: string,
-        email?: string
-    ) => void;
     setEmailErrorsExist: (value: boolean, subscriptionId: string) => void;
     setGlobalPrefixSettings: (value: Schema, targetSetting?: string) => void;
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
     ) => void;
     setSaveErrors: (value: AlertSubscriptionState['saveErrors']) => void;
+    setSingleAlertType: (
+        value: string,
+        selected: boolean,
+        catalogPrefix?: string,
+        email?: string
+    ) => void;
     setSubscribedEmail: (value: string, subscriptionId: string) => void;
     setSubscribedPrefix: (value: string, errors: string | null) => void;
     setSubscriptionMetadata: (value: ReducedAlertSubscription[]) => void;
@@ -222,47 +223,6 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'state reset'
                 ),
 
-            setAlertTypes: (values, catalogPrefix, email) =>
-                set(
-                    produce((state: AlertSubscriptionState) => {
-                        if (!catalogPrefix || !email) {
-                            return;
-                        }
-
-                        const alertTypes = values.map(
-                            ({ alertType: name }) => name
-                        );
-
-                        const targetSubscriptions =
-                            state.mutableSubscriptionMetadata.subscriptions;
-
-                        const targetIndex = targetSubscriptions.findIndex(
-                            (subscription) => subscription.email === email
-                        );
-
-                        if (targetIndex === -1) {
-                            state.mutableSubscriptionMetadata.subscriptions = [
-                                ...targetSubscriptions,
-                                {
-                                    alertTypes,
-                                    catalogPrefix,
-                                    email,
-                                    id: crypto.randomUUID(),
-                                    viewing: true,
-                                },
-                            ];
-
-                            return;
-                        }
-
-                        state.mutableSubscriptionMetadata.subscriptions[
-                            targetIndex
-                        ].alertTypes = alertTypes;
-                    }),
-                    false,
-                    'alert types set'
-                ),
-
             setEmailErrorsExist: (value, subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
@@ -300,6 +260,60 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     }),
                     false,
                     'save errors set'
+                ),
+
+            setSingleAlertType: (value, selected, catalogPrefix, email) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (!catalogPrefix || !email) {
+                            return;
+                        }
+
+                        const targetSubscriptions =
+                            state.mutableSubscriptionMetadata.subscriptions;
+
+                        const targetIndex = targetSubscriptions.findIndex(
+                            (subscription) => subscription.email === email
+                        );
+
+                        if (targetIndex === -1) {
+                            const baseAlertTypes = state.alertTypeOptions
+                                .filter(
+                                    ({ alertType, isDefault, isSystem }) =>
+                                        isSystem ||
+                                        (isDefault && alertType !== value)
+                                )
+                                .map(({ alertType }) => alertType);
+
+                            state.mutableSubscriptionMetadata.subscriptions = [
+                                ...targetSubscriptions,
+                                {
+                                    alertTypes: [...baseAlertTypes, value],
+                                    catalogPrefix,
+                                    email,
+                                    id: crypto.randomUUID(),
+                                    viewing: true,
+                                },
+                            ];
+
+                            return;
+                        }
+
+                        const { alertTypes: previousAlertTypes } =
+                            state.mutableSubscriptionMetadata.subscriptions[
+                                targetIndex
+                            ];
+
+                        state.mutableSubscriptionMetadata.subscriptions[
+                            targetIndex
+                        ].alertTypes = selected
+                            ? [...previousAlertTypes, value]
+                            : previousAlertTypes.filter(
+                                  (alertType) => alertType !== value
+                              );
+                    }),
+                    false,
+                    'single alert type set'
                 ),
 
             setSubscribedEmail: (value, subscriptionId) =>

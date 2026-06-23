@@ -40,6 +40,7 @@ export function useUpsertAlertSubscription() {
             // no operation should be performed.
             if (
                 existingSubscription &&
+                alertTypes?.length === existingSubscription.alertTypes.length &&
                 difference(alertTypes, existingSubscription.alertTypes)
                     .length === 0
             ) {

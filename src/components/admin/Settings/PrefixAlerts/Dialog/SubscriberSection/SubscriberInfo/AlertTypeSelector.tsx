@@ -1,27 +1,21 @@
-import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { AlertTypeSelectorProps } from 'src/components/admin/Settings/PrefixAlerts/types';
-import type { AlertTypeInfo } from 'src/gql-types/graphql';
-
-import { useMemo } from 'react';
 
 import {
-    Autocomplete,
+    Checkbox,
     FormControl,
+    FormControlLabel,
+    List,
+    ListItem,
     Stack,
-    TextField,
     Typography,
     useTheme,
 } from '@mui/material';
 
 import { Lock } from 'iconoir-react';
-import { union } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import SelectableAutocompleteOption from 'src/components/shared/Dialog/SelectableAutocompleteOption';
-import { diminishedTextColor } from 'src/context/Theme';
-import { OutlinedChip } from 'src/styledComponents/chips/OutlinedChip';
-import { basicSort_string, sortByAlertType } from 'src/utils/misc-utils';
+import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
 
 const AlertTypeSelector = ({
     options,
@@ -33,158 +27,113 @@ const AlertTypeSelector = ({
     const serverError = useAlertSubscriptionsStore(
         (state) => state.initializationError
     );
-    const setAlertTypes = useAlertSubscriptionsStore(
-        (state) => state.setAlertTypes
+    const setSingleAlertType = useAlertSubscriptionsStore(
+        (state) => state.setSingleAlertType
     );
-
-    const systemAlerts: AlertTypeInfo[] = useMemo(
-        () => options.filter(({ isSystem }) => isSystem),
-        [options]
-    );
-
-    const selectedAlertTypes: AlertTypeInfo[] = useMemo(() => {
-        const alertTypes = subscription?.alertTypes ?? [];
-
-        return options.filter(({ alertType }) =>
-            alertTypes.includes(alertType)
-        );
-    }, [options, subscription?.alertTypes]);
 
     return (
-        <FormControl fullWidth>
-            <Autocomplete
-                disableCloseOnSelect
-                disabled={Boolean(serverError)}
-                getOptionLabel={({ alertType }) => alertType}
-                isOptionEqualToValue={(option, value) =>
-                    option.alertType === value.alertType
-                }
-                multiple
-                onChange={(_event, values) => {
-                    const evaluatedValues = union(values, systemAlerts);
+        <Stack spacing={1}>
+            <Typography style={{ fontWeight: 500 }}>
+                {intl.formatMessage({
+                    id: 'entityTable.data.alertTypes',
+                })}
+            </Typography>
 
-                    setAlertTypes(
-                        evaluatedValues,
-                        subscription?.catalogPrefix,
-                        subscription?.email
-                    );
-                }}
-                options={options.sort((first, second) =>
-                    basicSort_string(
-                        first.displayName,
-                        second.displayName,
-                        'asc'
-                    )
-                )}
-                renderInput={({
-                    InputProps,
-                    ...params
-                }: AutocompleteRenderInputParams) => (
-                    <TextField
-                        {...params}
-                        slotProps={{
-                            input: {
-                                ...InputProps,
-                                sx: { borderRadius: 3 },
-                            },
-                        }}
-                        label={intl.formatMessage({
-                            id: 'entityTable.data.alertTypes',
-                        })}
-                        size="small"
-                        variant="outlined"
-                    />
-                )}
-                renderOption={(renderOptionProps, option, state) => {
-                    const { key, ...restRenderOptionProps } = renderOptionProps;
-                    const { description, displayName, isSystem } = option;
+            <List component="div" disablePadding>
+                {options.map((option, index) => {
+                    const { alertType, description, displayName, isSystem } =
+                        option;
+                    const alertTypes = subscription?.alertTypes ?? [];
 
                     return (
-                        <SelectableAutocompleteOption
-                            key={key}
-                            Content={
-                                <Stack>
-                                    <Stack
-                                        direction="row"
-                                        style={{
-                                            justifyContent: 'space-between',
-                                        }}
-                                    >
-                                        <Typography
-                                            style={{
-                                                fontWeight: 500,
-                                                marginBottom: 4,
-                                                textTransform: 'capitalize',
+                        <ListItem
+                            key={`${alertType}-${index}`}
+                            dense
+                            style={{
+                                border: defaultOutline[theme.palette.mode],
+                                borderRadius: '6px',
+                                marginBottom: 6,
+                            }}
+                        >
+                            <FormControl fullWidth>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={alertTypes.includes(
+                                                alertType
+                                            )}
+                                            onChange={(event) => {
+                                                setSingleAlertType(
+                                                    option.alertType,
+                                                    event.target.checked,
+                                                    subscription?.catalogPrefix,
+                                                    subscription?.email
+                                                );
                                             }}
-                                        >
-                                            {displayName}
-                                        </Typography>
-
-                                        {isSystem ? (
-                                            <Lock
+                                        />
+                                    }
+                                    disabled={Boolean(serverError)}
+                                    label={
+                                        <Stack>
+                                            <Stack
+                                                direction="row"
                                                 style={{
-                                                    color: diminishedTextColor[
-                                                        theme.palette.mode
-                                                    ],
+                                                    justifyContent:
+                                                        'space-between',
+                                                    marginTop: 8,
                                                 }}
-                                            />
-                                        ) : null}
-                                    </Stack>
+                                            >
+                                                <Typography
+                                                    style={{
+                                                        fontWeight: 500,
+                                                        marginBottom: 4,
+                                                        textTransform:
+                                                            'capitalize',
+                                                    }}
+                                                >
+                                                    {displayName}
+                                                </Typography>
 
-                                    {description ? (
-                                        <Typography
-                                            sx={{
-                                                color: diminishedTextColor[
-                                                    theme.palette.mode
-                                                ],
-                                            }}
-                                        >
-                                            {description}
-                                        </Typography>
-                                    ) : null}
-                                </Stack>
-                            }
-                            renderOptionProps={restRenderOptionProps}
-                            state={state}
-                        />
-                    );
-                }}
-                renderValue={(values, getTagProps) => {
-                    return values
-                        .sort((first, second) =>
-                            sortByAlertType(
-                                {
-                                    isSystemAlert: first.isSystem,
-                                    value: first.displayName,
-                                },
-                                {
-                                    isSystemAlert: second.isSystem,
-                                    value: second.displayName,
-                                },
-                                'asc'
-                            )
-                        )
-                        .map(({ alertType, displayName, isSystem }, index) => {
-                            const { onDelete, key, ...restOfTagProps } =
-                                getTagProps({
-                                    index,
-                                });
+                                                {isSystem ? (
+                                                    <Lock
+                                                        style={{
+                                                            color: diminishedTextColor[
+                                                                theme.palette
+                                                                    .mode
+                                                            ],
+                                                        }}
+                                                    />
+                                                ) : null}
+                                            </Stack>
 
-                            return (
-                                <OutlinedChip
-                                    {...restOfTagProps}
-                                    key={`alert_type-tag-${alertType}-${index}`}
-                                    label={displayName}
-                                    onDelete={isSystem ? undefined : onDelete}
-                                    size="small"
-                                    variant="outlined"
+                                            {description ? (
+                                                <Typography
+                                                    sx={{
+                                                        color: diminishedTextColor[
+                                                            theme.palette.mode
+                                                        ],
+                                                        marginBottom: 1,
+                                                    }}
+                                                >
+                                                    {description}
+                                                </Typography>
+                                            ) : null}
+                                        </Stack>
+                                    }
+                                    slotProps={{
+                                        typography: {
+                                            component: 'div',
+                                            width: '100%',
+                                        },
+                                    }}
+                                    style={{ alignItems: 'flex-start' }}
                                 />
-                            );
-                        });
-                }}
-                value={selectedAlertTypes}
-            />
-        </FormControl>
+                            </FormControl>
+                        </ListItem>
+                    );
+                })}
+            </List>
+        </Stack>
     );
 };
 
