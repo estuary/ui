@@ -28,7 +28,7 @@ export interface AlertSubscriptionResponse
     id: string;
 }
 
-export interface AlertTypeSelectorProps extends SubscriptionDependentProps {
+export interface AlertTypeListProps extends SubscriptionDependentProps {
     options: AlertTypeInfo[];
 }
 

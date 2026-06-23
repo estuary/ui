@@ -1,4 +1,4 @@
-import type { AlertTypeSelectorProps } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { AlertTypeListProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import {
     Checkbox,
@@ -17,10 +17,7 @@ import { useIntl } from 'react-intl';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
 
-const AlertTypeSelector = ({
-    options,
-    subscription,
-}: AlertTypeSelectorProps) => {
+const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
@@ -137,4 +134,4 @@ const AlertTypeSelector = ({
     );
 };
 
-export default AlertTypeSelector;
+export default AlertTypeList;

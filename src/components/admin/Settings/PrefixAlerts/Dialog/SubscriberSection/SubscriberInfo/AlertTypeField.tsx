@@ -2,7 +2,7 @@ import type { SubscriptionDependentProps } from 'src/components/admin/Settings/P
 
 import { Skeleton } from '@mui/material';
 
-import AlertTypeSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/AlertTypeSelector';
+import AlertTypeList from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/AlertTypeList';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 const AlertTypeField = ({ subscription }: SubscriptionDependentProps) => {
@@ -16,10 +16,7 @@ const AlertTypeField = ({ subscription }: SubscriptionDependentProps) => {
     return alertTypeOptionsFetching ? (
         <Skeleton height={38} width={490} />
     ) : (
-        <AlertTypeSelector
-            subscription={subscription}
-            options={alertTypeOptions}
-        />
+        <AlertTypeList subscription={subscription} options={alertTypeOptions} />
     );
 };
 
