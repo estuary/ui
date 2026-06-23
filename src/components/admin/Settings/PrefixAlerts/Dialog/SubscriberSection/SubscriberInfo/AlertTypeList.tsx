@@ -127,7 +127,10 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                             width: '100%',
                                         },
                                     }}
-                                    style={{ alignItems: 'flex-start' }}
+                                    style={{
+                                        alignItems: 'flex-start',
+                                        marginRight: 'unset',
+                                    }}
                                 />
                             </FormControl>
                         </ListItem>
