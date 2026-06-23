@@ -73,12 +73,14 @@ const turnGridSx = {
 } as const;
 
 // Typewriter reveal for streamed assistant text: a steady base cadence
-// (~60 chars/sec at 60fps) so replies type in rather than popping in whole,
-// plus a catch-up term that clears any backlog within ~1.5s so the reveal never
-// lags far behind a fast stream or a response that lands all at once.
-const TYPE_CHARS_PER_FRAME = 1;
-const TYPE_MAX_LAG_FRAMES = 90;
-const WELCOME_TYPE_DELAY_MS = 5000;
+// (~30 chars/sec at 60fps) so replies type in rather than popping in whole,
+// plus a catch-up term that clears any backlog within ~3s so the reveal never
+// lags far behind a fast stream or a response that lands all at once. Lower
+// TYPE_CHARS_PER_FRAME to type slower; raise TYPE_MAX_LAG_FRAMES to drain
+// bursts more gently.
+const TYPE_CHARS_PER_FRAME = 0.5;
+const TYPE_MAX_LAG_FRAMES = 180;
+const WELCOME_TYPE_DELAY_MS = 2000;
 
 // Reveals `text` a few characters per frame so streamed assistant output types
 // in. While the model is still producing tokens the target grows; the reveal
@@ -112,9 +114,13 @@ function useTypewriter(
             if (remaining <= 0) {
                 return;
             }
+            // No Math.ceil here: rounding up forces a floor of 1 char/frame
+            // (~60 chars/sec), which would override the fractional base cadence
+            // and pin the reveal speed regardless of the constants. `revealed`
+            // accumulates as a float and text.slice() truncates it for display.
             const step = Math.max(
                 TYPE_CHARS_PER_FRAME,
-                Math.ceil(remaining / TYPE_MAX_LAG_FRAMES)
+                remaining / TYPE_MAX_LAG_FRAMES
             );
             setRevealed((current) => Math.min(text.length, current + step));
             frame = window.requestAnimationFrame(tick);
