@@ -52,6 +52,20 @@ const COLLAPSED_HEIGHT_TWO_LINE = 78;
 const SCROLL_FADE_HEIGHT = 28;
 const TERMINAL_PROMPT = '#56d364';
 
+// Every turn — user or agent — lays out on the same two-column grid: a
+// fixed-width marker column (the user `❯` or the agent `•`, centered so the two
+// share a center line) followed by the turn's text. The column width is fixed
+// and identical across rows, so the markers stay aligned and every turn's text
+// starts at the same x regardless of which glyph sits in the column or how big
+// it is — resizing the bullet no longer drags the text column with it. Sized to
+// hold the largest marker (the 1.8em bullet, ~1.8ch in the monospace face).
+const turnGridSx = {
+    display: 'grid',
+    gridTemplateColumns: '1.9em 1fr',
+    columnGap: 0.75,
+    alignItems: 'start',
+} as const;
+
 // Typewriter reveal for streamed assistant text: a steady base cadence
 // (~120 chars/sec at 60fps) so replies type in rather than popping in whole,
 // plus a catch-up term that clears any backlog within ~1.5s so the reveal never
@@ -176,30 +190,31 @@ function MessageLine({
         return (
             <Box
                 sx={{
-                    display: 'flex',
-                    gap: 1,
+                    ...turnGridSx,
                     my: 1,
                     // Subtly band each past prompt so the user's turns read as
                     // distinct from the agent's output while scrolling history.
-                    // The negative inline margin bleeds the highlight into the
-                    // padding gutter while the `❯` stays aligned with the agent
-                    // bullet.
-                    px: 0.5,
-                    mx: -0.5,
-                    // borderRadius: theme.radius.sm,
                     backgroundColor: theme.palette.action.hover,
                     color: theme.palette.text.primary,
                 }}
             >
                 <Box
                     component="span"
-                    sx={{ color: TERMINAL_PROMPT, userSelect: 'none' }}
+                    sx={{
+                        justifySelf: 'center',
+                        color: TERMINAL_PROMPT,
+                        userSelect: 'none',
+                    }}
                 >
                     ❯
                 </Box>
                 <Box
                     component="span"
-                    sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+                    sx={{
+                        minWidth: 0,
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                    }}
                 >
                     {content}
                 </Box>
@@ -210,28 +225,30 @@ function MessageLine({
     return (
         <Box
             sx={{
-                display: 'flex',
-                gap: 1,
+                ...turnGridSx,
                 py: 1,
                 lineHeight: 1.45,
                 color: theme.palette.text.primary,
             }}
         >
-            {/* A dim bullet marks each agent turn and insets its text to align
-                with the user prompt's `❯`, so the transcript reads as a column
-                of alternating markers. The top margin matches the leading
-                paragraph's so the bullet lines up with the first line of text. */}
+            {/* A bullet marks each agent turn, centered in the shared marker
+                column so it lines up with the user prompt's `❯` above and below
+                it. The top margin optically centers the oversized glyph on the
+                first line of text. */}
             <Box
                 component="span"
                 sx={{
-                    mt: 0.4,
-                    color: theme.palette.text.disabled,
+                    justifySelf: 'center',
+                    mt: 0.2,
+                    fontSize: '1.8em',
+                    lineHeight: 1,
+                    color: theme.palette.text.primary,
                     userSelect: 'none',
                 }}
             >
                 •
             </Box>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Box sx={{ minWidth: 0 }}>
                 {displayed ? (
                     <AssistantMarkdown>{displayed}</AssistantMarkdown>
                 ) : null}
@@ -835,13 +852,16 @@ export default function AssistantTerminal() {
 
     // The editable prompt line. Focus/blur drive the collapsed two-line state.
     const promptLine = (
-        <Box sx={{ display: 'flex', gap: 1, py: 0.5 }}>
+        <Box sx={{ ...turnGridSx, py: 0.5 }}>
             <Box
                 component="span"
                 sx={{
+                    justifySelf: 'center',
+                    // Stay top-aligned with the first line as the input grows
+                    // to multiple rows.
+                    alignSelf: 'start',
                     color: TERMINAL_PROMPT,
                     userSelect: 'none',
-                    alignSelf: 'flex-start',
                 }}
             >
                 ❯
@@ -861,7 +881,7 @@ export default function AssistantTerminal() {
                 multiline
                 maxRows={6}
                 sx={{
-                    'flex': 1,
+                    'minWidth': 0,
                     'color': theme.palette.text.primary,
                     'fontFamily': TERMINAL_FONT,
                     'fontSize': 13,
@@ -1015,7 +1035,7 @@ export default function AssistantTerminal() {
                         // overflowY: 'visible',
                         display: 'flex',
                         flexDirection: 'column',
-                        pl: 2,
+                        pl: 1,
                         // Clear the top-right health strip so terminal text never
                         // runs underneath it.
                         pr: showFormInPanel
