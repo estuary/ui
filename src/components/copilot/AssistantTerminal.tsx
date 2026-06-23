@@ -41,14 +41,15 @@ import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 // Height of the terminal when collapsed and idle: a short window onto the bottom
 // of the live transcript, showing the tail of the conversation with the input
 // hidden. Sized to read like the top bar it replaces.
-const COLLAPSED_HEIGHT = 48;
+const COLLAPSED_HEIGHT = 70;
 // Width reserved at the top-right for the entity health strip plus the chrome
 // buttons; the terminal text is padded to clear it so the two never overlap.
 const STATUS_AREA_WIDTH = 460;
 // Collapsed height while the bar is engaged — focused, or the agent working or
 // awaiting input: it grows by a line to reveal the live-line row (the editable
 // prompt, or the thinking/approval status) beneath the transcript tail.
-const COLLAPSED_HEIGHT_TWO_LINE = 78;
+const COLLAPSED_PROMPT_LINE_HEIGHT = 21;
+const COLLAPSED_STATUS_LINE_HEIGHT = 29;
 // Height of the gradient that fades the transcript at an edge with content
 // scrolled past it (top and/or bottom), so it dissolves rather than hard-cuts.
 const SCROLL_FADE_HEIGHT = 28;
@@ -67,7 +68,7 @@ const TERMINAL_PROMPT = '#56d364';
 const turnGridSx = {
     display: 'grid',
     gridTemplateColumns: '1.9em 1fr',
-    columnGap: 0.75,
+    columnGap: 0.5,
     alignItems: 'start',
 } as const;
 
@@ -139,6 +140,12 @@ const HITL_LABELS: Record<string, string> = {
 const toolCallName = (call: any): string =>
     call?.function?.name ?? call?.name ?? 'tool call';
 
+const WELCOME_MESSAGE = {
+    id: 'assistant-welcome',
+    role: 'assistant',
+    content: 'Hey, what can I help you with?',
+};
+
 // Renders a single chat message terminal-style: user turns as a `❯` prompt line,
 // assistant turns as plain output. Read-only tool calls are not shown — the
 // steady "thinking…" indicator stands in for them; only approval-required tool
@@ -146,6 +153,7 @@ const toolCallName = (call: any): string =>
 function MessageLine({
     message,
     markPending,
+    showAgentBullet,
     completedToolCallIds,
     streaming,
     onReveal,
@@ -155,6 +163,7 @@ function MessageLine({
     // muted pointer in the transcript while it awaits input. Narrow viewports use
     // a modal that's self-evident, so no pointer is shown there.
     markPending: boolean;
+    showAgentBullet: boolean;
     completedToolCallIds: Set<string>;
     // True for the assistant message the model is actively streaming, so its
     // text types in. False for finished turns and user turns, which render whole.
@@ -196,7 +205,7 @@ function MessageLine({
             <Box
                 sx={{
                     ...turnGridSx,
-                    my: 1,
+                    // my: 1,
                     // Subtly band each past prompt so the user's turns read as
                     // distinct from the agent's output while scrolling history.
                     backgroundColor: theme.palette.action.hover,
@@ -231,7 +240,7 @@ function MessageLine({
         <Box
             sx={{
                 ...turnGridSx,
-                py: 1,
+                py: 0.5,
                 lineHeight: 1.45,
                 color: theme.palette.text.primary,
             }}
@@ -240,19 +249,23 @@ function MessageLine({
                 column so it lines up with the user prompt's `❯` above and below
                 it. The top margin optically centers the oversized glyph on the
                 first line of text. */}
-            <Box
-                component="span"
-                sx={{
-                    justifySelf: 'center',
-                    mt: 0.2,
-                    fontSize: '1.8em',
-                    lineHeight: 1,
-                    color: theme.palette.text.primary,
-                    userSelect: 'none',
-                }}
-            >
-                •
-            </Box>
+            {showAgentBullet ? (
+                <Box
+                    component="span"
+                    sx={{
+                        justifySelf: 'center',
+                        mt: -0.3,
+                        fontSize: '1.8em',
+                        lineHeight: 1,
+                        color: theme.palette.text.primary,
+                        userSelect: 'none',
+                    }}
+                >
+                    •
+                </Box>
+            ) : (
+                <Box component="span" aria-hidden />
+            )}
             <Box sx={{ minWidth: 0 }}>
                 {displayed ? (
                     <AssistantMarkdown>{displayed}</AssistantMarkdown>
@@ -307,12 +320,16 @@ export default function AssistantTerminal() {
     const setResizingTerminal = useCopilotAssistantStore(
         (state) => state.setResizingTerminal
     );
+    const kapaSearchInFlight = useCopilotAssistantStore(
+        (state) => state.kapaSearchInFlight
+    );
 
     // The system prompt is injected by the runtime (server.mjs), not the client,
     // so it stays out of the bundle and can't be stripped — no instructions are
     // sent from here.
     const { messages, sendMessage, isLoading, stopGeneration, isAvailable } =
         useCopilotChatHeadless_c();
+    const assistantWorking = isLoading || kapaSearchInFlight;
 
     const [draft, setDraft] = useState('');
     // Whether the collapsed prompt is focused. Drives only the bar's cursor
@@ -346,6 +363,11 @@ export default function AssistantTerminal() {
     // to the newest line while this holds, so scrolling up to read history isn't
     // yanked back down by each streamed token.
     const atBottomRef = useRef(true);
+    // A collapsed transcript click/drag can blur the textarea before the click
+    // handler decides whether to refocus it. Keep the terminal's focused visual
+    // state stable during that interaction without preventing native text
+    // selection.
+    const mouseDownInCollapsedTranscriptRef = useRef(false);
 
     const updateFades = useCallback(() => {
         const node = scrollRef.current;
@@ -400,7 +422,7 @@ export default function AssistantTerminal() {
             node.scrollTop = node.scrollHeight;
         }
         updateFades();
-    }, [messages, isLoading, open, updateFades]);
+    }, [messages, assistantWorking, open, updateFades]);
 
     // Keep the transcript pinned to its newest line while the bar's height
     // animates. The CSS height transition resizes the viewport continuously
@@ -435,7 +457,7 @@ export default function AssistantTerminal() {
         };
         frame = window.requestAnimationFrame(pin);
         return () => window.cancelAnimationFrame(frame);
-    }, [open, focused, isLoading, updateFades]);
+    }, [open, focused, assistantWorking, updateFades]);
 
     // Recompute the edge fades on mount and when the viewport resizes (the
     // transcript may start or stop overflowing).
@@ -446,7 +468,24 @@ export default function AssistantTerminal() {
     }, [updateFades]);
 
     useEffect(() => {
-        if (open && !isLoading) {
+        if (!focused || open) {
+            return undefined;
+        }
+        const onMouseDown = (event: MouseEvent) => {
+            const target = event.target;
+            if (target instanceof Node && outerRef.current?.contains(target)) {
+                return;
+            }
+            mouseDownInCollapsedTranscriptRef.current = false;
+            setFocused(false);
+        };
+        document.addEventListener('mousedown', onMouseDown, true);
+        return () =>
+            document.removeEventListener('mousedown', onMouseDown, true);
+    }, [focused, open]);
+
+    useEffect(() => {
+        if (open && !assistantWorking) {
             const id = window.setTimeout(
                 () => inputRef.current?.focus({ preventScroll: true }),
                 240
@@ -454,7 +493,7 @@ export default function AssistantTerminal() {
             return () => window.clearTimeout(id);
         }
         return undefined;
-    }, [open, isLoading]);
+    }, [open, assistantWorking]);
 
     // While a response is streaming, Esc interrupts it (mirrors the
     // "esc to interrupt" hint shown in place of the prompt).
@@ -522,12 +561,27 @@ export default function AssistantTerminal() {
         clearPendingFreshPrompt();
     }, [pendingFreshPrompt, isAvailable, sendMessage, clearPendingFreshPrompt]);
 
+    const runSlashCommand = (text: string): boolean => {
+        const [command] = text.trim().split(/\s+/, 1);
+
+        switch (command?.toLowerCase()) {
+            case '/clear':
+                useCopilotAssistantStore.getState().clearChatContext();
+                return true;
+            default:
+                return false;
+        }
+    };
+
     const submit = () => {
         const text = draft.trim();
-        if (!text || isLoading) {
+        if (!text || assistantWorking) {
             return;
         }
         setDraft('');
+        if (runSlashCommand(text)) {
+            return;
+        }
         // The reply streams into the transcript above; the live indicator stands
         // in for the prompt while it streams, and the prompt returns when it's
         // done.
@@ -679,41 +733,46 @@ export default function AssistantTerminal() {
     // when it's an assistant turn and a response is in flight. Only this one
     // types in; every earlier turn is already complete and renders whole.
     const streamingMessageId = useMemo(() => {
-        if (!isLoading) {
+        if (!assistantWorking) {
             return null;
         }
         const list = messages ?? [];
         const last = list[list.length - 1];
         return last?.role === 'assistant' ? last.id : null;
-    }, [messages, isLoading]);
+    }, [messages, assistantWorking]);
 
-    // Render only the conversation turns; tool-result messages are excluded.
-    const messageNodes = useMemo(
-        () =>
-            (messages ?? [])
-                .filter(
-                    (message: any) =>
-                        message?.role === 'user' ||
-                        message?.role === 'assistant'
-                )
-                .map((message: any) => (
-                    <MessageLine
-                        key={message.id}
-                        message={message}
-                        markPending={usePanel}
-                        completedToolCallIds={completedToolCallIds}
-                        streaming={message.id === streamingMessageId}
-                        onReveal={pinToBottom}
-                    />
-                )),
-        [
-            messages,
-            usePanel,
-            completedToolCallIds,
-            streamingMessageId,
-            pinToBottom,
-        ]
-    );
+    // Render only the conversation turns; tool-result messages are excluded. The
+    // welcome row is UI-only: it gives the collapsed empty terminal an agent
+    // message to show without adding anything to CopilotKit's chat context.
+    const messageNodes = useMemo(() => {
+        const conversationMessages = (messages ?? []).filter(
+            (message: any) =>
+                message?.role === 'user' || message?.role === 'assistant'
+        );
+        const displayMessages =
+            conversationMessages.length > 0
+                ? conversationMessages
+                : [WELCOME_MESSAGE];
+
+        return displayMessages.map((message: any) => (
+            <MessageLine
+                key={message.id}
+                message={message}
+                markPending={usePanel}
+                showAgentBullet={open}
+                completedToolCallIds={completedToolCallIds}
+                streaming={message.id === streamingMessageId}
+                onReveal={pinToBottom}
+            />
+        ));
+    }, [
+        messages,
+        usePanel,
+        open,
+        completedToolCallIds,
+        streamingMessageId,
+        pinToBottom,
+    ]);
 
     const dim = theme.palette.text.disabled;
 
@@ -733,13 +792,21 @@ export default function AssistantTerminal() {
     // where the input was, leaving just the transcript tail.
     const hasTranscript = messageNodes.length > 0;
     const liveLineRevealed =
-        open || focused || isLoading || awaitingApproval || !hasTranscript;
+        open ||
+        focused ||
+        assistantWorking ||
+        awaitingApproval ||
+        !hasTranscript;
     // Two lines only when the transcript tail and the live-line row both show; a
     // single line otherwise (just the tail when blurred, or just the prompt when
     // there's no transcript yet).
+    const collapsedLiveLineHeight =
+        assistantWorking || awaitingApproval
+            ? COLLAPSED_STATUS_LINE_HEIGHT
+            : COLLAPSED_PROMPT_LINE_HEIGHT;
     const collapsedHeight =
         hasTranscript && liveLineRevealed
-            ? COLLAPSED_HEIGHT_TWO_LINE
+            ? COLLAPSED_HEIGHT + collapsedLiveLineHeight
             : COLLAPSED_HEIGHT;
 
     // Fade the transcript into the background at any edge hiding scrolled-past
@@ -758,7 +825,7 @@ export default function AssistantTerminal() {
 
     // The editable prompt line. Focus/blur drive the collapsed bar's cursor.
     const promptLine = (
-        <Box sx={{ ...turnGridSx, py: 0.5 }}>
+        <Box sx={{ ...turnGridSx }}>
             <Box
                 component="span"
                 sx={{
@@ -777,7 +844,12 @@ export default function AssistantTerminal() {
                 value={draft}
                 onChange={(event) => setDraft(event.target.value)}
                 onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
+                onBlur={() => {
+                    if (mouseDownInCollapsedTranscriptRef.current) {
+                        return;
+                    }
+                    setFocused(false);
+                }}
                 onKeyDown={(event) => {
                     if (event.key === 'Enter' && !event.shiftKey) {
                         event.preventDefault();
@@ -806,25 +878,32 @@ export default function AssistantTerminal() {
     );
 
     // The working indicator and approval hint that share the live-line row with
-    // the prompt. A steady "thinking…" with the blinking cursor stands in for the
-    // read-only tool calls — those popped in and out of the transcript as each one
-    // started and finished; the esc hint trails it.
+    // the prompt. A steady status with the blinking cursor stands in for
+    // read-only work — regular model/tool activity is "thinking", while the Kapa
+    // knowledge-base tool gets a more specific search label.
+    const workingLabel = kapaSearchInFlight ? 'searching...' : 'thinking...';
     const thinkingLine = (
         <Box
             sx={{
-                display: 'flex',
-                gap: 1,
+                ...turnGridSx,
                 py: 0.5,
                 userSelect: 'none',
                 color: theme.palette.text.secondary,
             }}
         >
-            <Box component="span" sx={blinkingCursorSx}>
+            <Box
+                component="span"
+                sx={{ ...blinkingCursorSx, justifySelf: 'center' }}
+            >
                 ▌
             </Box>
-            <Box component="span">thinking…</Box>
-            <Box component="span" sx={{ color: dim, ml: 1 }}>
-                esc to interrupt
+            <Box component="span">
+                {workingLabel}
+                {isLoading ? (
+                    <Box component="span" sx={{ color: dim, ml: 1 }}>
+                        esc to interrupt
+                    </Box>
+                ) : null}
             </Box>
         </Box>
     );
@@ -909,8 +988,15 @@ export default function AssistantTerminal() {
 
                 <Box
                     ref={scrollRef}
+                    onMouseDown={(event) => {
+                        mouseDownInCollapsedTranscriptRef.current =
+                            !open &&
+                            focused &&
+                            event.target !== inputRef.current;
+                    }}
                     onScroll={updateFades}
                     onClick={() => {
+                        mouseDownInCollapsedTranscriptRef.current = false;
                         // A drag to select transcript text also fires a click on
                         // release; focusing the input then would move the caret into
                         // it and clear the selection. Leave focus alone when the user
@@ -940,7 +1026,6 @@ export default function AssistantTerminal() {
                         // overflowY: 'visible',
                         display: 'flex',
                         flexDirection: 'column',
-                        pl: 1,
                         // Clear the top-right health strip so terminal text never
                         // runs underneath it.
                         pr: showFormInPanel
@@ -985,7 +1070,7 @@ export default function AssistantTerminal() {
                             }}
                         >
                             <Box sx={{ minHeight: 0, overflow: 'hidden' }}>
-                                {isLoading
+                                {assistantWorking
                                     ? thinkingLine
                                     : awaitingApproval
                                       ? approvalHint

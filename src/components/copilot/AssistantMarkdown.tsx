@@ -1,4 +1,8 @@
-import type { AnchorHTMLAttributes, HTMLAttributes, PropsWithChildren } from 'react';
+import type {
+    AnchorHTMLAttributes,
+    HTMLAttributes,
+    PropsWithChildren,
+} from 'react';
 
 import { Box, Divider, Link } from '@mui/material';
 
@@ -15,7 +19,11 @@ const heading = (fontSize: number) =>
     function Heading(props: MdProps) {
         return (
             <Box
-                sx={{ fontSize, fontWeight: 700, mt: 1.25, mb: 0.5 }}
+                sx={{
+                    fontSize,
+                    'fontWeight': 700,
+                    'mb': 0.5,
+                }}
                 {...props}
             />
         );
@@ -164,8 +172,7 @@ const markdownOptions = {
                 <Box
                     component="th"
                     sx={{
-                        border: (theme) =>
-                            `1px solid ${theme.palette.divider}`,
+                        border: (theme) => `1px solid ${theme.palette.divider}`,
                         px: 1,
                         py: 0.5,
                         textAlign: 'left',
@@ -181,8 +188,7 @@ const markdownOptions = {
                 <Box
                     component="td"
                     sx={{
-                        border: (theme) =>
-                            `1px solid ${theme.palette.divider}`,
+                        border: (theme) => `1px solid ${theme.palette.divider}`,
                         px: 1,
                         py: 0.5,
                     }}
@@ -194,5 +200,16 @@ const markdownOptions = {
 };
 
 export function AssistantMarkdown({ children }: { children: string }) {
-    return <Markdown options={markdownOptions}>{children}</Markdown>;
+    return (
+        <Box
+            sx={{
+                '& h1:not(:first-child), & h2:not(:first-child), & h3:not(:first-child), & h4:not(:first-child), & h5:not(:first-child), & h6:not(:first-child)':
+                    {
+                        mt: 2,
+                    },
+            }}
+        >
+            <Markdown options={markdownOptions}>{children}</Markdown>
+        </Box>
+    );
 }

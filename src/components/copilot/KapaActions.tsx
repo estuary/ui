@@ -1,5 +1,6 @@
 import { useCopilotAction } from '@copilotkit/react-core';
 
+import { useCopilotAssistantStore } from 'src/stores/Copilot/Store';
 import { getCopilotSettings } from 'src/utils/env-utils';
 
 // The dev runtime exposes a /kapa proxy alongside /copilotkit; derive its URL
@@ -12,6 +13,10 @@ const kapaProxyUrl = `${new URL(getCopilotSettings().runtimeUrl).origin}/kapa`;
 // Suits diagnosis and open-ended "how does X work" questions; lookupEstuaryDocs
 // (single known page) suits fetching a specific doc whose URL is already known.
 export default function KapaActions() {
+    const setKapaSearchInFlight = useCopilotAssistantStore(
+        (state) => state.setKapaSearchInFlight
+    );
+
     useCopilotAction({
         name: 'searchEstuaryKnowledge',
         description:
@@ -28,6 +33,7 @@ export default function KapaActions() {
         handler: async ({ query }) => {
             // eslint-disable-next-line no-console
             console.log('[copilot] searchEstuaryKnowledge', query);
+            setKapaSearchInFlight(true);
 
             try {
                 const response = await fetch(kapaProxyUrl, {
@@ -43,6 +49,8 @@ export default function KapaActions() {
                     error:
                         error instanceof Error ? error.message : String(error),
                 };
+            } finally {
+                setKapaSearchInFlight(false);
             }
         },
     });

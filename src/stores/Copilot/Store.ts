@@ -34,10 +34,16 @@ interface CopilotAssistantState {
     // Whether the in-dashboard assistant is enabled. Persisted (per browser) and
     // toggled from Admin → Settings; when false, the layout doesn't mount it.
     assistantEnabled: boolean;
+    // Client-side Kapa searches run inside a Copilot action handler, which can
+    // outlive CopilotKit's visible loading flag. Track them separately so the
+    // terminal can keep showing work in progress.
+    kapaSearchInFlight: boolean;
     setOpen: (open: boolean) => void;
     setExpandedHeight: (height: number) => void;
     setResizingTerminal: (resizing: boolean) => void;
     setAssistantEnabled: (enabled: boolean) => void;
+    setKapaSearchInFlight: (inFlight: boolean) => void;
+    clearChatContext: () => void;
     openWithPrompt: (prompt: string) => void;
     openWithPromptInNewThread: (prompt: string) => void;
     clearPendingPrompt: () => void;
@@ -69,6 +75,7 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                 ),
                 resizingTerminal: false,
                 assistantEnabled: true,
+                kapaSearchInFlight: false,
 
                 setOpen: (open) => {
                     set(
@@ -112,6 +119,31 @@ export const useCopilotAssistantStore = create<CopilotAssistantState>()(
                         }),
                         false,
                         'Copilot Assistant Enabled Updated'
+                    );
+                },
+
+                setKapaSearchInFlight: (inFlight) => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.kapaSearchInFlight = inFlight;
+                        }),
+                        false,
+                        'Copilot Assistant Kapa Search In Flight Updated'
+                    );
+                },
+
+                clearChatContext: () => {
+                    set(
+                        produce((state: CopilotAssistantState) => {
+                            state.pendingPrompt = null;
+                            state.pendingFreshPrompt = null;
+                            state.kapaSearchInFlight = false;
+                            // Remount CopilotKit for a clean thread; setMessages
+                            // and reset have been unreliable with the v2 store.
+                            state.threadNonce += 1;
+                        }),
+                        false,
+                        'Copilot Assistant Chat Context Cleared'
                     );
                 },
 
