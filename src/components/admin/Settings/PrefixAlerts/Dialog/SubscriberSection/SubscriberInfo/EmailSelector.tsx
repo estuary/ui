@@ -72,12 +72,20 @@ function EmailSelector({
         [inputValue]
     );
 
-    useEffect(() => {
-        setEmailErrorsExist(inputErrorExists, subscriptionId);
-    }, [inputErrorExists, setEmailErrorsExist, subscriptionId]);
-
     const duplicateEmailDetected =
         duplicateSubscriptionEmails.includes(subscribedEmail);
+
+    useEffect(() => {
+        setEmailErrorsExist(
+            inputErrorExists || duplicateEmailDetected,
+            subscriptionId
+        );
+    }, [
+        duplicateEmailDetected,
+        inputErrorExists,
+        setEmailErrorsExist,
+        subscriptionId,
+    ]);
 
     return (
         <FormControl fullWidth>
