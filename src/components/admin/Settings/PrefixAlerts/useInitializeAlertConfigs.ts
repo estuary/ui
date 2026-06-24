@@ -16,6 +16,9 @@ export function useInitializeAlertConfigs() {
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
     );
+    const setServerError = useAlertSubscriptionsStore(
+        (state) => state.setServerErrors
+    );
 
     const [debouncedPrefix, setDebouncedPrefix] = useState(catalogPrefix);
 
@@ -32,8 +35,7 @@ export function useInitializeAlertConfigs() {
         [debouncedPrefix, mutableSubscriptionMetadata]
     );
 
-    // TODO: Add error handling.
-    const [{ data, fetching }] = useQuery({
+    const [{ data, error, fetching }] = useQuery({
         pause: !debouncedPrefix || settingsDefined,
         query: AlertConfigQuery,
         variables: {
@@ -44,6 +46,12 @@ export function useInitializeAlertConfigs() {
     useEffect(() => {
         updateDebouncedPrefix.current(catalogPrefix);
     }, [catalogPrefix, updateDebouncedPrefix]);
+
+    useEffect(() => {
+        if (!fetching && error) {
+            setServerError([error]);
+        }
+    }, [error, fetching, setServerError]);
 
     useEffect(() => {
         if (

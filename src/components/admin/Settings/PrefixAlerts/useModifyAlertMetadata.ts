@@ -26,7 +26,7 @@ export function useModifyAlertMetadata(
     const { upsertConfig } = useUpsertAlertConfig();
 
     const setServerError = useAlertSubscriptionsStore(
-        (state) => state.setSaveErrors
+        (state) => state.setServerErrors
     );
 
     const catalogPrefix = useAlertSubscriptionsStore(
@@ -41,15 +41,16 @@ export function useModifyAlertMetadata(
 
     const onClick = async () => {
         setLoading(true);
-        setServerError([]);
+        setServerError([], true);
 
         if (catalogPrefix.length === 0) {
             logRocketEvent('AlertSubscription', {
                 error: 'catalog prefix undefined',
                 operation: 'save',
+                promiseRejected: 'explicit',
             });
 
-            return Promise.reject('Catalog prefix undefined.');
+            return Promise.reject();
         }
 
         if (mutableSubscriptionMetadata.subscriptions.length === 0) {
@@ -117,6 +118,7 @@ export function useModifyAlertMetadata(
                         logRocketEvent('AlertSubscription', {
                             error: String(response),
                             response: String(response),
+                            promiseRejected: 'implicit',
                         });
                     }
                 });
@@ -124,6 +126,7 @@ export function useModifyAlertMetadata(
             (error) => {
                 logRocketEvent('AlertSubscription', {
                     error: String(error),
+                    promiseRejected: 'explicit',
                 });
             }
         );

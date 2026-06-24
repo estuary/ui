@@ -21,7 +21,7 @@ const SubscriberSection = () => {
         (state) => state.mutableSubscriptionMetadata
     );
     const setServerError = useAlertSubscriptionsStore(
-        (state) => state.setSaveErrors
+        (state) => state.setServerErrors
     );
 
     const initializeAlertTypeOptions = useAlertSubscriptionsStore(

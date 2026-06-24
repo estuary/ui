@@ -34,7 +34,7 @@ interface AlertSubscriptionState {
     ) => void;
     mutableSubscriptionMetadata: SubscriptionMetadata;
     prefixErrorsExist: boolean;
-    saveErrors: (CombinedError | PostgrestError | null | undefined)[];
+    serverErrors: (CombinedError | PostgrestError | null | undefined)[];
     subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
     setEmailErrorsExist: (value: boolean, subscriptionId: string) => void;
@@ -42,7 +42,10 @@ interface AlertSubscriptionState {
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
     ) => void;
-    setSaveErrors: (value: AlertSubscriptionState['saveErrors']) => void;
+    setServerErrors: (
+        values: AlertSubscriptionState['serverErrors'],
+        override?: boolean
+    ) => void;
     setSingleAlertType: (
         value: string,
         selected: boolean,
@@ -84,7 +87,7 @@ const getInitialState = (): Pick<
     | 'initializationError'
     | 'mutableSubscriptionMetadata'
     | 'prefixErrorsExist'
-    | 'saveErrors'
+    | 'serverErrors'
     | 'subscriptionMetadata'
 > => ({
     alertTypeOptions: [],
@@ -93,7 +96,7 @@ const getInitialState = (): Pick<
     initializationError: null,
     mutableSubscriptionMetadata: { settings: {}, subscriptions: [] },
     prefixErrorsExist: false,
-    saveErrors: [],
+    serverErrors: [],
     subscriptionMetadata: {},
 });
 
@@ -265,13 +268,19 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'initialization error set'
                 ),
 
-            setSaveErrors: (value) =>
+            setServerErrors: (values, override) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.saveErrors = value;
+                        const filteredErrors = values.filter(
+                            (value) => typeof value !== 'undefined'
+                        );
+
+                        state.serverErrors = override
+                            ? filteredErrors
+                            : state.serverErrors.concat(filteredErrors);
                     }),
                     false,
-                    'save errors set'
+                    'server errors set'
                 ),
 
             setSingleAlertType: (value, selected, catalogPrefix, email) =>
