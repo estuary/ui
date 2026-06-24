@@ -12,7 +12,6 @@ import {
 } from 'src/stores/names';
 import { createSchemaEvolutionStore } from 'src/stores/SchemaEvolution/Store';
 import { createShardDetailStore } from 'src/stores/ShardDetail/Store';
-import { createBillingTableStore } from 'src/stores/Tables/Billing/Store';
 import { createSelectableTableStore } from 'src/stores/Tables/Store';
 import { createTransformationCreateStore } from 'src/stores/TransformationCreate/Store';
 import { MessagePrefixes } from 'src/types';
@@ -64,9 +63,6 @@ const invariableStores = {
     [SelectTableStoreNames.ACCESS_GRANTS_USERS]: createSelectableTableStore(
         SelectTableStoreNames.ACCESS_GRANTS_USERS
     ),
-    [SelectTableStoreNames.BILLING]: createBillingTableStore(
-        SelectTableStoreNames.BILLING
-    ),
     [SelectTableStoreNames.CAPTURE]: createSelectableTableStore(
         SelectTableStoreNames.CAPTURE
     ),
@@ -84,9 +80,6 @@ const invariableStores = {
     ),
     [SelectTableStoreNames.MATERIALIZATION]: createSelectableTableStore(
         SelectTableStoreNames.MATERIALIZATION
-    ),
-    [SelectTableStoreNames.REFRESH_TOKENS]: createSelectableTableStore(
-        SelectTableStoreNames.REFRESH_TOKENS
     ),
 
     // Shard Detail Store

@@ -35,7 +35,6 @@ export enum TablePrefixes {
     materializations = 'mat',
     prefixes = 'pr',
     prefixAlerts = 'pal',
-    refreshTokens = 'rt',
     schemaViewer = 'sv',
     storageMappings = 'sm',
 }

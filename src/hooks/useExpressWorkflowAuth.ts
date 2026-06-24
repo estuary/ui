@@ -1,4 +1,4 @@
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 
 const useExpressWorkflowAuth = () => {
     const tenant = useTenantStore((state) => state.selectedTenant);

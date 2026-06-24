@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import AccessToken from 'src/components/admin/Api/AccessToken';
-import RefreshToken from 'src/components/admin/Api/RefreshToken';
+import { RefreshToken } from 'src/components/admin/Api/RefreshToken';
 import AdminTabs from 'src/components/admin/Tabs';
 import usePageTitle from 'src/hooks/usePageTitle';
 

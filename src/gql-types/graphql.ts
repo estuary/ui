@@ -53,6 +53,21 @@ export type Scalars = {
   Url: { input: any; output: any; }
 };
 
+export type AwsPrivateLink = {
+  __typename?: 'AWSPrivateLink';
+  azIds: Array<Scalars['String']['output']>;
+  region: Scalars['String']['output'];
+  serviceName: Scalars['String']['output'];
+  serviceRegion?: Maybe<Scalars['String']['output']>;
+};
+
+export type AwsPrivateLinkInput = {
+  azIds: Array<Scalars['String']['input']>;
+  region: Scalars['String']['input'];
+  serviceName: Scalars['String']['input'];
+  serviceRegion?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** Status of the abandonment evaluation for a task. */
 export type AbandonStatus = {
   __typename?: 'AbandonStatus';
@@ -305,6 +320,21 @@ export type AutoDiscoverStatus = {
   pendingPublish?: Maybe<AutoDiscoverOutcome>;
 };
 
+export type AzurePrivateLink = {
+  __typename?: 'AzurePrivateLink';
+  dnsName?: Maybe<Scalars['String']['output']>;
+  location: Scalars['String']['output'];
+  resourceType?: Maybe<Scalars['String']['output']>;
+  serviceName: Scalars['String']['output'];
+};
+
+export type AzurePrivateLinkInput = {
+  dnsName?: InputMaybe<Scalars['String']['input']>;
+  location: Scalars['String']['input'];
+  resourceType?: InputMaybe<Scalars['String']['input']>;
+  serviceName: Scalars['String']['input'];
+};
+
 export type BillingPaymentMethodPayload = {
   __typename?: 'BillingPaymentMethodPayload';
   paymentMethods: Array<PaymentMethod>;
@@ -332,7 +362,9 @@ export type CapabilityBit =
   | 'DeleteGrant'
   | 'JournalAppend'
   | 'JournalRead'
-  | 'SpecEdit';
+  | 'ModifyDataPlanePrivateNetworking'
+  | 'SpecEdit'
+  | 'ViewDataPlanePrivateNetworking';
 
 export type CardPaymentMethodDetails = {
   __typename?: 'CardPaymentMethodDetails';
@@ -540,22 +572,46 @@ export type DataPlane = {
   __typename?: 'DataPlane';
   /** AWS IAM user ARN for this data-plane. */
   awsIamUserArn?: Maybe<Scalars['String']['output']>;
+  /**
+   * AWS PrivateLink endpoint provisioning results, opaque JSON exported by
+   * the data-plane controller. Empty when no AWS endpoints are provisioned,
+   * or when the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  awsLinkEndpoints: Array<Scalars['JSON']['output']>;
   /** Azure application client ID for this data-plane. */
   azureApplicationClientId?: Maybe<Scalars['String']['output']>;
   /** Azure application name for this data-plane. */
   azureApplicationName?: Maybe<Scalars['String']['output']>;
+  /**
+   * Azure Private Link endpoint provisioning results, opaque JSON. Empty when
+   * the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  azureLinkEndpoints: Array<Scalars['JSON']['output']>;
   /** CIDR blocks for this data-plane. */
   cidrBlocks: Array<Scalars['String']['output']>;
   /** Cloud provider where this data-plane is hosted. */
   cloudProvider: DataPlaneCloudProvider;
   /** Fully-qualified domain name of this data-plane. */
   fqdn: Scalars['String']['output'];
+  /**
+   * GCP Private Service Connect endpoint provisioning results, opaque JSON.
+   * Empty when the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  gcpPscEndpoints: Array<Scalars['JSON']['output']>;
   /** GCP service account email for this data-plane. */
   gcpServiceAccountEmail?: Maybe<Scalars['String']['output']>;
   /** Whether this is a public data-plane. */
   isPublic: Scalars['Boolean']['output'];
   /** Name of this data-plane under the catalog namespace. */
   name: Scalars['String']['output'];
+  /**
+   * Configured private link endpoints for this data-plane. Replacing this
+   * list (via `updateDataPlanePrivateLinks`) triggers reconvergence by the
+   * data-plane controller on its next poll. Returns an empty list to
+   * callers that lack the `ViewDataPlanePrivateNetworking` capability on
+   * this data plane.
+   */
+  privateLinks: Array<PrivateLink>;
   /** Address of reactors within the data-plane. */
   reactorAddress: Scalars['String']['output'];
   /**
@@ -627,6 +683,23 @@ export type FieldProvenance = {
   __typename?: 'FieldProvenance';
   path: Scalars['String']['output'];
   source?: Maybe<Scalars['String']['output']>;
+};
+
+export type GcpPrivateServiceConnect = {
+  __typename?: 'GCPPrivateServiceConnect';
+  allPorts: Scalars['Boolean']['output'];
+  dnsRecordNames: Array<Scalars['String']['output']>;
+  dnsZoneName: Scalars['String']['output'];
+  region: Scalars['String']['output'];
+  serviceAttachment: Scalars['String']['output'];
+};
+
+export type GcpPrivateServiceConnectInput = {
+  allPorts?: Scalars['Boolean']['input'];
+  dnsRecordNames: Array<Scalars['String']['input']>;
+  dnsZoneName: Scalars['String']['input'];
+  region: Scalars['String']['input'];
+  serviceAttachment: Scalars['String']['input'];
 };
 
 /** Status of the inferred schema */
@@ -956,6 +1029,8 @@ export type MutationRoot = {
    * Share the returned token with the intended recipient out-of-band.
    */
   createInviteLink: InviteLink;
+  /** Create a refresh token for the authenticated user. */
+  createRefreshToken: RefreshTokenResult;
   /**
    * Create a storage mapping for the given catalog prefix.
    *
@@ -980,6 +1055,14 @@ export type MutationRoot = {
    * catalog prefix with the specified capability.
    */
   redeemInviteLink: RedeemInviteLinkResult;
+  /**
+   * Revoke a refresh token owned by the authenticated user.
+   *
+   * Rather than deleting the row, we zero its `valid_for` interval, which
+   * marks the token as expired/invalid while preserving the audit trail.
+   * Already-zeroed (revoked) tokens are treated as not found.
+   */
+  revokeRefreshToken: Scalars['Boolean']['output'];
   setBillingPaymentMethod: BillingPaymentMethodPayload;
   /**
    * Check storage health for a given catalog prefix and storage definition.
@@ -1012,6 +1095,19 @@ export type MutationRoot = {
    * the updated subscription.
    */
   updateAlertSubscription: AlertSubscription;
+  /**
+   * Replaces the configured private link endpoints on a private data plane.
+   *
+   * The provided list overwrites the entire `private_links` column; partial
+   * updates are intentionally not supported. The data-plane controller
+   * converges to the new configuration on its next poll. Returns the desired
+   * private links state. The `*LinkEndpoints` provisioning results are not echoed here:
+   * they lag this write until the controller converges, so callers needing them re-query `dataPlanes`.
+   *
+   * Requires the `ModifyDataPlanePrivateNetworking` capability on the
+   * private data-plane name.
+   */
+  updateDataPlanePrivateLinks: Array<PrivateLink>;
   /**
    * Update an existing storage mapping for the given catalog prefix.
    *
@@ -1048,6 +1144,13 @@ export type MutationRootCreateInviteLinkArgs = {
 };
 
 
+export type MutationRootCreateRefreshTokenArgs = {
+  detail?: InputMaybe<Scalars['String']['input']>;
+  multiUse?: Scalars['Boolean']['input'];
+  validFor?: Scalars['String']['input'];
+};
+
+
 export type MutationRootCreateStorageMappingArgs = {
   catalogPrefix: Scalars['Prefix']['input'];
   detail?: InputMaybe<Scalars['String']['input']>;
@@ -1077,6 +1180,11 @@ export type MutationRootRedeemInviteLinkArgs = {
 };
 
 
+export type MutationRootRevokeRefreshTokenArgs = {
+  id: Scalars['Id']['input'];
+};
+
+
 export type MutationRootSetBillingPaymentMethodArgs = {
   paymentMethodId: Scalars['String']['input'];
   tenant: Scalars['String']['input'];
@@ -1101,6 +1209,12 @@ export type MutationRootUpdateAlertSubscriptionArgs = {
   detail?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootUpdateDataPlanePrivateLinksArgs = {
+  dataPlaneName: Scalars['String']['input'];
+  privateLinks: Array<PrivateLinkInput>;
 };
 
 
@@ -1193,6 +1307,22 @@ export type PrefixRefEdge = {
 export type PrefixesBy = {
   /** Filter returned prefixes by user capability. */
   minCapability: Capability;
+};
+
+/**
+ * Private link configuration for a customer-owned data plane: AWS
+ * PrivateLink, Azure Private Link, or GCP Private Service Connect.
+ */
+export type PrivateLink = AwsPrivateLink | AzurePrivateLink | GcpPrivateServiceConnect;
+
+/**
+ * Private link configuration for a customer-owned data plane: AWS
+ * PrivateLink, Azure Private Link, or GCP Private Service Connect.
+ */
+export type PrivateLinkInput = {
+  aws?: InputMaybe<AwsPrivateLinkInput>;
+  azure?: InputMaybe<AzurePrivateLinkInput>;
+  gcp?: InputMaybe<GcpPrivateServiceConnectInput>;
 };
 
 /** Filter connectors by their protocol (capture or materialization). */
@@ -1322,6 +1452,8 @@ export type QueryRoot = {
    */
   liveSpecs: LiveSpecRefConnection;
   prefixes: PrefixRefConnection;
+  /** List refresh tokens owned by the authenticated user. */
+  refreshTokens: RefreshTokenInfoConnection;
   /**
    * Returns storage mappings accessible to the current user.
    *
@@ -1405,6 +1537,12 @@ export type QueryRootPrefixesArgs = {
 };
 
 
+export type QueryRootRefreshTokensArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryRootStorageMappingsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -1425,6 +1563,44 @@ export type RedeemInviteLinkResult = {
   capability: Capability;
   /** The catalog prefix that was granted. */
   catalogPrefix: Scalars['Prefix']['output'];
+};
+
+export type RefreshTokenInfo = {
+  __typename?: 'RefreshTokenInfo';
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  /**
+   * True once the token's validity window has elapsed
+   * (now is past `updated_at + valid_for`).
+   */
+  expired: Scalars['Boolean']['output'];
+  id: Scalars['Id']['output'];
+  multiUse: Scalars['Boolean']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  uses: Scalars['Int']['output'];
+};
+
+export type RefreshTokenInfoConnection = {
+  __typename?: 'RefreshTokenInfoConnection';
+  /** A list of edges. */
+  edges: Array<RefreshTokenInfoEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type RefreshTokenInfoEdge = {
+  __typename?: 'RefreshTokenInfoEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: RefreshTokenInfo;
+};
+
+export type RefreshTokenResult = {
+  __typename?: 'RefreshTokenResult';
+  id: Scalars['Id']['output'];
+  secret: Scalars['String']['output'];
 };
 
 export type RepublishRequested = {
@@ -1849,6 +2025,30 @@ export type LiveSpecsQueryQueryVariables = Exact<{
 
 export type LiveSpecsQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', cursor: string, node: { __typename?: 'LiveSpecRef', catalogName: any, liveSpec?: { __typename?: 'LiveSpec', catalogType: CatalogType } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
+export type RefreshTokensQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type RefreshTokensQuery = { __typename?: 'QueryRoot', refreshTokens: { __typename?: 'RefreshTokenInfoConnection', edges: Array<{ __typename?: 'RefreshTokenInfoEdge', cursor: string, node: { __typename?: 'RefreshTokenInfo', id: any, detail?: string | null, createdAt: any, uses: number, expired: boolean } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+
+export type CreateRefreshTokenMutationVariables = Exact<{
+  detail?: InputMaybe<Scalars['String']['input']>;
+  multiUse: Scalars['Boolean']['input'];
+  validFor: Scalars['String']['input'];
+}>;
+
+
+export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: any, secret: string } };
+
+export type RevokeRefreshTokenMutationVariables = Exact<{
+  id: Scalars['Id']['input'];
+}>;
+
+
+export type RevokeRefreshTokenMutation = { __typename?: 'MutationRoot', revokeRefreshToken: boolean };
+
 export type CreateStorageMappingMutationVariables = Exact<{
   catalogPrefix: Scalars['Prefix']['input'];
   spec: Scalars['JSON']['input'];
@@ -1936,6 +2136,9 @@ export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind
 export const DeleteInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<DeleteInviteLinkMutation, DeleteInviteLinkMutationVariables>;
 export const RedeemInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RedeemInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"redeemInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<RedeemInviteLinkMutation, RedeemInviteLinkMutationVariables>;
 export const LiveSpecsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LiveSpecsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"liveSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogType"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<LiveSpecsQueryQuery, LiveSpecsQueryQueryVariables>;
+export const RefreshTokensDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RefreshTokens"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshTokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"uses"}},{"kind":"Field","name":{"kind":"Name","value":"expired"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<RefreshTokensQuery, RefreshTokensQueryVariables>;
+export const CreateRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"multiUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}},{"kind":"Argument","name":{"kind":"Name","value":"multiUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"multiUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"validFor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]}}]} as unknown as DocumentNode<CreateRefreshTokenMutation, CreateRefreshTokenMutationVariables>;
+export const RevokeRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RevokeRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<RevokeRefreshTokenMutation, RevokeRefreshTokenMutationVariables>;
 export const CreateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<CreateStorageMappingMutation, CreateStorageMappingMutationVariables>;
 export const UpdateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"republish"}}]}}]}}]} as unknown as DocumentNode<UpdateStorageMappingMutation, UpdateStorageMappingMutationVariables>;
 export const TestConnectionHealthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestConnectionHealth"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testConnectionHealth"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"results"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fragmentStore"}},{"kind":"Field","name":{"kind":"Name","value":"dataPlaneName"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]}}]} as unknown as DocumentNode<TestConnectionHealthMutation, TestConnectionHealthMutationVariables>;

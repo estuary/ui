@@ -27,7 +27,7 @@ import { useIntl } from 'react-intl';
 import useLegendConfig from 'src/components/graphs/useLegendConfig';
 import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 import { eChartsColors } from 'src/context/Theme';
-import { useBillingStore } from 'src/stores/Billing/Store';
+import { useBillingStore } from 'src/stores/Billing';
 import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
 
 const chartContainerId = 'data-by-month';

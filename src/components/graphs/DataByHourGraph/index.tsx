@@ -195,9 +195,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
             precision?: number
         ) => {
             if (!Number.isInteger(value)) {
-                return intl.formatMessage({
-                    id: 'common.missing',
-                });
+                return 'N/A';
             }
 
             if (dimension.includes('docs')) {
@@ -208,7 +206,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
                 maximumFractionDigits: precision,
             })}`;
         },
-        [intl]
+        []
     );
 
     const [

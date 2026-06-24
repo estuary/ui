@@ -7,7 +7,7 @@ import { createContext, useContext } from 'react';
 import { useQuery } from 'urql';
 
 import { AlertSubscriptionQuery } from 'src/api/alerts';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 
 const AlertSubscriptionsContext = createContext<UseQueryResponse<
     ReducedAlertSubscriptionQueryResponse,

@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import EmptyGraphState from 'src/components/graphs/states/Empty';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
 import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
-import { useBillingStore } from 'src/stores/Billing/Store';
+import { useBillingStore } from 'src/stores/Billing';
 import { hasLength } from 'src/utils/misc-utils';
 
 function GraphStateWrapper({ children }: BaseComponentProps) {

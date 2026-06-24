@@ -63,6 +63,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         InviteLink: (data) => null,
                         LiveSpecRef: (_data) => null,
                         PrefixRef: (_data) => null,
+                        RefreshTokenInfo: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
                     },
@@ -85,6 +86,12 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             },
                             updateAlertSubscription(_result, _args, cache) {
                                 invalidateQuery(cache, 'alertSubscriptions');
+                            },
+                            createRefreshToken(_result, _args, cache) {
+                                invalidateQuery(cache, 'refreshTokens');
+                            },
+                            revokeRefreshToken(_result, _args, cache) {
+                                invalidateQuery(cache, 'refreshTokens');
                             },
                         },
                     },

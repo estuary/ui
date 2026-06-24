@@ -327,11 +327,6 @@ export interface UserDetails {
     usedSSO: boolean;
 }
 
-export interface RefreshTokenData {
-    id: string;
-    secret: string;
-}
-
 export interface BindingMetadata {
     bindingIndex: number;
     collection: string;
