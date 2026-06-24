@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import DataVolume from 'src/components/tables/cells/billing/DataVolume';
 import TimeStamp from 'src/components/tables/cells/billing/TimeStamp';
 import MonetaryValue from 'src/components/tables/cells/MonetaryValue';
-import { useBillingStore } from 'src/stores/Billing/Store';
+import { useBillingStore } from 'src/stores/Billing';
 import { invoiceId } from 'src/utils/billing-utils';
 
 interface RowProps {

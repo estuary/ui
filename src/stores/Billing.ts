@@ -1,4 +1,6 @@
-import type { BillingState } from 'src/stores/Billing/types';
+import type { Invoice } from 'src/api/billing';
+import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
+import type { InvoiceId } from 'src/utils/billing-utils';
 import type { NamedSet } from 'zustand/middleware';
 
 import { create } from 'zustand';
@@ -15,22 +17,31 @@ import { invoiceId } from 'src/utils/billing-utils';
 import { hasLength } from 'src/utils/misc-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
+interface BillingState extends StoreWithHydration {
+    selectedInvoiceId: InvoiceId | null;
+    setSelectedInvoice: (value: InvoiceId) => void;
+
+    invoices: Invoice[];
+    setInvoices: (value: Invoice[]) => void;
+
+    paymentMethodExists: boolean | null;
+    setPaymentMethodExists: (value: any[] | undefined) => void;
+
+    resetState: () => void;
+}
+
 const getInitialStateData = (): Pick<
     BillingState,
-    | 'invoices'
-    | 'invoicesInitialized'
-    | 'paymentMethodExists'
-    | 'selectedInvoiceId'
+    'invoices' | 'paymentMethodExists' | 'selectedInvoiceId'
 > => {
     return {
         selectedInvoiceId: null,
         invoices: [],
-        invoicesInitialized: false,
         paymentMethodExists: null,
     };
 };
 
-export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
+const getInitialState = (set: NamedSet<BillingState>): BillingState => {
     return {
         ...getInitialStateData(),
         ...getStoreWithHydrationSettings('Billing', set),
@@ -59,17 +70,6 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
             );
         },
 
-        setInvoicesInitialized: (value) => {
-            set(
-                produce((state: BillingState) => {
-                    state.invoicesInitialized =
-                        value && state.active ? value : false;
-                }),
-                false,
-                'Billing History Initialized'
-            );
-        },
-
         setPaymentMethodExists: (value) => {
             set(
                 produce((state: BillingState) => {
@@ -94,3 +94,14 @@ export const getInitialState = (set: NamedSet<BillingState>): BillingState => {
 export const useBillingStore = create<BillingState>()(
     devtools((set) => getInitialState(set), devtoolsOptions('billing'))
 );
+
+// Selector Hooks
+export const useBilling_selectedInvoice = () => {
+    return useBillingStore((state) =>
+        state.selectedInvoiceId
+            ? (state.invoices.find(
+                  (inv) => invoiceId(inv) === state.selectedInvoiceId
+              ) ?? null)
+            : null
+    );
+};

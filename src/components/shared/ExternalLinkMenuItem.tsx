@@ -9,16 +9,6 @@ interface Props {
     link: string;
 }
 
-export const externalLinkStyling = {
-    bgcolor: 'none',
-    color: 'text.primary',
-    fontSize: 14,
-    fontWeight: 500,
-    px: 3,
-    py: 1.5,
-    textTransform: 'uppercase',
-};
-
 function ExternalLinkMenuItem({ children, link }: Props) {
     return (
         <MenuItem
@@ -27,11 +17,19 @@ function ExternalLinkMenuItem({ children, link }: Props) {
             target="_blank"
             rel="noopener"
             tabIndex={0}
-            sx={externalLinkStyling}
+            sx={{
+                bgcolor: 'none',
+                color: 'text.primary',
+                fontSize: 14,
+                fontWeight: 500,
+                gap: 1,
+                px: 3,
+                py: 1.5,
+            }}
         >
             <span>{children}</span>
 
-            <OpenNewWindow style={{ height: 20, width: 36 }} />
+            <OpenNewWindow style={{ fontSize: '0.75em' }} />
         </MenuItem>
     );
 }

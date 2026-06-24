@@ -2,14 +2,14 @@ import type { BaseComponentProps } from 'src/types';
 
 import { Avatar, Stack, Typography } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 interface Props extends BaseComponentProps {
     stepNumber: number;
     title: string;
 }
 
-function HeroBaseStep({ children, stepNumber, title }: Props) {
+export function HeroBaseStep({ children, stepNumber, title }: Props) {
     return (
         <>
             <Stack
@@ -34,9 +34,7 @@ function HeroBaseStep({ children, stepNumber, title }: Props) {
                     {stepNumber}
                 </Avatar>
 
-                <Typography variant="h6">
-                    <FormattedMessage id={title} />
-                </Typography>
+                <Typography variant="h6">{title}</Typography>
             </Stack>
 
             <Typography variant="subtitle1">{children}</Typography>
@@ -44,4 +42,13 @@ function HeroBaseStep({ children, stepNumber, title }: Props) {
     );
 }
 
-export default HeroBaseStep;
+/** @deprecated Prefer the named `HeroBaseStep` export */
+function HeroBaseStepWrapper({ title, ...props }: Props) {
+    const intl = useIntl();
+
+    return (
+        <HeroBaseStep {...props} title={intl.formatMessage({ id: title })} />
+    );
+}
+
+export default HeroBaseStepWrapper;

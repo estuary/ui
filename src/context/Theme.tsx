@@ -461,6 +461,9 @@ export const opaqueLightModeBorder = {
     dark: undefined,
 };
 
+// TODO need to consolidate lots of duplicated "rgba(247, 249, 252, 0.05)" values in the theme, but not today...
+export const stripePaymentFormFieldBackgroundDark = 'rgba(247, 249, 252, 0.05)';
+
 export const opaqueLightModeBackground = {
     light: 'rgba(255, 255, 255, 0.70)',
     dark: 'rgba(247, 249, 252, 0.05)',
@@ -978,24 +981,9 @@ const themeSettings = createTheme({
         },
         MuiButtonBase: {
             defaultProps: {
-                // based on React-Admin's solution
-                //   https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/defaultTheme.ts
                 disableRipple: true,
                 sx: {
-                    'fontSize': 14,
-                    '&.Mui-focusVisible::after, &:hover::after': {
-                        backgroundColor: 'currentColor',
-                        borderRadius: 'inherit',
-                        content: '""',
-                        display: 'block',
-                        height: '100%',
-                        opacity: 0.1,
-                        position: 'absolute',
-                        right: 0,
-                        top: 0,
-                        width: '100%',
-                        zIndex: buttonHoverIndex,
-                    },
+                    fontSize: 14,
                     [`& .${chipClasses.deleteIcon}, button`]: {
                         zIndex: chipDeleteIndex,
                     },
@@ -1011,6 +999,7 @@ const themeSettings = createTheme({
                 root: {
                     fontSize: 14,
                     borderRadius: 4,
+                    textTransform: 'none',
                 },
             },
         },
@@ -1048,6 +1037,13 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     transitionTimingFunction: standardTransitionEasing,
+                },
+            },
+        },
+        MuiTab: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
                 },
             },
         },

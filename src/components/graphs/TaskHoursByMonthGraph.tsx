@@ -29,7 +29,7 @@ import {
 } from 'src/components/graphs/tooltips';
 import useTooltipConfig from 'src/components/graphs/useTooltipConfig';
 import { defaultOutlineColor } from 'src/context/Theme';
-import { useBillingStore } from 'src/stores/Billing/Store';
+import { useBillingStore } from 'src/stores/Billing';
 import { CARD_AREA_HEIGHT, stripTimeFromDate } from 'src/utils/billing-utils';
 
 const chartContainerId = 'task-hours-by-month';

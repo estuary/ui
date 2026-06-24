@@ -3,7 +3,7 @@ import { Grid } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
-import { useBillingStore } from 'src/stores/Billing/Store';
+import { useBillingStore } from 'src/stores/Billing';
 
 function BillingLoadError() {
     const hydrationErrorsExist = useBillingStore(

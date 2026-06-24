@@ -2,9 +2,9 @@ import { Box, Stack, Typography } from '@mui/material';
 
 import { FormattedMessage } from 'react-intl';
 
-import RefreshTokenTable from 'src/components/tables/RefreshTokens';
+import { RefreshTokenTable } from 'src/components/admin/Api/RefreshToken/Table';
 
-function RefreshToken() {
+export function RefreshToken() {
     return (
         <Box sx={{ mb: 5 }}>
             <Stack sx={{ mx: 2, mb: 1 }}>
@@ -15,7 +15,7 @@ function RefreshToken() {
                         fontWeight: '400',
                     }}
                 >
-                    <FormattedMessage id="admin.cli_api.refreshToken" />
+                    <FormattedMessage id="admin.cli_api.refreshToken.header" />
                 </Typography>
 
                 <Typography>
@@ -27,5 +27,3 @@ function RefreshToken() {
         </Box>
     );
 }
-
-export default RefreshToken;

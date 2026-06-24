@@ -1,14 +1,24 @@
-import type { TenantState } from 'src/stores/Tenant/types';
 import type { StoreApi } from 'zustand';
-import type { NamedSet } from 'zustand/middleware';
+import type { NamedSet, PersistOptions } from 'zustand/middleware';
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import produce from 'immer';
 
-import { persistOptions } from 'src/stores/Tenant/shared';
 import { devtoolsOptions } from 'src/utils/store-utils';
+
+interface TenantState {
+    selectedTenant: string;
+    setSelectedTenant: (value: string) => void;
+}
+
+// Previous persist states for testing migrations
+// v0 - {"state":{"selectedTenant":"foo/"},"version":0}
+const persistOptions: PersistOptions<TenantState> = {
+    name: 'estuary.tenants-store',
+    version: 0,
+};
 
 const getInitialStateData = (): Pick<TenantState, 'selectedTenant'> => ({
     selectedTenant: '',

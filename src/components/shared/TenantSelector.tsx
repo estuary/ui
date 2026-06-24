@@ -10,7 +10,7 @@ import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 import { useEntitiesStore_tenantsWithAdmin } from 'src/stores/Entities/hooks';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {

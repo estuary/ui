@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Box, Button } from '@mui/material';
 
 import { Refresh } from 'iconoir-react';
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { useEditorStore_persistedDraftId } from 'src/components/editor/Store/hooks';
 import { logRocketEvent } from 'src/services/shared';
@@ -12,11 +12,11 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
 interface Props {
-    buttonLabelId: string;
+    buttonLabel: string;
     refresh: Function;
 }
 
-function RefreshButton({ buttonLabelId, refresh }: Props) {
+export function RefreshButton({ buttonLabel, refresh }: Props) {
     const selectionsHydrating = useBindingStore((state) =>
         Object.values(state.selections).some(({ hydrating }) => hydrating)
     );
@@ -44,9 +44,25 @@ function RefreshButton({ buttonLabelId, refresh }: Props) {
                     void refresh();
                 }}
             >
-                <FormattedMessage id={buttonLabelId} />
+                {buttonLabel}
             </Button>
         </Box>
     );
 }
-export default RefreshButton;
+
+/** @deprecated Prefer the named `RefreshButton` export */
+function RefreshButtonWrapper({
+    buttonLabelId,
+    ...props
+}: Omit<Props, 'buttonLabel'> & { buttonLabelId: string }) {
+    const intl = useIntl();
+
+    return (
+        <RefreshButton
+            {...props}
+            buttonLabel={intl.formatMessage({ id: buttonLabelId })}
+        />
+    );
+}
+
+export default RefreshButtonWrapper;

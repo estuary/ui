@@ -152,10 +152,6 @@ export const Workflows: Record<string, string> = {
     'workflows.disable.message': `Control whether your {entityType} is disabled. This setting takes effect when your changes are published.`,
     'workflows.disable.update.error': `Failed to update {entityType}. Please check your network connection and try again.`,
 
-    // Collection Reset
-    'collectionReset.editor.warning.title': `Editing disabled`,
-    'collectionReset.editor.warning.message': `While backfilling the ${CommonMessages['terms.dataFlow'].toLowerCase()} you cannot manually edit your spec.`,
-
     'workflows.dataFlowBackfill.label': `${backfillModeName}`,
     'workflows.dataFlowBackfill.options.reset.label': `Dataflow Reset`,
     'workflows.dataFlowBackfill.options.reset.description': `Backfill data from the source, reset inferred schemas, drop and re-create all destination tables and derivations.`,
@@ -213,13 +209,6 @@ export const Workflows: Record<string, string> = {
     'fieldSelection.table.label.userDefined': `User Defined`,
     'fieldSelection.table.label.userRequires': `User Requires`,
     'fieldSelection.table.label.unknown': `Unknown`,
-    'fieldSelection.table.label.translated.fieldRequired': `field is required`,
-    'fieldSelection.table.label.translated.locationRequired': `location is required`,
-    'fieldSelection.table.label.translated.locationRecommended': `location is recommended`,
-    'fieldSelection.table.label.translated.fieldOmitted': `field is omitted`,
-    'fieldSelection.table.label.translated.fieldOptional': `field is optional`,
-    'fieldSelection.table.label.translated.fieldForbidden': `field is forbidden`,
-    'fieldSelection.table.label.translated.incompatible': `field is incompatible`,
     'fieldSelection.table.label.filter': `Filter fields`,
     'fieldSelection.table.tooltip.disabledRowAction': `Action disabled: {reason}.`,
     'fieldSelection.massActionMenu.depthZero.label': `Required Only`,
@@ -364,7 +353,6 @@ export const Workflows: Record<string, string> = {
     'schemaMode.options.noSchema.example.schema': `default`,
 
     // Entities Create
-    'entityCreate.catalogEditor.heading': `Advanced Specification Editor`,
     'entityCreate.docs.header': `Connector Help`,
     'entityCreate.cta.docs': `Connector Help`,
     'entityCreate.errors.collapseTitle': `View logs`,

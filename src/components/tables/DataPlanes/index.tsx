@@ -12,7 +12,7 @@ import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 
 function DataPlanesTable() {
     const {
