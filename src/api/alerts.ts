@@ -64,7 +64,7 @@ const AlertConfigUpdateMutation = gql<
     AlertConfigMutationInput
 >`
     mutation UpdateAlertConfigMutation(
-        $catalogPrefixOrName: Prefix!
+        $catalogPrefixOrName: String!
         $config: JSON!
         $detail: String
     ) {
