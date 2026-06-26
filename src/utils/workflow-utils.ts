@@ -43,7 +43,7 @@ export const getBackfillCounter = (binding: any): number => {
 };
 
 export const getSourceOrTarget = (binding: any) => {
-    return Object.hasOwn(binding ?? {}, 'source')
+    return Object.hasOwn(binding ?? {}, '3source')
         ? binding.source
         : Object.hasOwn(binding ?? {}, 'target')
           ? binding.target

@@ -94,7 +94,7 @@ declare module '@mui/material/Typography' {
 // Navigation Width
 export enum NavWidths {
     MOBILE = 0,
-    RAIL = 48,
+    RAIL = 54,
     FULL = 200,
 }
 
@@ -702,20 +702,11 @@ export const jsonFormsPadding: SxProps<Theme> = {
         },
 };
 
-export const underlineTextSx: SxProps<Theme> = {
-    'textDecoration': 'underline',
-    '&:hover, &:focus': {
-        textDecoration: 'underline',
-    },
-};
-
 // Used to make buttons look like a normal(ish) link
 export const linkButtonSx: SxProps<Theme> = {
-    ...underlineTextSx,
     px: 1,
     py: 0,
     fontWeight: 500,
-    zIndex: headerLinkIndex,
 };
 
 // Light is an RGB translation of #E1E9F4; Light is an RGB translation of #F7F9FC.
@@ -990,6 +981,11 @@ const themeSettings = createTheme({
                 },
             },
         },
+        MuiLink: {
+            defaultProps: {
+                underline: 'hover',
+            },
+        },
         MuiButton: {
             defaultProps: {
                 variant: 'contained',
@@ -998,8 +994,16 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     fontSize: 14,
-                    borderRadius: 4,
+                    borderRadius: 8,
                     textTransform: 'none',
+                },
+            },
+        },
+        MuiIconButton: {
+            styleOverrides: {
+                root: {
+                    fontSize: 14,
+                    borderRadius: 8,
                 },
             },
         },
@@ -1148,14 +1152,50 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                     },
                 },
                 MuiAppBar: {
+                    defaultProps: {
+                        position: 'static' as const,
+                        elevation: 0,
+                    },
                     styleOverrides: {
                         root: {
-                            background:
-                                palette.mode === 'dark'
-                                    ? sample_grey[800]
-                                    : 'white',
+                            background: palette.background?.default,
                             boxShadow: 'none',
                             color: palette.text?.primary,
+                        },
+                    },
+                },
+                MuiDrawer: {
+                    styleOverrides: {
+                        paper: {
+                            background: palette.background?.default,
+                            border: 0,
+                        },
+                    },
+                },
+                MuiListItemButton: {
+                    styleOverrides: {
+                        root: {
+                            gap: 8,
+                            whiteSpace: 'nowrap',
+                            padding: '6px 10px',
+                            borderRadius: 8,
+                        },
+                    },
+                },
+                MuiListItemIcon: {
+                    styleOverrides: {
+                        root: {
+                            minWidth: 'auto',
+                            color: 'inherit',
+                        },
+                    },
+                },
+                MuiListItemText: {
+                    styleOverrides: {
+                        primary: {
+                            fontSize: 13,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                         },
                     },
                 },

@@ -2,7 +2,6 @@ import type { MouseEvent } from 'react';
 
 import {
     Box,
-    Chip,
     IconButton,
     keyframes,
     Link,
@@ -10,9 +9,9 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { usePostHog } from '@posthog/react';
 import { NavArrowRight, Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+import { useLocalStorage } from 'react-use';
 
 import {
     AGENT_SKILLS_URL,
@@ -20,36 +19,35 @@ import {
     LINK_COLOR,
     SECONDARY_TEXT_COLOR,
     SHIMMER_STYLES,
-    useAgentSkillsStore,
 } from 'src/components/AgentSkills/shared';
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
-import { toastIndex } from 'src/context/Theme';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 const toastIn = keyframes`
     0%   { opacity: 0; transform: translateY(16px) scale(0.98); }
     100% { opacity: 1; transform: translateY(0)    scale(1);    }
 `;
 
-interface ToastProps {
+interface AgentSkillsToastProps {
     docsPanelOpen?: boolean;
 }
 
-export function Toast({ docsPanelOpen }: ToastProps) {
+export function AgentSkillsToast({ docsPanelOpen }: AgentSkillsToastProps) {
     const theme = useTheme();
     const mode = theme.palette.mode;
     const intl = useIntl();
-    const postHog = usePostHog();
-    const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
-    const dismissToast = useAgentSkillsStore((s) => s.dismissToast);
+    const [dismissed, setDismissed] = useLocalStorage(
+        LocalStorageKeys.AGENT_SKILLS_TOAST_DISMISSED,
+        false
+    );
 
-    // If the docs panel is open just hide the toast. That way it cannot cover up
-    //  the cookie consent banner in the docs.
-    if (toastDismissed || docsPanelOpen) {
+    // Hide the toast while the docs panel is open so it cannot cover the
+    // cookie-consent banner that renders inside the docs.
+    if (dismissed || docsPanelOpen) {
         return null;
     }
 
     const handleClick = () => {
-        postHog.capture('AgentSkills:Click', { source: 'toast' });
         window.open(AGENT_SKILLS_URL, '_blank', 'noopener,noreferrer');
     };
 
@@ -71,13 +69,13 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                 'display': 'block',
                 'animation': `${toastIn} 750ms cubic-bezier(.2,.9,.25,1) 1s both`,
                 'transition': 'transform 200ms ease, box-shadow 200ms ease',
-                'zIndex': toastIndex,
+                'zIndex': 1200,
                 '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow:
                         '0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 40px -8px rgba(15, 23, 42, 0.22), 0 36px 80px -12px rgba(46, 100, 235, 0.28)',
                 },
-                '&:hover .cta-arrow': {
+                '&:hover .est-toast-cta-arrow': {
                     transform: 'translateX(3px)',
                 },
             }}
@@ -113,7 +111,7 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                     }}
                 >
                     <SparkleIcon
-                        sx={{ width: 26, height: 26, color: 'common.white' }}
+                        sx={{ width: 26, height: 26, color: '#fff' }}
                     />
                 </Box>
 
@@ -127,21 +125,22 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                             mb: 0.5,
                         }}
                     >
-                        <Chip
-                            label={intl.formatMessage({
-                                id: 'agentSkills.badge',
-                            })}
-                            size="small"
+                        <Box
+                            component="span"
                             sx={{
                                 fontSize: 10,
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
                                 color: LINK_COLOR,
-                                bgcolor: '#eaf0ff',
-                                height: 'auto',
+                                background: '#eaf0ff',
+                                px: '7px',
                                 py: '2px',
+                                borderRadius: '999px',
+                                lineHeight: 1.4,
                             }}
-                        />
+                        >
+                            {intl.formatMessage({ id: 'agentSkills.badge' })}
+                        </Box>
                         <Typography
                             component="span"
                             sx={{
@@ -197,11 +196,8 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                     >
                         {intl.formatMessage({ id: 'agentSkills.cta' })}
                         <NavArrowRight
-                            className="cta-arrow"
-                            width={17}
-                            height={17}
-                            strokeWidth={1.8}
-                            style={{ transition: 'transform 200ms ease' }}
+                            className="est-toast-cta-arrow"
+                            style={{ fontSize: 17, transition: 'transform 200ms ease' }}
                         />
                     </Link>
                 </Box>
@@ -211,10 +207,7 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                     size="small"
                     onClick={(e) => {
                         e.stopPropagation();
-                        postHog.capture('AgentSkills:Click', {
-                            source: 'dismiss',
-                        });
-                        dismissToast();
+                        setDismissed(true);
                     }}
                     aria-label={intl.formatMessage({
                         id: 'agentSkills.dismiss',
@@ -227,7 +220,7 @@ export function Toast({ docsPanelOpen }: ToastProps) {
                         '&:hover': { color: '#475569', background: 'none' },
                     }}
                 >
-                    <Xmark width={20} height={20} />
+                    <Xmark style={{ fontSize: 20 }} />
                 </IconButton>
             </Box>
         </Box>

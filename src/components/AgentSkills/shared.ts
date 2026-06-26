@@ -1,32 +1,4 @@
-import type { PersistOptions } from 'zustand/middleware';
-
 import { keyframes } from '@mui/material';
-
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-import { LocalStorageKeys } from 'src/utils/localStorage-utils';
-
-interface AgentSkillsState {
-    toastDismissed: boolean;
-    dismissToast: () => void;
-}
-
-// v0 - {"state":{"toastDismissed":false},"version":0}
-const persistOptions: PersistOptions<AgentSkillsState> = {
-    name: LocalStorageKeys.AGENT_SKILLS_TOAST_DISMISSED,
-    version: 0,
-};
-
-export const useAgentSkillsStore = create<AgentSkillsState>()(
-    persist(
-        (set) => ({
-            toastDismissed: false,
-            dismissToast: () => set({ toastDismissed: true }),
-        }),
-        persistOptions
-    )
-);
 
 export const AGENT_SKILLS_URL = 'https://docs.estuary.dev/guides/agent-skills/';
 

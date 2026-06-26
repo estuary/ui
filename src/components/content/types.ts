@@ -1,5 +1,4 @@
-import type { SxProps } from '@mui/material';
-import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
+import type { SxProps, Theme } from '@mui/material';
 
 export interface SingleLineCodeProps {
     value: any;
@@ -11,6 +10,6 @@ export interface SingleLineCodeProps {
 export interface MessageWithLinkProps {
     messageID: string;
     link?: string;
-    linkOptions?: ExternalLinkOptions;
+    linkOptions?: { sx?: SxProps<Theme> };
     intlValues?: any;
 }

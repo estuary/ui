@@ -1,5 +1,7 @@
 import { Avatar } from '@mui/material';
 
+import defaultAvatar from 'src/images/user.png';
+
 interface Props {
     avatarUrl: string | null;
     userName: string | null;
@@ -14,7 +16,7 @@ function UserAvatar({ avatarUrl, size, userName, userEmail }: Props) {
 
     return (
         <Avatar
-            src={avatarUrl ?? ''}
+            src={avatarUrl || defaultAvatar}
             sx={{
                 fontSize: avatarSize / 1.5,
                 height: avatarSize,

@@ -1,7 +1,6 @@
-import type { AlertColor } from '@mui/material';
+import type { AlertColor, SxProps, Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 import type { ErrorDetails } from 'src/components/shared/Error/types';
-import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
 
 import { AlertTitle, Box } from '@mui/material';
 
@@ -15,7 +14,7 @@ export interface ErrorProps {
     error?: ErrorDetails;
     hideIcon?: boolean;
     hideTitle?: boolean;
-    linkOptions?: ExternalLinkOptions;
+    linkOptions?: { sx?: SxProps<Theme> };
     noAlertBox?: boolean;
     severity?: AlertColor;
     cta?: ReactNode;

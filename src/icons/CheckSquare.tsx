@@ -1,16 +1,9 @@
 import React from 'react';
 
-import { IconoirContext } from 'iconoir-react';
-
 function SvgCheckSquare(
-    passedProps: React.SVGProps<SVGSVGElement>,
+    props: React.SVGProps<SVGSVGElement>,
     svgRef?: React.Ref<SVGSVGElement>
 ) {
-    const context = React.useContext(IconoirContext);
-    const props = {
-        ...context,
-        ...passedProps,
-    };
 
     return (
         <svg
