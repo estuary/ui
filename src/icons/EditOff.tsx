@@ -1,9 +1,16 @@
 import React from 'react';
 
+import { IconoirContext } from 'iconoir-react';
+
 function SvgEditOff(
-    props: React.SVGProps<SVGSVGElement>,
+    passedProps: React.SVGProps<SVGSVGElement>,
     svgRef?: React.Ref<SVGSVGElement>
 ) {
+    const context = React.useContext(IconoirContext);
+    const props = {
+        ...context,
+        ...passedProps,
+    };
 
     return (
         <svg

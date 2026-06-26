@@ -34,6 +34,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import { HeaderPill } from 'src/components/AgentSkills/HeaderPill';
+import CompanyLogo from 'src/components/graphics/CompanyLogo';
+import CompanyMark from 'src/components/graphics/CompanyMark';
 import { HelpMenu } from 'src/components/menus/HelpMenu';
 import ListItemLink from 'src/components/navigation/ListItemLink';
 import UserAvatar from 'src/components/shared/UserAvatar';
@@ -98,6 +100,22 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     overflowX: 'hidden',
                 }}
             >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        // Left-anchor the brand in both states. The drawer
+                        // animates its width on collapse; centering would fling
+                        // the mark toward the middle of the still-wide rail and
+                        // snap it back as the width settles.
+                        justifyContent: 'flex-start',
+                        height: 48,
+                        px: 2,
+                    }}
+                >
+                    {open ? <CompanyLogo /> : <CompanyMark />}
+                </Box>
+
                 <List
                     aria-label={intl.formatMessage({
                         id: 'navigation.toggle.ariaLabel',

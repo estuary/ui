@@ -8,6 +8,7 @@ import { Box, Paper, Snackbar, Typography, useTheme } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
+import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { paperBackground } from 'src/context/Theme';
 import useNotificationStore, {
     notificationStoreSelectors,
@@ -144,12 +145,16 @@ function PageContainer({
                     <Typography sx={{ fontWeight: 'bold' }}>
                         {intl.formatMessage({ id: header })}
                     </Typography>
+
+                    <Box sx={{ ml: 'auto' }}>
+                        <SidePanelDocsOpenButton />
+                    </Box>
                 </Paper>
             ) : null}
 
             <Paper
                 sx={{
-                    px: navigationOpen ? 1 : 5,
+                    px: navigationOpen ? 1 : { xs: 1, md: 5 },
                     transition: (t) =>
                         `padding ${t.transitions.duration.shortest}ms`,
                     py: 2,

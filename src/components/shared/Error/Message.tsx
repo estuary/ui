@@ -1,5 +1,5 @@
-import type { SxProps, Theme } from '@mui/material';
 import type { ErrorDetails } from 'src/components/shared/Error/types';
+import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
 
 import { Box, Stack, Typography } from '@mui/material';
 
@@ -15,7 +15,7 @@ import { CustomEvents } from 'src/services/types';
 
 interface Props {
     error?: ErrorDetails;
-    linkOptions?: { sx?: SxProps<Theme> };
+    linkOptions?: ExternalLinkOptions;
 }
 
 const FALLBACK = 'error.fallBack';

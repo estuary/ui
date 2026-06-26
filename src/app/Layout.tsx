@@ -10,7 +10,6 @@ import { useLocalStorage } from 'react-use';
 
 import { AgentSkillsToast } from 'src/components/AgentSkills/Toast';
 import Navigation from 'src/components/navigation/Navigation';
-import Topbar from 'src/components/navigation/TopBar';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import PageContainer from 'src/components/shared/PageContainer';
 import DocsSidePanel from 'src/components/sidePanelDocs/SidePanel';
@@ -80,16 +79,12 @@ function AppLayout() {
             sx={{
                 display: 'grid',
                 gridTemplateColumns: `${navigationWidth}px 1fr`,
-                gridTemplateRows: 'auto 1fr',
+                gridTemplateRows: '1fr',
                 height: '100vh',
                 transition: (t) =>
                     `grid-template-columns ${t.transitions.duration.shortest}ms`,
             }}
         >
-            <Box sx={{ gridColumn: '1 / -1' }}>
-                <Topbar navigationOpen={navigationOpen} />
-            </Box>
-
             <Navigation
                 open={navigationOpen}
                 width={navigationWidth}
@@ -98,7 +93,11 @@ function AppLayout() {
 
             <AgentSkillsToast docsPanelOpen={displaySidePanel} />
 
-            <Box sx={{ overflow: 'hidden', minWidth: 0 }}>
+            {/* Top strip the removed top bar used to occupy. Padding the whole
+            content column (not just PageContainer) keeps the docs side panel
+            top-aligned with the page content, and lines the breadcrumb bar up
+            with the first sidebar nav item below the logo header. */}
+            <Box sx={{ overflow: 'hidden', minWidth: 0, pt: 6 }}>
                 <ReflexContainer orientation="vertical">
                     <ReflexElement
                         className="left-pane"

@@ -1,4 +1,4 @@
-import type { SxProps, Theme } from '@mui/material';
+import type { ExternalLinkOptions } from 'src/components/shared/ExternalLink';
 
 import { Stack, Typography } from '@mui/material';
 
@@ -9,7 +9,7 @@ import { showAsTechnicalDifficulties } from 'src/services/shared';
 
 interface Props {
     message: string;
-    linkOptions?: { sx?: SxProps<Theme> };
+    linkOptions?: ExternalLinkOptions;
 }
 
 // We will only show special messaging for errors that are can actually tell the user
