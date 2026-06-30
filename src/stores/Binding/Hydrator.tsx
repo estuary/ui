@@ -1,7 +1,9 @@
+import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { BaseComponentProps } from 'src/types';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
+import { useConnectorTag_nullable } from 'src/context/ConnectorTag';
 import { useEntityType } from 'src/context/EntityContext';
 import {
     useEntityWorkflow,
@@ -16,8 +18,7 @@ import {
     useBinding_setHydrated,
     useBinding_setHydrationErrorsExist,
 } from 'src/stores/Binding/hooks';
-import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
-import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { PrefillSourceCaptureGate } from 'src/stores/Binding/PrefillSourceCaptureGate';
 
 export const BindingHydrator = ({ children }: BaseComponentProps) => {
     // We want to manually control this in a REF to not fire extra effect calls
@@ -30,9 +31,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
 
     const getTrialPrefixes = useTrialPrefixes();
 
-    const connectorTagId = useDetailsFormStore(
-        (state) => state.details.data.connectorImage.id
-    );
+    const connectorTagState = useConnectorTag_nullable();
 
     const hydrated = useBinding_hydrated();
     const setHydrated = useBinding_setHydrated();
@@ -40,15 +39,16 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
     const setActive = useBinding_setActive();
     const hydrateState = useBinding_hydrateState();
 
-    const setPrefilledCapture = useSourceCaptureStore(
-        (state) => state.setPrefilledCapture
-    );
+    const [prefillResponse, setPrefillResponse] = useState<
+        LiveSpecsExt_MaterializeOrTransform[] | null
+    >(null);
 
     useEffect(() => {
-        if (
-            (workflow && connectorTagId.length > 0) ||
-            workflow === 'collection_create'
-        ) {
+        if (workflow && connectorTagState) {
+            const connectorTag = connectorTagState.applicable
+                ? connectorTagState.data
+                : null;
+
             setActive(true);
 
             // TODO (Workflow Hydrator) - when moving bindings into the parent hydrator
@@ -57,20 +57,13 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
             hydrateState(
                 editWorkflow,
                 entityType,
-                connectorTagId,
+                connectorTag,
                 getTrialPrefixes,
                 rehydrating.current
             )
                 .then(
                     (response) => {
-                        if (
-                            response &&
-                            response.length === 1 &&
-                            response[0].spec_type === 'capture' &&
-                            !editWorkflow
-                        ) {
-                            setPrefilledCapture(response[0].catalog_name);
-                        }
+                        setPrefillResponse(response);
                     },
                     (error) => {
                         logRocketConsole(
@@ -89,7 +82,7 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
                 });
         }
     }, [
-        connectorTagId,
+        connectorTagState,
         editWorkflow,
         entityType,
         getTrialPrefixes,
@@ -97,7 +90,6 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         setActive,
         setHydrated,
         setHydrationErrorsExist,
-        setPrefilledCapture,
         workflow,
     ]);
 
@@ -105,8 +97,11 @@ export const BindingHydrator = ({ children }: BaseComponentProps) => {
         return null;
     }
 
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <>{children}</>;
+    return (
+        <PrefillSourceCaptureGate response={prefillResponse}>
+            {children}
+        </PrefillSourceCaptureGate>
+    );
 };
 
 export default BindingHydrator;

@@ -66,8 +66,7 @@ function DemoButton({ step, type }: Props) {
     return (
         <>
             <Grid
-                item
-                xs={4}
+                size={{ xs: 4 }}
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',

@@ -34,7 +34,7 @@ import type {
     RankedTester,
 } from '@jsonforms/core';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
     Button,
@@ -43,7 +43,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Hidden,
     Tab,
     Tabs,
     Typography,
@@ -234,8 +233,15 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
     //  the source-shopify-native connector as it can contain multiple discriminators
     //  in the stores array. If we do not set this on edit then the user cannot add
     //  new stores.
-    if (defaultDiscriminator.current) {
-        if (required && !hasOwnProperty(data, discriminatorProperty)) {
+    // We need to wait for data to exist so that we do not override any setting the user
+    //  is setting and spread out default value into the data
+    useEffect(() => {
+        if (
+            defaultDiscriminator.current &&
+            required &&
+            data &&
+            !hasOwnProperty(data, discriminatorProperty)
+        ) {
             const defaultVal = getDiscriminatorDefaultValue(
                 possibleSchemas?.[selectedIndex]?.properties,
                 discriminatorProperty
@@ -250,15 +256,23 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
             defaultDiscriminator.current = false;
 
             handleChange(path, {
+                ...data,
                 [discriminatorProperty]: defaultVal?.[discriminatorProperty],
             });
         }
-    }
+        // We really only care about data so that once that is "changed" and exists
+        //  then we can make sure the default discriminator is set on it
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
 
     const singleOption = oneOfRenderInfos.length === 1;
 
+    if (!visible) {
+        return null;
+    }
+
     return (
-        <Hidden xsUp={!visible}>
+        <>
             <CombinatorProperties
                 schema={schema}
                 combinatorKeyword="oneOf"
@@ -328,7 +342,7 @@ export const Custom_MaterialOneOfRenderer_Discriminator = ({
                     </Button>
                 </DialogActions>
             </Dialog>
-        </Hidden>
+        </>
     );
 };
 

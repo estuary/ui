@@ -1,18 +1,12 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
-import type { LiveSpecsExt_Related } from 'src/api/liveSpecsExt';
 import type { Entity } from 'src/types';
 
 import { useMemo } from 'react';
 
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
-import { liveSpecsExtRelatedQuery } from 'src/api/liveSpecsExt';
 import { supabaseClient } from 'src/context/GlobalProviders';
-import {
-    ENABLED_SHARDS,
-    escapeReservedCharacters,
-    TABLES,
-} from 'src/services/supabase';
+import { TABLES } from 'src/services/supabase';
 
 // TODO: Consider consolidating query interface instances.
 export interface LiveSpecsExtQuery {
@@ -116,31 +110,4 @@ export function useLiveSpecsExtWithOutSpec(
     specType: Entity
 ): Response<LiveSpecsExtQuery> {
     return useLiveSpecsExt(draftId, specType, false);
-}
-
-export function useLiveSpecsExt_related(captureName: string) {
-    const { data, error, isValidating } = useQuery(
-        supabaseClient
-            .from(TABLES.LIVE_SPECS_EXT)
-            .select(liveSpecsExtRelatedQuery)
-            .eq('spec_type', 'materialization')
-            .or(ENABLED_SHARDS)
-            .or(
-                `spec->>sourceCapture.eq.${escapeReservedCharacters(
-                    captureName
-                )},spec->sourceCapture->>capture.eq.${escapeReservedCharacters(
-                    captureName
-                )},spec->source->>capture.eq.${escapeReservedCharacters(
-                    captureName
-                )}`
-            )
-            .returns<LiveSpecsExt_Related[]>()
-        // getLiveSpecsRelatedToMaterialization(collectionName)
-    );
-
-    return {
-        related: data ?? [],
-        error,
-        isValidating,
-    };
 }

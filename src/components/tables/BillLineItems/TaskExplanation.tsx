@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { IconButton, Stack, Typography } from '@mui/material';
+import { boxClasses, IconButton, Stack, Typography } from '@mui/material';
 
 import { HelpCircle } from 'iconoir-react';
 import { usePopupState } from 'material-ui-popup-state/hooks';
@@ -41,7 +41,7 @@ function TaskExplanation() {
                 popperProps={{
                     placement: 'right',
                     sx: {
-                        ['& .MuiBox-root']: {
+                        [`& .${boxClasses.root}`]: {
                             maxWidth: 375,
                         },
                     },

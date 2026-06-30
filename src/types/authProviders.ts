@@ -8,4 +8,4 @@ export type SupportedProvider = Extract<
 // To support marketplace we must first support logging in with that provider
 // There was not really a great place to make this connection clear so this
 //  felt good enough for now.
-export type MarketPlaceProviders = Extract<SupportedProvider, 'google'>;
+// export type MarketPlaceProviders = Extract<SupportedProvider, 'google'>;

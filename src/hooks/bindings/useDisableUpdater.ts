@@ -2,6 +2,8 @@ import type { BindingDisableUpdate } from 'src/stores/Binding/types';
 
 import { useCallback, useMemo } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -30,7 +32,7 @@ function useDisableUpdater(bindingUUID?: string) {
     const { enqueueSnackbar } = useSnackbar();
 
     const [storeSetting, bindingIndex, collectionName] = useBindingStore(
-        (state) => {
+        useShallow((state) => {
             if (
                 !bindingUUID ||
                 !hasOwnProperty(state.resourceConfigs?.[bindingUUID], 'meta')
@@ -41,11 +43,14 @@ function useDisableUpdater(bindingUUID?: string) {
             const config = state.resourceConfigs[bindingUUID].meta;
 
             return [config.disable, config.bindingIndex, config.collectionName];
-        }
+        })
     );
 
     const [generateToggleDisableUpdates, toggleDisable] = useBindingStore(
-        (state) => [state.generateToggleDisableUpdates, state.toggleDisable]
+        useShallow((state) => [
+            state.generateToggleDisableUpdates,
+            state.toggleDisable,
+        ])
     );
     const setFormState = useFormStateStore_setFormState();
 

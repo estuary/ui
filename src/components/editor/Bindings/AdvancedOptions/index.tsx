@@ -46,7 +46,7 @@ export default function AdvancedOptions({
                 fullSourceErrorExists || onIncompatibleSchemaChangeErrorExists
             }
             header={
-                <Typography variant="formSectionHeader">
+                <Typography component="span" variant="formSectionHeader">
                     {intl.formatMessage({
                         id: 'workflows.advancedSettings.title',
                     })}

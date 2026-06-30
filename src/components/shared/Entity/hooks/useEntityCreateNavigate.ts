@@ -14,7 +14,7 @@ export interface HookEntityCreateNavigateProps {
     advanceToForm?: boolean;
     dataPlaneId?: string | null;
     expressWorkflow?: boolean;
-    id?: string | null | undefined;
+    imagePath?: string | null | undefined;
 }
 
 export default function useEntityCreateNavigate() {
@@ -25,7 +25,7 @@ export default function useEntityCreateNavigate() {
         (
             entity: EntityWithCreateWorkflow,
             {
-                id,
+                imagePath,
                 advanceToForm,
                 dataPlaneId,
                 expressWorkflow,
@@ -33,8 +33,9 @@ export default function useEntityCreateNavigate() {
         ) => {
             const searchParamConfig: { [param: string]: any } = {};
 
-            if (hasLength(id)) {
-                searchParamConfig[GlobalSearchParams.CONNECTOR_ID] = id;
+            if (hasLength(imagePath)) {
+                searchParamConfig[GlobalSearchParams.CONNECTOR_IMAGE_PATH] =
+                    imagePath;
             }
 
             if (typeof dataPlaneId !== 'undefined') {

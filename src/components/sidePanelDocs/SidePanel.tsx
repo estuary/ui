@@ -1,4 +1,10 @@
-import { Drawer, IconButton, Toolbar, Typography } from '@mui/material';
+import {
+    Drawer,
+    drawerClasses,
+    IconButton,
+    Toolbar,
+    Typography,
+} from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
 import { FormattedMessage } from 'react-intl';
@@ -21,8 +27,8 @@ function DocsSidePanel({ show }: Props) {
             variant="permanent"
             className="pane-content"
             sx={{
-                'width': '100%',
-                '& .MuiDrawer-paper': {
+                width: '100%',
+                [`& .${drawerClasses.paper}`]: {
                     width: '100%',
                     boxSizing: 'border-box',
                     position: 'absolute',

@@ -306,6 +306,14 @@ const getOrderedProps = (jsonSchema?: JsonSchema): string[] => {
 //         elements: controls,
 //     }));
 // };
+// const arrayToMatrix = (arr: any[], width: number) =>
+//     arr.reduce(
+//         (rows, key, index) =>
+//             (index % width == 0
+//                 ? rows.push([key])
+//                 : rows[rows.length - 1].push(key)) && rows,
+//         []
+//     );
 
 interface CategoryUiSchema_Elements {
     type: string;
@@ -483,7 +491,7 @@ const generateUISchema = (
                 rootSchema as JsonSchema,
                 jsonSchema.$ref,
                 rootSchema as JsonSchema
-            ),
+            ) as JsonSchema,
             schemaElements,
             currentRef,
             schemaName,
@@ -684,7 +692,7 @@ const generateUISchema = (
                         rootSchema as JsonSchema,
                         value.$ref,
                         rootSchema as JsonSchema
-                    );
+                    ) as JsonSchema;
                 }
 
                 return generateUISchema(

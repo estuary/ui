@@ -86,10 +86,12 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                     />
                 )}
                 renderOption={(renderOptionProps, option, state) => {
+                    const { key, ...restRenderOptionProps } = renderOptionProps;
                     const { description, displayName, isSystem } = option;
 
                     return isSystem ? null : (
                         <SelectableAutocompleteOption
+                            key={key}
                             Content={
                                 <Stack>
                                     <Typography
@@ -115,7 +117,7 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                                     ) : null}
                                 </Stack>
                             }
-                            renderOptionProps={renderOptionProps}
+                            renderOptionProps={restRenderOptionProps}
                             state={state}
                         />
                     );
@@ -136,13 +138,14 @@ const AlertTypeSelector = ({ options }: AlertTypeSelectorProps) => {
                             )
                         )
                         .map(({ alertType, displayName, isSystem }, index) => {
-                            const { onDelete, ...tagProps } = getTagProps({
-                                index,
-                            });
+                            const { onDelete, key, ...restOfTagProps } =
+                                getTagProps({
+                                    index,
+                                });
 
                             return (
                                 <OutlinedChip
-                                    {...tagProps}
+                                    {...restOfTagProps}
                                     diminishedText={isSystem}
                                     key={`alert_type-tag-${alertType}-${index}`}
                                     label={displayName}

@@ -6,13 +6,11 @@ import { useIntl } from 'react-intl';
 
 import { diminishedTextColor } from 'src/context/Theme';
 
-export default function DetailWrapper({
+export function DetailWrapper({
     children,
-    headerMessageId,
+    header,
     Hydrating,
-}: DetailWrapperProps) {
-    const intl = useIntl();
-
+}: Omit<DetailWrapperProps, 'headerMessageId'> & { header: string }) {
     return (
         <Box>
             <Typography
@@ -22,10 +20,25 @@ export default function DetailWrapper({
                     mb: '2px',
                 }}
             >
-                {intl.formatMessage({ id: headerMessageId })}
+                {header}
             </Typography>
 
             {Hydrating ?? children}
         </Box>
+    );
+}
+
+/** @deprecated Prefer the named `DetailWrapper` export */
+export default function DeprecatedDetailWrapper({
+    headerMessageId,
+    ...props
+}: DetailWrapperProps) {
+    const intl = useIntl();
+
+    return (
+        <DetailWrapper
+            {...props}
+            header={intl.formatMessage({ id: headerMessageId })}
+        />
     );
 }

@@ -1,10 +1,11 @@
 import type { DialogActionProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
+import { Button } from '@mui/material';
+
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 
 const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     const intl = useIntl();
@@ -20,7 +21,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     );
 
     return (
-        <SafeLoadingButton
+        <Button
             color="error"
             disabled={Boolean(
                 prefixErrorsExist ||
@@ -34,7 +35,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
             variant="outlined"
         >
             {intl.formatMessage({ id: 'cta.delete' })}
-        </SafeLoadingButton>
+        </Button>
     );
 };
 

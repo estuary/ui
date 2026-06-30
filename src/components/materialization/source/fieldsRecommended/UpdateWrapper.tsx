@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
@@ -25,12 +27,14 @@ const FieldsRecommendedUpdateWrapper = () => {
     const setFormState = useFormStateStore_setFormState();
 
     const [setFieldsRecommended, fieldsRecommended, setSaving, saving] =
-        useSourceCaptureStore((state) => [
-            state.setFieldsRecommended,
-            state.fieldsRecommended,
-            state.setSaving,
-            state.saving,
-        ]);
+        useSourceCaptureStore(
+            useShallow((state) => [
+                state.setFieldsRecommended,
+                state.fieldsRecommended,
+                state.setSaving,
+                state.saving,
+            ])
+        );
 
     const { currentSetting, updateSourceSetting } = useSourceSetting<
         boolean | number

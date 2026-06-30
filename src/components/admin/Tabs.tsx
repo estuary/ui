@@ -29,16 +29,12 @@ function AdminTabs() {
             });
         }
 
-        return response.concat([
-            {
-                labelMessageId: 'admin.tabs.connectors',
-                path: authenticatedRoutes.admin.connectors.fullPath,
-            },
-            {
-                labelMessageId: 'admin.tabs.api',
-                path: authenticatedRoutes.admin.api.fullPath,
-            },
-        ]);
+        response.push({
+            labelMessageId: 'admin.tabs.api',
+            path: authenticatedRoutes.admin.api.fullPath,
+        });
+
+        return response;
     }, [hasAnyAccess]);
 
     return <NavigationTabs keyPrefix={TAB_KEY} tabs={tabProps} />;

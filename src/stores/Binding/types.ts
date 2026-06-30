@@ -1,5 +1,6 @@
 import type { DurationObjectUnits } from 'luxon';
 import type { TrialCollectionQuery } from 'src/api/liveSpecsExt';
+import type { ConnectorTagData } from 'src/context/ConnectorTag';
 import type { LiveSpecsExt_MaterializeOrTransform } from 'src/hooks/useLiveSpecsExt';
 import type { ResourceConfigPointers } from 'src/services/ajv';
 import type { CallSupabaseResponse } from 'src/services/supabase';
@@ -14,6 +15,7 @@ import type {
     JsonFormsData,
     Schema,
     SourceCaptureDef,
+    TargetNamingStrategy,
 } from 'src/types';
 
 export interface CollectionMetadata {
@@ -172,7 +174,8 @@ export interface BindingState
     prefillResourceConfigs: (
         targetCollections: string[],
         disableOmit?: boolean,
-        sourceCapture?: SourceCaptureDef
+        sourceCapture?: SourceCaptureDef,
+        rootTargetNaming?: TargetNamingStrategy
     ) => void;
 
     // The combination of resource config store actions, `updateResourceConfig` and
@@ -210,7 +213,7 @@ export interface BindingState
     hydrateState: (
         editWorkflow: boolean,
         entityType: Entity,
-        connectorTagId: string,
+        connectorTag: ConnectorTagData | null,
         getTrialOnlyPrefixes: (prefixes: string[]) => Promise<string[]>,
         rehydrating?: boolean
     ) => Promise<LiveSpecsExt_MaterializeOrTransform[] | null>;

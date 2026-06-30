@@ -2,7 +2,7 @@ import type { PostgrestError } from '@supabase/postgrest-js';
 import type { DirectiveStates, UserClaims } from 'src/directives/types';
 import type { AppliedDirective } from 'src/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
@@ -25,6 +25,8 @@ const useDirectiveGuard = (
 
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
+
+    const autoRanOnce = useRef(false);
 
     const [calculatedState, setCalculatedState] =
         useState<DirectiveStates | null>(null);
@@ -90,13 +92,21 @@ const useDirectiveGuard = (
                 DIRECTIVES[selectedDirective].token = options.token;
             }
 
-            if (DIRECTIVES[selectedDirective].token) {
+            if (
+                DIRECTIVES[selectedDirective].token &&
+                !autoRanOnce.current &&
+                !serverError
+            ) {
                 const fetchDirective = async () => {
                     logRocketEvent(CustomEvents.DIRECTIVE_EXCHANGE_TOKEN);
                     return exchangeBearerToken(
                         DIRECTIVES[selectedDirective].token
                     );
                 };
+
+                // This should fix the local issue where you could get stuck in an
+                //  infinite loop loading after restarting your local.
+                autoRanOnce.current = true;
 
                 fetchDirective()
                     .then((response) => {

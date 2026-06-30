@@ -27,7 +27,7 @@ function PrefixSelector({
             id={labelId}
             onChange={(_event, newValue) => onChange(newValue)}
             options={options}
-            componentsProps={{
+            slotProps={{
                 paper: {
                     sx: {
                         minWidth: 'fit-content',
@@ -41,11 +41,6 @@ function PrefixSelector({
             }: AutocompleteRenderInputParams) => (
                 <TextField
                     {...params}
-                    InputProps={{
-                        ...InputProps,
-                        disableUnderline: variantString === 'standard',
-                        sx: { borderRadius: 3 },
-                    }}
                     label={label}
                     error={Boolean(error)}
                     required
@@ -54,6 +49,15 @@ function PrefixSelector({
                         minWidth: 100,
                     }}
                     variant={variantString}
+                    slotProps={{
+                        input: {
+                            ...InputProps,
+                            ...(variantString === 'standard'
+                                ? { disableUnderline: true }
+                                : {}),
+                            sx: { borderRadius: 3 },
+                        },
+                    }}
                 />
             )}
         />

@@ -115,6 +115,7 @@ export const getFieldSelection = (
     return updatedSelections;
 };
 
+const DEFAULT_RESPONSE: ExpandedFieldSelection[] = [];
 export const getExpandedFieldSelection = (
     selections: BindingFieldSelection | undefined
 ): ExpandedFieldSelection[] =>
@@ -130,7 +131,7 @@ export const getExpandedFieldSelection = (
                             selection.field
                         ),
           }))
-        : [];
+        : DEFAULT_RESPONSE;
 
 export const mapRecommendedValueToAlgorithm = (
     value: boolean | number | null | undefined

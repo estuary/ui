@@ -1,5 +1,7 @@
 import type { FetcherArgs } from 'src/hooks/entityStatus/types';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useMount } from 'react-use';
 import useSWR from 'swr';
 
@@ -33,14 +35,16 @@ export const useEntityRelationships = (
         setCaptures,
         setMaterializations,
         setCollections,
-    ] = useEntityRelationshipStore((state) => [
-        state.setActive,
-        state.setHydrated,
-        state.setHydrationError,
-        state.setCaptures,
-        state.setMaterializations,
-        state.setCollections,
-    ]);
+    ] = useEntityRelationshipStore(
+        useShallow((state) => [
+            state.setActive,
+            state.setHydrated,
+            state.setHydrationError,
+            state.setCaptures,
+            state.setMaterializations,
+            state.setCollections,
+        ])
+    );
 
     // We do not really use the 'active' flag but the base hydration
     //  code does so just keeping it updated here

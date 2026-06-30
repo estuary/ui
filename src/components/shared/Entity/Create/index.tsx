@@ -24,9 +24,6 @@ import useUnsavedChangesPrompt from 'src/components/shared/Entity/hooks/useUnsav
 import ValidationErrorSummary from 'src/components/shared/Entity/ValidationErrorSummary';
 import Error from 'src/components/shared/Error';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
-import useGlobalSearchParams, {
-    GlobalSearchParams,
-} from 'src/hooks/searchParams/useGlobalSearchParams';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { CustomEvents } from 'src/services/types';
@@ -50,8 +47,6 @@ function EntityCreate({
     Toolbar: toolbar,
     RediscoverButton,
 }: EntityCreateProps) {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
-
     const { resetState } = useEntityWorkflowHelpers();
 
     // Binding Store
@@ -118,7 +113,7 @@ function EntityCreate({
             entityNameChanged,
             endpointConfigServerUpdateRequired,
             resourceConfigServerUpdateRequired,
-            newValue,
+            newValue: newValue ?? 'null',
             component: 'EntityCreate',
         });
 
@@ -142,29 +137,30 @@ function EntityCreate({
             entityType === 'materialization'
                 ? hasLength(imageTag.connectorId)
                 : hasLength(imageTag.connectorId) &&
-                  imageTag.connectorId === connectorId &&
                   !entityNameChanged &&
                   persistedDraftId,
-        [
-            connectorId,
-            entityType,
-            entityNameChanged,
-            imageTag.connectorId,
-            persistedDraftId,
-        ]
+        [entityType, entityNameChanged, imageTag, persistedDraftId]
     );
 
     const storeHydrationComplete = useFormHydrationChecker();
 
-    return detailsHydrationError ? (
-        <Error
-            condensed
-            error={{
-                ...BASE_ERROR,
-                message: detailsHydrationError,
-            }}
-        />
-    ) : !storeHydrationComplete ? null : (
+    if (detailsHydrationError) {
+        return (
+            <Error
+                condensed
+                error={{
+                    ...BASE_ERROR,
+                    message: detailsHydrationError,
+                }}
+            />
+        );
+    }
+
+    if (!storeHydrationComplete) {
+        return null;
+    }
+
+    return (
         <DraftSpecEditorHydrator
             entityType={entityType}
             entityName={entityName}

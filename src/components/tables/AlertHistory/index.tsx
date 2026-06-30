@@ -275,7 +275,7 @@ function AlertHistoryTable({
                             header: 'alerts.table.empty.header',
                             message: failed
                                 ? 'alerts.table.error.message'
-                                : 'alerts.table.empty.message',
+                                : `alerts.table.empty.message.${active ? 'active' : 'resolved'}`,
                             disableDoclink: true,
                         }}
                         tableState={tableState}

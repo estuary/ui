@@ -2,7 +2,7 @@ import type { ErrorDetails } from 'src/components/shared/Error/types';
 
 import { useEffect, useState } from 'react';
 
-import { Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 import { Navigate, useSearchParams } from 'react-router-dom';
@@ -10,7 +10,6 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import { unauthenticatedRoutes } from 'src/app/routes';
 import FullPageDialog from 'src/components/fullPage/Dialog';
 import { redirectToBase } from 'src/components/login/useRedirectPath';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import Error from 'src/components/shared/Error';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import HeaderMessage from 'src/pages/login/HeaderMessage';
@@ -85,7 +84,7 @@ export function SSORequired() {
                     })}
                 </Typography>
 
-                <SafeLoadingButton
+                <Button
                     variant="contained"
                     onClick={handleSSOLogin}
                     loading={loading}
@@ -93,7 +92,7 @@ export function SSORequired() {
                     {intl.formatMessage({
                         id: 'login.sso.required.cta',
                     })}
-                </SafeLoadingButton>
+                </Button>
             </Stack>
         </FullPageDialog>
     );

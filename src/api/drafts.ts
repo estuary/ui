@@ -1,6 +1,5 @@
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
-    deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
@@ -12,10 +11,6 @@ const createEntityDraft = (entityName: string) => {
     return insertSupabase(TABLES.DRAFTS, {
         detail: entityName,
     });
-};
-
-const deleteEntityDraft = (draftId: string) => {
-    return deleteSupabase(TABLES.DRAFTS, { id: draftId });
 };
 
 export interface DraftsQuery_ByCatalogName {
@@ -46,4 +41,4 @@ const getDraftsByCatalogName = async (
     return data;
 };
 
-export { createEntityDraft, deleteEntityDraft, getDraftsByCatalogName };
+export { createEntityDraft, getDraftsByCatalogName };

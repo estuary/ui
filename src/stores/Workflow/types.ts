@@ -1,4 +1,4 @@
-import type { ConnectorWithTagQuery } from 'src/api/types';
+import type { ConnectorTagData } from 'src/context/ConnectorTag';
 import type { StoreWithHydration } from 'src/stores/extensions/Hydration';
 import type { StoreWithCollections } from 'src/stores/Workflow/slices/Collections';
 import type { StoreWithProjections } from 'src/stores/Workflow/slices/Projections';
@@ -15,7 +15,7 @@ export interface WorkflowState
         StoreWithProjections,
         StoreWithCollections {
     catalogName: CatalogName;
-    connectorMetadata: ConnectorWithTagQuery[];
+    connectorMetadata: ConnectorTagData | null;
     customerId: string;
     redirectUrl: string;
     resetState: () => void;

@@ -1,19 +1,15 @@
 import type { AlertSubscriptionDialogProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import {
+    Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
     Grid,
-    IconButton,
     Stack,
-    Typography,
-    useTheme,
 } from '@mui/material';
 
-import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { useUnmount } from 'react-use';
 
@@ -24,6 +20,8 @@ import PrefixField from 'src/components/admin/Settings/PrefixAlerts/Dialog/Prefi
 import SaveButton from 'src/components/admin/Settings/PrefixAlerts/Dialog/SaveButton';
 import ServerErrors from 'src/components/admin/Settings/PrefixAlerts/Dialog/ServerErrors';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import MessageWithLink from 'src/components/content/MessageWithLink';
+import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 
 const TITLE_ID = 'alert-subscription-dialog-title';
 
@@ -38,7 +36,6 @@ const AlertSubscriptionDialog = ({
     staticPrefix,
 }: AlertSubscriptionDialogProps) => {
     const intl = useIntl();
-    const theme = useTheme();
 
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
@@ -55,50 +52,18 @@ const AlertSubscriptionDialog = ({
 
     return (
         <Dialog open={open} maxWidth="md" fullWidth aria-labelledby={TITLE_ID}>
-            <DialogTitle
-                component="div"
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                }}
-            >
-                <Typography variant="h6">
-                    {intl.formatMessage({ id: headerId })}
-                </Typography>
-
-                <IconButton
-                    onClick={(event) => {
-                        event.preventDefault();
-
-                        closeDialog();
-                    }}
-                >
-                    <Xmark
-                        style={{
-                            fontSize: '1rem',
-                            color: theme.palette.text.primary,
-                        }}
-                    />
-                </IconButton>
-            </DialogTitle>
+            <DialogTitleWithClose id={TITLE_ID} onClose={closeDialog}>
+                {intl.formatMessage({ id: headerId })}
+            </DialogTitleWithClose>
 
             <DialogContent sx={{ mt: 1 }}>
                 <ServerErrors />
 
-                <Typography sx={{ mb: 2 }}>
-                    {intl.formatMessage({ id: descriptionId })}
-                </Typography>
+                <Box style={{ marginBottom: 16 }}>
+                    <MessageWithLink messageID={descriptionId} />
+                </Box>
 
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{
-                        mb: 3,
-                        pt: 1,
-                        alignItems: 'flex-start',
-                    }}
-                >
+                <Grid container spacing={2}>
                     <PrefixField staticPrefix={staticPrefix} />
 
                     <EmailListField staticEmail={staticEmail} />

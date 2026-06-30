@@ -6,13 +6,14 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    accordionSummaryClasses,
     Typography,
     useTheme,
 } from '@mui/material';
 
 import { NavArrowDown } from 'iconoir-react';
 import { isEmpty } from 'lodash';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useEditorStore_invalidEditors } from 'src/components/editor/Store/hooks';
 import CatalogList from 'src/components/transformation/create/Config/catalog/CatalogList';
@@ -26,6 +27,7 @@ import {
 import { hasLength } from 'src/utils/misc-utils';
 
 function MigrationList() {
+    const intl = useIntl();
     const theme = useTheme();
 
     // Draft Editor Store
@@ -94,7 +96,7 @@ function MigrationList() {
                 }
                 sx={{
                     'px': 1,
-                    '& .MuiAccordionSummary-content': {
+                    [`& .${accordionSummaryClasses.content}`]: {
                         'my': 0,
                         'color': migrationSelected
                             ? theme.palette.primary.main
@@ -111,8 +113,10 @@ function MigrationList() {
                     },
                 }}
             >
-                <Typography sx={{ fontWeight: 500 }}>
-                    <FormattedMessage id="newTransform.config.advancedSettings.header" />
+                <Typography component="span" sx={{ fontWeight: 500 }}>
+                    {intl.formatMessage({
+                        id: 'newTransform.config.advancedSettings.header',
+                    })}
                 </Typography>
             </AccordionSummary>
 

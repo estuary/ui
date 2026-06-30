@@ -6,19 +6,19 @@ import { useState } from 'react';
 
 import { Button, Dialog } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import ProgressDialog from 'src/components/tables/RowActions/ProgressDialog';
 import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
-function RowActionButton({
-    messageID,
+export function RowActionButton({
+    message,
     renderConfirmationMessage,
     renderProgress,
     selectableTableStoreName,
-}: RowActionButtonProps) {
+}: Omit<RowActionButtonProps, 'messageID'> & { message: string }) {
     const confirmationModalContext = useConfirmationModalContext();
 
     const [showProgress, setShowProgress] = useState(false);
@@ -85,9 +85,7 @@ function RowActionButton({
 
     return (
         <>
-            <Button onClick={() => handlers.action()}>
-                <FormattedMessage id={messageID} />
-            </Button>
+            <Button onClick={() => handlers.action()}>{message}</Button>
 
             <Dialog open={showProgress} maxWidth="md">
                 {targets.length > 0 ? (
@@ -102,4 +100,16 @@ function RowActionButton({
     );
 }
 
-export default RowActionButton;
+/** @deprecated Prefer the named `RowActionButton` export */
+function RowActionButtonWrapper({ messageID, ...props }: RowActionButtonProps) {
+    const intl = useIntl();
+
+    return (
+        <RowActionButton
+            {...props}
+            message={intl.formatMessage({ id: messageID })}
+        />
+    );
+}
+
+export default RowActionButtonWrapper;

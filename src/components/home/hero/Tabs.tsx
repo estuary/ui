@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Button, Tab, Tabs } from '@mui/material';
+import { Tab, Tabs } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -18,7 +18,6 @@ function HeroTabs() {
                     label={intl.formatMessage({
                         id: tabProp.label,
                     })}
-                    component={Button}
                     onClick={() => setActiveTab(tabProp.value)}
                     value={tabProp.value}
                     sx={{

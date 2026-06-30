@@ -2,7 +2,17 @@ import type { VariableSizeList } from 'react-window';
 
 import { useLayoutEffect, useRef } from 'react';
 
-import { Box, Stack, Table, TableContainer } from '@mui/material';
+import {
+    Box,
+    Stack,
+    Table,
+    tableCellClasses,
+    TableContainer,
+    tableHeadClasses,
+    tableRowClasses,
+} from '@mui/material';
+
+import { useShallow } from 'zustand/react/shallow';
 
 import { useIntl } from 'react-intl';
 
@@ -21,11 +31,13 @@ function LogsTable() {
     const columns = useLogColumns();
 
     const [hydrated, setAllowFetchingMore, [scrollToIndex, scrollToPosition]] =
-        useJournalDataLogsStore((state) => [
-            state.hydrated,
-            state.setAllowFetchingMore,
-            state.scrollToWhenDone,
-        ]);
+        useJournalDataLogsStore(
+            useShallow((state) => [
+                state.hydrated,
+                state.setAllowFetchingMore,
+                state.scrollToWhenDone,
+            ])
+        );
 
     const tableScroller = useRef<VariableSizeList | undefined>(undefined);
     const outerRef = useRef<HTMLDivElement | undefined>(undefined);
@@ -67,19 +79,20 @@ function LogsTable() {
                     size="small"
                     stickyHeader
                     sx={{
-                        'minWidth': 250,
-                        'width': '100%',
-                        'height': '100%',
+                        minWidth: 250,
+                        width: '100%',
+                        height: '100%',
                         // Keeps the header showing the border row on the header and not the cells
                         //  becaues they do not take the entire width
-                        'borderCollapse': 'collapse',
-                        '& > .MuiTableHead-root .MuiTableRow-root': {
-                            borderBottomColor: (theme) =>
-                                defaultOutlineColor[theme.palette.mode],
-                            borderBottomWidth: 1,
-                            borderBottomStyle: 'solid',
-                        },
-                        '& > .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root':
+                        borderCollapse: 'collapse',
+                        [`& > .${tableHeadClasses.root} .${tableRowClasses.root}`]:
+                            {
+                                borderBottomColor: (theme) =>
+                                    defaultOutlineColor[theme.palette.mode],
+                                borderBottomWidth: 1,
+                                borderBottomStyle: 'solid',
+                            },
+                        [`& > .${tableHeadClasses.root} .${tableRowClasses.root} .${tableCellClasses.root}`]:
                             {
                                 borderBottom: 'none',
                             },

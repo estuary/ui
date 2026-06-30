@@ -100,12 +100,14 @@ export const useEntitiesStore_tenantsWithAdmin = () => {
 
 export const useEntitiesStore_populateState = () => {
     const [setCapabilities, setHydrated, setHydrationErrors, setMutate] =
-        useEntitiesStore((state) => [
-            state.setCapabilities,
-            state.setHydrated,
-            state.setHydrationErrors,
-            state.setMutate,
-        ]);
+        useEntitiesStore(
+            useShallow((state) => [
+                state.setCapabilities,
+                state.setHydrated,
+                state.setHydrationErrors,
+                state.setMutate,
+            ])
+        );
 
     const populateState = useCallback(
         ({
@@ -217,10 +219,9 @@ export const useHydrateStateWithGql = () => {
 export const useHydrateStateWithPostgres = () => {
     const { populateState } = useEntitiesStore_populateState();
 
-    const [hydrateState, setActive] = useEntitiesStore((state) => [
-        state.hydrateState,
-        state.setActive,
-    ]);
+    const [hydrateState, setActive] = useEntitiesStore(
+        useShallow((state) => [state.hydrateState, state.setActive])
+    );
 
     // We hardcode the key here as we only call once
     const response = useSWR(
@@ -251,10 +252,9 @@ export const useHydrateStateWithPostgres = () => {
 };
 
 export const useStorageMappingsHydrator = () => {
-    const [hydrated, setStorageMappings] = useEntitiesStore((state) => [
-        state.hydrated,
-        state.setStorageMappings,
-    ]);
+    const [hydrated, setStorageMappings] = useEntitiesStore(
+        useShallow((state) => [state.hydrated, state.setStorageMappings])
+    );
 
     // We do not want to get these for support role as that will time out
     const hasSupportRole = useUserInfoSummaryStore(

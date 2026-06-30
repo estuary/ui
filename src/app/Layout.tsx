@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
+import { Toast } from 'src/components/AgentSkills/Toast';
 import Navigation from 'src/components/navigation/Navigation';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import PageContainer from 'src/components/shared/PageContainer';
@@ -39,7 +42,11 @@ function AppLayout() {
     const [rightPaneFlex, setRightPaneFlex] = useState<any>(0.0);
 
     const [animateOpening, setAnimateOpening, docsURL] = useSidePanelDocsStore(
-        (state) => [state.animateOpening, state.setAnimateOpening, state.url]
+        useShallow((state) => [
+            state.animateOpening,
+            state.setAnimateOpening,
+            state.url,
+        ])
     );
 
     const { showDocs } = useShowSidePanelDocs();
@@ -76,6 +83,8 @@ function AppLayout() {
                     onNavigationToggle={toggleNavigationDrawer}
                 />
             </Box>
+
+            <Toast docsPanelOpen={displaySidePanel} />
 
             <Box
                 sx={{

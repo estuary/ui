@@ -3,6 +3,7 @@ import type { WorkflowInitializerProps } from 'src/components/shared/Entity/type
 import { useEffectOnce } from 'react-use';
 
 import Error from 'src/components/shared/Error';
+import { ConnectorTagProvider } from 'src/context/ConnectorTag';
 import { BASE_ERROR } from 'src/services/supabase';
 import BindingHydrator from 'src/stores/Binding/Hydrator';
 import { useWorkflowStore } from 'src/stores/Workflow/Store';
@@ -10,7 +11,7 @@ import { useWorkflowHydrator } from 'src/stores/Workflow/useWorkflowHydrator';
 
 // This hydrator is here without a store so that we can start working on moving a lot of
 //  these separate stores into a single "Workflow" store for Create and Edit.
-function WorkflowHydrator({
+function WorkflowHydratorInner({
     children,
     expressWorkflow,
 }: WorkflowInitializerProps) {
@@ -22,6 +23,7 @@ function WorkflowHydrator({
 
     // TODO: Replace with useEffect and alter the logic in a fashion where
     //   `hydrateState` is called once. Simply using a ref is not sufficient.
+    // (Q1 2026 Update) - With React 18 StrictMode we just need to rethink hydration overall
     useEffectOnce(() => {
         if (!hydrated) {
             setActive(true);
@@ -46,6 +48,19 @@ function WorkflowHydrator({
     }
 
     return <BindingHydrator>{children}</BindingHydrator>;
+}
+
+function WorkflowHydrator({
+    children,
+    expressWorkflow,
+}: WorkflowInitializerProps) {
+    return (
+        <ConnectorTagProvider>
+            <WorkflowHydratorInner expressWorkflow={expressWorkflow}>
+                {children}
+            </WorkflowHydratorInner>
+        </ConnectorTagProvider>
+    );
 }
 
 export default WorkflowHydrator;

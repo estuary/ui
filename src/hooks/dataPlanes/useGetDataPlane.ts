@@ -10,7 +10,7 @@ import { defaultDataPlaneSuffix } from 'src/utils/env-utils';
 
 function useGetDataPlane() {
     // TODO (data planes) - don't want the options being passed in. Need to store those off
-    // const [dataPlaneOptions] = useEntitiesStore((state) => [state.dataPlanes]);
+    // const [dataPlaneOptions] = useEntitiesStore(useShallow((state) => [state.dataPlanes]));
 
     const hasSupportRole = useUserInfoSummaryStore(
         (state) => state.hasSupportAccess

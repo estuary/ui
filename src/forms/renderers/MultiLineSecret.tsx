@@ -11,8 +11,9 @@ import {
 } from '@jsonforms/material-renderers';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 
-import { DropzoneDialog } from 'react-mui-dropzone';
+import { useIntl } from 'react-intl';
 
+import { FileUploadDialog } from 'src/generatedModules/FileUpload/FileUploadDialog';
 import { Options } from 'src/types/jsonforms';
 
 export const multiLineSecretTester: RankedTester = rankWith(
@@ -20,35 +21,16 @@ export const multiLineSecretTester: RankedTester = rankWith(
     optionIs(Options.multiLineSecret, true)
 );
 
-// This is blank on purpose. For right now we can just show null settings are nothing
 const MultiLineSecretRenderer = (props: any) => {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const { handleChange, path, enabled } = props;
 
+    const intl = useIntl();
     const [isUploadOpen, setIsUploadOpen] = useState(false);
 
-    const submitFile = useCallback(
-        (acceptedFiles) => {
-            if (acceptedFiles) {
-                const uploadDone = (inputValue: string | null) => {
-                    handleChange(path, inputValue);
-                    setIsUploadOpen(false);
-                };
-
-                acceptedFiles.forEach(async (file: File) => {
-                    const reader = new FileReader();
-
-                    reader.onabort = () => uploadDone(null);
-                    reader.onerror = () => uploadDone(null);
-                    reader.onloadend = () => {
-                        const result = reader.result ?? null;
-                        uploadDone(result as string);
-                    };
-                    reader.readAsText(file);
-                });
-            }
-
-            setIsUploadOpen(false);
+    const handleFileRead = useCallback(
+        (content: string | null) => {
+            handleChange(path, content);
         },
         [handleChange, path]
     );
@@ -76,47 +58,25 @@ const MultiLineSecretRenderer = (props: any) => {
 
                 <Box>
                     <Button
-                        disabled={!enabled}
-                        onClick={() => setIsUploadOpen(!isUploadOpen)}
+                        disabled={!enabled || isUploadOpen}
+                        onClick={() => setIsUploadOpen(true)}
                         sx={{ whiteSpace: 'nowrap' }}
                     >
-                        Use secret from file
+                        {intl.formatMessage({
+                            id: 'multiLineSecret.openDialog.cta',
+                        })}
                     </Button>
                 </Box>
             </Stack>
 
-            {isUploadOpen ? (
-                <DropzoneDialog
-                    open={isUploadOpen}
-                    onSave={submitFile}
-                    filesLimit={1}
-                    clearOnUnmount={true}
-                    showPreviews={false}
-                    showPreviewsInDropzone={true}
-                    useChipsForPreview={true}
-                    maxFileSize={5000000} //bytes
-                    onClose={() => setIsUploadOpen(false)}
-                    alertSnackbarProps={{
-                        anchorOrigin: {
-                            horizontal: 'center',
-                            vertical: 'top',
-                        },
-                        autoHideDuration: 6000,
-                    }}
-                    dialogProps={{
-                        open: isUploadOpen,
-                        sx: {
-                            '& .MuiDropzoneArea-root': {
-                                'minHeight': 150,
-                                'padding': 5,
-                                '& .MuiDropzonePreviewList-root': {
-                                    justifyContent: 'center',
-                                },
-                            },
-                        },
-                    }}
-                />
-            ) : null}
+            <FileUploadDialog
+                open={isUploadOpen}
+                title={intl.formatMessage({
+                    id: 'multiLineSecret.openDialog.cta',
+                })}
+                onClose={() => setIsUploadOpen(false)}
+                onFileRead={handleFileRead}
+            />
         </>
     );
 };

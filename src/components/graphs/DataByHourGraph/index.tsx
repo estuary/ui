@@ -7,6 +7,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useTheme } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { BarChart } from 'echarts/charts';
 import {
     DatasetComponent,
@@ -71,10 +73,9 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
     const entityType = useEntityType();
     const messages = useDataByHourGraphMessages();
 
-    const [range, statType] = useDetailsUsageStore((store) => [
-        store.range,
-        store.statType,
-    ]);
+    const [range, statType] = useDetailsUsageStore(
+        useShallow((state) => [state.range, state.statType])
+    );
     const { shortFormat, longFormat, getTimeZone, labelKey } =
         LUXON_GRAIN_SETTINGS[range.grain];
 
@@ -194,9 +195,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
             precision?: number
         ) => {
             if (!Number.isInteger(value)) {
-                return intl.formatMessage({
-                    id: 'common.missing',
-                });
+                return 'N/A';
             }
 
             if (dimension.includes('docs')) {
@@ -207,7 +206,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
                 maximumFractionDigits: precision,
             })}`;
         },
-        [intl]
+        []
     );
 
     const [

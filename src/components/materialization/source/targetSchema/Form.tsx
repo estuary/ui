@@ -5,6 +5,8 @@ import { useEffect, useRef } from 'react';
 
 import { Box, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { InfoCircle } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
@@ -16,6 +18,7 @@ import useTargetSchemaOptions from 'src/hooks/sourceCapture/useTargetSchemaOptio
 import { compareOptionsIncludingAliases } from 'src/stores/SourceCapture/shared';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 
+// TODO (target naming:post migration:remove)
 export default function TargetSchemaForm({
     currentSetting,
     scope,
@@ -27,7 +30,10 @@ export default function TargetSchemaForm({
     const workflow = useEntityWorkflow();
 
     const [setTargetSchemaHasError, setTargetSchema] = useSourceCaptureStore(
-        (state) => [state.setTargetSchemaHasError, state.setTargetSchema]
+        useShallow((state) => [
+            state.setTargetSchemaHasError,
+            state.setTargetSchema,
+        ])
     );
 
     const options = useTargetSchemaOptions();
@@ -82,11 +88,11 @@ export default function TargetSchemaForm({
                 scope={scope}
                 isOptionEqualToValue={compareOptionsIncludingAliases}
                 renderOption={(
-                    renderOptionProps,
+                    { key, ...renderOptionProps },
                     option: AutoCompleteOptionForTargetSchema
                 ) => {
                     return (
-                        <li {...renderOptionProps}>
+                        <li key={key} {...renderOptionProps}>
                             <SelectorOption option={option} />
                         </li>
                     );

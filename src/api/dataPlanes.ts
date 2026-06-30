@@ -14,11 +14,6 @@ export interface AwsDnsEntry {
     hosted_zone_id: string;
 }
 
-export interface AwsLinkEndpoint {
-    dns_entries: AwsDnsEntry[];
-    service_name: string;
-}
-
 export interface BaseDataPlaneQuery {
     data_plane_name: string;
     id: string;

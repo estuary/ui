@@ -10,10 +10,9 @@ import { disabledButtonText } from 'src/context/Theme';
 
 interface Props {
     entityType: Entity;
-    disabled: boolean;
 }
 
-function RediscoverButton({ entityType, disabled }: Props) {
+function RediscoverButton({ entityType }: Props) {
     const { generateCatalog, isSaving, formActive } = useDiscoverCapture(
         entityType,
         { initiateRediscovery: true }
@@ -22,7 +21,7 @@ function RediscoverButton({ entityType, disabled }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
-    const disable = disabled || isSaving || formActive;
+    const disable = isSaving || formActive;
 
     return (
         <Tooltip

@@ -54,14 +54,16 @@ function AutocompletedField({
             }: AutocompleteRenderInputParams) => (
                 <TextField
                     {...params}
-                    InputProps={{
-                        ...InputProps,
-                        sx: { borderRadius: 3 },
-                    }}
                     label={label}
                     required={required}
                     size="small"
                     variant="outlined"
+                    slotProps={{
+                        input: {
+                            ...InputProps,
+                            sx: { borderRadius: 3 },
+                        },
+                    }}
                 />
             )}
         />

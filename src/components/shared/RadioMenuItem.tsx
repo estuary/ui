@@ -1,6 +1,12 @@
 import type { RadioMenuItemProps } from 'src/components/shared/types';
 
-import { Box, FormControlLabel, Radio, Typography } from '@mui/material';
+import {
+    Box,
+    FormControlLabel,
+    Radio,
+    Typography,
+    typographyClasses,
+} from '@mui/material';
 
 export default function RadioMenuItem({
     description,
@@ -24,8 +30,8 @@ export default function RadioMenuItem({
 
                     <Typography
                         sx={{
-                            'textTransform': 'lowercase',
-                            '&.MuiTypography-root:first-letter': {
+                            textTransform: 'lowercase',
+                            [`&.${typographyClasses.root}:first-letter`]: {
                                 textTransform: 'uppercase',
                             },
                         }}

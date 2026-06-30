@@ -1,6 +1,6 @@
 import { Paper, Typography } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import DraftSpecEditor from 'src/components/editor/DraftSpec';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
@@ -16,16 +16,15 @@ import {
 import { FormStatus } from 'src/stores/FormState/types';
 
 interface Props {
-    messageId: string;
+    message: string;
 }
 
-function CatalogEditor({ messageId }: Props) {
+export function CatalogEditor({ message }: Props) {
     const draftId = useEditorStore_id();
 
     const formStatus = useFormStateStore_status();
     const formActive = useFormStateStore_isActive();
 
-    const intl = useIntl();
     const backfillMode = useBindingStore((state) => state.backfillMode);
     const backfillCount = useBinding_backfilledBindings_count();
 
@@ -37,17 +36,15 @@ function CatalogEditor({ messageId }: Props) {
         return (
             <WrapperWithHeader
                 header={
-                    <Typography variant="subtitle1">
-                        <FormattedMessage id="entityCreate.catalogEditor.heading" />
+                    <Typography component="span" variant="subtitle1">
+                        Advanced Specification Editor
                     </Typography>
                 }
                 hideBorder
                 mountClosed
             >
                 <ErrorBoundryWrapper>
-                    <Typography sx={{ mb: 2 }}>
-                        <FormattedMessage id={messageId} />
-                    </Typography>
+                    <Typography sx={{ mb: 2 }}>{message}</Typography>
 
                     {editorDisabled ? (
                         <AlertBox
@@ -56,13 +53,10 @@ function CatalogEditor({ messageId }: Props) {
                             }}
                             short
                             severity="warning"
-                            title={intl.formatMessage({
-                                id: 'collectionReset.editor.warning.title',
-                            })}
+                            title="Editing disabled"
                         >
-                            {intl.formatMessage({
-                                id: 'collectionReset.editor.warning.message',
-                            })}
+                            While backfilling the data flow you cannot manually
+                            edit your spec.
                         </AlertBox>
                     ) : null}
 
@@ -80,4 +74,11 @@ function CatalogEditor({ messageId }: Props) {
     }
 }
 
-export default CatalogEditor;
+/** @deprecated Prefer the named `CatalogEditor` export */
+function CatalogEditorWrapper({ messageId }: { messageId: string }) {
+    const intl = useIntl();
+
+    return <CatalogEditor message={intl.formatMessage({ id: messageId })} />;
+}
+
+export default CatalogEditorWrapper;

@@ -3,3 +3,4 @@ coverage
 build
 deps
 src/gql-types
+storybook-static

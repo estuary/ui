@@ -2,6 +2,8 @@ import type { TransformConfig } from 'src/stores/TransformationCreate/types';
 
 import { useCallback, useMemo } from 'react';
 
+import { Button } from '@mui/material';
+
 import { usePostHog } from '@posthog/react';
 import { FormattedMessage } from 'react-intl';
 import { useNavigate } from 'react-router';
@@ -14,7 +16,6 @@ import {
     useEditorStore_setId,
     useEditorStore_setPersistedDraftId,
 } from 'src/components/editor/Store/hooks';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { EVENT_NAME } from 'src/components/transformation/create/shared';
 import { useFormStateStore_setFormState } from 'src/stores/FormState/hooks';
 import { FormStatus } from 'src/stores/FormState/types';
@@ -192,14 +193,15 @@ function InitializeDraftButton({
         setSourceCollections,
     ]);
 
+    // TODO test how this used saveloadingbutton before
     return (
-        <SafeLoadingButton
+        <Button
             variant="contained"
             disabled={formInvalid}
             onClick={initializeTransformation}
         >
             <FormattedMessage id="cta.next" />
-        </SafeLoadingButton>
+        </Button>
     );
 }
 

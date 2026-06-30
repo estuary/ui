@@ -8,6 +8,8 @@ import {
     Typography,
 } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import {
     AddressElement,
     PaymentElement,
@@ -32,10 +34,9 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
     const stripe = useStripe();
     const elements = useElements();
 
-    const [user, userDetails] = useUserStore((state) => [
-        state.user,
-        state.userDetails,
-    ]);
+    const [user, userDetails] = useUserStore(
+        useShallow((state) => [state.user, state.userDetails])
+    );
 
     const setupEvents = useRef(false);
     const [error, setError] = useState('');

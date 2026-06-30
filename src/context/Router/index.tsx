@@ -13,9 +13,9 @@ import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
 import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
-import AdminConnectors from 'src/components/admin/Connectors';
 import AdminSettings from 'src/components/admin/Settings';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
+import HasSupportRoleGuard from 'src/components/shared/guards/SupportRole';
 import { AuthenticatedOnlyContext } from 'src/context/Authenticated';
 import { DashboardWelcomeProvider } from 'src/context/DashboardWelcome';
 import { EntityContextProvider } from 'src/context/EntityContext';
@@ -720,18 +720,6 @@ const router = createBrowserRouter(
                         </Route>
 
                         <Route
-                            path={authenticatedRoutes.admin.connectors.path}
-                            element={
-                                <ErrorBoundary
-                                    FallbackComponent={ErrorImporting}
-                                >
-                                    <Suspense fallback={null}>
-                                        <AdminConnectors />
-                                    </Suspense>
-                                </ErrorBoundary>
-                            }
-                        />
-                        <Route
                             path={authenticatedRoutes.admin.billing.path}
                             element={
                                 <ErrorBoundary
@@ -753,23 +741,25 @@ const router = createBrowserRouter(
                         />
                     </Route>
 
-                    {!isProduction ? (
-                        <>
-                            <Route
-                                path="test/jsonforms"
-                                element={
-                                    <ErrorBoundary
-                                        FallbackComponent={ErrorImporting}
-                                    >
+                    <Route path="test">
+                        <Route
+                            path="jsonforms"
+                            element={
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <HasSupportRoleGuard>
                                         <EntityContextProvider value="capture">
                                             <TestJsonForms />
                                         </EntityContextProvider>
-                                    </ErrorBoundary>
-                                }
-                            />
+                                    </HasSupportRoleGuard>
+                                </ErrorBoundary>
+                            }
+                        />
 
+                        {!isProduction ? (
                             <Route
-                                path="test/gql"
+                                path="gql"
                                 element={
                                     <ErrorBoundary
                                         FallbackComponent={ErrorImporting}
@@ -778,8 +768,8 @@ const router = createBrowserRouter(
                                     </ErrorBoundary>
                                 }
                             />
-                        </>
-                    ) : null}
+                        ) : null}
+                    </Route>
 
                     <Route
                         path={authenticatedRoutes.pageNotFound.path}

@@ -28,7 +28,7 @@ const getInitialStateData = (): Pick<
     | 'storageMappingPrefix'
 > => ({
     catalogName: { root: '', suffix: '', tenant: '', whole: '' },
-    connectorMetadata: [],
+    connectorMetadata: null,
     customerId: '',
     redirectUrl: '',
     storageMappingPrefix: '',

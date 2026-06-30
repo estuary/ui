@@ -26,6 +26,16 @@ export type Scalars = {
   JSON: { input: any; output: any; }
   /** A scalar that can represent any JSON Object value. */
   JSONObject: { input: any; output: any; }
+  /**
+   * ISO 8601 calendar date without timezone.
+   * Format: %Y-%m-%d
+   *
+   * # Examples
+   *
+   * * `1994-11-13`
+   * * `2000-02-24`
+   */
+  NaiveDate: { input: any; output: any; }
   Name: { input: any; output: any; }
   Prefix: { input: any; output: any; }
   /**
@@ -41,6 +51,21 @@ export type Scalars = {
   UUID: { input: any; output: any; }
   /** URL is a String implementing the [URL Standard](http://url.spec.whatwg.org/) */
   Url: { input: any; output: any; }
+};
+
+export type AwsPrivateLink = {
+  __typename?: 'AWSPrivateLink';
+  azIds: Array<Scalars['String']['output']>;
+  region: Scalars['String']['output'];
+  serviceName: Scalars['String']['output'];
+  serviceRegion?: Maybe<Scalars['String']['output']>;
+};
+
+export type AwsPrivateLinkInput = {
+  azIds: Array<Scalars['String']['input']>;
+  region: Scalars['String']['input'];
+  serviceName: Scalars['String']['input'];
+  serviceRegion?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** Status of the abandonment evaluation for a task. */
@@ -110,6 +135,49 @@ export type Alert = {
   resolvedArguments?: Maybe<Scalars['JSON']['output']>;
   /** The time at which the alert was resolved, or null if it is still active. */
   resolvedAt?: Maybe<Scalars['DateTime']['output']>;
+};
+
+/** A single row from `public.alert_configs`. */
+export type AlertConfigEntry = {
+  __typename?: 'AlertConfigEntry';
+  catalogPrefixOrName: Scalars['String']['output'];
+  config: Scalars['JSON']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  /**
+   * The fully-resolved effective config at this scope, merging all
+   * ancestor prefix layers and controller defaults.
+   */
+  effective: EffectiveAlertConfig;
+  id: Scalars['Id']['output'];
+  lastModifiedBy?: Maybe<Scalars['UUID']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AlertConfigEntryConnection = {
+  __typename?: 'AlertConfigEntryConnection';
+  /** A list of edges. */
+  edges: Array<AlertConfigEntryEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type AlertConfigEntryEdge = {
+  __typename?: 'AlertConfigEntryEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: AlertConfigEntry;
+};
+
+/**
+ * Optional filter for the `alertConfigs` query. When omitted, all accessible
+ * rows are returned.
+ */
+export type AlertConfigsFilter = {
+  /** Filter on the `catalog_prefix_or_name` column. */
+  catalogPrefixOrName?: InputMaybe<PrefixFilter>;
 };
 
 export type AlertConnection = {
@@ -252,6 +320,27 @@ export type AutoDiscoverStatus = {
   pendingPublish?: Maybe<AutoDiscoverOutcome>;
 };
 
+export type AzurePrivateLink = {
+  __typename?: 'AzurePrivateLink';
+  dnsName?: Maybe<Scalars['String']['output']>;
+  location: Scalars['String']['output'];
+  resourceType?: Maybe<Scalars['String']['output']>;
+  serviceName: Scalars['String']['output'];
+};
+
+export type AzurePrivateLinkInput = {
+  dnsName?: InputMaybe<Scalars['String']['input']>;
+  location: Scalars['String']['input'];
+  resourceType?: InputMaybe<Scalars['String']['input']>;
+  serviceName: Scalars['String']['input'];
+};
+
+export type BillingPaymentMethodPayload = {
+  __typename?: 'BillingPaymentMethodPayload';
+  paymentMethods: Array<PaymentMethod>;
+  primaryPaymentMethod?: Maybe<PaymentMethod>;
+};
+
 export type BoolFilter = {
   eq?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -260,14 +349,41 @@ export type BoolFilter = {
 export type Capability =
   | 'admin'
   /** Note that the discriminants here align with those in the database type. */
+  | 'none'
   | 'read'
   | 'write';
+
+export type CapabilityBit =
+  | 'Assume'
+  | 'CatalogRead'
+  | 'CreateGrant'
+  | 'CreateInviteLink'
+  | 'Delegate'
+  | 'DeleteGrant'
+  | 'JournalAppend'
+  | 'JournalRead'
+  | 'ModifyDataPlanePrivateNetworking'
+  | 'SpecEdit'
+  | 'ViewDataPlanePrivateNetworking';
+
+export type CardPaymentMethodDetails = {
+  __typename?: 'CardPaymentMethodDetails';
+  brand?: Maybe<Scalars['String']['output']>;
+  expMonth: Scalars['Int']['output'];
+  expYear: Scalars['Int']['output'];
+  last4?: Maybe<Scalars['String']['output']>;
+};
 
 export type CatalogType =
   | 'capture'
   | 'collection'
   | 'materialization'
   | 'test';
+
+export type ChargeStatus =
+  | 'FAILED'
+  | 'PENDING'
+  | 'SUCCEEDED';
 
 /** Result of checking storage health for a catalog prefix. */
 export type ConnectionHealthTestResult = {
@@ -278,6 +394,114 @@ export type ConnectionHealthTestResult = {
   catalogPrefix: Scalars['Prefix']['output'];
   /** Individual health check results for each data plane and store combination. */
   results: Array<StorageHealthItem>;
+};
+
+/**
+ * A connector from the Estuary connector catalog, identified by its OCI image
+ * name (e.g. "ghcr.io/estuary/source-postgres"). Use `defaultSpec` to get the
+ * configuration schemas for the blessed image tag, or `spec(imageTag)` for a
+ * specific version.
+ */
+export type Connector = {
+  __typename?: 'Connector';
+  /** Timestamp of when the connector was first created */
+  createdAt: Scalars['DateTime']['output'];
+  /**
+   * The blessed image tag for newly created tasks using this connector.
+   * Resolved as the lexicographically highest image tag among tags with
+   * a complete spec, e.g. `:v2` wins over `:v1`, `:v1` wins over `:dev`.
+   */
+  defaultImageTag?: Maybe<Scalars['String']['output']>;
+  /**
+   * The spec for this connector's default (blessed) image tag. This is the
+   * spec that should be used when configuring newly created tasks.
+   */
+  defaultSpec?: Maybe<ConnectorSpec>;
+  /** A string that contains a list of connector details (latency, batch, etc.) */
+  detail?: Maybe<Scalars['String']['output']>;
+  /** Link to an external site with more information about the endpoint */
+  externalUrl: Scalars['String']['output'];
+  /** Unique id of the connector */
+  id: Scalars['Id']['output'];
+  /** Name of the connector's OCI (Docker) container image, for example "ghcr.io/estuary/source-postgres" */
+  imageName: Scalars['String']['output'];
+  /** The connector's logo image, represented as a URL per locale */
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  /** The protocol of this connector (capture or materialization). */
+  protocol?: Maybe<ConnectorProto>;
+  /** Whether this connector should appear in a promoted position in connector listings */
+  recommended: Scalars['Boolean']['output'];
+  /** Look up the spec for a specific image tag of this connector. */
+  spec?: Maybe<ConnectorSpec>;
+  /** The title, a few words at most */
+  title?: Maybe<Scalars['String']['output']>;
+};
+
+
+/**
+ * A connector from the Estuary connector catalog, identified by its OCI image
+ * name (e.g. "ghcr.io/estuary/source-postgres"). Use `defaultSpec` to get the
+ * configuration schemas for the blessed image tag, or `spec(imageTag)` for a
+ * specific version.
+ */
+export type ConnectorSpecArgs = {
+  imageTag: Scalars['String']['input'];
+};
+
+export type ConnectorConnection = {
+  __typename?: 'ConnectorConnection';
+  /** A list of edges. */
+  edges: Array<ConnectorEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type ConnectorEdge = {
+  __typename?: 'ConnectorEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: Connector;
+};
+
+/**
+ * The type of task that the connector is used for. Derivation connectors
+ * exist but are not yet represented in this API.
+ */
+export type ConnectorProto =
+  | 'capture'
+  | 'materialization';
+
+/**
+ * The resolved specification for a connector at a particular image tag.
+ * Includes the JSON schemas needed to configure the connector's endpoint
+ * and resources.
+ */
+export type ConnectorSpec = {
+  __typename?: 'ConnectorSpec';
+  /** The default interval between invocations of a capture using this connector. Formatted as HH:MM:SS. Only applicable to non-streaming (polling) capture connectors. */
+  defaultCaptureInterval?: Maybe<Scalars['String']['output']>;
+  /** Whether backfill should be disabled for this connector */
+  disableBackfill: Scalars['Boolean']['output'];
+  /** URL pointing to the documentation page for this connector */
+  documentationUrl?: Maybe<Scalars['String']['output']>;
+  /** Endpoint configuration JSON Schema. Returned as raw JSON because JSON Schema is a recursive format that cannot be meaningfully decomposed into GraphQL fields. */
+  endpointSpecSchema?: Maybe<Scalars['JSON']['output']>;
+  /**
+   * The database ID of the connector_tags row backing this spec.
+   * @deprecated Not intended to be part of the public API. To be removed once downstream components no longer depend on this field.
+   */
+  id: Scalars['Id']['output'];
+  /**
+   * The OCI Image tag this spec was resolved from, including the leading `:`. For example `:v1`.
+   * This may differ from the requested tag if the request fell back to the default.
+   */
+  imageTag: Scalars['String']['output'];
+  /** The protocol of the connector (capture or materialization) */
+  protocol?: Maybe<ConnectorProto>;
+  /** Resource configuration JSON Schema. Returned as raw JSON because JSON Schema is a recursive format that cannot be meaningfully decomposed into GraphQL fields. */
+  resourceSpecSchema?: Maybe<Scalars['JSON']['output']>;
 };
 
 /** The shape of a connector status, which matches that of an ops::Log. */
@@ -294,6 +518,14 @@ export type ConnectorStatus = {
   shard: ShardRef;
   /** The time at which the status was last updated */
   ts: Scalars['DateTime']['output'];
+};
+
+/** Filters for the paginated `connectors` query. */
+export type ConnectorsFilter = {
+  /** Filter by connector protocol. Only connectors with at least one version matching this protocol will be returned. */
+  protocol?: InputMaybe<ProtocolFilter>;
+  /** Filter by whether the connector is recommended. */
+  recommended?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 /** Status info related to the controller */
@@ -323,6 +555,11 @@ export type Controller = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type CreateBillingSetupIntentPayload = {
+  __typename?: 'CreateBillingSetupIntentPayload';
+  clientSecret: Scalars['String']['output'];
+};
+
 /** Result of creating a storage mapping. */
 export type CreateStorageMappingResult = {
   __typename?: 'CreateStorageMappingResult';
@@ -335,22 +572,46 @@ export type DataPlane = {
   __typename?: 'DataPlane';
   /** AWS IAM user ARN for this data-plane. */
   awsIamUserArn?: Maybe<Scalars['String']['output']>;
+  /**
+   * AWS PrivateLink endpoint provisioning results, opaque JSON exported by
+   * the data-plane controller. Empty when no AWS endpoints are provisioned,
+   * or when the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  awsLinkEndpoints: Array<Scalars['JSON']['output']>;
   /** Azure application client ID for this data-plane. */
   azureApplicationClientId?: Maybe<Scalars['String']['output']>;
   /** Azure application name for this data-plane. */
   azureApplicationName?: Maybe<Scalars['String']['output']>;
+  /**
+   * Azure Private Link endpoint provisioning results, opaque JSON. Empty when
+   * the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  azureLinkEndpoints: Array<Scalars['JSON']['output']>;
   /** CIDR blocks for this data-plane. */
   cidrBlocks: Array<Scalars['String']['output']>;
   /** Cloud provider where this data-plane is hosted. */
   cloudProvider: DataPlaneCloudProvider;
   /** Fully-qualified domain name of this data-plane. */
   fqdn: Scalars['String']['output'];
+  /**
+   * GCP Private Service Connect endpoint provisioning results, opaque JSON.
+   * Empty when the caller lacks `ViewDataPlanePrivateNetworking`.
+   */
+  gcpPscEndpoints: Array<Scalars['JSON']['output']>;
   /** GCP service account email for this data-plane. */
   gcpServiceAccountEmail?: Maybe<Scalars['String']['output']>;
   /** Whether this is a public data-plane. */
   isPublic: Scalars['Boolean']['output'];
   /** Name of this data-plane under the catalog namespace. */
   name: Scalars['String']['output'];
+  /**
+   * Configured private link endpoints for this data-plane. Replacing this
+   * list (via `updateDataPlanePrivateLinks`) triggers reconvergence by the
+   * data-plane controller on its next poll. Returns an empty list to
+   * callers that lack the `ViewDataPlanePrivateNetworking` capability on
+   * this data plane.
+   */
+  privateLinks: Array<PrivateLink>;
   /** Address of reactors within the data-plane. */
   reactorAddress: Scalars['String']['output'];
   /**
@@ -388,6 +649,11 @@ export type DataPlaneEdge = {
   node: DataPlane;
 };
 
+export type DateFilter = {
+  gt?: InputMaybe<Scalars['NaiveDate']['input']>;
+  lt?: InputMaybe<Scalars['NaiveDate']['input']>;
+};
+
 /** A capture binding that has changed as a result of a discover */
 export type DiscoverChange = {
   __typename?: 'DiscoverChange';
@@ -399,12 +665,41 @@ export type DiscoverChange = {
   target: Scalars['Collection']['output'];
 };
 
+export type EffectiveAlertConfig = {
+  __typename?: 'EffectiveAlertConfig';
+  config: Scalars['JSON']['output'];
+  provenance: Array<FieldProvenance>;
+};
+
 /** A generic error that can be associated with a particular draft spec for a given operation. */
 export type Error = {
   __typename?: 'Error';
   catalogName: Scalars['String']['output'];
   detail: Scalars['String']['output'];
   scope?: Maybe<Scalars['String']['output']>;
+};
+
+export type FieldProvenance = {
+  __typename?: 'FieldProvenance';
+  path: Scalars['String']['output'];
+  source?: Maybe<Scalars['String']['output']>;
+};
+
+export type GcpPrivateServiceConnect = {
+  __typename?: 'GCPPrivateServiceConnect';
+  allPorts: Scalars['Boolean']['output'];
+  dnsRecordNames: Array<Scalars['String']['output']>;
+  dnsZoneName: Scalars['String']['output'];
+  region: Scalars['String']['output'];
+  serviceAttachment: Scalars['String']['output'];
+};
+
+export type GcpPrivateServiceConnectInput = {
+  allPorts?: Scalars['Boolean']['input'];
+  dnsRecordNames: Array<Scalars['String']['input']>;
+  dnsZoneName: Scalars['String']['input'];
+  region: Scalars['String']['input'];
+  serviceAttachment: Scalars['String']['input'];
 };
 
 /** Status of the inferred schema */
@@ -483,6 +778,63 @@ export type InviteLinksFilter = {
   singleUse?: InputMaybe<BoolFilter>;
 };
 
+export type Invoice = {
+  __typename?: 'Invoice';
+  amountDue?: Maybe<Scalars['Int']['output']>;
+  dateEnd: Scalars['String']['output'];
+  dateStart: Scalars['String']['output'];
+  extra: Scalars['JSON']['output'];
+  hostedInvoiceUrl?: Maybe<Scalars['String']['output']>;
+  invoicePdf?: Maybe<Scalars['String']['output']>;
+  invoiceType: InvoiceType;
+  lineItems: Scalars['JSON']['output'];
+  paymentDetails?: Maybe<InvoicePaymentDetails>;
+  status?: Maybe<Scalars['String']['output']>;
+  subtotal: Scalars['Int']['output'];
+};
+
+export type InvoiceConnection = {
+  __typename?: 'InvoiceConnection';
+  /** A list of edges. */
+  edges: Array<InvoiceEdge>;
+  /** A list of nodes. */
+  nodes: Array<Invoice>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type InvoiceEdge = {
+  __typename?: 'InvoiceEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: Invoice;
+};
+
+export type InvoiceFilter = {
+  dateEnd?: InputMaybe<DateFilter>;
+  dateStart?: InputMaybe<DateFilter>;
+  invoiceType?: InputMaybe<InvoiceTypeFilter>;
+};
+
+export type InvoicePaymentDetails = {
+  __typename?: 'InvoicePaymentDetails';
+  card?: Maybe<CardPaymentMethodDetails>;
+  receiptUrl?: Maybe<Scalars['String']['output']>;
+  status: ChargeStatus;
+  usBankAccount?: Maybe<UsBankAccountPaymentMethodDetails>;
+};
+
+export type InvoiceType =
+  | 'FINAL'
+  | 'MANUAL'
+  | 'PREVIEW';
+
+export type InvoiceTypeFilter = {
+  eq?: InputMaybe<InvoiceType>;
+};
+
 /** The status of a publication. */
 export type JobStatus = {
   __typename?: 'JobStatus';
@@ -497,6 +849,11 @@ export type LiveSpec = {
   catalogType: CatalogType;
   createdAt: Scalars['DateTime']['output'];
   dataPlaneId: Scalars['Id']['output'];
+  /**
+   * The fully-resolved effective alert config for this task, merging all
+   * ancestor prefix layers and controller defaults.
+   */
+  effectiveAlertConfig: EffectiveAlertConfig;
   isDisabled: Scalars['Boolean']['output'];
   lastBuildId: Scalars['Id']['output'];
   lastPubId: Scalars['Id']['output'];
@@ -664,6 +1021,7 @@ export type MutationRoot = {
    * an existing subscription for the same prefix and email address.
    */
   createAlertSubscription: AlertSubscription;
+  createBillingSetupIntent: CreateBillingSetupIntentPayload;
   /**
    * Create an invite link that grants access to a catalog prefix.
    *
@@ -671,6 +1029,8 @@ export type MutationRoot = {
    * Share the returned token with the intended recipient out-of-band.
    */
   createInviteLink: InviteLink;
+  /** Create a refresh token for the authenticated user. */
+  createRefreshToken: RefreshTokenResult;
   /**
    * Create a storage mapping for the given catalog prefix.
    *
@@ -683,6 +1043,7 @@ export type MutationRoot = {
   createStorageMapping: CreateStorageMappingResult;
   /** Delete an alert subscription that exactly matches the given prefix and email. */
   deleteAlertSubscription: AlertSubscription;
+  deleteBillingPaymentMethod: BillingPaymentMethodPayload;
   /**
    * Delete an invite link, revoking it so it can no longer be redeemed.
    *
@@ -695,6 +1056,15 @@ export type MutationRoot = {
    */
   redeemInviteLink: RedeemInviteLinkResult;
   /**
+   * Revoke a refresh token owned by the authenticated user.
+   *
+   * Rather than deleting the row, we zero its `valid_for` interval, which
+   * marks the token as expired/invalid while preserving the audit trail.
+   * Already-zeroed (revoked) tokens are treated as not found.
+   */
+  revokeRefreshToken: Scalars['Boolean']['output'];
+  setBillingPaymentMethod: BillingPaymentMethodPayload;
+  /**
    * Check storage health for a given catalog prefix and storage definition.
    *
    * This validates the inputs, verifies that the user has admin access to the catalog prefix,
@@ -705,10 +1075,39 @@ export type MutationRoot = {
    */
   testConnectionHealth: ConnectionHealthTestResult;
   /**
+   * Creates or replaces the alert config at `catalogPrefixOrName`.
+   *
+   * `catalogPrefixOrName` is either a catalog prefix ending in `/`
+   * (applies to all tasks under that prefix) or an exact catalog name
+   * with no trailing slash (applies to that single task). Exact catalog
+   * names must refer to a task that currently exists in `live_specs`;
+   * prefixes have no such constraint.
+   *
+   * To clear all configured overrides while keeping the row, pass an empty
+   * `{}` config.
+   *
+   * If `detail` is omitted or `null` on update, the existing `detail`
+   * value is preserved.
+   */
+  updateAlertConfig: UpdateAlertConfigResult;
+  /**
    * Updates the alert subscription for the given prefix and email, returning
    * the updated subscription.
    */
   updateAlertSubscription: AlertSubscription;
+  /**
+   * Replaces the configured private link endpoints on a private data plane.
+   *
+   * The provided list overwrites the entire `private_links` column; partial
+   * updates are intentionally not supported. The data-plane controller
+   * converges to the new configuration on its next poll. Returns the desired
+   * private links state. The `*LinkEndpoints` provisioning results are not echoed here:
+   * they lag this write until the controller converges, so callers needing them re-query `dataPlanes`.
+   *
+   * Requires the `ModifyDataPlanePrivateNetworking` capability on the
+   * private data-plane name.
+   */
+  updateDataPlanePrivateLinks: Array<PrivateLink>;
   /**
    * Update an existing storage mapping for the given catalog prefix.
    *
@@ -732,11 +1131,23 @@ export type MutationRootCreateAlertSubscriptionArgs = {
 };
 
 
+export type MutationRootCreateBillingSetupIntentArgs = {
+  tenant: Scalars['String']['input'];
+};
+
+
 export type MutationRootCreateInviteLinkArgs = {
   capability: Capability;
   catalogPrefix: Scalars['Prefix']['input'];
   detail?: InputMaybe<Scalars['String']['input']>;
   singleUse?: Scalars['Boolean']['input'];
+};
+
+
+export type MutationRootCreateRefreshTokenArgs = {
+  detail?: InputMaybe<Scalars['String']['input']>;
+  multiUse?: Scalars['Boolean']['input'];
+  validFor?: Scalars['String']['input'];
 };
 
 
@@ -753,6 +1164,12 @@ export type MutationRootDeleteAlertSubscriptionArgs = {
 };
 
 
+export type MutationRootDeleteBillingPaymentMethodArgs = {
+  paymentMethodId: Scalars['String']['input'];
+  tenant: Scalars['String']['input'];
+};
+
+
 export type MutationRootDeleteInviteLinkArgs = {
   token: Scalars['UUID']['input'];
 };
@@ -763,9 +1180,27 @@ export type MutationRootRedeemInviteLinkArgs = {
 };
 
 
+export type MutationRootRevokeRefreshTokenArgs = {
+  id: Scalars['Id']['input'];
+};
+
+
+export type MutationRootSetBillingPaymentMethodArgs = {
+  paymentMethodId: Scalars['String']['input'];
+  tenant: Scalars['String']['input'];
+};
+
+
 export type MutationRootTestConnectionHealthArgs = {
   catalogPrefix: Scalars['Prefix']['input'];
   spec: Scalars['JSON']['input'];
+};
+
+
+export type MutationRootUpdateAlertConfigArgs = {
+  catalogPrefixOrName: Scalars['String']['input'];
+  config: Scalars['JSON']['input'];
+  detail?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -774,6 +1209,12 @@ export type MutationRootUpdateAlertSubscriptionArgs = {
   detail?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootUpdateDataPlanePrivateLinksArgs = {
+  dataPlaneName: Scalars['String']['input'];
+  privateLinks: Array<PrivateLinkInput>;
 };
 
 
@@ -796,6 +1237,20 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']['output']>;
 };
 
+export type PaymentMethod = {
+  __typename?: 'PaymentMethod';
+  billingDetails: PaymentMethodBillingDetails;
+  card?: Maybe<CardPaymentMethodDetails>;
+  id: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  usBankAccount?: Maybe<UsBankAccountPaymentMethodDetails>;
+};
+
+export type PaymentMethodBillingDetails = {
+  __typename?: 'PaymentMethodBillingDetails';
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 /**
  * Information on the config updates performed by the controller.
  * This does not include any information on user-initiated config updates.
@@ -814,9 +1269,21 @@ export type PrefixFilter = {
 /** A prefix to which the user is authorized. */
 export type PrefixRef = {
   __typename?: 'PrefixRef';
+  /** Fine-grained capabilities the user has at this prefix. */
+  capabilities: Array<CapabilityBit>;
   /** The prefix to which the user is authorized. */
   prefix: Scalars['Prefix']['output'];
-  /** The capability granted to the user for this prefix. */
+  /**
+   * The literal legacy `capability` column value of the grant(s) that
+   * emitted this prefix (max'd if multiple grants land at the same
+   * prefix). Reports `none` for prefixes whose authorization comes
+   * entirely from the `bundles` column rather than the legacy column.
+   *
+   * Exists solely so the dashboard's read/write/admin prefix-bucket
+   * store keeps working until it migrates to consuming `capabilities`
+   * directly. Once that migration lands, this field and its derivation
+   * can be deleted.
+   */
   userCapability: Capability;
 };
 
@@ -840,6 +1307,28 @@ export type PrefixRefEdge = {
 export type PrefixesBy = {
   /** Filter returned prefixes by user capability. */
   minCapability: Capability;
+};
+
+/**
+ * Private link configuration for a customer-owned data plane: AWS
+ * PrivateLink, Azure Private Link, or GCP Private Service Connect.
+ */
+export type PrivateLink = AwsPrivateLink | AzurePrivateLink | GcpPrivateServiceConnect;
+
+/**
+ * Private link configuration for a customer-owned data plane: AWS
+ * PrivateLink, Azure Private Link, or GCP Private Service Connect.
+ */
+export type PrivateLinkInput = {
+  aws?: InputMaybe<AwsPrivateLinkInput>;
+  azure?: InputMaybe<AzurePrivateLinkInput>;
+  gcp?: InputMaybe<GcpPrivateServiceConnectInput>;
+};
+
+/** Filter connectors by their protocol (capture or materialization). */
+export type ProtocolFilter = {
+  /** Match connectors that have at least one version with this protocol. */
+  eq: ConnectorProto;
 };
 
 /** Summary of a publication that was attempted by a controller. */
@@ -904,6 +1393,15 @@ export type PublicationStatus = {
 
 export type QueryRoot = {
   __typename?: 'QueryRoot';
+  /**
+   * Lists alert-config rows visible to the caller.
+   *
+   * Results are limited to readable prefixes and sorted by
+   * `catalog_prefix_or_name`. `filter.catalogPrefixOrName.startsWith` can
+   * narrow the results further. Passing a full catalog name returns at
+   * most one exact-name row.
+   */
+  alertConfigs: AlertConfigEntryConnection;
   /** Returns a complete list of alert subscriptions. */
   alertSubscriptions: Array<AlertSubscription>;
   /** Returns all possible alert types with their user-facing metadata. */
@@ -913,6 +1411,21 @@ export type QueryRoot = {
    * prefixes.
    */
   alerts: AlertConnection;
+  /**
+   * Returns information about a single connector. At least one parameter
+   * must be provided. If both are provided, the connector must match both
+   * the image name and id in order to be returned.
+   */
+  connector?: Maybe<Connector>;
+  /**
+   * Resolve the spec for a full OCI image name (e.g.
+   * "ghcr.io/estuary/source-postgres:v1"). If the requested tag is not
+   * available, falls back to the default tag. Check the returned `imageTag`
+   * field to see which tag was actually resolved.
+   */
+  connectorSpec?: Maybe<ConnectorSpec>;
+  /** Returns a paginated list of connectors, optionally filtered by protocol. */
+  connectors: ConnectorConnection;
   /**
    * Returns data planes accessible to the current user.
    *
@@ -939,6 +1452,8 @@ export type QueryRoot = {
    */
   liveSpecs: LiveSpecRefConnection;
   prefixes: PrefixRefConnection;
+  /** List refresh tokens owned by the authenticated user. */
+  refreshTokens: RefreshTokenInfoConnection;
   /**
    * Returns storage mappings accessible to the current user.
    *
@@ -946,6 +1461,14 @@ export type QueryRoot = {
    * Results are paginated and sorted by catalog_prefix.
    */
   storageMappings: StorageMappingConnection;
+  tenant?: Maybe<Tenant>;
+};
+
+
+export type QueryRootAlertConfigsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AlertConfigsFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -958,6 +1481,26 @@ export type QueryRootAlertsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   by: AlertsBy;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootConnectorArgs = {
+  id?: InputMaybe<Scalars['Id']['input']>;
+  imageName?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryRootConnectorSpecArgs = {
+  fullImageName: Scalars['String']['input'];
+};
+
+
+export type QueryRootConnectorsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<ConnectorsFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -994,12 +1537,23 @@ export type QueryRootPrefixesArgs = {
 };
 
 
+export type QueryRootRefreshTokensArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryRootStorageMappingsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   by: StorageMappingsBy;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootTenantArgs = {
+  name: Scalars['String']['input'];
 };
 
 /** Result of redeeming an invite link. */
@@ -1009,6 +1563,44 @@ export type RedeemInviteLinkResult = {
   capability: Capability;
   /** The catalog prefix that was granted. */
   catalogPrefix: Scalars['Prefix']['output'];
+};
+
+export type RefreshTokenInfo = {
+  __typename?: 'RefreshTokenInfo';
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  /**
+   * True once the token's validity window has elapsed
+   * (now is past `updated_at + valid_for`).
+   */
+  expired: Scalars['Boolean']['output'];
+  id: Scalars['Id']['output'];
+  multiUse: Scalars['Boolean']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  uses: Scalars['Int']['output'];
+};
+
+export type RefreshTokenInfoConnection = {
+  __typename?: 'RefreshTokenInfoConnection';
+  /** A list of edges. */
+  edges: Array<RefreshTokenInfoEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type RefreshTokenInfoEdge = {
+  __typename?: 'RefreshTokenInfoEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: RefreshTokenInfo;
+};
+
+export type RefreshTokenResult = {
+  __typename?: 'RefreshTokenResult';
+  id: Scalars['Id']['output'];
+  secret: Scalars['String']['output'];
 };
 
 export type RepublishRequested = {
@@ -1284,6 +1876,36 @@ export type StorageMappingsBy = {
   underPrefix?: InputMaybe<Scalars['Prefix']['input']>;
 };
 
+export type Tenant = {
+  __typename?: 'Tenant';
+  billing: TenantBilling;
+  name: Scalars['String']['output'];
+};
+
+export type TenantBilling = {
+  __typename?: 'TenantBilling';
+  invoices: InvoiceConnection;
+  paymentMethods: Array<PaymentMethod>;
+  primaryPaymentMethod?: Maybe<PaymentMethod>;
+};
+
+
+export type TenantBillingInvoicesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<InvoiceFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+/** Result of the `updateAlertConfig` mutation. */
+export type UpdateAlertConfigResult = {
+  __typename?: 'UpdateAlertConfigResult';
+  catalogPrefixOrName: Scalars['String']['output'];
+  created: Scalars['Boolean']['output'];
+  id: Scalars['Id']['output'];
+};
+
 /** Result of updating a storage mapping. */
 export type UpdateStorageMappingResult = {
   __typename?: 'UpdateStorageMappingResult';
@@ -1291,6 +1913,13 @@ export type UpdateStorageMappingResult = {
   catalogPrefix: Scalars['Prefix']['output'];
   /** Whether a republish is required because the primary storage bucket changed. */
   republish: Scalars['Boolean']['output'];
+};
+
+export type UsBankAccountPaymentMethodDetails = {
+  __typename?: 'UsBankAccountPaymentMethodDetails';
+  accountHolderType?: Maybe<Scalars['String']['output']>;
+  bankName?: Maybe<Scalars['String']['output']>;
+  last4?: Maybe<Scalars['String']['output']>;
 };
 
 export type CreateAlertSubscriptionMutationMutationVariables = Exact<{
@@ -1332,6 +1961,22 @@ export type AlertTypeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type AlertTypeQuery = { __typename?: 'QueryRoot', alertTypes: Array<{ __typename?: 'AlertTypeInfo', alertType: AlertType, description: string, displayName: string, isDefault: boolean, isSystem: boolean }> };
+
+export type ConnectorsGridQueryVariables = Exact<{
+  filter?: InputMaybe<ConnectorsFilter>;
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type ConnectorsGridQuery = { __typename?: 'QueryRoot', connectors: { __typename?: 'ConnectorConnection', edges: Array<{ __typename?: 'ConnectorEdge', cursor: string, node: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null, recommended: boolean, detail?: string | null, defaultSpec?: { __typename?: 'ConnectorSpec', id: any, imageTag: string, documentationUrl?: string | null, protocol?: ConnectorProto | null } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+
+export type ConnectorTagDataQueryVariables = Exact<{
+  imageName: Scalars['String']['input'];
+  fullImageName: Scalars['String']['input'];
+}>;
+
+
+export type ConnectorTagDataQuery = { __typename?: 'QueryRoot', connector?: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null } | null, connectorSpec?: { __typename?: 'ConnectorSpec', id: any, imageTag: string, defaultCaptureInterval?: string | null, disableBackfill: boolean, documentationUrl?: string | null, endpointSpecSchema?: any | null, resourceSpecSchema?: any | null, protocol?: ConnectorProto | null } | null };
 
 export type DataPlanesQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;
@@ -1379,6 +2024,30 @@ export type LiveSpecsQueryQueryVariables = Exact<{
 
 
 export type LiveSpecsQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', cursor: string, node: { __typename?: 'LiveSpecRef', catalogName: any, liveSpec?: { __typename?: 'LiveSpec', catalogType: CatalogType } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+
+export type RefreshTokensQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type RefreshTokensQuery = { __typename?: 'QueryRoot', refreshTokens: { __typename?: 'RefreshTokenInfoConnection', edges: Array<{ __typename?: 'RefreshTokenInfoEdge', cursor: string, node: { __typename?: 'RefreshTokenInfo', id: any, detail?: string | null, createdAt: any, uses: number, expired: boolean } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+
+export type CreateRefreshTokenMutationVariables = Exact<{
+  detail?: InputMaybe<Scalars['String']['input']>;
+  multiUse: Scalars['Boolean']['input'];
+  validFor: Scalars['String']['input'];
+}>;
+
+
+export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: any, secret: string } };
+
+export type RevokeRefreshTokenMutationVariables = Exact<{
+  id: Scalars['Id']['input'];
+}>;
+
+
+export type RevokeRefreshTokenMutation = { __typename?: 'MutationRoot', revokeRefreshToken: boolean };
 
 export type CreateStorageMappingMutationVariables = Exact<{
   catalogPrefix: Scalars['Prefix']['input'];
@@ -1459,12 +2128,17 @@ export const DeleteAlertSubscriptionMutationDocument = {"kind":"Document","defin
 export const AlertSubscriptionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertSubscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertSubscriptions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertTypes"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<AlertSubscriptionsQuery, AlertSubscriptionsQueryVariables>;
 export const UpdateAlertSubscriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAlertSubscriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AlertType"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAlertSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"alertTypes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<UpdateAlertSubscriptionMutationMutation, UpdateAlertSubscriptionMutationMutationVariables>;
 export const AlertTypeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}}]}}]}}]} as unknown as DocumentNode<AlertTypeQuery, AlertTypeQueryVariables>;
+export const ConnectorsGridDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorsGrid"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ConnectorsFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connectors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"500"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"recommended"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"defaultSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<ConnectorsGridQuery, ConnectorsGridQueryVariables>;
+export const ConnectorTagDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorTagData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fullImageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connector"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"imageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"connectorSpec"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fullImageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fullImageName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"defaultCaptureInterval"}},{"kind":"Field","name":{"kind":"Name","value":"disableBackfill"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"endpointSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"resourceSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]} as unknown as DocumentNode<ConnectorTagDataQuery, ConnectorTagDataQueryVariables>;
 export const DataPlanesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DataPlanes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dataPlanes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"cloudProvider"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"fqdn"}},{"kind":"Field","name":{"kind":"Name","value":"cidrBlocks"}},{"kind":"Field","name":{"kind":"Name","value":"awsIamUserArn"}},{"kind":"Field","name":{"kind":"Name","value":"gcpServiceAccountEmail"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationClientId"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationName"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<DataPlanesQuery, DataPlanesQueryVariables>;
 export const InviteLinksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"InviteLinks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"inviteLinks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"ssoProviderId"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<InviteLinksQuery, InviteLinksQueryVariables>;
 export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"capability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Capability"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"capability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"capability"}}},{"kind":"Argument","name":{"kind":"Name","value":"singleUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateInviteLinkMutation, CreateInviteLinkMutationVariables>;
 export const DeleteInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<DeleteInviteLinkMutation, DeleteInviteLinkMutationVariables>;
 export const RedeemInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RedeemInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"redeemInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<RedeemInviteLinkMutation, RedeemInviteLinkMutationVariables>;
 export const LiveSpecsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LiveSpecsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"liveSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogType"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<LiveSpecsQueryQuery, LiveSpecsQueryQueryVariables>;
+export const RefreshTokensDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RefreshTokens"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshTokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"uses"}},{"kind":"Field","name":{"kind":"Name","value":"expired"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<RefreshTokensQuery, RefreshTokensQueryVariables>;
+export const CreateRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"multiUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}},{"kind":"Argument","name":{"kind":"Name","value":"multiUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"multiUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"validFor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"validFor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]}}]} as unknown as DocumentNode<CreateRefreshTokenMutation, CreateRefreshTokenMutationVariables>;
+export const RevokeRefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RevokeRefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Id"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeRefreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<RevokeRefreshTokenMutation, RevokeRefreshTokenMutationVariables>;
 export const CreateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<CreateStorageMappingMutation, CreateStorageMappingMutationVariables>;
 export const UpdateStorageMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateStorageMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateStorageMapping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"republish"}}]}}]}}]} as unknown as DocumentNode<UpdateStorageMappingMutation, UpdateStorageMappingMutationVariables>;
 export const TestConnectionHealthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestConnectionHealth"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"spec"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testConnectionHealth"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"spec"},"value":{"kind":"Variable","name":{"kind":"Name","value":"spec"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"results"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fragmentStore"}},{"kind":"Field","name":{"kind":"Name","value":"dataPlaneName"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]}}]} as unknown as DocumentNode<TestConnectionHealthMutation, TestConnectionHealthMutationVariables>;

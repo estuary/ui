@@ -9,7 +9,7 @@ interface Props {
 
 function DemoStep({ step }: Props) {
     return (
-        <Grid item xs={4}>
+        <Grid size={{ xs: 4 }}>
             <HeroBaseStep stepNumber={step} title={`home.hero.${step}.title`}>
                 <Box
                     sx={{

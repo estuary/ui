@@ -1,5 +1,7 @@
 import type { BaseComponentProps } from 'src/types';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { FormattedMessage } from 'react-intl';
 import { useMount } from 'react-use';
 
@@ -15,10 +17,9 @@ export const EntitiesHydratorForSupport = ({
     useHydrateStateWithGql();
 
     // The rest of the stuff we need to handle hydration
-    const [hydrated, hydrationErrors] = useEntitiesStore((state) => [
-        state.hydrated,
-        state.hydrationErrors,
-    ]);
+    const [hydrated, hydrationErrors] = useEntitiesStore(
+        useShallow((state) => [state.hydrated, state.hydrationErrors])
+    );
 
     useMount(() => {
         logRocketEvent('authroles', {

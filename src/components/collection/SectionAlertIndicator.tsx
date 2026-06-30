@@ -19,9 +19,9 @@ export default function SectionAlertIndicator() {
     const theme = useTheme();
 
     // Binding Store
-    const [collectionsError] = useWorkflowStore((state) => {
-        return [state.collectionsError];
-    });
+    const collectionsError = useWorkflowStore(
+        (state) => state.collectionsError
+    );
     const bindingHydrationErrorsExist = useBinding_hydrationErrorsExist();
     const resourceConfigErrorsExist = useBinding_resourceConfigErrorsExist();
     const bindingErrorsExist = useBinding_bindingErrorsExist();
@@ -59,7 +59,7 @@ export default function SectionAlertIndicator() {
                 />
             ) : null}
 
-            <Typography variant="subtitle1">
+            <Typography component="span" variant="subtitle1">
                 {intl.formatMessage({
                     id: `${messagePrefix}.collections.heading`,
                 })}

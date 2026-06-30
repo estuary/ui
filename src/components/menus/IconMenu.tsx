@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 
 import React from 'react';
 
-import { Box, IconButton, Menu, Tooltip } from '@mui/material';
+import { avatarClasses, Box, IconButton, Menu, Tooltip } from '@mui/material';
 
 import {
     defaultOutline,
@@ -141,22 +141,20 @@ const IconMenu = ({
                 PaperProps={{
                     sx: {
                         ...arrowSx,
-                        '& .MuiAvatar-root': {
+                        [`& .${avatarClasses.root}`]: {
                             height: 32,
                             ml: -0.5,
                             mr: 1,
                             width: 32,
                         },
-                        'filter':
-                            'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
-                        'mt': 1.5,
-                        'overflow': 'visible',
-                        'bgcolor': (theme) =>
-                            paperBackground[theme.palette.mode],
-                        'backgroundImage': (theme) =>
+                        filter: 'rgb(50 50 93 / 2%) 0px 2px 5px -1px, rgb(0 0 0 / 5%) 0px 1px 3px -1px',
+                        mt: 1.5,
+                        overflow: 'visible',
+                        bgcolor: (theme) => paperBackground[theme.palette.mode],
+                        backgroundImage: (theme) =>
                             paperBackgroundImage[theme.palette.mode],
-                        'border': (theme) => defaultOutline[theme.palette.mode],
-                        'borderRadius': 3,
+                        border: (theme) => defaultOutline[theme.palette.mode],
+                        borderRadius: 3,
                     },
                 }}
             >

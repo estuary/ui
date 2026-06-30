@@ -11,7 +11,7 @@ interface Props {
 
 function DetailStep({ step, title }: Props) {
     return (
-        <Grid item xs={4}>
+        <Grid size={{ xs: 4 }}>
             <HeroStep stepNumber={step} title={title}>
                 <FormattedMessage id={`home.hero.companyDetails.step${step}`} />
             </HeroStep>

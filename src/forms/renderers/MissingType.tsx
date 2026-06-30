@@ -1,6 +1,6 @@
 import type { LayoutProps, RankedTester } from '@jsonforms/core';
 
-import { Alert, Hidden } from '@mui/material';
+import { Alert } from '@mui/material';
 
 import { rankWith, uiTypeIs } from '@jsonforms/core';
 import { withJsonFormsLayoutProps } from '@jsonforms/react';
@@ -33,15 +33,17 @@ const MissingTypeRenderer = (props: LayoutProps) => {
         return null;
     }
 
+    if (!visible) {
+        return null;
+    }
+
     return (
-        <Hidden xsUp={!visible}>
-            <Alert severity="error">
-                <span>Error: Invalid field definition at</span>
-                <code>
-                    {path}: {schemaOptions?.ref}
-                </code>
-            </Alert>
-        </Hidden>
+        <Alert severity="error">
+            <span>Error: Invalid field definition at</span>
+            <code>
+                {path}: {schemaOptions?.ref}
+            </code>
+        </Alert>
     );
 };
 

@@ -14,18 +14,6 @@ import { hasLength } from 'src/utils/misc-utils';
 
 export const CLICK_TO_ACCEPT_LATEST_VERSION = 'v3';
 
-export const jobCompleted = (
-    appliedDirective?: AppliedDirective<UserClaims>
-) => {
-    return appliedDirective?.job_status.type === 'success';
-};
-
-export const claimSubmitted = (
-    appliedDirective?: AppliedDirective<UserClaims>
-) => {
-    return appliedDirective?.user_claims !== null;
-};
-
 export const jobStatusQuery = (data: JobStatusQueryData) => {
     return supabaseClient
         .from(TABLES.APPLIED_DIRECTIVES)

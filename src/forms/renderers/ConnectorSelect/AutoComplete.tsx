@@ -118,11 +118,12 @@ export const ConnectorAutoComplete = (
                 />
             )}
             renderOption={(renderOptionProps, option) => {
+                const { key, ...restRenderOptionProps } = renderOptionProps;
                 return (
                     <ConnectorOption
-                        renderOptionProps={renderOptionProps}
+                        renderOptionProps={restRenderOptionProps}
                         option={option}
-                        key={option.label}
+                        key={key}
                     />
                 );
             }}

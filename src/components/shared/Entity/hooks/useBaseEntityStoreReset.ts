@@ -8,6 +8,7 @@ import { useEndpointConfigStore_reset } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_resetState } from 'src/stores/FormState/hooks';
 import { useSchemaEvolution_resetState } from 'src/stores/SchemaEvolution/hooks';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
+import { useTargetNaming_resetState } from 'src/stores/TargetNaming/hooks';
 import { useTransformationCreate_resetState } from 'src/stores/TransformationCreate/hooks';
 
 //  !!!!!!!!!!!!!!!!!!!!!!!! DO NOT PUT WORKFLOW STORE IN HERE !!!!!!!!!!!!!!!!!!!!!!!!
@@ -27,6 +28,7 @@ function useBaseEntityStoreReset() {
     const resetSourceCapture = useSourceCaptureStore(
         (state) => state.resetState
     );
+    const resetTargetNaming = useTargetNaming_resetState();
     const resetTransformationCreateState = useTransformationCreate_resetState();
 
     return useCallback(() => {
@@ -38,6 +40,7 @@ function useBaseEntityStoreReset() {
         resetBindingsEditorStore();
         resetSchemaEvolutionState();
         resetSourceCapture();
+        resetTargetNaming();
         resetTransformationCreateState();
     }, [
         resetBindingState,
@@ -48,6 +51,7 @@ function useBaseEntityStoreReset() {
         resetFormState,
         resetSchemaEvolutionState,
         resetSourceCapture,
+        resetTargetNaming,
         resetTransformationCreateState,
     ]);
 }

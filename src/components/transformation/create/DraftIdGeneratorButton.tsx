@@ -2,6 +2,8 @@ import type { DraftIdGeneratorButtonProps } from 'src/components/transformation/
 
 import { useCallback, useMemo, useState } from 'react';
 
+import { Button } from '@mui/material';
+
 import { usePostHog } from '@posthog/react';
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
@@ -9,7 +11,6 @@ import { useIntl } from 'react-intl';
 import { createEntityDraft } from 'src/api/drafts';
 import { createDraftSpec, modifyDraftSpec } from 'src/api/draftSpecs';
 import { useEditorStore_id } from 'src/components/editor/Store/hooks';
-import SafeLoadingButton from 'src/components/SafeLoadingButton';
 import { EVENT_NAME } from 'src/components/transformation/create/shared';
 import {
     useTransformationCreate_catalogName,
@@ -218,9 +219,9 @@ function DraftIdGeneratorButton({
     );
 
     return (
-        <SafeLoadingButton
+        <Button
             variant={buttonVariant ?? 'contained'}
-            loading={urlLoading}
+            loading={Boolean(urlLoading)}
             disabled={!!entityNameError || !!submitButtonError || urlLoading}
             onClick={async () => {
                 const generatedDraftId = await generateDraftId();
@@ -236,7 +237,7 @@ function DraftIdGeneratorButton({
                 : intl.formatMessage({
                       id: 'newTransform.button.cta',
                   })}
-        </SafeLoadingButton>
+        </Button>
     );
 }
 

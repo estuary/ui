@@ -7,7 +7,7 @@ import { useBindingStore } from 'src/stores/Binding/Store';
 
 function useBackfillModeOptions() {
     const intl = useIntl();
-    const [backfillMode] = useBindingStore((state) => [state.backfillMode]);
+    const backfillMode = useBindingStore((state) => state.backfillMode);
 
     const isOptionEqualToValue = (
         option: BaseAutoCompleteOption<BackfillMode>

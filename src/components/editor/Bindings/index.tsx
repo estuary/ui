@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 
 import { Stack, Typography, useTheme } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import AutoDiscoverySettings from 'src/components/capture/AutoDiscoverySettings';
 import CaptureInterval from 'src/components/capture/Interval';
@@ -16,6 +16,7 @@ import { createEditorStore } from 'src/components/editor/Store/create';
 import AdvancedOptions from 'src/components/materialization/AdvancedOptions';
 import SourceCapture from 'src/components/materialization/source/Capture';
 import Backfill from 'src/components/shared/Entity/Backfill';
+import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import { useEntityType } from 'src/context/EntityContext';
 import { LocalZustandProvider } from 'src/context/LocalZustand';
 import { alternativeReflexContainerBackground } from 'src/context/Theme';
@@ -29,6 +30,7 @@ import {
 import { useDetailsFormStore } from 'src/stores/DetailsForm/Store';
 import { useFormStateStore_messagePrefix } from 'src/stores/FormState/hooks';
 import { EditorStoreNames } from 'src/stores/names';
+import { useTargetNamingHydrator } from 'src/stores/TargetNaming/useTargetNamingHydrator';
 
 interface Props {
     draftSpecs: DraftSpecQuery[];
@@ -46,6 +48,7 @@ function BindingsMultiEditor({
     // This keeps an eye on resource config and updates if there is a need
     useServerUpdateRequiredMonitor(draftSpecs);
     useValidateFieldSelection();
+    useTargetNamingHydrator();
 
     const intl = useIntl();
     const theme = useTheme();
@@ -116,9 +119,9 @@ function BindingsMultiEditor({
             </Stack>
 
             <Typography sx={{ mb: 2 }}>
-                <FormattedMessage
-                    id={`${messagePrefix}.collectionSelector.instructions`}
-                />
+                {intl.formatMessage({
+                    id: `${messagePrefix}.collectionSelector.instructions`,
+                })}
             </Typography>
 
             <ListAndDetails
@@ -130,7 +133,12 @@ function BindingsMultiEditor({
                     />
                 }
                 details={
-                    <BindingsEditor itemType={itemType} readOnly={readOnly} />
+                    <ErrorBoundryWrapper>
+                        <BindingsEditor
+                            itemType={itemType}
+                            readOnly={readOnly}
+                        />
+                    </ErrorBoundryWrapper>
                 }
                 backgroundColor={
                     alternativeReflexContainerBackground[theme.palette.mode]

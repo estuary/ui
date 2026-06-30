@@ -8,6 +8,7 @@ import {
     List,
     ListItem,
     ListItemText,
+    listItemTextClasses,
 } from '@mui/material';
 
 import { useIntl } from 'react-intl';
@@ -44,8 +45,8 @@ function NestedListItem({
                 <ListItemText
                     primary={catalogName}
                     sx={{
-                        'ml': 0.5,
-                        '& .MuiListItemText-primary': {
+                        ml: 0.5,
+                        [`& .${listItemTextClasses.primary}`]: {
                             fontWeight: 500,
                             whiteSpace: 'nowrap',
                         },

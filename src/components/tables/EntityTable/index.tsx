@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
     Box,
+    inputBaseClasses,
     Stack,
     Table,
     TableContainer,
@@ -284,8 +285,8 @@ function EntityTable({
                                     defaultValue={searchQuery}
                                     onChange={handlers.filterTable}
                                     sx={{
-                                        'width': '100%',
-                                        '& .MuiInputBase-root': {
+                                        width: '100%',
+                                        [`& .${inputBaseClasses.root}`]: {
                                             borderRadius: 3,
                                         },
                                     }}

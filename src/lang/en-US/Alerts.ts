@@ -4,11 +4,13 @@ export const Alerts: Record<string, string> = {
     'alerts.config.header': `Organization Notifications`,
     'alerts.config.cta.addAlertMethod': `Configure Notifications`,
 
-    'alerts.config.dialog.emailSelector.inputError': `One or more emails are not formatted properly.`,
+    'alerts.config.dialog.emailSelector.inputError': `Email is incorrectly formatted.`,
     'alerts.config.dialog.error.generic': `An issue was encountered {operation} an alert subscription.`,
     'alerts.config.dialog.error.term.delete': `deleting`,
     'alerts.config.dialog.error.term.modify': `creating or updating`,
-    'alerts.config.dialog.generate.description': `Choose where you'd like notifications to be sent. To add an email address, select from the list of admin user emails or enter a custom email address.`,
+    'alerts.config.dialog.generate.description': `Choose where you'd like notifications to be sent. Email addresses can be for mailing lists, {docLink}, or individual users.`,
+    'alerts.config.dialog.generate.description.docLink': `Slack channels`,
+    'alerts.config.dialog.generate.description.docPath': `https://slack.com/intl/en-au/help/articles/206819278-Send-emails-to-Slack`,
     'alerts.config.dialog.generate.header': `Configure Notification Methods`,
     'alerts.config.dialog.update.description': `Choose the notifications you'd like to receive.`,
     'alerts.config.dialog.update.header': `Update Notification Methods`,
@@ -42,8 +44,10 @@ export const Alerts: Record<string, string> = {
     'alerts.table.data.details': `Details`,
     'alerts.table.label': `List of all alerts for tenant`,
     'alerts.table.empty.header': `No alerts found`,
-    'alerts.table.empty.message': `No resolved alerts`,
     'alerts.table.error.message': `There was an error attempting to fetch resolved alerts.`,
+    // dynamically built in ui/src/components/tables/AlertHistory/index.tsx
+    'alerts.table.empty.message.active': `No active alerts`,
+    'alerts.table.empty.message.resolved': `No resolved alerts`,
 
     'alerts.table.reduced': `Showing {count} of {total} total alerts.`,
 

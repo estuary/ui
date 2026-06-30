@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
-import { MAC_ADDR_RE } from 'src/validation';
+import { FULL_IMAGE_NAME_RE } from 'src/validation';
 
 // This 'navigateToPath' is so stupid and so annoying. However, for whatever reason
 //  if you have the navigate to equal to '..' it threw you back up too many levels
@@ -16,9 +16,11 @@ interface Props extends BaseComponentProps {
 // This is quick - but really we should just make a general "SearchParamGuard" that
 //  can easily check we have everything we need.
 function ConnectorSelectedGuard({ children, navigateToPath }: Props) {
-    const connectorId = useGlobalSearchParams(GlobalSearchParams.CONNECTOR_ID);
+    const connectorImagePath = useGlobalSearchParams(
+        GlobalSearchParams.CONNECTOR_IMAGE_PATH
+    );
 
-    if (!MAC_ADDR_RE.test(connectorId)) {
+    if (!FULL_IMAGE_NAME_RE.test(connectorImagePath ?? '')) {
         return <Navigate to={navigateToPath} replace />;
     }
 

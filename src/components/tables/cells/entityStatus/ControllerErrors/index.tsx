@@ -1,6 +1,6 @@
 import type { ControllerErrorsProps } from 'src/components/tables/cells/entityStatus/ControllerErrors/types';
 
-import { Box, TableCell, Typography } from '@mui/material';
+import { alertClasses, Box, TableCell, Typography } from '@mui/material';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import ButtonWithPopper from 'src/components/shared/buttons/ButtonWithPopper';
@@ -47,9 +47,9 @@ export default function ControllerErrors({
                         severity="error"
                         short
                         sx={{
-                            'mb': 1,
-                            'width': 600,
-                            '& .MuiAlert-message': {
+                            mb: 1,
+                            width: 600,
+                            [`& .${alertClasses.message}`]: {
                                 width: '100%',
                             },
                         }}

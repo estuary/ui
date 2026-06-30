@@ -7,7 +7,7 @@ import { Check } from 'iconoir-react';
 
 interface SelectableAutocompleteOptionProps {
     Content: ReactNode;
-    renderOptionProps: HTMLAttributes<HTMLElement> & { key: any };
+    renderOptionProps: HTMLAttributes<HTMLElement>;
     state: AutocompleteRenderOptionState;
 }
 
@@ -18,13 +18,10 @@ const SelectableAutocompleteOption = ({
 }: SelectableAutocompleteOptionProps) => {
     const theme = useTheme();
 
-    const { key, ...optionProps } = renderOptionProps;
-
     return (
         <Box
-            {...optionProps}
+            {...renderOptionProps}
             component="li"
-            key={key}
             style={{
                 alignItems: 'flex-start',
                 display: 'flex',

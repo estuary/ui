@@ -21,7 +21,7 @@ export const Ops: Record<string, string> = {
     // Dynamically generated in /src/components/tables/Logs/HydrationWarning.tsx
     'ops.hydrationWarning.OFFSET_NOT_YET_AVAILABLE.title': `No logs available`,
 
-    'ops.hydrationWarning.offsetNot.instructions': `Usually this means that your task hasn’t processed any data, usually because of a configuration issue (Ex. an invalid storage mapping).  Please {docLink} if you need any help determining why your task isn’t producing logs.`,
+    'ops.hydrationWarning.offsetNot.instructions': `Usually this means that your task hasn't processed any data, usually because of a configuration issue (Ex. an invalid storage mapping).  Please {docLink} if you need any help determining why your task isn't producing logs.`,
     'ops.hydrationWarning.offsetNot.instructions.docLink': `${CTAs['cta.support']}`,
     'ops.hydrationWarning.offsetNot.instructions.docPath': `${CommonMessages['support.email']}`,
 
@@ -36,8 +36,6 @@ export const Ops: Record<string, string> = {
 
     // Journals
     'journals.notFound.title': `Not Found`,
-    'journals.tooFewDocuments.title': `Low document count`,
-    'journals.tooFewDocuments.message': `Fewer documents than desired were found. This could mean that your entity isn't seeing very much data.`,
     'journals.tooManyBytes.title': `Large documents`,
     'journals.tooManyBytes.message': `Exceeded the maximum bytes before reaching the desired number of documents. This probably means that your documents are large.`,
     'journals.tooManyBytesAndNoDocuments.title': `Read limit reached`,

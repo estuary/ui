@@ -5,6 +5,8 @@ import useConstant from 'use-constant';
 
 import { Divider, Grid, Typography } from '@mui/material';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useIntl } from 'react-intl';
@@ -29,9 +31,11 @@ import BillingLineItemsTable from 'src/components/tables/BillLineItems';
 import usePageTitle from 'src/hooks/usePageTitle';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
-import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
-import { useBillingStore } from 'src/stores/Billing/Store';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import {
+    useBilling_selectedInvoice,
+    useBillingStore,
+} from 'src/stores/Billing';
+import { useTenantStore } from 'src/stores/Tenant';
 import { invoiceId, TOTAL_CARD_HEIGHT } from 'src/utils/billing-utils';
 
 const routeTitle = authenticatedRoutes.admin.billing.title;
@@ -54,19 +58,14 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
     // TODO (billing store)
     // The `active` stuff could probably be removed now that other stuff is
     //  cleaned up - but leaving to make it easier
-    const [active, setActive] = useBillingStore((state) => [
-        state.active,
-        state.setActive,
-    ]);
-    const [hydrated, setHydrated] = useBillingStore((state) => [
-        state.hydrated,
-        state.setHydrated,
-    ]);
+    const [active, setActive] = useBillingStore(
+        useShallow((state) => [state.active, state.setActive])
+    );
+    const [hydrated, setHydrated] = useBillingStore(
+        useShallow((state) => [state.hydrated, state.setHydrated])
+    );
     const setHydrationErrorsExist = useBillingStore(
         (state) => state.setHydrationErrorsExist
-    );
-    const setHistoryInitialized = useBillingStore(
-        (state) => state.setInvoicesInitialized
     );
     const setInvoices = useBillingStore((state) => state.setInvoices);
     const setNetworkFailed = useBillingStore((state) => state.setNetworkFailed);
@@ -110,7 +109,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     setInvoices([]);
                 } finally {
                     setHydrated(true);
-                    setHistoryInitialized(true);
                     setActive(false);
                 }
             })();
@@ -120,7 +118,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         dateRange.start,
         selectedTenant,
         setActive,
-        setHistoryInitialized,
         setHydrated,
         setHydrationErrorsExist,
         setInvoices,
@@ -134,7 +131,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             <AdminTabs />
 
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
-                <Grid item xs={12} md={9}>
+                <Grid size={{ xs: 12, md: 9 }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
                         {intl.formatMessage({ id: 'admin.billing.header' })}
                     </Typography>
@@ -143,9 +140,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 </Grid>
 
                 <Grid
-                    item
-                    xs={12}
-                    md={3}
+                    size={{ xs: 12, md: 3 }}
                     sx={{ display: 'flex', alignItems: 'end' }}
                 >
                     <TenantOptions />
@@ -155,7 +150,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
                 <BillingLoadError />
 
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={intl.formatMessage({
@@ -166,7 +161,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     </CardWrapper>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                     <CardWrapper
                         height={TOTAL_CARD_HEIGHT}
                         message={intl.formatMessage({
@@ -179,7 +174,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     </CardWrapper>
                 </Grid>
 
-                <Grid item xs={12} md={12}>
+                <Grid size={{ xs: 12, md: 12 }}>
                     <CardWrapper
                         height={invoiceCardHeight}
                         message={
@@ -219,11 +214,11 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                     </CardWrapper>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <Divider sx={{ mt: 3 }} />
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                     <ErrorBoundary
                         fallback={
                             <>

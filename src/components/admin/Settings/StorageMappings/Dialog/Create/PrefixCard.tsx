@@ -10,7 +10,7 @@ import { useStorageMappings } from 'src/api/gql/storageMappings';
 import { useCouldMatchRoot } from 'src/components/shared/LeavesAutocomplete';
 import { RHFLeavesAutocomplete } from 'src/components/shared/RHFFields';
 import { useDialogLink } from 'src/hooks/useDialog';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import { useTenantStore } from 'src/stores/Tenant';
 import { validateCatalogName } from 'src/validation';
 
 export function PrefixCard() {

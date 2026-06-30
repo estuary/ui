@@ -30,14 +30,9 @@ export const LocalZustandProvider = ({
 //   the store even if they don't allow for selection
 export const useLocalZustandStore = <S extends Object, U>(
     storeName: StoreName,
-    selector: (state: S) => U,
-    equalityFn?: any
+    selector: (state: S) => U
 ) => {
     const store = useContext(LocalZustandContext);
 
-    return useStore<StoreApi<S>, ReturnType<typeof selector>>(
-        store,
-        selector,
-        equalityFn
-    );
+    return useStore<StoreApi<S>, ReturnType<typeof selector>>(store, selector);
 };

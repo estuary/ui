@@ -140,15 +140,6 @@ export const useFormStateStore_messagePrefix = () => {
     );
 };
 
-export const useFormStateStore_liveSpec = () => {
-    const workflow = useEntityWorkflow();
-
-    return useZustandStore<EntityFormState, EntityFormState['liveSpec']>(
-        storeName(workflow),
-        (state) => state.liveSpec
-    );
-};
-
 export const useFormStateStore_setLiveSpec = () => {
     const workflow = useEntityWorkflow();
 

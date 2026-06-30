@@ -3,7 +3,14 @@ import type { TableColumns } from 'src/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Button, Skeleton, Table, TableContainer } from '@mui/material';
+import {
+    Box,
+    Button,
+    Skeleton,
+    Table,
+    TableContainer,
+    tableRowClasses,
+} from '@mui/material';
 
 import { CreditCard, Download } from 'iconoir-react';
 import { useIntl } from 'react-intl';
@@ -15,9 +22,11 @@ import TotalLines from 'src/components/tables/BillLineItems/TotalLines';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import { getTableHeaderWithoutHeaderColor } from 'src/context/Theme';
-import { useBilling_selectedInvoice } from 'src/stores/Billing/hooks';
-import { useBillingStore } from 'src/stores/Billing/Store';
-import { useTenantStore } from 'src/stores/Tenant/Store';
+import {
+    useBilling_selectedInvoice,
+    useBillingStore,
+} from 'src/stores/Billing';
+import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 
 export const columns: TableColumns[] = [
@@ -90,8 +99,8 @@ function BillingLineItemsTable() {
                     stickyHeader
                     sx={{
                         ...getTableHeaderWithoutHeaderColor(),
-                        'minWidth': 350,
-                        '& .MuiTableRow-root': {
+                        minWidth: 350,
+                        [`& .${tableRowClasses.root}`]: {
                             height: INVOICE_ROW_HEIGHT,
                         },
                     }}

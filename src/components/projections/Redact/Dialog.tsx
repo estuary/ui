@@ -56,7 +56,6 @@ const RedactFieldDialog = ({
                     id: 'projection.dialog.redact.header',
                 })}
             </DialogTitle>
-
             <DialogContent>
                 {error ? (
                     <Box style={{ marginBottom: 16, width: 500 }}>
@@ -79,54 +78,60 @@ const RedactFieldDialog = ({
                     }: AutocompleteRenderInputParams) => (
                         <TextField
                             {...params}
-                            InputProps={{
-                                ...InputProps,
-                                sx: { borderRadius: 3 },
-                            }}
                             label={intl.formatMessage({
                                 id: 'projection.label.redactionStrategy',
                             })}
                             size="small"
                             sx={{ width: 500 }}
+                            slotProps={{
+                                input: {
+                                    ...InputProps,
+                                    sx: { borderRadius: 3 },
+                                },
+                            }}
                         />
                     )}
-                    renderOption={(renderOptionProps, option, state) => (
-                        <SelectableAutocompleteOption
-                            Content={
-                                <>
-                                    <Typography
-                                        style={{
-                                            fontWeight: 500,
-                                            marginBottom: 4,
-                                            textTransform: 'capitalize',
-                                        }}
-                                    >
-                                        {intl.formatMessage({
-                                            id: `projection.option.${option}.label`,
-                                        })}
-                                    </Typography>
+                    renderOption={(renderOptionProps, option, state) => {
+                        const { key, ...restRenderOptionProps } =
+                            renderOptionProps;
+                        return (
+                            <SelectableAutocompleteOption
+                                key={key}
+                                Content={
+                                    <>
+                                        <Typography
+                                            style={{
+                                                fontWeight: 500,
+                                                marginBottom: 4,
+                                                textTransform: 'capitalize',
+                                            }}
+                                        >
+                                            {intl.formatMessage({
+                                                id: `projection.option.${option}.label`,
+                                            })}
+                                        </Typography>
 
-                                    <Typography
-                                        sx={{
-                                            color: diminishedTextColor[
-                                                theme.palette.mode
-                                            ],
-                                        }}
-                                    >
-                                        {intl.formatMessage({
-                                            id: `projection.option.${option}.description`,
-                                        })}
-                                    </Typography>
-                                </>
-                            }
-                            renderOptionProps={renderOptionProps}
-                            state={state}
-                        />
-                    )}
+                                        <Typography
+                                            sx={{
+                                                color: diminishedTextColor[
+                                                    theme.palette.mode
+                                                ],
+                                            }}
+                                        >
+                                            {intl.formatMessage({
+                                                id: `projection.option.${option}.description`,
+                                            })}
+                                        </Typography>
+                                    </>
+                                }
+                                renderOptionProps={restRenderOptionProps}
+                                state={state}
+                            />
+                        );
+                    }}
                     value={redactionStrategy}
                 />
             </DialogContent>
-
             <DialogActions>
                 <Button
                     onClick={() => {

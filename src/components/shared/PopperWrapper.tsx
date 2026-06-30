@@ -57,6 +57,7 @@ function PopperWrapper({
         >
             {({ TransitionProps }) => (
                 <ClickAwayListener onClickAway={externalAreaClicked}>
+                    {/*This _looks_ like something that should use slotProps but it is not (Q1 2026): https://mui.com/material-ui/react-popper/#transitions*/}
                     <Fade {...TransitionProps} timeout={350}>
                         <Box
                             sx={{

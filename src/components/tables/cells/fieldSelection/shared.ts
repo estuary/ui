@@ -3,86 +3,86 @@ import { RejectReason, SelectReason } from 'src/types/wasm';
 export const TOGGLE_BUTTON_CLASS = 'toggle-button';
 
 export const fieldOutcomeMessages: {
-    [reason: string]: { id: string; translatedId: string };
+    [reason: string]: { id: string; tooltip: string };
 } = {
     [RejectReason.COLLECTION_OMITS]: {
         id: 'fieldSelection.table.label.collectionOmits',
-        translatedId: '',
+        tooltip: '',
     },
     [RejectReason.CONNECTOR_FORBIDS]: {
         id: 'fieldSelection.table.label.connectorForbids',
-        translatedId: 'fieldSelection.table.label.translated.fieldForbidden',
+        tooltip: 'field is forbidden',
     },
     [RejectReason.CONNECTOR_OMITS]: {
         id: 'fieldSelection.table.label.connectorOmits',
-        translatedId: 'fieldSelection.table.label.translated.fieldOmitted',
+        tooltip: 'field is omitted',
     },
     [RejectReason.CONNECTOR_INCOMPATIBLE]: {
         id: 'fieldSelection.table.label.connectorIncompatible',
-        translatedId: 'fieldSelection.table.label.translated.incompatible',
+        tooltip: 'field is incompatible',
     },
     [RejectReason.COVERED_LOCATION]: {
         id: 'fieldSelection.table.label.coveredLocation',
-        translatedId: '',
+        tooltip: '',
     },
     [RejectReason.DUPLICATE_FOLD]: {
         id: 'fieldSelection.table.label.duplicateFold',
-        translatedId: '',
+        tooltip: '',
     },
     [RejectReason.DUPLICATE_LOCATION]: {
         id: 'fieldSelection.table.label.duplicateLocation',
-        translatedId: '',
+        tooltip: '',
     },
     [RejectReason.EXCLUDED_PARENT]: {
         id: 'fieldSelection.table.label.excludedParent',
-        translatedId: '',
+        tooltip: '',
     },
     [RejectReason.NOT_SELECTED]: {
         id: 'fieldSelection.table.label.notSelected',
-        translatedId: 'fieldSelection.table.label.translated.fieldOptional',
+        tooltip: 'field is optional',
     },
     [RejectReason.USER_EXCLUDES]: {
         id: 'fieldSelection.table.label.userExcludes',
-        translatedId: '',
+        tooltip: '',
     },
     [SelectReason.CONNECTOR_REQUIRES]: {
         id: 'fieldSelection.table.label.connectorRequires',
-        translatedId: 'fieldSelection.table.label.translated.fieldRequired',
+        tooltip: 'field is required',
     },
     [SelectReason.CONNECTOR_REQUIRES_LOCATION]: {
         id: 'fieldSelection.table.label.connectorRequiresLocation',
-        translatedId: 'fieldSelection.table.label.translated.fieldRequired',
+        tooltip: 'field is required',
     },
     [SelectReason.CORE_METADATA]: {
         id: 'fieldSelection.table.label.coreMetadata',
-        translatedId: '',
+        tooltip: '',
     },
     [SelectReason.CURRENT_DOCUMENT]: {
         id: 'fieldSelection.table.label.currentDocument',
-        translatedId: 'fieldSelection.table.label.translated.fieldRequired',
+        tooltip: 'field is required',
     },
     [SelectReason.CURRENT_VALUE]: {
         id: 'fieldSelection.table.label.currentValue',
-        translatedId: '',
+        tooltip: '',
     },
     [SelectReason.DESIRED_DEPTH]: {
         id: 'fieldSelection.table.label.desiredDepth',
-        translatedId: '',
+        tooltip: '',
     },
     [SelectReason.GROUP_BY_KEY]: {
         id: 'fieldSelection.table.label.groupByKey',
-        translatedId: 'fieldSelection.table.label.translated.fieldRequired',
+        tooltip: 'field is required',
     },
     [SelectReason.PARTITION_KEY]: {
         id: 'fieldSelection.table.label.partitionKey',
-        translatedId: 'fieldSelection.table.label.translated.fieldRequired',
+        tooltip: 'field is required',
     },
     [SelectReason.USER_DEFINED]: {
         id: 'fieldSelection.table.label.userDefined',
-        translatedId: '',
+        tooltip: '',
     },
     [SelectReason.USER_REQUIRES]: {
         id: 'fieldSelection.table.label.userRequires',
-        translatedId: '',
+        tooltip: '',
     },
 };

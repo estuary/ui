@@ -1,4 +1,4 @@
-import type { LoadingButtonProps } from '@mui/lab';
+import type { ButtonProps } from '@mui/material';
 
 export type DraftCreationCallback = (
     draftId: string | undefined | null
@@ -10,7 +10,7 @@ export interface TransformationCreateProps {
 }
 
 export interface DraftIdGeneratorButtonProps {
-    buttonVariant?: LoadingButtonProps['variant'];
+    buttonVariant?: ButtonProps['variant'];
     draftCreationCallback?: DraftCreationCallback;
     entityNameError?: string | null;
     sourceCollectionSet?: Set<string>;

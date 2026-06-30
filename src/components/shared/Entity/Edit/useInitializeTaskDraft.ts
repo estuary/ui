@@ -253,8 +253,7 @@ function useInitializeTaskDraft() {
                             taskSpecType,
                             {
                                 [GlobalSearchParams.LIVE_SPEC_ID]: liveSpecId,
-                                [GlobalSearchParams.CONNECTOR_ID]:
-                                    task.connector_id,
+                                [GlobalSearchParams.CONNECTOR_IMAGE_PATH]: `${task.connector_image_name}${task.connector_image_tag}`,
                                 [GlobalSearchParams.LAST_PUB_ID]:
                                     task.last_pub_id,
                             },

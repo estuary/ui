@@ -15,7 +15,6 @@ import pLimit from 'p-limit';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
     DEFAULT_PAGING_SIZE,
-    deleteSupabase,
     handleFailure,
     handleSuccess,
     insertSupabase,
@@ -162,10 +161,6 @@ export const modifyDraftSpec = (
     }
 
     return updateSupabase(TABLES.DRAFT_SPECS, data, matchData);
-};
-
-export const deleteDraftSpec = (draftId: string) => {
-    return deleteSupabase(TABLES.DRAFT_SPECS, { draft_id: draftId });
 };
 
 // TODO (optimization | typing): Narrow the columns selected from the draft_specs_ext table.

@@ -1,14 +1,6 @@
 import type { Connection } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/ConnectionTestContext';
 
-import {
-    Box,
-    List,
-    ListItem,
-    ListItemText,
-    Stack,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -19,7 +11,7 @@ import {
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
-import { codeBackground } from 'src/context/Theme';
+import PreformattedBlock from 'src/components/shared/PreformattedBlock';
 
 const BucketAttribute = ({ children }: { children: React.ReactNode }) => (
     <TechnicalEmphasis
@@ -32,7 +24,6 @@ const BucketAttribute = ({ children }: { children: React.ReactNode }) => (
 
 export function AwsInstructions({ connection }: { connection: Connection }) {
     const intl = useIntl();
-    const theme = useTheme();
     const { bucket, region } = connection.store;
     const allAwsArns = useAwsArnsForBucket(bucket);
     const policy = useBucketPolicy(bucket ?? '', allAwsArns);
@@ -90,19 +81,7 @@ export function AwsInstructions({ connection }: { connection: Connection }) {
                 })}
             </Typography>
 
-            <Box
-                component="pre"
-                sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: codeBackground[theme.palette.mode],
-                    overflow: 'auto',
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                }}
-            >
-                {policy.formatted}
-            </Box>
+            <PreformattedBlock>{policy.formatted}</PreformattedBlock>
 
             <Typography
                 variant="body2"

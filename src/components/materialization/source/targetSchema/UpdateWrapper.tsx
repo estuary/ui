@@ -3,6 +3,8 @@ import type { TargetSchemas } from 'src/stores/SourceCapture/types';
 
 import { useCallback } from 'react';
 
+import { useShallow } from 'zustand/react/shallow';
+
 import { useSnackbar } from 'notistack';
 import { useIntl } from 'react-intl';
 
@@ -13,6 +15,7 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useSourceCaptureStore } from 'src/stores/SourceCapture/Store';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
+// TODO (target naming:post migration:remove)
 export default function TargetSchemaUpdateWrapper() {
     const intl = useIntl();
     const { enqueueSnackbar } = useSnackbar();
@@ -20,7 +23,11 @@ export default function TargetSchemaUpdateWrapper() {
     const setFormState = useFormStateStore_setFormState();
 
     const [targetSchema, setTargetSchema, setSaving] = useSourceCaptureStore(
-        (state) => [state.targetSchema, state.setTargetSchema, state.setSaving]
+        useShallow((state) => [
+            state.targetSchema,
+            state.setTargetSchema,
+            state.setSaving,
+        ])
     );
 
     const { currentSetting, updateSourceSetting } =

@@ -19,7 +19,6 @@ export interface LuxonGrainSettings {
 const dayAndMonthFormat = `LLL dd`;
 const timeZoneFormat = `ZZZZ`;
 export const defaultQueryDateFormat = `yyyy-MM-dd'T'HH:mm:ssZZ`;
-export const dayAndTimeFormat = `${dayAndMonthFormat} HH:mm:ssZZZZ`;
 
 const DAILY_GRAIN_SETTINGS: LuxonGrainSettings = {
     relativeUnit: 'days',
@@ -56,10 +55,12 @@ export const LUXON_GRAIN_SETTINGS: {
         selectedLabelKey: 'detailsPanel.recentUsage.filter.label.year',
         longFormat: (val) =>
             val
+                .toUTC()
                 .setLocale(navigator.language ?? 'en-US')
                 .toLocaleString({ month: 'long', year: 'numeric' }),
         shortFormat: (val) =>
             val
+                .toUTC()
                 .setLocale(navigator.language ?? 'en-US')
                 .toLocaleString({ month: 'short' }),
     },

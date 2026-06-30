@@ -70,7 +70,7 @@ function CollectionSpecViews({ presentation }: Props) {
         );
     } else {
         return skimProjectionResponseDoneProcessing ? (
-            <LiveSpecEditor localZustandScope singleSpec height={HEIGHT} />
+            <LiveSpecEditor localZustandScope height={HEIGHT} />
         ) : (
             <MonacoEditorSkeleton />
         );

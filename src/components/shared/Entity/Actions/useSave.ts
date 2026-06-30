@@ -85,7 +85,7 @@ function useSave(
     );
 
     const collectionsBeingBackfilled = useBinding_collectionsBeingBackfilled();
-    const [backfillMode] = useBindingStore((state) => [state.backfillMode]);
+    const backfillMode = useBindingStore((state) => state.backfillMode);
 
     const setIncompatibleCollections =
         useBindingsEditorStore_setIncompatibleCollections();

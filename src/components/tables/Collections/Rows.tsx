@@ -1,4 +1,5 @@
 import type { CollectionQueryWithStats } from 'src/api/liveSpecsExt';
+import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 import type { StatsResponse } from 'src/stores/Tables/Store';
 
 import { TableRow, useTheme } from '@mui/material';
@@ -11,10 +12,14 @@ import Docs from 'src/components/tables/cells/stats/Docs';
 import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import useRowsWithStatsState from 'src/components/tables/hooks/useRowsWithStatsState';
 import { selectKeyValueName } from 'src/components/tables/shared';
-import { useEntityType } from 'src/context/EntityContext';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { SelectTableStoreNames } from 'src/stores/names';
+
+const COLLECTION_STATUS_TYPES: ShardEntityTypes[] = [
+    'collection',
+    'derivation',
+];
 
 interface RowProps {
     isSelected: boolean;
@@ -39,8 +44,6 @@ function Row({
     showEntityStatus,
 }: RowProps) {
     const theme = useTheme();
-    const entityType = useEntityType();
-
     const { generatePath } = useDetailsNavigator(
         authenticatedRoutes.collections.details.overview.fullPath
     );
@@ -58,7 +61,7 @@ function Row({
                 name={row.catalog_name}
                 showEntityStatus={showEntityStatus}
                 detailsLink={generatePath(row)}
-                entityStatusTypes={[entityType, 'derivation']}
+                entityStatusTypes={COLLECTION_STATUS_TYPES}
             />
 
             <Bytes

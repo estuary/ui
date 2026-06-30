@@ -12,11 +12,20 @@ import type { BaseComponentProps } from 'src/types';
 import React from 'react';
 
 import {
+    accordionDetailsClasses,
+    chipClasses,
     createTheme,
+    gridClasses,
+    iconButtonClasses,
     ThemeProvider as MUIThemeProvider,
+    radioClasses,
+    tableCellClasses,
+    tableHeadClasses,
+    tableRowClasses,
     useMediaQuery,
 } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
+import { gridClasses as dataGridClasses } from '@mui/x-data-grid';
 
 import { Check, Copy, Square, WarningCircle, XmarkCircle } from 'iconoir-react';
 import { useLocalStorage } from 'react-use';
@@ -335,6 +344,9 @@ const accordionButton = zIndexIncrement * 5;
 // Need to make the sticky header be on top
 export const headerLinkIndex = zIndexIncrement * 30;
 
+// Want to make sure it is near the top but right under the screen disable overlay
+export const toastIndex = zIndexIncrement * 35;
+
 // Popper component z index must be greater than 100, the z index of the reflex splitter component.
 export const popperIndex = zIndexIncrement * 500;
 
@@ -412,7 +424,7 @@ export const typographyTruncation: TypographyProps = {
 };
 
 export const draggableChipIconSx: SxProps<Theme> = {
-    '& .MuiChip-icon': {
+    [`& .${chipClasses.icon}`]: {
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,
         cursor: 'grab',
@@ -434,7 +446,7 @@ export const hiddenButAccessibleInput: SxProps<Theme> = {
 };
 
 export const hiddenButAccessibleRadio: SxProps<Theme> = {
-    '& .MuiRadio-root, & .MuiRadio-root input': {
+    [`& .${radioClasses.root}, & .${radioClasses.root} input`]: {
         position: 'fixed',
         opacity: 0,
         pointerEvents: 'none',
@@ -449,6 +461,9 @@ export const opaqueLightModeBorder = {
     dark: undefined,
 };
 
+// TODO need to consolidate lots of duplicated "rgba(247, 249, 252, 0.05)" values in the theme, but not today...
+export const stripePaymentFormFieldBackgroundDark = 'rgba(247, 249, 252, 0.05)';
+
 export const opaqueLightModeBackground = {
     light: 'rgba(255, 255, 255, 0.70)',
     dark: 'rgba(247, 249, 252, 0.05)',
@@ -456,6 +471,9 @@ export const opaqueLightModeBackground = {
 
 // TODO (Colors) need to follow a pattern where all colors are in the theme file.
 //      this is one way to handle the light/dark mode:
+// We should look into something like - https://mui.com/material-ui/migration/upgrade-to-v6/#color-mode-theme-utility
+//      OR
+// We just look into waiting for css variable support - https://mui.com/material-ui/customization/css-theme-variables/overview/
 
 export const paperBackground = {
     light: 'white',
@@ -674,13 +692,14 @@ const baseBackground = {
 
 export const jsonFormsPadding: SxProps<Theme> = {
     // Handles inputs on the first layer
-    '& > .MuiGrid-root > .MuiGrid-root ': {
+    [`& > .${gridClasses.root} > .${gridClasses.root}`]: {
         marginBottom: 1,
     },
     // Handles inputs that are nested
-    '& .MuiAccordionDetails-root > .MuiGrid-root > .MuiGrid-root': {
-        marginBottom: 1,
-    },
+    [`& .${accordionDetailsClasses.root} > .${gridClasses.root} > .${gridClasses.root}`]:
+        {
+            marginBottom: 1,
+        },
 };
 
 export const underlineTextSx: SxProps<Theme> = {
@@ -743,22 +762,22 @@ export const dataGridEntireCellButtonStyling: SxProps<Theme> = {
 };
 
 export const dataGridListStyling: SxProps<Theme> = {
-    'borderRadius': 0,
-    'borderBottom': 'none',
-    '& .MuiDataGrid-row ': {
+    borderRadius: 0,
+    borderBottom: 'none',
+    [`& .${dataGridClasses.row}`]: {
         cursor: 'pointer',
     },
-    '& .MuiDataGrid-cell': {
+    [`& .${dataGridClasses.cell}`]: {
         borderBottom: (theme) => defaultOutline[theme.palette.mode],
     },
-    '& .MuiDataGrid-columnSeparator': {
+    [`& .${dataGridClasses.columnSeparator}`]: {
         display: 'none',
     },
-    '& .MuiDataGrid-columnHeaders': {
+    [`& .${dataGridClasses.columnHeaders}`]: {
         borderBottom: (theme) => defaultOutline[theme.palette.mode],
         bgcolor: (theme) => alternativeDataGridHeader[theme.palette.mode],
     },
-    '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+    [`& .${dataGridClasses.columnHeaderTitleContainerContent}`]: {
         height: '100%',
         width: '100%',
     },
@@ -780,8 +799,7 @@ const tableCellBackground = {
 //  there will be some color there. Given how darkmode colors stacks this is a fair trade-off
 export const getTableHeaderWithoutHeaderColor = (): SxProps<Theme> => {
     return {
-        [`& .MuiTableHead-root .MuiTableRow-head,
-                    & .MuiTableHead-root .MuiTableRow-head .MuiTableCell-root`]:
+        [`& .${tableHeadClasses.root} .${tableRowClasses.head}, & .${tableHeadClasses.root} .${tableRowClasses.head} .${tableCellClasses.root}`]:
             {
                 bgcolor: (theme) => tableCellBackground[theme.palette.mode],
             },
@@ -897,28 +915,28 @@ export const historyCompareBorder = `3px solid `;
 // If you have custom `sx` on your chip you'll need to import this
 //  and spread it into your custom styling. Or just style with `style`
 export const chipOutlinedStyling: SxProps<Theme> = {
-    '&.MuiChip-outlined': {
-        '&.MuiChip-colorPrimary': {
+    [`&.${chipClasses.outlined}`]: {
+        [`&.${chipClasses.colorPrimary}`]: {
             color: (theme) => theme.palette.text.primary,
             backgroundColor: 'rgba(58, 86, 202, 0.12)',
         },
-        '&.MuiChip-colorSecondary': {
+        [`&.${chipClasses.colorSecondary}`]: {
             color: (theme) => theme.palette.text.primary,
             backgroundColor: 'rgba(25, 42, 136, 0.12)',
         },
-        '&.MuiChip-colorSuccess': {
+        [`&.${chipClasses.colorSuccess}`]: {
             color: (theme) => theme.palette.text.primary,
             backgroundColor: 'rgba(42, 121, 66, 0.12)',
         },
-        '&.MuiChip-colorError': {
+        [`&.${chipClasses.colorError}`]: {
             color: (theme) => theme.palette.text.primary,
             backgroundColor: 'rgba(202, 59, 85, 0.12)',
         },
-        '&.MuiChip-colorInfo': {
+        [`&.${chipClasses.colorInfo}`]: {
             color: (theme) => theme.palette.text.primary,
             backgroundColor: 'rgba(79, 214, 255, 0.12)',
         },
-        '&.MuiChip-colorWarning': {
+        [`&.${chipClasses.colorWarning}`]: {
             color: (theme) => theme.palette.text.primary,
             backgroundColor: 'rgba(237, 108, 2, 0.12)',
         },
@@ -963,25 +981,10 @@ const themeSettings = createTheme({
         },
         MuiButtonBase: {
             defaultProps: {
-                // based on React-Admin's solution
-                //   https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/defaultTheme.ts
                 disableRipple: true,
                 sx: {
-                    'fontSize': 14,
-                    '&.Mui-focusVisible::after, &:hover::after': {
-                        backgroundColor: 'currentColor',
-                        borderRadius: 'inherit',
-                        content: '""',
-                        display: 'block',
-                        height: '100%',
-                        opacity: 0.1,
-                        position: 'absolute',
-                        right: 0,
-                        top: 0,
-                        width: '100%',
-                        zIndex: buttonHoverIndex,
-                    },
-                    '& .MuiChip-deleteIcon, button': {
+                    fontSize: 14,
+                    [`& .${chipClasses.deleteIcon}, button`]: {
                         zIndex: chipDeleteIndex,
                     },
                 },
@@ -996,6 +999,7 @@ const themeSettings = createTheme({
                 root: {
                     fontSize: 14,
                     borderRadius: 4,
+                    textTransform: 'none',
                 },
             },
         },
@@ -1033,6 +1037,13 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     transitionTimingFunction: standardTransitionEasing,
+                },
+            },
+        },
+        MuiTab: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
                 },
             },
         },
@@ -1120,7 +1131,7 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                             timeout: standardTransitionDuration,
                         },
                         sx: {
-                            '& .MuiIconButton-root': {
+                            [`& .${iconButtonClasses.root}`]: {
                                 zIndex: accordionButton,
                             },
                         },

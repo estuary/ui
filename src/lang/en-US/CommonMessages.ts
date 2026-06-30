@@ -32,7 +32,6 @@ export const CommonMessages: Record<string, string> = {
     'common.optionsMissing': `No options`,
     'common.noData': `No data to display`,
     'common.loggedOut': `You have been logged out. Please log back in.`,
-    'common.missing': `N/A`,
     'common.none': `none`,
     'common.noUnDo': `This action cannot be undone.`,
     'common.version': `version`,
@@ -55,6 +54,11 @@ export const CommonMessages: Record<string, string> = {
     'common.pending': `Pending`,
     'common.upToDate': `Up-to-date`,
     'common.unknown': `Unknown`,
+    'common.examples': `Examples`,
+
+    // Timestamp popper labels
+    'common.timestamp.utc.label': `UTC`,
+    'common.timestamp.local.label': `Local`,
 
     // Aria
     'aria.openExpand': `show more`,
@@ -148,4 +152,9 @@ export const CommonMessages: Record<string, string> = {
     // Leaves autocomplete validation
     'leavesAutocomplete.mustStartWith.single': `Must start with "{root}"`,
     'leavesAutocomplete.mustStartWith.multiple': `Must start with one of: {roots}`,
+
+    'defaults.tenant': `acmeCo`,
+    'defaults.schema': `anvils`,
+    'defaults.table': `orders`,
+    'defaults.public': `public`,
 };

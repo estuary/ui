@@ -164,7 +164,14 @@ const ConfirmationModalContextProvider = ({ children }: BaseComponentProps) => {
                         />
                     ) : null}
 
-                    <Stack direction="row" spacing={2}>
+                    <Stack
+                        direction="row"
+                        spacing={2}
+                        sx={{
+                            justifyContent: 'end',
+                            flexGrow: 1,
+                        }}
+                    >
                         <Button variant="text" onClick={handlers.dismiss}>
                             {intl.formatMessage({ id: settings.cancelText })}
                         </Button>
