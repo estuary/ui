@@ -30,7 +30,7 @@ import useDraftSpecEditor from 'src/hooks/useDraftSpecEditor';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 import { getProperSchemaScope } from 'src/utils/schema-utils';
 
-export interface Props {
+interface Props {
     entityName?: string;
     localZustandScope?: boolean;
 }

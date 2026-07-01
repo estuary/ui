@@ -22,7 +22,7 @@ import { jobSucceeded } from 'src/services/supabase';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
-export interface UpdateEntityProps {
+interface UpdateEntityProps {
     entity: CaptureQuery;
     onFinish: (response: any) => void;
     generateNewSpec: (

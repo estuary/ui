@@ -27,5 +27,5 @@ export const allowedNullableTypes = [
     'number',
     'string',
 ] as const;
-export type AllowedNullables = typeof allowedNullableTypes;
+type AllowedNullables = typeof allowedNullableTypes;
 export type AllowedNullable = AllowedNullables[number];

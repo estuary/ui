@@ -17,7 +17,7 @@ import {
     hasLength,
 } from 'src/utils/misc-utils';
 
-export const FILTER_TABLE_PROPS = {
+const FILTER_TABLE_PROPS = {
     captures: {
         [`${TablePrefixes.captures}-${TableFilterKeys.searchQuery}`]: `${DEMO_TENANT}wikipedia/recent-changes`,
     },
