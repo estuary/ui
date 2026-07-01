@@ -10,7 +10,6 @@ import {
     Tooltip,
     useTheme,
 } from '@mui/material';
-import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 
 import {
     CloudDownload,
@@ -21,49 +20,36 @@ import {
     Settings,
 } from 'iconoir-react';
 import { useIntl } from 'react-intl';
+import { useLocalStorage } from 'react-use';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import ListItemLink from 'src/components/navigation/ListItemLink';
 import ModeSwitch from 'src/components/navigation/ModeSwitch';
-import { paperBackground } from 'src/context/Theme';
+import { NavWidths, paperBackground } from 'src/context/Theme';
+import { LocalStorageKeys as Keys } from 'src/utils/localStorage-utils';
 
-interface NavigationProps {
-    open: boolean;
-    width: number;
-    onNavigationToggle: Function;
-}
-
-const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
+export const Navigation = () => {
     const intl = useIntl();
     const theme = useTheme();
 
-    const openNavigation = () => {
-        onNavigationToggle(true);
-    };
-
-    const closeNavigation = () => {
-        onNavigationToggle(false);
-    };
+    const [nav, setNav] = useLocalStorage<{ open: boolean }>(
+        Keys.NAVIGATION_SETTINGS
+    );
+    const open = nav?.open ?? true;
 
     return (
-        <MuiDrawer
-            anchor="left"
-            open={open}
-            variant="permanent"
-            ModalProps={{ keepMounted: true }}
-            onClose={closeNavigation}
+        <Box
             sx={{
-                [`& .${drawerClasses.paper}`]: {
-                    boxSizing: 'border-box',
-                    transition: (paperTheme) =>
-                        `${paperTheme.transitions.duration.shortest}ms`,
-                    width,
-                    border: 0,
-                    background: paperBackground[theme.palette.mode],
-                },
-                transition: (drawerTheme) =>
-                    `${drawerTheme.transitions.duration.shortest}ms`,
-                width,
+                height: '100%',
+                width: open ? NavWidths.FULL : NavWidths.RAIL,
+                flexShrink: 0,
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                background: paperBackground[theme.palette.mode],
+                boxSizing: 'border-box',
+                transition: (boxTheme) =>
+                    `${boxTheme.transitions.duration.shortest}ms`,
             }}
         >
             <Toolbar />
@@ -129,7 +115,7 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                         >
                             <ListItemButton
                                 component="a"
-                                onClick={openNavigation}
+                                onClick={() => setNav({ open: !open })}
                                 sx={{
                                     minHeight: 45,
                                     px: 1.5,
@@ -160,8 +146,6 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
                     </List>
                 </Box>
             </Stack>
-        </MuiDrawer>
+        </Box>
     );
 };
-
-export default Navigation;
