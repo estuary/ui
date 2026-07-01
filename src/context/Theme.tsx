@@ -91,12 +91,6 @@ declare module '@mui/material/Typography' {
     }
 }
 
-// Navigation Width
-export const NavWidths = {
-    RAIL: 48,
-    FULL: 200,
-};
-
 // Colors
 export const sample_blue = {
     100: '#DCE6FE',
