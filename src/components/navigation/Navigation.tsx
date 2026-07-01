@@ -25,8 +25,13 @@ import { useLocalStorage } from 'react-use';
 import { authenticatedRoutes } from 'src/app/routes';
 import ListItemLink from 'src/components/navigation/ListItemLink';
 import ModeSwitch from 'src/components/navigation/ModeSwitch';
-import { NavWidths, paperBackground } from 'src/context/Theme';
+import { paperBackground } from 'src/context/Theme';
 import { LocalStorageKeys as Keys } from 'src/utils/localStorage-utils';
+
+const NavWidths = {
+    RAIL: 48,
+    FULL: 200,
+} as const;
 
 export const Navigation = () => {
     const intl = useIntl();
@@ -114,7 +119,6 @@ export const Navigation = () => {
                             enterDelay={open ? 1000 : undefined}
                         >
                             <ListItemButton
-                                component="a"
                                 onClick={() => setNav({ open: !open })}
                                 sx={{
                                     minHeight: 45,
