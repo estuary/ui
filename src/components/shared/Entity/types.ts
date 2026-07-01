@@ -52,7 +52,6 @@ export type EntityToolbarProgressProps = Pick<EntityToolbarProps, 'waitTimes'>;
 
 export interface LogDialogActionsProps {
     close: any;
-    closeCtaKey?: string;
     hideButtons?: boolean;
 }
 
