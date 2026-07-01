@@ -1,0 +1,120 @@
+name: Code Health
+
+# Informational dead-code delta for each PR. Runs Knip on the PR head and on the
+# base, then comments the difference. The bar is always "the base branch," so it
+# ratchets forward on its own as main improves — no committed baseline needed.
+
+permissions:
+    contents: read
+    packages: read # `@estuary/flow-web` install
+    pull-requests: write # post the delta comment
+
+on:
+    pull_request:
+
+concurrency:
+    group: health-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+jobs:
+    knip-delta:
+        name: Dead-code delta
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout (full history)
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 22.22.0
+                  cache: 'npm'
+                  cache-dependency-path: '**/package-lock.json'
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '@estuary'
+
+            - name: Get Deps
+              run: npm ci
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            # Both runs use the head branch's installed Knip/toolchain, so only the
+            # source differs between them. Knip exits non-zero when it finds issues
+            # (expected on a dirty tree), so tolerate it and let the script read JSON.
+            - name: Knip on PR head
+              run: |
+                  git checkout --force --quiet ${{ github.event.pull_request.head.sha }}
+                  # Stash the classifier so it survives the base checkout below
+                  # (base doesn't have it on a PR that introduces this check).
+                  cp .github/scripts/knip-classify.mjs "$RUNNER_TEMP/classify.mjs"
+                  node_modules/.bin/knip --reporter json > "$RUNNER_TEMP/head.json" || true
+                  node "$RUNNER_TEMP/classify.mjs" "$RUNNER_TEMP/head.json"
+
+            - name: Knip on base (measured with the head's config)
+              run: |
+                  git checkout --force --quiet ${{ github.event.pull_request.base.sha }}
+                  # Pin the HEAD's Knip config for the base run too, so a PR that
+                  # only changes config (like the one that introduces this check)
+                  # doesn't manufacture a phantom delta. The ruler is constant;
+                  # only source differences register. Falls back to base's config.
+                  git checkout --quiet ${{ github.event.pull_request.head.sha }} -- knip.json 2>/dev/null || true
+                  node_modules/.bin/knip --reporter json > "$RUNNER_TEMP/base.json" || true
+                  # Classify against the base's checked-out source (files present now).
+                  node "$RUNNER_TEMP/classify.mjs" "$RUNNER_TEMP/base.json"
+
+            - name: Restore head
+              run: git checkout --force --quiet ${{ github.event.pull_request.head.sha }}
+
+            - name: Compute delta
+              id: delta
+              run: node .github/scripts/knip-delta.mjs "$RUNNER_TEMP/base.json" "$RUNNER_TEMP/head.json" "$RUNNER_TEMP/health.md"
+
+            # always(): the delta step exits non-zero (fails the check) when the
+            # tool itself is broken — knip produced no report, or the classify
+            # step didn't run — and we still want its alert comment posted.
+            - name: Upsert PR comment
+              if: always()
+              uses: actions/github-script@v7
+              env:
+                  HEALTH_MD: ${{ runner.temp }}/health.md
+              with:
+                  script: |
+                      const fs = require('fs');
+                      // No report file → an earlier step failed before the delta ran; nothing to post.
+                      if (!fs.existsSync(process.env.HEALTH_MD)) return;
+                      const body = fs.readFileSync(process.env.HEALTH_MD, 'utf8');
+                      const marker = '<!-- knip-health -->';
+                      const { owner, repo } = context.repo;
+                      const issue_number = context.issue.number;
+                      const { data: comments } = await github.rest.issues.listComments({
+                          owner,
+                          repo,
+                          issue_number,
+                      });
+                      const existing = comments.find(
+                          (c) => c.body && c.body.includes(marker)
+                      );
+                      if (existing) {
+                          await github.rest.issues.updateComment({
+                              owner,
+                              repo,
+                              comment_id: existing.id,
+                              body,
+                          });
+                      } else {
+                          await github.rest.issues.createComment({
+                              owner,
+                              repo,
+                              issue_number,
+                              body,
+                          });
+                      }
+
+            # Once you trust the signal, un-comment to make new dead code block the PR:
+            # - name: Enforce no new dead code
+            #   if: steps.delta.outputs.introduced != '0'
+            #   run: |
+            #     echo "::error::This PR introduces ${{ steps.delta.outputs.introduced }} new dead-code issue(s). See the Code-health comment."
+            #     exit 1
