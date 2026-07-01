@@ -103,7 +103,6 @@ Different entity creation/edit flows exist as separate contexts and store hydrat
 
 - `capture_create` / `capture_edit`
 - `collection_create` (transformations)
-- `express_capture_create` (simplified flow)
 - `materialization_create` / `materialization_edit`
 
 Each flow has its own context, store hydration, and UI progression. Common UI is shared through components that accept configuration as props.
