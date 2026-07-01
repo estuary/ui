@@ -31,7 +31,6 @@ export interface EntityToolbarProps {
     GenerateButton: ReactNode;
     primaryButtonProps: EntitySaveButtonProps | any;
     secondaryButtonProps: EntityTestButtonProps | any;
-    expressWorkflow?: boolean;
     PrimaryButtonComponent?: any;
     SecondaryButtonComponent?: any;
     hideLogs?: boolean;
@@ -42,7 +41,6 @@ export interface EntityToolbarProps {
 
 export type EntityToolbarActionProps = Pick<
     EntityToolbarProps,
-    | 'expressWorkflow'
     | 'GenerateButton'
     | 'PrimaryButtonComponent'
     | 'SecondaryButtonComponent'
@@ -64,6 +62,4 @@ export interface TableHydratorProps {
     selectedCollections: string[];
 }
 
-export interface WorkflowInitializerProps extends BaseComponentProps {
-    expressWorkflow?: boolean;
-}
+export interface WorkflowInitializerProps extends BaseComponentProps {}
