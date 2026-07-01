@@ -86,7 +86,7 @@ export const populateResourceConfigErrors = (
     state.resourceConfigErrorsExist = hasErrors;
 };
 
-export const sortByDisableStatus = (
+const sortByDisableStatus = (
     disabledA: boolean,
     disabledB: boolean,
     collectionA: string,
@@ -205,7 +205,7 @@ const getResourceConfig = (
     };
 };
 
-export const initializeResourceConfig = (
+const initializeResourceConfig = (
     state: BindingState,
     binding: any,
     bindingUUID: string,
@@ -425,7 +425,7 @@ export const hydrateSpecificationDependentState = async (
     return { bindingChanges, error: null };
 };
 
-export const getInitialBindingData = (): Pick<
+const getInitialBindingData = (): Pick<
     BindingState,
     'bindingErrorsExist' | 'bindings' | 'currentBinding'
 > => ({
@@ -434,7 +434,7 @@ export const getInitialBindingData = (): Pick<
     currentBinding: null,
 });
 
-export const getInitialMiscData = (): Pick<
+const getInitialMiscData = (): Pick<
     BindingState,
     | 'captureInterval'
     | 'collectionMetadata'

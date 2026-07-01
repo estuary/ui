@@ -51,7 +51,7 @@ const getInitialStateData = (): Pick<
     previousDetails: initialDetails,
 });
 
-export const getInitialState = (
+const getInitialState = (
     set: NamedSet<DetailsFormState>,
     get: StoreApi<DetailsFormState>['getState']
 ): DetailsFormState => ({

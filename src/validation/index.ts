@@ -3,7 +3,7 @@ import type { PrefixedName_Errors } from 'src/components/inputs/PrefixedName/typ
 // Based on pattern taken from
 //  https://github.com/estuary/animated-carnival/blob/main/supabase/migrations/03_catalog-types.sql
 export const PREFIX_NAME_PATTERN = `[a-zA-Z0-9-_.]+`;
-export const CATALOG_NAME_PATTERN = `^(${PREFIX_NAME_PATTERN}/)+${PREFIX_NAME_PATTERN}$`;
+const CATALOG_NAME_PATTERN = `^(${PREFIX_NAME_PATTERN}/)+${PREFIX_NAME_PATTERN}$`;
 export const NAME_RE = new RegExp(CATALOG_NAME_PATTERN);
 
 export const NUMERIC_RE = RegExp(`^[0-9]+$`);
@@ -14,7 +14,7 @@ export const CAPTURE_INTERVAL_RE = new RegExp(
 export const ISO_8601_DURATION_RE = new RegExp(
     /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/
 );
-export const ISO_8601_DURATION_RE_STRING = ISO_8601_DURATION_RE.toString();
+const ISO_8601_DURATION_RE_STRING = ISO_8601_DURATION_RE.toString();
 // Need the pattern with the slashes removed for JSON Forms. Passing a pattern string in was not working as
 // the escaped characters kept getting removed
 export const ISO_8601_DURATION_PATTERN = ISO_8601_DURATION_RE_STRING.substring(

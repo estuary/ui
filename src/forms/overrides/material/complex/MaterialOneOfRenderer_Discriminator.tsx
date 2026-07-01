@@ -113,7 +113,7 @@ function skipTabChangePrompt(data: any, prop: string): boolean {
     return true;
 }
 
-export const Custom_MaterialOneOfRenderer_Discriminator = ({
+const Custom_MaterialOneOfRenderer_Discriminator = ({
     handleChange,
     schema,
     path,

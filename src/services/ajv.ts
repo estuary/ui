@@ -19,7 +19,7 @@ import { stripPathing } from 'src/utils/misc-utils';
 type Ajv = ReturnType<typeof createAjv>;
 
 // TODO (typing) Need to get this typed as the AJV Options type
-export const defaultAjvSettings: any = {
+const defaultAjvSettings: any = {
     // Causes it to mutate its input to set default values.
     useDefaults: 'empty',
     // Don't barf when things aren't quite aligned with the JSON schema spec. Log it instead.
@@ -39,7 +39,7 @@ export const defaultAjvSettings: any = {
     addUsedSchema: false,
 };
 
-export const addKeywords = (ajv: Ajv) => {
+const addKeywords = (ajv: Ajv) => {
     // Flow allows some extra annotations, some of which are used to control how forms are rendered
     // in the UI. The full list of allowed annotations is defined in:
     // https://github.com/estuary/flow/blob/master/crates/doc/src/annotation.rs
@@ -138,7 +138,7 @@ export interface ResourceConfigPointers {
     ['x_delta_updates']: string | undefined;
 }
 
-export const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
+const prepareSourceCaptureForServer = (arg: SourceCaptureDef) => {
     const response = {
         ...arg,
     };

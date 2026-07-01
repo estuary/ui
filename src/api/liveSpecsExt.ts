@@ -52,22 +52,22 @@ const commonColumns = baseColumns.concat([
 export interface CaptureQuery extends LiveSpecsExtBaseQuery {
     writes_to: string[];
 }
-export interface CaptureQueryWithSpec extends CaptureQuery {
+interface CaptureQueryWithSpec extends CaptureQuery {
     spec: any;
 }
 export interface CaptureQueryWithStats extends CaptureQuery {
     stats?: CatalogStats;
 }
-export interface MaterializationQuery extends LiveSpecsExtBaseQuery {
+interface MaterializationQuery extends LiveSpecsExtBaseQuery {
     reads_from: string[];
 }
-export interface MaterializationQueryWithSpec extends MaterializationQuery {
+interface MaterializationQueryWithSpec extends MaterializationQuery {
     spec: any;
 }
 export interface MaterializationQueryWithStats extends MaterializationQuery {
     stats?: CatalogStats;
 }
-export type CollectionQuery = LiveSpecsExtBaseQuery;
+type CollectionQuery = LiveSpecsExtBaseQuery;
 export interface CollectionQueryWithStats extends CollectionQuery {
     stats?: CatalogStats;
 }
@@ -211,7 +211,7 @@ const getLiveSpecs_existingTasks = (
 };
 
 // Hydration-specific queries
-export interface LiveSpecsExtQuery_DetailsForm {
+interface LiveSpecsExtQuery_DetailsForm {
     catalog_name: string;
     id: string;
     spec_type: Entity;
@@ -252,7 +252,7 @@ const getLiveSpecs_detailsForm = async (liveSpecId: string) => {
     return data;
 };
 
-export interface LiveSpecsExtQuery_DataPlaneAuthReq {
+interface LiveSpecsExtQuery_DataPlaneAuthReq {
     shard_labels: ProtocolLabel[];
 }
 
@@ -449,7 +449,7 @@ const getLiveSpecSpec = (liveSpecId: string) => {
         .single();
 };
 
-export interface LiveSpecsExtQuery_Latest {
+interface LiveSpecsExtQuery_Latest {
     spec: any;
     id: string;
     last_pub_id: string;

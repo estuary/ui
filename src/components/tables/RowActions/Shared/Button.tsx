@@ -13,7 +13,7 @@ import { useConfirmationModalContext } from 'src/context/Confirmation';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
-export function RowActionButton({
+function RowActionButton({
     message,
     renderConfirmationMessage,
     renderProgress,

@@ -79,7 +79,7 @@ export interface StorageMappingDictionary {
     [prefix: string]: StorageMapping;
 }
 
-export interface StorageMappingStore {
+interface StorageMappingStore {
     provider: string;
     bucket: string;
     prefix: string;
@@ -95,7 +95,7 @@ export interface StorageMappingsQuery {
 }
 
 // TODO (marketplace) we may expand these in the future
-export type TenantPaymentProviders = 'external' | 'stripe';
+type TenantPaymentProviders = 'external' | 'stripe';
 
 export interface TenantPaymentDetails {
     gcm_account_id: string | null;
@@ -187,7 +187,7 @@ export interface Grant_UserExt extends BaseGrant {
     user_id: string;
 }
 
-export interface LiveSpecsExtBareMinimum {
+interface LiveSpecsExtBareMinimum {
     catalog_name: string;
     id: string;
     spec_type: Entity;
@@ -307,7 +307,7 @@ export interface OpsLogFlowDocument {
     fields?: Schema;
 }
 
-export interface Meta {
+interface Meta {
     uuid: string;
 }
 
