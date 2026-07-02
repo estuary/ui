@@ -13,9 +13,4 @@ export const Navigation: Record<string, string> = {
     'helpMenu.about': `About ${CommonMessages.productName}`,
     'helpMenu.status': `Status`,
     'helpMenu.status.link': `https://status.estuary.dev/`,
-
-    'updateAlert.cta': `Update`,
-    'updateAlert.title': `Dashboard Updated`,
-    'updateAlert.message': `An updated version of the UI was released. Reload this page to get the latest changes.`,
-    'updateAlert.warning': `Unsaved changes could be lost.`,
 };

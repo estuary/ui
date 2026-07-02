@@ -11,6 +11,7 @@ import {
     HomeSimple,
     Settings,
 } from 'iconoir-react';
+
 import { authenticatedRoutes } from 'src/app/routes';
 import { Pill as AgentSkillsPill } from 'src/components/AgentSkills/Pill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
@@ -18,6 +19,7 @@ import CompanyMark from 'src/components/graphics/CompanyMark';
 import { HelpMenu } from 'src/components/menus/HelpMenu';
 import NavLink, { NavButton } from 'src/components/navigation/NavItems';
 import { UserButton, UserMenu } from 'src/components/navigation/User';
+import { UpdateAlert } from 'src/components/UpdateAlert';
 import { useNavigationStore } from 'src/stores/useNavigationStore';
 
 const NavWidths = {
@@ -111,6 +113,8 @@ export const Navigation = () => {
                 </List>
 
                 <Box sx={{ mt: 'auto', pb: 1 }}>
+                    <UpdateAlert isOpen={open} />
+
                     <Box sx={{ mx: 1, my: 0.25 }}>
                         <AgentSkillsPill />
                     </Box>

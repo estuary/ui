@@ -1,19 +1,25 @@
 import { useEffect, useState } from 'react';
 
-import { Box, Divider } from '@mui/material';
+import { Popover } from '@mui/material';
 
-import { NavArrowDown } from 'iconoir-react';
-import { useIntl } from 'react-intl';
+import { ReloadWindow } from 'iconoir-react';
 import useSWR from 'swr';
 
 import { getLatestVersionDetails } from 'src/api/meta';
-import ButtonWithPopper from 'src/components/shared/buttons/ButtonWithPopper';
 import Actions from 'src/components/UpdateAlert/Actions';
+import { NavButton } from 'src/components/navigation/NavItems';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 
-export function UpdateAlert() {
-    const intl = useIntl();
+interface UpdateAlertProps {
+    isOpen?: boolean;
+}
+
+// Sidebar item that appears when the served meta.json commit no longer
+// matches the commit baked into this bundle, meaning a newer version of
+// the dashboard has been deployed since this tab loaded.
+export function UpdateAlert({ isOpen }: UpdateAlertProps) {
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
     const [hasLatest, setHasLatest] = useState<boolean>(true);
 
@@ -44,25 +50,28 @@ export function UpdateAlert() {
     }
 
     return (
-        <Box sx={{ display: 'flex' }}>
-            <ButtonWithPopper
-                popper={<Actions />}
-                buttonProps={{
-                    endIcon: <NavArrowDown style={{ fontSize: 13 }} />,
-                    size: 'small',
-                    sx: {
-                        alignItems: 'center',
-                        p: 1,
-                    },
-                    variant: 'text',
+        <>
+            <NavButton
+                icon={<ReloadWindow />}
+                title="Update"
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+                isOpen={isOpen}
+            />
+            <Popover
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
+                anchorOrigin={{
+                    horizontal: 'left',
+                    vertical: 'top',
                 }}
-                popperProps={{
-                    placement: 'bottom-end',
+                transformOrigin={{
+                    horizontal: 'left',
+                    vertical: 'bottom',
                 }}
             >
-                {intl.formatMessage({ id: 'updateAlert.cta' })}
-            </ButtonWithPopper>
-            <Divider orientation="vertical" flexItem sx={{ ml: 1, mr: 2 }} />
-        </Box>
+                <Actions />
+            </Popover>
+        </>
     );
 }
