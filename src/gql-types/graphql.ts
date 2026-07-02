@@ -335,6 +335,32 @@ export type AzurePrivateLinkInput = {
   serviceName: Scalars['String']['input'];
 };
 
+export type BillingAddress = {
+  __typename?: 'BillingAddress';
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  line1?: Maybe<Scalars['String']['output']>;
+  line2?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  state?: Maybe<Scalars['String']['output']>;
+};
+
+export type BillingAddressInput = {
+  city?: InputMaybe<Scalars['String']['input']>;
+  country?: InputMaybe<Scalars['String']['input']>;
+  line1?: InputMaybe<Scalars['String']['input']>;
+  line2?: InputMaybe<Scalars['String']['input']>;
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  state?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type BillingContact = {
+  __typename?: 'BillingContact';
+  address?: Maybe<BillingAddress>;
+  email?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type BillingPaymentMethodPayload = {
   __typename?: 'BillingPaymentMethodPayload';
   paymentMethods: Array<PaymentMethod>;
@@ -360,10 +386,12 @@ export type CapabilityBit =
   | 'CreateInviteLink'
   | 'Delegate'
   | 'DeleteGrant'
+  | 'EditBilling'
   | 'JournalAppend'
   | 'JournalRead'
   | 'ModifyDataPlanePrivateNetworking'
   | 'SpecEdit'
+  | 'ViewBilling'
   | 'ViewDataPlanePrivateNetworking';
 
 export type CardPaymentMethodDetails = {
@@ -1063,6 +1091,7 @@ export type MutationRoot = {
    * Already-zeroed (revoked) tokens are treated as not found.
    */
   revokeRefreshToken: Scalars['Boolean']['output'];
+  setBillingContact: SetBillingContactPayload;
   setBillingPaymentMethod: BillingPaymentMethodPayload;
   /**
    * Check storage health for a given catalog prefix and storage definition.
@@ -1182,6 +1211,14 @@ export type MutationRootRedeemInviteLinkArgs = {
 
 export type MutationRootRevokeRefreshTokenArgs = {
   id: Scalars['Id']['input'];
+};
+
+
+export type MutationRootSetBillingContactArgs = {
+  address: BillingAddressInput;
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  tenant: Scalars['String']['input'];
 };
 
 
@@ -1618,6 +1655,11 @@ export type RepublishRequested = {
   receivedAt: Scalars['DateTime']['output'];
 };
 
+export type SetBillingContactPayload = {
+  __typename?: 'SetBillingContactPayload';
+  contact: BillingContact;
+};
+
 /** The shape of a connector status, which matches that of an ops::Log. */
 export type ShardFailure = {
   __typename?: 'ShardFailure';
@@ -1884,6 +1926,7 @@ export type Tenant = {
 
 export type TenantBilling = {
   __typename?: 'TenantBilling';
+  contact: BillingContact;
   invoices: InvoiceConnection;
   paymentMethods: Array<PaymentMethod>;
   primaryPaymentMethod?: Maybe<PaymentMethod>;
