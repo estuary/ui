@@ -1,21 +1,17 @@
 import { Box, Link, Paper, Tooltip, Typography, useTheme } from '@mui/material';
 
-import { usePostHog } from '@posthog/react';
 import { NavArrowRight } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import {
     AGENT_SKILLS_URL,
-    BG_GRADIENT,
-    GRADIENT,
     LINK_COLOR,
     SECONDARY_TEXT_COLOR,
     SHIMMER_STYLES,
-    useAgentSkillsStore,
 } from 'src/components/AgentSkills/shared';
 import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
 
-function TooltipContent({ onClick }: { onClick: () => void }) {
+function TooltipContent() {
     const theme = useTheme();
     const mode = theme.palette.mode;
     const intl = useIntl();
@@ -23,7 +19,6 @@ function TooltipContent({ onClick }: { onClick: () => void }) {
     return (
         <Paper
             elevation={0}
-            onClick={onClick}
             sx={{
                 width: 320,
                 borderRadius: '12px',
@@ -79,43 +74,26 @@ function TooltipContent({ onClick }: { onClick: () => void }) {
                     {intl.formatMessage({
                         id: 'agentSkills.cta',
                     })}
-                    <NavArrowRight width={16} height={16} />
+                    <NavArrowRight style={{ fontSize: 16 }} />
                 </Box>
             </Box>
         </Paper>
     );
 }
 
-export function HeaderPill() {
-    const theme = useTheme();
-    const mode = theme.palette.mode;
-    const intl = useIntl();
-    const postHog = usePostHog();
-    const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
+interface HeaderPillProps {
+    isOpen?: boolean;
+}
 
-    if (!toastDismissed) {
-        return null;
-    }
+export function HeaderPill({ isOpen = true }: HeaderPillProps) {
+    const intl = useIntl();
 
     return (
         <Tooltip
-            title={
-                <TooltipContent
-                    onClick={() => {
-                        postHog.capture('AgentSkills:Click', {
-                            source: 'popover',
-                        });
-                        window.open(
-                            AGENT_SKILLS_URL,
-                            '_blank',
-                            'noopener,noreferrer'
-                        );
-                    }}
-                />
-            }
-            placement="bottom-end"
+            title={<TooltipContent />}
+            placement={isOpen ? 'bottom-start' : 'right'}
             enterDelay={200}
-            leaveDelay={150}
+            leaveDelay={100}
             slotProps={{
                 tooltip: {
                     sx: {
@@ -131,51 +109,36 @@ export function HeaderPill() {
                 target="_blank"
                 rel="noopener noreferrer"
                 underline="none"
-                onClick={() =>
-                    postHog.capture('AgentSkills:Click', {
-                        source: 'pill',
-                    })
-                }
                 sx={{
-                    'display': 'inline-flex',
+                    'display': 'flex',
+                    'width': '100%',
                     'alignItems': 'center',
+                    'justifyContent': 'flex-start',
                     'gap': 1,
-                    'height': 36,
-                    'px': '14px',
-                    'pl': '10px',
+                    'py': '6px',
+                    'px': '10px',
                     'borderRadius': '999px',
-                    'background': BG_GRADIENT[mode],
-                    'border': '1px solid rgba(46,100,235,0.22)',
                     'fontSize': 13,
                     'fontWeight': 600,
-                    'transition': 'transform 200ms ease',
+                    'cursor': 'pointer',
+                    'transition':
+                        'background 180ms ease, transform 180ms ease, box-shadow 180ms ease',
                     '&:hover': {
                         background:
                             'linear-gradient(135deg, rgba(46,100,235,0.14) 0%, rgba(54,197,176,0.16) 100%)',
-                        borderColor: 'rgba(46,100,235,0.42)',
                         boxShadow: '0 6px 16px -6px rgba(46,100,235,0.35)',
                         transform: 'translateY(-1px)',
                     },
                 }}
             >
-                <Box
+                <SparkleIcon
                     sx={{
-                        width: 22,
-                        height: 22,
-                        borderRadius: '999px',
-                        background: GRADIENT[mode],
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow:
-                            'inset 0 0 0 1px rgba(255,255,255,0.25), 0 2px 6px -2px rgba(46,100,235,0.55)',
+                        width: 18,
+                        height: 18,
+                        color: 'text.primary',
                         flexShrink: 0,
                     }}
-                >
-                    <SparkleIcon
-                        sx={{ width: 14, height: 14, color: 'common.white' }}
-                    />
-                </Box>
+                />
                 <Typography
                     component="span"
                     sx={{

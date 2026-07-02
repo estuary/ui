@@ -1,31 +1,47 @@
-//TODO (UI / UX) - These icons are not final
+import React from 'react';
+
 import {
     Box,
+    Divider,
     List,
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Menu,
+    MenuItem,
     Stack,
-    Toolbar,
-    Tooltip,
+    Typography,
     useTheme,
 } from '@mui/material';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
+
+import { useShallow } from 'zustand/react/shallow';
 
 import {
     CloudDownload,
     CloudUpload,
     DatabaseScript,
     FastArrowLeft,
+    HalfMoon,
+    HelpCircle,
     HomeSimple,
+    LogOut,
+    MoreHoriz,
     Settings,
+    SunLight,
 } from 'iconoir-react';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import { HeaderPill } from 'src/components/AgentSkills/HeaderPill';
+import CompanyLogo from 'src/components/graphics/CompanyLogo';
+import CompanyMark from 'src/components/graphics/CompanyMark';
+import { HelpMenu } from 'src/components/menus/HelpMenu';
 import ListItemLink from 'src/components/navigation/ListItemLink';
-import ModeSwitch from 'src/components/navigation/ModeSwitch';
-import { paperBackground } from 'src/context/Theme';
+import UserAvatar from 'src/components/shared/UserAvatar';
+import { supabaseClient } from 'src/context/GlobalProviders';
+import { useColorMode } from 'src/context/Theme';
+import { useUserStore } from 'src/context/User/useUserContextStore';
 
 interface NavigationProps {
     open: boolean;
@@ -36,6 +52,18 @@ interface NavigationProps {
 const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
     const intl = useIntl();
     const theme = useTheme();
+    const colorMode = useColorMode();
+
+    const userDetails = useUserStore(useShallow((state) => state.userDetails));
+
+    const [menuAnchor, setMenuAnchor] = React.useState<HTMLElement | null>(
+        null
+    );
+    const menuOpen = Boolean(menuAnchor);
+
+    const [helpAnchor, setHelpAnchor] = React.useState<HTMLElement | null>(
+        null
+    );
 
     const openNavigation = () => {
         onNavigationToggle(true);
@@ -55,109 +83,218 @@ const Navigation = ({ open, width, onNavigationToggle }: NavigationProps) => {
             sx={{
                 [`& .${drawerClasses.paper}`]: {
                     boxSizing: 'border-box',
+                    position: 'static',
+                    height: '100%',
                     transition: (paperTheme) =>
                         `${paperTheme.transitions.duration.shortest}ms`,
                     width,
-                    border: 0,
-                    background: paperBackground[theme.palette.mode],
                 },
                 transition: (drawerTheme) =>
                     `${drawerTheme.transitions.duration.shortest}ms`,
                 width,
             }}
         >
-            <Toolbar />
-
             <Stack
                 sx={{
                     height: '100%',
-                    justifyContent: 'space-between',
                     overflowX: 'hidden',
                 }}
             >
-                <Box>
-                    <List
-                        aria-label={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
-                        })}
-                    >
-                        <ListItemLink
-                            icon={<HomeSimple />}
-                            title={authenticatedRoutes.home.title}
-                            link={authenticatedRoutes.home.path}
-                        />
-                        <ListItemLink
-                            icon={<CloudUpload />}
-                            title={authenticatedRoutes.captures.title}
-                            link={authenticatedRoutes.captures.path}
-                        />
-                        <ListItemLink
-                            icon={<DatabaseScript />}
-                            title={authenticatedRoutes.collections.title}
-                            link={authenticatedRoutes.collections.path}
-                        />
-                        <ListItemLink
-                            icon={<CloudDownload />}
-                            title={authenticatedRoutes.materializations.title}
-                            link={authenticatedRoutes.materializations.path}
-                        />
-                        <ListItemLink
-                            icon={<Settings />}
-                            title={authenticatedRoutes.admin.title}
-                            link={authenticatedRoutes.admin.path}
-                        />
-                    </List>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        // Left-anchor the brand in both states. The drawer
+                        // animates its width on collapse; centering would fling
+                        // the mark toward the middle of the still-wide rail and
+                        // snap it back as the width settles.
+                        justifyContent: 'flex-start',
+                        height: 48,
+                        px: 2,
+                    }}
+                >
+                    {open ? <CompanyLogo /> : <CompanyMark />}
                 </Box>
 
-                <Box>
-                    <List
-                        aria-label={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
-                        })}
+                <List
+                    aria-label={intl.formatMessage({
+                        id: 'navigation.toggle.ariaLabel',
+                    })}
+                >
+                    <ListItemLink
+                        icon={<HomeSimple />}
+                        title={authenticatedRoutes.home.title}
+                        link={authenticatedRoutes.home.path}
+                        isOpen={open}
+                    />
+                    <ListItemLink
+                        icon={<CloudUpload />}
+                        title={authenticatedRoutes.captures.title}
+                        link={authenticatedRoutes.captures.path}
+                        isOpen={open}
+                    />
+                    <ListItemLink
+                        icon={<DatabaseScript />}
+                        title={authenticatedRoutes.collections.title}
+                        link={authenticatedRoutes.collections.path}
+                        isOpen={open}
+                    />
+                    <ListItemLink
+                        icon={<CloudDownload />}
+                        title={authenticatedRoutes.materializations.title}
+                        link={authenticatedRoutes.materializations.path}
+                        isOpen={open}
+                    />
+                    <ListItemLink
+                        icon={<Settings />}
+                        title={authenticatedRoutes.admin.title}
+                        link={authenticatedRoutes.admin.path}
+                        isOpen={open}
+                    />
+                </List>
+
+                <Box sx={{ mt: 'auto', pb: 1 }}>
+                    <Box
                         sx={{
+                            px: 1,
                             py: 1,
+                            display: 'flex',
+                            justifyContent: open ? 'flex-start' : 'center',
                         }}
                     >
-                        <ModeSwitch />
+                        <HeaderPill isOpen={open} />
+                    </Box>
 
-                        <Tooltip
-                            title={intl.formatMessage({
-                                id: 'navigation.toggle.ariaLabel',
-                            })}
-                            placement="right-end"
-                            enterDelay={open ? 1000 : undefined}
-                        >
-                            <ListItemButton
-                                component="a"
-                                onClick={openNavigation}
-                                sx={{
-                                    minHeight: 45,
-                                    px: 1.5,
-                                    whiteSpace: 'nowrap',
+                    <ListItemLink
+                        icon={<HelpCircle />}
+                        title="helpMenu.tooltip"
+                        onClick={(e) => setHelpAnchor(e.currentTarget)}
+                        isOpen={open}
+                    />
+                    <HelpMenu
+                        anchorEl={helpAnchor}
+                        onClose={() => setHelpAnchor(null)}
+                    />
+
+                    <ListItemLink
+                        icon={
+                            <FastArrowLeft
+                                style={{
+                                    transform: open
+                                        ? 'scaleX(1)'
+                                        : 'scaleX(-1)',
+                                    transition: 'all 50ms ease-in-out',
                                 }}
-                            >
-                                <ListItemIcon sx={{ minWidth: 36 }}>
-                                    <FastArrowLeft
-                                        style={{
-                                            transform: open
-                                                ? 'scaleX(1)'
-                                                : 'scaleX(-1)',
-                                            transition: 'all 50ms ease-in-out',
-                                        }}
-                                    />
-                                </ListItemIcon>
+                            />
+                        }
+                        title="navigation.collapse"
+                        onClick={openNavigation}
+                        isOpen={open}
+                    />
 
+                    {userDetails ? (
+                        <>
+                            <ListItemButton
+                                onClick={(e) => setMenuAnchor(e.currentTarget)}
+                                sx={{ mx: 1, my: 0.25 }}
+                            >
+                                <UserAvatar
+                                    userEmail={userDetails.email}
+                                    userName={userDetails.userName}
+                                    avatarUrl={userDetails.avatar}
+                                    size={20}
+                                />
                                 <ListItemText
-                                    primary={intl.formatMessage({
-                                        id: 'navigation.collapse',
-                                    })}
-                                    sx={{
-                                        display: !open ? 'none' : undefined,
+                                    primary={userDetails.email}
+                                    primaryTypographyProps={{
+                                        fontSize: 12,
+                                        fontWeight: 500,
+                                        lineHeight: 1.3,
+                                        noWrap: true,
+                                    }}
+                                />
+                                <MoreHoriz
+                                    style={{
+                                        flexShrink: 0,
+                                        color: theme.palette.text.secondary,
                                     }}
                                 />
                             </ListItemButton>
-                        </Tooltip>
-                    </List>
+
+                            <Menu
+                                anchorEl={menuAnchor}
+                                open={menuOpen}
+                                onClose={() => setMenuAnchor(null)}
+                                onClick={() => setMenuAnchor(null)}
+                                anchorOrigin={{
+                                    horizontal: 'left',
+                                    vertical: 'top',
+                                }}
+                                transformOrigin={{
+                                    horizontal: 'left',
+                                    vertical: 'bottom',
+                                }}
+                            >
+                                <MenuItem
+                                    disabled
+                                    sx={{ opacity: '1 !important' }}
+                                >
+                                    <Stack spacing={0}>
+                                        <Typography
+                                            sx={{
+                                                fontSize: 13,
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            {userDetails.userName ??
+                                                userDetails.email}
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: 'text.secondary',
+                                            }}
+                                        >
+                                            {userDetails.email}
+                                        </Typography>
+                                    </Stack>
+                                </MenuItem>
+
+                                <Divider />
+
+                                <MenuItem
+                                    onClick={() => colorMode.toggleColorMode()}
+                                >
+                                    <ListItemIcon>
+                                        {theme.palette.mode === 'dark' ? (
+                                            <HalfMoon />
+                                        ) : (
+                                            <SunLight />
+                                        )}
+                                    </ListItemIcon>
+                                    <FormattedMessage
+                                        id={
+                                            theme.palette.mode === 'dark'
+                                                ? 'modeSwitch.darkLabel'
+                                                : 'modeSwitch.lightLabel'
+                                        }
+                                    />
+                                </MenuItem>
+                                <Divider />
+
+                                <MenuItem
+                                    onClick={() => {
+                                        void supabaseClient.auth.signOut();
+                                    }}
+                                >
+                                    <ListItemIcon>
+                                        <LogOut />
+                                    </ListItemIcon>
+                                    <FormattedMessage id="cta.logout" />
+                                </MenuItem>
+                            </Menu>
+                        </>
+                    ) : null}
                 </Box>
             </Stack>
         </MuiDrawer>

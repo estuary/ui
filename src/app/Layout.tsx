@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
@@ -8,7 +8,7 @@ import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
-import { Toast } from 'src/components/AgentSkills/Toast';
+import { AgentSkillsToast } from 'src/components/AgentSkills/Toast';
 import Navigation from 'src/components/navigation/Navigation';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import PageContainer from 'src/components/shared/PageContainer';
@@ -75,38 +75,44 @@ function AppLayout() {
     };
 
     return (
-        <Box sx={{ height: '100vh' }}>
-            <Box>
-                <Navigation
-                    open={navigationOpen}
-                    width={navigationWidth}
-                    onNavigationToggle={toggleNavigationDrawer}
-                />
-            </Box>
+        <Box
+            sx={{
+                display: 'grid',
+                gridTemplateColumns: `${navigationWidth}px 1fr`,
+                gridTemplateRows: '1fr',
+                height: '100vh',
+                transition: (t) =>
+                    `grid-template-columns ${t.transitions.duration.shortest}ms`,
+            }}
+        >
+            <Navigation
+                open={navigationOpen}
+                width={navigationWidth}
+                onNavigationToggle={toggleNavigationDrawer}
+            />
 
-            <Toast docsPanelOpen={displaySidePanel} />
+            <AgentSkillsToast docsPanelOpen={displaySidePanel} />
 
-            <Box
-                sx={{
-                    ml: `${navigationWidth}px`,
-                    height: '100%',
-                }}
-            >
+            {/* Top strip the removed top bar used to occupy. Padding the whole
+            content column (not just PageContainer) keeps the docs side panel
+            top-aligned with the page content, and lines the breadcrumb bar up
+            with the first sidebar nav item below the logo header. */}
+            <Box sx={{ overflow: 'hidden', minWidth: 0, pt: 6 }}>
                 <ReflexContainer orientation="vertical">
                     <ReflexElement
                         className="left-pane"
                         minSize={theme.breakpoints.values.sm / 2}
                         flex={leftPaneFlex}
                         style={{
+                            overflow: 'hidden',
                             transitionDuration: animateOpening
                                 ? `${theme.transitions.duration.shortest}ms`
                                 : undefined,
                         }}
                     >
-                        <Box className="pane-content">
+                        <Box className="pane-content" sx={{ height: '100%' }}>
                             <ErrorBoundryWrapper>
-                                <Toolbar />
-                                <PageContainer>
+                                <PageContainer navigationOpen={navigationOpen}>
                                     <Outlet />
                                 </PageContainer>
                             </ErrorBoundryWrapper>

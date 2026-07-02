@@ -1,6 +1,7 @@
-import type { ReactElement } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 
 import {
+    Badge,
     ListItemButton,
     ListItemIcon,
     ListItemText,
@@ -11,41 +12,48 @@ import { useIntl } from 'react-intl';
 import { Link, useMatch, useResolvedPath } from 'react-router-dom';
 
 interface Props {
-    icon: ReactElement;
+    icon: ReactNode;
     title: string;
-    link: string;
+    link?: string;
+    onClick?: (event: MouseEvent<HTMLElement>) => void;
+    isOpen?: boolean;
+    badgeContent?: number;
+    tooltipDelay?: number;
 }
 
-export const ListItemLink = ({ icon, title, link }: Props) => {
-    const resolved = useResolvedPath(link);
-    const selected = Boolean(
-        useMatch({
-            path: resolved.pathname,
-            end: false, // `end: false` matches nested routes e.g. `/admin/billing`
-        })
-    );
+export const ListItemLink = ({
+    icon,
+    title,
+    link,
+    onClick,
+    isOpen,
+    badgeContent,
+    tooltipDelay,
+}: Props) => {
+    // Hooks must run unconditionally; for action items (no `link`) the resolved
+    // match is ignored because `selected` is gated on `link` being present.
+    const resolved = useResolvedPath(link ?? '');
+    const match = useMatch({ path: resolved.pathname, end: false });
+    const selected = Boolean(link) && Boolean(match);
 
     return (
         <li>
-            <Tooltip title={title} placement="right-end">
+            <Tooltip
+                title={!isOpen ? title : ''}
+                placement="right"
+                enterDelay={tooltipDelay ? tooltipDelay : undefined}
+            >
                 <ListItemButton
-                    component={Link}
-                    to={link}
-                    selected={selected}
-                    disableGutters
-                    sx={{
-                        whiteSpace: 'nowrap',
-                        px: 1.5,
-                    }}
+                    {...(link
+                        ? { component: Link, to: link, selected }
+                        : { onClick })}
+                    sx={{ mx: 1, my: 0.25 }}
                 >
-                    <ListItemIcon
-                        sx={{
-                            minWidth: 36,
-                            color: (theme) => theme.palette.text.primary,
-                        }}
-                    >
-                        {icon}
-                    </ListItemIcon>
+                    {icon ? (
+                        <ListItemIcon>
+                            <Badge badgeContent={badgeContent}>{icon}</Badge>
+                        </ListItemIcon>
+                    ) : null}
 
                     <ListItemText primary={title} />
                 </ListItemButton>

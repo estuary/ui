@@ -4,7 +4,7 @@ import { RouteTitles } from 'src/lang/en-US/RouteTitles';
 
 export const Captures: Record<string, string> = {
     'captureTable.header': `Captures`,
-    'capturesTable.title': `Your Captures`,
+    'capturesTable.title': `Captures`,
     'capturesTable.cta.new': `New Capture`,
     'capturesTable.filterLabel': `Filter captures`,
     'capturesTable.delete.removeCollectionsOption': `Delete all collections associated with this capture. Collections used by active tasks will be skipped.`,
