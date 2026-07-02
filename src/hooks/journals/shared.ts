@@ -22,7 +22,7 @@ function isJournalRecord(val: any): val is JournalRecord {
     return val?._meta?.uuid;
 }
 
-export async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
+async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
     // Get a lock on the stream
     const reader = stream.getReader();
 
@@ -43,7 +43,7 @@ export async function* streamAsyncIterator<T>(stream: ReadableStream<T>) {
     }
 }
 
-export async function readAllDocuments<T>(stream: ReadableStream<T>) {
+async function readAllDocuments<T>(stream: ReadableStream<T>) {
     const accum: T[] = [];
 
     for await (const item of streamAsyncIterator(stream)) {

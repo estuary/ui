@@ -98,7 +98,7 @@ export const useEntitiesStore_tenantsWithAdmin = () => {
     );
 };
 
-export const useEntitiesStore_populateState = () => {
+const useEntitiesStore_populateState = () => {
     const [setCapabilities, setHydrated, setHydrationErrors, setMutate] =
         useEntitiesStore(
             useShallow((state) => [

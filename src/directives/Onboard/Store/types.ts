@@ -1,4 +1,4 @@
-export interface SurveyResponse {
+interface SurveyResponse {
     origin: string;
     details: string;
 }

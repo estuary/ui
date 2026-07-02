@@ -22,7 +22,7 @@ import { Patterns } from 'src/types/jsonforms';
 
 const INVALID_TIME = 'Invalid Time';
 
-export const CustomLayout = forwardRef<HTMLDivElement, PickersLayoutProps<any>>(
+const CustomLayout = forwardRef<HTMLDivElement, PickersLayoutProps<any>>(
     function CustomLayout(props, ref) {
         const { actionBar, content, ownerState } = usePickerLayout(props);
 

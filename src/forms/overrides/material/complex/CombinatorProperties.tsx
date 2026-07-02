@@ -38,10 +38,10 @@ interface CombinatorPropertiesProps {
     path: string;
 }
 
-export const isLayout = (uischema: UISchemaElement): uischema is Layout =>
+const isLayout = (uischema: UISchemaElement): uischema is Layout =>
     Object.hasOwn(uischema, 'elements');
 
-export class CombinatorProperties extends React.Component<
+class CombinatorProperties extends React.Component<
     CombinatorPropertiesProps,
     {}
 > {
