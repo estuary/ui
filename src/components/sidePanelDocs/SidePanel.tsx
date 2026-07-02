@@ -36,8 +36,6 @@ function DocsSidePanel({ show }: Props) {
             }}
             open={show}
         >
-            <Toolbar />
-
             <Toolbar
                 sx={{
                     display: 'flex',

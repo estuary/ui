@@ -245,13 +245,7 @@ function EntityTable({
         <Box data-public>
             {hideHeaderAndFooter ||
             (!showToolbar && hideFilter && !ExportComponent) ? null : (
-                <Box sx={{ mx: 2 }}>
-                    <Stack direction="row" spacing={1}>
-                        {showToolbar ? (
-                            <Title header={header} marginBottom={2} />
-                        ) : null}
-                    </Stack>
-
+                <Box>
                     <Toolbar
                         disableGutters
                         sx={{
@@ -297,7 +291,7 @@ function EntityTable({
                 </Box>
             )}
 
-            <Box sx={hideHeaderAndFooter ? {} : { mb: 2, mx: 2 }}>
+            <Box sx={hideHeaderAndFooter ? {} : { mb: 2 }}>
                 <TableContainer component={Box}>
                     <Table
                         size="small"

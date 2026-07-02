@@ -2,12 +2,9 @@ import { Box, Link, Paper, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { usePostHog } from '@posthog/react';
 import { NavArrowRight } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import {
     AGENT_SKILLS_URL,
-    BG_GRADIENT,
-    GRADIENT,
     LINK_COLOR,
     SECONDARY_TEXT_COLOR,
     SHIMMER_STYLES,
@@ -18,7 +15,6 @@ import { SparkleIcon } from 'src/components/AgentSkills/SparkleIcon';
 function TooltipContent({ onClick }: { onClick: () => void }) {
     const theme = useTheme();
     const mode = theme.palette.mode;
-    const intl = useIntl();
 
     return (
         <Paper
@@ -49,9 +45,7 @@ function TooltipContent({ onClick }: { onClick: () => void }) {
                         mb: 0.5,
                     }}
                 >
-                    {intl.formatMessage({
-                        id: 'agentSkills.title',
-                    })}
+                    Meet Estuary Agent Skills
                 </Typography>
                 <Typography
                     sx={{
@@ -61,9 +55,9 @@ function TooltipContent({ onClick }: { onClick: () => void }) {
                         mb: '10px',
                     }}
                 >
-                    {intl.formatMessage({
-                        id: 'agentSkills.description',
-                    })}
+                    Give any AI agent the skills to build connectors, debug
+                    pipelines, and check stats on Estuary, from wherever you
+                    work.
                 </Typography>
                 <Box
                     component="span"
@@ -76,20 +70,15 @@ function TooltipContent({ onClick }: { onClick: () => void }) {
                         gap: 0.5,
                     }}
                 >
-                    {intl.formatMessage({
-                        id: 'agentSkills.cta',
-                    })}
-                    <NavArrowRight width={16} height={16} />
+                    Read the docs
+                    <NavArrowRight style={{ fontSize: 16 }} />
                 </Box>
             </Box>
         </Paper>
     );
 }
 
-export function HeaderPill() {
-    const theme = useTheme();
-    const mode = theme.palette.mode;
-    const intl = useIntl();
+export function Pill() {
     const postHog = usePostHog();
     const toastDismissed = useAgentSkillsStore((s) => s.toastDismissed);
 
@@ -113,9 +102,9 @@ export function HeaderPill() {
                     }}
                 />
             }
-            placement="bottom-end"
+            placement="bottom-start"
             enterDelay={200}
-            leaveDelay={150}
+            leaveDelay={100}
             slotProps={{
                 tooltip: {
                     sx: {
@@ -137,54 +126,49 @@ export function HeaderPill() {
                     })
                 }
                 sx={{
-                    'display': 'inline-flex',
+                    'display': 'flex',
+                    'width': '100%',
                     'alignItems': 'center',
+                    'justifyContent': 'flex-start',
                     'gap': 1,
-                    'height': 36,
-                    'px': '14px',
-                    'pl': '10px',
-                    'borderRadius': '999px',
-                    'background': BG_GRADIENT[mode],
-                    'border': '1px solid rgba(46,100,235,0.22)',
+                    'py': '6px',
+                    'px': '10px',
+                    'borderRadius': '8px',
+                    'color': 'text.primary',
                     'fontSize': 13,
-                    'fontWeight': 600,
-                    'transition': 'transform 200ms ease',
+                    'fontWeight': 400,
+                    'cursor': 'pointer',
+                    'transition':
+                        'background 180ms ease, transform 180ms ease, box-shadow 180ms ease',
                     '&:hover': {
                         background:
                             'linear-gradient(135deg, rgba(46,100,235,0.14) 0%, rgba(54,197,176,0.16) 100%)',
-                        borderColor: 'rgba(46,100,235,0.42)',
                         boxShadow: '0 6px 16px -6px rgba(46,100,235,0.35)',
-                        transform: 'translateY(-1px)',
                     },
                 }}
             >
-                <Box
+                <SparkleIcon
                     sx={{
-                        width: 22,
-                        height: 22,
-                        borderRadius: '999px',
-                        background: GRADIENT[mode],
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow:
-                            'inset 0 0 0 1px rgba(255,255,255,0.25), 0 2px 6px -2px rgba(46,100,235,0.55)',
+                        fontSize: 21,
+                        color: 'inherit',
                         flexShrink: 0,
                     }}
-                >
-                    <SparkleIcon
-                        sx={{ width: 14, height: 14, color: 'common.white' }}
-                    />
-                </Box>
+                />
                 <Typography
                     component="span"
                     sx={{
+                        my: 0.5,
+                        flex: '1 1 auto',
+                        minWidth: 0,
+                        overflow: 'hidden',
                         whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
                         fontSize: 'inherit',
                         fontWeight: 'inherit',
+                        color: 'inherit',
                     }}
                 >
-                    {intl.formatMessage({ id: 'agentSkills.pill.label' })}
+                    Agent Skills
                 </Typography>
             </Link>
         </Tooltip>
