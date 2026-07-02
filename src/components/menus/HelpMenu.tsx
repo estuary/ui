@@ -13,6 +13,11 @@ function HelpMenu() {
             icon={<HelpCircle />}
             identifier="help-menu"
             tooltip={intl.formatMessage({ id: 'helpMenu.tooltip' })}
+            hideArrow
+            customMenuPosition={{
+                anchorOrigin: { vertical: 'top', horizontal: 'left' },
+                transformOrigin: { vertical: 'bottom', horizontal: 'left' },
+            }}
         >
             <ExternalLinkMenuItem
                 link={intl.formatMessage({ id: 'helpMenu.docs.link' })}

@@ -50,6 +50,11 @@ const UserMenu = ({ iconColor }: Props) => {
                 }
                 identifier="account-menu"
                 tooltip={intl.formatMessage({ id: 'accountMenu.tooltip' })}
+                hideArrow
+                customMenuPosition={{
+                    anchorOrigin: { vertical: 'top', horizontal: 'left' },
+                    transformOrigin: { vertical: 'bottom', horizontal: 'left' },
+                }}
             >
                 <MenuItem sx={nonInteractiveMenuStyling}>
                     <ListItemIcon>
