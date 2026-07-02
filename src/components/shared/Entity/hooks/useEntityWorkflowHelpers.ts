@@ -25,7 +25,7 @@ import { useWorkflowStore } from 'src/stores/Workflow/Store';
 import { getPathWithParams, hasLength } from 'src/utils/misc-utils';
 import { snackbarSettings } from 'src/utils/notification-utils';
 
-type RouteHandler = (customRoute?: string, external?: boolean) => void;
+type RouteHandler = (customRoute?: string) => void;
 
 function useEntityWorkflowHelpers() {
     const postHog = usePostHog();
@@ -85,7 +85,7 @@ function useEntityWorkflowHelpers() {
     const { generatePath } = useDetailsNavigator(entityDetailsBaseURL);
 
     const exit: RouteHandler = useCallback(
-        (customRoute?: string, external?: boolean) => {
+        (customRoute?: string) => {
             logRocketConsole('EntityWorkflow:exit');
             resetState();
 
@@ -97,12 +97,6 @@ function useEntityWorkflowHelpers() {
             }
 
             logRocketConsole('EntityWorkflow:exit:navigate');
-            if (external && hasLength(route)) {
-                window.location.href = route;
-
-                return;
-            }
-
             navigate(route, { replace: true });
         },
         [catalogName, generatePath, navigate, resetState]
@@ -110,13 +104,13 @@ function useEntityWorkflowHelpers() {
 
     // Form Event Handlers
     const closeLogs: RouteHandler = useCallback(
-        (customRoute?: string, external?: boolean) => {
+        (customRoute?: string) => {
             logRocketConsole('EntityWorkflow:closeLogs');
             setFormState({ showLogs: false });
 
             if (exitWhenLogsClose) {
                 logRocketConsole('EntityWorkflow:closeLogs:exit');
-                exit(customRoute, external);
+                exit(customRoute);
             }
         },
         [exit, setFormState, exitWhenLogsClose]

@@ -21,16 +21,10 @@ const STORE_KEY = 'workflow';
 
 const getInitialStateData = (): Pick<
     WorkflowState,
-    | 'catalogName'
-    | 'connectorMetadata'
-    | 'customerId'
-    | 'redirectUrl'
-    | 'storageMappingPrefix'
+    'catalogName' | 'connectorMetadata' | 'storageMappingPrefix'
 > => ({
     catalogName: { root: '', suffix: '', tenant: '', whole: '' },
     connectorMetadata: null,
-    customerId: '',
-    redirectUrl: '',
     storageMappingPrefix: '',
 });
 
@@ -70,26 +64,6 @@ const getInitialState = (set: NamedSet<WorkflowState>): WorkflowState => ({
             }),
             false,
             'connector metadata set'
-        );
-    },
-
-    setCustomerId: (value) => {
-        set(
-            produce((state: WorkflowState) => {
-                state.customerId = value;
-            }),
-            false,
-            'customer ID set'
-        );
-    },
-
-    setRedirectUrl: (value) => {
-        set(
-            produce((state: WorkflowState) => {
-                state.redirectUrl = value;
-            }),
-            false,
-            'redirect URL set'
         );
     },
 
