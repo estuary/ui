@@ -1,5 +1,15 @@
+import type { Connection } from 'src/api/gql/useAllPages';
+import type { AlertConfigEntry } from 'src/gql-types/graphql';
 import type { Entity } from 'src/types';
 import type { AlertSubscription } from 'src/types/gql';
+
+// The `AlertConfigEntryConnection` interface provided by GraphQL
+// cannot be used here, unfortunately, if the hook `useAllPages`
+// must be invoked. The client defines a generic type for GraphQL
+// connections that omits properties found in these connections.
+export interface AlertConfigQueryResponse {
+    alertConfigs: Connection<AlertConfigEntry>;
+}
 
 export interface DraftSpecData {
     spec: any;
@@ -56,7 +66,7 @@ export interface LiveSpecsExtQuery_GroupedUpdates {
 
 export type ReducedAlertSubscription = Pick<
     AlertSubscription,
-    'alertTypes' | 'catalogPrefix' | 'email' | 'updatedAt'
+    'alertTypes' | 'catalogPrefix' | 'email'
 >;
 
 export interface ReducedAlertSubscriptionQueryResponse {

@@ -4,10 +4,18 @@ export const Alerts: Record<string, string> = {
     'alerts.config.header': `Organization Notifications`,
     'alerts.config.cta.addAlertMethod': `Configure Notifications`,
 
+    'alerts.config.dialog.cta.addSubscriber': `Add Recipient`,
+    'alerts.config.dialog.cta.deleteAll': `Delete Prefix Alerts`,
     'alerts.config.dialog.emailSelector.inputError': `Email is incorrectly formatted.`,
+    'alerts.config.dialog.emailSelector.duplicationError': `Email is used by another subscription to this prefix.`,
     'alerts.config.dialog.error.generic': `An issue was encountered {operation} an alert subscription.`,
     'alerts.config.dialog.error.term.delete': `deleting`,
     'alerts.config.dialog.error.term.modify': `creating or updating`,
+    'alerts.config.dialog.label.globalSettings': `Global Settings`,
+    'alerts.config.dialog.label.subscribers': `Recipients ({count})`,
+    'alerts.config.dialog.label.placeholderSubscriberId': `(new recipient)`,
+    'alerts.config.dialog.message.noExistingSubscriptions': `No emails are configured to be notified for prefix, {prefix}. To receive notifications for this prefix, click "Add Recipient" to get started.`,
+    'alerts.config.dialog.message.globalSettings': `Default settings applied to all tasks under this prefix. Individual tasks can override these values in their own notification settings.`,
     'alerts.config.dialog.generate.description': `Choose where you'd like notifications to be sent. Email addresses can be for mailing lists, {docLink}, or individual users.`,
     'alerts.config.dialog.generate.description.docLink': `Slack channels`,
     'alerts.config.dialog.generate.description.docPath': `https://slack.com/intl/en-au/help/articles/206819278-Send-emails-to-Slack`,
@@ -64,7 +72,8 @@ export const Alerts: Record<string, string> = {
     'alert.active.noAlerts.title': `All Clear!`,
     'alert.active.noAlerts.message': `No active alerts.`,
 
-    // Consumed in ui/src/settings/alerts.ts and ui/src/hooks/useAlertTypeContent.ts
+    // Consumed in ui/src/settings/alerts.ts, ui/src/hooks/useAlertTypeContent.ts,
+    // and ui/src/components/admin/Settings/PrefixAlerts/Dialog/GlobalSettings/DataMovementSetting.tsx
     'alerts.alertType.humanReadable.auto_discover_failed': `Auto Discover Failed`,
     'alerts.alertType.humanReadable.background_publication_failed': `Background Publication Failed`,
     'alerts.alertType.humanReadable.shard_failed': `Task Failure`,

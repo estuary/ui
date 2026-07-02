@@ -17,10 +17,6 @@ export const columns: TableColumns[] = [
     },
     {
         field: null,
-        headerIntlKey: 'entityTable.data.alertTypes',
-    },
-    {
-        field: null,
         headerIntlKey: 'alerts.config.table.label.alertMethod',
     },
     {

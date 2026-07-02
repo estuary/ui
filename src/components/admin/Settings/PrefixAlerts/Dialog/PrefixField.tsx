@@ -1,6 +1,6 @@
 import type { PrefixFieldProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
-import { Grid, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
@@ -21,35 +21,34 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
         }
     });
 
-    return (
-        <Grid size={{ xs: 12, md: 5 }}>
-            {staticPrefix ? (
-                <TextField
-                    InputProps={{
-                        sx: { borderRadius: 3 },
-                    }}
-                    disabled
-                    fullWidth
-                    label={intl.formatMessage({
-                        id: 'common.tenant',
-                    })}
-                    required
-                    size="small"
-                    value={staticPrefix}
-                    variant="outlined"
-                />
-            ) : (
-                <PrefixedName
-                    label={intl.formatMessage({
-                        id: 'common.tenant',
-                    })}
-                    onChange={setSubscribedPrefix}
-                    prefixOnly
-                    required
-                    size="small"
-                    validateOnLoad
-                />
-            )}
-        </Grid>
+    return staticPrefix ? (
+        <TextField
+            disabled
+            fullWidth
+            label={intl.formatMessage({
+                id: 'common.tenant',
+            })}
+            required
+            size="small"
+            slotProps={{
+                input: {
+                    sx: { borderRadius: 3 },
+                },
+            }}
+            value={staticPrefix}
+            variant="outlined"
+        />
+    ) : (
+        <PrefixedName
+            allowBlankName
+            allowEndSlash
+            label={intl.formatMessage({
+                id: 'common.tenant',
+            })}
+            onChange={setSubscribedPrefix}
+            required
+            size="small"
+            validateOnLoad
+        />
     );
 }

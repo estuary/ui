@@ -1,61 +1,29 @@
-import type { ChipDisplay } from 'src/components/shared/ChipList/types';
 import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/PrefixAlerts/types';
 
-import { useMemo } from 'react';
-
 import { TableCell, TableRow } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
 import AlertEditButton from 'src/components/tables/cells/prefixAlerts/EditButton';
-import { sortByAlertType } from 'src/utils/misc-utils';
 
-function Row({ alertTypeDefs, row }: RowProps) {
-    const evaluatedAlertTypes: ChipDisplay[] = useMemo(
-        () =>
-            row.alertTypes
-                .map((alertType) =>
-                    alertTypeDefs.find((def) => def.alertType === alertType)
-                )
-                .filter((def) => typeof def !== 'undefined')
-                .sort((first, second) =>
-                    sortByAlertType(
-                        {
-                            isSystemAlert: first.isSystem,
-                            value: first.displayName,
-                        },
-                        {
-                            isSystemAlert: second.isSystem,
-                            value: second.displayName,
-                        },
-                        'asc'
-                    )
-                )
-                .map(({ displayName, isSystem }) => ({
-                    display: displayName,
-                    diminishedText: isSystem,
-                })),
-        [alertTypeDefs, row.alertTypes]
-    );
+function Row({ row }: RowProps) {
+    const { subscriptions } = row;
 
     return (
         <TableRow>
-            <TableCell>{row.catalogPrefix}</TableCell>
+            <TableCell>{subscriptions[0].catalogPrefix}</TableCell>
 
             <ChipListCell
                 maxChips={3}
                 stripPath={false}
-                values={evaluatedAlertTypes}
+                values={subscriptions.map(({ email }) => email)}
             />
 
-            <TableCell>{row.email}</TableCell>
-
             <AlertEditButton
-                alertTypes={row.alertTypes}
-                email={row.email}
-                prefix={row.catalogPrefix}
+                prefix={subscriptions[0].catalogPrefix}
+                subscriptionMetadata={row}
             />
         </TableRow>
     );
@@ -67,7 +35,7 @@ function Rows({ alertTypeDefs, data }: RowsProps) {
             {data.map((datum, index) => (
                 <Row
                     alertTypeDefs={alertTypeDefs}
-                    key={`${datum.catalogPrefix}-${datum.email}-${index}`}
+                    key={`${datum.subscriptions[0].id}-${index}`}
                     row={datum}
                 />
             ))}

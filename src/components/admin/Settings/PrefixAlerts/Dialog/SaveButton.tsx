@@ -7,18 +7,27 @@ import { Button } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
+import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
 
 const SaveButton = ({ closeDialog }: DialogActionProps) => {
     const intl = useIntl();
-    const { loading, onClick } = useModifyAlertSubscription(closeDialog);
+    const { loading, onClick } = useModifyAlertMetadata(closeDialog);
 
     const errorsExist = useAlertSubscriptionsStore(
-        (state) => state.emailErrorsExist || state.prefixErrorsExist
+        (state) =>
+            state.prefixErrorsExist ||
+            state.mutableSubscriptionMetadata.subscriptions.some(
+                ({ emailErrorsExist }) => emailErrorsExist
+            )
     );
 
-    const subscription = useAlertSubscriptionsStore(
-        (state) => state.subscription
+    const catalogPrefix = useAlertSubscriptionsStore(
+        (state) => state.catalogPrefix
+    );
+    const emptyEmailExists = useAlertSubscriptionsStore((state) =>
+        state.mutableSubscriptionMetadata.subscriptions.some(
+            ({ email }) => email.length === 0
+        )
     );
 
     const disabled = useMemo(
@@ -26,10 +35,10 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
             Boolean(
                 errorsExist ||
                     loading ||
-                    subscription.catalogPrefix.length === 0 ||
-                    subscription.email.length === 0
+                    catalogPrefix.length === 0 ||
+                    emptyEmailExists
             ),
-        [errorsExist, loading, subscription.catalogPrefix, subscription.email]
+        [catalogPrefix, emptyEmailExists, errorsExist, loading]
     );
 
     return (

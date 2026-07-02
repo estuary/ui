@@ -1,4 +1,5 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
+import type { SubscriptionDependentProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { Grant_UserExt } from 'src/types';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -18,6 +19,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { useEvaluateSubscriptionIneligibility } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateSubscriptionIneligibility';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import usePrefixAdministrators from 'src/hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'src/hooks/useUserInformationByPrefix';
@@ -31,21 +33,27 @@ const sanitizeEmail = (value: string) => {
     return value.trim();
 };
 
-function EmailSelector() {
+// TODO: Investigate an issue that prevents the list of admin email from
+//   being displayed as options. Confirm this is not an existing issue in
+//   production.
+function EmailSelector({
+    subscription: { email: subscribedEmail, id: subscriptionId },
+}: SubscriptionDependentProps) {
     const intl = useIntl();
 
     const serverError = useAlertSubscriptionsStore(
         (state) => state.initializationError
     );
-    const [prefix, subscribedEmail, setSubscribedEmail, setEmailErrorsExist] =
+    const [prefix, setSubscribedEmail, setEmailErrorsExist] =
         useAlertSubscriptionsStore(
             useShallow((state) => [
-                state.subscription.catalogPrefix,
-                state.subscription.email,
+                state.catalogPrefix,
                 state.setSubscribedEmail,
                 state.setEmailErrorsExist,
             ])
         );
+    const { emptyEmailDetected, duplicateSubscriptionEmails } =
+        useEvaluateSubscriptionIneligibility();
 
     const [inputValue, setInputValue] = useState(subscribedEmail);
 
@@ -64,14 +72,30 @@ function EmailSelector() {
         [inputValue]
     );
 
+    const duplicateEmailDetected =
+        duplicateSubscriptionEmails.includes(subscribedEmail);
+
     useEffect(() => {
-        setEmailErrorsExist(inputErrorExists);
-    }, [inputErrorExists, setEmailErrorsExist]);
+        setEmailErrorsExist(
+            inputErrorExists || duplicateEmailDetected,
+            subscriptionId
+        );
+    }, [
+        duplicateEmailDetected,
+        inputErrorExists,
+        setEmailErrorsExist,
+        subscriptionId,
+    ]);
 
     return (
         <FormControl fullWidth>
             <Autocomplete
-                disabled={Boolean(serverError)}
+                disabled={
+                    Boolean(serverError) ||
+                    (emptyEmailDetected && subscribedEmail.length > 0) ||
+                    (duplicateSubscriptionEmails.length > 0 &&
+                        !duplicateEmailDetected)
+                }
                 filterOptions={(options) =>
                     options.filter((option) => {
                         if (typeof option === 'string') {
@@ -107,7 +131,7 @@ function EmailSelector() {
                 }}
                 onChange={(_event, value, reason) => {
                     if (!value) {
-                        setSubscribedEmail('');
+                        setSubscribedEmail('', subscriptionId);
 
                         return;
                     }
@@ -125,12 +149,20 @@ function EmailSelector() {
                     setSubscribedEmail(
                         typeof value === 'string'
                             ? sanitizeEmail(value)
-                            : value.user_email
+                            : value.user_email,
+                        subscriptionId
                     );
+                }}
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === 'Tab') {
+                        setSubscribedEmail(
+                            sanitizeEmail(inputValue),
+                            subscriptionId
+                        );
+                    }
                 }}
                 onInputChange={(_event, value) => {
                     setInputValue(value);
-                    setSubscribedEmail(sanitizeEmail(value));
                 }}
                 options={userInfo as Option[]}
                 renderInput={({
@@ -139,16 +171,23 @@ function EmailSelector() {
                 }: AutocompleteRenderInputParams) => (
                     <TextField
                         {...params}
-                        InputProps={{
-                            ...InputProps,
-                            sx: { borderRadius: 3 },
-                        }}
-                        error={inputErrorExists}
+                        error={inputErrorExists || duplicateEmailDetected}
                         label={intl.formatMessage({
                             id: 'data.email',
                         })}
+                        onBlur={(_event) => {
+                            setSubscribedEmail(
+                                sanitizeEmail(inputValue),
+                                subscriptionId
+                            );
+                        }}
                         required
                         size="small"
+                        slotProps={{
+                            input: {
+                                sx: { borderRadius: 3 },
+                            },
+                        }}
                         variant="outlined"
                     />
                 )}
@@ -175,16 +214,19 @@ function EmailSelector() {
                                     <ListItemText
                                         primary={option.user_full_name}
                                         secondary={option.user_email}
-                                        primaryTypographyProps={{
-                                            sx: {
-                                                fontWeight: 500,
-                                                fontSize: 16,
+                                        slotProps={{
+                                            primary: {
+                                                sx: {
+                                                    fontWeight: 500,
+                                                    fontSize: 16,
+                                                },
                                             },
-                                        }}
-                                        secondaryTypographyProps={{
-                                            sx: {
-                                                color: (theme) =>
-                                                    theme.palette.text.primary,
+                                            secondary: {
+                                                sx: {
+                                                    color: (theme) =>
+                                                        theme.palette.text
+                                                            .primary,
+                                                },
                                             },
                                         }}
                                         sx={{ ml: 2 }}
@@ -199,9 +241,17 @@ function EmailSelector() {
             />
 
             {inputErrorExists ? (
-                <FormHelperText error={inputErrorExists}>
+                <FormHelperText error>
                     {intl.formatMessage({
                         id: 'alerts.config.dialog.emailSelector.inputError',
+                    })}
+                </FormHelperText>
+            ) : null}
+
+            {duplicateEmailDetected ? (
+                <FormHelperText error>
+                    {intl.formatMessage({
+                        id: 'alerts.config.dialog.emailSelector.duplicationError',
                     })}
                 </FormHelperText>
             ) : null}

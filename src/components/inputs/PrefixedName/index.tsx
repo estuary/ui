@@ -229,7 +229,10 @@ function PrefixedName({
                     //  name input is of less importance. Mainly for GenerateInvitation
                     [`& .${inputAdornmentClasses.root}, & .${inputAdornmentClasses.root} .${autocompleteClasses.root}`]:
                         {
-                            width: allowBlankName ? '100%' : undefined,
+                            width:
+                                allowBlankName && !singleOption
+                                    ? '100%'
+                                    : undefined,
                         },
                     // Gross - but prevents the name input from showing a border while inside another border
                     [`& div > div > fieldset.${outlinedInputClasses.notchedOutline}`]:
