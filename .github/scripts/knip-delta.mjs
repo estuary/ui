@@ -31,6 +31,7 @@ const RAW_CATS = [
     'nsTypes',
     'enumMembers',
     'classMembers',
+    'orphanedProps',
 ];
 const EXPORTED = new Set(['exports', 'types', 'nsExports', 'nsTypes']);
 
@@ -58,6 +59,7 @@ const LABELS = {
     unlisted: 'Unlisted dependencies',
     classMembers: 'Unused class members',
     binaries: 'Unused binaries',
+    orphanedProps: 'Orphaned props',
 };
 
 // One-line explainer per display category, shown when its section is expanded.
@@ -71,6 +73,7 @@ const EXPLAIN = {
     unlisted: 'Imported but missing from package.json',
     classMembers: 'A class member referenced nowhere',
     binaries: 'A referenced binary that is not installed',
+    orphanedProps: 'Declared on the component but no caller ever passes it',
 };
 
 function load(path) {
