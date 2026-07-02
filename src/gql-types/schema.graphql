@@ -315,6 +315,30 @@ input AzurePrivateLinkInput {
   serviceName: String!
 }
 
+type BillingAddress {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+
+input BillingAddressInput {
+  city: String
+  country: String
+  line1: String
+  line2: String
+  postalCode: String
+  state: String
+}
+
+type BillingContact {
+  address: BillingAddress
+  email: String
+  name: String
+}
+
 type BillingPaymentMethodPayload {
   paymentMethods: [PaymentMethod!]!
   primaryPaymentMethod: PaymentMethod
@@ -345,10 +369,12 @@ enum CapabilityBit {
   CreateInviteLink
   Delegate
   DeleteGrant
+  EditBilling
   JournalAppend
   JournalRead
   ModifyDataPlanePrivateNetworking
   SpecEdit
+  ViewBilling
   ViewDataPlanePrivateNetworking
 }
 
@@ -1102,6 +1128,7 @@ type MutationRoot {
   Already-zeroed (revoked) tokens are treated as not found.
   """
   revokeRefreshToken(id: Id!): Boolean!
+  setBillingContact(address: BillingAddressInput!, email: String!, name: String!, tenant: String!): SetBillingContactPayload!
   setBillingPaymentMethod(paymentMethodId: String!, tenant: String!): BillingPaymentMethodPayload!
 
   """
@@ -1521,6 +1548,10 @@ type RepublishRequested {
   receivedAt: DateTime!
 }
 
+type SetBillingContactPayload {
+  contact: BillingContact!
+}
+
 """The shape of a connector status, which matches that of an ops::Log."""
 type ShardFailure {
   """
@@ -1825,6 +1856,7 @@ type Tenant {
 }
 
 type TenantBilling {
+  contact: BillingContact!
   invoices(after: String, before: String, filter: InvoiceFilter, first: Int, last: Int): InvoiceConnection!
   paymentMethods: [PaymentMethod!]!
   primaryPaymentMethod: PaymentMethod
