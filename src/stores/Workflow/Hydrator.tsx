@@ -11,11 +11,8 @@ import { useWorkflowHydrator } from 'src/stores/Workflow/useWorkflowHydrator';
 
 // This hydrator is here without a store so that we can start working on moving a lot of
 //  these separate stores into a single "Workflow" store for Create and Edit.
-function WorkflowHydratorInner({
-    children,
-    expressWorkflow,
-}: WorkflowInitializerProps) {
-    const { hydrateState } = useWorkflowHydrator(expressWorkflow);
+function WorkflowHydratorInner({ children }: WorkflowInitializerProps) {
+    const { hydrateState } = useWorkflowHydrator();
 
     const hydrationError = useWorkflowStore((state) => state.hydrationError);
     const hydrated = useWorkflowStore((state) => state.hydrated);
@@ -50,15 +47,10 @@ function WorkflowHydratorInner({
     return <BindingHydrator>{children}</BindingHydrator>;
 }
 
-function WorkflowHydrator({
-    children,
-    expressWorkflow,
-}: WorkflowInitializerProps) {
+function WorkflowHydrator({ children }: WorkflowInitializerProps) {
     return (
         <ConnectorTagProvider>
-            <WorkflowHydratorInner expressWorkflow={expressWorkflow}>
-                {children}
-            </WorkflowHydratorInner>
+            <WorkflowHydratorInner>{children}</WorkflowHydratorInner>
         </ConnectorTagProvider>
     );
 }

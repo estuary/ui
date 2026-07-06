@@ -15,7 +15,7 @@ import { FormStatus } from 'src/stores/FormState/types';
 import { useTransformationCreate_catalogName } from 'src/stores/TransformationCreate/hooks';
 import { hasLength } from 'src/utils/misc-utils';
 
-function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
+function LogDialogActions({ close }: LogDialogActionsProps) {
     const entityType = useEntityType();
 
     const formStatus = useFormStateStore_status();
@@ -66,7 +66,7 @@ function LogDialogActions({ close, closeCtaKey }: LogDialogActionsProps) {
 
             <Stack direction="row" spacing={2}>
                 <Button onClick={close}>
-                    <FormattedMessage id={closeCtaKey ?? 'cta.close'} />
+                    <FormattedMessage id="cta.close" />
                 </Button>
             </Stack>
         </>

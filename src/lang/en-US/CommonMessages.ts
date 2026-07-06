@@ -3,7 +3,6 @@ export const CommonMessages: Record<string, string> = {
     // Misc
     'company': `Estuary`,
     'productName': `Estuary`,
-    'expressFlowIntegration': `Powered by Estuary`,
     'spec': `data flow specification`,
 
     'common.browserTitle': `Estuary`,
