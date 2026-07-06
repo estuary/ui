@@ -62,7 +62,7 @@ export interface GlobalSettingProps<T> {
     targetSetting: AlertConfigKeys;
 }
 
-export interface MutableAlertSubscription extends ReducedAlertSubscription {
+interface MutableAlertSubscription extends ReducedAlertSubscription {
     id: string;
     viewing: boolean;
     deleted?: boolean;
