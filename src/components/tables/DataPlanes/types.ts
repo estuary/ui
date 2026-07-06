@@ -21,7 +21,7 @@ export interface DataPlaneDialogFieldProps {
     showCopyButton?: boolean;
 }
 
-export interface ToggleOption {
+interface ToggleOption {
     key: string;
     label: string;
     value: string | null;

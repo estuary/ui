@@ -10,7 +10,7 @@ import {
     POPUP_WIDTH,
 } from 'src/hooks/forks/react-use-oauth2/components/constants';
 
-export type AuthTokenPayload = {
+type AuthTokenPayload = {
     token_type: string;
     expires_in: number;
     access_token: string;
@@ -18,7 +18,7 @@ export type AuthTokenPayload = {
     refresh_token: string;
 };
 
-export type Oauth2Props<TData = AuthTokenPayload> = {
+type Oauth2Props<TData = AuthTokenPayload> = {
     onError: (error: string) => void | Promise<any> | PromiseLike<any>;
     onSuccess: (
         payload: TData,

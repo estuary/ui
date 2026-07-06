@@ -62,12 +62,12 @@ type BaseRules<
     'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'
 >;
 
-export type PartialRules<
+type PartialRules<
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = Pick<BaseRules<TFieldValues, TName>, 'maxLength' | 'pattern' | 'validate'>;
 
-export type FinalRules<
+type FinalRules<
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = Pick<

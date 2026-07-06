@@ -16,7 +16,7 @@ export interface BaseButtonProps extends BindingUUIDProp {
     selections: FieldSelection[] | null | undefined;
 }
 
-export interface BaseMenuProps {
+interface BaseMenuProps {
     handleClick: (recommended: boolean | number) => void;
     disabled: boolean;
 }

@@ -12,7 +12,7 @@ import {
 import Row from 'src/components/shared/AutoComplete/VirtualizedList/Row';
 import { autoCompleteListPadding } from 'src/context/Theme';
 
-export const itemSize = 40;
+const itemSize = 40;
 const groupSize = 55;
 
 const getChildSize = (child: ReactChild) => {

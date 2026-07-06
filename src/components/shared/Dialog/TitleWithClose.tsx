@@ -6,7 +6,7 @@ import { DialogTitle, IconButton } from '@mui/material';
 import { Xmark } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
-export interface DialogTitleProps extends BaseComponentProps {
+interface DialogTitleProps extends BaseComponentProps {
     id: string;
     onClose: () => void;
     disabled?: boolean;

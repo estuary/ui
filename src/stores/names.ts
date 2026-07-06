@@ -14,7 +14,7 @@ export enum EditorStoreNames {
     MATERIALIZATION = 'materialization_editor_store',
 }
 
-export enum EndpointConfigStoreNames {
+enum EndpointConfigStoreNames {
     GENERAL = 'general-endpoint-config',
 }
 

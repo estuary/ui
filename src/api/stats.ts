@@ -82,17 +82,14 @@ const MATERIALIZATION_QUERY = `
 const hourlyGrain = 'hourly';
 const dailyGrain = 'daily';
 const monthlyGrain = 'monthly';
-export type Grains =
-    | typeof hourlyGrain
-    | typeof dailyGrain
-    | typeof monthlyGrain;
+type Grains = typeof hourlyGrain | typeof dailyGrain | typeof monthlyGrain;
 type AllowedDates = Date | string | number;
 
 // Make sure that this matched the derivation closely
 //      Function : grainsFromTS
 //      Source : https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
 // TODO (typing)
-export const convertToUTC = (
+const convertToUTC = (
     date: AllowedDates,
     grain: Grains,
     skipConversion?: boolean

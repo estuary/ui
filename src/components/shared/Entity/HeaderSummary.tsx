@@ -12,7 +12,7 @@ interface Props extends BaseComponentProps {
     title: string;
 }
 
-export function HeaderSummary({ severity, title, children }: Props) {
+function HeaderSummary({ severity, title, children }: Props) {
     return (
         <Box sx={{ width: '100%', mb: 2 }}>
             <AlertBox

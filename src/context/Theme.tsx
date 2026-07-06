@@ -92,7 +92,7 @@ declare module '@mui/material/Typography' {
 }
 
 // Colors
-export const sample_blue = {
+const sample_blue = {
     100: '#DCE6FE',
     200: '#BACDFD',
     300: '#96B0F9',
@@ -126,10 +126,10 @@ export type SemanticColor =
     | '#4FD6FF';
 
 export const successMain: SemanticColor = '#40B763';
-export const successDark: SemanticColor = '#2A7942';
+const successDark: SemanticColor = '#2A7942';
 export const warningMain: SemanticColor = '#F5D75E';
 export const errorMain: SemanticColor = '#CA3B55';
-export const infoMain: SemanticColor = '#4FD6FF';
+const infoMain: SemanticColor = '#4FD6FF';
 
 const rgbTranslations = {
     dark: {
@@ -329,13 +329,13 @@ const buttonHoverIndex = zIndexIncrement * 4;
 const chipDeleteIndex = buttonHoverIndex + zIndexIncrement;
 
 // To make the sortable chip list work
-export const chipDraggableIndex = buttonHoverIndex + zIndexIncrement;
+const chipDraggableIndex = buttonHoverIndex + zIndexIncrement;
 
 // JSONForms accordion is hardcoded to 20 so making this "1 higher"
 const accordionButton = zIndexIncrement * 5;
 
 // Need to make the sticky header be on top
-export const headerLinkIndex = zIndexIncrement * 30;
+const headerLinkIndex = zIndexIncrement * 30;
 
 // Want to make sure it is near the top but right under the screen disable overlay
 export const toastIndex = zIndexIncrement * 35;
@@ -552,7 +552,7 @@ export const alternativeReflexContainerBackground = {
     dark: 'rgba(247, 249, 252, 0.05)',
 };
 
-export const alternativeDataGridHeader = {
+const alternativeDataGridHeader = {
     light: 'white',
     dark: 'transparent',
 };
@@ -712,7 +712,7 @@ export const linkButtonSx: SxProps<Theme> = {
 };
 
 // Light is an RGB translation of #E1E9F4; Light is an RGB translation of #F7F9FC.
-export const connectorCardLogoBackground = {
+const connectorCardLogoBackground = {
     light: 'rgba(225, 233, 244, 0.30)',
     dark: 'rgba(247, 249, 252, 0.08)',
 };
@@ -813,7 +813,7 @@ export const getStickyTableCell = (headerParent?: boolean): SxProps<Theme> => {
     };
 };
 
-export const wrappingTableCell = {
+const wrappingTableCell = {
     wordWrap: 'break-word',
     // WARNING - the min width work as you might expect. The max width does NOT
     //  It looks and feels good but the cell will for sure grow larger than just 300px

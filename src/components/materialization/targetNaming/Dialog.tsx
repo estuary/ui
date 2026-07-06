@@ -26,7 +26,7 @@ interface Props {
     alertMessage?: string;
 }
 
-export function TargetNamingDialog({
+function TargetNamingDialog({
     open,
     initialStrategy,
     onCancel,

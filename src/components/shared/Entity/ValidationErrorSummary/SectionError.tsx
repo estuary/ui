@@ -12,7 +12,7 @@ interface Props {
     title?: string;
 }
 
-export function SectionError({
+function SectionError({
     config,
     configEmptyMessage,
     errorMessage,
