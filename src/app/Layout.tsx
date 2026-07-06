@@ -6,36 +6,19 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
-import { useLocalStorage } from 'react-use';
 
 import { Toast } from 'src/components/AgentSkills/Toast';
-import Navigation from 'src/components/navigation/Navigation';
+import { Navigation } from 'src/components/navigation/Navigation';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import PageContainer from 'src/components/shared/PageContainer';
 import DocsSidePanel from 'src/components/sidePanelDocs/SidePanel';
 import { useShowSidePanelDocs } from 'src/context/SidePanelDocs';
-import { NavWidths } from 'src/context/Theme';
 import { useSidePanelDocsStore } from 'src/stores/SidePanelDocs/Store';
-import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 import { hasLength } from 'src/utils/misc-utils';
 
 function AppLayout() {
     const theme = useTheme();
     const belowMd = useMediaQuery(theme.breakpoints.down('md'));
-
-    const [navigationConfig, setNavigationConfig] = useLocalStorage(
-        LocalStorageKeys.NAVIGATION_SETTINGS,
-        { open: true }
-    );
-
-    const navigationOpen = navigationConfig?.open ?? true;
-    const navigationWidth: NavWidths = navigationConfig?.open
-        ? NavWidths.FULL
-        : NavWidths.RAIL;
-
-    const toggleNavigationDrawer = () => {
-        setNavigationConfig({ open: !navigationOpen });
-    };
 
     // Splitter for the side panel docs
     const [leftPaneFlex, setLeftPaneFlex] = useState<any>(0.0);
@@ -75,20 +58,15 @@ function AppLayout() {
     };
 
     return (
-        <Box sx={{ height: '100vh' }}>
-            <Box>
-                <Navigation
-                    open={navigationOpen}
-                    width={navigationWidth}
-                    onNavigationToggle={toggleNavigationDrawer}
-                />
-            </Box>
+        <Box sx={{ display: 'flex', height: '100vh' }}>
+            <Navigation />
 
             <Toast docsPanelOpen={displaySidePanel} />
 
             <Box
                 sx={{
-                    ml: `${navigationWidth}px`,
+                    flex: 1,
+                    minWidth: 0,
                     height: '100%',
                 }}
             >
