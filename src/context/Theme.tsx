@@ -1157,33 +1157,6 @@ const ThemeProvider = ({ children }: BaseComponentProps) => {
                         },
                     },
                 },
-                MuiListItemButton: {
-                    styleOverrides: {
-                        root: {
-                            gap: 8,
-                            whiteSpace: 'nowrap',
-                            padding: '6px 10px',
-                            borderRadius: 8,
-                        },
-                    },
-                },
-                MuiListItemIcon: {
-                    styleOverrides: {
-                        root: {
-                            minWidth: 'auto',
-                            color: 'inherit',
-                        },
-                    },
-                },
-                MuiListItemText: {
-                    styleOverrides: {
-                        primary: {
-                            fontSize: 13,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                        },
-                    },
-                },
                 MuiDialog: {
                     styleOverrides: {
                         paper: {

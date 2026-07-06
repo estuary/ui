@@ -1,3 +1,4 @@
+import type { SxProps, Theme } from '@mui/material';
 import type { MouseEvent, ReactElement } from 'react';
 
 import {
@@ -9,6 +10,33 @@ import {
 
 import { useIntl } from 'react-intl';
 import { Link, useMatch, useResolvedPath } from 'react-router-dom';
+
+// Compact styling for the sidebar's buttons, links, and their contents.
+// Scoped here so other List usages across the app keep default styling.
+export const navButtonSx: SxProps<Theme> = {
+    gap: '8px',
+    mx: 1,
+    my: 0.25,
+    px: '10px',
+    py: '6px',
+    borderRadius: '8px',
+    whiteSpace: 'nowrap',
+};
+
+const navIconSx: SxProps<Theme> = {
+    minWidth: 'auto',
+    color: 'inherit',
+};
+
+const navTextSlotProps = {
+    primary: {
+        sx: {
+            fontSize: 13,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+        },
+    },
+};
 
 interface LinkProps {
     icon: ReactElement;
@@ -28,11 +56,14 @@ const NavLink = ({ icon, title, link, isOpen }: LinkProps) => {
                     component={Link}
                     to={link}
                     selected={selected}
-                    sx={{ mx: 1, my: 0.25 }}
+                    sx={navButtonSx}
                 >
-                    <ListItemIcon>{icon}</ListItemIcon>
+                    <ListItemIcon sx={navIconSx}>{icon}</ListItemIcon>
 
-                    <ListItemText primary={title} />
+                    <ListItemText
+                        primary={title}
+                        slotProps={navTextSlotProps}
+                    />
                 </MuiListItemButton>
             </Tooltip>
         </li>
@@ -42,6 +73,7 @@ const NavLink = ({ icon, title, link, isOpen }: LinkProps) => {
 interface ButtonProps {
     icon: ReactElement;
     title: string;
+    tooltip?: string;
     onClick: (event: MouseEvent<HTMLElement>) => void;
     isOpen?: boolean;
 }
@@ -49,16 +81,20 @@ interface ButtonProps {
 export const NavButton = ({
     icon,
     title,
+    tooltip,
     onClick,
     isOpen,
 }: ButtonProps) => {
     return (
         <li>
-            <Tooltip title={!isOpen ? title : ''} placement="right">
-                <MuiListItemButton onClick={onClick} sx={{ mx: 1, my: 0.25 }}>
-                    <ListItemIcon>{icon}</ListItemIcon>
+            <Tooltip title={!isOpen ? tooltip || title : ''} placement="right">
+                <MuiListItemButton onClick={onClick} sx={navButtonSx}>
+                    <ListItemIcon sx={navIconSx}>{icon}</ListItemIcon>
 
-                    <ListItemText primary={title} />
+                    <ListItemText
+                        primary={title}
+                        slotProps={navTextSlotProps}
+                    />
                 </MuiListItemButton>
             </Tooltip>
         </li>

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 
 import { Box, List, Stack, useTheme } from '@mui/material';
 
@@ -30,13 +30,9 @@ const NavWidths = {
 export const Navigation = () => {
     const theme = useTheme();
 
-    const [menuAnchor, setMenuAnchor] = React.useState<HTMLElement | null>(
-        null
-    );
+    const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
 
-    const [helpAnchor, setHelpAnchor] = React.useState<HTMLElement | null>(
-        null
-    );
+    const [helpAnchor, setHelpAnchor] = useState<HTMLElement | null>(null);
 
     const open = useNavigationStore((state) => state.open);
     const toggleOpen = useNavigationStore((state) => state.toggleOpen);
@@ -79,7 +75,7 @@ export const Navigation = () => {
                     {open ? <CompanyLogo /> : <CompanyMark />}
                 </Box>
 
-                <List aria-label="Toggle Navigation">
+                <List aria-label="Main navigation">
                     <NavLink
                         icon={<HomeSimple />}
                         title={authenticatedRoutes.home.title}
@@ -112,7 +108,10 @@ export const Navigation = () => {
                     />
                 </List>
 
-                <Box sx={{ mt: 'auto', pb: 1 }}>
+                <Box
+                    aria-label="Secondary navigation"
+                    sx={{ mt: 'auto', pb: 1 }}
+                >
                     <UpdateAlert isOpen={open} />
 
                     <Box sx={{ mx: 1, my: 0.25 }}>
@@ -142,6 +141,7 @@ export const Navigation = () => {
                             />
                         }
                         title="Collapse"
+                        tooltip="Expand"
                         onClick={toggleOpen}
                         isOpen={open}
                     />

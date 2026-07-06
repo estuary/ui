@@ -143,6 +143,9 @@ function PageContainer({ children, hideBackground }: Props) {
                         {intl.formatMessage({ id: header })}
                     </Typography>
 
+                    {/* TODO (UI / UX) - restore the per-page documentation link here.
+                        Pages still set headerLink via usePageTitle but nothing renders it. */}
+
                     <Box sx={{ ml: 'auto' }}>
                         <SidePanelDocsOpenButton />
                     </Box>

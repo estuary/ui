@@ -16,6 +16,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { HalfMoon, LogOut, MoreHoriz, SunLight } from 'iconoir-react';
 
+import { navButtonSx } from 'src/components/navigation/NavItems';
 import UserAvatar from 'src/components/shared/UserAvatar';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { useColorMode } from 'src/context/Theme';
@@ -35,7 +36,7 @@ export const UserButton = ({ onClick, isOpen }: UserButtonProps) => {
     }
 
     return (
-        <MuiListItemButton onClick={onClick} sx={{ mx: 1, my: 0.25 }}>
+        <MuiListItemButton onClick={onClick} sx={navButtonSx}>
             <UserAvatar
                 userEmail={userDetails.email}
                 userName={userDetails.userName}
@@ -44,11 +45,13 @@ export const UserButton = ({ onClick, isOpen }: UserButtonProps) => {
             />
             <ListItemText
                 primary={userDetails.email}
-                primaryTypographyProps={{
-                    fontSize: 12,
-                    fontWeight: 500,
-                    lineHeight: 1.3,
-                    noWrap: true,
+                slotProps={{
+                    primary: {
+                        fontSize: 12,
+                        fontWeight: 500,
+                        lineHeight: 1.3,
+                        noWrap: true,
+                    },
                 }}
             />
             {isOpen ? (
