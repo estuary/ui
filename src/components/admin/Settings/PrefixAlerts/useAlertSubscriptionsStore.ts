@@ -286,7 +286,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
             setSingleAlertType: (value, selected, catalogPrefix, email) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        if (!catalogPrefix || !email) {
+                        if (!catalogPrefix) {
                             return;
                         }
 
@@ -323,7 +323,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                 {
                                     alertTypes: [...baseAlertTypes, value],
                                     catalogPrefix,
-                                    email,
+                                    email: '',
                                     id: crypto.randomUUID(),
                                     viewing: true,
                                 },
