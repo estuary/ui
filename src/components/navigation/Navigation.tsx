@@ -53,8 +53,9 @@ export const Navigation = () => {
                 flexDirection: 'column',
                 background: paperBackground[theme.palette.mode],
                 boxSizing: 'border-box',
-                transition: (boxTheme) =>
-                    `${boxTheme.transitions.duration.shortest}ms`,
+                transition: theme.transitions.create('width', {
+                    duration: theme.transitions.duration.shortest,
+                }),
             }}
         >
             <Toolbar />
