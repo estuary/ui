@@ -63,7 +63,7 @@ function AppLayout() {
             {
                 // Hide the toast while the docs panel is open so it cannot cover the
                 // cookie-consent banner that renders inside the docs.
-                !displaySidePanel && <AgentSkillsToast />
+                !displaySidePanel ? <AgentSkillsToast /> : null
             }
 
             <Box
