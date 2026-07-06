@@ -57,7 +57,6 @@ export const CTAs: Record<string, string> = {
     'cta.contactUs': `Contact Us`,
     'cta.manualSelect': `Manually Select`,
     'cta.modify': `modify`,
-    'cta.exit': `Exit`,
     'cta.rename': `Rename`,
     'cta.inviteLink': `Invite Link`,
     'cta.redact': `Redact`,
