@@ -96,7 +96,7 @@ const DataMovementSetting = ({
                         />
                     )}
                     value={fromUnconventionalTimeFormat(
-                        config?.condition.stalledFor
+                        config?.condition?.stalledFor
                     )}
                 />
             )}
