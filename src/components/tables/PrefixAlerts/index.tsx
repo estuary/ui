@@ -6,11 +6,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Stack, Table, TableContainer } from '@mui/material';
 
-import { useShallow } from 'zustand/react/shallow';
-
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
+import { useQuery } from 'urql';
 
+import { AlertConfigQuery } from 'src/api/alerts';
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -23,22 +23,27 @@ import {
     TABLE_ROW_HEIGHT,
 } from 'src/components/tables/PrefixAlerts/shared';
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
-import { useGetAlertConfigs } from 'src/context/AlertConfigs';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
+import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
 function PrefixAlertTable() {
-    const [{ data, error, fetching }] = useGetAlertSubscriptions();
-    const [alertConfigResponse] = useGetAlertConfigs();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const [setInitializationError, setSubscriptionMetadata] =
-        useAlertSubscriptionsStore(
-            useShallow((state) => [
-                state.setInitializationError,
-                state.setSubscriptionMetadata,
-            ])
-        );
+    const [{ data, error, fetching }] = useGetAlertSubscriptions();
+    const [alertConfigResponse] = useQuery({
+        pause: selectedTenant.length === 0,
+        query: AlertConfigQuery,
+    });
+
+    const setInitializationError = useAlertSubscriptionsStore(
+        (state) => state.setInitializationError
+    );
+    const setSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.setSubscriptionMetadata
+    );
+
     const initializeGlobalPrefixSettings = useAlertSubscriptionsStore(
         (state) => state.initializeGlobalPrefixSettings
     );

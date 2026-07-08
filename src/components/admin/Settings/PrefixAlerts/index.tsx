@@ -1,6 +1,5 @@
 import StandAloneTableTitle from 'src/components/tables/EntityTable/StandAloneTableTitle';
 import PrefixAlertTable from 'src/components/tables/PrefixAlerts';
-import { AlertConfigsProvider } from 'src/context/AlertConfigs';
 import { AlertSubscriptionsProvider } from 'src/context/AlertSubscriptions';
 import { AlertTypeProvider } from 'src/context/AlertType';
 
@@ -10,13 +9,11 @@ function PrefixAlerts() {
     return (
         <AlertTypeProvider>
             <AlertSubscriptionsProvider>
-                <AlertConfigsProvider>
-                    <StandAloneTableTitle
-                        docsUrl={docsUrl}
-                        titleIntlKey="alerts.config.header"
-                    />
-                    <PrefixAlertTable />
-                </AlertConfigsProvider>
+                <StandAloneTableTitle
+                    docsUrl={docsUrl}
+                    titleIntlKey="alerts.config.header"
+                />
+                <PrefixAlertTable />
             </AlertSubscriptionsProvider>
         </AlertTypeProvider>
     );
