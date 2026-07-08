@@ -53,15 +53,6 @@ export function useModifyAlertMetadata(
             return Promise.reject();
         }
 
-        if (mutableSubscriptionMetadata.subscriptions.length === 0) {
-            logRocketEvent('AlertSubscription', {
-                skipped: true,
-                operation: 'save',
-            });
-
-            return Promise.resolve();
-        }
-
         const subscriptionQueries: Promise<AlertSubscriptionResponse>[] =
             mutableSubscriptionMetadata.subscriptions.map((subscription) => {
                 const { alertTypes, email } = subscription;
