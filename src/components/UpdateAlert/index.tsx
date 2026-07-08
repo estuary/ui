@@ -6,8 +6,8 @@ import { ReloadWindow } from 'iconoir-react';
 import useSWR from 'swr';
 
 import { getLatestVersionDetails } from 'src/api/meta';
-import Actions from 'src/components/UpdateAlert/Actions';
 import { NavButton } from 'src/components/navigation/NavItems';
+import Actions from 'src/components/UpdateAlert/Actions';
 import { logRocketEvent } from 'src/services/shared';
 import { CustomEvents } from 'src/services/types';
 

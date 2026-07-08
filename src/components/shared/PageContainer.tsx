@@ -10,11 +10,11 @@ import { useIntl } from 'react-intl';
 import AlertBox from 'src/components/shared/AlertBox';
 import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { paperBackground } from 'src/context/Theme';
-import { useNavigationStore } from 'src/stores/useNavigationStore';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
 import { useTopBarStore } from 'src/stores/TopBar/Store';
+import { useNavigationStore } from 'src/stores/useNavigationStore';
 
 interface Props {
     children: ReactNode | ReactNode[];
