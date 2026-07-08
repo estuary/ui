@@ -28,6 +28,9 @@ interface AlertSubscriptionState {
         values: AlertTypeInfo[],
         fetching: boolean
     ) => void;
+    initializeGlobalPrefixSettings: (
+        values: { prefix: string; config: Schema }[]
+    ) => void;
     markSubscriptionForDeletion: (
         catalogPrefix: string,
         subscriptionId: string
@@ -159,6 +162,36 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     }),
                     false,
                     'alert type options initialized'
+                ),
+
+            initializeGlobalPrefixSettings: (values) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (values.length === 0) {
+                            return;
+                        }
+
+                        values.forEach(({ config, prefix }) => {
+                            if (
+                                !hasOwnProperty(
+                                    state.subscriptionMetadata,
+                                    prefix
+                                )
+                            ) {
+                                state.subscriptionMetadata[prefix] = {
+                                    settings: config,
+                                    subscriptions: [],
+                                };
+
+                                return;
+                            }
+
+                            state.subscriptionMetadata[prefix].settings =
+                                config;
+                        });
+                    }),
+                    false,
+                    'global prefix settings initialized'
                 ),
 
             setGlobalPrefixSettings: (value, targetSetting) =>

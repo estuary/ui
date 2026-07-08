@@ -18,7 +18,9 @@ function Row({ row }: RowProps) {
             <ChipListCell
                 maxChips={3}
                 stripPath={false}
-                values={subscriptions.map(({ email }) => email)}
+                values={subscriptions.map(({ email }) =>
+                    email.length > 0 ? email : 'N/A'
+                )}
             />
 
             <AlertEditButton
@@ -29,12 +31,11 @@ function Row({ row }: RowProps) {
     );
 }
 
-function Rows({ alertTypeDefs, data }: RowsProps) {
+function Rows({ data }: RowsProps) {
     return (
         <>
             {data.map((datum, index) => (
                 <Row
-                    alertTypeDefs={alertTypeDefs}
                     key={`${datum.subscriptions[0].id}-${index}`}
                     row={datum}
                 />

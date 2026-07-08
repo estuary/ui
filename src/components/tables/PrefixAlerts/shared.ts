@@ -1,6 +1,8 @@
+import type { ReducedAlertSubscription } from 'src/api/types';
 import type { TableColumns } from 'src/types';
 
 import { SelectTableStoreNames } from 'src/stores/names';
+import { basicSort_string } from 'src/utils/misc-utils';
 
 export const TABLE_HEADER_HEIGHT = 40;
 export const TABLE_ROW_HEIGHT = 50;
@@ -26,3 +28,8 @@ export const columns: TableColumns[] = [
 ];
 
 export const selectableTableStoreName = SelectTableStoreNames.PREFIX_ALERTS;
+
+export const sortByCatalogPrefix = (
+    first: ReducedAlertSubscription,
+    second: ReducedAlertSubscription
+): number => basicSort_string(first.catalogPrefix, second.catalogPrefix, 'asc');

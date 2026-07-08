@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import NotificationSettings from 'src/components/shared/Entity/Details/Overview/NotificationSettings';
 import AlertHistoryTable from 'src/components/tables/AlertHistory';
+import { AlertConfigsProvider } from 'src/context/AlertConfigs';
 import { AlertSubscriptionsProvider } from 'src/context/AlertSubscriptions';
 import { useEntityType } from 'src/context/EntityContext';
 import useGlobalSearchParams, {
@@ -30,7 +31,9 @@ function EntityAlerts() {
                 {!isCollection && catalogName ? (
                     <Grid size={{ xs: 12, md: 12, lg: 4 }}>
                         <AlertSubscriptionsProvider>
-                            <NotificationSettings taskName={catalogName} />
+                            <AlertConfigsProvider>
+                                <NotificationSettings taskName={catalogName} />
+                            </AlertConfigsProvider>
                         </AlertSubscriptionsProvider>
                     </Grid>
                 ) : null}
