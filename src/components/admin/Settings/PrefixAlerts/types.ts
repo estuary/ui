@@ -50,8 +50,8 @@ export interface EmailListFieldProps extends SubscriptionDependentProps {
 }
 
 interface GlobalSettingConfig<T> {
-    condition: T;
     autoDisable?: boolean;
+    condition?: T;
     enabled?: boolean;
 }
 
