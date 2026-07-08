@@ -68,7 +68,7 @@ export function useModifyAlertMetadata(
 
         const serverErrors: (PostgrestError | CombinedError)[] = [];
 
-        Promise.allSettled(subscriptionQueries).then(
+        await Promise.allSettled(subscriptionQueries).then(
             (responses) => {
                 responses.forEach((response) => {
                     if (isPromiseFulfilledResult(response)) {
