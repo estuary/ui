@@ -80,7 +80,7 @@ function PrefixAlertTable() {
         const mergedSubscriptions =
             data?.alertSubscriptions && data.alertSubscriptions.length > 0
                 ? configSubscriptions.concat(data.alertSubscriptions)
-                : [];
+                : configSubscriptions;
 
         const evaluatedData = searchQuery
             ? mergedSubscriptions
