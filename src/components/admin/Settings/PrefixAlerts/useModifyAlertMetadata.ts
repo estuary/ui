@@ -12,7 +12,7 @@ import { useUpsertAlertConfig } from 'src/components/admin/Settings/PrefixAlerts
 import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
-import { isPromiseFulfilledResult } from 'src/utils/misc-utils';
+import { hasOwnProperty, isPromiseFulfilledResult } from 'src/utils/misc-utils';
 
 export function useModifyAlertMetadata(
     closeDialog: () => void,
@@ -36,6 +36,9 @@ export function useModifyAlertMetadata(
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
     );
+    const immutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.subscriptionMetadata
+    );
 
     const [loading, setLoading] = useState(false);
 
@@ -53,18 +56,35 @@ export function useModifyAlertMetadata(
             return Promise.reject();
         }
 
-        const subscriptionQueries: Promise<AlertSubscriptionResponse>[] =
-            mutableSubscriptionMetadata.subscriptions.map((subscription) => {
-                const { alertTypes, email } = subscription;
+        const staleSubscriptionQueries: Promise<AlertSubscriptionResponse>[] =
+            [];
 
-                return deletionTrigger || subscription.deleted
-                    ? deleteSubscription({ email, prefix: catalogPrefix })
-                    : upsertSubscription({
-                          alertTypes,
-                          email,
-                          prefix: catalogPrefix,
-                      });
-            });
+        if (hasOwnProperty(immutableSubscriptionMetadata, catalogPrefix)) {
+            immutableSubscriptionMetadata[catalogPrefix].subscriptions
+                .filter(
+                    ({ email }) =>
+                        !mutableSubscriptionMetadata.subscriptions.some(
+                            (mutableSubscription) =>
+                                mutableSubscription.email === email
+                        )
+                )
+                .map(({ email }) => {
+                    return deleteSubscription({ email, prefix: catalogPrefix });
+                });
+        }
+
+        const subscriptionQueries: Promise<AlertSubscriptionResponse>[] =
+            mutableSubscriptionMetadata.subscriptions
+                .map(({ alertTypes, deleted, email }) => {
+                    return deletionTrigger || deleted
+                        ? deleteSubscription({ email, prefix: catalogPrefix })
+                        : upsertSubscription({
+                              alertTypes,
+                              email,
+                              prefix: catalogPrefix,
+                          });
+                })
+                .concat(staleSubscriptionQueries);
 
         const serverErrors: (PostgrestError | CombinedError)[] = [];
 
