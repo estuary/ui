@@ -59,13 +59,13 @@ export function useInviteLinks(afterCursor?: string) {
 export const CREATE_INVITE_LINK = graphql(`
     mutation CreateInviteLink(
         $catalogPrefix: Prefix!
-        $capability: Capability!
+        $capabilityLegacy: LegacyCapability!
         $singleUse: Boolean!
         $detail: String
     ) {
         createInviteLink(
             catalogPrefix: $catalogPrefix
-            capability: $capability
+            capabilityLegacy: $capabilityLegacy
             singleUse: $singleUse
             detail: $detail
         ) {

@@ -134,7 +134,7 @@ const useEntitiesStore_populateState = () => {
 //  That should load in around 1 second for 4g
 const authRolesQuery = graphql(`
     query AuthRolesQuery($after: String) {
-        prefixes(by: { minCapability: read }, first: 7500, after: $after) {
+        prefixes(by: {}, first: 7500, after: $after) {
             edges {
                 node {
                     prefix

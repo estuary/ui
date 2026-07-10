@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { InviteErrorProps } from 'src/components/tables/AccessGrants/AccessLinks';
-import type { Capability } from 'src/gql-types/graphql';
+import type { LegacyCapability } from 'src/gql-types/graphql';
 
 import { useRef, useState } from 'react';
 
@@ -31,7 +31,7 @@ import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 // The write capability should be obscured to the user. It is more challenging
 // for a user to understand the nuances of this grant and likely will not be used
 // outside of advanced cases.
-const capabilityOptions: Capability[] = ['admin', 'read'];
+const capabilityOptions: LegacyCapability[] = ['admin', 'read'];
 const MAX_PREFIX_LENGTH = 12;
 const EVENT_NAME = 'Invite:Create';
 
@@ -97,7 +97,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
         defaultPrefix: true,
     });
 
-    const [capability, setCapability] = useState<Capability>(
+    const [capability, setCapability] = useState<LegacyCapability>(
         capabilityOptions[0]
     );
     const [singleUse, setSingleUse] = useState(true);
@@ -119,7 +119,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
 
         const result = await createMutation({
             catalogPrefix,
-            capability,
+            capabilityLegacy: capability,
             singleUse,
         });
 
@@ -158,7 +158,7 @@ export function GenerateInvitation({ setError }: InviteErrorProps) {
                             options={capabilityOptions}
                             defaultValue={capabilityOptions[0]}
                             changeHandler={(_event, value) =>
-                                setCapability(value as Capability)
+                                setCapability(value as LegacyCapability)
                             }
                         />
                     </Box>

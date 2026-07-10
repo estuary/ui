@@ -371,10 +371,15 @@ export type BoolFilter = {
   eq?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-/** Capability within the Estuary role-based access control (RBAC) authorization system. */
+/**
+ * Deprecated alias of `LegacyCapability`, preserved under the original
+ * `Capability` name while clients migrate off it. Do not use in new
+ * operations; prefer `withCapabilities` (on the `prefixes` filter) and
+ * `capabilityLegacy` (on `createInviteLink`). Removed once the deprecated
+ * inputs are dropped.
+ */
 export type Capability =
   | 'admin'
-  /** Note that the discriminants here align with those in the database type. */
   | 'none'
   | 'read'
   | 'write';
@@ -393,6 +398,17 @@ export type CapabilityBit =
   | 'SpecEdit'
   | 'ViewBilling'
   | 'ViewDataPlanePrivateNetworking';
+
+export type CapabilityBundle =
+  | 'Admin'
+  | 'Assume'
+  | 'Delegate'
+  | 'Edit'
+  | 'ManageBilling'
+  | 'ManageDataPlanes'
+  | 'ManageUsers'
+  | 'View'
+  | 'Write';
 
 export type CardPaymentMethodDetails = {
   __typename?: 'CardPaymentMethodDetails';
@@ -615,6 +631,13 @@ export type DataPlane = {
    * the caller lacks `ViewDataPlanePrivateNetworking`.
    */
   azureLinkEndpoints: Array<Scalars['JSON']['output']>;
+  /**
+   * Capability bundles the user holds to this data plane's name prefix:
+   * every bundle whose full capability set is covered by `capabilityBits`.
+   */
+  capabilities: Array<CapabilityBundle>;
+  /** Fine-grained capabilities the user has to this data plane's name prefix. */
+  capabilityBits: Array<CapabilityBit>;
   /** CIDR blocks for this data-plane. */
   cidrBlocks: Array<Scalars['String']['output']>;
   /** Cloud provider where this data-plane is hosted. */
@@ -649,8 +672,11 @@ export type DataPlane = {
   region: Scalars['String']['output'];
   /** Tag (cluster) identifier within the region. */
   tag: Scalars['String']['output'];
-  /** The current user's capability to this data plane's name prefix. */
-  userCapability: Capability;
+  /**
+   * The current user's capability to this data plane's name prefix.
+   * @deprecated The legacy read/write/admin capability model is being replaced; use `capabilities` instead.
+   */
+  userCapability: LegacyCapability;
 };
 
 /** Cloud provider where the data plane is hosted. */
@@ -764,8 +790,21 @@ export type InferredSchemaStatus = {
 /** An invite link that grants access to a catalog prefix. */
 export type InviteLink = {
   __typename?: 'InviteLink';
-  /** The capability level granted by this invite link. */
-  capability: Capability;
+  /**
+   * Capability bundles granted by this invite link, derived from its
+   * legacy capability level.
+   */
+  capabilities: Array<CapabilityBundle>;
+  /**
+   * The capability level granted by this invite link.
+   * @deprecated The legacy read/write/admin capability model is being replaced; use `capabilities` instead.
+   */
+  capability: LegacyCapability;
+  /**
+   * Fine-grained capabilities granted by this invite link, derived
+   * from its legacy capability level.
+   */
+  capabilityBits: Array<CapabilityBit>;
   /** The catalog prefix this invite link grants access to. */
   catalogPrefix: Scalars['Prefix']['output'];
   /** When this invite link was created. */
@@ -870,6 +909,14 @@ export type JobStatus = {
   type: StatusType;
 };
 
+/** Capability within the Estuary role-based access control (RBAC) authorization system. */
+export type LegacyCapability =
+  | 'admin'
+  /** Note that the discriminants here align with those in the database type. */
+  | 'none'
+  | 'read'
+  | 'write';
+
 export type LiveSpec = {
   __typename?: 'LiveSpec';
   builtSpec?: Maybe<Scalars['JSON']['output']>;
@@ -946,6 +993,17 @@ export type LiveSpecRef = {
    * timestamp, and are paginated.
    */
   alertHistory?: Maybe<AlertConnection>;
+  /**
+   * Capability bundles the user holds to the referent: every bundle
+   * whose full capability set is covered by `capabilityBits`.
+   * Null when the user has no access, mirroring `userCapability`.
+   */
+  capabilities?: Maybe<Array<CapabilityBundle>>;
+  /**
+   * Fine-grained capabilities the user has to the referent.
+   * Null when the user has no access, mirroring `userCapability`.
+   */
+  capabilityBits?: Maybe<Array<CapabilityBit>>;
   /** The catalog_name of the referent. */
   catalogName: Scalars['Name']['output'];
   /** Information about the most recent publication of the spec */
@@ -965,8 +1023,9 @@ export type LiveSpecRef = {
    * name, and passing a name that the user cannot access. In either case,
    * the result would be `userCapability: null`, and all other fields on the
    * LiveSpecRef would also be null.
+   * @deprecated The legacy read/write/admin capability model is being replaced; use `capabilities` instead.
    */
-  userCapability?: Maybe<Capability>;
+  userCapability?: Maybe<LegacyCapability>;
 };
 
 
@@ -1166,7 +1225,8 @@ export type MutationRootCreateBillingSetupIntentArgs = {
 
 
 export type MutationRootCreateInviteLinkArgs = {
-  capability: Capability;
+  capability?: InputMaybe<Capability>;
+  capabilityLegacy?: InputMaybe<LegacyCapability>;
   catalogPrefix: Scalars['Prefix']['input'];
   detail?: InputMaybe<Scalars['String']['input']>;
   singleUse?: Scalars['Boolean']['input'];
@@ -1306,8 +1366,16 @@ export type PrefixFilter = {
 /** A prefix to which the user is authorized. */
 export type PrefixRef = {
   __typename?: 'PrefixRef';
-  /** Fine-grained capabilities the user has at this prefix. */
+  /**
+   * Fine-grained capabilities the user has at this prefix.
+   * Identical to `capabilityBits`, retained under this name until
+   * clients migrate; `capabilities` is then re-typed to report
+   * capability bundles, as it does on other types.
+   * @deprecated Renamed to `capabilityBits`; `capabilities` will later report capability bundles.
+   */
   capabilities: Array<CapabilityBit>;
+  /** Fine-grained capabilities the user has at this prefix. */
+  capabilityBits: Array<CapabilityBit>;
   /** The prefix to which the user is authorized. */
   prefix: Scalars['Prefix']['output'];
   /**
@@ -1317,11 +1385,12 @@ export type PrefixRef = {
    * entirely from the `bundles` column rather than the legacy column.
    *
    * Exists solely so the dashboard's read/write/admin prefix-bucket
-   * store keeps working until it migrates to consuming `capabilities`
+   * store keeps working until it migrates to consuming `capabilityBits`
    * directly. Once that migration lands, this field and its derivation
    * can be deleted.
+   * @deprecated Reports only the legacy read/write/admin grant level; use `capabilityBits` instead.
    */
-  userCapability: Capability;
+  userCapability: LegacyCapability;
 };
 
 export type PrefixRefConnection = {
@@ -1342,8 +1411,19 @@ export type PrefixRefEdge = {
 };
 
 export type PrefixesBy = {
-  /** Filter returned prefixes by user capability. */
-  minCapability: Capability;
+  /**
+   * Filter to prefixes where the user's capability is at least this legacy
+   * level (an ordered read/write/admin threshold).
+   *
+   * Deprecated: a "minimum" has no meaning in the orthogonal capability
+   * model. Use `withCapabilities` to filter by specific capabilities instead.
+   * At most one of the two may be set; omitting both applies no
+   * capability filter.
+   * @deprecated a minimum capability has no meaning in the orthogonal capability model; use withCapabilities instead.
+   */
+  minCapability?: InputMaybe<Capability>;
+  /** Filter to prefixes where the user holds all of these capabilities. */
+  withCapabilities?: InputMaybe<Array<CapabilityBundle>>;
 };
 
 /**
@@ -1596,8 +1676,21 @@ export type QueryRootTenantArgs = {
 /** Result of redeeming an invite link. */
 export type RedeemInviteLinkResult = {
   __typename?: 'RedeemInviteLinkResult';
-  /** The capability level that was granted. */
-  capability: Capability;
+  /**
+   * Capability bundles that were granted, derived from the invite
+   * link's legacy capability level.
+   */
+  capabilities: Array<CapabilityBundle>;
+  /**
+   * The capability level that was granted.
+   * @deprecated The legacy read/write/admin capability model is being replaced; use `capabilities` instead.
+   */
+  capability: LegacyCapability;
+  /**
+   * Fine-grained capabilities that were granted, derived from the
+   * invite link's legacy capability level.
+   */
+  capabilityBits: Array<CapabilityBit>;
   /** The catalog prefix that was granted. */
   catalogPrefix: Scalars['Prefix']['output'];
 };
@@ -1876,14 +1969,24 @@ export type StorageHealthItem = {
 /** A storage mapping that defines where collection data is stored. */
 export type StorageMapping = {
   __typename?: 'StorageMapping';
+  /**
+   * Capability bundles the user holds to this storage mapping's prefix:
+   * every bundle whose full capability set is covered by `capabilityBits`.
+   */
+  capabilities: Array<CapabilityBundle>;
+  /** Fine-grained capabilities the user has to this storage mapping's prefix. */
+  capabilityBits: Array<CapabilityBit>;
   /** The catalog prefix this storage mapping applies to. */
   catalogPrefix: Scalars['Prefix']['output'];
   /** Optional description of this storage mapping. */
   detail?: Maybe<Scalars['String']['output']>;
   /** The storage definition containing stores and data plane assignments. */
   spec: Scalars['JSON']['output'];
-  /** The current user's capability to this storage mapping's prefix. */
-  userCapability: Capability;
+  /**
+   * The current user's capability to this storage mapping's prefix.
+   * @deprecated The legacy read/write/admin capability model is being replaced; use `capabilities` instead.
+   */
+  userCapability: LegacyCapability;
 };
 
 export type StorageMappingConnection = {
@@ -2034,17 +2137,17 @@ export type InviteLinksQueryVariables = Exact<{
 }>;
 
 
-export type InviteLinksQuery = { __typename?: 'QueryRoot', inviteLinks: { __typename?: 'InviteLinkConnection', edges: Array<{ __typename?: 'InviteLinkEdge', cursor: string, node: { __typename?: 'InviteLink', token: string, ssoProviderId?: string | null, catalogPrefix: string, capability: Capability, singleUse: boolean, detail?: string | null, createdAt: string } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type InviteLinksQuery = { __typename?: 'QueryRoot', inviteLinks: { __typename?: 'InviteLinkConnection', edges: Array<{ __typename?: 'InviteLinkEdge', cursor: string, node: { __typename?: 'InviteLink', token: string, ssoProviderId?: string | null, catalogPrefix: string, capability: LegacyCapability, singleUse: boolean, detail?: string | null, createdAt: string } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type CreateInviteLinkMutationVariables = Exact<{
   catalogPrefix: Scalars['Prefix']['input'];
-  capability: Capability;
+  capabilityLegacy: LegacyCapability;
   singleUse: Scalars['Boolean']['input'];
   detail?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type CreateInviteLinkMutation = { __typename?: 'MutationRoot', createInviteLink: { __typename?: 'InviteLink', token: string, catalogPrefix: string, capability: Capability, singleUse: boolean, detail?: string | null, createdAt: string } };
+export type CreateInviteLinkMutation = { __typename?: 'MutationRoot', createInviteLink: { __typename?: 'InviteLink', token: string, catalogPrefix: string, capability: LegacyCapability, singleUse: boolean, detail?: string | null, createdAt: string } };
 
 export type DeleteInviteLinkMutationVariables = Exact<{
   token: Scalars['UUID']['input'];
@@ -2058,7 +2161,7 @@ export type RedeemInviteLinkMutationVariables = Exact<{
 }>;
 
 
-export type RedeemInviteLinkMutation = { __typename?: 'MutationRoot', redeemInviteLink: { __typename?: 'RedeemInviteLinkResult', capability: Capability, catalogPrefix: string } };
+export type RedeemInviteLinkMutation = { __typename?: 'MutationRoot', redeemInviteLink: { __typename?: 'RedeemInviteLinkResult', capability: LegacyCapability, catalogPrefix: string } };
 
 export type LiveSpecsQueryQueryVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
@@ -2163,7 +2266,7 @@ export type AuthRolesQueryQueryVariables = Exact<{
 }>;
 
 
-export type AuthRolesQueryQuery = { __typename?: 'QueryRoot', prefixes: { __typename?: 'PrefixRefConnection', edges: Array<{ __typename?: 'PrefixRefEdge', node: { __typename?: 'PrefixRef', prefix: string, userCapability: Capability } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type AuthRolesQueryQuery = { __typename?: 'QueryRoot', prefixes: { __typename?: 'PrefixRefConnection', edges: Array<{ __typename?: 'PrefixRefEdge', node: { __typename?: 'PrefixRef', prefix: string, userCapability: LegacyCapability } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export const PageInfoFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<PageInfoFieldsFragment, unknown>;
 export const CreateAlertSubscriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateAlertSubscriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AlertType"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createAlertSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"alertTypes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<CreateAlertSubscriptionMutationMutation, CreateAlertSubscriptionMutationMutationVariables>;
@@ -2175,7 +2278,7 @@ export const ConnectorsGridDocument = {"kind":"Document","definitions":[{"kind":
 export const ConnectorTagDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorTagData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fullImageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connector"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"imageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"connectorSpec"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fullImageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fullImageName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"defaultCaptureInterval"}},{"kind":"Field","name":{"kind":"Name","value":"disableBackfill"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"endpointSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"resourceSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]} as unknown as DocumentNode<ConnectorTagDataQuery, ConnectorTagDataQueryVariables>;
 export const DataPlanesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DataPlanes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dataPlanes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"cloudProvider"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"fqdn"}},{"kind":"Field","name":{"kind":"Name","value":"cidrBlocks"}},{"kind":"Field","name":{"kind":"Name","value":"awsIamUserArn"}},{"kind":"Field","name":{"kind":"Name","value":"gcpServiceAccountEmail"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationClientId"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationName"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<DataPlanesQuery, DataPlanesQueryVariables>;
 export const InviteLinksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"InviteLinks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"inviteLinks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"ssoProviderId"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<InviteLinksQuery, InviteLinksQueryVariables>;
-export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"capability"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Capability"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"capability"},"value":{"kind":"Variable","name":{"kind":"Name","value":"capability"}}},{"kind":"Argument","name":{"kind":"Name","value":"singleUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateInviteLinkMutation, CreateInviteLinkMutationVariables>;
+export const CreateInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"capabilityLegacy"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LegacyCapability"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"catalogPrefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogPrefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"capabilityLegacy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"capabilityLegacy"}}},{"kind":"Argument","name":{"kind":"Name","value":"singleUse"},"value":{"kind":"Variable","name":{"kind":"Name","value":"singleUse"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"singleUse"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<CreateInviteLinkMutation, CreateInviteLinkMutationVariables>;
 export const DeleteInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<DeleteInviteLinkMutation, DeleteInviteLinkMutationVariables>;
 export const RedeemInviteLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RedeemInviteLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"redeemInviteLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"capability"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}}]}}]}}]} as unknown as DocumentNode<RedeemInviteLinkMutation, RedeemInviteLinkMutationVariables>;
 export const LiveSpecsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LiveSpecsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"liveSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogType"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<LiveSpecsQueryQuery, LiveSpecsQueryQueryVariables>;
@@ -2190,4 +2293,4 @@ export const AlertingOverviewQueryDocument = {"kind":"Document","definitions":[{
 export const ActiveAlertCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ActiveAlertCount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"names"},"value":{"kind":"ListValue","values":[{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeAlerts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ActiveAlertCountQuery, ActiveAlertCountQueryVariables>;
 export const ActiveAlertsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ActiveAlertsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"names"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeAlerts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","alias":{"kind":"Name","value":"alertDetails"},"name":{"kind":"Name","value":"arguments"}},{"kind":"Field","name":{"kind":"Name","value":"firedAt"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<ActiveAlertsQueryQuery, ActiveAlertsQueryQueryVariables>;
 export const AlertHistoryQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertHistoryQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Name"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"before"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"last"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"liveSpecs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"names"},"value":{"kind":"Variable","name":{"kind":"Name","value":"catalogName"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertHistory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"before"},"value":{"kind":"Variable","name":{"kind":"Name","value":"before"}}},{"kind":"Argument","name":{"kind":"Name","value":"last"},"value":{"kind":"Variable","name":{"kind":"Name","value":"last"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","alias":{"kind":"Name","value":"alertDetails"},"name":{"kind":"Name","value":"arguments"}},{"kind":"Field","name":{"kind":"Name","value":"catalogName"}},{"kind":"Field","name":{"kind":"Name","value":"firedAt"}},{"kind":"Field","name":{"kind":"Name","value":"resolvedAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PageInfoFields"}}]}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<AlertHistoryQueryQuery, AlertHistoryQueryQueryVariables>;
-export const AuthRolesQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AuthRolesQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prefixes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"minCapability"},"value":{"kind":"EnumValue","value":"read"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"7500"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"userCapability"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<AuthRolesQueryQuery, AuthRolesQueryQueryVariables>;
+export const AuthRolesQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AuthRolesQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prefixes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[]}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"7500"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"prefix"}},{"kind":"Field","name":{"kind":"Name","value":"userCapability"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<AuthRolesQueryQuery, AuthRolesQueryQueryVariables>;
