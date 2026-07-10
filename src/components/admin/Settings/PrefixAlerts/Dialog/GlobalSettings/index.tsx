@@ -4,17 +4,17 @@ import { useIntl } from 'react-intl';
 
 import DataMovementSetting from 'src/components/admin/Settings/PrefixAlerts/Dialog/GlobalSettings/DataMovementSetting';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { useInitializeAlertConfig } from 'src/components/admin/Settings/PrefixAlerts/useInitializeAlertConfig';
 import { defaultOutline } from 'src/context/Theme';
 import { AlertConfigKeys } from 'src/utils/notification-utils';
 
 const GlobalSettings = () => {
     const intl = useIntl();
 
+    const { loading, evaluatedSettings } = useInitializeAlertConfig();
+
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
-    );
-    const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
-        (state) => state.mutableSubscriptionMetadata
     );
 
     return (
@@ -44,10 +44,9 @@ const GlobalSettings = () => {
 
             <DataMovementSetting
                 config={
-                    mutableSubscriptionMetadata.settings?.[
-                        AlertConfigKeys.DATA_MOVEMENT_STALLED
-                    ]
+                    evaluatedSettings?.[AlertConfigKeys.DATA_MOVEMENT_STALLED]
                 }
+                loading={loading}
                 prefix={catalogPrefix}
                 targetSetting={AlertConfigKeys.DATA_MOVEMENT_STALLED}
             />

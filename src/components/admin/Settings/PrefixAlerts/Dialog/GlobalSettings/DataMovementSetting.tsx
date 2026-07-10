@@ -3,7 +3,13 @@ import type { GlobalSettingProps } from 'src/components/admin/Settings/PrefixAle
 
 import React from 'react';
 
-import { Autocomplete, Stack, TextField, Typography } from '@mui/material';
+import {
+    Autocomplete,
+    Skeleton,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -16,6 +22,7 @@ import {
 
 const DataMovementSetting = ({
     config,
+    loading,
     prefix,
     targetSetting,
 }: GlobalSettingProps<{ stalledFor: string }>) => {
@@ -43,51 +50,56 @@ const DataMovementSetting = ({
                 </Typography>
             </Stack>
 
-            <Autocomplete
-                disabled={!prefix}
-                disableClearable
-                fullWidth
-                getOptionLabel={(interval) => options[interval]}
-                onChange={(_event: React.SyntheticEvent, value: string) => {
-                    const formattedValue = toUnconventionalTimeFormat(value);
+            {loading ? (
+                <Skeleton height={38} />
+            ) : (
+                <Autocomplete
+                    disabled={!prefix}
+                    disableClearable
+                    fullWidth
+                    getOptionLabel={(interval) => options[interval]}
+                    onChange={(_event: React.SyntheticEvent, value: string) => {
+                        const formattedValue =
+                            toUnconventionalTimeFormat(value);
 
-                    setGlobalPrefixSettings(
-                        formattedValue !== 'none'
-                            ? {
-                                  [targetSetting]: {
-                                      condition: {
-                                          stalledFor: formattedValue,
+                        setGlobalPrefixSettings(
+                            formattedValue !== 'none'
+                                ? {
+                                      [targetSetting]: {
+                                          condition: {
+                                              stalledFor: formattedValue,
+                                          },
                                       },
-                                  },
-                              }
-                            : {},
-                        targetSetting
-                    );
-                }}
-                options={Object.keys(options)}
-                renderInput={({
-                    InputProps,
-                    ...params
-                }: AutocompleteRenderInputParams) => (
-                    <TextField
-                        {...params}
-                        label={intl.formatMessage({
-                            id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label',
-                        })}
-                        size="small"
-                        variant="outlined"
-                        slotProps={{
-                            input: {
-                                ...InputProps,
-                                sx: { borderRadius: 3 },
-                            },
-                        }}
-                    />
-                )}
-                value={fromUnconventionalTimeFormat(
-                    config?.condition?.stalledFor
-                )}
-            />
+                                  }
+                                : {},
+                            targetSetting
+                        );
+                    }}
+                    options={Object.keys(options)}
+                    renderInput={({
+                        InputProps,
+                        ...params
+                    }: AutocompleteRenderInputParams) => (
+                        <TextField
+                            {...params}
+                            label={intl.formatMessage({
+                                id: 'details.settings.notifications.dataProcessing.noDataProcessedInInterval.label',
+                            })}
+                            size="small"
+                            variant="outlined"
+                            slotProps={{
+                                input: {
+                                    ...InputProps,
+                                    sx: { borderRadius: 3 },
+                                },
+                            }}
+                        />
+                    )}
+                    value={fromUnconventionalTimeFormat(
+                        config?.condition?.stalledFor
+                    )}
+                />
+            )}
         </Stack>
     );
 };

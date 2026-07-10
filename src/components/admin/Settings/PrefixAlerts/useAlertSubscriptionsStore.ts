@@ -14,7 +14,11 @@ import produce from 'immer';
 import { isEmpty, omit } from 'lodash';
 import { type CombinedError } from 'urql';
 
-import { hasOwnProperty, sortByAlertType } from 'src/utils/misc-utils';
+import {
+    basicSort_stringLength,
+    hasOwnProperty,
+    sortByAlertType,
+} from 'src/utils/misc-utils';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 
@@ -171,24 +175,44 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             return;
                         }
 
-                        values.forEach(({ config, prefix }) => {
-                            if (
-                                !hasOwnProperty(
-                                    state.subscriptionMetadata,
-                                    prefix
-                                )
-                            ) {
+                        values
+                            .filter(
+                                ({ prefix }) =>
+                                    !Object.keys(
+                                        state.subscriptionMetadata
+                                    ).includes(prefix)
+                            )
+                            .forEach(({ config, prefix }) => {
                                 state.subscriptionMetadata[prefix] = {
                                     settings: config,
                                     subscriptions: [],
                                 };
+                            });
 
-                                return;
-                            }
+                        const sortedValues = values.sort((first, second) =>
+                            basicSort_stringLength(
+                                first.prefix,
+                                second.prefix,
+                                'desc'
+                            )
+                        );
 
-                            state.subscriptionMetadata[prefix].settings =
-                                config;
-                        });
+                        Object.entries(state.subscriptionMetadata)
+                            .filter(([_prefix, metadata]) =>
+                                isEmpty(metadata.settings)
+                            )
+                            .forEach(([prefix, _metadata]) => {
+                                const matchedValue = sortedValues.find(
+                                    (value) => prefix.startsWith(value.prefix)
+                                );
+
+                                if (!matchedValue) {
+                                    return;
+                                }
+
+                                state.subscriptionMetadata[prefix].settings =
+                                    matchedValue.config;
+                            });
                     }),
                     false,
                     'global prefix settings initialized'
