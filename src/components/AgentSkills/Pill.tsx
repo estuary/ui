@@ -71,7 +71,7 @@ function TooltipContent({ onClick }: { onClick: () => void }) {
                     }}
                 >
                     Read the docs
-                    <NavArrowRight style={{ fontSize: 16 }} />
+                    <NavArrowRight width={16} height={16} />
                 </Box>
             </Box>
         </Paper>

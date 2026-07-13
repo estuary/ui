@@ -189,10 +189,10 @@ export function Toast() {
                         Read the docs
                         <NavArrowRight
                             className="cta-arrow"
-                            style={{
-                                fontSize: 14,
-                                transition: 'transform 200ms ease',
-                            }}
+                            width={17}
+                            height={17}
+                            strokeWidth={1.8}
+                            style={{ transition: 'transform 200ms ease' }}
                         />
                     </Link>
                 </Box>
@@ -216,7 +216,7 @@ export function Toast() {
                         '&:hover': { color: '#475569', background: 'none' },
                     }}
                 >
-                    <Xmark style={{ fontSize: 20 }} />
+                    <Xmark width={20} height={20} />
                 </IconButton>
             </Box>
         </Box>
