@@ -20,7 +20,7 @@ import {
 } from 'src/stores/EndpointConfig/hooks';
 import { useFormStateStore_isActive } from 'src/stores/FormState/hooks';
 
-export const CONFIG_EDITOR_ID = 'endpointConfigEditor';
+const CONFIG_EDITOR_ID = 'endpointConfigEditor';
 
 interface Props {
     readOnly: boolean;

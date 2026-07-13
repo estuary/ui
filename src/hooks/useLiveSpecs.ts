@@ -7,7 +7,7 @@ import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 import { supabaseClient } from 'src/context/GlobalProviders';
 import { TABLES } from 'src/services/supabase';
 
-export interface LiveSpecsQuery extends Schema {
+interface LiveSpecsQuery extends Schema {
     catalog_name: string;
     spec_type: string;
     // Filtering only

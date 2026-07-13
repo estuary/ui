@@ -17,7 +17,7 @@ import {
 import { TableStatuses } from 'src/types';
 import { invoiceId } from 'src/utils/billing-utils';
 
-export const columns: TableColumns[] = [
+const columns: TableColumns[] = [
     {
         field: 'date_start',
         headerIntlKey: 'admin.billing.table.history.label.date_start',

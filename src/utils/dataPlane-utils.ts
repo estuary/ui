@@ -35,7 +35,7 @@ export enum SHARD_LABELS {
     TASK_TYPE = 'estuary.dev/task-type',
 }
 
-export enum ErrorFlags {
+enum ErrorFlags {
     // DEBUGGING = 'parsing jwt:', // useful for testing just add it to the onError
     OPERATION_INVALID = 'Unauthorized',
     TOKEN_EXPIRED = 'token is expired',
@@ -70,7 +70,7 @@ export const shouldRefreshToken = (errorMessage?: string | null) => {
 //  what would balance wiggle room needed and not making the page unusable
 const TIMEOUT_MS = 3000;
 const LIST_TIMEOUT_ERROR_MESSAGE = 'Request timed out';
-export async function dataPlaneFetcher_list(
+async function dataPlaneFetcher_list(
     shardClient: ShardClient,
     selector: ShardSelector,
     key: 'ShardsList'

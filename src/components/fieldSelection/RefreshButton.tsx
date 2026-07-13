@@ -16,7 +16,7 @@ interface Props {
     refresh: Function;
 }
 
-export function RefreshButton({ buttonLabel, refresh }: Props) {
+function RefreshButton({ buttonLabel, refresh }: Props) {
     const selectionsHydrating = useBindingStore((state) =>
         Object.values(state.selections).some(({ hydrating }) => hydrating)
     );

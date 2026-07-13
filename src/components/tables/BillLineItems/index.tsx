@@ -29,7 +29,7 @@ import {
 import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 
-export const columns: TableColumns[] = [
+const columns: TableColumns[] = [
     {
         field: 'description',
         headerIntlKey: 'admin.billing.table.line_items.label.description',

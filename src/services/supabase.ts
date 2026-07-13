@@ -23,14 +23,14 @@ export const SHARDS_DISABLE = `spec->shards->disable`;
 
 export const SHARD_LABELS = `shard_labels:built_spec->shardTemplate->labels->labels`;
 
-export const ERROR_MESSAGES = {
+const ERROR_MESSAGES = {
     jwtExpired: 'JWT expired',
     jwtInvalid: 'invalid JWT',
     jwsInvalid: 'JWSError JWSInvalidSignature',
     refreshInvalid: 'Refresh Token Not Found',
 };
 
-export const tokenHasIssues = (errorMessage?: string) => {
+const tokenHasIssues = (errorMessage?: string) => {
     return (
         errorMessage &&
         (errorMessage === ERROR_MESSAGES.jwtExpired ||
@@ -396,9 +396,8 @@ export const pagedFetchAll = async <T>(
 // START: Poller
 export type PollerTimeout = number | undefined;
 export const JOB_STATUS_POLLER_ERROR = 'supabase.poller.failed';
-export const DEFAULT_POLLER_ERROR_TITLE_KEY = 'supabase.poller.failed.title';
-export const DEFAULT_POLLER_ERROR_MESSAGE_KEY =
-    'supabase.poller.failed.message';
+const DEFAULT_POLLER_ERROR_TITLE_KEY = 'supabase.poller.failed.title';
+const DEFAULT_POLLER_ERROR_MESSAGE_KEY = 'supabase.poller.failed.message';
 export const DEFAULT_POLLER_ERROR = {
     title: DEFAULT_POLLER_ERROR_TITLE_KEY,
     error: {
@@ -406,9 +405,9 @@ export const DEFAULT_POLLER_ERROR = {
     },
 };
 
-export const JOB_TYPE_EMPTY = 'emptyDraft';
+const JOB_TYPE_EMPTY = 'emptyDraft';
 export const JOB_TYPE_FAILURE = 'buildFailed';
-export const JOB_TYPE_SUCCESS = 'success';
+const JOB_TYPE_SUCCESS = 'success';
 
 // These columns are not always what you want... but okay for a "default" constant
 export const JOB_STATUS_SUCCESS = [JOB_TYPE_EMPTY, JOB_TYPE_SUCCESS];

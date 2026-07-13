@@ -40,7 +40,7 @@ const formatDate = (formatValue: Date) => {
     }
 };
 
-export const CustomLayout = forwardRef<HTMLDivElement, PickersLayoutProps<any>>(
+const CustomLayout = forwardRef<HTMLDivElement, PickersLayoutProps<any>>(
     function CustomLayout(props, ref) {
         const { tabs, content, ownerState } = usePickerLayout(props);
 

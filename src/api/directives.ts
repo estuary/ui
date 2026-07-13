@@ -17,7 +17,7 @@ import {
     updateSupabase,
 } from 'src/services/supabase';
 
-export interface ExchangeResponse {
+interface ExchangeResponse {
     directive: Directive | null; // Only null so we can "fake" this response below
     applied_directive: AppliedDirective<UserClaims>;
 }

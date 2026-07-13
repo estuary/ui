@@ -10,7 +10,7 @@ import type { DekafConfig } from 'src/types';
 
 import { FULL_IMAGE_NAME_RE } from 'src/validation';
 
-export const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
+const DEKAF_IMAGE_PREFIX = 'ghcr.io/estuary/dekaf-';
 
 export const buildConnectorImagePath = (
     imageName: string,

@@ -14,14 +14,14 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  Collection: { input: any; output: any; }
+  Collection: { input: string; output: string; }
   /**
    * Implement the DateTime<Utc> scalar
    *
    * The input/output is a string in RFC3339 format.
    */
-  DateTime: { input: any; output: any; }
-  Id: { input: any; output: any; }
+  DateTime: { input: string; output: string; }
+  Id: { input: string; output: string; }
   /** A scalar that can represent any JSON value. */
   JSON: { input: any; output: any; }
   /** A scalar that can represent any JSON Object value. */
@@ -35,9 +35,9 @@ export type Scalars = {
    * * `1994-11-13`
    * * `2000-02-24`
    */
-  NaiveDate: { input: any; output: any; }
-  Name: { input: any; output: any; }
-  Prefix: { input: any; output: any; }
+  NaiveDate: { input: string; output: string; }
+  Name: { input: string; output: string; }
+  Prefix: { input: string; output: string; }
   /**
    * A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
    * Strings within GraphQL. UUIDs are used to assign unique identifiers to
@@ -48,9 +48,9 @@ export type Scalars = {
    * * [Wikipedia: Universally Unique Identifier](http://en.wikipedia.org/wiki/Universally_unique_identifier)
    * * [RFC4122: A Universally Unique Identifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
    */
-  UUID: { input: any; output: any; }
+  UUID: { input: string; output: string; }
   /** URL is a String implementing the [URL Standard](http://url.spec.whatwg.org/) */
-  Url: { input: any; output: any; }
+  Url: { input: string; output: string; }
 };
 
 export type AwsPrivateLink = {
@@ -1991,7 +1991,7 @@ export type CreateAlertSubscriptionMutationMutationVariables = Exact<{
 }>;
 
 
-export type CreateAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', createAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: any, email?: string | null } };
+export type CreateAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', createAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: string, email?: string | null } };
 
 export type DeleteAlertSubscriptionMutationMutationVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
@@ -1999,14 +1999,14 @@ export type DeleteAlertSubscriptionMutationMutationVariables = Exact<{
 }>;
 
 
-export type DeleteAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', deleteAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: any, email?: string | null } };
+export type DeleteAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', deleteAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: string, email?: string | null } };
 
 export type AlertSubscriptionsQueryVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
 }>;
 
 
-export type AlertSubscriptionsQuery = { __typename?: 'QueryRoot', alertSubscriptions: Array<{ __typename?: 'AlertSubscription', alertTypes: Array<AlertType>, catalogPrefix: any, email?: string | null }> };
+export type AlertSubscriptionsQuery = { __typename?: 'QueryRoot', alertSubscriptions: Array<{ __typename?: 'AlertSubscription', alertTypes: Array<AlertType>, catalogPrefix: string, email?: string | null, updatedAt: string }> };
 
 export type UpdateAlertSubscriptionMutationMutationVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
@@ -2016,7 +2016,7 @@ export type UpdateAlertSubscriptionMutationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', updateAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: any, email?: string | null } };
+export type UpdateAlertSubscriptionMutationMutation = { __typename?: 'MutationRoot', updateAlertSubscription: { __typename?: 'AlertSubscription', catalogPrefix: string, email?: string | null } };
 
 export type AlertTypeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2029,7 +2029,7 @@ export type ConnectorsGridQueryVariables = Exact<{
 }>;
 
 
-export type ConnectorsGridQuery = { __typename?: 'QueryRoot', connectors: { __typename?: 'ConnectorConnection', edges: Array<{ __typename?: 'ConnectorEdge', cursor: string, node: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null, recommended: boolean, detail?: string | null, defaultSpec?: { __typename?: 'ConnectorSpec', id: any, imageTag: string, documentationUrl?: string | null, protocol?: ConnectorProto | null } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type ConnectorsGridQuery = { __typename?: 'QueryRoot', connectors: { __typename?: 'ConnectorConnection', edges: Array<{ __typename?: 'ConnectorEdge', cursor: string, node: { __typename?: 'Connector', id: string, imageName: string, logoUrl?: string | null, title?: string | null, recommended: boolean, detail?: string | null, defaultSpec?: { __typename?: 'ConnectorSpec', id: string, imageTag: string, documentationUrl?: string | null, protocol?: ConnectorProto | null } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export type ConnectorTagDataQueryVariables = Exact<{
   imageName: Scalars['String']['input'];
@@ -2037,7 +2037,7 @@ export type ConnectorTagDataQueryVariables = Exact<{
 }>;
 
 
-export type ConnectorTagDataQuery = { __typename?: 'QueryRoot', connector?: { __typename?: 'Connector', id: any, imageName: string, logoUrl?: string | null, title?: string | null } | null, connectorSpec?: { __typename?: 'ConnectorSpec', id: any, imageTag: string, defaultCaptureInterval?: string | null, disableBackfill: boolean, documentationUrl?: string | null, endpointSpecSchema?: any | null, resourceSpecSchema?: any | null, protocol?: ConnectorProto | null } | null };
+export type ConnectorTagDataQuery = { __typename?: 'QueryRoot', connector?: { __typename?: 'Connector', id: string, imageName: string, logoUrl?: string | null, title?: string | null } | null, connectorSpec?: { __typename?: 'ConnectorSpec', id: string, imageTag: string, defaultCaptureInterval?: string | null, disableBackfill: boolean, documentationUrl?: string | null, endpointSpecSchema?: any | null, resourceSpecSchema?: any | null, protocol?: ConnectorProto | null } | null };
 
 export type DataPlanesQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;
@@ -2052,7 +2052,7 @@ export type InviteLinksQueryVariables = Exact<{
 }>;
 
 
-export type InviteLinksQuery = { __typename?: 'QueryRoot', inviteLinks: { __typename?: 'InviteLinkConnection', edges: Array<{ __typename?: 'InviteLinkEdge', cursor: string, node: { __typename?: 'InviteLink', token: any, ssoProviderId?: any | null, catalogPrefix: any, capability: Capability, singleUse: boolean, detail?: string | null, createdAt: any } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type InviteLinksQuery = { __typename?: 'QueryRoot', inviteLinks: { __typename?: 'InviteLinkConnection', edges: Array<{ __typename?: 'InviteLinkEdge', cursor: string, node: { __typename?: 'InviteLink', token: string, ssoProviderId?: string | null, catalogPrefix: string, capability: Capability, singleUse: boolean, detail?: string | null, createdAt: string } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type CreateInviteLinkMutationVariables = Exact<{
   catalogPrefix: Scalars['Prefix']['input'];
@@ -2062,7 +2062,7 @@ export type CreateInviteLinkMutationVariables = Exact<{
 }>;
 
 
-export type CreateInviteLinkMutation = { __typename?: 'MutationRoot', createInviteLink: { __typename?: 'InviteLink', token: any, catalogPrefix: any, capability: Capability, singleUse: boolean, detail?: string | null, createdAt: any } };
+export type CreateInviteLinkMutation = { __typename?: 'MutationRoot', createInviteLink: { __typename?: 'InviteLink', token: string, catalogPrefix: string, capability: Capability, singleUse: boolean, detail?: string | null, createdAt: string } };
 
 export type DeleteInviteLinkMutationVariables = Exact<{
   token: Scalars['UUID']['input'];
@@ -2076,7 +2076,7 @@ export type RedeemInviteLinkMutationVariables = Exact<{
 }>;
 
 
-export type RedeemInviteLinkMutation = { __typename?: 'MutationRoot', redeemInviteLink: { __typename?: 'RedeemInviteLinkResult', capability: Capability, catalogPrefix: any } };
+export type RedeemInviteLinkMutation = { __typename?: 'MutationRoot', redeemInviteLink: { __typename?: 'RedeemInviteLinkResult', capability: Capability, catalogPrefix: string } };
 
 export type LiveSpecsQueryQueryVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
@@ -2084,7 +2084,7 @@ export type LiveSpecsQueryQueryVariables = Exact<{
 }>;
 
 
-export type LiveSpecsQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', cursor: string, node: { __typename?: 'LiveSpecRef', catalogName: any, liveSpec?: { __typename?: 'LiveSpec', catalogType: CatalogType } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type LiveSpecsQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', cursor: string, node: { __typename?: 'LiveSpecRef', catalogName: string, liveSpec?: { __typename?: 'LiveSpec', catalogType: CatalogType } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export type RefreshTokensQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -2092,7 +2092,7 @@ export type RefreshTokensQueryVariables = Exact<{
 }>;
 
 
-export type RefreshTokensQuery = { __typename?: 'QueryRoot', refreshTokens: { __typename?: 'RefreshTokenInfoConnection', edges: Array<{ __typename?: 'RefreshTokenInfoEdge', cursor: string, node: { __typename?: 'RefreshTokenInfo', id: any, detail?: string | null, createdAt: any, uses: number, expired: boolean } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type RefreshTokensQuery = { __typename?: 'QueryRoot', refreshTokens: { __typename?: 'RefreshTokenInfoConnection', edges: Array<{ __typename?: 'RefreshTokenInfoEdge', cursor: string, node: { __typename?: 'RefreshTokenInfo', id: string, detail?: string | null, createdAt: string, uses: number, expired: boolean } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type CreateRefreshTokenMutationVariables = Exact<{
   detail?: InputMaybe<Scalars['String']['input']>;
@@ -2101,7 +2101,7 @@ export type CreateRefreshTokenMutationVariables = Exact<{
 }>;
 
 
-export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: any, secret: string } };
+export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: string, secret: string } };
 
 export type RevokeRefreshTokenMutationVariables = Exact<{
   id: Scalars['Id']['input'];
@@ -2117,7 +2117,7 @@ export type CreateStorageMappingMutationVariables = Exact<{
 }>;
 
 
-export type CreateStorageMappingMutation = { __typename?: 'MutationRoot', createStorageMapping: { __typename?: 'CreateStorageMappingResult', catalogPrefix: any } };
+export type CreateStorageMappingMutation = { __typename?: 'MutationRoot', createStorageMapping: { __typename?: 'CreateStorageMappingResult', catalogPrefix: string } };
 
 export type UpdateStorageMappingMutationVariables = Exact<{
   catalogPrefix: Scalars['Prefix']['input'];
@@ -2126,7 +2126,7 @@ export type UpdateStorageMappingMutationVariables = Exact<{
 }>;
 
 
-export type UpdateStorageMappingMutation = { __typename?: 'MutationRoot', updateStorageMapping: { __typename?: 'UpdateStorageMappingResult', catalogPrefix: any, republish: boolean } };
+export type UpdateStorageMappingMutation = { __typename?: 'MutationRoot', updateStorageMapping: { __typename?: 'UpdateStorageMappingResult', catalogPrefix: string, republish: boolean } };
 
 export type TestConnectionHealthMutationVariables = Exact<{
   catalogPrefix: Scalars['Prefix']['input'];
@@ -2141,7 +2141,7 @@ export type StorageMappingQueryQueryVariables = Exact<{
 }>;
 
 
-export type StorageMappingQueryQuery = { __typename?: 'QueryRoot', storageMappings: { __typename?: 'StorageMappingConnection', edges: Array<{ __typename?: 'StorageMappingEdge', cursor: string, node: { __typename?: 'StorageMapping', catalogPrefix: any, spec: any } }> } };
+export type StorageMappingQueryQuery = { __typename?: 'QueryRoot', storageMappings: { __typename?: 'StorageMappingConnection', edges: Array<{ __typename?: 'StorageMappingEdge', cursor: string, node: { __typename?: 'StorageMapping', catalogPrefix: string, spec: any } }> } };
 
 export type AlertingOverviewQueryQueryVariables = Exact<{
   prefix: Scalars['String']['input'];
@@ -2149,7 +2149,7 @@ export type AlertingOverviewQueryQueryVariables = Exact<{
 }>;
 
 
-export type AlertingOverviewQueryQuery = { __typename?: 'QueryRoot', alerts: { __typename?: 'AlertConnection', edges: Array<{ __typename?: 'AlertEdge', node: { __typename?: 'Alert', alertType: AlertType, firedAt: any, catalogName: string, resolvedAt?: any | null, alertDetails: any } }> } };
+export type AlertingOverviewQueryQuery = { __typename?: 'QueryRoot', alerts: { __typename?: 'AlertConnection', edges: Array<{ __typename?: 'AlertEdge', node: { __typename?: 'Alert', alertType: AlertType, firedAt: string, catalogName: string, resolvedAt?: string | null, alertDetails: any } }> } };
 
 export type ActiveAlertCountQueryVariables = Exact<{
   catalogName: Scalars['Name']['input'];
@@ -2163,7 +2163,7 @@ export type ActiveAlertsQueryQueryVariables = Exact<{
 }>;
 
 
-export type ActiveAlertsQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', node: { __typename?: 'LiveSpecRef', activeAlerts?: Array<{ __typename?: 'Alert', alertType: AlertType, catalogName: string, firedAt: any, alertDetails: any }> | null } }> } };
+export type ActiveAlertsQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', node: { __typename?: 'LiveSpecRef', activeAlerts?: Array<{ __typename?: 'Alert', alertType: AlertType, catalogName: string, firedAt: string, alertDetails: any }> | null } }> } };
 
 export type AlertHistoryQueryQueryVariables = Exact<{
   catalogName?: InputMaybe<Array<Scalars['Name']['input']> | Scalars['Name']['input']>;
@@ -2172,7 +2172,7 @@ export type AlertHistoryQueryQueryVariables = Exact<{
 }>;
 
 
-export type AlertHistoryQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', node: { __typename?: 'LiveSpecRef', alertHistory?: { __typename?: 'AlertConnection', edges: Array<{ __typename?: 'AlertEdge', cursor: string, node: { __typename?: 'Alert', alertType: AlertType, catalogName: string, firedAt: any, resolvedAt?: any | null, alertDetails: any } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } | null } }> } };
+export type AlertHistoryQueryQuery = { __typename?: 'QueryRoot', liveSpecs: { __typename?: 'LiveSpecRefConnection', edges: Array<{ __typename?: 'LiveSpecRefEdge', node: { __typename?: 'LiveSpecRef', alertHistory?: { __typename?: 'AlertConnection', edges: Array<{ __typename?: 'AlertEdge', cursor: string, node: { __typename?: 'Alert', alertType: AlertType, catalogName: string, firedAt: string, resolvedAt?: string | null, alertDetails: any } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } | null } }> } };
 
 export type PageInfoFieldsFragment = { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null };
 
@@ -2181,7 +2181,7 @@ export type AuthRolesQueryQueryVariables = Exact<{
 }>;
 
 
-export type AuthRolesQueryQuery = { __typename?: 'QueryRoot', prefixes: { __typename?: 'PrefixRefConnection', edges: Array<{ __typename?: 'PrefixRefEdge', node: { __typename?: 'PrefixRef', prefix: any, userCapability: Capability } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type AuthRolesQueryQuery = { __typename?: 'QueryRoot', prefixes: { __typename?: 'PrefixRefConnection', edges: Array<{ __typename?: 'PrefixRefEdge', node: { __typename?: 'PrefixRef', prefix: string, userCapability: Capability } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export const PageInfoFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PageInfoFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PageInfo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]} as unknown as DocumentNode<PageInfoFieldsFragment, unknown>;
 export const AlertConfigsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertConfigs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"AlertConfigsFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertConfigs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefixOrName"}},{"kind":"Field","name":{"kind":"Name","value":"config"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"effective"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"config"}},{"kind":"Field","name":{"kind":"Name","value":"provenance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"source"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lastModifiedBy"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]}}]} as unknown as DocumentNode<AlertConfigsQuery, AlertConfigsQueryVariables>;

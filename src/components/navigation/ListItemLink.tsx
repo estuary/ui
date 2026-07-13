@@ -16,7 +16,7 @@ interface Props {
     link: string;
 }
 
-export const ListItemLink = ({ icon, title, link }: Props) => {
+const ListItemLink = ({ icon, title, link }: Props) => {
     const resolved = useResolvedPath(link);
     const selected = Boolean(
         useMatch({

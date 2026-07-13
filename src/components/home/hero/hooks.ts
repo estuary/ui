@@ -3,7 +3,7 @@ import type { MuiTabProps } from 'src/types';
 
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-export const TABS: MuiTabProps<TabOptions>[] = [
+const TABS: MuiTabProps<TabOptions>[] = [
     {
         label: 'home.hero.tab.companyOverview',
         value: 'overview',

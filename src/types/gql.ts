@@ -6,7 +6,7 @@ import type {
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 import type { Schema } from 'src/types/index';
 
-export interface AlertDetailsRecipients {
+interface AlertDetailsRecipients {
     email: string;
     full_name?: string;
 }
@@ -31,7 +31,7 @@ export interface AlertNodeEdge {
     node: AlertNode;
 }
 
-export interface LiveSpecNode {
+interface LiveSpecNode {
     activeAlerts?: AlertNode[];
     alertHistory?: {
         edges: AlertNodeEdge[];
@@ -41,14 +41,14 @@ export interface LiveSpecNode {
 
 // PAGINATION
 
-export interface PageInfo {
+interface PageInfo {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
     startCursor: string;
     endCursor: string;
 }
 
-export type PageInfoReverse = Pick<
+type PageInfoReverse = Pick<
     PageInfo,
     'hasNextPage' | 'hasPreviousPage' | 'startCursor' | 'endCursor'
 >;
@@ -66,7 +66,7 @@ export interface AlertsVariables {
 
 // TODO (typing) - we need more versions of pagination
 //  as some endpoints only support before/last (AlertHistory)
-export interface PaginationVariables {
+interface PaginationVariables {
     before?: string | undefined;
     after?: string | undefined;
     first?: number | undefined;
@@ -77,7 +77,7 @@ export type WithPagination<T> = T & PaginationVariables;
 
 // QUERY RESPONSES
 
-export type DefaultAlertingQueryResponse = {
+type DefaultAlertingQueryResponse = {
     alerts: {
         edges: {
             node: AlertNode;
@@ -112,19 +112,6 @@ export interface AlertHistoryQueryResponse {
         edges: {
             node: LiveSpecNode;
         }[];
-    };
-}
-
-export interface AuthRolesNode {
-    prefix: string;
-    userCapability: string;
-}
-export interface AuthRolesQueryResponse {
-    prefixes: {
-        edges: {
-            node: AuthRolesNode;
-        }[];
-        pageInfo?: Pick<PageInfo, 'hasNextPage' | 'endCursor'>;
     };
 }
 

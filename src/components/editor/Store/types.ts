@@ -4,7 +4,7 @@ import type { DraftSpec, DraftSpecQuery } from 'src/hooks/useDraftSpecs';
 import type { BaseComponentProps, Schema } from 'src/types';
 import type { KeyedMutator } from 'swr';
 
-export interface DraftSpecResponse {
+interface DraftSpecResponse {
     draftSpecs: DraftSpecQuery[];
     isValidating: boolean;
     mutate: KeyedMutator<PostgrestResponse<DraftSpecQuery>> | null;

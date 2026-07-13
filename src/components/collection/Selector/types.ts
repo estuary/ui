@@ -12,24 +12,24 @@ import type { AddDialogProps } from 'src/components/shared/Entity/AddDialog/type
 import type { ColumnProps } from 'src/components/tables/EntityTable/types';
 import type { BindingMetadata, BindingState } from 'src/stores/Binding/types';
 
-export type CollectionSelectorCellRenderer = (
+type CollectionSelectorCellRenderer = (
     params: any,
     filterValue?: string
 ) => ReactNode;
 
-export type CollectionNameKey =
+type CollectionNameKey =
     | typeof COLLECTION_SELECTOR_NAME_COL
     | typeof COLLECTION_SELECTOR_STRIPPED_PATH_NAME;
 
-export type CollectionSelectorStringKey =
+type CollectionSelectorStringKey =
     | CollectionNameKey
     | typeof COLLECTION_SELECTOR_UUID_COL;
 
-export type CollectionSelectorBooleanKey =
+type CollectionSelectorBooleanKey =
     | CollectionNameKey
     | typeof COLLECTION_SELECTOR_TOGGLE_COL;
 
-export type CollectionSelectorChunkKey =
+type CollectionSelectorChunkKey =
     | CollectionNameKey
     | typeof COLLECTION_SELECTOR_HIGHLIGHT_CHUNKS;
 
@@ -71,7 +71,7 @@ export interface CollectionSelectorProps {
     RediscoverButton?: ReactNode;
 }
 
-export interface CollectionSelectorCell<T = any> {
+interface CollectionSelectorCell<T = any> {
     handler?: (rows: T, newVal?: any) => Promise<any>;
     cellRenderer: CollectionSelectorCellRenderer;
 }

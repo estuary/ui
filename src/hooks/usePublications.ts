@@ -6,7 +6,7 @@ import { supabaseClient } from 'src/context/GlobalProviders';
 import { DEFAULT_POLLING } from 'src/context/SWR';
 import { TABLES } from 'src/services/supabase';
 
-export interface Publications {
+interface Publications {
     id: string;
     job_status: JobStatus;
     logs_token: string;
