@@ -1,21 +1,18 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { EntitiesState } from 'src/stores/Entities/types';
 import type { AuthRoles, Capability } from 'src/types';
-import type {
-    AuthRolesQueryResponse,
-    PaginationVariables,
-} from 'src/types/gql';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
 import useSWR from 'swr';
-import { gql, useQuery } from 'urql';
+import { useQuery } from 'urql';
 
 import { getAllStorageMappingStores } from 'src/api/storageMappings';
 import { singleCallSettings } from 'src/context/SWR';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { graphql } from 'src/gql-types';
 import { logRocketEvent } from 'src/services/shared';
 import { BASE_ERROR } from 'src/services/supabase';
 import { useEntitiesStore } from 'src/stores/Entities/Store';
@@ -135,7 +132,7 @@ const useEntitiesStore_populateState = () => {
 // The 7500 was kind of picked through "vibes"
 //  It should keep the payload around 1000kB
 //  That should load in around 1 second for 4g
-const authRolesQuery = gql<AuthRolesQueryResponse, PaginationVariables>`
+const authRolesQuery = graphql(`
     query AuthRolesQuery($after: String) {
         prefixes(by: { minCapability: read }, first: 7500, after: $after) {
             edges {
@@ -150,7 +147,7 @@ const authRolesQuery = gql<AuthRolesQueryResponse, PaginationVariables>`
             }
         }
     }
-`;
+`);
 
 export const useHydrateStateWithGql = () => {
     const { populateState } = useEntitiesStore_populateState();
