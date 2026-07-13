@@ -61,7 +61,7 @@ export function Toast() {
                 'display': 'block',
                 'animation': `${toastIn} 750ms cubic-bezier(.2,.9,.25,1) 1s both`,
                 'transition': 'transform 200ms ease, box-shadow 200ms ease',
-                'zIndex': theme.zIndex.snackbar,
+                'zIndex': theme.zIndex.drawer,
                 '&:hover': {
                     transform: 'translateY(-2px)',
                     boxShadow:
