@@ -15,6 +15,7 @@ import UserRows, {
 } from 'src/components/tables/AccessGrants/UserRows';
 import EntityTable from 'src/components/tables/EntityTable';
 import RowSelector from 'src/components/tables/RowActions/AccessGrants/RowSelector';
+import Title from 'src/components/tables/Title';
 import { SelectTableStoreNames } from 'src/stores/names';
 import { useTableState } from 'src/stores/Tables/hooks';
 import TableHydrator from 'src/stores/Tables/Hydrator';
@@ -68,6 +69,11 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
 
     return (
         <Box sx={{ mb: showUser ? 8 : 0 }}>
+            {/* The Access Grants page stacks two tables under one page title,
+                so each carries its own heading to tell them apart. */}
+            <Box sx={{ ml: 2 }}>
+                <Title header={headerKey} />
+            </Box>
             <TableHydrator
                 query={query}
                 selectableTableStoreName={
