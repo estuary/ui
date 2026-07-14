@@ -2,7 +2,7 @@ import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { SubscriptionDependentProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { Grant_UserExt } from 'src/types';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Autocomplete,
@@ -67,10 +67,8 @@ function EmailSelector({
         minCapability
     );
 
-    const inputErrorExists = useMemo(
-        () => !isValidEmail(inputValue),
-        [inputValue]
-    );
+    const inputErrorExists = !isValidEmail(inputValue);
+    const inputErrorDisplayed = inputValue.length > 0 && inputErrorExists;
 
     const duplicateEmailDetected =
         duplicateSubscriptionEmails.includes(subscribedEmail);
@@ -171,7 +169,7 @@ function EmailSelector({
                 }: AutocompleteRenderInputParams) => (
                     <TextField
                         {...params}
-                        error={inputErrorExists || duplicateEmailDetected}
+                        error={inputErrorDisplayed || duplicateEmailDetected}
                         label={intl.formatMessage({
                             id: 'data.email',
                         })}
@@ -240,7 +238,7 @@ function EmailSelector({
                 value={inputValue}
             />
 
-            {inputErrorExists ? (
+            {inputErrorDisplayed ? (
                 <FormHelperText error>
                     {intl.formatMessage({
                         id: 'alerts.config.dialog.emailSelector.inputError',
