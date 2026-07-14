@@ -1,4 +1,3 @@
-import type { ReducedAlertSubscription } from 'src/api/types';
 import type { SubscriptionMetadataDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { Schema, TableState } from 'src/types';
 
@@ -18,7 +17,6 @@ import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import Rows from 'src/components/tables/PrefixAlerts/Rows';
 import {
     columns,
-    sortByCatalogPrefix,
     TABLE_HEADER_HEIGHT,
     TABLE_ROW_HEIGHT,
 } from 'src/components/tables/PrefixAlerts/shared';
@@ -54,46 +52,20 @@ function PrefixAlertTable() {
     });
 
     const processedData: SubscriptionMetadataDictionary = useMemo(() => {
-        const existingSubscriptionPrefixes =
-            data?.alertSubscriptions.map(
-                ({ catalogPrefix }) => catalogPrefix
-            ) ?? [];
-
-        const configSubscriptions =
-            alertConfigResponse?.data?.alertConfigs.edges
-                .filter(
-                    ({ node: { catalogPrefixOrName } }) =>
-                        !existingSubscriptionPrefixes.includes(
-                            catalogPrefixOrName
-                        )
-                )
-                .map(
-                    ({
-                        node: { catalogPrefixOrName },
-                    }): ReducedAlertSubscription => ({
-                        alertTypes: [],
-                        catalogPrefix: catalogPrefixOrName,
-                        email: '',
-                    })
-                ) ?? [];
-
-        const mergedSubscriptions =
-            data?.alertSubscriptions && data.alertSubscriptions.length > 0
-                ? configSubscriptions.concat(data.alertSubscriptions)
-                : configSubscriptions;
+        if (!data?.alertSubscriptions) {
+            return {};
+        }
 
         const evaluatedData = searchQuery
-            ? mergedSubscriptions
-                  .filter(
-                      ({ catalogPrefix, email }) =>
-                          catalogPrefix.includes(searchQuery) ||
-                          email.includes(searchQuery)
-                  )
-                  .sort(sortByCatalogPrefix)
-            : mergedSubscriptions.sort(sortByCatalogPrefix);
+            ? data.alertSubscriptions.filter(
+                  ({ catalogPrefix, email }) =>
+                      catalogPrefix.includes(searchQuery) ||
+                      email.includes(searchQuery)
+              )
+            : data.alertSubscriptions;
 
         return bundleSubscriptionsByPrefix(evaluatedData);
-    }, [alertConfigResponse?.data, data?.alertSubscriptions, searchQuery]);
+    }, [data?.alertSubscriptions, searchQuery]);
 
     const processedDataExists = useMemo(
         () => Object.keys(processedData).length > 0,
