@@ -3,6 +3,7 @@ import type { Schema } from 'src/types';
 import { useEffect, useRef, useState } from 'react';
 
 import { debounce, isEmpty } from 'lodash';
+import { useUnmount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useEvaluateGlobalPrefixSettings } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateGlobalPrefixSettings';
@@ -26,6 +27,10 @@ export function useInitializeAlertConfig() {
     useEffect(() => {
         updateDebouncedPrefix.current(catalogPrefix);
     }, [catalogPrefix, updateDebouncedPrefix]);
+
+    useUnmount(() => {
+        updateDebouncedPrefix.current.cancel();
+    });
 
     useEffect(() => {
         if (debouncedPrefix === catalogPrefix) {
