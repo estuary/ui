@@ -1972,7 +1972,7 @@ export type AlertConfigsQueryVariables = Exact<{
 }>;
 
 
-export type AlertConfigsQuery = { __typename?: 'QueryRoot', alertConfigs: { __typename?: 'AlertConfigEntryConnection', edges: Array<{ __typename?: 'AlertConfigEntryEdge', node: { __typename?: 'AlertConfigEntry', catalogPrefixOrName: string, config: any, createdAt: any, detail?: string | null, id: any, lastModifiedBy?: any | null, updatedAt: any, effective: { __typename?: 'EffectiveAlertConfig', config: any, provenance: Array<{ __typename?: 'FieldProvenance', source?: string | null }> } } }>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean } } };
+export type AlertConfigsQuery = { __typename?: 'QueryRoot', alertConfigs: { __typename?: 'AlertConfigEntryConnection', edges: Array<{ __typename?: 'AlertConfigEntryEdge', node: { __typename?: 'AlertConfigEntry', catalogPrefixOrName: string, config: any, createdAt: string, detail?: string | null, id: string, lastModifiedBy?: string | null, updatedAt: string, effective: { __typename?: 'EffectiveAlertConfig', config: any, provenance: Array<{ __typename?: 'FieldProvenance', source?: string | null }> } } }>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean } } };
 
 export type UpdateAlertConfigMutationMutationVariables = Exact<{
   catalogPrefixOrName: Scalars['String']['input'];
@@ -2006,7 +2006,7 @@ export type AlertSubscriptionsQueryVariables = Exact<{
 }>;
 
 
-export type AlertSubscriptionsQuery = { __typename?: 'QueryRoot', alertSubscriptions: Array<{ __typename?: 'AlertSubscription', alertTypes: Array<AlertType>, catalogPrefix: string, email?: string | null, updatedAt: string }> };
+export type AlertSubscriptionsQuery = { __typename?: 'QueryRoot', alertSubscriptions: Array<{ __typename?: 'AlertSubscription', alertTypes: Array<AlertType>, catalogPrefix: string, email?: string | null }> };
 
 export type UpdateAlertSubscriptionMutationMutationVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
