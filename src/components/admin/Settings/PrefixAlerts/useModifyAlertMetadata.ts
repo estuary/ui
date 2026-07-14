@@ -57,6 +57,7 @@ export function useModifyAlertMetadata(
                 promiseRejected: 'explicit',
             });
 
+            setLoading(false);
             return Promise.reject();
         }
 
