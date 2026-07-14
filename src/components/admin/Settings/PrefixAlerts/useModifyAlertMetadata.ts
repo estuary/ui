@@ -4,7 +4,7 @@ import type { CombinedError } from 'urql';
 
 import { useState } from 'react';
 
-import { isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -154,13 +154,26 @@ export function useModifyAlertMetadata(
         // the only "preventative" measure the client can take is to prevent
         // the insertion of table row when no settings have been defined for a
         // given prefix.
-        const { explicit: explicitSettings, implicit: implicitSettings } =
-            evaluateGlobalPrefixSettings();
+        const {
+            directImplicitMatch,
+            explicit: explicitSettings,
+            implicit: implicitSettings,
+        } = evaluateGlobalPrefixSettings();
+
+        const explicitSettingsEmpty = isEmpty(explicitSettings);
+        const implicitSettingsEmpty = isEmpty(implicitSettings);
+
+        const existingSettingRemoval =
+            directImplicitMatch &&
+            explicitSettingsEmpty &&
+            !implicitSettingsEmpty;
 
         if (
-            Boolean(explicitSettings && !implicitSettings) ||
-            Boolean(implicitSettings && !explicitSettings) ||
-            !isEqual(explicitSettings, implicitSettings)
+            existingSettingRemoval ||
+            (!explicitSettingsEmpty && implicitSettingsEmpty) ||
+            (!explicitSettingsEmpty &&
+                !implicitSettingsEmpty &&
+                !isEqual(explicitSettings, implicitSettings))
         ) {
             const configResponse = await upsertConfig({
                 catalogPrefixOrName: catalogPrefix,

@@ -20,7 +20,11 @@ export function useEvaluateGlobalPrefixSettings() {
 
     const evaluateGlobalPrefixSettings = useCallback(
         (debouncedPrefix?: string) => {
-            let settings: { explicit: Schema; implicit: Schema } = {
+            let settings: {
+                explicit: Schema;
+                implicit: Schema;
+                directImplicitMatch?: boolean;
+            } = {
                 explicit: {},
                 implicit: {},
             };
@@ -54,6 +58,8 @@ export function useEvaluateGlobalPrefixSettings() {
 
             settings.implicit =
                 immutableSubscriptionMetadata[matchedPrefix].settings;
+
+            settings.directImplicitMatch = prefix === matchedPrefix;
 
             return settings;
         },
