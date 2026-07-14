@@ -8,7 +8,7 @@ interface Connection<TNode> {
     edges: { node: TNode }[];
     pageInfo: {
         hasNextPage: boolean;
-        endCursor: string;
+        endCursor?: string | null;
     };
 }
 
@@ -30,7 +30,7 @@ interface UseAllPagesResult<TResult> {
  */
 export function useAllPages<
     TData,
-    TVariables extends AnyVariables & { after?: string },
+    TVariables extends AnyVariables & { after?: string | null },
     TNode,
     TResult,
 >(
