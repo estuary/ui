@@ -23,7 +23,7 @@ import { useEvaluateSubscriptionIneligibility } from 'src/components/admin/Setti
 import UserAvatar from 'src/components/shared/UserAvatar';
 import usePrefixAdministrators from 'src/hooks/usePrefixAdministrators';
 import useUserInformationByPrefix from 'src/hooks/useUserInformationByPrefix';
-import { BASIC_EMAIL_RE } from 'src/validation';
+import { BASIC_EMAIL_RE, isValidEmail } from 'src/validation';
 
 type Option = Grant_UserExt | string;
 
@@ -68,7 +68,7 @@ function EmailSelector({
     );
 
     const inputErrorExists = useMemo(
-        () => inputValue.length > 0 && !BASIC_EMAIL_RE.test(inputValue),
+        () => !isValidEmail(inputValue),
         [inputValue]
     );
 

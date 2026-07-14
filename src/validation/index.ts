@@ -78,3 +78,6 @@ export const validateCatalogName = (
 
     return null;
 };
+
+export const isValidEmail = (email: string) =>
+    email.length > 0 && BASIC_EMAIL_RE.test(email);
