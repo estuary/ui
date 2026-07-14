@@ -57,7 +57,7 @@ interface AlertSubscriptionState {
         value: string,
         selected: boolean,
         catalogPrefix?: string,
-        email?: string
+        id?: string
     ) => void;
     setSubscribedEmail: (value: string, subscriptionId: string) => void;
     setSubscribedPrefix: (value: string, errors: string | null) => void;
@@ -340,7 +340,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'server errors set'
                 ),
 
-            setSingleAlertType: (value, selected, catalogPrefix, email) =>
+            setSingleAlertType: (value, selected, catalogPrefix, id) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
                         if (!catalogPrefix) {
@@ -363,7 +363,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             state.mutableSubscriptionMetadata.subscriptions;
 
                         const targetIndex = targetSubscriptions.findIndex(
-                            (subscription) => subscription.email === email
+                            (subscription) => subscription.id === id
                         );
 
                         if (targetIndex === -1) {

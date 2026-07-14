@@ -81,7 +81,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                                     option.alertType,
                                                     event.target.checked,
                                                     subscription?.catalogPrefix,
-                                                    subscription?.email
+                                                    subscription?.id
                                                 );
                                             }}
                                         />
