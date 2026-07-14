@@ -34,12 +34,14 @@ function Row({ row }: RowProps) {
 function Rows({ data }: RowsProps) {
     return (
         <>
-            {data.map((datum, index) => (
-                <Row
-                    key={`${datum.subscriptions[0].id}-${index}`}
-                    row={datum}
-                />
-            ))}
+            {data
+                .filter((datum) => datum.subscriptions.length > 0)
+                .map((datum, index) => (
+                    <Row
+                        key={`${datum.subscriptions[0].id}-${index}`}
+                        row={datum}
+                    />
+                ))}
         </>
     );
 }
