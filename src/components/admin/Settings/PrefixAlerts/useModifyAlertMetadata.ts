@@ -68,8 +68,10 @@ export function useModifyAlertMetadata(
                                 mutableSubscription.email === email
                         )
                 )
-                .map(({ email }) => {
-                    return deleteSubscription({ email, prefix: catalogPrefix });
+                .forEach(({ email }) => {
+                    staleSubscriptionQueries.push(
+                        deleteSubscription({ email, prefix: catalogPrefix })
+                    );
                 });
         }
 
