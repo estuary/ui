@@ -120,7 +120,7 @@ const Summary = ({
                 {expanded ? null : (
                     <Box style={{ paddingLeft: 12 }}>
                         <ChipList
-                            maxChips={3}
+                            maxChips={5}
                             stripPath={false}
                             values={evaluatedAlertTypes}
                         />
