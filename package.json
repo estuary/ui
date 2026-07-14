@@ -53,7 +53,7 @@
         "@dnd-kit/utilities": "^3.2.1",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
-        "@estuary/flow-web": "file:__inline-deps__/estuary-flow-web-20260622-172147.tgz",
+        "@estuary/flow-web": "file:__inline-deps__/estuary-flow-web-20260713-143059.tgz",
         "@jsonforms/core": "^3.7.0",
         "@jsonforms/material-renderers": "^3.7.0",
         "@jsonforms/react": "^3.7.0",
@@ -132,6 +132,7 @@
     "devDependencies": {
         "@graphql-codegen/cli": "^6.2.1",
         "@graphql-codegen/client-preset": "^5.2.4",
+        "@graphql-codegen/plugin-helpers": "^6.2.1",
         "@graphql-codegen/schema-ast": "^5.0.1",
         "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
         "@storybook/addon-a11y": "^10.3.4",

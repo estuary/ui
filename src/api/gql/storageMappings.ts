@@ -3,8 +3,9 @@ import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useCallback } from 'react';
 
-import { gql, useClient, useQuery } from 'urql';
+import { useClient, useQuery } from 'urql';
 
+import { graphql } from 'src/gql-types';
 import { useTenantStore } from 'src/stores/Tenant';
 
 // Public types
@@ -58,30 +59,20 @@ interface ServerFragmentStore {
     account_tenant_id?: string | null;
 }
 
+// Shape of the storage mapping `spec` field, which the schema types as JSON
+interface StorageMappingSpec {
+    stores: ServerFragmentStore[];
+    data_planes: string[];
+}
+
 interface StorageMappingVariables {
     catalogPrefix: string;
-    spec: {
-        stores: ServerFragmentStore[];
-        data_planes: string[];
-    };
+    spec: StorageMappingSpec;
     detail?: string;
 }
 
-interface CreateStorageMappingResult {
-    created: boolean;
-    catalogPrefix: string;
-}
-
-interface UpdateStorageMappingResult {
-    republish: boolean;
-    catalogPrefix: string;
-}
-
 // GraphQL Mutations
-const CREATE_STORAGE_MAPPING = gql<
-    { createStorageMapping: CreateStorageMappingResult | null },
-    StorageMappingVariables
->`
+const CREATE_STORAGE_MAPPING = graphql(`
     mutation CreateStorageMapping(
         $catalogPrefix: Prefix!
         $spec: JSON!
@@ -95,12 +86,9 @@ const CREATE_STORAGE_MAPPING = gql<
             catalogPrefix
         }
     }
-`;
+`);
 
-const UPDATE_STORAGE_MAPPING = gql<
-    { updateStorageMapping: UpdateStorageMappingResult | null },
-    StorageMappingVariables
->`
+const UPDATE_STORAGE_MAPPING = graphql(`
     mutation UpdateStorageMapping(
         $catalogPrefix: Prefix!
         $spec: JSON!
@@ -115,20 +103,9 @@ const UPDATE_STORAGE_MAPPING = gql<
             republish
         }
     }
-`;
+`);
 
-const TEST_CONNECTION_HEALTH = gql<
-    {
-        testConnectionHealth: {
-            results: {
-                fragmentStore: ServerFragmentStore;
-                dataPlaneName: string;
-                error: string | null;
-            }[];
-        } | null;
-    },
-    StorageMappingVariables
->`
+const TEST_CONNECTION_HEALTH = graphql(`
     mutation TestConnectionHealth($catalogPrefix: Prefix!, $spec: JSON!) {
         testConnectionHealth(catalogPrefix: $catalogPrefix, spec: $spec) {
             results {
@@ -138,24 +115,9 @@ const TEST_CONNECTION_HEALTH = gql<
             }
         }
     }
-`;
+`);
 
-interface StorageMappingsQueryResponse {
-    storageMappings: {
-        edges: {
-            cursor: string;
-            node: {
-                catalogPrefix: string;
-                spec: {
-                    data_planes: string[];
-                    stores: ServerFragmentStore[];
-                };
-            };
-        }[];
-    };
-}
-
-const QUERY = gql<StorageMappingsQueryResponse, { underPrefix: string }>`
+const QUERY = graphql(`
     query StorageMappingQuery($underPrefix: Prefix!) {
         storageMappings(by: { underPrefix: $underPrefix }) {
             edges {
@@ -167,7 +129,7 @@ const QUERY = gql<StorageMappingsQueryResponse, { underPrefix: string }>`
             }
         }
     }
-`;
+`);
 
 // Maps cloud provider names to storage provider variants (for GraphQL mutations)
 const CLOUD_TO_STORAGE_PROVIDER: Record<CloudProvider, StorageProvider> = {
@@ -268,7 +230,7 @@ export function useStorageMappingService() {
                 result.data?.testConnectionHealth?.results.map((r) => ({
                     fragmentStore: fromServerStore(r.fragmentStore),
                     dataPlaneName: r.dataPlaneName,
-                    error: r.error,
+                    error: r.error ?? null,
                 })) ?? []
             );
         },
@@ -276,9 +238,7 @@ export function useStorageMappingService() {
     );
 
     const create = useCallback(
-        async (
-            input: StorageMappingInput
-        ): Promise<CreateStorageMappingResult> => {
+        async (input: StorageMappingInput) => {
             const result = await client.mutation(CREATE_STORAGE_MAPPING, {
                 catalogPrefix: input.catalogPrefix,
                 detail: input.detail,
@@ -286,7 +246,7 @@ export function useStorageMappingService() {
                     stores: input.spec.fragmentStores.map(toServerStore),
                     data_planes: input.spec.dataPlanes,
                 },
-            });
+            } satisfies StorageMappingVariables);
 
             if (result.error) {
                 throw new Error(
@@ -309,9 +269,7 @@ export function useStorageMappingService() {
     );
 
     const update = useCallback(
-        async (
-            input: StorageMappingInput
-        ): Promise<UpdateStorageMappingResult> => {
+        async (input: StorageMappingInput) => {
             const result = await client.mutation(UPDATE_STORAGE_MAPPING, {
                 catalogPrefix: input.catalogPrefix,
                 detail: input.detail,
@@ -319,7 +277,7 @@ export function useStorageMappingService() {
                     stores: input.spec.fragmentStores.map(toServerStore),
                     data_planes: input.spec.dataPlanes,
                 },
-            });
+            } satisfies StorageMappingVariables);
 
             if (result.error) {
                 throw new Error(
@@ -358,13 +316,17 @@ export function useStorageMappings() {
     });
 
     const storageMappings: StorageMapping[] =
-        data?.storageMappings.edges.map((edge) => ({
-            catalogPrefix: edge.node.catalogPrefix,
-            spec: {
-                fragmentStores: edge.node.spec.stores.map(fromServerStore),
-                dataPlanes: edge.node.spec.data_planes ?? [],
-            },
-        })) ?? [];
+        data?.storageMappings.edges.map((edge) => {
+            const spec = edge.node.spec as StorageMappingSpec;
+
+            return {
+                catalogPrefix: edge.node.catalogPrefix,
+                spec: {
+                    fragmentStores: spec.stores.map(fromServerStore),
+                    dataPlanes: spec.data_planes ?? [],
+                },
+            };
+        }) ?? [];
 
     return {
         storageMappings,

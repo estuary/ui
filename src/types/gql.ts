@@ -61,7 +61,7 @@ export interface AlertsVariables {
 
 // TODO (typing) - we need more versions of pagination
 //  as some endpoints only support before/last (AlertHistory)
-export interface PaginationVariables {
+interface PaginationVariables {
     before?: string | undefined;
     after?: string | undefined;
     first?: number | undefined;
@@ -101,19 +101,6 @@ export interface AlertHistoryQueryResponse {
         edges: {
             node: LiveSpecNode;
         }[];
-    };
-}
-
-interface AuthRolesNode {
-    prefix: string;
-    userCapability: string;
-}
-export interface AuthRolesQueryResponse {
-    prefixes: {
-        edges: {
-            node: AuthRolesNode;
-        }[];
-        pageInfo?: Pick<PageInfo, 'hasNextPage' | 'endCursor'>;
     };
 }
 
