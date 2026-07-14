@@ -62,10 +62,6 @@ const Summary = ({
         [alertTypeDefs, alertTypes]
     );
 
-    const ineligibleSubscription =
-        duplicateSubscriptionEmails.length > 0 &&
-        duplicateSubscriptionEmails.includes(subscription.email);
-
     return (
         <AccordionSummary
             sx={{
@@ -106,7 +102,9 @@ const Summary = ({
                               })}
                     </Typography>
 
-                    {ineligibleSubscription ? (
+                    {duplicateSubscriptionEmails.includes(
+                        subscription.email
+                    ) ? (
                         <WarningCircle
                             style={{
                                 color: theme.palette.error.main,
