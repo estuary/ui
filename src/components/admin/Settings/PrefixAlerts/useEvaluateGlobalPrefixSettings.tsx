@@ -1,0 +1,68 @@
+import type { Schema } from 'src/types';
+
+import { useCallback } from 'react';
+
+import { isEmpty } from 'lodash';
+
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { basicSort_stringLength } from 'src/utils/misc-utils';
+
+export function useEvaluateGlobalPrefixSettings() {
+    const catalogPrefix = useAlertSubscriptionsStore(
+        (state) => state.catalogPrefix
+    );
+    const immutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.subscriptionMetadata
+    );
+    const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.mutableSubscriptionMetadata
+    );
+
+    const evaluateGlobalPrefixSettings = useCallback(
+        (debouncedPrefix?: string) => {
+            let settings: { explicit: Schema; implicit: Schema } = {
+                explicit: {},
+                implicit: {},
+            };
+            const prefix = debouncedPrefix ?? catalogPrefix;
+
+            if (prefix.length === 0) {
+                return settings;
+            }
+
+            settings.explicit = mutableSubscriptionMetadata.settings;
+
+            const sortedImmutablePrefixAndMetadata = Object.entries(
+                immutableSubscriptionMetadata
+            )
+                .filter(([_prefix, metadata]) => !isEmpty(metadata.settings))
+                .sort((first, second) => {
+                    return basicSort_stringLength(first[0], second[0], 'desc');
+                });
+
+            const matchedImmutablePrefixAndMetadata =
+                sortedImmutablePrefixAndMetadata.find(([prefix, _metadata]) =>
+                    catalogPrefix.startsWith(prefix)
+                );
+
+            if (!matchedImmutablePrefixAndMetadata) {
+                return settings;
+            }
+
+            const [matchedPrefix, _matchedMetadata] =
+                matchedImmutablePrefixAndMetadata;
+
+            settings.implicit =
+                immutableSubscriptionMetadata[matchedPrefix].settings;
+
+            return settings;
+        },
+        [
+            catalogPrefix,
+            immutableSubscriptionMetadata,
+            mutableSubscriptionMetadata,
+        ]
+    );
+
+    return { evaluateGlobalPrefixSettings };
+}

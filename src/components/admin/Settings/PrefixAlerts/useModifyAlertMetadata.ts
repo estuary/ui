@@ -4,10 +4,12 @@ import type { CombinedError } from 'urql';
 
 import { useState } from 'react';
 
+import { isEqual } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
+import { useEvaluateGlobalPrefixSettings } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateGlobalPrefixSettings';
 import { useUpsertAlertConfig } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertConfig';
 import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
 import { logRocketEvent } from 'src/services/shared';
@@ -24,6 +26,8 @@ export function useModifyAlertMetadata(
     const { deleteSubscription } = useDeleteAlertSubscription();
 
     const { upsertConfig } = useUpsertAlertConfig();
+
+    const { evaluateGlobalPrefixSettings } = useEvaluateGlobalPrefixSettings();
 
     const setServerError = useAlertSubscriptionsStore(
         (state) => state.setServerErrors
@@ -144,34 +148,48 @@ export function useModifyAlertMetadata(
             }
         );
 
-        const configResponse = await upsertConfig({
-            catalogPrefixOrName: catalogPrefix,
-            config: mutableSubscriptionMetadata.settings,
-        });
+        // Presently, there is not a GraphQL endpoint available to delete rows
+        // from the alert_configs database table when the config is empty. Thus,
+        // the only "preventative" measure the client can take is to prevent
+        // the insertion of table row when no settings have been defined for a
+        // given prefix.
+        const { explicit: explicitSettings, implicit: implicitSettings } =
+            evaluateGlobalPrefixSettings();
 
-        if (configResponse?.error || configResponse?.invalid) {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            const serverError =
-                configResponse?.invalid && !configResponse?.error
-                    ? {
-                          ...BASE_ERROR,
-                          message: intl.formatMessage(
-                              {
-                                  id: 'alerts.config.dialog.error.generic',
-                              },
-                              {
-                                  operation: intl.formatMessage({
-                                      id: deletionTrigger
-                                          ? 'alerts.config.dialog.error.term.delete'
-                                          : 'alerts.config.dialog.error.term.modify',
-                                  }),
-                              }
-                          ),
-                      }
-                    : configResponse?.error;
+        if (
+            Boolean(explicitSettings && !implicitSettings) ||
+            Boolean(implicitSettings && !explicitSettings) ||
+            !isEqual(explicitSettings, implicitSettings)
+        ) {
+            const configResponse = await upsertConfig({
+                catalogPrefixOrName: catalogPrefix,
+                config: mutableSubscriptionMetadata.settings,
+            });
 
-            if (serverError) {
-                serverErrors.push(serverError);
+            if (configResponse?.error || configResponse?.invalid) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                const serverError =
+                    configResponse?.invalid && !configResponse?.error
+                        ? {
+                              ...BASE_ERROR,
+                              message: intl.formatMessage(
+                                  {
+                                      id: 'alerts.config.dialog.error.generic',
+                                  },
+                                  {
+                                      operation: intl.formatMessage({
+                                          id: deletionTrigger
+                                              ? 'alerts.config.dialog.error.term.delete'
+                                              : 'alerts.config.dialog.error.term.modify',
+                                      }),
+                                  }
+                              ),
+                          }
+                        : configResponse?.error;
+
+                if (serverError) {
+                    serverErrors.push(serverError);
+                }
             }
         }
 
