@@ -149,18 +149,19 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
             initializeAlertTypeOptions: (values, fetching) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.alertTypeOptions = values.sort((first, second) =>
-                            sortByAlertType(
-                                {
-                                    isSystemAlert: first.isSystem,
-                                    value: first.displayName,
-                                },
-                                {
-                                    isSystemAlert: second.isSystem,
-                                    value: second.displayName,
-                                },
-                                'asc'
-                            )
+                        state.alertTypeOptions = [...values].sort(
+                            (first, second) =>
+                                sortByAlertType(
+                                    {
+                                        isSystemAlert: first.isSystem,
+                                        value: first.displayName,
+                                    },
+                                    {
+                                        isSystemAlert: second.isSystem,
+                                        value: second.displayName,
+                                    },
+                                    'asc'
+                                )
                         );
                         state.alertTypeOptionsFetching = fetching;
                     }),
@@ -175,7 +176,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             return;
                         }
 
-                        values
+                        [...values]
                             .filter(
                                 ({ prefix }) =>
                                     !Object.keys(
