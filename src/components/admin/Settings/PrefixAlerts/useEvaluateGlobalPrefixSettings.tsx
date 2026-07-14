@@ -28,9 +28,9 @@ export function useEvaluateGlobalPrefixSettings() {
                 explicit: {},
                 implicit: {},
             };
-            const prefix = debouncedPrefix ?? catalogPrefix;
+            const evaluatedPrefix = debouncedPrefix ?? catalogPrefix;
 
-            if (prefix.length === 0) {
+            if (evaluatedPrefix.length === 0) {
                 return settings;
             }
 
@@ -46,7 +46,7 @@ export function useEvaluateGlobalPrefixSettings() {
 
             const matchedImmutablePrefixAndMetadata =
                 sortedImmutablePrefixAndMetadata.find(([prefix, _metadata]) =>
-                    catalogPrefix.startsWith(prefix)
+                    evaluatedPrefix.startsWith(prefix)
                 );
 
             if (!matchedImmutablePrefixAndMetadata) {
@@ -59,7 +59,7 @@ export function useEvaluateGlobalPrefixSettings() {
             settings.implicit =
                 immutableSubscriptionMetadata[matchedPrefix].settings;
 
-            settings.directImplicitMatch = prefix === matchedPrefix;
+            settings.directImplicitMatch = evaluatedPrefix === matchedPrefix;
 
             return settings;
         },
