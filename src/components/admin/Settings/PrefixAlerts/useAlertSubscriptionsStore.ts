@@ -382,7 +382,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                     alertTypes: [...baseAlertTypes, value],
                                     catalogPrefix,
                                     email: '',
-                                    id: crypto.randomUUID(),
+                                    id: id ?? crypto.randomUUID(),
                                     viewing: true,
                                 },
                             ];
