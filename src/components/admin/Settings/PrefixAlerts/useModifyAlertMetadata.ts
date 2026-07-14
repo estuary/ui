@@ -108,24 +108,14 @@ export function useModifyAlertMetadata(
                             return;
                         }
 
-                        // TODO: Detect single subscription deletions when evaluating the operation performed.
                         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                         const serverError =
                             response.value?.invalid && !response.value?.error
                                 ? {
                                       ...BASE_ERROR,
-                                      message: intl.formatMessage(
-                                          {
-                                              id: 'alerts.config.dialog.error.generic',
-                                          },
-                                          {
-                                              operation: intl.formatMessage({
-                                                  id: deletionTrigger
-                                                      ? 'alerts.config.dialog.error.term.delete'
-                                                      : 'alerts.config.dialog.error.term.modify',
-                                              }),
-                                          }
-                                      ),
+                                      message: intl.formatMessage({
+                                          id: 'alerts.config.dialog.error.generic',
+                                      }),
                                   }
                                 : response.value?.error;
 
@@ -186,18 +176,9 @@ export function useModifyAlertMetadata(
                     configResponse?.invalid && !configResponse?.error
                         ? {
                               ...BASE_ERROR,
-                              message: intl.formatMessage(
-                                  {
-                                      id: 'alerts.config.dialog.error.generic',
-                                  },
-                                  {
-                                      operation: intl.formatMessage({
-                                          id: deletionTrigger
-                                              ? 'alerts.config.dialog.error.term.delete'
-                                              : 'alerts.config.dialog.error.term.modify',
-                                      }),
-                                  }
-                              ),
+                              message: intl.formatMessage({
+                                  id: 'alerts.config.dialog.error.generic',
+                              }),
                           }
                         : configResponse?.error;
 
