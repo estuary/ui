@@ -23,10 +23,7 @@ function Row({ row }: RowProps) {
                 )}
             />
 
-            <AlertEditButton
-                prefix={subscriptions[0].catalogPrefix}
-                subscriptionMetadata={row}
-            />
+            <AlertEditButton prefix={subscriptions[0].catalogPrefix} />
         </TableRow>
     );
 }

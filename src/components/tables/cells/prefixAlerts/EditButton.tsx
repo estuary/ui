@@ -8,11 +8,7 @@ import { useIntl } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
 
-function AlertEditButton({
-    prefix,
-    subscriptionMetadata,
-    ...props
-}: EditButtonProps) {
+function AlertEditButton({ prefix, ...props }: EditButtonProps) {
     const intl = useIntl();
 
     const [open, setOpen] = useState(false);

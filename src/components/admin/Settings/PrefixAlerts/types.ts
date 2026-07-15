@@ -38,7 +38,6 @@ export interface DialogActionProps {
 
 export interface EditButtonProps extends TableCellProps {
     prefix: string;
-    subscriptionMetadata: SubscriptionMetadata;
 }
 
 export interface EmailDictionary {
