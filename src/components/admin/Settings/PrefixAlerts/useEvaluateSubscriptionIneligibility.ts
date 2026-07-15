@@ -10,12 +10,16 @@ export function useEvaluateSubscriptionIneligibility() {
     return useMemo(() => {
         const { subscriptions } = mutableSubscriptionMetadata;
 
-        const emptyEmailDetected = subscriptions.some(
-            (subscription) => subscription.email.length === 0
-        );
+        const emptyEmailDetected = subscriptions
+            .filter(({ deleted }) => !deleted)
+            .some((subscription) => subscription.email.length === 0);
 
         const duplicateSubscriptionEmails = subscriptions
-            .filter(({ email }) => {
+            .filter(({ deleted, email }) => {
+                if (deleted) {
+                    return false;
+                }
+
                 const firstIndex = subscriptions.findIndex(
                     (subscription) => subscription.email === email
                 );
