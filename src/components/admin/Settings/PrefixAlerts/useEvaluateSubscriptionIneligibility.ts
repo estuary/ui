@@ -9,21 +9,20 @@ export function useEvaluateSubscriptionIneligibility() {
 
     return useMemo(() => {
         const { subscriptions } = mutableSubscriptionMetadata;
+        const activeSubscriptions = subscriptions.filter(
+            ({ deleted }) => !deleted
+        );
 
-        const emptyEmailDetected = subscriptions
-            .filter(({ deleted }) => !deleted)
-            .some((subscription) => subscription.email.length === 0);
+        const emptyEmailDetected = activeSubscriptions.some(
+            (subscription) => subscription.email.length === 0
+        );
 
-        const duplicateSubscriptionEmails = subscriptions
-            .filter(({ deleted, email }) => {
-                if (deleted) {
-                    return false;
-                }
-
-                const firstIndex = subscriptions.findIndex(
+        const duplicateSubscriptionEmails = activeSubscriptions
+            .filter(({ email }) => {
+                const firstIndex = activeSubscriptions.findIndex(
                     (subscription) => subscription.email === email
                 );
-                const lastIndex = subscriptions.findLastIndex(
+                const lastIndex = activeSubscriptions.findLastIndex(
                     (subscription) => subscription.email === email
                 );
 
