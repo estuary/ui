@@ -33,6 +33,7 @@ function PrefixAlertTable() {
     const [alertConfigResponse] = useQuery({
         pause: selectedTenant.length === 0,
         query: AlertConfigQuery,
+        variables: { first: 100 },
     });
 
     const setInitializationError = useAlertSubscriptionsStore(
