@@ -176,7 +176,9 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             return;
                         }
 
-                        [...values]
+                        const clonedValues = [...values];
+
+                        clonedValues
                             .filter(
                                 ({ prefix }) =>
                                     !Object.keys(
@@ -190,12 +192,13 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                 };
                             });
 
-                        const sortedValues = values.sort((first, second) =>
-                            basicSort_stringLength(
-                                first.prefix,
-                                second.prefix,
-                                'desc'
-                            )
+                        const sortedValues = clonedValues.sort(
+                            (first, second) =>
+                                basicSort_stringLength(
+                                    first.prefix,
+                                    second.prefix,
+                                    'desc'
+                                )
                         );
 
                         Object.entries(state.subscriptionMetadata)
