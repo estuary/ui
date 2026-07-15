@@ -219,32 +219,6 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'global prefix settings initialized'
                 ),
 
-            setGlobalPrefixSettings: (value, targetSetting) =>
-                set(
-                    produce((state: AlertSubscriptionState) => {
-                        if (isEmpty(value) && !targetSetting) {
-                            state.mutableSubscriptionMetadata.settings = {};
-
-                            return;
-                        }
-
-                        state.mutableSubscriptionMetadata.settings =
-                            isEmpty(value) && targetSetting
-                                ? omit(
-                                      state.mutableSubscriptionMetadata
-                                          .settings,
-                                      targetSetting
-                                  )
-                                : {
-                                      ...state.mutableSubscriptionMetadata
-                                          .settings,
-                                      ...value,
-                                  };
-                    }),
-                    false,
-                    'global prefix settings set'
-                ),
-
             markSubscriptionForDeletion: (_catalogPrefix, subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
@@ -315,6 +289,32 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     }),
                     false,
                     'email errors exist set'
+                ),
+
+            setGlobalPrefixSettings: (value, targetSetting) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        if (isEmpty(value) && !targetSetting) {
+                            state.mutableSubscriptionMetadata.settings = {};
+
+                            return;
+                        }
+
+                        state.mutableSubscriptionMetadata.settings =
+                            isEmpty(value) && targetSetting
+                                ? omit(
+                                      state.mutableSubscriptionMetadata
+                                          .settings,
+                                      targetSetting
+                                  )
+                                : {
+                                      ...state.mutableSubscriptionMetadata
+                                          .settings,
+                                      ...value,
+                                  };
+                    }),
+                    false,
+                    'global prefix settings set'
                 ),
 
             setInitializationError: (value) =>

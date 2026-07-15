@@ -49,14 +49,14 @@ export interface EmailListFieldProps extends SubscriptionDependentProps {
     staticEmail?: string;
 }
 
-interface GlobalSettingConfig<T> {
-    autoDisable?: boolean;
-    condition?: T;
-    enabled?: boolean;
+export interface GlobalSettingEvaluationResult {
+    explicit: Schema;
+    implicit: Schema;
+    directImplicitMatch?: boolean;
 }
 
-export interface GlobalSettingProps<T> {
-    config: GlobalSettingConfig<T> | undefined;
+export interface GlobalSettingProps {
+    settings: GlobalSettingEvaluationResult;
     loading: boolean;
     prefix: string;
     targetSetting: AlertConfigKeys;

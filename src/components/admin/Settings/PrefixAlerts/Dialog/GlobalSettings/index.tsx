@@ -11,7 +11,7 @@ import { AlertConfigKeys } from 'src/utils/notification-utils';
 const GlobalSettings = () => {
     const intl = useIntl();
 
-    const { loading, evaluatedSettings } = useInitializeAlertConfig();
+    const { loading, settings } = useInitializeAlertConfig();
 
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
@@ -43,9 +43,7 @@ const GlobalSettings = () => {
             </Stack>
 
             <DataMovementSetting
-                config={
-                    evaluatedSettings?.[AlertConfigKeys.DATA_MOVEMENT_STALLED]
-                }
+                settings={settings}
                 loading={loading}
                 prefix={catalogPrefix}
                 targetSetting={AlertConfigKeys.DATA_MOVEMENT_STALLED}

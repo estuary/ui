@@ -1,8 +1,8 @@
-import type { Schema } from 'src/types';
+import type { GlobalSettingEvaluationResult } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { debounce, isEmpty } from 'lodash';
+import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -16,7 +16,10 @@ export function useInitializeAlertConfig() {
     );
 
     const [debouncedPrefix, setDebouncedPrefix] = useState(catalogPrefix);
-    const [evaluatedSettings, setEvaluatedSettings] = useState<Schema>({});
+    const [settings, setSettings] = useState<GlobalSettingEvaluationResult>({
+        explicit: {},
+        implicit: {},
+    });
 
     const updateDebouncedPrefix = useRef(
         debounce((prefix) => {
@@ -34,17 +37,15 @@ export function useInitializeAlertConfig() {
 
     useEffect(() => {
         if (debouncedPrefix === catalogPrefix) {
-            const { explicit: explicitSettings, implicit: implicitSettings } =
+            const prefixSettings =
                 evaluateGlobalPrefixSettings(debouncedPrefix);
 
-            setEvaluatedSettings(
-                isEmpty(explicitSettings) ? implicitSettings : explicitSettings
-            );
+            setSettings(prefixSettings);
         }
     }, [catalogPrefix, debouncedPrefix, evaluateGlobalPrefixSettings]);
 
     return {
         loading: debouncedPrefix !== catalogPrefix,
-        evaluatedSettings,
+        settings,
     };
 }

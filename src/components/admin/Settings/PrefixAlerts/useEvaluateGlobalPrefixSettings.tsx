@@ -1,4 +1,4 @@
-import type { Schema } from 'src/types';
+import type { GlobalSettingEvaluationResult } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 import { useCallback } from 'react';
 
@@ -20,11 +20,7 @@ export function useEvaluateGlobalPrefixSettings() {
 
     const evaluateGlobalPrefixSettings = useCallback(
         (debouncedPrefix?: string) => {
-            const settings: {
-                explicit: Schema;
-                implicit: Schema;
-                directImplicitMatch?: boolean;
-            } = {
+            const settings: GlobalSettingEvaluationResult = {
                 explicit: {},
                 implicit: {},
             };

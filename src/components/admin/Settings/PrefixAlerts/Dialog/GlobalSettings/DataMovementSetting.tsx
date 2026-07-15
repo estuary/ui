@@ -1,7 +1,7 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { GlobalSettingProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
     Autocomplete,
@@ -11,21 +11,23 @@ import {
     Typography,
 } from '@mui/material';
 
+import { cloneDeep, set } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import useSettingIntervalOptions from 'src/components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
+import { hasOwnProperty } from 'src/utils/misc-utils';
 import {
     fromUnconventionalTimeFormat,
     toUnconventionalTimeFormat,
 } from 'src/utils/notification-utils';
 
 const DataMovementSetting = ({
-    config,
+    settings,
     loading,
     prefix,
     targetSetting,
-}: GlobalSettingProps<{ stalledFor: string }>) => {
+}: GlobalSettingProps) => {
     const intl = useIntl();
 
     const { options } = useSettingIntervalOptions();
@@ -34,9 +36,19 @@ const DataMovementSetting = ({
         (state) => state.setGlobalPrefixSettings
     );
 
+    const config = useMemo(() => {
+        const { explicit: explicitSettings, implicit: implicitSettings } =
+            settings;
+
+        return explicitSettings?.[targetSetting] &&
+            hasOwnProperty(explicitSettings[targetSetting], 'condition')
+            ? explicitSettings[targetSetting]
+            : (implicitSettings?.[targetSetting] ?? {});
+    }, [settings, targetSetting]);
+
     return (
         <Stack spacing={2}>
-            <Stack spacing="2px">
+            <Stack spacing="2px" style={{ flexGrow: 1 }}>
                 <Typography style={{ fontWeight: 500 }}>
                     {intl.formatMessage({
                         id: 'alerts.alertType.humanReadable.data_movement_stalled',
@@ -62,14 +74,17 @@ const DataMovementSetting = ({
                         const formattedValue =
                             toUnconventionalTimeFormat(value);
 
+                        const evaluatedConfig = cloneDeep(config);
+                        set(
+                            evaluatedConfig,
+                            'condition.stalledFor',
+                            formattedValue
+                        );
+
                         setGlobalPrefixSettings(
                             formattedValue !== 'none'
                                 ? {
-                                      [targetSetting]: {
-                                          condition: {
-                                              stalledFor: formattedValue,
-                                          },
-                                      },
+                                      [targetSetting]: evaluatedConfig,
                                   }
                                 : {},
                             targetSetting
