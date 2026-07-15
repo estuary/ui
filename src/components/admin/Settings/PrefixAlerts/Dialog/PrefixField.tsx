@@ -7,9 +7,12 @@ import { useMount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import PrefixedName from 'src/components/inputs/PrefixedName';
+import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
 
 export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     const intl = useIntl();
+
+    const objectRoles = useEntitiesStore_capabilities_adminable();
 
     const setSubscribedPrefix = useAlertSubscriptionsStore(
         (state) => state.setSubscribedPrefix
@@ -42,7 +45,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
         <PrefixedName
             allowBlankName
             allowEndSlash
-            fixedPrefix
+            fixedPrefix={objectRoles.length > 1}
             label={intl.formatMessage({
                 id: 'common.tenant',
             })}
