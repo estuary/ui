@@ -19,6 +19,10 @@ export function useEvaluateSubscriptionIneligibility() {
 
         const duplicateSubscriptionEmails = activeSubscriptions
             .filter(({ email }) => {
+                if (email.length === 0) {
+                    return false;
+                }
+
                 const firstIndex = activeSubscriptions.findIndex(
                     (subscription) => subscription.email === email
                 );
