@@ -20,7 +20,7 @@ export function useEvaluateGlobalPrefixSettings() {
 
     const evaluateGlobalPrefixSettings = useCallback(
         (debouncedPrefix?: string) => {
-            let settings: {
+            const settings: {
                 explicit: Schema;
                 implicit: Schema;
                 directImplicitMatch?: boolean;
