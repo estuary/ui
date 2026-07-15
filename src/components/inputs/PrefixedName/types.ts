@@ -20,6 +20,7 @@ export interface PrefixedNameProps {
     allowEndSlash?: boolean;
     defaultPrefix?: boolean;
     disabled?: boolean;
+    fixedPrefix?: boolean;
     hideErrorMessage?: boolean;
     onChange?: PrefixedName_Change;
     onNameChange?: PrefixedName_Change;

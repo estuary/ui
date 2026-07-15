@@ -42,6 +42,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
         <PrefixedName
             allowBlankName
             allowEndSlash
+            fixedPrefix
             label={intl.formatMessage({
                 id: 'common.tenant',
             })}
