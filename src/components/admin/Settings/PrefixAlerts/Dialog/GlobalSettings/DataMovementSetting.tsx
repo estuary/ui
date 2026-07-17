@@ -16,7 +16,6 @@ import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import useSettingIntervalOptions from 'src/components/shared/Entity/Details/Overview/NotificationSettings/useSettingIntervalOptions';
-import { hasOwnProperty } from 'src/utils/misc-utils';
 import {
     fromUnconventionalTimeFormat,
     toUnconventionalTimeFormat,
@@ -42,11 +41,7 @@ const DataMovementSetting = ({
             implicit: { effective: implicitEffectiveConfig },
         } = configs;
 
-        return explicitEffectiveConfig?.[targetSetting] &&
-            hasOwnProperty(
-                explicitEffectiveConfig?.[targetSetting],
-                'condition'
-            )
+        return explicitEffectiveConfig?.[targetSetting]
             ? explicitEffectiveConfig[targetSetting]
             : (implicitEffectiveConfig?.[targetSetting] ?? {});
     }, [configs, targetSetting]);

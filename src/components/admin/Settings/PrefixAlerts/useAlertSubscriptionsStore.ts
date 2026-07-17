@@ -12,7 +12,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import { type CombinedError } from 'urql';
 
 import {
@@ -316,12 +316,18 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                         configKeys.forEach((key) => {
                             state.mutableSubscriptionMetadata.configs[key][
                                 targetSetting
-                            ] = {
-                                ...state.mutableSubscriptionMetadata.configs[
-                                    key
-                                ][targetSetting],
-                                condition: alertCondition,
-                            };
+                            ] = isEmpty(alertCondition)
+                                ? omit(
+                                      state.mutableSubscriptionMetadata.configs[
+                                          key
+                                      ][targetSetting],
+                                      'condition'
+                                  )
+                                : {
+                                      ...state.mutableSubscriptionMetadata
+                                          .configs[key][targetSetting],
+                                      condition: alertCondition,
+                                  };
                         });
                     }),
                     false,
