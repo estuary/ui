@@ -35,11 +35,6 @@ export const GRADIENT = {
     dark: 'linear-gradient(135deg, #1a4bcb 0%, #3a6fd4 45%, #2a9e8c 100%)',
 };
 
-export const BG_GRADIENT = {
-    light: 'linear-gradient(135deg, rgba(46,100,235,0.08) 0%, rgba(54,197,176,0.10) 100%)',
-    dark: 'linear-gradient(180deg, rgba(46,100,235,0.12) 0%, rgba(54,197,176,0.16) 100%)',
-};
-
 export const SECONDARY_TEXT_COLOR = {
     light: '#475569',
     dark: '#94a3b8',

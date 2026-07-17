@@ -38,6 +38,8 @@ export type Scalars = {
   NaiveDate: { input: string; output: string; }
   Name: { input: string; output: string; }
   Prefix: { input: string; output: string; }
+  /** A secret returned by the API, such as a bearer credential. The value is serialized as a string, but clients must treat it as sensitive: redact it from logs and UIs, and never pass it to a language model. */
+  Sensitive: { input: any; output: any; }
   /**
    * A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as
    * Strings within GraphQL. UUIDs are used to assign unique identifiers to
@@ -382,14 +384,18 @@ export type Capability =
 export type CapabilityBit =
   | 'Assume'
   | 'CatalogRead'
+  | 'CreateApiKey'
   | 'CreateGrant'
   | 'CreateInviteLink'
+  | 'CreateServiceAccount'
   | 'Delegate'
   | 'DeleteGrant'
   | 'EditBilling'
   | 'JournalAppend'
   | 'JournalRead'
   | 'ModifyDataPlanePrivateNetworking'
+  | 'QueryServiceAccounts'
+  | 'RevokeApiKey'
   | 'SpecEdit'
   | 'ViewBilling'
   | 'ViewDataPlanePrivateNetworking';
@@ -583,9 +589,24 @@ export type Controller = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type CreateApiKeyResult = {
+  __typename?: 'CreateApiKeyResult';
+  id: Scalars['Id']['output'];
+  /**
+   * The bearer credential, returned exactly once. Present it as an
+   * `Authorization: Bearer` token or exchange it at `POST /api/v1/auth/token`.
+   */
+  secret: Scalars['Sensitive']['output'];
+  /**
+   * The owning account in its post-mint state, so the new token merges into
+   * client caches without a follow-up query.
+   */
+  serviceAccount: ServiceAccount;
+};
+
 export type CreateBillingSetupIntentPayload = {
   __typename?: 'CreateBillingSetupIntentPayload';
-  clientSecret: Scalars['String']['output'];
+  clientSecret: Scalars['Sensitive']['output'];
 };
 
 /** Result of creating a storage mapping. */
@@ -1045,10 +1066,35 @@ export type LockFailure = {
 export type MutationRoot = {
   __typename?: 'MutationRoot';
   /**
+   * Add a user_grant to a service account.
+   *
+   * The caller must have CreateGrant on BOTH the account's catalog name and
+   * the granted prefix. Adding a grant is grant creation, so the account
+   * anchor gates on that same capability, while the per-prefix check
+   * prevents a caller from extending an account's access beyond what they
+   * could grant anyone. (Human-user grant creation still lives in
+   * PostgREST; when it migrates to GraphQL it should gate on this same
+   * CreateGrant capability.)
+   */
+  addServiceAccountGrant: ServiceAccount;
+  /**
    * Creates a new alert subscription. Returns an error if there is already
    * an existing subscription for the same prefix and email address.
    */
   createAlertSubscription: AlertSubscription;
+  /**
+   * Mint a credential for a service account.
+   *
+   * The credential is a multi-use refresh token owned by the account: its
+   * secret never rotates and its validity window of `valid_for` slides with
+   * use, like any refresh token. Returns the token id and the bearer secret,
+   * which is returned exactly once and cannot be retrieved again. Present it
+   * as an `Authorization: Bearer` credential or exchange it for a 1-hour
+   * access token via `POST /api/v1/auth/token`.
+   *
+   * The caller must have CreateApiKey on the account's catalog name.
+   */
+  createApiKey: CreateApiKeyResult;
   createBillingSetupIntent: CreateBillingSetupIntentPayload;
   /**
    * Create an invite link that grants access to a catalog prefix.
@@ -1057,8 +1103,28 @@ export type MutationRoot = {
    * Share the returned token with the intended recipient out-of-band.
    */
   createInviteLink: InviteLink;
-  /** Create a refresh token for the authenticated user. */
+  /**
+   * Create a refresh token for the authenticated user.
+   *
+   * Service-account callers are rejected: their API keys are administered
+   * via createApiKey and revokeApiKey.
+   */
   createRefreshToken: RefreshTokenResult;
+  /**
+   * Create a service account homed at the specified catalog name, seeded
+   * with the given user_grants.
+   *
+   * `catalogName` is a management anchor: admins of a prefix covering it
+   * may manage the account. It determines who may manage the account, not
+   * what the account may access. Access is determined solely by the
+   * account's user_grants, which may span multiple prefixes.
+   *
+   * The caller must have CreateServiceAccount on the catalog name AND
+   * CreateGrant on each granted prefix. Creates an auth.users row, an
+   * internal.service_accounts row, and a user_grants row per requested
+   * grant.
+   */
+  createServiceAccount: ServiceAccount;
   /**
    * Create a storage mapping for the given catalog prefix.
    *
@@ -1084,11 +1150,64 @@ export type MutationRoot = {
    */
   redeemInviteLink: RedeemInviteLinkResult;
   /**
+   * Remove ALL user_grants from a service account, stripping its access in
+   * one call and returning the account with `grants: []`.
+   *
+   * The caller must manage the service account (CreateServiceAccount on its
+   * catalog name). As with removeServiceAccountGrant, no capability on the
+   * grants' prefixes is required: removal only narrows access, so a manager
+   * may clear grants to prefixes they don't themselves administer. Clearing
+   * an account that already has no grants is an idempotent no-op.
+   */
+  removeAllServiceAccountGrants: ServiceAccount;
+  /**
+   * Remove a user_grant from a service account, returning the account in its
+   * post-removal state.
+   *
+   * The caller must have CreateServiceAccount on the catalog name. Unlike addServiceAccountGrant, no capability on the
+   * grant's prefix is required: removal only ever narrows the account's
+   * access, so managers may remove ANY grant — including grants to
+   * prefixes they don't themselves administer.
+   *
+   * Removal is idempotent: removing a grant the account doesn't hold is a
+   * no-op that returns the unchanged account rather than an error.
+   */
+  removeServiceAccountGrant: ServiceAccount;
+  /**
+   * Revoke ALL of a service account's API keys at once — the credential kill
+   * switch — returning the account with no active keys.
+   *
+   * The caller must have RevokeApiKey on the account's catalog name.
+   * Like revokeApiKey, each key is made inert by zeroing its
+   * `valid_for` interval (preserving the audit trail) rather than deleted;
+   * already-revoked keys are skipped. A service account's user_id only ever
+   * owns its own minted credentials, so this targets exactly those. An
+   * account with no active keys is an idempotent no-op.
+   */
+  revokeAllApiKeys: ServiceAccount;
+  /**
+   * Revoke a service-account token, returning the owning account in its
+   * post-revocation state.
+   *
+   * The caller must have RevokeApiKey on the owning service account's
+   * catalog name. The account is resolved from the token id.
+   *
+   * Rather than deleting the row, we zero its `valid_for` interval, which
+   * makes the token inert (it fails the exchange's expiry check and is
+   * excluded from listings) while preserving the audit trail. Revocation is
+   * idempotent: revoking an already-inert token is a no-op that still returns
+   * the account. Only an id that maps to no service-account token errors.
+   */
+  revokeApiKey: ServiceAccount;
+  /**
    * Revoke a refresh token owned by the authenticated user.
    *
    * Rather than deleting the row, we zero its `valid_for` interval, which
    * marks the token as expired/invalid while preserving the audit trail.
    * Already-zeroed (revoked) tokens are treated as not found.
+   *
+   * Service-account callers are rejected: their API keys are administered
+   * via createApiKey and revokeApiKey.
    */
   revokeRefreshToken: Scalars['Boolean']['output'];
   setBillingContact: SetBillingContactPayload;
@@ -1152,11 +1271,25 @@ export type MutationRoot = {
 };
 
 
+export type MutationRootAddServiceAccountGrantArgs = {
+  capability: Capability;
+  catalogName: Scalars['Name']['input'];
+  prefix: Scalars['Prefix']['input'];
+};
+
+
 export type MutationRootCreateAlertSubscriptionArgs = {
   alertTypes?: InputMaybe<Array<AlertType>>;
   detail?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootCreateApiKeyArgs = {
+  catalogName: Scalars['Name']['input'];
+  detail: Scalars['String']['input'];
+  validFor: Scalars['String']['input'];
 };
 
 
@@ -1177,6 +1310,12 @@ export type MutationRootCreateRefreshTokenArgs = {
   detail?: InputMaybe<Scalars['String']['input']>;
   multiUse?: Scalars['Boolean']['input'];
   validFor?: Scalars['String']['input'];
+};
+
+
+export type MutationRootCreateServiceAccountArgs = {
+  catalogName: Scalars['Name']['input'];
+  grants: Array<UserGrantInput>;
 };
 
 
@@ -1206,6 +1345,27 @@ export type MutationRootDeleteInviteLinkArgs = {
 
 export type MutationRootRedeemInviteLinkArgs = {
   token: Scalars['UUID']['input'];
+};
+
+
+export type MutationRootRemoveAllServiceAccountGrantsArgs = {
+  catalogName: Scalars['Name']['input'];
+};
+
+
+export type MutationRootRemoveServiceAccountGrantArgs = {
+  catalogName: Scalars['Name']['input'];
+  prefix: Scalars['Prefix']['input'];
+};
+
+
+export type MutationRootRevokeAllApiKeysArgs = {
+  catalogName: Scalars['Name']['input'];
+};
+
+
+export type MutationRootRevokeApiKeyArgs = {
+  id: Scalars['Id']['input'];
 };
 
 
@@ -1368,6 +1528,37 @@ export type ProtocolFilter = {
   eq: ConnectorProto;
 };
 
+/** A public data plane, as visible to unauthenticated callers. */
+export type PublicDataPlane = {
+  __typename?: 'PublicDataPlane';
+  /** Cloud provider where this data-plane is hosted. */
+  cloudProvider: DataPlaneCloudProvider;
+  /** Name of this data-plane under the catalog namespace. */
+  name: Scalars['String']['output'];
+  /**
+   * Cloud region where this data-plane is hosted.
+   * For example: "us-east-1" (AWS), "us-central1" (GCP), "eastus" (Azure).
+   */
+  region: Scalars['String']['output'];
+};
+
+export type PublicDataPlaneConnection = {
+  __typename?: 'PublicDataPlaneConnection';
+  /** A list of edges. */
+  edges: Array<PublicDataPlaneEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type PublicDataPlaneEdge = {
+  __typename?: 'PublicDataPlaneEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: PublicDataPlane;
+};
+
 /** Summary of a publication that was attempted by a controller. */
 export type PublicationInfo = {
   __typename?: 'PublicationInfo';
@@ -1489,8 +1680,19 @@ export type QueryRoot = {
    */
   liveSpecs: LiveSpecRefConnection;
   prefixes: PrefixRefConnection;
+  /**
+   * Returns all public data planes.
+   *
+   * This query requires no authentication. It exposes only the name, cloud
+   * provider, and region of public data planes, so that account-creation
+   * flows can offer a data-plane selection before the user has signed up.
+   *
+   * Results are paginated and sorted by name.
+   */
+  publicDataPlanes: PublicDataPlaneConnection;
   /** List refresh tokens owned by the authenticated user. */
   refreshTokens: RefreshTokenInfoConnection;
+  serviceAccounts: ServiceAccountConnection;
   /**
    * Returns storage mappings accessible to the current user.
    *
@@ -1574,7 +1776,21 @@ export type QueryRootPrefixesArgs = {
 };
 
 
+export type QueryRootPublicDataPlanesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryRootRefreshTokensArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootServiceAccountsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -1637,7 +1853,7 @@ export type RefreshTokenInfoEdge = {
 export type RefreshTokenResult = {
   __typename?: 'RefreshTokenResult';
   id: Scalars['Id']['output'];
-  secret: Scalars['String']['output'];
+  secret: Scalars['Sensitive']['output'];
 };
 
 export type RepublishRequested = {
@@ -1653,6 +1869,56 @@ export type RepublishRequested = {
   reason: Scalars['String']['output'];
   /** Informational only, timestamp of when the controller observed the `Republish` request. */
   receivedAt: Scalars['DateTime']['output'];
+};
+
+export type ServiceAccount = {
+  __typename?: 'ServiceAccount';
+  apiKeys: Array<ServiceAccountApiKey>;
+  catalogName: Scalars['Name']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  /**
+   * Email of the user who created the account. Null if that user has no
+   * email on file.
+   */
+  createdByEmail?: Maybe<Scalars['String']['output']>;
+  grants: Array<UserGrant>;
+  lastUsedAt?: Maybe<Scalars['DateTime']['output']>;
+};
+
+/**
+ * A service-account credential: a multi-use refresh token owned by the account
+ * and minted by an administrator. The secret itself is returned only once at
+ * creation (see [`CreateApiKeyResult`]).
+ */
+export type ServiceAccountApiKey = {
+  __typename?: 'ServiceAccountApiKey';
+  createdAt: Scalars['DateTime']['output'];
+  /**
+   * Email of the user who minted the token. Null if that user has no email
+   * on file.
+   */
+  createdByEmail?: Maybe<Scalars['String']['output']>;
+  detail?: Maybe<Scalars['String']['output']>;
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['Id']['output'];
+  lastUsedAt?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type ServiceAccountConnection = {
+  __typename?: 'ServiceAccountConnection';
+  /** A list of edges. */
+  edges: Array<ServiceAccountEdge>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type ServiceAccountEdge = {
+  __typename?: 'ServiceAccountEdge';
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node: ServiceAccount;
 };
 
 export type SetBillingContactPayload = {
@@ -1983,6 +2249,26 @@ export type UpdateAlertConfigMutationMutationVariables = Exact<{
 
 export type UpdateAlertConfigMutationMutation = { __typename?: 'MutationRoot', updateAlertConfig: { __typename?: 'UpdateAlertConfigResult', catalogPrefixOrName: string } };
 
+/**
+ * A user_grant held by a service account: the prefix it may act on and the
+ * capability it holds there. An account's access is the union of its grants,
+ * which may span multiple prefixes independent of its catalog_name anchor.
+ */
+export type UserGrant = {
+  __typename?: 'UserGrant';
+  capability: Capability;
+  createdAt: Scalars['DateTime']['output'];
+  detail?: Maybe<Scalars['String']['output']>;
+  prefix: Scalars['Prefix']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+/** A user_grant to seed a service account with at creation time. */
+export type UserGrantInput = {
+  capability: Capability;
+  prefix: Scalars['Prefix']['input'];
+};
+
 export type CreateAlertSubscriptionMutationMutationVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
   email: Scalars['String']['input'];
@@ -2101,7 +2387,7 @@ export type CreateRefreshTokenMutationVariables = Exact<{
 }>;
 
 
-export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: string, secret: string } };
+export type CreateRefreshTokenMutation = { __typename?: 'MutationRoot', createRefreshToken: { __typename?: 'RefreshTokenResult', id: string, secret: any } };
 
 export type RevokeRefreshTokenMutationVariables = Exact<{
   id: Scalars['Id']['input'];

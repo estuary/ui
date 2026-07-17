@@ -1,46 +1,41 @@
-//TODO (UI / UX) - These icons are not final
-import {
-    Box,
-    List,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Stack,
-    Toolbar,
-    Tooltip,
-    useTheme,
-} from '@mui/material';
+import { useState } from 'react';
+
+import { Box, List, Stack, useTheme } from '@mui/material';
 
 import {
     CloudDownload,
     CloudUpload,
     DatabaseScript,
     FastArrowLeft,
+    HelpCircle,
     HomeSimple,
     Settings,
 } from 'iconoir-react';
-import { useIntl } from 'react-intl';
-import { useLocalStorage } from 'react-use';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import ListItemLink from 'src/components/navigation/ListItemLink';
-import ModeSwitch from 'src/components/navigation/ModeSwitch';
-import { paperBackground } from 'src/context/Theme';
-import { LocalStorageKeys as Keys } from 'src/utils/localStorage-utils';
+import { Pill as AgentSkillsPill } from 'src/components/AgentSkills/Pill';
+import CompanyLogo from 'src/components/graphics/CompanyLogo';
+import CompanyMark from 'src/components/graphics/CompanyMark';
+import { HelpMenu } from 'src/components/menus/HelpMenu';
+import NavLink, { NavButton } from 'src/components/navigation/NavItems';
+import { UserButton, UserMenu } from 'src/components/navigation/User';
+import { UpdateAlert } from 'src/components/UpdateAlert';
+import { useNavigationStore } from 'src/stores/useNavigationStore';
 
 const NavWidths = {
-    RAIL: 48,
+    RAIL: 58,
     FULL: 200,
 } as const;
 
 export const Navigation = () => {
-    const intl = useIntl();
     const theme = useTheme();
 
-    const [nav, setNav] = useLocalStorage<{ open: boolean }>(
-        Keys.NAVIGATION_SETTINGS
-    );
-    const open = nav?.open ?? true;
+    const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+
+    const [helpAnchor, setHelpAnchor] = useState<HTMLElement | null>(null);
+
+    const open = useNavigationStore((state) => state.open);
+    const toggleOpen = useNavigationStore((state) => state.toggleOpen);
 
     return (
         <Box
@@ -51,104 +46,114 @@ export const Navigation = () => {
                 overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
-                background: paperBackground[theme.palette.mode],
+                background: theme.palette.background.default,
                 boxSizing: 'border-box',
                 transition: theme.transitions.create('width', {
                     duration: theme.transitions.duration.shortest,
                 }),
             }}
         >
-            <Toolbar />
-
             <Stack
                 sx={{
                     height: '100%',
-                    justifyContent: 'space-between',
                     overflowX: 'hidden',
                 }}
             >
-                <Box>
-                    <List
-                        aria-label={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
-                        })}
-                    >
-                        <ListItemLink
-                            icon={<HomeSimple />}
-                            title={authenticatedRoutes.home.title}
-                            link={authenticatedRoutes.home.path}
-                        />
-                        <ListItemLink
-                            icon={<CloudUpload />}
-                            title={authenticatedRoutes.captures.title}
-                            link={authenticatedRoutes.captures.path}
-                        />
-                        <ListItemLink
-                            icon={<DatabaseScript />}
-                            title={authenticatedRoutes.collections.title}
-                            link={authenticatedRoutes.collections.path}
-                        />
-                        <ListItemLink
-                            icon={<CloudDownload />}
-                            title={authenticatedRoutes.materializations.title}
-                            link={authenticatedRoutes.materializations.path}
-                        />
-                        <ListItemLink
-                            icon={<Settings />}
-                            title={authenticatedRoutes.admin.title}
-                            link={authenticatedRoutes.admin.path}
-                        />
-                    </List>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        // Left-anchor the brand in both states. The drawer
+                        // animates its width on collapse; centering would fling
+                        // the mark toward the middle of the still-wide rail and
+                        // snap it back as the width settles.
+                        justifyContent: 'flex-start',
+                        height: 48,
+                        px: 2.5,
+                    }}
+                >
+                    {open ? <CompanyLogo /> : <CompanyMark />}
                 </Box>
 
-                <Box>
-                    <List
-                        aria-label={intl.formatMessage({
-                            id: 'navigation.toggle.ariaLabel',
-                        })}
-                        sx={{
-                            py: 1,
-                        }}
-                    >
-                        <ModeSwitch />
+                <List aria-label="Main navigation">
+                    <NavLink
+                        icon={<HomeSimple />}
+                        title={authenticatedRoutes.home.title}
+                        link={authenticatedRoutes.home.path}
+                        isOpen={open}
+                    />
+                    <NavLink
+                        icon={<CloudUpload />}
+                        title={authenticatedRoutes.captures.title}
+                        link={authenticatedRoutes.captures.path}
+                        isOpen={open}
+                    />
+                    <NavLink
+                        icon={<DatabaseScript />}
+                        title={authenticatedRoutes.collections.title}
+                        link={authenticatedRoutes.collections.path}
+                        isOpen={open}
+                    />
+                    <NavLink
+                        icon={<CloudDownload />}
+                        title={authenticatedRoutes.materializations.title}
+                        link={authenticatedRoutes.materializations.path}
+                        isOpen={open}
+                    />
+                    <NavLink
+                        icon={<Settings />}
+                        title={authenticatedRoutes.admin.title}
+                        link={authenticatedRoutes.admin.path}
+                        isOpen={open}
+                    />
+                </List>
 
-                        <Tooltip
-                            title={intl.formatMessage({
-                                id: 'navigation.toggle.ariaLabel',
-                            })}
-                            placement="right-end"
-                            enterDelay={open ? 1000 : undefined}
-                        >
-                            <ListItemButton
-                                onClick={() => setNav({ open: !open })}
-                                sx={{
-                                    minHeight: 45,
-                                    px: 1.5,
-                                    whiteSpace: 'nowrap',
+                <Box
+                    aria-label="Secondary navigation"
+                    sx={{ mt: 'auto', pb: 1 }}
+                >
+                    <UpdateAlert isOpen={open} />
+
+                    <Box sx={{ mx: 1, my: 0.25 }}>
+                        <AgentSkillsPill />
+                    </Box>
+
+                    <NavButton
+                        icon={<HelpCircle />}
+                        title="Help"
+                        onClick={(e) => setHelpAnchor(e.currentTarget)}
+                        isOpen={open}
+                    />
+                    <HelpMenu
+                        anchorEl={helpAnchor}
+                        onClose={() => setHelpAnchor(null)}
+                    />
+
+                    <NavButton
+                        icon={
+                            <FastArrowLeft
+                                style={{
+                                    transform: open
+                                        ? 'scaleX(1)'
+                                        : 'scaleX(-1)',
+                                    transition: 'all 50ms ease-in-out',
                                 }}
-                            >
-                                <ListItemIcon sx={{ minWidth: 36 }}>
-                                    <FastArrowLeft
-                                        style={{
-                                            transform: open
-                                                ? 'scaleX(1)'
-                                                : 'scaleX(-1)',
-                                            transition: 'all 50ms ease-in-out',
-                                        }}
-                                    />
-                                </ListItemIcon>
+                            />
+                        }
+                        title="Collapse"
+                        tooltip="Expand"
+                        onClick={toggleOpen}
+                        isOpen={open}
+                    />
 
-                                <ListItemText
-                                    primary={intl.formatMessage({
-                                        id: 'navigation.collapse',
-                                    })}
-                                    sx={{
-                                        display: !open ? 'none' : undefined,
-                                    }}
-                                />
-                            </ListItemButton>
-                        </Tooltip>
-                    </List>
+                    <UserButton
+                        onClick={(e) => setMenuAnchor(e.currentTarget)}
+                        isOpen={open}
+                    />
+                    <UserMenu
+                        anchorEl={menuAnchor}
+                        onClose={() => setMenuAnchor(null)}
+                    />
                 </Box>
             </Stack>
         </Box>

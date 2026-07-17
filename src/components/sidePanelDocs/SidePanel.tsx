@@ -32,12 +32,11 @@ function DocsSidePanel({ show }: Props) {
                     width: '100%',
                     boxSizing: 'border-box',
                     position: 'absolute',
+                    borderLeft: 'none',
                 },
             }}
             open={show}
         >
-            <Toolbar />
-
             <Toolbar
                 sx={{
                     display: 'flex',
