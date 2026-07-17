@@ -36,6 +36,9 @@ const AlertSubscriptionDialog = ({
     const resetSubscriptionState = useAlertSubscriptionsStore(
         (state) => state.resetState
     );
+    const initializationErrors = useAlertSubscriptionsStore(
+        (state) => state.initializationErrors
+    );
 
     const closeDialog = () => {
         setOpen(false);
@@ -55,17 +58,21 @@ const AlertSubscriptionDialog = ({
             <DialogContent sx={{ mt: 1 }}>
                 <ServerErrors />
 
-                <Box style={{ marginBottom: 16 }}>
-                    <MessageWithLink messageID={descriptionId} />
-                </Box>
+                {initializationErrors.length > 0 ? null : (
+                    <>
+                        <Box style={{ marginBottom: 16 }}>
+                            <MessageWithLink messageID={descriptionId} />
+                        </Box>
 
-                <Stack spacing={4}>
-                    <PrefixField staticPrefix={staticPrefix} />
+                        <Stack spacing={4}>
+                            <PrefixField staticPrefix={staticPrefix} />
 
-                    <GlobalSettings />
+                            <GlobalSettings />
 
-                    <SubscriberSection />
-                </Stack>
+                            <SubscriberSection />
+                        </Stack>
+                    </>
+                )}
             </DialogContent>
 
             <DialogActions

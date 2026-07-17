@@ -25,8 +25,8 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
     const intl = useIntl();
     const theme = useTheme();
 
-    const serverError = useAlertSubscriptionsStore(
-        (state) => state.initializationError
+    const serverErrors = useAlertSubscriptionsStore(
+        (state) => state.initializationErrors
     );
     const setSingleAlertType = useAlertSubscriptionsStore(
         (state) => state.setSingleAlertType
@@ -86,7 +86,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                             }}
                                         />
                                     }
-                                    disabled={Boolean(serverError)}
+                                    disabled={serverErrors.length > 0}
                                     label={
                                         <Stack>
                                             <Stack

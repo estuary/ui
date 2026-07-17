@@ -41,8 +41,8 @@ function EmailSelector({
 }: SubscriptionDependentProps) {
     const intl = useIntl();
 
-    const serverError = useAlertSubscriptionsStore(
-        (state) => state.initializationError
+    const serverErrors = useAlertSubscriptionsStore(
+        (state) => state.initializationErrors
     );
     const [prefix, setSubscribedEmail, setEmailErrorsExist] =
         useAlertSubscriptionsStore(
@@ -89,7 +89,7 @@ function EmailSelector({
         <FormControl fullWidth>
             <Autocomplete
                 disabled={
-                    Boolean(serverError) ||
+                    serverErrors.length > 0 ||
                     (emptyEmailDetected && subscribedEmail.length > 0) ||
                     (duplicateSubscriptionEmails.length > 0 &&
                         !duplicateEmailDetected)

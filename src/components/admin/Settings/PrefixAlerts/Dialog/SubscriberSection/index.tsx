@@ -20,8 +20,8 @@ const SubscriberSection = () => {
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
     );
-    const setServerError = useAlertSubscriptionsStore(
-        (state) => state.setServerErrors
+    const setInitializationErrors = useAlertSubscriptionsStore(
+        (state) => state.setInitializationErrors
     );
 
     const initializeAlertTypeOptions = useAlertSubscriptionsStore(
@@ -40,9 +40,9 @@ const SubscriberSection = () => {
 
     useEffect(() => {
         if (error) {
-            setServerError([error]);
+            setInitializationErrors([error]);
         }
-    }, [error, setServerError]);
+    }, [error, setInitializationErrors]);
 
     useEffect(() => {
         initializeAlertTypeOptions(data?.alertTypes ?? [], fetching);

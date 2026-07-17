@@ -39,8 +39,8 @@ function PrefixAlertTable() {
         variables: { first: 100 },
     });
 
-    const setInitializationError = useAlertSubscriptionsStore(
-        (state) => state.setInitializationError
+    const setInitializationErrors = useAlertSubscriptionsStore(
+        (state) => state.setInitializationErrors
     );
     const setSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.setSubscriptionMetadata
@@ -88,7 +88,7 @@ function PrefixAlertTable() {
 
     useEffect(() => {
         if (!fetching && !alertConfigResponse.fetching) {
-            setInitializationError(error);
+            setInitializationErrors([error, alertConfigResponse?.error]);
             setSubscriptionMetadata(data?.alertSubscriptions ?? []);
 
             const alertConfigData: {
@@ -112,12 +112,13 @@ function PrefixAlertTable() {
         }
     }, [
         alertConfigResponse?.data,
+        alertConfigResponse?.error,
         alertConfigResponse.fetching,
         data?.alertSubscriptions,
         error,
         fetching,
         initializeGlobalPrefixSettings,
-        setInitializationError,
+        setInitializationErrors,
         setSubscriptionMetadata,
     ]);
 

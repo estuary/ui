@@ -28,7 +28,7 @@ interface AlertSubscriptionState {
     alertTypeOptions: AlertTypeInfo[];
     alertTypeOptionsFetching: boolean;
     catalogPrefix: string;
-    initializationError: CombinedError | PostgrestError | null | undefined;
+    initializationErrors: (CombinedError | PostgrestError)[];
     initializeAlertTypeOptions: (
         values: AlertTypeInfo[],
         fetching: boolean
@@ -45,7 +45,7 @@ interface AlertSubscriptionState {
     ) => void;
     mutableSubscriptionMetadata: SubscriptionMetadata;
     prefixErrorsExist: boolean;
-    serverErrors: (CombinedError | PostgrestError | null | undefined)[];
+    serverErrors: (CombinedError | PostgrestError)[];
     subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
     setEmailErrorsExist: (value: boolean, subscriptionId: string) => void;
@@ -53,11 +53,11 @@ interface AlertSubscriptionState {
         alertCondition: Schema,
         targetSetting: string
     ) => void;
-    setInitializationError: (
-        value: AlertSubscriptionState['initializationError']
+    setInitializationErrors: (
+        values: (CombinedError | PostgrestError | null | undefined)[]
     ) => void;
     setServerErrors: (
-        values: AlertSubscriptionState['serverErrors'],
+        values: (CombinedError | PostgrestError | null | undefined)[],
         override?: boolean
     ) => void;
     setSingleAlertType: (
@@ -98,7 +98,7 @@ const getInitialState = (): Pick<
     | 'alertTypeOptions'
     | 'alertTypeOptionsFetching'
     | 'catalogPrefix'
-    | 'initializationError'
+    | 'initializationErrors'
     | 'mutableSubscriptionMetadata'
     | 'prefixErrorsExist'
     | 'serverErrors'
@@ -107,7 +107,7 @@ const getInitialState = (): Pick<
     alertTypeOptions: [],
     alertTypeOptionsFetching: false,
     catalogPrefix: '',
-    initializationError: null,
+    initializationErrors: [],
     mutableSubscriptionMetadata: {
         configs: { effective: {}, standard: {} },
         subscriptions: [],
@@ -334,20 +334,24 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'global prefix settings set'
                 ),
 
-            setInitializationError: (value) =>
+            setInitializationErrors: (values) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        state.initializationError = value;
+                        state.initializationErrors = values.filter(
+                            (error) =>
+                                error !== null && typeof error !== 'undefined'
+                        );
                     }),
                     false,
-                    'initialization error set'
+                    'initialization errors set'
                 ),
 
             setServerErrors: (values, override) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
                         const filteredErrors = values.filter(
-                            (value) => typeof value !== 'undefined'
+                            (error) =>
+                                error !== null && typeof error !== 'undefined'
                         );
 
                         state.serverErrors = override
