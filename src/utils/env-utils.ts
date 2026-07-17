@@ -16,7 +16,7 @@ export const defaultDataPlaneSuffix = ((): string => {
 
 // Base URL for the Estuary API. Endpoint paths live at each call site so the
 // host is configured in exactly one place.
-const requireEstuaryApiUrl = (): string => {
+export const requireEstuaryApiUrl = (): string => {
     const estuaryApiUrl = import.meta.env.VITE_ESTUARY_API_URL;
 
     if (estuaryApiUrl) {
@@ -148,14 +148,6 @@ export const getMarketplaceSettings = () => {
     }
 };
 
-export const getTaskAuthorizationSettings = () => ({
-    taskAuthorizationEndpoint: `${requireEstuaryApiUrl()}/authorize/user/task`,
-});
-
-export const getCollectionAuthorizationSettings = () => ({
-    collectionAuthorizationEndpoint: `${requireEstuaryApiUrl()}/authorize/user/collection`,
-});
-
 export const getGoogleTageManagerSettings = () => {
     const settings = {
         enabled: import.meta.env.VITE_GOOGLE_TAG_MANAGER_ENABLED === ENABLED,
@@ -176,7 +168,3 @@ export const getDocsSettings = () => {
 
     return settings;
 };
-
-export const getEntityStatusSettings = () => ({
-    entityStatusBaseEndpoint: `${requireEstuaryApiUrl()}/api/v1/catalog/status`,
-});

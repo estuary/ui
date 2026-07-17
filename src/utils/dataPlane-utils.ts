@@ -22,10 +22,7 @@ import {
     DATA_PLANE_PREFIX,
     DATA_PLANE_SETTINGS,
 } from 'src/settings/dataPlanes';
-import {
-    getCollectionAuthorizationSettings,
-    getTaskAuthorizationSettings,
-} from 'src/utils/env-utils';
+import { requireEstuaryApiUrl } from 'src/utils/env-utils';
 import { hasLength, OPENID_HOST } from 'src/utils/misc-utils';
 
 export enum SHARD_LABELS {
@@ -139,7 +136,7 @@ export interface TaskAuthorizationResponse {
     shardIdPrefix: string;
 }
 
-const { taskAuthorizationEndpoint } = getTaskAuthorizationSettings();
+const taskAuthorizationEndpoint = `${requireEstuaryApiUrl()}/authorize/user/task`;
 
 // The broker authorization that comes back from /authorize/user/task is only good
 // for reading the ops stats or logs journals of a specific task. Collection
@@ -169,8 +166,7 @@ interface CollectionAuthorizationResponse {
     retryMillis: number;
 }
 
-const { collectionAuthorizationEndpoint } =
-    getCollectionAuthorizationSettings();
+const collectionAuthorizationEndpoint = `${requireEstuaryApiUrl()}/authorize/user/collection`;
 
 // The broker authorization that comes back from /authorize/user/collection is only good
 // for reading the ops logs journals of a specific collection.

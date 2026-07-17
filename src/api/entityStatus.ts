@@ -4,9 +4,9 @@ import type {
 } from 'src/types/controlPlane';
 
 import { client } from 'src/services/client';
-import { getEntityStatusSettings } from 'src/utils/env-utils';
+import { requireEstuaryApiUrl } from 'src/utils/env-utils';
 
-const { entityStatusBaseEndpoint } = getEntityStatusSettings();
+const entityStatusBaseEndpoint = `${requireEstuaryApiUrl()}/api/v1/catalog/status`;
 
 // Local API documentation can be found here: http://localhost:8675/api/v1/docs
 export const getEntityStatus = async (
