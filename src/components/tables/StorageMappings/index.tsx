@@ -11,17 +11,21 @@ import {
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage, useIntl } from 'react-intl';
-
 import { usePaginatedStorageMappings } from 'src/api/gql/storageMappings';
 import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/AddStorageButton';
 import Rows from 'src/components/tables/StorageMappings/Rows';
-import { tableColumns } from 'src/components/tables/StorageMappings/shared';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 
-function StorageMappingsTable() {
-    const intl = useIntl();
+const tableColumns = [
+    'Catalog Prefix',
+    'Data Planes',
+    'Primary Store',
+    'Storage Prefix',
+] as const;
 
+const columnCount = tableColumns.length;
+
+function StorageMappingsTable() {
     const { currentPage, cursor, onPageChange } = useCursorPagination();
 
     const { storageMappings, fetching, error, pageInfo, pageSize } =
@@ -31,36 +35,22 @@ function StorageMappingsTable() {
         onPageChange(event, page, pageInfo?.endCursor);
     };
 
-    const columnCount = tableColumns.length;
-
     return (
-        <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
-                <AddStorageButton />
-            </Box>
+        <Box sx={{ my: 2 }}>
+            <AddStorageButton />
 
             {error ? (
                 <Typography color="error" sx={{ mb: 2 }}>
-                    <FormattedMessage id="storageMappingsTable.error.loadFailed" />
+                    Failed to load storage locations.
                 </Typography>
             ) : null}
 
             <TableContainer>
-                <Table
-                    aria-label={intl.formatMessage({
-                        id: 'storageMappingsTable.table.aria.label',
-                    })}
-                >
+                <Table aria-label="Storage Locations Table">
                     <TableHead>
                         <TableRow>
                             {tableColumns.map((column) => (
-                                <TableCell key={column.headerIntlKey}>
-                                    {column.headerIntlKey ? (
-                                        <FormattedMessage
-                                            id={column.headerIntlKey}
-                                        />
-                                    ) : null}
-                                </TableCell>
+                                <TableCell key={column}>{column}</TableCell>
                             ))}
                         </TableRow>
                     </TableHead>
@@ -72,7 +62,7 @@ function StorageMappingsTable() {
                                     colSpan={columnCount}
                                     sx={{ textAlign: 'center' }}
                                 >
-                                    <FormattedMessage id="common.loading" />
+                                    Loading...
                                 </TableCell>
                             </TableRow>
                         ) : storageMappings.length === 0 && !error ? (
@@ -82,7 +72,7 @@ function StorageMappingsTable() {
                                     sx={{ textAlign: 'center', p: 4 }}
                                 >
                                     <Typography sx={{ py: 1 }}>
-                                        <FormattedMessage id="storageMappingsTable.message1" />
+                                        No results found.
                                     </Typography>
                                 </TableCell>
                             </TableRow>

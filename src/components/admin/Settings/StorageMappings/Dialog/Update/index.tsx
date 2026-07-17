@@ -13,7 +13,6 @@ import {
     useForm,
     useFormContext,
 } from 'react-hook-form';
-import { useIntl } from 'react-intl';
 
 import {
     useStorageMappings,
@@ -50,7 +49,6 @@ function DialogInner({
     open: boolean;
     onClose: () => void;
 }) {
-    const intl = useIntl();
     const { update } = useStorageMappingService();
 
     const {
@@ -84,9 +82,7 @@ function DialogInner({
     } = useFieldArray({
         name: 'dataPlanes',
         rules: {
-            required: intl.formatMessage({
-                id: 'storageMappings.dialog.dataPlanes.validation.required',
-            }),
+            required: 'At least one data plane is required',
         },
     });
     const allowPublic = watch('allowPublic');
@@ -169,13 +165,11 @@ function DialogInner({
     const title = useMemo(
         () => (
             <Typography variant="h6" component="span" fontWeight={600}>
-                {intl.formatMessage({
-                    id: 'storageMappings.dialog.update.title',
-                })}
+                Storage for{' '}
                 <TechnicalEmphasis>{mapping.catalogPrefix}</TechnicalEmphasis>
             </Typography>
         ),
-        [intl, mapping.catalogPrefix]
+        [mapping.catalogPrefix]
     );
 
     const steps = useMemo(
@@ -186,21 +180,13 @@ function DialogInner({
                     component: (
                         <>
                             <Typography sx={{ mb: 4 }}>
-                                {intl.formatMessage({
-                                    id: 'storageMappings.dialog.update.description.prefix',
-                                })}
-                                <ExternalLink
-                                    link={intl.formatMessage({
-                                        id: 'storageMappings.dialog.docsPath',
-                                    })}
-                                >
-                                    {intl.formatMessage({
-                                        id: 'storageMappings.dialog.docsLink',
-                                    })}
+                                Update your data plane or collection storage
+                                configuration below. For information and access
+                                requirements, see the{' '}
+                                <ExternalLink link="https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow">
+                                    documentation
                                 </ExternalLink>
-                                {intl.formatMessage({
-                                    id: 'storageMappings.dialog.update.description.suffix',
-                                })}
+                                .
                             </Typography>
                             <Stack spacing={2}>
                                 <CardWrapper>
@@ -234,9 +220,7 @@ function DialogInner({
                             </Stack>
                         </>
                     ),
-                    nextLabel: intl.formatMessage({
-                        id: 'storageMappings.dialog.update.saveChanges',
-                    }),
+                    nextLabel: 'Save Changes',
                     canAdvance: () =>
                         dataPlanes.length > 0 &&
                         !nestedStoreFormOpen &&
@@ -245,7 +229,6 @@ function DialogInner({
                 },
             ] satisfies WizardStep[],
         [
-            intl,
             dataPlanes,
             allTestsPassing,
             nestedStoreFormOpen,
@@ -270,7 +253,6 @@ function DialogInner({
 }
 
 export function UpdateMappingWizard() {
-    const intl = useIntl();
     const { open, onClose, context } = useDialog('EDIT_STORAGE_MAPPING');
     const { storageMappings, error: storageMappingsError } =
         useStorageMappings();
@@ -352,17 +334,14 @@ export function UpdateMappingWizard() {
     if (queryError && open) {
         const errorSteps: WizardStep[] = [
             {
-                title: intl.formatMessage({
-                    id: 'storageMappings.dialog.update.title',
-                }),
+                title: 'Storage',
                 component: (
                     <AlertBox short severity="error">
-                        {intl.formatMessage({
-                            id: 'storageMappings.dialog.error.loadFailed',
-                        })}
+                        We weren&apos;t able to load the data needed for this
+                        form. Please reload the page and try again.
                     </AlertBox>
                 ),
-                nextLabel: intl.formatMessage({ id: 'cta.close' }),
+                nextLabel: 'Close',
                 onAdvance: async () => {
                     onClose();
                     return false;
