@@ -23,7 +23,7 @@ import {
 } from 'src/utils/notification-utils';
 
 const DataMovementSetting = ({
-    settings,
+    configs,
     loading,
     prefix,
     targetSetting,
@@ -36,15 +36,20 @@ const DataMovementSetting = ({
         (state) => state.setGlobalPrefixSettings
     );
 
-    const config = useMemo(() => {
-        const { explicit: explicitSettings, implicit: implicitSettings } =
-            settings;
+    const setting = useMemo(() => {
+        const {
+            explicit: { effective: explicitEffectiveConfig },
+            implicit: { effective: implicitEffectiveConfig },
+        } = configs;
 
-        return explicitSettings?.[targetSetting] &&
-            hasOwnProperty(explicitSettings[targetSetting], 'condition')
-            ? explicitSettings[targetSetting]
-            : (implicitSettings?.[targetSetting] ?? {});
-    }, [settings, targetSetting]);
+        return explicitEffectiveConfig?.[targetSetting] &&
+            hasOwnProperty(
+                explicitEffectiveConfig?.[targetSetting],
+                'condition'
+            )
+            ? explicitEffectiveConfig[targetSetting]
+            : (implicitEffectiveConfig?.[targetSetting] ?? {});
+    }, [configs, targetSetting]);
 
     return (
         <Stack spacing={2}>
@@ -74,9 +79,9 @@ const DataMovementSetting = ({
                         const formattedValue =
                             toUnconventionalTimeFormat(value);
 
-                        const evaluatedConfig = cloneDeep(config);
+                        const clonedSetting = cloneDeep(setting);
                         set(
-                            evaluatedConfig,
+                            clonedSetting,
                             'condition.stalledFor',
                             formattedValue
                         );
@@ -84,7 +89,7 @@ const DataMovementSetting = ({
                         setGlobalPrefixSettings(
                             formattedValue !== 'none'
                                 ? {
-                                      [targetSetting]: evaluatedConfig,
+                                      [targetSetting]: clonedSetting,
                                   }
                                 : {},
                             targetSetting
@@ -111,7 +116,7 @@ const DataMovementSetting = ({
                         />
                     )}
                     value={fromUnconventionalTimeFormat(
-                        config?.condition?.stalledFor
+                        setting?.condition?.stalledFor
                     )}
                 />
             )}

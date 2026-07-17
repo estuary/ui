@@ -1,6 +1,7 @@
 import type { PostgrestError } from '@supabase/postgrest-js';
 import type { ReducedAlertSubscription } from 'src/api/types';
 import type {
+    AlertConfigOptions,
     SubscriptionMetadata,
     SubscriptionMetadataDictionary,
 } from 'src/components/admin/Settings/PrefixAlerts/types';
@@ -33,7 +34,10 @@ interface AlertSubscriptionState {
         fetching: boolean
     ) => void;
     initializeGlobalPrefixSettings: (
-        values: { prefix: string; config: Schema }[]
+        values: {
+            configs: AlertConfigOptions;
+            prefix: string;
+        }[]
     ) => void;
     markSubscriptionForDeletion: (
         catalogPrefix: string,
@@ -45,7 +49,7 @@ interface AlertSubscriptionState {
     subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
     setEmailErrorsExist: (value: boolean, subscriptionId: string) => void;
-    setGlobalPrefixSettings: (value: Schema, targetSetting?: string) => void;
+    setGlobalPrefixSettings: (value: Schema, targetSetting: string) => void;
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
     ) => void;
@@ -101,13 +105,39 @@ const getInitialState = (): Pick<
     alertTypeOptionsFetching: false,
     catalogPrefix: '',
     initializationError: null,
-    mutableSubscriptionMetadata: { settings: {}, subscriptions: [] },
+    mutableSubscriptionMetadata: {
+        configs: { effective: {}, standard: {} },
+        subscriptions: [],
+    },
     prefixErrorsExist: false,
     serverErrors: [],
     subscriptionMetadata: {},
 });
 
 const name = 'estuary.alert-subscriptions-store';
+
+const updateAlertConfigs = (
+    state: AlertSubscriptionState,
+    targetSetting: string | undefined,
+    value: Schema
+) => {
+    const configKeys = Object.keys(
+        state.mutableSubscriptionMetadata.configs
+    ) as (keyof AlertConfigOptions)[];
+
+    configKeys.forEach((key) => {
+        state.mutableSubscriptionMetadata.configs[key] =
+            isEmpty(value) && targetSetting
+                ? omit(
+                      state.mutableSubscriptionMetadata.configs[key],
+                      targetSetting
+                  )
+                : {
+                      ...state.mutableSubscriptionMetadata.configs[key],
+                      ...value,
+                  };
+    });
+};
 
 const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
     devtools((set) => {
@@ -185,9 +215,9 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                         state.subscriptionMetadata
                                     ).includes(prefix)
                             )
-                            .forEach(({ config, prefix }) => {
+                            .forEach(({ configs, prefix }) => {
                                 state.subscriptionMetadata[prefix] = {
-                                    settings: config,
+                                    configs,
                                     subscriptions: [],
                                 };
                             });
@@ -201,11 +231,8 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                 )
                         );
 
-                        Object.entries(state.subscriptionMetadata)
-                            .filter(([_prefix, metadata]) =>
-                                isEmpty(metadata.settings)
-                            )
-                            .forEach(([prefix, _metadata]) => {
+                        Object.entries(state.subscriptionMetadata).forEach(
+                            ([prefix, _metadata]) => {
                                 const matchedValue = sortedValues.find(
                                     (value) => prefix.startsWith(value.prefix)
                                 );
@@ -214,9 +241,10 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                     return;
                                 }
 
-                                state.subscriptionMetadata[prefix].settings =
-                                    matchedValue.config;
-                            });
+                                state.subscriptionMetadata[prefix].configs =
+                                    matchedValue.configs;
+                            }
+                        );
                     }),
                     false,
                     'global prefix settings initialized'
@@ -298,23 +326,15 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                 set(
                     produce((state: AlertSubscriptionState) => {
                         if (isEmpty(value) && !targetSetting) {
-                            state.mutableSubscriptionMetadata.settings = {};
+                            state.mutableSubscriptionMetadata.configs = {
+                                effective: {},
+                                standard: {},
+                            };
 
                             return;
                         }
 
-                        state.mutableSubscriptionMetadata.settings =
-                            isEmpty(value) && targetSetting
-                                ? omit(
-                                      state.mutableSubscriptionMetadata
-                                          .settings,
-                                      targetSetting
-                                  )
-                                : {
-                                      ...state.mutableSubscriptionMetadata
-                                          .settings,
-                                      ...value,
-                                  };
+                        updateAlertConfigs(state, targetSetting, value);
                     }),
                     false,
                     'global prefix settings set'
@@ -454,7 +474,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                         }
 
                         state.mutableSubscriptionMetadata = {
-                            settings: {},
+                            configs: { effective: {}, standard: {} },
                             subscriptions:
                                 state.mutableSubscriptionMetadata.subscriptions.map(
                                     (subscription) => ({

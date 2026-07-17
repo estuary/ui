@@ -31,7 +31,7 @@ export const bundleSubscriptionsByPrefix = (
             });
         } else {
             subscriptionMetadata[catalogPrefix] = {
-                settings: {},
+                configs: { effective: {}, standard: {} },
                 subscriptions: [
                     { ...query, id: crypto.randomUUID(), viewing: false },
                 ],

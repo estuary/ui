@@ -146,28 +146,26 @@ export function useModifyAlertMetadata(
         // given prefix.
         const {
             directImplicitMatch,
-            explicit: explicitSettings,
-            implicit: implicitSettings,
+            explicit: { effective: explicitEffectiveConfig },
+            implicit: { effective: implicitEffectiveConfig },
         } = evaluateGlobalPrefixSettings();
 
-        const explicitSettingsEmpty = isEmpty(explicitSettings);
-        const implicitSettingsEmpty = isEmpty(implicitSettings);
+        const explicitConfigEmpty = isEmpty(explicitEffectiveConfig);
+        const implicitConfigEmpty = isEmpty(implicitEffectiveConfig);
 
-        const existingSettingRemoval =
-            directImplicitMatch &&
-            explicitSettingsEmpty &&
-            !implicitSettingsEmpty;
+        const existingConfigRemoval =
+            directImplicitMatch && explicitConfigEmpty && !implicitConfigEmpty;
 
         if (
-            existingSettingRemoval ||
-            (!explicitSettingsEmpty && implicitSettingsEmpty) ||
-            (!explicitSettingsEmpty &&
-                !implicitSettingsEmpty &&
-                !isEqual(explicitSettings, implicitSettings))
+            existingConfigRemoval ||
+            (!explicitConfigEmpty && implicitConfigEmpty) ||
+            (!explicitConfigEmpty &&
+                !implicitConfigEmpty &&
+                !isEqual(explicitEffectiveConfig, implicitEffectiveConfig))
         ) {
             const configResponse = await upsertConfig({
                 catalogPrefixOrName: catalogPrefix,
-                config: mutableSubscriptionMetadata.settings,
+                config: mutableSubscriptionMetadata.configs.standard,
             });
 
             if (configResponse?.error || configResponse?.invalid) {

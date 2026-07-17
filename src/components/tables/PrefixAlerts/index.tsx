@@ -1,5 +1,8 @@
-import type { SubscriptionMetadataDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
-import type { Schema, TableState } from 'src/types';
+import type {
+    AlertConfigOptions,
+    SubscriptionMetadataDictionary,
+} from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -88,18 +91,24 @@ function PrefixAlertTable() {
             setInitializationError(error);
             setSubscriptionMetadata(data?.alertSubscriptions ?? []);
 
-            const config: { prefix: string; config: Schema }[] =
+            const alertConfigData: {
+                configs: AlertConfigOptions;
+                prefix: string;
+            }[] =
                 alertConfigResponse?.data &&
                 alertConfigResponse.data.alertConfigs.edges.length > 0
                     ? alertConfigResponse.data.alertConfigs.edges.map(
                           ({ node }) => ({
+                              configs: {
+                                  effective: node.effective.config,
+                                  standard: node.config,
+                              },
                               prefix: node.catalogPrefixOrName,
-                              config: node.effective.config,
                           })
                       )
                     : [];
 
-            initializeGlobalPrefixSettings(config);
+            initializeGlobalPrefixSettings(alertConfigData);
         }
     }, [
         alertConfigResponse?.data,

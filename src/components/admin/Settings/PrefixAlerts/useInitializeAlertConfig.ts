@@ -16,9 +16,9 @@ export function useInitializeAlertConfig() {
     );
 
     const [debouncedPrefix, setDebouncedPrefix] = useState(catalogPrefix);
-    const [settings, setSettings] = useState<GlobalSettingEvaluationResult>({
-        explicit: {},
-        implicit: {},
+    const [configs, setConfigs] = useState<GlobalSettingEvaluationResult>({
+        explicit: { effective: {}, standard: {} },
+        implicit: { effective: {}, standard: {} },
     });
 
     const updateDebouncedPrefix = useRef(
@@ -37,15 +37,14 @@ export function useInitializeAlertConfig() {
 
     useEffect(() => {
         if (debouncedPrefix === catalogPrefix) {
-            const prefixSettings =
-                evaluateGlobalPrefixSettings(debouncedPrefix);
+            const prefixConfigs = evaluateGlobalPrefixSettings(debouncedPrefix);
 
-            setSettings(prefixSettings);
+            setConfigs(prefixConfigs);
         }
     }, [catalogPrefix, debouncedPrefix, evaluateGlobalPrefixSettings]);
 
     return {
         loading: debouncedPrefix !== catalogPrefix,
-        settings,
+        configs,
     };
 }

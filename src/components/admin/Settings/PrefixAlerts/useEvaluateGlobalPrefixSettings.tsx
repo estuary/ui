@@ -21,8 +21,8 @@ export function useEvaluateGlobalPrefixSettings() {
     const evaluateGlobalPrefixSettings = useCallback(
         (debouncedPrefix?: string) => {
             const settings: GlobalSettingEvaluationResult = {
-                explicit: {},
-                implicit: {},
+                explicit: { effective: {}, standard: {} },
+                implicit: { effective: {}, standard: {} },
             };
             const evaluatedPrefix = debouncedPrefix ?? catalogPrefix;
 
@@ -30,12 +30,15 @@ export function useEvaluateGlobalPrefixSettings() {
                 return settings;
             }
 
-            settings.explicit = mutableSubscriptionMetadata.settings;
+            settings.explicit = mutableSubscriptionMetadata.configs;
 
             const sortedImmutablePrefixAndMetadata = Object.entries(
                 immutableSubscriptionMetadata
             )
-                .filter(([_prefix, metadata]) => !isEmpty(metadata.settings))
+                .filter(
+                    ([_prefix, metadata]) =>
+                        !isEmpty(metadata.configs.effective)
+                )
                 .sort((first, second) => {
                     return basicSort_stringLength(first[0], second[0], 'desc');
                 });
@@ -53,7 +56,7 @@ export function useEvaluateGlobalPrefixSettings() {
                 matchedImmutablePrefixAndMetadata;
 
             settings.implicit =
-                immutableSubscriptionMetadata[matchedPrefix].settings;
+                immutableSubscriptionMetadata[matchedPrefix].configs;
 
             settings.directImplicitMatch = evaluatedPrefix === matchedPrefix;
 

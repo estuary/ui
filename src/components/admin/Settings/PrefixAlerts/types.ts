@@ -6,6 +6,11 @@ import type { Schema } from 'src/types';
 import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
 import type { AlertConfigKeys } from 'src/utils/notification-utils';
 
+export interface AlertConfigOptions {
+    effective: Schema;
+    standard: Schema;
+}
+
 export interface AlertConfigResponse extends AlertMetadataErrorResponse {
     prefix: string;
 }
@@ -49,13 +54,13 @@ export interface EmailListFieldProps extends SubscriptionDependentProps {
 }
 
 export interface GlobalSettingEvaluationResult {
-    explicit: Schema;
-    implicit: Schema;
+    explicit: AlertConfigOptions;
+    implicit: AlertConfigOptions;
     directImplicitMatch?: boolean;
 }
 
 export interface GlobalSettingProps {
-    settings: GlobalSettingEvaluationResult;
+    configs: GlobalSettingEvaluationResult;
     loading: boolean;
     prefix: string;
     targetSetting: AlertConfigKeys;
@@ -87,7 +92,7 @@ export interface SubscriptionDependentProps {
 }
 
 export interface SubscriptionMetadata {
-    settings: Schema;
+    configs: AlertConfigOptions;
     subscriptions: MutableAlertSubscription[];
 }
 
