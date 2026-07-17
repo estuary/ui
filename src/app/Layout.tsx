@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { Box, Toolbar, useMediaQuery, useTheme } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 import { useShallow } from 'zustand/react/shallow';
 
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex';
 import { Outlet } from 'react-router';
 
-import { Toast } from 'src/components/AgentSkills/Toast';
+import { Toast as AgentSkillsToast } from 'src/components/AgentSkills/Toast';
 import { Navigation } from 'src/components/navigation/Navigation';
 import ErrorBoundryWrapper from 'src/components/shared/ErrorBoundryWrapper';
 import PageContainer from 'src/components/shared/PageContainer';
@@ -60,14 +60,19 @@ function AppLayout() {
     return (
         <Box sx={{ display: 'flex', height: '100vh' }}>
             <Navigation />
-
-            <Toast docsPanelOpen={displaySidePanel} />
+            {
+                // Hide the toast while the docs panel is open so it cannot cover the
+                // cookie-consent banner that renders inside the docs.
+                !displaySidePanel ? <AgentSkillsToast /> : null
+            }
 
             <Box
                 sx={{
                     flex: 1,
                     minWidth: 0,
                     height: '100%',
+                    overflow: 'hidden',
+                    pt: 2,
                 }}
             >
                 <ReflexContainer orientation="vertical">
@@ -81,9 +86,8 @@ function AppLayout() {
                                 : undefined,
                         }}
                     >
-                        <Box className="pane-content">
+                        <Box className="pane-content" sx={{ height: '100%' }}>
                             <ErrorBoundryWrapper>
-                                <Toolbar />
                                 <PageContainer>
                                     <Outlet />
                                 </PageContainer>

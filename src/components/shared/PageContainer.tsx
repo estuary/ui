@@ -3,14 +3,18 @@ import type { Notification } from 'src/stores/NotificationStore';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Container, Paper, Snackbar, useTheme } from '@mui/material';
+import { Box, Paper, Snackbar, Typography, useTheme } from '@mui/material';
 
-import Topbar from 'src/components/navigation/TopBar';
+import { useIntl } from 'react-intl';
+
 import AlertBox from 'src/components/shared/AlertBox';
+import SidePanelDocsOpenButton from 'src/components/sidePanelDocs/OpenButton';
 import { paperBackground } from 'src/context/Theme';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
+import { useTopBarStore } from 'src/stores/TopBar/Store';
+import { useNavigationStore } from 'src/stores/useNavigationStore';
 
 interface Props {
     children: ReactNode | ReactNode[];
@@ -18,7 +22,10 @@ interface Props {
 }
 
 function PageContainer({ children, hideBackground }: Props) {
+    const intl = useIntl();
     const theme = useTheme();
+    const header = useTopBarStore((state) => state.header);
+    const navigationOpen = useNavigationStore((state) => state.open);
 
     const notification = useNotificationStore(
         notificationStoreSelectors.notification
@@ -77,10 +84,12 @@ function PageContainer({ children, hideBackground }: Props) {
     }, [notification]);
 
     return (
-        <Container
-            maxWidth={false}
+        <Box
             sx={{
-                paddingTop: 3,
+                pr: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
             }}
         >
             {notification && alertBody ? (
@@ -112,20 +121,57 @@ function PageContainer({ children, hideBackground }: Props) {
                 </Snackbar>
             ) : null}
 
-            <Topbar />
+            {header ? (
+                <Paper
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        py: 0.5,
+                        px: 2,
+                        color: 'text.secondary',
+                        fontSize: '0.8rem',
+                        width: '100%',
+                        boxShadow: boxShadowMixin,
+                        borderRadius: '16px 16px 0 0',
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+                        background: backgroundMixin,
+                    }}
+                >
+                    <Typography sx={{ fontWeight: 'bold' }}>
+                        {intl.formatMessage({ id: header })}
+                    </Typography>
+
+                    {/* TODO (UI / UX) - restore the per-page documentation link here.
+                        Pages still set headerLink via usePageTitle but nothing renders it. */}
+
+                    <Box sx={{ ml: 'auto' }}>
+                        <SidePanelDocsOpenButton />
+                    </Box>
+                </Paper>
+            ) : null}
 
             <Paper
                 sx={{
-                    p: 2,
+                    px: navigationOpen ? 1 : { xs: 1, md: 5 },
+                    transition: (t) =>
+                        `padding ${t.transitions.duration.shortest}ms`,
+                    py: 2,
+                    flex: 1,
+                    minHeight: 0,
+                    overflow: 'auto',
+                    overscrollBehavior: 'none',
                     width: '100%',
+                    mb: 1,
                     boxShadow: boxShadowMixin,
-                    borderRadius: 3,
+                    borderRadius: header ? '0 0 16px 16px' : 8,
                     background: backgroundMixin,
                 }}
             >
                 {children}
             </Paper>
-        </Container>
+        </Box>
     );
 }
 
