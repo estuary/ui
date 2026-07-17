@@ -87,10 +87,9 @@ const DataMovementSetting = ({
                         );
 
                         setGlobalPrefixSettings(
-                            formattedValue !== 'none'
-                                ? {
-                                      [targetSetting]: clonedSetting,
-                                  }
+                            formattedValue !== 'none' &&
+                                clonedSetting?.condition
+                                ? clonedSetting.condition
                                 : {},
                             targetSetting
                         );

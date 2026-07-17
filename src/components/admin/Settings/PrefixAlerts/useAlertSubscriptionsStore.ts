@@ -12,7 +12,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import produce from 'immer';
-import { isEmpty, omit } from 'lodash';
+import { isEmpty } from 'lodash';
 import { type CombinedError } from 'urql';
 
 import {
@@ -49,7 +49,10 @@ interface AlertSubscriptionState {
     subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
     setEmailErrorsExist: (value: boolean, subscriptionId: string) => void;
-    setGlobalPrefixSettings: (value: Schema, targetSetting: string) => void;
+    setGlobalPrefixSettings: (
+        alertCondition: Schema,
+        targetSetting: string
+    ) => void;
     setInitializationError: (
         value: AlertSubscriptionState['initializationError']
     ) => void;
@@ -115,29 +118,6 @@ const getInitialState = (): Pick<
 });
 
 const name = 'estuary.alert-subscriptions-store';
-
-const updateAlertConfigs = (
-    state: AlertSubscriptionState,
-    targetSetting: string | undefined,
-    value: Schema
-) => {
-    const configKeys = Object.keys(
-        state.mutableSubscriptionMetadata.configs
-    ) as (keyof AlertConfigOptions)[];
-
-    configKeys.forEach((key) => {
-        state.mutableSubscriptionMetadata.configs[key] =
-            isEmpty(value) && targetSetting
-                ? omit(
-                      state.mutableSubscriptionMetadata.configs[key],
-                      targetSetting
-                  )
-                : {
-                      ...state.mutableSubscriptionMetadata.configs[key],
-                      ...value,
-                  };
-    });
-};
 
 const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
     devtools((set) => {
@@ -322,19 +302,27 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'email errors exist set'
                 ),
 
-            setGlobalPrefixSettings: (value, targetSetting) =>
+            setGlobalPrefixSettings: (alertCondition, targetSetting) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        if (isEmpty(value) && !targetSetting) {
-                            state.mutableSubscriptionMetadata.configs = {
-                                effective: {},
-                                standard: {},
-                            };
-
+                        if (targetSetting.length === 0) {
                             return;
                         }
 
-                        updateAlertConfigs(state, targetSetting, value);
+                        const configKeys = Object.keys(
+                            state.mutableSubscriptionMetadata.configs
+                        ) as (keyof AlertConfigOptions)[];
+
+                        configKeys.forEach((key) => {
+                            state.mutableSubscriptionMetadata.configs[key][
+                                targetSetting
+                            ] = {
+                                ...state.mutableSubscriptionMetadata.configs[
+                                    key
+                                ][targetSetting],
+                                condition: alertCondition,
+                            };
+                        });
                     }),
                     false,
                     'global prefix settings set'
