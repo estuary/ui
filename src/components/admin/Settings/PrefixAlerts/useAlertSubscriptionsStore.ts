@@ -39,10 +39,7 @@ interface AlertSubscriptionState {
             prefix: string;
         }[]
     ) => void;
-    markSubscriptionForDeletion: (
-        catalogPrefix: string,
-        subscriptionId: string
-    ) => void;
+    markSubscriptionForDeletion: (subscriptionId: string) => void;
     mutableSubscriptionMetadata: SubscriptionMetadata;
     prefixErrorsExist: boolean;
     serverErrors: (CombinedError | PostgrestError)[];
@@ -230,7 +227,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'global prefix settings initialized'
                 ),
 
-            markSubscriptionForDeletion: (_catalogPrefix, subscriptionId) =>
+            markSubscriptionForDeletion: (subscriptionId) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
                         const immutableSubscriptionIndex =

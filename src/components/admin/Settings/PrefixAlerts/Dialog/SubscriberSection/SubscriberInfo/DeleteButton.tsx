@@ -6,9 +6,7 @@ import { Xmark } from 'iconoir-react';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
-const DeleteButton = ({
-    subscription: { catalogPrefix, id },
-}: SubscriptionDependentProps) => {
+const DeleteButton = ({ subscription: { id } }: SubscriptionDependentProps) => {
     const theme = useTheme();
 
     const markSubscriptionForDeletion = useAlertSubscriptionsStore(
@@ -20,7 +18,7 @@ const DeleteButton = ({
             onClick={(event) => {
                 event.stopPropagation();
 
-                markSubscriptionForDeletion(catalogPrefix, id);
+                markSubscriptionForDeletion(id);
             }}
             size="small"
             sx={{
