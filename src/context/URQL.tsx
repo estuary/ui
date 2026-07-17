@@ -10,6 +10,7 @@ import { requestPolicyExchange } from '@urql/exchange-request-policy';
 import { Client, fetchExchange, Provider } from 'urql';
 
 import { useUserStore } from 'src/context/User/useUserContextStore';
+import { getGqlUrl } from 'src/utils/env-utils';
 import { getAuthHeader } from 'src/utils/misc-utils';
 
 function invalidateQuery(
@@ -32,7 +33,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
 
     const gqlClient = useMemo(() => {
         return new Client({
-            url: import.meta.env.VITE_GQL_URL,
+            url: getGqlUrl(),
             preferGetMethod: false,
             exchanges: [
                 // WARNING - order is important on exchanges
