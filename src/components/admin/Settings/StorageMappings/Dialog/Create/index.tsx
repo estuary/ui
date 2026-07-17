@@ -26,7 +26,6 @@ import MessageWithLink from 'src/components/content/MessageWithLink';
 import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
-import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { cardHeaderSx } from 'src/context/Theme';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useDialog } from 'src/hooks/useDialog';
@@ -78,8 +77,6 @@ function CreateMappingWizardInner({
     const allowPublic = watch('allowPublic');
     const stores = watch('fragmentStores');
 
-    const refresh = useStorageMappingsRefresh();
-
     const closeDialog = useCallback(() => {
         onClose();
         reset();
@@ -88,9 +85,8 @@ function CreateMappingWizardInner({
 
     const handleComplete = useCallback(async () => {
         await create(buildMappingPayload(getValues()));
-        refresh();
         return true;
-    }, [create, getValues, refresh]);
+    }, [create, getValues]);
 
     const steps = useMemo(
         (): WizardStep[] =>

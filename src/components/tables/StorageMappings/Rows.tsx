@@ -1,34 +1,33 @@
-import type { StorageMappingsQuery } from 'src/types';
+import type { StorageMappingTableRow } from 'src/api/gql/storageMappings';
 
 import { TableCell, TableRow, useTheme } from '@mui/material';
 
 import ChipListCell from 'src/components/tables/cells/ChipList';
-import TimeStamp from 'src/components/tables/cells/TimeStamp';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import { useDialog } from 'src/hooks/useDialog';
 
-function Rows({ data }: { data: StorageMappingsQuery[] }) {
+function Rows({ data }: { data: StorageMappingTableRow[] }) {
     const theme = useTheme();
 
     const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
 
-    const handleRowClick = (row: (typeof data)[0]) => {
-        onOpen({ prefix: row.catalog_prefix });
+    const handleRowClick = (row: StorageMappingTableRow) => {
+        onOpen({ prefix: row.catalogPrefix });
     };
 
     return (
         <>
             {data.map((row) => {
-                const store = row.spec.stores[0];
+                const store = row.spec.stores?.[0];
 
                 return (
                     <TableRow
                         hover
-                        key={`StorageMappings-${row.id}`}
+                        key={`StorageMappings-${row.catalogPrefix}`}
                         sx={getEntityTableRowSx(theme)}
                         onClick={() => handleRowClick(row)}
                     >
-                        <TableCell>{row.catalog_prefix}</TableCell>
+                        <TableCell>{row.catalogPrefix}</TableCell>
 
                         <ChipListCell
                             values={row.spec.data_planes}
@@ -37,12 +36,10 @@ function Rows({ data }: { data: StorageMappingsQuery[] }) {
                         />
 
                         <TableCell>
-                            {store.provider}/{store.bucket}
+                            {store ? `${store.provider}/${store.bucket}` : null}
                         </TableCell>
 
-                        <TableCell>{store.prefix}</TableCell>
-
-                        <TimeStamp time={row.updated_at} enableRelative />
+                        <TableCell>{store?.prefix}</TableCell>
                     </TableRow>
                 );
             })}

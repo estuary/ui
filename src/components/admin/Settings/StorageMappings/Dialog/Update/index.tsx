@@ -31,7 +31,6 @@ import AlertBox from 'src/components/shared/AlertBox';
 import CardWrapper from 'src/components/shared/CardWrapper';
 import ExternalLink from 'src/components/shared/ExternalLink';
 import { WizardDialog } from 'src/components/shared/WizardDialog/WizardDialog';
-import { useStorageMappingsRefresh } from 'src/components/tables/StorageMappings/shared';
 import { useDataPlanes } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useDialog } from 'src/hooks/useDialog';
 import { logRocketConsole } from 'src/services/shared';
@@ -75,8 +74,6 @@ function DialogInner({
         );
         void testConnections(connections).catch(() => {});
     }, [mapping, initializeEndpoints, testConnections]);
-
-    const refresh = useStorageMappingsRefresh();
 
     const { getValues, watch, setValue, reset } =
         useFormContext<StorageMappingFormData>();
@@ -166,9 +163,8 @@ function DialogInner({
                 dataPlanes: data.dataPlanes.map((dp) => dp.name),
             },
         });
-        refresh();
         return true;
-    }, [getValues, update, refresh]);
+    }, [getValues, update]);
 
     const title = useMemo(
         () => (

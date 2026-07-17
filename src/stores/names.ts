@@ -44,7 +44,6 @@ export enum SelectTableStoreNames {
     CONNECTOR = 'Connectors-Table',
     MATERIALIZATION = 'Materializations-Table',
     PREFIX_ALERTS = 'Prefix-Alert-Table',
-    STORAGE_MAPPINGS = 'Storage-Mappings-Table',
 }
 
 export enum ShardDetailStoreNames {

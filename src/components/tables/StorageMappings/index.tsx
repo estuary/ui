@@ -1,82 +1,127 @@
-import { useMemo } from 'react';
+import {
+    Box,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableFooter,
+    TableHead,
+    TablePagination,
+    TableRow,
+    Typography,
+} from '@mui/material';
 
-import { Box } from '@mui/material';
+import { FormattedMessage, useIntl } from 'react-intl';
 
-import { getStorageMappings } from 'src/api/storageMappings';
+import { usePaginatedStorageMappings } from 'src/api/gql/storageMappings';
 import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/AddStorageButton';
-import EntityTable from 'src/components/tables/EntityTable';
 import Rows from 'src/components/tables/StorageMappings/Rows';
 import { tableColumns } from 'src/components/tables/StorageMappings/shared';
-import { SelectTableStoreNames } from 'src/stores/names';
-import { useTableState } from 'src/stores/Tables/hooks';
-import TableHydrator from 'src/stores/Tables/Hydrator';
-import { useTenantStore } from 'src/stores/Tenant';
+import { useCursorPagination } from 'src/hooks/useCursorPagination';
 
 function StorageMappingsTable() {
-    const {
-        pagination,
-        setPagination,
-        rowsPerPage,
-        setRowsPerPage,
-        searchQuery,
-        setSearchQuery,
-        sortDirection,
-        setSortDirection,
-        columnToSort,
-        setColumnToSort,
-    } = useTableState('sm', 'catalog_prefix');
+    const intl = useIntl();
 
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+    const { currentPage, cursor, onPageChange } = useCursorPagination();
 
-    const query = useMemo(() => {
-        return selectedTenant
-            ? getStorageMappings(selectedTenant, pagination, searchQuery, [
-                  {
-                      col: columnToSort,
-                      direction: sortDirection,
-                  },
-              ])
-            : null;
-    }, [columnToSort, pagination, searchQuery, selectedTenant, sortDirection]);
+    const { storageMappings, fetching, error, pageInfo, pageSize } =
+        usePaginatedStorageMappings(cursor);
+
+    const handlePageChange = (event: any, page: number) => {
+        onPageChange(event, page, pageInfo?.endCursor);
+    };
+
+    const columnCount = tableColumns.length;
 
     return (
         <Box>
-            <TableHydrator
-                disableQueryParamHack
-                query={query}
-                selectableTableStoreName={
-                    SelectTableStoreNames.STORAGE_MAPPINGS
-                }
-            >
-                <EntityTable
-                    noExistingDataContentIds={{
-                        header: 'storageMappingsTable.message1',
-                        message: 'storageMappingsTable.message2',
-                        disableDoclink: true,
-                    }}
-                    columns={tableColumns}
-                    renderTableRows={(data) => <Rows data={data} />}
-                    rowsPerPage={rowsPerPage}
-                    setRowsPerPage={setRowsPerPage}
-                    pagination={pagination}
-                    setPagination={setPagination}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    sortDirection={sortDirection}
-                    setSortDirection={setSortDirection}
-                    columnToSort={columnToSort}
-                    setColumnToSort={setColumnToSort}
-                    header={null}
-                    filterLabel="storageMappingsTable.filterLabel"
-                    selectableTableStoreName={
-                        SelectTableStoreNames.STORAGE_MAPPINGS
-                    }
-                    showToolbar
-                    toolbar={<AddStorageButton />}
-                    hideFilter
-                    tableAriaLabelKey="storageMappingsTable.table.aria.label"
-                />
-            </TableHydrator>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+                <AddStorageButton />
+            </Box>
+
+            {error ? (
+                <Typography color="error" sx={{ mb: 2 }}>
+                    <FormattedMessage id="storageMappingsTable.error.loadFailed" />
+                </Typography>
+            ) : null}
+
+            <TableContainer>
+                <Table
+                    aria-label={intl.formatMessage({
+                        id: 'storageMappingsTable.table.aria.label',
+                    })}
+                >
+                    <TableHead>
+                        <TableRow>
+                            {tableColumns.map((column) => (
+                                <TableCell key={column.headerIntlKey}>
+                                    {column.headerIntlKey ? (
+                                        <FormattedMessage
+                                            id={column.headerIntlKey}
+                                        />
+                                    ) : null}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                        {fetching && storageMappings.length === 0 ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columnCount}
+                                    sx={{ textAlign: 'center' }}
+                                >
+                                    <FormattedMessage id="common.loading" />
+                                </TableCell>
+                            </TableRow>
+                        ) : storageMappings.length === 0 && !error ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columnCount}
+                                    sx={{ textAlign: 'center', p: 4 }}
+                                >
+                                    <Typography sx={{ py: 1 }}>
+                                        <FormattedMessage id="storageMappingsTable.message1" />
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            <Rows data={storageMappings} />
+                        )}
+                    </TableBody>
+
+                    {pageInfo && storageMappings.length > 0 ? (
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    count={-1}
+                                    page={currentPage}
+                                    rowsPerPage={pageSize}
+                                    rowsPerPageOptions={[pageSize]}
+                                    onPageChange={handlePageChange}
+                                    labelDisplayedRows={({ from }) => {
+                                        const to =
+                                            from + storageMappings.length - 1;
+                                        return `${from}–${to}`;
+                                    }}
+                                    slotProps={{
+                                        actions: {
+                                            previousButton: {
+                                                disabled:
+                                                    !pageInfo.hasPreviousPage,
+                                            },
+                                            nextButton: {
+                                                disabled: !pageInfo.hasNextPage,
+                                            },
+                                        },
+                                    }}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    ) : null}
+                </Table>
+            </TableContainer>
         </Box>
     );
 }
