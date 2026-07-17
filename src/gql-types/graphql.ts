@@ -654,11 +654,11 @@ export type DataPlane = {
   /** Name of this data-plane under the catalog namespace. */
   name: Scalars['String']['output'];
   /**
-   * Configured private link endpoints for this data-plane. Replacing this
-   * list (via `updateDataPlanePrivateLinks`) triggers reconvergence by the
-   * data-plane controller on its next poll. Returns an empty list to
-   * callers that lack the `ViewDataPlanePrivateNetworking` capability on
-   * this data plane.
+   * Configured private links for this data-plane, each with its
+   * controller-observed provisioning status. Mutating links (via
+   * `addDataPlanePrivateLink` and friends) triggers reconvergence by the
+   * data-plane controller. Returns an empty list to callers that lack the
+   * `ViewDataPlanePrivateNetworking` capability on this data plane.
    */
   privateLinks: Array<PrivateLink>;
   /** Address of reactors within the data-plane. */
@@ -1066,6 +1066,12 @@ export type LockFailure = {
 export type MutationRoot = {
   __typename?: 'MutationRoot';
   /**
+   * Adds a private link to a private data plane. The data-plane controller
+   * converges to provision it on its next poll; the returned link starts
+   * `pending`. Requires `ModifyDataPlanePrivateNetworking` on the data plane.
+   */
+  addDataPlanePrivateLink: PrivateLink;
+  /**
    * Add a user_grant to a service account.
    *
    * The caller must have CreateGrant on BOTH the account's catalog name and
@@ -1161,6 +1167,12 @@ export type MutationRoot = {
    */
   removeAllServiceAccountGrants: ServiceAccount;
   /**
+   * Removes a private link by id. The controller tears down its endpoint on
+   * the next converge. Requires `ModifyDataPlanePrivateNetworking` on the
+   * owning data plane. Returns the removed link id.
+   */
+  removeDataPlanePrivateLink: Scalars['Id']['output'];
+  /**
    * Remove a user_grant from a service account, returning the account in its
    * post-removal state.
    *
@@ -1244,18 +1256,14 @@ export type MutationRoot = {
    */
   updateAlertSubscription: AlertSubscription;
   /**
-   * Replaces the configured private link endpoints on a private data plane.
-   *
-   * The provided list overwrites the entire `private_links` column; partial
-   * updates are intentionally not supported. The data-plane controller
-   * converges to the new configuration on its next poll. Returns the desired
-   * private links state. The `*LinkEndpoints` provisioning results are not echoed here:
-   * they lag this write until the controller converges, so callers needing them re-query `dataPlanes`.
-   *
-   * Requires the `ModifyDataPlanePrivateNetworking` capability on the
-   * private data-plane name.
+   * Replaces the configuration of an existing private link by id. A changed
+   * config resets the observed status to `pending` and re-triggers convergence:
+   * the desired-edit trigger clears the observation columns and bumps the
+   * link's internal generation, so a converge already in flight against the
+   * previous configuration cannot later stamp this link with a stale status.
+   * Requires `ModifyDataPlanePrivateNetworking` on the owning data plane.
    */
-  updateDataPlanePrivateLinks: Array<PrivateLink>;
+  updateDataPlanePrivateLink: PrivateLink;
   /**
    * Update an existing storage mapping for the given catalog prefix.
    *
@@ -1268,6 +1276,12 @@ export type MutationRoot = {
    * are allowed (they were already validated when created).
    */
   updateStorageMapping: UpdateStorageMappingResult;
+};
+
+
+export type MutationRootAddDataPlanePrivateLinkArgs = {
+  config: PrivateLinkConfigInput;
+  dataPlaneName: Scalars['String']['input'];
 };
 
 
@@ -1353,6 +1367,11 @@ export type MutationRootRemoveAllServiceAccountGrantsArgs = {
 };
 
 
+export type MutationRootRemoveDataPlanePrivateLinkArgs = {
+  id: Scalars['Id']['input'];
+};
+
+
 export type MutationRootRemoveServiceAccountGrantArgs = {
   catalogName: Scalars['Name']['input'];
   prefix: Scalars['Prefix']['input'];
@@ -1409,9 +1428,9 @@ export type MutationRootUpdateAlertSubscriptionArgs = {
 };
 
 
-export type MutationRootUpdateDataPlanePrivateLinksArgs = {
-  dataPlaneName: Scalars['String']['input'];
-  privateLinks: Array<PrivateLinkInput>;
+export type MutationRootUpdateDataPlanePrivateLinkArgs = {
+  config: PrivateLinkConfigInput;
+  id: Scalars['Id']['input'];
 };
 
 
@@ -1506,21 +1525,54 @@ export type PrefixesBy = {
   minCapability: Capability;
 };
 
-/**
- * Private link configuration for a customer-owned data plane: AWS
- * PrivateLink, Azure Private Link, or GCP Private Service Connect.
- */
-export type PrivateLink = AwsPrivateLink | AzurePrivateLink | GcpPrivateServiceConnect;
+/** A configured private link and its controller-observed provisioning status. */
+export type PrivateLink = {
+  __typename?: 'PrivateLink';
+  /**
+   * The link configuration (AWS PrivateLink, Azure Private Link, or GCP PSC).
+   * Its variant (`AWSPrivateLink`/`AzurePrivateLink`/`GCPPrivateServiceConnect`)
+   * is the link's cloud provider.
+   */
+  config: PrivateLinkConfig;
+  /**
+   * Provider-specific provisioning details (DNS entries, IPs) once
+   * provisioned; opaque JSON exported by the data-plane controller.
+   */
+  details?: Maybe<Scalars['JSON']['output']>;
+  /** Failure detail when `status` is `failed`. */
+  error?: Maybe<Scalars['String']['output']>;
+  /** Stable identifier of this private link. */
+  id: Scalars['Id']['output'];
+  /** When the controller last observed this link's status. */
+  observedAt?: Maybe<Scalars['DateTime']['output']>;
+  /** Controller-observed provisioning status. */
+  status: PrivateLinkProvisioningStatus;
+};
 
 /**
  * Private link configuration for a customer-owned data plane: AWS
  * PrivateLink, Azure Private Link, or GCP Private Service Connect.
  */
-export type PrivateLinkInput = {
+export type PrivateLinkConfig = AwsPrivateLink | AzurePrivateLink | GcpPrivateServiceConnect;
+
+/**
+ * Private link configuration for a customer-owned data plane: AWS
+ * PrivateLink, Azure Private Link, or GCP Private Service Connect.
+ */
+export type PrivateLinkConfigInput = {
   aws?: InputMaybe<AwsPrivateLinkInput>;
   azure?: InputMaybe<AzurePrivateLinkInput>;
   gcp?: InputMaybe<GcpPrivateServiceConnectInput>;
 };
+
+/** Controller-observed provisioning status of a configured private link. */
+export type PrivateLinkProvisioningStatus =
+  /** Provisioning failed; see `error`. */
+  | 'FAILED'
+  /** Not yet provisioned for the current configuration. */
+  | 'PENDING'
+  /** Provisioned; `details` describes the endpoint. */
+  | 'PROVISIONED';
 
 /** Filter connectors by their protocol (capture or materialization). */
 export type ProtocolFilter = {
@@ -2231,24 +2283,6 @@ export type UsBankAccountPaymentMethodDetails = {
   last4?: Maybe<Scalars['String']['output']>;
 };
 
-export type AlertConfigsQueryVariables = Exact<{
-  filter?: InputMaybe<AlertConfigsFilter>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-}>;
-
-
-export type AlertConfigsQuery = { __typename?: 'QueryRoot', alertConfigs: { __typename?: 'AlertConfigEntryConnection', edges: Array<{ __typename?: 'AlertConfigEntryEdge', node: { __typename?: 'AlertConfigEntry', catalogPrefixOrName: string, config: any, createdAt: string, detail?: string | null, id: string, lastModifiedBy?: string | null, updatedAt: string, effective: { __typename?: 'EffectiveAlertConfig', config: any, provenance: Array<{ __typename?: 'FieldProvenance', source?: string | null }> } } }>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean } } };
-
-export type UpdateAlertConfigMutationMutationVariables = Exact<{
-  catalogPrefixOrName: Scalars['String']['input'];
-  config: Scalars['JSON']['input'];
-  detail?: InputMaybe<Scalars['String']['input']>;
-}>;
-
-
-export type UpdateAlertConfigMutationMutation = { __typename?: 'MutationRoot', updateAlertConfig: { __typename?: 'UpdateAlertConfigResult', catalogPrefixOrName: string } };
-
 /**
  * A user_grant held by a service account: the prefix it may act on and the
  * capability it holds there. An account's access is the union of its grants,
@@ -2268,6 +2302,24 @@ export type UserGrantInput = {
   capability: Capability;
   prefix: Scalars['Prefix']['input'];
 };
+
+export type AlertConfigsQueryVariables = Exact<{
+  filter?: InputMaybe<AlertConfigsFilter>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type AlertConfigsQuery = { __typename?: 'QueryRoot', alertConfigs: { __typename?: 'AlertConfigEntryConnection', edges: Array<{ __typename?: 'AlertConfigEntryEdge', node: { __typename?: 'AlertConfigEntry', catalogPrefixOrName: string, config: any, createdAt: string, detail?: string | null, id: string, lastModifiedBy?: string | null, updatedAt: string, effective: { __typename?: 'EffectiveAlertConfig', config: any, provenance: Array<{ __typename?: 'FieldProvenance', source?: string | null }> } } }>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean } } };
+
+export type UpdateAlertConfigMutationMutationVariables = Exact<{
+  catalogPrefixOrName: Scalars['String']['input'];
+  config: Scalars['JSON']['input'];
+  detail?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type UpdateAlertConfigMutationMutation = { __typename?: 'MutationRoot', updateAlertConfig: { __typename?: 'UpdateAlertConfigResult', catalogPrefixOrName: string } };
 
 export type CreateAlertSubscriptionMutationMutationVariables = Exact<{
   prefix: Scalars['Prefix']['input'];
