@@ -152,9 +152,7 @@ export const AdminPage: Record<string, string> = {
     // Storage Mappings
     'storageMappings.header': `Collection Storage`,
     'storageMappingsTable.title': `Storage Locations`,
-    'storageMappingsTable.table.aria.label': `Storage Locations Table`,
     'storageMappingsTable.filterLabel': `Filter by Prefix`,
-    'storageMappingsTable.message1': `No results found.`,
     'storageMappingsTable.message2': `We couldn't find any results matching your search. Please try a different filter.`,
     'storageMappings.status.active': `Primary`,
     'storageMappings.prefix.description': `The prefix you want to configure`,
@@ -165,12 +163,8 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.lastUpdated.label': `Last Updated`,
     'storageMappings.message': `Create a Storage Mapping to govern where your data is stored. The primary storage mapping is where new data is written to, both primary and other storage mappings are used to read existing data from.`,
 
-    'storageMappings.configureStorage.label': `Add Storage`,
     'storageMappings.wizard.step.configure': `Configuration`,
     'storageMappings.wizard.step.test': `Continue to connection test`,
-    'storageMappings.wizard.title.configure': `New Collection Storage`,
-    'storageMappings.wizard.title.test': `Authorize Storage Access`,
-    'storageMappings.wizard.cta.testConnection': `Continue to connection test`,
     'storageMappings.dialog.generate.description': `Configure a new collection storage for your data.`,
     'storageMappings.dialog.generate.alert.keyPrefix': `Your tenant, {tenant}, will be used to prefix the keys written to the specified storage location.`,
     'storageMappings.dialog.generate.providerOption.AZURE': `Azure Object Storage Service`,
@@ -181,22 +175,10 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.generate.error.republicationFailed': `There was an error republishing the entities in your system. Please try again.`,
     'storageMappings.dialog.generate.error.unableToFetchLogs': `There was an issue fetching the logs when applying the new storage mapping. Please contact support to confirm that your system has been updated accordingly.`,
 
-    // Dialog - shared
-    'storageMappings.dialog.error.loadFailed': `We weren't able to load the data needed for this form. Please reload the page and try again.`,
-    'storageMappings.dialog.docsLink': `documentation`,
-    'storageMappings.dialog.docsPath': `https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow`,
-
-    // Update dialog
-    'storageMappings.dialog.update.title': `Storage for `,
-    'storageMappings.dialog.update.description.prefix': `Update your data plane or collection storage configuration below. For information and access requirements, see the `,
-    'storageMappings.dialog.update.description.suffix': `.`,
-    'storageMappings.dialog.update.saveChanges': `Save Changes`,
-
     // Create dialog
     'storageMappings.dialog.create.description': `Add a new storage location for your collection data. For information and access requirements, see the {docLink}.`,
     'storageMappings.dialog.create.description.docPath': `https://docs.estuary.dev/getting-started/installation/#configuring-your-cloud-storage-bucket-for-use-with-flow`,
     'storageMappings.dialog.create.description.docLink': `documentation`,
-    'storageMappings.dialog.create.testDescription.prefix': `Each data plane that processes your data needs its own access to your storage bucket. For more details, see the `,
 
     // Connection tests
     'storageMappings.dialog.connectionTests.title': `Connection Tests`,
@@ -212,7 +194,6 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.dataPlanes.setAsDefault': `Set as default`,
     'storageMappings.dialog.dataPlanes.selector.label': `Data Plane`,
     'storageMappings.dialog.dataPlanes.allowPublic': `Allow public`,
-    'storageMappings.dialog.dataPlanes.validation.required': `At least one data plane is required`,
 
     // Storage locations card
     'storageMappings.dialog.storageLocations.title': `Storage Locations`,

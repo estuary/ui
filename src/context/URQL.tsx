@@ -88,6 +88,12 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             revokeRefreshToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'refreshTokens');
                             },
+                            createStorageMapping(_result, _args, cache) {
+                                invalidateQuery(cache, 'storageMappings');
+                            },
+                            updateStorageMapping(_result, _args, cache) {
+                                invalidateQuery(cache, 'storageMappings');
+                            },
                         },
                     },
                 }),
