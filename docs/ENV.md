@@ -58,10 +58,7 @@ foo_enabled=true
 
 | Key                                 | Description                                            |
 | ----------------------------------- | ------------------------------------------------------ |
-| `VITE_GQL_URL`                      | GraphQL server URL                                     |
-| `VITE_TASK_AUTHORIZATION_URL`       | Fetching access to read ops logs or stats for tasks    |
-| `VITE_COLLECTION_AUTHORIZATION_URL` | Access to read ops logs for tasks                      |
-| `VITE_ENTITY_STATUS_BASE_URL`       | Used on details pages to fetch status / related tasks  |
+| `VITE_ESTUARY_API_URL`              | Base URL for the Estuary API; endpoint paths (GraphQL, task/collection authorization, entity status) are appended at each call site |
 | `VITE_MARKETPLACE_VERIFY_URL`       | Endpoint for verifying GCP Marketplace subscriptions   |
 | `VITE_DEFAULT_DATA_PLANE_SUFFIX`    | Default data-plane suffix appended to data-plane names |
 
