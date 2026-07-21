@@ -13,7 +13,7 @@ import { usePublicDataPlanes } from 'src/hooks/dataPlanes/usePublicDataPlanes';
 
 // Matches est-dry-dock's phased rollout of colocated trial buckets: this is
 // the plane new tenants land on when nothing else is picked.
-const PREFERRED_DEFAULT = 'ops/dp/public/aws-us-east-1-c1';
+const DEFAULT_PUBLIC_DATA_PLANE = 'ops/dp/public/aws-us-east-1-c1';
 
 function DataPlaneSelector() {
     const intl = useIntl();
@@ -32,7 +32,7 @@ function DataPlaneSelector() {
     useEffect(() => {
         if (!selected && options.length > 0) {
             const preferred =
-                options.find((option) => option.name === PREFERRED_DEFAULT) ??
+                options.find((option) => option.name === DEFAULT_PUBLIC_DATA_PLANE) ??
                 options[0];
             setSelected(preferred.name);
         }
