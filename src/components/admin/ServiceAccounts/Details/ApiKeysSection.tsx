@@ -1,4 +1,4 @@
-import type { ServiceAccountTokenInfo } from 'src/gql-types/graphql';
+import type { ServiceAccountApiKey } from 'src/gql-types/graphql';
 
 import { useMemo, useState } from 'react';
 
@@ -16,7 +16,7 @@ import {
 import { Key, Plus, Trash } from 'iconoir-react';
 import { DateTime } from 'luxon';
 
-import { useRevokeServiceAccountToken } from 'src/api/gql/serviceAccounts';
+import { useRevokeApiKey } from 'src/api/gql/serviceAccounts';
 import {
     ExpiryWarning,
     tokenExpiry,
@@ -25,7 +25,7 @@ import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndica
 import AlertBox from 'src/components/shared/AlertBox';
 
 interface ApiKeysSectionProps {
-    tokens: ServiceAccountTokenInfo[];
+    tokens: ServiceAccountApiKey[];
     onCreateKey: () => void;
 }
 
@@ -57,16 +57,15 @@ function recentlyUsedGraceMinutes(
 
 export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
     const [revokeTarget, setRevokeTarget] =
-        useState<ServiceAccountTokenInfo | null>(null);
+        useState<ServiceAccountApiKey | null>(null);
     const [revokeError, setRevokeError] = useState<string | null>(null);
 
-    const [{ fetching: revoking }, revokeServiceAccountToken] =
-        useRevokeServiceAccountToken();
+    const [{ fetching: revoking }, revokeApiKey] = useRevokeApiKey();
 
-    const revokeToken = async (token: ServiceAccountTokenInfo) => {
+    const revokeToken = async (token: ServiceAccountApiKey) => {
         setRevokeError(null);
 
-        const result = await revokeServiceAccountToken({ id: token.id });
+        const result = await revokeApiKey({ id: token.id });
 
         if (result.error) {
             // Surface the failure in the confirmation dialog — the expired-key
@@ -81,7 +80,7 @@ export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
 
     // Expired keys are already inert, so revoking one skips the confirmation
     // dialog; active keys open it first.
-    const requestRevoke = (token: ServiceAccountTokenInfo) => {
+    const requestRevoke = (token: ServiceAccountApiKey) => {
         if (isExpired(token.expiresAt)) {
             void revokeToken(token);
         } else {

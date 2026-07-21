@@ -25,8 +25,8 @@ import {
 import { NavArrowLeft, Plus, Refresh, Trash } from 'iconoir-react';
 
 import {
+    useCreateApiKey,
     useCreateServiceAccount,
-    useCreateServiceAccountToken,
 } from 'src/api/gql/serviceAccounts';
 import { CapabilitySelector } from 'src/components/admin/ServiceAccounts/CapabilitySelector';
 import { LifetimeSelector } from 'src/components/admin/ServiceAccounts/LifetimeSelector';
@@ -90,8 +90,7 @@ export function CreateServiceAccountDialog({
 
     const [{ fetching: creatingAccount }, createServiceAccount] =
         useCreateServiceAccount();
-    const [{ fetching: creatingToken }, createServiceAccountToken] =
-        useCreateServiceAccountToken();
+    const [{ fetching: creatingToken }, createApiKey] = useCreateApiKey();
     const fetching = creatingAccount || creatingToken;
 
     const [localMode, setLocalMode] = useState<CreateMode>(mode);
@@ -195,16 +194,13 @@ export function CreateServiceAccountDialog({
         }
 
         if (localMode === 'guided' && makeKey) {
-            const tokenResult = await createServiceAccountToken({
+            const tokenResult = await createApiKey({
                 catalogName,
                 detail: keyDesc || 'Default key',
                 validFor: keyLife,
             });
 
-            if (
-                tokenResult.error ||
-                !tokenResult.data?.createServiceAccountToken
-            ) {
+            if (tokenResult.error || !tokenResult.data?.createApiKey) {
                 // The account exists; only the key failed. Surface it but move
                 // on to the account so the user can retry the key there.
                 setError(
@@ -217,7 +213,7 @@ export function CreateServiceAccountDialog({
 
             setCreatedName(catalogName);
             setReveal({
-                secret: tokenResult.data.createServiceAccountToken.secret,
+                secret: tokenResult.data.createApiKey.secret,
                 description: keyDesc || 'API key',
                 expires: formatExpiryFromNow(keyLife),
                 account: catalogName,

@@ -24,9 +24,9 @@ export function capabilityColor(capability: string): CapabilityColor {
 // Capabilities offered when granting access, ordered least- to most-privileged.
 export const CAPABILITY_OPTIONS: Capability[] = ['read', 'write', 'admin'];
 
-// API key lifetimes. Values are ISO-8601 durations passed to
-// createServiceAccountToken's required `validFor`. (The design's "No expiry"
-// is omitted because the field is required.)
+// API key lifetimes. Values are ISO-8601 durations passed to createApiKey's
+// required `validFor`. (The design's "No expiry" is omitted because the field
+// is required.)
 export interface LifetimeOption {
     label: string;
     value: string;

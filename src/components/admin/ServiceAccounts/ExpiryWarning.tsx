@@ -45,7 +45,9 @@ export function tokenExpiry(expiresAt: string | null | undefined): {
 
 // The soonest-expiring token's `expiresAt` — the account's most urgent
 // credential. Null when the account has no tokens.
-export function soonestExpiry(tokens: ServiceAccount['tokens']): string | null {
+export function soonestExpiry(
+    tokens: ServiceAccount['apiKeys']
+): string | null {
     if (tokens.length === 0) {
         return null;
     }

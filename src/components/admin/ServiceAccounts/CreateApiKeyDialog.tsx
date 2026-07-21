@@ -11,7 +11,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import { useCreateServiceAccountToken } from 'src/api/gql/serviceAccounts';
+import { useCreateApiKey } from 'src/api/gql/serviceAccounts';
 import { LifetimeSelector } from 'src/components/admin/ServiceAccounts/LifetimeSelector';
 import { SecretRevealModal } from 'src/components/admin/ServiceAccounts/SecretRevealModal';
 import {
@@ -40,8 +40,7 @@ export function CreateApiKeyDialog({
     const [secret, setSecret] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const [{ fetching }, createServiceAccountToken] =
-        useCreateServiceAccountToken();
+    const [{ fetching }, createApiKey] = useCreateApiKey();
 
     useEffect(() => {
         if (open) {
@@ -59,13 +58,13 @@ export function CreateApiKeyDialog({
             return;
         }
 
-        const result = await createServiceAccountToken({
+        const result = await createApiKey({
             catalogName,
             detail: label,
             validFor,
         });
 
-        if (result.error || !result.data?.createServiceAccountToken) {
+        if (result.error || !result.data?.createApiKey) {
             setError(
                 result.error?.message ??
                     'There was an error creating the API key.'
@@ -73,7 +72,7 @@ export function CreateApiKeyDialog({
             return;
         }
 
-        setSecret(result.data.createServiceAccountToken.secret);
+        setSecret(result.data.createApiKey.secret);
     };
 
     const handleRevealDone = () => {

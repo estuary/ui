@@ -20,7 +20,6 @@ export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
         catalogName
         createdAt
         createdByEmail
-        updatedAt
         lastUsedAt
         grants {
             prefix
@@ -29,7 +28,7 @@ export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
             detail
             updatedAt
         }
-        tokens {
+        apiKeys {
             id
             detail
             createdAt
@@ -99,7 +98,7 @@ export function useServiceAccount(catalogName: string | null) {
 const CREATE_SERVICE_ACCOUNT = graphql(`
     mutation CreateServiceAccount(
         $catalogName: Name!
-        $grants: [ServiceAccountGrantInput!]!
+        $grants: [UserGrantInput!]!
     ) {
         createServiceAccount(catalogName: $catalogName, grants: $grants) {
             catalogName
@@ -108,15 +107,15 @@ const CREATE_SERVICE_ACCOUNT = graphql(`
     }
 `);
 
-// Mints a credential (refresh token) owned by the account. The secret is
-// returned exactly once and cannot be retrieved again.
-const CREATE_SERVICE_ACCOUNT_TOKEN = graphql(`
-    mutation CreateServiceAccountToken(
+// Mints an API key (a multi-use refresh token) owned by the account. The secret
+// is returned exactly once and cannot be retrieved again.
+const CREATE_API_KEY = graphql(`
+    mutation CreateApiKey(
         $catalogName: Name!
         $detail: String!
         $validFor: String!
     ) {
-        createServiceAccountToken(
+        createApiKey(
             catalogName: $catalogName
             detail: $detail
             validFor: $validFor
@@ -130,9 +129,9 @@ const CREATE_SERVICE_ACCOUNT_TOKEN = graphql(`
     }
 `);
 
-const REVOKE_SERVICE_ACCOUNT_TOKEN = graphql(`
-    mutation RevokeServiceAccountToken($id: Id!) {
-        revokeServiceAccountToken(id: $id) {
+const REVOKE_API_KEY = graphql(`
+    mutation RevokeApiKey($id: Id!) {
+        revokeApiKey(id: $id) {
             ...ServiceAccountFields
         }
     }
@@ -165,11 +164,11 @@ const REMOVE_SERVICE_ACCOUNT_GRANT = graphql(`
     }
 `);
 
-// Revokes every active token the account owns. Used when removing an account's
-// last grant: a credential with no access left is worth retiring.
-const REVOKE_ALL_SERVICE_ACCOUNT_TOKENS = graphql(`
-    mutation RevokeAllServiceAccountTokens($catalogName: Name!) {
-        revokeAllServiceAccountTokens(catalogName: $catalogName) {
+// Revokes every active API key the account owns. Used when removing an
+// account's last grant: a credential with no access left is worth retiring.
+const REVOKE_ALL_API_KEYS = graphql(`
+    mutation RevokeAllApiKeys($catalogName: Name!) {
+        revokeAllApiKeys(catalogName: $catalogName) {
             ...ServiceAccountFields
         }
     }
@@ -179,12 +178,12 @@ export function useCreateServiceAccount() {
     return useMutation(CREATE_SERVICE_ACCOUNT);
 }
 
-export function useCreateServiceAccountToken() {
-    return useMutation(CREATE_SERVICE_ACCOUNT_TOKEN);
+export function useCreateApiKey() {
+    return useMutation(CREATE_API_KEY);
 }
 
-export function useRevokeServiceAccountToken() {
-    return useMutation(REVOKE_SERVICE_ACCOUNT_TOKEN);
+export function useRevokeApiKey() {
+    return useMutation(REVOKE_API_KEY);
 }
 
 export function useAddServiceAccountGrant() {
@@ -195,6 +194,6 @@ export function useRemoveServiceAccountGrant() {
     return useMutation(REMOVE_SERVICE_ACCOUNT_GRANT);
 }
 
-export function useRevokeAllServiceAccountTokens() {
-    return useMutation(REVOKE_ALL_SERVICE_ACCOUNT_TOKENS);
+export function useRevokeAllApiKeys() {
+    return useMutation(REVOKE_ALL_API_KEYS);
 }

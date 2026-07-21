@@ -66,15 +66,15 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         // returns the updated account reconciles every cached
                         // query (list + detail) by key — see updates below.
                         ServiceAccount: (data) => data.catalogName as string,
-                        ServiceAccountTokenInfo: (data) => data.id as string,
+                        ServiceAccountApiKey: (data) => data.id as string,
                         // Grants have no id of their own; keep them embedded
                         // under their owning account.
-                        ServiceAccountGrant: (_data) => null,
-                        // The one-time token secret lives only on this result —
+                        UserGrant: (_data) => null,
+                        // The one-time API-key secret lives only on this result —
                         // leave it un-normalized so it never lands in the cache.
                         // Its nested `serviceAccount` still normalizes by
-                        // catalogName, so the new token merges into the account.
-                        CreateServiceAccountTokenResult: (_data) => null,
+                        // catalogName, so the new key merges into the account.
+                        CreateApiKeyResult: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
                     },
@@ -101,7 +101,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                             revokeRefreshToken(_result, _args, cache) {
                                 invalidateQuery(cache, 'refreshTokens');
                             },
-                            // Grant and token mutations return the updated
+                            // Grant and API-key mutations return the updated
                             // ServiceAccount, so the normalized cache (keyed by
                             // catalogName) reconciles the list and detail queries
                             // on its own. createServiceAccount still needs an

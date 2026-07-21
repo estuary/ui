@@ -1,4 +1,4 @@
-import type { ServiceAccountGrant } from 'src/gql-types/graphql';
+import type { UserGrant } from 'src/gql-types/graphql';
 import type { Capability } from 'src/types';
 
 import { useState } from 'react';
@@ -21,7 +21,7 @@ import { EditPencil, Folder, Lock, Plus, Trash } from 'iconoir-react';
 
 import {
     useRemoveServiceAccountGrant,
-    useRevokeAllServiceAccountTokens,
+    useRevokeAllApiKeys,
 } from 'src/api/gql/serviceAccounts';
 import { GrantDialog } from 'src/components/admin/ServiceAccounts/GrantDialog';
 import { capabilityColor } from 'src/components/admin/ServiceAccounts/shared';
@@ -30,7 +30,7 @@ import AlertBox from 'src/components/shared/AlertBox';
 
 interface GrantsSectionProps {
     catalogName: string;
-    grants: ServiceAccountGrant[];
+    grants: UserGrant[];
     // Number of API keys the account owns, used to offer revoking them when the
     // last grant is removed.
     tokenCount: number;
@@ -50,22 +50,20 @@ export function GrantsSection({
     const { leaves } = usePrefixLeaves();
 
     const [dialog, setDialog] = useState<GrantDialogState | null>(null);
-    const [removeTarget, setRemoveTarget] =
-        useState<ServiceAccountGrant | null>(null);
+    const [removeTarget, setRemoveTarget] = useState<UserGrant | null>(null);
     const [revokeKeysToo, setRevokeKeysToo] = useState(false);
     const [removeError, setRemoveError] = useState<string | null>(null);
 
     const [{ fetching: removing }, removeServiceAccountGrant] =
         useRemoveServiceAccountGrant();
-    const [{ fetching: revoking }, revokeAllServiceAccountTokens] =
-        useRevokeAllServiceAccountTokens();
+    const [{ fetching: revoking }, revokeAllApiKeys] = useRevokeAllApiKeys();
 
     // Removing the only remaining grant leaves the account with no access.
     const removingLastGrant = grants.length === 1;
     const offerRevokeKeys = removingLastGrant && tokenCount > 0;
     const busy = removing || revoking;
 
-    const openRemove = (grant: ServiceAccountGrant) => {
+    const openRemove = (grant: UserGrant) => {
         setRemoveError(null);
         setRevokeKeysToo(false);
         setRemoveTarget(grant);
@@ -89,7 +87,7 @@ export function GrantsSection({
         }
 
         if (offerRevokeKeys && revokeKeysToo) {
-            const revokeResult = await revokeAllServiceAccountTokens({
+            const revokeResult = await revokeAllApiKeys({
                 catalogName,
             });
 

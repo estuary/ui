@@ -1,9 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { ReactNode } from 'react';
-import type {
-    ServiceAccount,
-    ServiceAccountGrant,
-} from 'src/gql-types/graphql';
+import type { ServiceAccount, UserGrant } from 'src/gql-types/graphql';
 
 import { useState } from 'react';
 
@@ -32,7 +29,7 @@ import {
 
 interface AccountCardProps {
     serviceAccount: ServiceAccount;
-    grants: ServiceAccountGrant[];
+    grants: UserGrant[];
     onOpen: (catalogName: string) => void;
 }
 
@@ -70,7 +67,7 @@ export function AccountCard({
     const grantCount = grants.length;
     const hasGrants = grantCount > 0;
 
-    const keyCount = serviceAccount.tokens.length;
+    const keyCount = serviceAccount.apiKeys.length;
 
     const [hovered, setHovered] = useState(false);
 
@@ -155,7 +152,7 @@ export function AccountCard({
                     </Box>
 
                     <ExpiryWarning
-                        expiresAt={soonestExpiry(serviceAccount.tokens)}
+                        expiresAt={soonestExpiry(serviceAccount.apiKeys)}
                         sx={{ flex: 'none' }}
                     />
                 </Stack>

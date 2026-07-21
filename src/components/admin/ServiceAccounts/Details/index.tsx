@@ -161,9 +161,9 @@ export function ServiceAccountDetails() {
                             : 'Never'}
                     </MetaItem>
                     <MetaItem label="API keys">
-                        {serviceAccount.tokens.length === 0
+                        {serviceAccount.apiKeys.length === 0
                             ? 'None'
-                            : String(serviceAccount.tokens.length)}
+                            : String(serviceAccount.apiKeys.length)}
                     </MetaItem>
                 </Stack>
 
@@ -171,12 +171,12 @@ export function ServiceAccountDetails() {
                     <GrantsSection
                         catalogName={serviceAccount.catalogName}
                         grants={serviceAccount.grants}
-                        tokenCount={serviceAccount.tokens.length}
+                        tokenCount={serviceAccount.apiKeys.length}
                     />
                 </Box>
 
                 <ApiKeysSection
-                    tokens={serviceAccount.tokens}
+                    tokens={serviceAccount.apiKeys}
                     onCreateKey={() => setCreateKeyOpen(true)}
                 />
 
