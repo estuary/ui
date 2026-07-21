@@ -3,6 +3,7 @@ import type {
     SubscriptionMetadataDictionary,
 } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { TableState } from 'src/types';
+import type { WithRequiredProperty } from 'src/types/utils';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -106,7 +107,7 @@ function PrefixAlertTable() {
             );
 
             const alertConfigData: {
-                configs: AlertConfigOptions;
+                configs: WithRequiredProperty<AlertConfigOptions, 'standard'>;
                 prefix: string;
             }[] =
                 alertConfigResponse?.data &&

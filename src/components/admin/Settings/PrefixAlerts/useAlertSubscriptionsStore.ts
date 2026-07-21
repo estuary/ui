@@ -106,7 +106,7 @@ const getInitialState = (): Pick<
     catalogPrefix: '',
     initializationErrors: [],
     mutableSubscriptionMetadata: {
-        configs: { effective: {}, standard: {} },
+        configs: { effective: {}, standard: null },
         subscriptions: [],
     },
     prefixErrorsExist: false,
@@ -219,7 +219,14 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                 }
 
                                 state.subscriptionMetadata[prefix].configs =
-                                    matchedValue.configs;
+                                    matchedValue.prefix === prefix
+                                        ? matchedValue.configs
+                                        : {
+                                              effective:
+                                                  matchedValue.configs
+                                                      .effective,
+                                              standard: null,
+                                          };
                             }
                         );
                     }),
@@ -310,21 +317,56 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             state.mutableSubscriptionMetadata.configs
                         ) as (keyof AlertConfigOptions)[];
 
+                        const alertConditionEmpty = isEmpty(alertCondition);
+
                         configKeys.forEach((key) => {
-                            state.mutableSubscriptionMetadata.configs[key][
-                                targetSetting
-                            ] = isEmpty(alertCondition)
-                                ? omit(
-                                      state.mutableSubscriptionMetadata.configs[
-                                          key
-                                      ][targetSetting],
-                                      'condition'
-                                  )
-                                : {
-                                      ...state.mutableSubscriptionMetadata
-                                          .configs[key][targetSetting],
-                                      condition: alertCondition,
-                                  };
+                            if (
+                                state.mutableSubscriptionMetadata.configs[key]
+                            ) {
+                                if (alertConditionEmpty) {
+                                    state.mutableSubscriptionMetadata.configs[
+                                        key
+                                    ][targetSetting] = omit(
+                                        state.mutableSubscriptionMetadata
+                                            .configs[key][targetSetting],
+                                        'condition'
+                                    );
+                                } else {
+                                    const immutableConfig =
+                                        state.catalogPrefix.length > 0 &&
+                                        hasOwnProperty(
+                                            state.subscriptionMetadata,
+                                            state.catalogPrefix
+                                        )
+                                            ? (state.subscriptionMetadata[
+                                                  state.catalogPrefix
+                                              ].configs[key] ?? {})
+                                            : {};
+
+                                    state.mutableSubscriptionMetadata.configs[
+                                        key
+                                    ] = {
+                                        ...immutableConfig,
+                                        [targetSetting]: {
+                                            ...immutableConfig?.[targetSetting],
+                                            ...state.mutableSubscriptionMetadata
+                                                .configs[key][targetSetting],
+                                            condition: alertCondition,
+                                        },
+                                    };
+                                }
+
+                                return;
+                            }
+
+                            if (!alertConditionEmpty) {
+                                state.mutableSubscriptionMetadata.configs[key] =
+                                    {
+                                        [targetSetting]: {
+                                            condition: alertCondition,
+                                        },
+                                    };
+                            }
                         });
                     }),
                     false,
@@ -455,29 +497,21 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
 
                         state.prefixErrorsExist = Boolean(errors);
 
-                        if (
+                        state.mutableSubscriptionMetadata.subscriptions =
                             state.catalogPrefix.length > 0 &&
                             hasOwnProperty(
                                 state.subscriptionMetadata,
                                 state.catalogPrefix
                             )
-                        ) {
-                            state.mutableSubscriptionMetadata =
-                                state.subscriptionMetadata[state.catalogPrefix];
-
-                            return;
-                        }
-
-                        state.mutableSubscriptionMetadata = {
-                            configs: { effective: {}, standard: {} },
-                            subscriptions:
-                                state.mutableSubscriptionMetadata.subscriptions.map(
-                                    (subscription) => ({
-                                        ...subscription,
-                                        catalogPrefix: state.catalogPrefix,
-                                    })
-                                ),
-                        };
+                                ? state.subscriptionMetadata[
+                                      state.catalogPrefix
+                                  ].subscriptions
+                                : state.mutableSubscriptionMetadata.subscriptions.map(
+                                      (subscription) => ({
+                                          ...subscription,
+                                          catalogPrefix: state.catalogPrefix,
+                                      })
+                                  );
                     }),
                     false,
                     'subscribed prefix set'

@@ -156,12 +156,16 @@ export function useModifyAlertMetadata(
         const existingConfigRemoval =
             directImplicitMatch && explicitConfigEmpty && !implicitConfigEmpty;
 
-        if (
+        const configUpsertRequired =
             existingConfigRemoval ||
             (!explicitConfigEmpty && implicitConfigEmpty) ||
             (!explicitConfigEmpty &&
                 !implicitConfigEmpty &&
-                !isEqual(explicitEffectiveConfig, implicitEffectiveConfig))
+                !isEqual(explicitEffectiveConfig, implicitEffectiveConfig));
+
+        if (
+            configUpsertRequired &&
+            mutableSubscriptionMetadata.configs.standard
         ) {
             const configResponse = await upsertConfig({
                 catalogPrefixOrName: catalogPrefix,

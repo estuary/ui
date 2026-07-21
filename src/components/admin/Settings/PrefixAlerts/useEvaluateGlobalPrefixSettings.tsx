@@ -52,13 +52,15 @@ export function useEvaluateGlobalPrefixSettings() {
                 return settings;
             }
 
-            const [matchedPrefix, _matchedMetadata] =
+            const [matchedPrefix, matchedMetadata] =
                 matchedImmutablePrefixAndMetadata;
 
             settings.implicit =
                 immutableSubscriptionMetadata[matchedPrefix].configs;
 
-            settings.directImplicitMatch = evaluatedPrefix === matchedPrefix;
+            settings.directImplicitMatch =
+                evaluatedPrefix === matchedPrefix &&
+                matchedMetadata.configs.standard !== null;
 
             return settings;
         },

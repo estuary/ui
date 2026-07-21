@@ -8,7 +8,7 @@ import type { AlertConfigKeys } from 'src/utils/notification-utils';
 
 export interface AlertConfigOptions {
     effective: Schema;
-    standard: Schema;
+    standard: Schema | null;
 }
 
 export interface AlertConfigResponse extends AlertMetadataErrorResponse {
