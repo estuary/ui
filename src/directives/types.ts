@@ -42,6 +42,7 @@ interface ClickToAcceptClaim {
 interface OnboardClaim {
     requestedTenant: string;
     survey: any;
+    requestedDataPlane?: string;
 }
 
 interface StorageMappingsClaim {
