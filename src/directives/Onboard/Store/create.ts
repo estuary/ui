@@ -17,6 +17,7 @@ const getInitialStateData = (): Pick<
     | 'nameProblematic'
     | 'nameMissing'
     | 'requestedTenant'
+    | 'requestedDataPlane'
     | 'surveyResponse'
     | 'surveyMissing'
     | 'serverError'
@@ -25,6 +26,7 @@ const getInitialStateData = (): Pick<
     nameProblematic: false,
     nameMissing: false,
     requestedTenant: '',
+    requestedDataPlane: null,
     surveyResponse: { origin: '', details: '' },
     surveyMissing: false,
     serverError: null,
@@ -60,6 +62,16 @@ const getInitialState = (set: NamedSet<OnboardingState>): OnboardingState => ({
             }),
             false,
             'setNameInvalid'
+        );
+    },
+
+    setRequestedDataPlane: (value) => {
+        set(
+            () => ({
+                requestedDataPlane: value,
+            }),
+            false,
+            'setRequestedDataPlane'
         );
     },
 
