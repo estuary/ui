@@ -8,7 +8,7 @@ loadEnvFile(process.env.LOCAL ? '.env.development.local' : '.env');
 const config: CodegenConfig = {
     schema: [
         {
-            [process.env.VITE_GQL_URL as string]: {
+            [`${process.env.VITE_ESTUARY_API_URL}/api/graphql`]: {
                 inputValueDeprecation: true,
             } satisfies Partial<IntrospectionOptions> as Types.UrlSchemaOptions,
         },

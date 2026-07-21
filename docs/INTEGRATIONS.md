@@ -18,7 +18,7 @@ PostgreSQL database, Edge Functions, and auth.
 
 Real-time catalog data (alerts, live specs, shard status).
 
-- Configured via `VITE_GQL_URL` environment variable
+- Configured via the `VITE_ESTUARY_API_URL` base URL, with the `/api/graphql` path appended in `src/utils/env-utils.ts`
 - URQL client library
 - Pagination via before/after cursors
 - GraphiQL explorer available at `http://localhost:3000/test/gql` in development
