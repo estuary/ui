@@ -18,6 +18,7 @@ import {
 import { GrantScroller } from 'src/components/admin/ServiceAccounts/GrantScroller';
 import {
     monogram,
+    monogramColor,
     splitCatalogName,
 } from 'src/components/admin/ServiceAccounts/shared';
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
@@ -26,7 +27,6 @@ import {
     defaultOutline,
     defaultOutline_hovered,
     diminishedTextColor,
-    logoColors,
     semiTransparentBackground,
 } from 'src/context/Theme';
 
@@ -123,12 +123,9 @@ export function AccountCard({
                             fontSize: 14,
                             fontWeight: 700,
                             color: '#06121f',
-                            background: hasGrants
-                                ? `linear-gradient(135deg, ${logoColors.purple}, ${logoColors.teal})`
-                                : (theme) =>
-                                      theme.palette.mode === 'dark'
-                                          ? 'rgba(247, 249, 252, 0.08)'
-                                          : 'rgba(11, 19, 30, 0.06)',
+                            background: monogramColor(
+                                serviceAccount.catalogName
+                            ),
                         }}
                     >
                         {monogram(serviceAccount.catalogName)}

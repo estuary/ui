@@ -47,28 +47,28 @@ export function ServiceAccountsList() {
 
     return (
         <Box>
-            {hasAccounts ? (
-                <Stack
-                    direction="row"
-                    spacing={3}
-                    sx={{
-                        mb: 3,
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start',
-                    }}
-                >
-                    <Box sx={{ maxWidth: 660 }}>
-                        <Typography variant="h6" sx={{ mb: 0.5 }}>
-                            Service Accounts
-                        </Typography>
-                        <Typography color="text.secondary">
-                            Service accounts provide non-login identities for
-                            CI/CD pipelines, AI agents, and other programmatic
-                            integrations — including the Kafka-compatible API
-                            “dekaf”.
-                        </Typography>
-                    </Box>
+            <Stack
+                direction="row"
+                spacing={3}
+                sx={{
+                    mb: 3,
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                }}
+            >
+                <Box sx={{ maxWidth: 660 }}>
+                    <Typography variant="h6" sx={{ mb: 0.5 }}>
+                        Service accounts
+                    </Typography>
+                    <Typography color="text.secondary">
+                        Service accounts provide non-login identities for CI/CD
+                        pipelines, AI agents, and other programmatic
+                        integrations — including the Kafka-compatible API
+                        “dekaf”.
+                    </Typography>
+                </Box>
 
+                {hasAccounts ? (
                     <Button
                         variant="contained"
                         startIcon={<Plus />}
@@ -77,8 +77,8 @@ export function ServiceAccountsList() {
                     >
                         Create service account
                     </Button>
-                </Stack>
-            ) : null}
+                ) : null}
+            </Stack>
 
             <CreateServiceAccountDialog
                 open={createOpen}
@@ -109,7 +109,7 @@ export function ServiceAccountsList() {
                             sx={{
                                 display: 'grid',
                                 gridTemplateColumns:
-                                    'repeat(auto-fit, minmax(320px, 400px))',
+                                    'repeat(auto-fit, minmax(320px, 1fr))',
                                 gap: 2,
                             }}
                         >

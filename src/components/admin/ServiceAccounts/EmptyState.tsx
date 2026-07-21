@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Link, Stack, Typography } from '@mui/material';
 
 import { Developer, Plus } from 'iconoir-react';
 
@@ -53,6 +53,16 @@ export function EmptyState({ onQuickCreate, onGuidedCreate }: EmptyStateProps) {
             >
                 Create your first service account
             </Button>
+
+            <Link
+                component="button"
+                type="button"
+                underline="hover"
+                onClick={onGuidedCreate}
+                sx={{ mt: 2 }}
+            >
+                Use guided setup instead →
+            </Link>
         </Stack>
     );
 }

@@ -2,6 +2,8 @@ import type { Capability } from 'src/types';
 
 import { DateTime, Duration } from 'luxon';
 
+import { stringToColor } from 'src/utils/stableColor';
+
 // A color valid for both <Chip color> and <ToggleButton color>.
 export type CapabilityColor = 'info' | 'primary' | 'warning';
 
@@ -77,4 +79,10 @@ export function monogram(catalogName: string): string {
     const alphanumeric = leaf.replace(/[^a-z0-9]/gi, '');
 
     return (alphanumeric.slice(0, 1) || 'SA').toUpperCase();
+}
+
+// Stable per-account background color for the monogram avatar, derived from the
+// catalog name. High lightness keeps dark monogram text readable across hues.
+export function monogramColor(catalogName: string): string {
+    return stringToColor(catalogName, { saturation: 80, lightness: 60 });
 }

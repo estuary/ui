@@ -15,7 +15,7 @@ const SERVICE_ACCOUNTS_LIMIT = 100;
 // The ServiceAccount fields every query and entity-returning mutation selects.
 // Mutations return the updated account, so the normalized cache (keyed by
 // catalogName) reconciles the list and detail views without a refetch.
-graphql(`
+export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
     fragment ServiceAccountFields on ServiceAccount {
         catalogName
         createdAt
