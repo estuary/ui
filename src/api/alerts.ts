@@ -1,22 +1,10 @@
 import type {
-    AlertConfigQueryResponse,
-    ReducedAlertSubscriptionQueryResponse,
-} from 'src/api/types';
-import type {
     DataProcessingAlert,
     AlertSubscription as LegacyAlertSubscription,
 } from 'src/types';
-import type {
-    AlertConfigMutationInput,
-    AlertConfigQueryInput,
-    AlertSubscriptionMutationInput,
-    AlertSubscriptionsBy,
-    AlertTypeQueryResponse,
-} from 'src/types/gql';
-
-import { gql } from 'urql';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
+import { graphql } from 'src/gql-types';
 import {
     deleteSupabase,
     handleFailure,
@@ -27,7 +15,7 @@ import {
     updateSupabase,
 } from 'src/services/supabase';
 
-const AlertConfigQuery = gql<AlertConfigQueryResponse, AlertConfigQueryInput>`
+const AlertConfigQuery = graphql(`
     query AlertConfigs(
         $filter: AlertConfigsFilter
         $after: String
@@ -57,12 +45,9 @@ const AlertConfigQuery = gql<AlertConfigQueryResponse, AlertConfigQueryInput>`
             }
         }
     }
-`;
+`);
 
-const AlertConfigUpdateMutation = gql<
-    { catalogPrefixOrName: string },
-    AlertConfigMutationInput
->`
+const AlertConfigUpdateMutation = graphql(`
     mutation UpdateAlertConfigMutation(
         $catalogPrefixOrName: String!
         $config: JSON!
@@ -76,12 +61,9 @@ const AlertConfigUpdateMutation = gql<
             catalogPrefixOrName
         }
     }
-`;
+`);
 
-const AlertSubscriptionCreateMutation = gql<
-    { catalogPrefix: string; email: string },
-    AlertSubscriptionMutationInput
->`
+const AlertSubscriptionCreateMutation = graphql(`
     mutation CreateAlertSubscriptionMutation(
         $prefix: Prefix!
         $email: String!
@@ -98,12 +80,9 @@ const AlertSubscriptionCreateMutation = gql<
             email
         }
     }
-`;
+`);
 
-const AlertSubscriptionDeleteMutation = gql<
-    { catalogPrefix: string; email: string },
-    AlertSubscriptionMutationInput
->`
+const AlertSubscriptionDeleteMutation = graphql(`
     mutation DeleteAlertSubscriptionMutation(
         $prefix: Prefix!
         $email: String!
@@ -113,12 +92,9 @@ const AlertSubscriptionDeleteMutation = gql<
             email
         }
     }
-`;
+`);
 
-const AlertSubscriptionQuery = gql<
-    ReducedAlertSubscriptionQueryResponse,
-    AlertSubscriptionsBy
->`
+const AlertSubscriptionQuery = graphql(`
     query AlertSubscriptions($prefix: Prefix!) {
         alertSubscriptions(by: { prefix: $prefix }) {
             alertTypes
@@ -126,12 +102,9 @@ const AlertSubscriptionQuery = gql<
             email
         }
     }
-`;
+`);
 
-const AlertSubscriptionUpdateMutation = gql<
-    { catalogPrefix: string; email: string },
-    AlertSubscriptionMutationInput
->`
+const AlertSubscriptionUpdateMutation = graphql(`
     mutation UpdateAlertSubscriptionMutation(
         $prefix: Prefix!
         $email: String!
@@ -148,9 +121,9 @@ const AlertSubscriptionUpdateMutation = gql<
             email
         }
     }
-`;
+`);
 
-const AlertTypeQuery = gql<AlertTypeQueryResponse>`
+const AlertTypeQuery = graphql(`
     query AlertType {
         alertTypes {
             alertType
@@ -160,7 +133,7 @@ const AlertTypeQuery = gql<AlertTypeQueryResponse>`
             isSystem
         }
     }
-`;
+`);
 
 const createDataProcessingNotification = (
     catalogName: string,

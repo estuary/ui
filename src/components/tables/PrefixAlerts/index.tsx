@@ -64,11 +64,17 @@ function PrefixAlertTable() {
             ? data.alertSubscriptions.filter(
                   ({ catalogPrefix, email }) =>
                       catalogPrefix.includes(searchQuery) ||
-                      email.includes(searchQuery)
+                      email?.includes(searchQuery)
               )
             : data.alertSubscriptions;
 
-        return bundleSubscriptionsByPrefix(evaluatedData);
+        return bundleSubscriptionsByPrefix(
+            evaluatedData.map(({ alertTypes, catalogPrefix, email }) => ({
+                alertTypes,
+                catalogPrefix,
+                email: email ?? '',
+            }))
+        );
     }, [data?.alertSubscriptions, searchQuery]);
 
     const processedDataExists = useMemo(
@@ -89,7 +95,15 @@ function PrefixAlertTable() {
     useEffect(() => {
         if (!fetching && !alertConfigResponse.fetching) {
             setInitializationErrors([error, alertConfigResponse?.error]);
-            setSubscriptionMetadata(data?.alertSubscriptions ?? []);
+            setSubscriptionMetadata(
+                data?.alertSubscriptions.map(
+                    ({ alertTypes, catalogPrefix, email }) => ({
+                        alertTypes,
+                        catalogPrefix,
+                        email: email ?? '',
+                    })
+                ) ?? []
+            );
 
             const alertConfigData: {
                 configs: AlertConfigOptions;

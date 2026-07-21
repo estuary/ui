@@ -1,4 +1,5 @@
 import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { AlertType } from 'src/gql-types/graphql';
 import type { AlertSubscriptionMutationInput } from 'src/types/gql';
 
 import { useCallback } from 'react';
@@ -60,7 +61,9 @@ export function useUpsertAlertSubscription() {
                 : mutateCreateSubscription;
 
             return mutateSubscription({
-                alertTypes: hasLength(alertTypes) ? alertTypes : undefined,
+                alertTypes: hasLength(alertTypes)
+                    ? (alertTypes as AlertType[])
+                    : undefined,
                 email,
                 prefix,
             }).then(
@@ -92,8 +95,6 @@ export function useUpsertAlertSubscription() {
                             variables: response.operation.variables,
                         });
 
-                        const { email, prefix } = response.operation.variables;
-
                         return Promise.resolve({
                             prefix,
                             email,
@@ -102,12 +103,10 @@ export function useUpsertAlertSubscription() {
                         });
                     }
 
-                    const { email, catalogPrefix } = response.data;
-
                     return Promise.resolve({
                         email,
                         id: uuid,
-                        prefix: catalogPrefix,
+                        prefix,
                     });
                 },
                 () => {

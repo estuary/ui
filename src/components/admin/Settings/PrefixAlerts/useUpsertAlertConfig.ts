@@ -59,7 +59,7 @@ export function useUpsertAlertConfig() {
                     }
 
                     const { catalogPrefixOrName: responsePrefix } =
-                        response.data;
+                        response.data.updateAlertConfig;
 
                     return Promise.resolve({
                         prefix: responsePrefix,

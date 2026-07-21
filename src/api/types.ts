@@ -68,7 +68,3 @@ export type ReducedAlertSubscription = Pick<
     AlertSubscription,
     'alertTypes' | 'catalogPrefix' | 'email'
 >;
-
-export interface ReducedAlertSubscriptionQueryResponse {
-    alertSubscriptions: ReducedAlertSubscription[];
-}
