@@ -7,6 +7,8 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.admin.accessGrants': `Access Grants`,
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
+    'routeTitle.admin.serviceAccounts': `Service Accounts`,
+    'routeTitle.admin.serviceAccounts.details': `Service Account`,
     'routeTitle.admin.settings': `Settings`,
     'routeTitle.captureCreate': `Create Capture`,
     'routeTitle.captureDetails': `Capture Details`,
@@ -20,6 +22,7 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.details': `Details`,
     'routeTitle.error.entityNotFound': `Entity Not Found`,
     'routeTitle.error.pageNotFound': `Page Not Found`,
+    'routeTitle.flowctl.accessToken': `flowctl Access Token`,
     'routeTitle.loginLoading': `Checking Credentials`,
     'routeTitle.noGrants': `Signed Up`,
     'routeTitle.legal': `Legal`,
@@ -28,6 +31,8 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.materializationEdit': `Edit Materialization`,
     'routeTitle.materializations': `${CommonMessages['terms.destinations']}`,
     'routeTitle.registration': `Registration`,
+    'routeTitle.settings': `Settings`,
+    'routeTitle.settings.personalTokens': `Personal Tokens`,
 
     // The routes with custom prefix values
     //  The some of these strings are generated in login/Basic and login/Enterprise
