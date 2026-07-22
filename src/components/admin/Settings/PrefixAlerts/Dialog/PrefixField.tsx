@@ -8,11 +8,13 @@ import { useMount } from 'react-use';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import { useTenantStore } from 'src/stores/Tenant';
 import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
 export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     const intl = useIntl();
 
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const objectRoles = useEntitiesStore_capabilities_adminable();
 
     const catalogPrefix = useAlertSubscriptionsStore(
@@ -26,8 +28,13 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     );
 
     useMount(() => {
-        if (staticPrefix && staticPrefix.length > 0) {
-            setSubscribedPrefix(staticPrefix, null);
+        const evaluatedPrefix =
+            staticPrefix && staticPrefix.length > 0
+                ? staticPrefix
+                : selectedTenant;
+
+        if (evaluatedPrefix.length > 0) {
+            setSubscribedPrefix(evaluatedPrefix, null);
         }
     });
 
@@ -60,7 +67,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
                 setSubscribedPrefix(appendWithForwardSlash(catalogPrefix), null)
             }
             onChange={(value) => {
-                setSubscribedPrefix(value, null);
+                setSubscribedPrefix(value ?? selectedTenant, null);
             }}
             required
             textFieldVariant="outlined"
