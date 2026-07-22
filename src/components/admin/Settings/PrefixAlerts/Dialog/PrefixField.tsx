@@ -68,7 +68,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
             }
             onChange={(value) => {
                 setSubscribedPrefix(
-                    value.length > 0 ? value : selectedTenant,
+                    value.startsWith(selectedTenant) ? value : selectedTenant,
                     null
                 );
             }}
