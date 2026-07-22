@@ -6,14 +6,21 @@ import { useIntl } from 'react-intl';
 import { useMount } from 'react-use';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import PrefixedName from 'src/components/inputs/PrefixedName';
+import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import { appendWithForwardSlash } from 'src/utils/misc-utils';
 
 export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     const intl = useIntl();
 
     const objectRoles = useEntitiesStore_capabilities_adminable();
 
+    const catalogPrefix = useAlertSubscriptionsStore(
+        (state) => state.catalogPrefix
+    );
+    const prefixErrorsExist = useAlertSubscriptionsStore(
+        (state) => state.prefixErrorsExist
+    );
     const setSubscribedPrefix = useAlertSubscriptionsStore(
         (state) => state.setSubscribedPrefix
     );
@@ -42,17 +49,22 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
             variant="outlined"
         />
     ) : (
-        <PrefixedName
-            allowBlankName
-            allowEndSlash
-            fixedPrefix={objectRoles.length > 1}
+        <LeavesAutocomplete
+            error={prefixErrorsExist}
+            errorMessage={prefixErrorsExist ? 'Error' : undefined}
             label={intl.formatMessage({
                 id: 'common.tenant',
             })}
-            onChange={setSubscribedPrefix}
+            leaves={objectRoles}
+            onBlur={() =>
+                setSubscribedPrefix(appendWithForwardSlash(catalogPrefix), null)
+            }
+            onChange={(value) => {
+                setSubscribedPrefix(value, null);
+            }}
             required
-            size="small"
-            validateOnLoad
+            textFieldVariant="outlined"
+            value={catalogPrefix}
         />
     );
 }

@@ -181,9 +181,9 @@ function EmailSelector({
                         }}
                         required
                         size="small"
-                        slotProps={{
-                            input: {
-                                sx: { borderRadius: 3 },
+                        sx={{
+                            '.MuiInputBase-root': {
+                                borderRadius: 3,
                             },
                         }}
                         variant="outlined"
