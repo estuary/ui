@@ -26,6 +26,7 @@ const TITLE_ID = 'alert-subscription-dialog-title';
 
 const AlertSubscriptionDialog = ({
     descriptionId,
+    enableDeletion,
     headerId,
     open,
     setOpen,
@@ -77,10 +78,14 @@ const AlertSubscriptionDialog = ({
 
             <DialogActions
                 style={{
-                    justifyContent: 'space-between',
+                    justifyContent: enableDeletion
+                        ? 'space-between'
+                        : 'flex-end',
                 }}
             >
-                <DeleteButton closeDialog={() => closeDialog()} />
+                {enableDeletion ? (
+                    <DeleteButton closeDialog={() => closeDialog()} />
+                ) : null}
 
                 <Stack direction="row" spacing={1}>
                     <Button
