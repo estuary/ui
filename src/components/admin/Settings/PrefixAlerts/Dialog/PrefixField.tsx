@@ -67,7 +67,10 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
                 setSubscribedPrefix(appendWithForwardSlash(catalogPrefix), null)
             }
             onChange={(value) => {
-                setSubscribedPrefix(value ?? selectedTenant, null);
+                setSubscribedPrefix(
+                    value.length > 0 ? value : selectedTenant,
+                    null
+                );
             }}
             required
             textFieldVariant="outlined"
