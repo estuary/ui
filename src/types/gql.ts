@@ -1,5 +1,10 @@
-import type { AlertType, AlertTypeInfo } from 'src/gql-types/graphql';
+import type {
+    AlertConfigsFilter,
+    AlertType,
+    AlertTypeInfo,
+} from 'src/gql-types/graphql';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
+import type { Schema } from 'src/types/index';
 
 interface AlertDetailsRecipients {
     email: string;
@@ -96,6 +101,12 @@ export interface ActiveAlertCountQueryResponse {
 export type AlertHistoryForTaskQueryResponse = DefaultAlertingQueryResponse;
 export type AlertingOverviewQueryResponse = AlertHistoryForTaskQueryResponse;
 
+export interface AlertConfigQueryInput {
+    after?: string;
+    filter?: AlertConfigsFilter;
+    first?: number;
+}
+
 export interface AlertHistoryQueryResponse {
     liveSpecs: {
         edges: {
@@ -109,6 +120,13 @@ export interface AlertSubscription extends BaseFields {
     catalogPrefix: string;
     destination: string;
     email: string;
+}
+
+// This interface is used for the upsert alert config mutation.
+export interface AlertConfigMutationInput {
+    catalogPrefixOrName: string;
+    config: Schema;
+    detail?: string;
 }
 
 // This interface is used for create and update alert subscription mutations.

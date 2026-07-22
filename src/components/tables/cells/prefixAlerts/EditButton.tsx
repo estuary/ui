@@ -7,21 +7,11 @@ import { Button, TableCell } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
-import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
-function AlertEditButton({
-    alertTypes,
-    email,
-    prefix,
-    ...props
-}: EditButtonProps) {
+function AlertEditButton({ prefix, ...props }: EditButtonProps) {
     const intl = useIntl();
 
     const [open, setOpen] = useState(false);
-
-    const setSubscribedEmail = useAlertSubscriptionsStore(
-        (state) => state.setSubscribedEmail
-    );
 
     return (
         <TableCell {...props}>
@@ -30,7 +20,6 @@ function AlertEditButton({
                 onClick={(event) => {
                     event.preventDefault();
 
-                    setSubscribedEmail(email);
                     setOpen(true);
                 }}
             >
@@ -40,12 +29,10 @@ function AlertEditButton({
             <AlertSubscriptionDialog
                 descriptionId="alerts.config.dialog.update.description"
                 enableDeletion
-                existingAlertTypes={alertTypes}
                 headerId="alerts.config.dialog.update.header"
                 open={open}
                 setOpen={setOpen}
                 staticPrefix={prefix}
-                staticEmail={email}
             />
         </TableCell>
     );

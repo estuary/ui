@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 
 import { useEntityWorkflow } from 'src/context/Workflow';
 import { useEntitiesStore_capabilities_adminable } from 'src/stores/Entities/hooks';
+import { useTenantStore } from 'src/stores/Tenant';
 import { hasLength } from 'src/utils/misc-utils';
 import { validateCatalogName } from 'src/validation';
 
@@ -16,6 +17,7 @@ interface Options {
     allowBlankName?: boolean;
     allowEndSlash?: boolean;
     defaultPrefix?: boolean;
+    fixedPrefix?: boolean;
     onChange?: PrefixedName_Change;
     onNameChange?: PrefixedName_Change;
     onPrefixChange?: PrefixedName_Change;
@@ -26,6 +28,7 @@ function useValidatePrefix({
     allowBlankName,
     allowEndSlash,
     defaultPrefix,
+    fixedPrefix,
     onChange,
     onNameChange,
     onPrefixChange,
@@ -42,17 +45,18 @@ function useValidatePrefix({
     const singleOption = objectRoles.length === 1;
 
     // Fetch for the default value
-    // const [selectedTenant, setSelectedTenant] = useTenantStore(useShallow((state) => [
-    //     state.selectedTenant,
-    //     state.setSelectedTenant,
-    // ]));
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     // Local State for editing
     const [errors, setErrors] = useState<string | null>(null);
     const [name, setName] = useState('');
     const [nameError, setNameError] = useState<PrefixedName_Errors>(null);
     const [prefix, setPrefix] = useState(
-        singleOption || defaultPrefix ? objectRoles[0] : '' //selectedTenant
+        singleOption || defaultPrefix
+            ? objectRoles[0]
+            : fixedPrefix
+              ? selectedTenant
+              : ''
     );
     const [prefixError, setPrefixError] = useState<PrefixedName_Errors>(null);
 

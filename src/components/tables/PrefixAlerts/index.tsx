@@ -1,6 +1,9 @@
-import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
-import type { AlertTypeInfo } from 'src/gql-types/graphql';
+import type {
+    AlertConfigOptions,
+    SubscriptionMetadataDictionary,
+} from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { TableState } from 'src/types';
+import type { WithRequiredProperty } from 'src/types/utils';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -8,7 +11,9 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
+import { useQuery } from 'urql';
 
+import { AlertConfigQuery } from 'src/api/alerts';
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -21,15 +26,29 @@ import {
 } from 'src/components/tables/PrefixAlerts/shared';
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
-import { useGetAlertTypes } from 'src/context/AlertType';
+import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
+import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
 function PrefixAlertTable() {
-    const [{ data, error, fetching }] = useGetAlertSubscriptions();
-    const [alertTypeResponse] = useGetAlertTypes();
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
-    const setInitializationError = useAlertSubscriptionsStore(
-        (state) => state.setInitializationError
+    const [{ data, error, fetching }] = useGetAlertSubscriptions();
+    const [alertConfigResponse] = useQuery({
+        pause: selectedTenant.length === 0,
+        query: AlertConfigQuery,
+        variables: { first: 100 },
+    });
+
+    const setInitializationErrors = useAlertSubscriptionsStore(
+        (state) => state.setInitializationErrors
+    );
+    const setSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.setSubscriptionMetadata
+    );
+
+    const initializeGlobalPrefixSettings = useAlertSubscriptionsStore(
+        (state) => state.initializeGlobalPrefixSettings
     );
 
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -37,25 +56,31 @@ function PrefixAlertTable() {
         status: TableStatuses.LOADING,
     });
 
-    const processedData: ReducedAlertSubscriptionQueryResponse['alertSubscriptions'] =
-        useMemo(() => {
-            if (!data) {
-                return [];
-            }
+    const processedData: SubscriptionMetadataDictionary = useMemo(() => {
+        if (!data?.alertSubscriptions) {
+            return {};
+        }
 
-            return searchQuery
-                ? data.alertSubscriptions.filter(
-                      ({ catalogPrefix, email }) =>
-                          catalogPrefix.includes(searchQuery) ||
-                          email.includes(searchQuery)
-                  )
-                : data.alertSubscriptions;
-        }, [data, searchQuery]);
+        const evaluatedData = searchQuery
+            ? data.alertSubscriptions.filter(
+                  ({ catalogPrefix, email }) =>
+                      catalogPrefix.includes(searchQuery) ||
+                      email?.includes(searchQuery)
+              )
+            : data.alertSubscriptions;
 
-    const alertTypeDefs: AlertTypeInfo[] = useMemo(
-        () =>
-            !alertTypeResponse.data ? [] : alertTypeResponse.data.alertTypes,
-        [alertTypeResponse.data]
+        return bundleSubscriptionsByPrefix(
+            evaluatedData.map(({ alertTypes, catalogPrefix, email }) => ({
+                alertTypes,
+                catalogPrefix,
+                email: email ?? '',
+            }))
+        );
+    }, [data?.alertSubscriptions, searchQuery]);
+
+    const processedDataExists = useMemo(
+        () => Object.keys(processedData).length > 0,
+        [processedData]
     );
 
     // TODO: Create a hook that encapsulates this logic since it is used for the
@@ -69,15 +94,53 @@ function PrefixAlertTable() {
     });
 
     useEffect(() => {
-        if (!fetching && !alertTypeResponse.fetching) {
-            setInitializationError(error);
+        if (!fetching && !alertConfigResponse.fetching) {
+            setInitializationErrors([error, alertConfigResponse?.error]);
+            setSubscriptionMetadata(
+                data?.alertSubscriptions.map(
+                    ({ alertTypes, catalogPrefix, email }) => ({
+                        alertTypes,
+                        catalogPrefix,
+                        email: email ?? '',
+                    })
+                ) ?? []
+            );
+
+            const alertConfigData: {
+                configs: WithRequiredProperty<AlertConfigOptions, 'standard'>;
+                prefix: string;
+            }[] =
+                alertConfigResponse?.data &&
+                alertConfigResponse.data.alertConfigs.edges.length > 0
+                    ? alertConfigResponse.data.alertConfigs.edges.map(
+                          ({ node }) => ({
+                              configs: {
+                                  effective: node.effective.config,
+                                  standard: node.config,
+                              },
+                              prefix: node.catalogPrefixOrName,
+                          })
+                      )
+                    : [];
+
+            initializeGlobalPrefixSettings(alertConfigData);
         }
-    }, [alertTypeResponse.fetching, error, fetching, setInitializationError]);
+    }, [
+        alertConfigResponse?.data,
+        alertConfigResponse?.error,
+        alertConfigResponse.fetching,
+        data?.alertSubscriptions,
+        error,
+        fetching,
+        initializeGlobalPrefixSettings,
+        setInitializationErrors,
+        setSubscriptionMetadata,
+    ]);
 
     useEffect(() => {
-        if (fetching || alertTypeResponse.fetching) {
+        if (fetching || alertConfigResponse.fetching) {
             setTableState({ status: TableStatuses.LOADING });
-        } else if (processedData.length > 0) {
+        } else if (processedDataExists) {
             displayLoadingState.current?.cancel();
 
             setTableState({
@@ -93,9 +156,9 @@ function PrefixAlertTable() {
             });
         }
     }, [
-        alertTypeResponse.fetching,
+        alertConfigResponse.fetching,
+        processedDataExists,
         fetching,
-        processedData.length,
         searchQuery,
     ]);
 
@@ -144,12 +207,8 @@ function PrefixAlertTable() {
                             disableDoclink: true,
                         }}
                         rows={
-                            processedData.length > 0 &&
-                            alertTypeDefs.length > 0 ? (
-                                <Rows
-                                    alertTypeDefs={alertTypeDefs}
-                                    data={processedData}
-                                />
+                            processedDataExists ? (
+                                <Rows data={Object.values(processedData)} />
                             ) : null
                         }
                         tableState={tableState}

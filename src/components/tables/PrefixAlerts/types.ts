@@ -1,15 +1,12 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { ReducedAlertSubscription } from 'src/api/types';
-import type { AlertTypeInfo } from 'src/gql-types/graphql';
+import type { SubscriptionMetadata } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 export interface RowProps {
-    alertTypeDefs: AlertTypeInfo[];
-    row: ReducedAlertSubscription;
+    row: SubscriptionMetadata;
 }
 
 export interface RowsProps {
-    alertTypeDefs: AlertTypeInfo[];
-    data: ReducedAlertSubscription[];
+    data: SubscriptionMetadata[];
 }
 
 export interface TableFilterProps {

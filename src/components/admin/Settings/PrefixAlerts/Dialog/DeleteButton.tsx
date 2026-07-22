@@ -1,40 +1,69 @@
 import type { DialogActionProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
+import { useMemo } from 'react';
+
 import { Button } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
+import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
 
 const DeleteButton = ({ closeDialog }: DialogActionProps) => {
     const intl = useIntl();
+    const { loading, onClick } = useModifyAlertMetadata(closeDialog, true);
 
-    const { loading, onClick } = useModifyAlertSubscription(closeDialog, true);
-
-    const prefixErrorsExist = useAlertSubscriptionsStore(
-        (state) => state.prefixErrorsExist
+    const errorsExist = useAlertSubscriptionsStore(
+        (state) =>
+            state.prefixErrorsExist ||
+            state.mutableSubscriptionMetadata.subscriptions.some(
+                ({ emailErrorsExist }) => emailErrorsExist
+            )
     );
 
-    const subscription = useAlertSubscriptionsStore(
-        (state) => state.subscription
+    const catalogPrefix = useAlertSubscriptionsStore(
+        (state) => state.catalogPrefix
     );
+    const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.mutableSubscriptionMetadata
+    );
+    const subscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.subscriptionMetadata
+    );
+
+    const disabled = useMemo(() => {
+        const { subscriptions } = mutableSubscriptionMetadata;
+
+        const emptyEmailExists = subscriptions.some(
+            ({ email }) => email.length === 0
+        );
+
+        return Boolean(
+            errorsExist ||
+                loading ||
+                catalogPrefix.length === 0 ||
+                subscriptions.length === 0 ||
+                emptyEmailExists ||
+                !Object.keys(subscriptionMetadata).includes(catalogPrefix)
+        );
+    }, [
+        catalogPrefix,
+        errorsExist,
+        loading,
+        mutableSubscriptionMetadata,
+        subscriptionMetadata,
+    ]);
 
     return (
         <Button
             color="error"
-            disabled={Boolean(
-                prefixErrorsExist ||
-                    loading ||
-                    subscription.catalogPrefix.length === 0 ||
-                    subscription.email.length === 0
-            )}
+            disabled={disabled}
             loading={loading}
             onClick={onClick}
             size="small"
             variant="outlined"
         >
-            {intl.formatMessage({ id: 'cta.delete' })}
+            {intl.formatMessage({ id: 'alerts.config.dialog.cta.deleteAll' })}
         </Button>
     );
 };

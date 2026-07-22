@@ -1,15 +1,16 @@
 import type { AlertSubscriptionResponse } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { AlertType } from 'src/gql-types/graphql';
 import type { AlertSubscriptionMutationInput } from 'src/types/gql';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
+import { difference } from 'lodash';
 import { useMutation } from 'urql';
 
 import {
     AlertSubscriptionCreateMutation,
     AlertSubscriptionUpdateMutation,
 } from 'src/api/alerts';
-import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
 import { logRocketEvent } from 'src/services/shared';
 import { hasLength } from 'src/utils/misc-utils';
@@ -17,29 +18,12 @@ import { hasLength } from 'src/utils/misc-utils';
 export function useUpsertAlertSubscription() {
     const [{ data }] = useGetAlertSubscriptions();
 
-    const subscription = useAlertSubscriptionsStore(
-        (state) => state.subscription
+    const [createSubscriptionResult, mutateCreateSubscription] = useMutation(
+        AlertSubscriptionCreateMutation
     );
-
-    const query = useMemo(() => {
-        if (!subscription.catalogPrefix || !subscription.email) {
-            return AlertSubscriptionCreateMutation;
-        }
-
-        return data?.alertSubscriptions.find(
-            ({ catalogPrefix, email }) =>
-                subscription.catalogPrefix === catalogPrefix &&
-                subscription.email === email
-        )
-            ? AlertSubscriptionUpdateMutation
-            : AlertSubscriptionCreateMutation;
-    }, [
-        data?.alertSubscriptions,
-        subscription.catalogPrefix,
-        subscription.email,
-    ]);
-
-    const [upsertSubscriptionResult, mutateSubscription] = useMutation(query);
+    const [updateSubscriptionResult, mutateUpdateSubscription] = useMutation(
+        AlertSubscriptionUpdateMutation
+    );
 
     const upsertSubscription = useCallback(
         async ({
@@ -47,8 +31,39 @@ export function useUpsertAlertSubscription() {
             email,
             prefix,
         }: AlertSubscriptionMutationInput): Promise<AlertSubscriptionResponse> => {
+            const existingSubscription = data?.alertSubscriptions.find(
+                (subscription) =>
+                    subscription.catalogPrefix === prefix &&
+                    subscription.email === email
+            );
+
+            // If an existing subscription is identical to the mutable subscription,
+            // no operation should be performed.
+            if (
+                existingSubscription &&
+                alertTypes?.length === existingSubscription.alertTypes.length &&
+                difference(alertTypes, existingSubscription.alertTypes)
+                    .length === 0
+            ) {
+                return Promise.resolve({
+                    email,
+                    id: crypto.randomUUID(),
+                    prefix,
+                });
+            }
+
+            // If an existing alert subscription matches the catalog prefix and email
+            // of the mutable subscription - differing by the target alert types -- an
+            // update operation should be performed. If no existing alert subscription
+            // can be found, a create operation should be performed.
+            const mutateSubscription = existingSubscription
+                ? mutateUpdateSubscription
+                : mutateCreateSubscription;
+
             return mutateSubscription({
-                alertTypes: hasLength(alertTypes) ? alertTypes : undefined,
+                alertTypes: hasLength(alertTypes)
+                    ? (alertTypes as AlertType[])
+                    : undefined,
                 email,
                 prefix,
             }).then(
@@ -80,8 +95,6 @@ export function useUpsertAlertSubscription() {
                             variables: response.operation.variables,
                         });
 
-                        const { email, prefix } = response.operation.variables;
-
                         return Promise.resolve({
                             prefix,
                             email,
@@ -90,12 +103,10 @@ export function useUpsertAlertSubscription() {
                         });
                     }
 
-                    const { email, catalogPrefix } = response.data;
-
                     return Promise.resolve({
                         email,
                         id: uuid,
-                        prefix: catalogPrefix,
+                        prefix,
                     });
                 },
                 () => {
@@ -108,8 +119,16 @@ export function useUpsertAlertSubscription() {
                 }
             );
         },
-        [mutateSubscription]
+        [
+            data?.alertSubscriptions,
+            mutateCreateSubscription,
+            mutateUpdateSubscription,
+        ]
     );
 
-    return { upsertSubscription, upsertSubscriptionResult };
+    return {
+        createSubscriptionResult,
+        updateSubscriptionResult,
+        upsertSubscription,
+    };
 }
