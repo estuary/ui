@@ -504,12 +504,7 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                 ? state.subscriptionMetadata[
                                       state.catalogPrefix
                                   ].subscriptions
-                                : state.mutableSubscriptionMetadata.subscriptions.map(
-                                      (subscription) => ({
-                                          ...subscription,
-                                          catalogPrefix: state.catalogPrefix,
-                                      })
-                                  );
+                                : [];
                     }),
                     false,
                     'subscribed prefix set'
