@@ -1,18 +1,18 @@
-import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 export interface DataPlaneDialogProps {
     onClose: () => void;
-    dataPlane: BaseDataPlaneQuery;
+    dataPlane: DataPlaneNode;
 }
 
 export interface RowsProps {
-    data: BaseDataPlaneQuery[];
+    data: DataPlaneNode[];
 }
 
 export interface RowProps {
-    row: BaseDataPlaneQuery;
+    row: DataPlaneNode;
     rowSx: any;
-    onRowClick: (row: BaseDataPlaneQuery) => void;
+    onRowClick: (row: DataPlaneNode) => void;
 }
 
 export interface DataPlaneDialogFieldProps {
