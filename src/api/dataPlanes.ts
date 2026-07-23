@@ -1,8 +1,5 @@
-import type { SortingProps } from 'src/services/supabase';
-
 import { supabaseClient } from 'src/context/GlobalProviders';
 import {
-    defaultTableFilter,
     handleFailure,
     handleSuccess,
     supabaseRetry,
@@ -56,30 +53,6 @@ const getDataPlaneOptions = async (dataPlaneNames?: string[]) => {
     return data;
 };
 
-const getDataPlanesForTable = (
-    dataPlanePrefix: string,
-    pagination: any,
-    searchQuery: any,
-    sorting: SortingProps<any>[]
-) => {
-    return defaultTableFilter<BaseDataPlaneQuery>(
-        supabaseClient
-            .from(TABLES.DATA_PLANES)
-            .select(QUERY)
-            .ilike('data_plane_name', `${dataPlanePrefix}%`),
-        [
-            'data_plane_name',
-            'data_plane_fqdn',
-            'reactor_address',
-            'gcp_service_account_email',
-            'aws_iam_user_arn',
-        ],
-        searchQuery,
-        sorting,
-        pagination
-    );
-};
-
 // TODO (data-planes): Keep an eye on whether this function gets used in the future.
 //   Leaving in as it _likely_ will be needed.
 // const getDataPlaneById = async (dataPlaneId: string) => {
@@ -96,4 +69,4 @@ const getDataPlanesForTable = (
 //     return data;
 // };
 
-export { getDataPlanesForTable, getDataPlaneOptions };
+export { getDataPlaneOptions };

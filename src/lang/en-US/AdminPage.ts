@@ -123,21 +123,9 @@ export const AdminPage: Record<string, string> = {
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
     'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
-    'admin.dataPlanes.private.option': `Private`,
-    'admin.dataPlanes.public.option': `Public`,
     'admin.dataPlanes.header': `Data Planes`,
-    'admin.dataPlanes.column.header.name': `Name`,
-    'admin.dataPlanes.column.header.provider': `Provider`,
-    'admin.dataPlanes.column.header.location': `Location`,
-    'admin.dataPlanes.column.header.region': `Region`,
-    'admin.dataPlanes.table.aria.label': `Data Planes Table`,
 
-    'admin.dataPlanes.dialog.cloudProvider': `Cloud Provider`,
-    'admin.dataPlanes.dialog.internalId': `Internal ID`,
-    'admin.dataPlanes.dialog.description': `Data plane details and configuration`,
-    'admin.dataPlanes.dialog.ips': `IPs`,
-
-    // There are dynamically generated in src/components/tables/DataPlanes/index.tsx
+    // Referenced through DATA_PLANE_SETTINGS in src/settings/dataPlanes.ts
     'admin.dataPlanes.private.table.noContent.header': `No private data planes found`,
     'admin.dataPlanes.private.table.noContent.message': `To configure a private data plane, please contact support.`,
     'admin.dataPlanes.public.table.noContent.header': `No data planes found`,
