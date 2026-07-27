@@ -11,13 +11,19 @@ const AddButton = () => {
     const addTemplatedSubscription = useAlertSubscriptionsStore(
         (state) => state.addTemplatedSubscription
     );
+    const duplicatePrefixExists = useAlertSubscriptionsStore((state) =>
+        state.prefixErrors.includes('duplicate')
+    );
+
     const { emptyEmailDetected, duplicateSubscriptionEmails } =
         useEvaluateSubscriptionIneligibility();
 
     return (
         <Button
             disabled={
-                emptyEmailDetected || duplicateSubscriptionEmails.length > 0
+                duplicatePrefixExists ||
+                emptyEmailDetected ||
+                duplicateSubscriptionEmails.length > 0
             }
             onClick={() => {
                 addTemplatedSubscription();

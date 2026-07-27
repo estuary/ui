@@ -16,6 +16,9 @@ const GlobalSettings = () => {
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
     );
+    const duplicatePrefixExists = useAlertSubscriptionsStore((state) =>
+        state.prefixErrors.includes('duplicate')
+    );
 
     return (
         <Stack
@@ -44,6 +47,7 @@ const GlobalSettings = () => {
 
             <DataMovementSetting
                 configs={configs}
+                disabled={duplicatePrefixExists}
                 loading={loading}
                 prefix={catalogPrefix}
                 targetSetting={AlertConfigKeys.DATA_MOVEMENT_STALLED}

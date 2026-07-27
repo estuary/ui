@@ -23,6 +23,7 @@ import {
 
 const DataMovementSetting = ({
     configs,
+    disabled,
     loading,
     prefix,
     targetSetting,
@@ -66,7 +67,7 @@ const DataMovementSetting = ({
                 <Skeleton height={38} />
             ) : (
                 <Autocomplete
-                    disabled={!prefix}
+                    disabled={disabled || !prefix}
                     disableClearable
                     fullWidth
                     getOptionLabel={(interval) => options[interval]}

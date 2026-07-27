@@ -18,6 +18,7 @@ export const Alerts: Record<string, string> = {
     'alerts.config.dialog.generate.description.docLink': `Slack channels`,
     'alerts.config.dialog.generate.description.docPath': `https://slack.com/intl/en-au/help/articles/206819278-Send-emails-to-Slack`,
     'alerts.config.dialog.generate.header': `Configure Notification Methods`,
+    'alerts.config.dialog.prefixField.duplicate': `One or more subscriptions already exist for this prefix. To edit, please return to the Organization Notifications table and click the Edit button on the corresponding row.`,
     'alerts.config.dialog.update.description': `Choose the notifications you'd like to receive.`,
     'alerts.config.dialog.update.header': `Update Notification Methods`,
 

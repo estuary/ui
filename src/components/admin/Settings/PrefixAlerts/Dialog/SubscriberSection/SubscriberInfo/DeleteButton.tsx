@@ -9,12 +9,21 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 const DeleteButton = ({ subscription: { id } }: SubscriptionDependentProps) => {
     const theme = useTheme();
 
+    const duplicatePrefixExists = useAlertSubscriptionsStore((state) =>
+        state.prefixErrors.includes('duplicate')
+    );
     const markSubscriptionForDeletion = useAlertSubscriptionsStore(
         (state) => state.markSubscriptionForDeletion
     );
 
+    const disabledButtonColor =
+        theme.palette.mode === 'light'
+            ? theme.palette.grey[400]
+            : theme.palette.grey[600];
+
     return (
         <IconButton
+            disabled={duplicatePrefixExists}
             onClick={(event) => {
                 event.stopPropagation();
 
@@ -29,7 +38,9 @@ const DeleteButton = ({ subscription: { id } }: SubscriptionDependentProps) => {
         >
             <Xmark
                 style={{
-                    color: theme.palette.text.primary,
+                    color: duplicatePrefixExists
+                        ? disabledButtonColor
+                        : theme.palette.text.primary,
                 }}
             />
         </IconButton>

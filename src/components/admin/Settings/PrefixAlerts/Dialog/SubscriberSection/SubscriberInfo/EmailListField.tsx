@@ -5,11 +5,16 @@ import { TextField } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import EmailSelector from 'src/components/admin/Settings/PrefixAlerts/Dialog/SubscriberSection/SubscriberInfo/EmailSelector';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 const EmailListField = ({ subscription, staticEmail }: EmailListFieldProps) => {
     const intl = useIntl();
 
-    return staticEmail ? (
+    const duplicatePrefixExists = useAlertSubscriptionsStore((state) =>
+        state.prefixErrors.includes('duplicate')
+    );
+
+    return staticEmail || duplicatePrefixExists ? (
         <TextField
             disabled
             fullWidth

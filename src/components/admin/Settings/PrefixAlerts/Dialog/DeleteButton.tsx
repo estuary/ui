@@ -15,7 +15,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
 
     const errorsExist = useAlertSubscriptionsStore(
         (state) =>
-            state.prefixErrorsExist ||
+            state.prefixErrors.length > 0 ||
             state.mutableSubscriptionMetadata.subscriptions.some(
                 ({ emailErrorsExist }) => emailErrorsExist
             )

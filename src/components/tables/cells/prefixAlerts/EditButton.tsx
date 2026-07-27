@@ -7,9 +7,14 @@ import { Button, TableCell } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import AlertSubscriptionDialog from 'src/components/admin/Settings/PrefixAlerts/Dialog';
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 
 function AlertEditButton({ prefix, ...props }: EditButtonProps) {
     const intl = useIntl();
+
+    const setIsEditFlow = useAlertSubscriptionsStore(
+        (state) => state.setIsEditFlow
+    );
 
     const [open, setOpen] = useState(false);
 
@@ -20,6 +25,7 @@ function AlertEditButton({ prefix, ...props }: EditButtonProps) {
                 onClick={(event) => {
                     event.preventDefault();
 
+                    setIsEditFlow(true);
                     setOpen(true);
                 }}
             >

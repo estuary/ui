@@ -20,8 +20,8 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
     );
-    const prefixErrorsExist = useAlertSubscriptionsStore(
-        (state) => state.prefixErrorsExist
+    const prefixErrors = useAlertSubscriptionsStore(
+        (state) => state.prefixErrors
     );
     const setSubscribedPrefix = useAlertSubscriptionsStore(
         (state) => state.setSubscribedPrefix
@@ -34,7 +34,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
                 : selectedTenant;
 
         if (evaluatedPrefix.length > 0) {
-            setSubscribedPrefix(evaluatedPrefix, null);
+            setSubscribedPrefix(evaluatedPrefix);
         }
     });
 
@@ -57,19 +57,26 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
         />
     ) : (
         <LeavesAutocomplete
-            error={prefixErrorsExist}
-            errorMessage={prefixErrorsExist ? 'Error' : undefined}
+            error={prefixErrors.length > 0}
+            errorMessage={
+                prefixErrors.includes('duplicate')
+                    ? intl.formatMessage({
+                          id: 'alerts.config.dialog.prefixField.duplicate',
+                      })
+                    : prefixErrors.length > 0
+                      ? 'Error'
+                      : undefined
+            }
             label={intl.formatMessage({
                 id: 'common.tenant',
             })}
             leaves={objectRoles}
             onBlur={() =>
-                setSubscribedPrefix(appendWithForwardSlash(catalogPrefix), null)
+                setSubscribedPrefix(appendWithForwardSlash(catalogPrefix))
             }
             onChange={(value) => {
                 setSubscribedPrefix(
-                    value.startsWith(selectedTenant) ? value : selectedTenant,
-                    null
+                    value.startsWith(selectedTenant) ? value : selectedTenant
                 );
             }}
             required

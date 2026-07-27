@@ -62,6 +62,7 @@ export interface GlobalSettingEvaluationResult {
 
 export interface GlobalSettingProps {
     configs: GlobalSettingEvaluationResult;
+    disabled: boolean;
     loading: boolean;
     prefix: string;
     targetSetting: AlertConfigKeys;

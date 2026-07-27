@@ -31,6 +31,11 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
     const setSingleAlertType = useAlertSubscriptionsStore(
         (state) => state.setSingleAlertType
     );
+    const duplicatePrefixExists = useAlertSubscriptionsStore((state) =>
+        state.prefixErrors.includes('duplicate')
+    );
+
+    const disabled = serverErrors.length > 0 || duplicatePrefixExists;
 
     return (
         <Stack spacing={1}>
@@ -61,13 +66,14 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                 'borderRadius': '6px',
                                 'marginBottom': '6px',
                                 '&:hover': {
-                                    borderColor: isSystem
-                                        ? undefined
-                                        : selected
-                                          ? theme.palette.primary.main
-                                          : defaultOutlineColor_hovered[
-                                                theme.palette.mode
-                                            ],
+                                    borderColor:
+                                        isSystem || disabled
+                                            ? undefined
+                                            : selected
+                                              ? theme.palette.primary.main
+                                              : defaultOutlineColor_hovered[
+                                                    theme.palette.mode
+                                                ],
                                 },
                             }}
                         >
@@ -86,7 +92,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                             }}
                                         />
                                     }
-                                    disabled={serverErrors.length > 0}
+                                    disabled={disabled}
                                     label={
                                         <Stack>
                                             <Stack

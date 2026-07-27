@@ -5,6 +5,7 @@ import type {
     SubscriptionMetadata,
     SubscriptionMetadataDictionary,
 } from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { PrefixedName_ErrorStates } from 'src/components/inputs/PrefixedName/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
 import type { Schema } from 'src/types';
 
@@ -22,6 +23,7 @@ import {
 } from 'src/utils/misc-utils';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
+import { validateCatalogName } from 'src/validation';
 
 interface AlertSubscriptionState {
     addTemplatedSubscription: () => void;
@@ -39,9 +41,10 @@ interface AlertSubscriptionState {
             prefix: string;
         }[]
     ) => void;
+    isEditFlow: boolean;
     markSubscriptionForDeletion: (subscriptionId: string) => void;
     mutableSubscriptionMetadata: SubscriptionMetadata;
-    prefixErrorsExist: boolean;
+    prefixErrors: PrefixedName_ErrorStates[];
     serverErrors: (CombinedError | PostgrestError)[];
     subscriptionMetadata: SubscriptionMetadataDictionary;
     resetState: () => void;
@@ -53,6 +56,7 @@ interface AlertSubscriptionState {
     setInitializationErrors: (
         values: (CombinedError | PostgrestError | null | undefined)[]
     ) => void;
+    setIsEditFlow: (value: AlertSubscriptionState['isEditFlow']) => void;
     setServerErrors: (
         values: (CombinedError | PostgrestError | null | undefined)[],
         override?: boolean
@@ -64,7 +68,7 @@ interface AlertSubscriptionState {
         id?: string
     ) => void;
     setSubscribedEmail: (value: string, subscriptionId: string) => void;
-    setSubscribedPrefix: (value: string, errors: string | null) => void;
+    setSubscribedPrefix: (value: string) => void;
     setSubscriptionMetadata: (value: ReducedAlertSubscription[]) => void;
     toggleSubscriptionViewingStatus: (subscriptionId: string) => void;
 }
@@ -96,8 +100,9 @@ const getInitialState = (): Pick<
     | 'alertTypeOptionsFetching'
     | 'catalogPrefix'
     | 'initializationErrors'
+    | 'isEditFlow'
     | 'mutableSubscriptionMetadata'
-    | 'prefixErrorsExist'
+    | 'prefixErrors'
     | 'serverErrors'
     | 'subscriptionMetadata'
 > => ({
@@ -105,11 +110,12 @@ const getInitialState = (): Pick<
     alertTypeOptionsFetching: false,
     catalogPrefix: '',
     initializationErrors: [],
+    isEditFlow: false,
     mutableSubscriptionMetadata: {
         configs: { effective: {}, standard: null },
         subscriptions: [],
     },
-    prefixErrorsExist: false,
+    prefixErrors: [],
     serverErrors: [],
     subscriptionMetadata: {},
 });
@@ -385,6 +391,15 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'initialization errors set'
                 ),
 
+            setIsEditFlow: (value) =>
+                set(
+                    produce((state: AlertSubscriptionState) => {
+                        state.isEditFlow = value;
+                    }),
+                    false,
+                    'edit workflow flag set'
+                ),
+
             setServerErrors: (values, override) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
@@ -488,13 +503,27 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'subscribed email set'
                 ),
 
-            setSubscribedPrefix: (value, errors) =>
+            setSubscribedPrefix: (value) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
                         state.catalogPrefix = value;
 
-                        state.prefixErrorsExist = Boolean(errors);
+                        // Validate the prefix and store validation errors.
+                        const validationErrors =
+                            validateCatalogName(value, false, true) ?? [];
 
+                        if (
+                            !state.isEditFlow &&
+                            Object.keys(state.subscriptionMetadata).includes(
+                                value
+                            )
+                        ) {
+                            validationErrors.push('duplicate');
+                        }
+
+                        state.prefixErrors = validationErrors;
+
+                        // Evaluate the existing subscriptions for the prefix.
                         state.mutableSubscriptionMetadata.subscriptions =
                             state.catalogPrefix.length > 0 &&
                             hasOwnProperty(
