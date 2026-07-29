@@ -9,7 +9,6 @@ import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import { useDeleteAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useDeleteAlertSubscription';
-import { useEvaluateGlobalPrefixSettings } from 'src/components/admin/Settings/PrefixAlerts/useEvaluateGlobalPrefixSettings';
 import { useUpsertAlertConfig } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertConfig';
 import { useUpsertAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useUpsertAlertSubscription';
 import { logRocketEvent } from 'src/services/shared';
@@ -26,8 +25,6 @@ export function useModifyAlertMetadata(
     const { deleteSubscription } = useDeleteAlertSubscription();
 
     const { upsertConfig } = useUpsertAlertConfig();
-
-    const { evaluateGlobalPrefixSettings } = useEvaluateGlobalPrefixSettings();
 
     const setServerError = useAlertSubscriptionsStore(
         (state) => state.setServerErrors
@@ -145,23 +142,27 @@ export function useModifyAlertMetadata(
         // the insertion of table row when no settings have been defined for a
         // given prefix.
         const {
-            directImplicitMatch,
-            explicit: { effective: explicitEffectiveConfig },
-            implicit: { effective: implicitEffectiveConfig },
-        } = evaluateGlobalPrefixSettings();
+            configs: { standard: explicitConfig },
+            explicitConfigRef,
+        } = mutableSubscriptionMetadata;
 
-        const explicitConfigEmpty = isEmpty(explicitEffectiveConfig);
-        const implicitConfigEmpty = isEmpty(implicitEffectiveConfig);
-
-        const existingConfigRemoval =
-            directImplicitMatch && explicitConfigEmpty && !implicitConfigEmpty;
+        const draftedConfigEmpty =
+            isEmpty(explicitConfig) ||
+            Object.entries(explicitConfig).every(([_setting, settingConfig]) =>
+                isEmpty(settingConfig)
+            );
+        const serverConfigEmpty =
+            isEmpty(explicitConfigRef) ||
+            Object.entries(explicitConfigRef).every(
+                ([_setting, settingConfig]) => isEmpty(settingConfig)
+            );
 
         const configUpsertRequired =
-            existingConfigRemoval ||
-            (!explicitConfigEmpty && implicitConfigEmpty) ||
-            (!explicitConfigEmpty &&
-                !implicitConfigEmpty &&
-                !isEqual(explicitEffectiveConfig, implicitEffectiveConfig));
+            (draftedConfigEmpty && !serverConfigEmpty) ||
+            (!draftedConfigEmpty && serverConfigEmpty) ||
+            (!draftedConfigEmpty &&
+                !serverConfigEmpty &&
+                !isEqual(explicitConfig, explicitConfigRef));
 
         if (
             configUpsertRequired &&

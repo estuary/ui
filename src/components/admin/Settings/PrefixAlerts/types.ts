@@ -96,6 +96,7 @@ export interface SubscriptionDependentProps {
 
 export interface SubscriptionMetadata {
     configs: AlertConfigOptions;
+    explicitConfigRef: AlertConfigOptions['standard'];
     subscriptions: MutableAlertSubscription[];
 }
 

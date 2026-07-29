@@ -32,6 +32,7 @@ export const bundleSubscriptionsByPrefix = (
         } else {
             subscriptionMetadata[catalogPrefix] = {
                 configs: { effective: {}, standard: null },
+                explicitConfigRef: null,
                 subscriptions: [
                     { ...query, id: crypto.randomUUID(), viewing: false },
                 ],

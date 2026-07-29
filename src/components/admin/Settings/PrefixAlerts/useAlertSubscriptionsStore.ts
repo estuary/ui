@@ -107,6 +107,7 @@ const getInitialState = (): Pick<
     isEditFlow: false,
     mutableSubscriptionMetadata: {
         configs: { effective: {}, standard: null },
+        explicitConfigRef: null,
         subscriptions: [],
     },
     prefixErrors: [],
@@ -181,6 +182,9 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     produce((state: AlertSubscriptionState) => {
                         state.mutableSubscriptionMetadata.configs =
                             targetConfigs;
+
+                        state.mutableSubscriptionMetadata.explicitConfigRef =
+                            targetConfigs.standard;
                     }),
                     false,
                     'global prefix settings initialized'
