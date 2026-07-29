@@ -288,23 +288,15 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                                         'condition'
                                     );
                                 } else {
-                                    const immutableConfig =
-                                        state.catalogPrefix.length > 0 &&
-                                        hasOwnProperty(
-                                            state.subscriptionMetadata,
-                                            state.catalogPrefix
-                                        )
-                                            ? (state.subscriptionMetadata[
-                                                  state.catalogPrefix
-                                              ].configs[key] ?? {})
-                                            : {};
+                                    const existingConfig =
+                                        state.mutableSubscriptionMetadata
+                                            .configs[key] ?? {};
 
                                     state.mutableSubscriptionMetadata.configs[
                                         key
                                     ] = {
-                                        ...immutableConfig,
+                                        ...existingConfig,
                                         [targetSetting]: {
-                                            ...immutableConfig?.[targetSetting],
                                             ...state.mutableSubscriptionMetadata
                                                 .configs[key][targetSetting],
                                             condition: alertCondition,
