@@ -269,53 +269,75 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                             return;
                         }
 
-                        const configKeys = Object.keys(
-                            state.mutableSubscriptionMetadata.configs
-                        ) as (keyof AlertConfigOptions)[];
-
                         const alertConditionEmpty = isEmpty(alertCondition);
 
-                        configKeys.forEach((key) => {
-                            if (
-                                state.mutableSubscriptionMetadata.configs[key]
-                            ) {
-                                if (alertConditionEmpty) {
-                                    state.mutableSubscriptionMetadata.configs[
-                                        key
-                                    ][targetSetting] = omit(
-                                        state.mutableSubscriptionMetadata
-                                            .configs[key][targetSetting],
-                                        'condition'
-                                    );
-                                } else {
-                                    const existingConfig =
-                                        state.mutableSubscriptionMetadata
-                                            .configs[key] ?? {};
+                        if (
+                            state.mutableSubscriptionMetadata.configs.standard
+                        ) {
+                            const settingConfigKeys = hasOwnProperty(
+                                state.mutableSubscriptionMetadata.configs
+                                    .standard,
+                                targetSetting
+                            )
+                                ? Object.keys(
+                                      state.mutableSubscriptionMetadata.configs
+                                          .standard[targetSetting]
+                                  )
+                                : [];
 
-                                    state.mutableSubscriptionMetadata.configs[
-                                        key
-                                    ] = {
+                            if (
+                                alertConditionEmpty &&
+                                settingConfigKeys.length > 1 &&
+                                settingConfigKeys.includes('condition')
+                            ) {
+                                state.mutableSubscriptionMetadata.configs.standard[
+                                    targetSetting
+                                ] = omit(
+                                    state.mutableSubscriptionMetadata.configs
+                                        .standard[targetSetting],
+                                    'condition'
+                                );
+                            } else if (
+                                alertConditionEmpty &&
+                                ((settingConfigKeys.length === 1 &&
+                                    settingConfigKeys.includes('condition')) ||
+                                    settingConfigKeys.length === 0)
+                            ) {
+                                state.mutableSubscriptionMetadata.configs.standard =
+                                    omit(
+                                        state.mutableSubscriptionMetadata
+                                            .configs.standard,
+                                        targetSetting
+                                    ) ?? {};
+                            } else {
+                                const existingConfig =
+                                    state.mutableSubscriptionMetadata.configs
+                                        .standard ?? {};
+
+                                state.mutableSubscriptionMetadata.configs.standard =
+                                    {
                                         ...existingConfig,
                                         [targetSetting]: {
                                             ...state.mutableSubscriptionMetadata
-                                                .configs[key][targetSetting],
-                                            condition: alertCondition,
-                                        },
-                                    };
-                                }
-
-                                return;
-                            }
-
-                            if (!alertConditionEmpty) {
-                                state.mutableSubscriptionMetadata.configs[key] =
-                                    {
-                                        [targetSetting]: {
+                                                .configs.standard[
+                                                targetSetting
+                                            ],
                                             condition: alertCondition,
                                         },
                                     };
                             }
-                        });
+
+                            return;
+                        }
+
+                        if (!alertConditionEmpty) {
+                            state.mutableSubscriptionMetadata.configs.standard =
+                                {
+                                    [targetSetting]: {
+                                        condition: alertCondition,
+                                    },
+                                };
+                        }
                     }),
                     false,
                     'global prefix settings set'
