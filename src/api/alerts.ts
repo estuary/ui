@@ -135,6 +135,14 @@ const AlertTypeQuery = graphql(`
     }
 `);
 
+const EffectiveAlertConfigQuery = graphql(`
+    query EffectiveAlertConfig($catalogPrefixOrName: String!) {
+        effectiveAlertConfig(catalogPrefixOrName: $catalogPrefixOrName) {
+            config
+        }
+    }
+`);
+
 const createDataProcessingNotification = (
     catalogName: string,
     evaluationInterval: string
@@ -214,6 +222,7 @@ export {
     AlertTypeQuery,
     createDataProcessingNotification,
     deleteDataProcessingNotification,
+    EffectiveAlertConfigQuery,
     getNotificationSubscriptionForUser,
     getTaskNotification,
     updateDataProcessingNotificationInterval,

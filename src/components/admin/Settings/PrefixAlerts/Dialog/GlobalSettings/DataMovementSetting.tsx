@@ -1,7 +1,7 @@
 import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { GlobalSettingProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import {
     Autocomplete,
@@ -36,16 +36,10 @@ const DataMovementSetting = ({
         (state) => state.setGlobalPrefixSettings
     );
 
-    const setting = useMemo(() => {
-        const {
-            explicit: { effective: explicitEffectiveConfig },
-            implicit: { effective: implicitEffectiveConfig },
-        } = configs;
-
-        return explicitEffectiveConfig?.[targetSetting]
-            ? explicitEffectiveConfig[targetSetting]
-            : (implicitEffectiveConfig?.[targetSetting] ?? {});
-    }, [configs, targetSetting]);
+    const setting =
+        configs.standard?.[targetSetting] ??
+        configs.effective?.[targetSetting] ??
+        {};
 
     return (
         <Stack spacing={2}>

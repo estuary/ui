@@ -1,9 +1,5 @@
-import type {
-    AlertConfigOptions,
-    SubscriptionMetadataDictionary,
-} from 'src/components/admin/Settings/PrefixAlerts/types';
+import type { SubscriptionMetadataDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { TableState } from 'src/types';
-import type { WithRequiredProperty } from 'src/types/utils';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -11,9 +7,7 @@ import { Box, Stack, Table, TableContainer } from '@mui/material';
 
 import { debounce } from 'lodash';
 import { useUnmount } from 'react-use';
-import { useQuery } from 'urql';
 
-import { AlertConfigQuery } from 'src/api/alerts';
 import AlertGenerateButton from 'src/components/admin/Settings/PrefixAlerts/GenerateButton';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
@@ -26,29 +20,17 @@ import {
 } from 'src/components/tables/PrefixAlerts/shared';
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
-import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
 function PrefixAlertTable() {
-    const selectedTenant = useTenantStore((state) => state.selectedTenant);
-
     const [{ data, error, fetching }] = useGetAlertSubscriptions();
-    const [alertConfigResponse] = useQuery({
-        pause: selectedTenant.length === 0,
-        query: AlertConfigQuery,
-        variables: { first: 100 },
-    });
 
     const setInitializationErrors = useAlertSubscriptionsStore(
         (state) => state.setInitializationErrors
     );
     const setSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.setSubscriptionMetadata
-    );
-
-    const initializeGlobalPrefixSettings = useAlertSubscriptionsStore(
-        (state) => state.initializeGlobalPrefixSettings
     );
 
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -94,8 +76,8 @@ function PrefixAlertTable() {
     });
 
     useEffect(() => {
-        if (!fetching && !alertConfigResponse.fetching) {
-            setInitializationErrors([error, alertConfigResponse?.error]);
+        if (!fetching) {
+            setInitializationErrors([error]);
             setSubscriptionMetadata(
                 data?.alertSubscriptions.map(
                     ({ alertTypes, catalogPrefix, email }) => ({
@@ -105,40 +87,17 @@ function PrefixAlertTable() {
                     })
                 ) ?? []
             );
-
-            const alertConfigData: {
-                configs: WithRequiredProperty<AlertConfigOptions, 'standard'>;
-                prefix: string;
-            }[] =
-                alertConfigResponse?.data &&
-                alertConfigResponse.data.alertConfigs.edges.length > 0
-                    ? alertConfigResponse.data.alertConfigs.edges.map(
-                          ({ node }) => ({
-                              configs: {
-                                  effective: node.effective.config,
-                                  standard: node.config,
-                              },
-                              prefix: node.catalogPrefixOrName,
-                          })
-                      )
-                    : [];
-
-            initializeGlobalPrefixSettings(alertConfigData);
         }
     }, [
-        alertConfigResponse?.data,
-        alertConfigResponse?.error,
-        alertConfigResponse.fetching,
         data?.alertSubscriptions,
         error,
         fetching,
-        initializeGlobalPrefixSettings,
         setInitializationErrors,
         setSubscriptionMetadata,
     ]);
 
     useEffect(() => {
-        if (fetching || alertConfigResponse.fetching) {
+        if (fetching) {
             setTableState({ status: TableStatuses.LOADING });
         } else if (processedDataExists) {
             displayLoadingState.current?.cancel();
@@ -155,12 +114,7 @@ function PrefixAlertTable() {
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [
-        alertConfigResponse.fetching,
-        processedDataExists,
-        fetching,
-        searchQuery,
-    ]);
+    }, [processedDataExists, fetching, searchQuery]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 

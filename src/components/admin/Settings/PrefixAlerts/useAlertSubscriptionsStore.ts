@@ -8,6 +8,7 @@ import type {
 import type { PrefixedName_ErrorStates } from 'src/components/inputs/PrefixedName/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
 import type { Schema } from 'src/types';
+import type { WithRequiredProperty } from 'src/types/utils';
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
@@ -16,11 +17,7 @@ import produce from 'immer';
 import { isEmpty, omit } from 'lodash';
 import { type CombinedError } from 'urql';
 
-import {
-    basicSort_stringLength,
-    hasOwnProperty,
-    sortByAlertType,
-} from 'src/utils/misc-utils';
+import { hasOwnProperty, sortByAlertType } from 'src/utils/misc-utils';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 import { validateCatalogName } from 'src/validation';
@@ -36,10 +33,7 @@ interface AlertSubscriptionState {
         fetching: boolean
     ) => void;
     initializeGlobalPrefixSettings: (
-        values: {
-            configs: AlertConfigOptions;
-            prefix: string;
-        }[]
+        targetConfigs: WithRequiredProperty<AlertConfigOptions, 'standard'>
     ) => void;
     isEditFlow: boolean;
     markSubscriptionForDeletion: (subscriptionId: string) => void;
@@ -182,59 +176,11 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                     'alert type options initialized'
                 ),
 
-            initializeGlobalPrefixSettings: (values) =>
+            initializeGlobalPrefixSettings: (targetConfigs) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
-                        if (values.length === 0) {
-                            return;
-                        }
-
-                        const clonedValues = [...values];
-
-                        clonedValues
-                            .filter(
-                                ({ prefix }) =>
-                                    !Object.keys(
-                                        state.subscriptionMetadata
-                                    ).includes(prefix)
-                            )
-                            .forEach(({ configs, prefix }) => {
-                                state.subscriptionMetadata[prefix] = {
-                                    configs,
-                                    subscriptions: [],
-                                };
-                            });
-
-                        const sortedValues = clonedValues.sort(
-                            (first, second) =>
-                                basicSort_stringLength(
-                                    first.prefix,
-                                    second.prefix,
-                                    'desc'
-                                )
-                        );
-
-                        Object.entries(state.subscriptionMetadata).forEach(
-                            ([prefix, _metadata]) => {
-                                const matchedValue = sortedValues.find(
-                                    (value) => prefix.startsWith(value.prefix)
-                                );
-
-                                if (!matchedValue) {
-                                    return;
-                                }
-
-                                state.subscriptionMetadata[prefix].configs =
-                                    matchedValue.prefix === prefix
-                                        ? matchedValue.configs
-                                        : {
-                                              effective:
-                                                  matchedValue.configs
-                                                      .effective,
-                                              standard: null,
-                                          };
-                            }
-                        );
+                        state.mutableSubscriptionMetadata.configs =
+                            targetConfigs;
                     }),
                     false,
                     'global prefix settings initialized'
@@ -522,6 +468,10 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                         }
 
                         state.prefixErrors = validationErrors;
+
+                        // Reset mutable subscription metadata state.
+                        state.mutableSubscriptionMetadata =
+                            getInitialState().mutableSubscriptionMetadata;
 
                         // Evaluate the existing subscriptions for the prefix.
                         state.mutableSubscriptionMetadata.subscriptions =

@@ -4,6 +4,7 @@ import type { ReducedAlertSubscription } from 'src/api/types';
 import type { AlertTypeInfo } from 'src/gql-types/graphql';
 import type { Schema } from 'src/types';
 import type { BaseAlertSubscriptionMutationInput } from 'src/types/gql';
+import type { WithRequiredProperty } from 'src/types/utils';
 import type { AlertConfigKeys } from 'src/utils/notification-utils';
 
 export interface AlertConfigOptions {
@@ -61,7 +62,7 @@ export interface GlobalSettingEvaluationResult {
 }
 
 export interface GlobalSettingProps {
-    configs: GlobalSettingEvaluationResult;
+    configs: WithRequiredProperty<AlertConfigOptions, 'standard'>;
     disabled: boolean;
     loading: boolean;
     prefix: string;

@@ -11,13 +11,16 @@ import { AlertConfigKeys } from 'src/utils/notification-utils';
 const GlobalSettings = () => {
     const intl = useIntl();
 
-    const { configs, loading } = useInitializeAlertConfig();
+    const { loading } = useInitializeAlertConfig();
 
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
     );
     const duplicatePrefixExists = useAlertSubscriptionsStore((state) =>
         state.prefixErrors.includes('duplicate')
+    );
+    const mutableConfigs = useAlertSubscriptionsStore(
+        (state) => state.mutableSubscriptionMetadata.configs
     );
 
     return (
@@ -46,7 +49,7 @@ const GlobalSettings = () => {
             </Stack>
 
             <DataMovementSetting
-                configs={configs}
+                configs={mutableConfigs}
                 disabled={duplicatePrefixExists}
                 loading={loading}
                 prefix={catalogPrefix}
