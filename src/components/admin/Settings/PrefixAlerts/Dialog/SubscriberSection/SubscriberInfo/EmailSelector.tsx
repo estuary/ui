@@ -2,7 +2,7 @@ import type { AutocompleteRenderInputParams } from '@mui/material';
 import type { SubscriptionDependentProps } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { Grant_UserExt } from 'src/types';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
     Autocomplete,
@@ -16,6 +16,7 @@ import {
 
 import { useShallow } from 'zustand/react/shallow';
 
+import { debounce } from 'lodash';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
@@ -73,6 +74,16 @@ function EmailSelector({
     const duplicateEmailDetected =
         duplicateSubscriptionEmails.includes(subscribedEmail);
 
+    const updateDebouncedEmail = useRef(
+        debounce((input) => {
+            setSubscribedEmail(sanitizeEmail(input), subscriptionId);
+        }, 750)
+    );
+
+    useEffect(() => {
+        updateDebouncedEmail.current(inputValue);
+    }, [inputValue, updateDebouncedEmail]);
+
     useEffect(() => {
         setEmailErrorsExist(
             inputErrorExists || duplicateEmailDetected,
@@ -129,7 +140,7 @@ function EmailSelector({
                 }}
                 onChange={(_event, value, reason) => {
                     if (!value) {
-                        setSubscribedEmail('', subscriptionId);
+                        updateDebouncedEmail.current('');
 
                         return;
                     }
@@ -144,19 +155,15 @@ function EmailSelector({
                         setInputValue('');
                     }
 
-                    setSubscribedEmail(
+                    updateDebouncedEmail.current(
                         typeof value === 'string'
                             ? sanitizeEmail(value)
-                            : value.user_email,
-                        subscriptionId
+                            : value.user_email
                     );
                 }}
                 onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === 'Tab') {
-                        setSubscribedEmail(
-                            sanitizeEmail(inputValue),
-                            subscriptionId
-                        );
+                        updateDebouncedEmail.current(sanitizeEmail(inputValue));
                     }
                 }}
                 onInputChange={(_event, value) => {
@@ -174,9 +181,8 @@ function EmailSelector({
                             id: 'data.email',
                         })}
                         onBlur={(_event) => {
-                            setSubscribedEmail(
-                                sanitizeEmail(inputValue),
-                                subscriptionId
+                            updateDebouncedEmail.current(
+                                sanitizeEmail(inputValue)
                             );
                         }}
                         required
