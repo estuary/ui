@@ -44,7 +44,8 @@ export function useInitializeAlertConfig() {
     }, [catalogPrefix, debouncedPrefix, evaluateGlobalPrefixSettings]);
 
     return {
-        loading: debouncedPrefix !== catalogPrefix,
+        loading:
+            debouncedPrefix !== catalogPrefix || !debouncedPrefix.endsWith('/'),
         configs,
     };
 }
