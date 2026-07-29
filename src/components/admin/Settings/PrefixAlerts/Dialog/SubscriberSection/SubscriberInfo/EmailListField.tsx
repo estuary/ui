@@ -28,7 +28,7 @@ const EmailListField = ({ subscription, staticEmail }: EmailListFieldProps) => {
                     sx: { borderRadius: 3 },
                 },
             }}
-            value={staticEmail}
+            value={staticEmail ?? subscription.email}
             variant="outlined"
         />
     ) : (
