@@ -74,10 +74,24 @@ export function useInitializeAlertConfig() {
     });
 
     useEffect(() => {
-        if (!fetching && error) {
-            setServerError([error]);
+        const errors = [error, effectiveConfigResponse?.error].filter(
+            (err) => typeof err !== 'undefined'
+        );
+
+        if (
+            !fetching &&
+            !effectiveConfigResponse.fetching &&
+            errors.length > 0
+        ) {
+            setServerError(errors);
         }
-    }, [error, fetching, setServerError]);
+    }, [
+        effectiveConfigResponse?.error,
+        effectiveConfigResponse.fetching,
+        error,
+        fetching,
+        setServerError,
+    ]);
 
     useEffect(() => {
         if (debouncedPrefix !== catalogPrefix || settingsDefined || fetching) {
