@@ -101,5 +101,5 @@ export interface SubscriptionMetadata {
 }
 
 export interface SubscriptionMetadataDictionary {
-    [prefix: string]: SubscriptionMetadata;
+    [prefix: string]: Pick<SubscriptionMetadata, 'subscriptions'>;
 }

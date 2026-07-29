@@ -2,11 +2,11 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { SubscriptionMetadata } from 'src/components/admin/Settings/PrefixAlerts/types';
 
 export interface RowProps {
-    row: SubscriptionMetadata;
+    row: Pick<SubscriptionMetadata, 'subscriptions'>;
 }
 
 export interface RowsProps {
-    data: SubscriptionMetadata[];
+    data: Pick<SubscriptionMetadata, 'subscriptions'>[];
 }
 
 export interface TableFilterProps {
