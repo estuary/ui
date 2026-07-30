@@ -9,6 +9,11 @@ import { useQuery } from 'urql';
 
 import { AlertConfigQuery, EffectiveAlertConfigQuery } from 'src/api/alerts';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { PREFIX_NAME_PATTERN } from 'src/validation';
+
+const namePattern = new RegExp(
+    `^(${PREFIX_NAME_PATTERN}/)*${PREFIX_NAME_PATTERN}/?$`
+);
 
 export function useInitializeAlertConfig() {
     const catalogPrefix = useAlertSubscriptionsStore(
@@ -22,6 +27,9 @@ export function useInitializeAlertConfig() {
     );
     const setServerError = useAlertSubscriptionsStore(
         (state) => state.setServerErrors
+    );
+    const prefixErrors = useAlertSubscriptionsStore(
+        (state) => state.prefixErrors
     );
 
     const [debouncedPrefix, setDebouncedPrefix] = useState(catalogPrefix);
@@ -46,7 +54,9 @@ export function useInitializeAlertConfig() {
         pause:
             !debouncedPrefix ||
             !debouncedPrefix.endsWith('/') ||
-            settingsDefined,
+            settingsDefined ||
+            !namePattern.test(debouncedPrefix) ||
+            prefixErrors.length > 0,
         query: AlertConfigQuery,
         variables: {
             filter: { catalogPrefixOrName: { in: [debouncedPrefix] } },
@@ -58,7 +68,9 @@ export function useInitializeAlertConfig() {
         pause:
             !debouncedPrefix ||
             !debouncedPrefix.endsWith('/') ||
-            settingsDefined,
+            settingsDefined ||
+            !namePattern.test(debouncedPrefix) ||
+            prefixErrors.length > 0,
         query: EffectiveAlertConfigQuery,
         variables: {
             catalogPrefixOrName: debouncedPrefix,
@@ -78,13 +90,11 @@ export function useInitializeAlertConfig() {
             (err) => typeof err !== 'undefined'
         );
 
-        if (
-            !fetching &&
-            !effectiveConfigResponse.fetching &&
-            errors.length > 0
-        ) {
-            setServerError(errors);
-        }
+        setServerError(
+            !fetching && !effectiveConfigResponse.fetching && errors.length > 0
+                ? errors
+                : []
+        );
     }, [
         effectiveConfigResponse?.error,
         effectiveConfigResponse.fetching,

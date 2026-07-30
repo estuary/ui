@@ -61,7 +61,13 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     ) : (
         <LeavesAutocomplete
             error={prefixErrors.length > 0}
-            errorMessage={prefixErrors.length > 0 ? 'Error' : undefined}
+            errorMessage={
+                prefixErrors.length === 1
+                    ? intl.formatMessage({
+                          id: `custom.prefixedName.prefix.${prefixErrors[0]}`,
+                      })
+                    : undefined
+            }
             helperText={
                 duplicatePrefixExists
                     ? intl.formatMessage({
