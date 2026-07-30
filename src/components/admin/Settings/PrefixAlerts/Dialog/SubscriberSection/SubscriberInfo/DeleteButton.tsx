@@ -9,8 +9,8 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 const DeleteButton = ({ subscription: { id } }: SubscriptionDependentProps) => {
     const theme = useTheme();
 
-    const duplicatePrefixExists = useAlertSubscriptionsStore((state) =>
-        state.prefixErrors.includes('duplicate')
+    const duplicatePrefixExists = useAlertSubscriptionsStore(
+        (state) => state.duplicateEmailExists
     );
     const markSubscriptionForDeletion = useAlertSubscriptionsStore(
         (state) => state.markSubscriptionForDeletion

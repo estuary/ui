@@ -27,6 +27,7 @@ interface AlertSubscriptionState {
     alertTypeOptions: AlertTypeInfo[];
     alertTypeOptionsFetching: boolean;
     catalogPrefix: string;
+    duplicateEmailExists: boolean;
     initializationErrors: (CombinedError | PostgrestError)[];
     initializeAlertTypeOptions: (
         values: AlertTypeInfo[],
@@ -93,6 +94,7 @@ const getInitialState = (): Pick<
     | 'alertTypeOptions'
     | 'alertTypeOptionsFetching'
     | 'catalogPrefix'
+    | 'duplicateEmailExists'
     | 'initializationErrors'
     | 'isEditFlow'
     | 'mutableSubscriptionMetadata'
@@ -103,6 +105,7 @@ const getInitialState = (): Pick<
     alertTypeOptions: [],
     alertTypeOptionsFetching: false,
     catalogPrefix: '',
+    duplicateEmailExists: false,
     initializationErrors: [],
     isEditFlow: false,
     mutableSubscriptionMetadata: {
@@ -473,19 +476,14 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
                         state.catalogPrefix = value;
 
                         // Validate the prefix and store validation errors.
-                        const validationErrors =
+                        state.prefixErrors =
                             validateCatalogName(value, false, true) ?? [];
 
-                        if (
+                        state.duplicateEmailExists =
                             !state.isEditFlow &&
                             Object.keys(state.subscriptionMetadata).includes(
                                 value
-                            )
-                        ) {
-                            validationErrors.push('duplicate');
-                        }
-
-                        state.prefixErrors = validationErrors;
+                            );
 
                         // Reset mutable subscription metadata state.
                         state.mutableSubscriptionMetadata =

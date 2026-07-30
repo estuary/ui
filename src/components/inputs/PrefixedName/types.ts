@@ -1,5 +1,4 @@
 export type PrefixedName_ErrorStates =
-    | 'duplicate'
     | 'missing'
     | 'invalid'
     | 'unclean'

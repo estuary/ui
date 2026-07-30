@@ -10,8 +10,8 @@ import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAler
 const EmailListField = ({ subscription, staticEmail }: EmailListFieldProps) => {
     const intl = useIntl();
 
-    const duplicatePrefixExists = useAlertSubscriptionsStore((state) =>
-        state.prefixErrors.includes('duplicate')
+    const duplicatePrefixExists = useAlertSubscriptionsStore(
+        (state) => state.duplicateEmailExists
     );
 
     return staticEmail || duplicatePrefixExists ? (

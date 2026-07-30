@@ -22,6 +22,9 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
                     emailErrorsExist || !isValidEmail(email)
             )
     );
+    const duplicatePrefixExists = useAlertSubscriptionsStore(
+        (state) => state.duplicateEmailExists
+    );
 
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
@@ -40,9 +43,16 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
                 errorsExist ||
                     loading ||
                     catalogPrefix.length === 0 ||
-                    metadataMissing
+                    metadataMissing ||
+                    duplicatePrefixExists
             ),
-        [catalogPrefix, errorsExist, loading, metadataMissing]
+        [
+            catalogPrefix,
+            duplicatePrefixExists,
+            errorsExist,
+            loading,
+            metadataMissing,
+        ]
     );
 
     return (

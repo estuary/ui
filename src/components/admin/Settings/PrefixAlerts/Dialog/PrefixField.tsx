@@ -23,6 +23,9 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     const prefixErrors = useAlertSubscriptionsStore(
         (state) => state.prefixErrors
     );
+    const duplicatePrefixExists = useAlertSubscriptionsStore(
+        (state) => state.duplicateEmailExists
+    );
     const setSubscribedPrefix = useAlertSubscriptionsStore(
         (state) => state.setSubscribedPrefix
     );
@@ -58,14 +61,13 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
     ) : (
         <LeavesAutocomplete
             error={prefixErrors.length > 0}
-            errorMessage={
-                prefixErrors.includes('duplicate')
+            errorMessage={prefixErrors.length > 0 ? 'Error' : undefined}
+            helperText={
+                duplicatePrefixExists
                     ? intl.formatMessage({
                           id: 'alerts.config.dialog.prefixField.duplicate',
                       })
-                    : prefixErrors.length > 0
-                      ? 'Error'
-                      : undefined
+                    : undefined
             }
             label={intl.formatMessage({
                 id: 'common.tenant',

@@ -20,6 +20,9 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
                 ({ emailErrorsExist }) => emailErrorsExist
             )
     );
+    const duplicatePrefixExists = useAlertSubscriptionsStore(
+        (state) => state.duplicateEmailExists
+    );
 
     const catalogPrefix = useAlertSubscriptionsStore(
         (state) => state.catalogPrefix
@@ -44,10 +47,12 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
                 catalogPrefix.length === 0 ||
                 subscriptions.length === 0 ||
                 emptyEmailExists ||
-                !Object.keys(subscriptionMetadata).includes(catalogPrefix)
+                !Object.keys(subscriptionMetadata).includes(catalogPrefix) ||
+                duplicatePrefixExists
         );
     }, [
         catalogPrefix,
+        duplicatePrefixExists,
         errorsExist,
         loading,
         mutableSubscriptionMetadata,
