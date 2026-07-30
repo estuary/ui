@@ -77,7 +77,7 @@ function EmailSelector({
     const updateDebouncedEmail = useRef(
         debounce((input) => {
             setSubscribedEmail(sanitizeEmail(input), subscriptionId);
-        }, 750)
+        }, 1000)
     );
 
     useEffect(() => {
