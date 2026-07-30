@@ -9,6 +9,7 @@ import { useQuery } from 'urql';
 
 import { AlertConfigQuery, EffectiveAlertConfigQuery } from 'src/api/alerts';
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+import { appendWithForwardSlash } from 'src/utils/misc-utils';
 import { PREFIX_NAME_PATTERN } from 'src/validation';
 
 const namePattern = new RegExp(
@@ -39,7 +40,7 @@ export function useInitializeAlertConfig() {
 
     const updateDebouncedPrefix = useRef(
         debounce((prefix) => {
-            setDebouncedPrefix(prefix);
+            setDebouncedPrefix(appendWithForwardSlash(prefix));
         }, 750)
     );
 
@@ -49,6 +50,8 @@ export function useInitializeAlertConfig() {
             !isEmpty(mutableSubscriptionMetadata.configs.effective),
         [debouncedPrefix, mutableSubscriptionMetadata]
     );
+
+    const formattedCatalogPrefix = appendWithForwardSlash(catalogPrefix);
 
     const [{ data, error, fetching }] = useQuery({
         pause:
@@ -104,7 +107,11 @@ export function useInitializeAlertConfig() {
     ]);
 
     useEffect(() => {
-        if (debouncedPrefix !== catalogPrefix || settingsDefined || fetching) {
+        if (
+            debouncedPrefix !== formattedCatalogPrefix ||
+            settingsDefined ||
+            fetching
+        ) {
             return;
         }
 
@@ -145,11 +152,11 @@ export function useInitializeAlertConfig() {
             setConfigs(targetConfigs);
         }
     }, [
-        catalogPrefix,
         data,
         debouncedPrefix,
         effectiveConfigResponse?.data,
         effectiveConfigResponse.fetching,
+        formattedCatalogPrefix,
         fetching,
         initializeGlobalPrefixSettings,
         settingsDefined,
@@ -157,7 +164,7 @@ export function useInitializeAlertConfig() {
 
     return {
         loading:
-            debouncedPrefix !== catalogPrefix ||
+            debouncedPrefix !== formattedCatalogPrefix ||
             !debouncedPrefix.endsWith('/') ||
             fetching ||
             effectiveConfigResponse.fetching,
