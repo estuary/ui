@@ -18,6 +18,36 @@ import { CustomEvents } from 'src/services/types';
 import { INCREMENT } from 'src/utils/dataPlane-utils';
 import { journalStatusIsError } from 'src/utils/misc-utils';
 
+// Gazette packs message flags into the low 10 bits of a v1 UUID's clock-sequence
+// field, which is the fourth hyphen-delimited group. ACK_TXN marks a document as
+// the acknowledgement of a committed transaction: runtime bookkeeping rather than
+// collection data, so it should not be shown to users.
+//
+// The flag is what we test because the acknowledgement body differs by runtime
+// version. Runtime v1 writes the collection's ack template, `{"_meta":{"uuid":...,
+// "ack":true}}`, while runtime v2 writes `{"_meta":{"uuid":...},"is_ack":true,...}`.
+// Only the UUID is common to both, and `is_ack` sits in the user's own namespace
+// where a real document could legitimately carry it.
+//
+// See `build` and `parse` in crates/proto-gazette/src/uuid.rs of estuary/flow.
+const ACK_TXN = 0x2;
+const FLAGS_MASK = 0x3ff;
+const MESSAGE_UUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-([0-9a-f]{4})-[0-9a-f]{12}$/i;
+
+export const hasAckTxnFlag = (uuid: string): boolean => {
+    const match = MESSAGE_UUID.exec(uuid);
+
+    // Show, rather than hide, a document whose UUID we cannot interpret.
+    if (match === null) {
+        return false;
+    }
+
+    const flags = Number.parseInt(match[1], 16) & FLAGS_MASK;
+
+    return (flags & ACK_TXN) !== 0;
+};
+
 function isJournalRecord(val: any): val is JournalRecord {
     return val?._meta?.uuid;
 }
@@ -150,10 +180,7 @@ export async function loadDocuments({
             range: [readStart, readEnd],
             allDocs: allDocs
                 .filter(isJournalRecord)
-                .filter(
-                    (record) =>
-                        !(record._meta as unknown as { ack: boolean }).ack
-                ),
+                .filter((record) => !hasAckTxnFlag(record._meta.uuid)),
         };
     };
 
