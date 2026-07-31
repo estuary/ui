@@ -2,8 +2,6 @@ import { CommonMessages } from 'src/lang/en-US/CommonMessages';
 import { CTAs } from 'src/lang/en-US/CTAs';
 
 export const Navigation: Record<string, string> = {
-    'tenant.organization': `Organization`,
-
     'helpMenu.docs': `Docs`,
     'helpMenu.docs.link': `https://docs.estuary.dev/`,
     'helpMenu.slack': `Estuary Slack`,

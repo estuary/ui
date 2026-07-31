@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 
 import { Check } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 import PrefixSelector from 'src/components/inputs/PrefixedName/PrefixSelector';
 import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
@@ -21,7 +20,6 @@ interface OrgMenuProps {
 }
 
 export const OrgMenu = ({ anchorEl, onClose }: OrgMenuProps) => {
-    const intl = useIntl();
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const setSelectedTenant = useTenantStore(
         (state) => state.setSelectedTenant
@@ -39,16 +37,12 @@ export const OrgMenu = ({ anchorEl, onClose }: OrgMenuProps) => {
                 fullWidth
                 maxWidth="xs"
             >
-                <DialogTitle>
-                    <FormattedMessage id="tenant.organization" />
-                </DialogTitle>
+                <DialogTitle>Organization</DialogTitle>
                 <DialogContent>
                     <PrefixSelector
                         disabled={false}
                         error={false}
-                        label={intl.formatMessage({
-                            id: 'tenant.organization',
-                        })}
+                        label="Organization"
                         labelId="org-switcher"
                         onChange={(newValue) => {
                             setSelectedTenant(newValue);
@@ -92,7 +86,7 @@ export const OrgMenu = ({ anchorEl, onClose }: OrgMenuProps) => {
                     color: 'text.secondary',
                 }}
             >
-                <FormattedMessage id="tenant.organization" />
+                Organization
             </Typography>
 
             {tenantNames.map((tenant) => {
