@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Box, List, Stack, useTheme } from '@mui/material';
 
 import {
+    Building,
     CloudDownload,
     CloudUpload,
     DatabaseScript,
@@ -17,9 +18,11 @@ import { Pill as AgentSkillsPill } from 'src/components/AgentSkills/Pill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
 import CompanyMark from 'src/components/graphics/CompanyMark';
 import { HelpMenu } from 'src/components/menus/HelpMenu';
+import { OrgMenu } from 'src/components/menus/OrgMenu';
 import NavLink, { NavButton } from 'src/components/navigation/NavItems';
 import { UserButton, UserMenu } from 'src/components/navigation/User';
 import { UpdateAlert } from 'src/components/UpdateAlert';
+import { useTenantStore } from 'src/stores/Tenant';
 import { useNavigationStore } from 'src/stores/useNavigationStore';
 
 const NavWidths = {
@@ -33,6 +36,10 @@ export const Navigation = () => {
     const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
 
     const [helpAnchor, setHelpAnchor] = useState<HTMLElement | null>(null);
+
+    const [orgAnchor, setOrgAnchor] = useState<HTMLElement | null>(null);
+
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const open = useNavigationStore((state) => state.open);
     const toggleOpen = useNavigationStore((state) => state.toggleOpen);
@@ -154,6 +161,21 @@ export const Navigation = () => {
                         anchorEl={menuAnchor}
                         onClose={() => setMenuAnchor(null)}
                     />
+
+                    {selectedTenant ? (
+                        <>
+                            <NavButton
+                                icon={<Building />}
+                                title={selectedTenant.replace(/\/$/, '')}
+                                onClick={(e) => setOrgAnchor(e.currentTarget)}
+                                isOpen={open}
+                            />
+                            <OrgMenu
+                                anchorEl={orgAnchor}
+                                onClose={() => setOrgAnchor(null)}
+                            />
+                        </>
+                    ) : null}
                 </Box>
             </Stack>
         </Box>

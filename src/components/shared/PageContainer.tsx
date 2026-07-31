@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Paper, Snackbar, Typography, useTheme } from '@mui/material';
 
+import { Building } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -13,6 +14,7 @@ import { paperBackground } from 'src/context/Theme';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
+import { useTenantStore } from 'src/stores/Tenant';
 import { useTopBarStore } from 'src/stores/TopBar/Store';
 import { useNavigationStore } from 'src/stores/useNavigationStore';
 
@@ -26,6 +28,7 @@ function PageContainer({ children, hideBackground }: Props) {
     const theme = useTheme();
     const header = useTopBarStore((state) => state.header);
     const navigationOpen = useNavigationStore((state) => state.open);
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const notification = useNotificationStore(
         notificationStoreSelectors.notification
@@ -139,6 +142,19 @@ function PageContainer({ children, hideBackground }: Props) {
                         background: backgroundMixin,
                     }}
                 >
+                    {selectedTenant ? (
+                        <>
+                            <Building
+                                aria-hidden
+                                style={{ width: 16, height: 16 }}
+                            />
+                            <Typography>
+                                {selectedTenant.replace(/\/$/, '')}
+                            </Typography>
+                            <Typography aria-hidden>/</Typography>
+                        </>
+                    ) : null}
+
                     <Typography sx={{ fontWeight: 'bold' }}>
                         {intl.formatMessage({ id: header })}
                     </Typography>
