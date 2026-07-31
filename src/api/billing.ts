@@ -3,8 +3,54 @@ import type { TenantPaymentDetails } from 'src/types';
 import pLimit from 'p-limit';
 
 import { supabaseClient } from 'src/context/GlobalProviders';
+import { graphql } from 'src/gql-types';
 import { FUNCTIONS, invokeSupabase, TABLES } from 'src/services/supabase';
 import { formatDateForApi } from 'src/utils/billing-utils';
+
+export const PAYMENT_METHODS_QUERY = graphql(`
+    query Tenant($name: String!) {
+        tenant(name: $name) {
+            billing {
+                paymentMethods {
+                    billingDetails {
+                        name
+                    }
+                    card {
+                        brand
+                        expMonth
+                        expYear
+                        last4
+                    }
+                    id
+                    type
+                    usBankAccount {
+                        accountHolderType
+                        bankName
+                        last4
+                    }
+                }
+                primaryPaymentMethod {
+                    billingDetails {
+                        name
+                    }
+                    card {
+                        brand
+                        expMonth
+                        expYear
+                        last4
+                    }
+                    id
+                    type
+                    usBankAccount {
+                        accountHolderType
+                        bankName
+                        last4
+                    }
+                }
+            }
+        }
+    }
+`);
 
 const OPERATIONS = {
     SETUP_INTENT: 'setup-intent',

@@ -64,6 +64,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         RefreshTokenInfo: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
+                        Tenant: (_data) => null,
                     },
                     updates: {
                         Mutation: {

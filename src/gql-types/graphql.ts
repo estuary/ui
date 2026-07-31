@@ -175,7 +175,9 @@ export type AlertConfigEntryEdge = {
 
 /**
  * Optional filter for the `alertConfigs` query. When omitted, all accessible
- * rows are returned.
+ * rows are returned. A filter only narrows those results; the caller's
+ * catalog-read scope is enforced independently, so it can never widen what a
+ * caller may see.
  */
 export type AlertConfigsFilter = {
   /** Filter on the `catalog_prefix_or_name` column. */
@@ -612,8 +614,13 @@ export type CreateBillingSetupIntentPayload = {
 /** Result of creating a storage mapping. */
 export type CreateStorageMappingResult = {
   __typename?: 'CreateStorageMappingResult';
-  /** The catalog prefix for which the storage mapping was created. */
+  /**
+   * The catalog prefix for which the storage mapping was created.
+   * @deprecated Use storageMapping.catalogPrefix instead.
+   */
   catalogPrefix: Scalars['Prefix']['output'];
+  /** The newly created storage mapping. */
+  storageMapping: StorageMapping;
 };
 
 /** A data plane where tasks execute and collections are stored. */
@@ -638,6 +645,8 @@ export type DataPlane = {
   azureLinkEndpoints: Array<Scalars['JSON']['output']>;
   /** CIDR blocks for this data-plane. */
   cidrBlocks: Array<Scalars['String']['output']>;
+  /** Whether this data plane is closed to new selection. */
+  closed: Scalars['Boolean']['output'];
   /** Cloud provider where this data-plane is hosted. */
   cloudProvider: DataPlaneCloudProvider;
   /** Fully-qualified domain name of this data-plane. */
@@ -696,6 +705,15 @@ export type DataPlaneEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: DataPlane;
+};
+
+/**
+ * Optional filter for the `dataPlanes` query. When omitted, all accessible
+ * data planes are returned.
+ */
+export type DataPlanesFilter = {
+  /** Filter on the `closed` flag. */
+  closed?: InputMaybe<BoolFilter>;
 };
 
 export type DateFilter = {
@@ -822,6 +840,11 @@ export type InviteLinkEdge = {
   node: InviteLink;
 };
 
+/**
+ * Composable filter for the `inviteLinks` query. Every field is optional and
+ * only narrows the result set; the caller's admin scope is enforced
+ * independently, so a filter can never widen what a caller may see.
+ */
 export type InviteLinksFilter = {
   catalogPrefix?: InputMaybe<PrefixFilter>;
   singleUse?: InputMaybe<BoolFilter>;
@@ -1479,6 +1502,22 @@ export type PendingConfigUpdateStatus = {
 };
 
 export type PrefixFilter = {
+  /**
+   * Match values exactly equal to any entry in this set. The set must hold
+   * between 1 and 100 entries: an empty `in` is rejected during input
+   * validation rather than silently matching nothing (or everything), and
+   * the upper bound keeps this caller-controlled set from driving unbounded
+   * work — every entry is narrowed against the caller's authorized prefixes
+   * in memory and bound into a SQL `= ANY(...)` on each request.
+   * `startsWith` and `in` are mutually exclusive: a resolver rejects a
+   * filter that sets both, so a prefix scope is always either a subtree
+   * (`startsWith`) or an exact set (`in`), never a mix.
+   */
+  in?: InputMaybe<Array<Scalars['String']['input']>>;
+  /**
+   * Match values that start with this prefix — a subtree match, e.g.
+   * `acmeCo/` matches `acmeCo/`, `acmeCo/team/`, and so on.
+   */
   startsWith?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1677,9 +1716,9 @@ export type QueryRoot = {
    * Lists alert-config rows visible to the caller.
    *
    * Results are limited to readable prefixes and sorted by
-   * `catalog_prefix_or_name`. `filter.catalogPrefixOrName.startsWith` can
-   * narrow the results further. Passing a full catalog name returns at
-   * most one exact-name row.
+   * `catalog_prefix_or_name`. `filter.catalogPrefixOrName` narrows further,
+   * by subtree (`startsWith`) or an exact set (`in`) — not both. Passing a
+   * full catalog name returns at most one exact-name row.
    */
   alertConfigs: AlertConfigEntryConnection;
   /** Returns a complete list of alert subscriptions. */
@@ -1711,13 +1750,19 @@ export type QueryRoot = {
    *
    * Results are paginated and sorted by data_plane_name.
    * Only data planes the user has at least read capability to are returned.
+   *
+   * `filter.closed.eq` restricts results to data planes whose `closed`
+   * flag matches it; omitting it returns both open and closed planes.
    */
   dataPlanes: DataPlaneConnection;
+  /** Resolves the effective alert config at a single prefix or catalog name. */
+  effectiveAlertConfig: EffectiveAlertConfig;
   /**
    * List invite links the caller has admin access to.
    *
    * Returns invite links under all prefixes where the caller has admin
-   * capability, optionally narrowed by a prefix filter.
+   * capability, optionally narrowed by a prefix filter — a subtree
+   * (`startsWith`) or an exact set (`in`), not both.
    */
   inviteLinks: InviteLinkConnection;
   /**
@@ -1738,6 +1783,8 @@ export type QueryRoot = {
    * This query requires no authentication. It exposes only the name, cloud
    * provider, and region of public data planes, so that account-creation
    * flows can offer a data-plane selection before the user has signed up.
+   * Closed planes are always excluded: this query drives new selection,
+   * which is exactly what closing a plane retires it from.
    *
    * Results are paginated and sorted by name.
    */
@@ -1748,7 +1795,8 @@ export type QueryRoot = {
   /**
    * Returns storage mappings accessible to the current user.
    *
-   * Requires at least read capability to the queried prefixes.
+   * Returns mappings under every prefix where the caller has catalog-read
+   * capability. The optional `filter` narrows those authorized results.
    * Results are paginated and sorted by catalog_prefix.
    */
   storageMappings: StorageMappingConnection;
@@ -1800,8 +1848,14 @@ export type QueryRootConnectorsArgs = {
 export type QueryRootDataPlanesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<DataPlanesFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootEffectiveAlertConfigArgs = {
+  catalogPrefixOrName: Scalars['String']['input'];
 };
 
 
@@ -1851,7 +1905,8 @@ export type QueryRootServiceAccountsArgs = {
 export type QueryRootStorageMappingsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
-  by: StorageMappingsBy;
+  by?: InputMaybe<StorageMappingsBy>;
+  filter?: InputMaybe<StorageMappingsFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -2225,15 +2280,32 @@ export type StorageMappingEdge = {
 export type StorageMappingsBy = {
   /**
    * Fetch storage mappings by exact catalog prefixes.
-   * At least one of `exactPrefixes` or `underPrefix` must be provided.
+   * Exactly one of `exactPrefixes` or `underPrefix` must be provided.
    */
   exactPrefixes?: InputMaybe<Array<Scalars['Prefix']['input']>>;
   /**
    * Fetch all storage mappings under this prefix pattern.
    * For example, "acmeCo/" returns mappings for "acmeCo/", "acmeCo/team-a/", etc.
-   * At least one of `exactPrefixes` or `underPrefix` must be provided.
+   * Exactly one of `exactPrefixes` or `underPrefix` must be provided.
    */
   underPrefix?: InputMaybe<Scalars['Prefix']['input']>;
+};
+
+/**
+ * Composable filter for the `storageMappings` query. Every field is optional
+ * and only narrows the result set; the caller's catalog-read scope is enforced
+ * independently, so a filter can never widen what a caller may see.
+ */
+export type StorageMappingsFilter = {
+  /**
+   * Narrow by catalog prefix. `startsWith` matches a whole subtree —
+   * mappings for `acmeCo/`, `acmeCo/team-a/`, etc. — like the deprecated
+   * `by: { underPrefix }`. `in` matches an exact set of prefixes, like
+   * `by: { exactPrefixes }`. The two are alternative query modes and are
+   * mutually exclusive. Either way, results compose with (never widen past)
+   * the caller's authorized read prefixes.
+   */
+  catalogPrefix?: InputMaybe<PrefixFilter>;
 };
 
 export type Tenant = {
@@ -2270,10 +2342,15 @@ export type UpdateAlertConfigResult = {
 /** Result of updating a storage mapping. */
 export type UpdateStorageMappingResult = {
   __typename?: 'UpdateStorageMappingResult';
-  /** The catalog prefix for which the storage mapping was updated. */
+  /**
+   * The catalog prefix for which the storage mapping was updated.
+   * @deprecated Use storageMapping.catalogPrefix instead.
+   */
   catalogPrefix: Scalars['Prefix']['output'];
   /** Whether a republish is required because the primary storage bucket changed. */
   republish: Scalars['Boolean']['output'];
+  /** The updated storage mapping. */
+  storageMapping: StorageMapping;
 };
 
 export type UsBankAccountPaymentMethodDetails = {
@@ -2342,6 +2419,13 @@ export type AlertTypeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type AlertTypeQuery = { __typename?: 'QueryRoot', alertTypes: Array<{ __typename?: 'AlertTypeInfo', alertType: AlertType, description: string, displayName: string, isDefault: boolean, isSystem: boolean }> };
+
+export type TenantQueryVariables = Exact<{
+  name: Scalars['String']['input'];
+}>;
+
+
+export type TenantQuery = { __typename?: 'QueryRoot', tenant?: { __typename?: 'Tenant', billing: { __typename?: 'TenantBilling', paymentMethods: Array<{ __typename?: 'PaymentMethod', id: string, type: string, billingDetails: { __typename?: 'PaymentMethodBillingDetails', name?: string | null }, card?: { __typename?: 'CardPaymentMethodDetails', brand?: string | null, expMonth: number, expYear: number, last4?: string | null } | null, usBankAccount?: { __typename?: 'UsBankAccountPaymentMethodDetails', accountHolderType?: string | null, bankName?: string | null, last4?: string | null } | null }>, primaryPaymentMethod?: { __typename?: 'PaymentMethod', id: string, type: string, billingDetails: { __typename?: 'PaymentMethodBillingDetails', name?: string | null }, card?: { __typename?: 'CardPaymentMethodDetails', brand?: string | null, expMonth: number, expYear: number, last4?: string | null } | null, usBankAccount?: { __typename?: 'UsBankAccountPaymentMethodDetails', accountHolderType?: string | null, bankName?: string | null, last4?: string | null } | null } | null } } | null };
 
 export type ConnectorsGridQueryVariables = Exact<{
   filter?: InputMaybe<ConnectorsFilter>;
@@ -2509,6 +2593,7 @@ export const DeleteAlertSubscriptionMutationDocument = {"kind":"Document","defin
 export const AlertSubscriptionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertSubscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertSubscriptions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertTypes"}},{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<AlertSubscriptionsQuery, AlertSubscriptionsQueryVariables>;
 export const UpdateAlertSubscriptionMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAlertSubscriptionMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Prefix"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AlertType"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"detail"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAlertSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"prefix"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prefix"}}},{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"alertTypes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alertTypes"}}},{"kind":"Argument","name":{"kind":"Name","value":"detail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"detail"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"catalogPrefix"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<UpdateAlertSubscriptionMutationMutation, UpdateAlertSubscriptionMutationMutationVariables>;
 export const AlertTypeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AlertType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"alertType"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}}]}}]}}]} as unknown as DocumentNode<AlertTypeQuery, AlertTypeQueryVariables>;
+export const TenantDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Tenant"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tenant"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"billing"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"paymentMethods"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"billingDetails"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"card"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"brand"}},{"kind":"Field","name":{"kind":"Name","value":"expMonth"}},{"kind":"Field","name":{"kind":"Name","value":"expYear"}},{"kind":"Field","name":{"kind":"Name","value":"last4"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"usBankAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accountHolderType"}},{"kind":"Field","name":{"kind":"Name","value":"bankName"}},{"kind":"Field","name":{"kind":"Name","value":"last4"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"primaryPaymentMethod"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"billingDetails"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"card"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"brand"}},{"kind":"Field","name":{"kind":"Name","value":"expMonth"}},{"kind":"Field","name":{"kind":"Name","value":"expYear"}},{"kind":"Field","name":{"kind":"Name","value":"last4"}}]}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"usBankAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accountHolderType"}},{"kind":"Field","name":{"kind":"Name","value":"bankName"}},{"kind":"Field","name":{"kind":"Name","value":"last4"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<TenantQuery, TenantQueryVariables>;
 export const ConnectorsGridDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorsGrid"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ConnectorsFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connectors"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"500"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"recommended"}},{"kind":"Field","name":{"kind":"Name","value":"detail"}},{"kind":"Field","name":{"kind":"Name","value":"defaultSpec"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<ConnectorsGridQuery, ConnectorsGridQueryVariables>;
 export const ConnectorTagDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ConnectorTagData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fullImageName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"connector"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"imageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"imageName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageName"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"connectorSpec"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fullImageName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fullImageName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageTag"}},{"kind":"Field","name":{"kind":"Name","value":"defaultCaptureInterval"}},{"kind":"Field","name":{"kind":"Name","value":"disableBackfill"}},{"kind":"Field","name":{"kind":"Name","value":"documentationUrl"}},{"kind":"Field","name":{"kind":"Name","value":"endpointSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"resourceSpecSchema"}},{"kind":"Field","name":{"kind":"Name","value":"protocol"}}]}}]}}]} as unknown as DocumentNode<ConnectorTagDataQuery, ConnectorTagDataQueryVariables>;
 export const DataPlanesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DataPlanes"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dataPlanes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"100"}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"cloudProvider"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"fqdn"}},{"kind":"Field","name":{"kind":"Name","value":"cidrBlocks"}},{"kind":"Field","name":{"kind":"Name","value":"awsIamUserArn"}},{"kind":"Field","name":{"kind":"Name","value":"gcpServiceAccountEmail"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationClientId"}},{"kind":"Field","name":{"kind":"Name","value":"azureApplicationName"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<DataPlanesQuery, DataPlanesQueryVariables>;
