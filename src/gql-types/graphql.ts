@@ -175,7 +175,9 @@ export type AlertConfigEntryEdge = {
 
 /**
  * Optional filter for the `alertConfigs` query. When omitted, all accessible
- * rows are returned.
+ * rows are returned. A filter only narrows those results; the caller's
+ * catalog-read scope is enforced independently, so it can never widen what a
+ * caller may see.
  */
 export type AlertConfigsFilter = {
   /** Filter on the `catalog_prefix_or_name` column. */
@@ -612,8 +614,13 @@ export type CreateBillingSetupIntentPayload = {
 /** Result of creating a storage mapping. */
 export type CreateStorageMappingResult = {
   __typename?: 'CreateStorageMappingResult';
-  /** The catalog prefix for which the storage mapping was created. */
+  /**
+   * The catalog prefix for which the storage mapping was created.
+   * @deprecated Use storageMapping.catalogPrefix instead.
+   */
   catalogPrefix: Scalars['Prefix']['output'];
+  /** The newly created storage mapping. */
+  storageMapping: StorageMapping;
 };
 
 /** A data plane where tasks execute and collections are stored. */
@@ -638,6 +645,8 @@ export type DataPlane = {
   azureLinkEndpoints: Array<Scalars['JSON']['output']>;
   /** CIDR blocks for this data-plane. */
   cidrBlocks: Array<Scalars['String']['output']>;
+  /** Whether this data plane is closed to new selection. */
+  closed: Scalars['Boolean']['output'];
   /** Cloud provider where this data-plane is hosted. */
   cloudProvider: DataPlaneCloudProvider;
   /** Fully-qualified domain name of this data-plane. */
@@ -696,6 +705,15 @@ export type DataPlaneEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node: DataPlane;
+};
+
+/**
+ * Optional filter for the `dataPlanes` query. When omitted, all accessible
+ * data planes are returned.
+ */
+export type DataPlanesFilter = {
+  /** Filter on the `closed` flag. */
+  closed?: InputMaybe<BoolFilter>;
 };
 
 export type DateFilter = {
@@ -822,6 +840,11 @@ export type InviteLinkEdge = {
   node: InviteLink;
 };
 
+/**
+ * Composable filter for the `inviteLinks` query. Every field is optional and
+ * only narrows the result set; the caller's admin scope is enforced
+ * independently, so a filter can never widen what a caller may see.
+ */
 export type InviteLinksFilter = {
   catalogPrefix?: InputMaybe<PrefixFilter>;
   singleUse?: InputMaybe<BoolFilter>;
@@ -1479,6 +1502,22 @@ export type PendingConfigUpdateStatus = {
 };
 
 export type PrefixFilter = {
+  /**
+   * Match values exactly equal to any entry in this set. The set must hold
+   * between 1 and 100 entries: an empty `in` is rejected during input
+   * validation rather than silently matching nothing (or everything), and
+   * the upper bound keeps this caller-controlled set from driving unbounded
+   * work — every entry is narrowed against the caller's authorized prefixes
+   * in memory and bound into a SQL `= ANY(...)` on each request.
+   * `startsWith` and `in` are mutually exclusive: a resolver rejects a
+   * filter that sets both, so a prefix scope is always either a subtree
+   * (`startsWith`) or an exact set (`in`), never a mix.
+   */
+  in?: InputMaybe<Array<Scalars['String']['input']>>;
+  /**
+   * Match values that start with this prefix — a subtree match, e.g.
+   * `acmeCo/` matches `acmeCo/`, `acmeCo/team/`, and so on.
+   */
   startsWith?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1677,9 +1716,9 @@ export type QueryRoot = {
    * Lists alert-config rows visible to the caller.
    *
    * Results are limited to readable prefixes and sorted by
-   * `catalog_prefix_or_name`. `filter.catalogPrefixOrName.startsWith` can
-   * narrow the results further. Passing a full catalog name returns at
-   * most one exact-name row.
+   * `catalog_prefix_or_name`. `filter.catalogPrefixOrName` narrows further,
+   * by subtree (`startsWith`) or an exact set (`in`) — not both. Passing a
+   * full catalog name returns at most one exact-name row.
    */
   alertConfigs: AlertConfigEntryConnection;
   /** Returns a complete list of alert subscriptions. */
@@ -1711,13 +1750,19 @@ export type QueryRoot = {
    *
    * Results are paginated and sorted by data_plane_name.
    * Only data planes the user has at least read capability to are returned.
+   *
+   * `filter.closed.eq` restricts results to data planes whose `closed`
+   * flag matches it; omitting it returns both open and closed planes.
    */
   dataPlanes: DataPlaneConnection;
+  /** Resolves the effective alert config at a single prefix or catalog name. */
+  effectiveAlertConfig: EffectiveAlertConfig;
   /**
    * List invite links the caller has admin access to.
    *
    * Returns invite links under all prefixes where the caller has admin
-   * capability, optionally narrowed by a prefix filter.
+   * capability, optionally narrowed by a prefix filter — a subtree
+   * (`startsWith`) or an exact set (`in`), not both.
    */
   inviteLinks: InviteLinkConnection;
   /**
@@ -1738,6 +1783,8 @@ export type QueryRoot = {
    * This query requires no authentication. It exposes only the name, cloud
    * provider, and region of public data planes, so that account-creation
    * flows can offer a data-plane selection before the user has signed up.
+   * Closed planes are always excluded: this query drives new selection,
+   * which is exactly what closing a plane retires it from.
    *
    * Results are paginated and sorted by name.
    */
@@ -1748,7 +1795,8 @@ export type QueryRoot = {
   /**
    * Returns storage mappings accessible to the current user.
    *
-   * Requires at least read capability to the queried prefixes.
+   * Returns mappings under every prefix where the caller has catalog-read
+   * capability. The optional `filter` narrows those authorized results.
    * Results are paginated and sorted by catalog_prefix.
    */
   storageMappings: StorageMappingConnection;
@@ -1800,8 +1848,14 @@ export type QueryRootConnectorsArgs = {
 export type QueryRootDataPlanesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<DataPlanesFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryRootEffectiveAlertConfigArgs = {
+  catalogPrefixOrName: Scalars['String']['input'];
 };
 
 
@@ -1851,7 +1905,8 @@ export type QueryRootServiceAccountsArgs = {
 export type QueryRootStorageMappingsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
-  by: StorageMappingsBy;
+  by?: InputMaybe<StorageMappingsBy>;
+  filter?: InputMaybe<StorageMappingsFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -2225,15 +2280,32 @@ export type StorageMappingEdge = {
 export type StorageMappingsBy = {
   /**
    * Fetch storage mappings by exact catalog prefixes.
-   * At least one of `exactPrefixes` or `underPrefix` must be provided.
+   * Exactly one of `exactPrefixes` or `underPrefix` must be provided.
    */
   exactPrefixes?: InputMaybe<Array<Scalars['Prefix']['input']>>;
   /**
    * Fetch all storage mappings under this prefix pattern.
    * For example, "acmeCo/" returns mappings for "acmeCo/", "acmeCo/team-a/", etc.
-   * At least one of `exactPrefixes` or `underPrefix` must be provided.
+   * Exactly one of `exactPrefixes` or `underPrefix` must be provided.
    */
   underPrefix?: InputMaybe<Scalars['Prefix']['input']>;
+};
+
+/**
+ * Composable filter for the `storageMappings` query. Every field is optional
+ * and only narrows the result set; the caller's catalog-read scope is enforced
+ * independently, so a filter can never widen what a caller may see.
+ */
+export type StorageMappingsFilter = {
+  /**
+   * Narrow by catalog prefix. `startsWith` matches a whole subtree —
+   * mappings for `acmeCo/`, `acmeCo/team-a/`, etc. — like the deprecated
+   * `by: { underPrefix }`. `in` matches an exact set of prefixes, like
+   * `by: { exactPrefixes }`. The two are alternative query modes and are
+   * mutually exclusive. Either way, results compose with (never widen past)
+   * the caller's authorized read prefixes.
+   */
+  catalogPrefix?: InputMaybe<PrefixFilter>;
 };
 
 export type Tenant = {
@@ -2270,10 +2342,15 @@ export type UpdateAlertConfigResult = {
 /** Result of updating a storage mapping. */
 export type UpdateStorageMappingResult = {
   __typename?: 'UpdateStorageMappingResult';
-  /** The catalog prefix for which the storage mapping was updated. */
+  /**
+   * The catalog prefix for which the storage mapping was updated.
+   * @deprecated Use storageMapping.catalogPrefix instead.
+   */
   catalogPrefix: Scalars['Prefix']['output'];
   /** Whether a republish is required because the primary storage bucket changed. */
   republish: Scalars['Boolean']['output'];
+  /** The updated storage mapping. */
+  storageMapping: StorageMapping;
 };
 
 export type UsBankAccountPaymentMethodDetails = {

@@ -133,7 +133,9 @@ type AlertConfigEntryEdge {
 
 """
 Optional filter for the `alertConfigs` query. When omitted, all accessible
-rows are returned.
+rows are returned. A filter only narrows those results; the caller's
+catalog-read scope is enforced independently, so it can never widen what a
+caller may see.
 """
 input AlertConfigsFilter {
   """Filter on the `catalog_prefix_or_name` column."""
@@ -630,7 +632,10 @@ type CreateBillingSetupIntentPayload {
 """Result of creating a storage mapping."""
 type CreateStorageMappingResult {
   """The catalog prefix for which the storage mapping was created."""
-  catalogPrefix: Prefix!
+  catalogPrefix: Prefix! @deprecated(reason: "Use storageMapping.catalogPrefix instead.")
+
+  """The newly created storage mapping."""
+  storageMapping: StorageMapping!
 }
 
 """A data plane where tasks execute and collections are stored."""
@@ -659,6 +664,9 @@ type DataPlane {
 
   """CIDR blocks for this data-plane."""
   cidrBlocks: [String!]!
+
+  """Whether this data plane is closed to new selection."""
+  closed: Boolean!
 
   """Cloud provider where this data-plane is hosted."""
   cloudProvider: DataPlaneCloudProvider!
@@ -729,6 +737,15 @@ type DataPlaneEdge {
 
   """The item at the end of the edge"""
   node: DataPlane!
+}
+
+"""
+Optional filter for the `dataPlanes` query. When omitted, all accessible
+data planes are returned.
+"""
+input DataPlanesFilter {
+  """Filter on the `closed` flag."""
+  closed: BoolFilter
 }
 
 input DateFilter {
@@ -872,6 +889,11 @@ type InviteLinkEdge {
   node: InviteLink!
 }
 
+"""
+Composable filter for the `inviteLinks` query. Every field is optional and
+only narrows the result set; the caller's admin scope is enforced
+independently, so a filter can never widen what a caller may see.
+"""
 input InviteLinksFilter {
   catalogPrefix: PrefixFilter
   singleUse: BoolFilter
@@ -1389,6 +1411,23 @@ type PendingConfigUpdateStatus {
 scalar Prefix
 
 input PrefixFilter {
+  """
+  Match values exactly equal to any entry in this set. The set must hold
+  between 1 and 100 entries: an empty `in` is rejected during input
+  validation rather than silently matching nothing (or everything), and
+  the upper bound keeps this caller-controlled set from driving unbounded
+  work — every entry is narrowed against the caller's authorized prefixes
+  in memory and bound into a SQL `= ANY(...)` on each request.
+  `startsWith` and `in` are mutually exclusive: a resolver rejects a
+  filter that sets both, so a prefix scope is always either a subtree
+  (`startsWith`) or an exact set (`in`), never a mix.
+  """
+  in: [String!]
+
+  """
+  Match values that start with this prefix — a subtree match, e.g.
+  `acmeCo/` matches `acmeCo/`, `acmeCo/team/`, and so on.
+  """
   startsWith: String
 }
 
@@ -1604,9 +1643,9 @@ type QueryRoot {
   Lists alert-config rows visible to the caller.
   
   Results are limited to readable prefixes and sorted by
-  `catalog_prefix_or_name`. `filter.catalogPrefixOrName.startsWith` can
-  narrow the results further. Passing a full catalog name returns at
-  most one exact-name row.
+  `catalog_prefix_or_name`. `filter.catalogPrefixOrName` narrows further,
+  by subtree (`startsWith`) or an exact set (`in`) — not both. Passing a
+  full catalog name returns at most one exact-name row.
   """
   alertConfigs(after: String, filter: AlertConfigsFilter, first: Int): AlertConfigEntryConnection!
 
@@ -1662,14 +1701,23 @@ type QueryRoot {
   
   Results are paginated and sorted by data_plane_name.
   Only data planes the user has at least read capability to are returned.
+  
+  `filter.closed.eq` restricts results to data planes whose `closed`
+  flag matches it; omitting it returns both open and closed planes.
   """
-  dataPlanes(after: String, before: String, first: Int, last: Int): DataPlaneConnection!
+  dataPlanes(after: String, before: String, filter: DataPlanesFilter, first: Int, last: Int): DataPlaneConnection!
+
+  """
+  Resolves the effective alert config at a single prefix or catalog name.
+  """
+  effectiveAlertConfig(catalogPrefixOrName: String!): EffectiveAlertConfig!
 
   """
   List invite links the caller has admin access to.
   
   Returns invite links under all prefixes where the caller has admin
-  capability, optionally narrowed by a prefix filter.
+  capability, optionally narrowed by a prefix filter — a subtree
+  (`startsWith`) or an exact set (`in`), not both.
   """
   inviteLinks(after: String, filter: InviteLinksFilter, first: Int): InviteLinkConnection!
 
@@ -1692,6 +1740,8 @@ type QueryRoot {
   This query requires no authentication. It exposes only the name, cloud
   provider, and region of public data planes, so that account-creation
   flows can offer a data-plane selection before the user has signed up.
+  Closed planes are always excluded: this query drives new selection,
+  which is exactly what closing a plane retires it from.
   
   Results are paginated and sorted by name.
   """
@@ -1704,10 +1754,11 @@ type QueryRoot {
   """
   Returns storage mappings accessible to the current user.
   
-  Requires at least read capability to the queried prefixes.
+  Returns mappings under every prefix where the caller has catalog-read
+  capability. The optional `filter` narrows those authorized results.
   Results are paginated and sorted by catalog_prefix.
   """
-  storageMappings(after: String, before: String, by: StorageMappingsBy!, first: Int, last: Int): StorageMappingConnection!
+  storageMappings(after: String, before: String, by: StorageMappingsBy @deprecated(reason: "Prefer `filter: { catalogPrefix }`: `startsWith` replaces `underPrefix` and `in` replaces `exactPrefixes`. `by` is retained only for existing clients."), filter: StorageMappingsFilter, first: Int, last: Int): StorageMappingConnection!
   tenant(name: String!): Tenant
 }
 
@@ -2120,16 +2171,33 @@ type StorageMappingEdge {
 input StorageMappingsBy {
   """
   Fetch storage mappings by exact catalog prefixes.
-  At least one of `exactPrefixes` or `underPrefix` must be provided.
+  Exactly one of `exactPrefixes` or `underPrefix` must be provided.
   """
   exactPrefixes: [Prefix!]
 
   """
   Fetch all storage mappings under this prefix pattern.
   For example, "acmeCo/" returns mappings for "acmeCo/", "acmeCo/team-a/", etc.
-  At least one of `exactPrefixes` or `underPrefix` must be provided.
+  Exactly one of `exactPrefixes` or `underPrefix` must be provided.
   """
   underPrefix: Prefix
+}
+
+"""
+Composable filter for the `storageMappings` query. Every field is optional
+and only narrows the result set; the caller's catalog-read scope is enforced
+independently, so a filter can never widen what a caller may see.
+"""
+input StorageMappingsFilter {
+  """
+  Narrow by catalog prefix. `startsWith` matches a whole subtree —
+  mappings for `acmeCo/`, `acmeCo/team-a/`, etc. — like the deprecated
+  `by: { underPrefix }`. `in` matches an exact set of prefixes, like
+  `by: { exactPrefixes }`. The two are alternative query modes and are
+  mutually exclusive. Either way, results compose with (never widen past)
+  the caller's authorized read prefixes.
+  """
+  catalogPrefix: PrefixFilter
 }
 
 type Tenant {
@@ -2166,12 +2234,15 @@ type UpdateAlertConfigResult {
 """Result of updating a storage mapping."""
 type UpdateStorageMappingResult {
   """The catalog prefix for which the storage mapping was updated."""
-  catalogPrefix: Prefix!
+  catalogPrefix: Prefix! @deprecated(reason: "Use storageMapping.catalogPrefix instead.")
 
   """
   Whether a republish is required because the primary storage bucket changed.
   """
   republish: Boolean!
+
+  """The updated storage mapping."""
+  storageMapping: StorageMapping!
 }
 
 """
