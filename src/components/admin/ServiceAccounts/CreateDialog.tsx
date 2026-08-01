@@ -42,12 +42,19 @@ import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import { codeBackground, defaultOutline } from 'src/context/Theme';
+import { useDebouncedValue } from 'src/hooks/useDebouncedValue';
 import { generateAlliterativeName } from 'src/utils/alliterate';
 import { hasLength } from 'src/utils/misc-utils';
 import { stringToColor } from 'src/utils/stableColor';
 
 const TITLE_ID = 'create-service-account';
 const GUIDED_STEPS = ['Identity', 'Access', 'API key'];
+
+// The full-name preview is tinted with the account's stable color. The name is
+// derived per keystroke, so the color settles once typing pauses and crossfades
+// to its new value instead of strobing through a hue per character.
+const NAME_COLOR_DEBOUNCE_MS = 300;
+const NAME_COLOR_FADE_MS = 1000;
 
 type CreateMode = 'quick' | 'guided';
 
@@ -137,6 +144,11 @@ export function CreateServiceAccountDialog({
         '/'
     );
     const identityComplete = hasLength(name) && hasLength(location);
+
+    const settledNamePreview = useDebouncedValue(
+        namePreview,
+        NAME_COLOR_DEBOUNCE_MS
+    );
 
     const updateGuidedGrant = (index: number, patch: Partial<GuidedGrant>) => {
         setGuidedGrants((prev) =>
@@ -280,7 +292,8 @@ export function CreateServiceAccountDialog({
                 variant="body2"
                 sx={{
                     fontFamily: 'monospace',
-                    color: stringToColor(namePreview),
+                    color: stringToColor(settledNamePreview),
+                    transition: `color ${NAME_COLOR_FADE_MS}ms ease`,
                 }}
             >
                 {namePreview}

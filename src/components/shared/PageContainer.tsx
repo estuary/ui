@@ -27,6 +27,7 @@ function PageContainer({ children, hideBackground }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const header = useTopBarStore((state) => state.header);
+    const headerDetail = useTopBarStore((state) => state.headerDetail);
     const navigationOpen = useNavigationStore((state) => state.open);
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
@@ -163,21 +164,48 @@ function PageContainer({ children, hideBackground }: Props) {
                                 aria-hidden
                                 style={{ width: 16, height: 16 }}
                             />
-                            <Typography>
+                            <Typography sx={{ flex: 'none' }}>
                                 {selectedTenant.replace(/\/$/, '')}
                             </Typography>
-                            <Typography aria-hidden>/</Typography>
+                            <Typography
+                                aria-hidden
+                                sx={{ flex: 'none', color: 'text.disabled' }}
+                            >
+                                /
+                            </Typography>
                         </>
                     ) : null}
 
-                    <Typography sx={{ fontWeight: 'bold' }}>
+                    <Typography sx={{ fontWeight: 'bold', flex: 'none' }}>
                         {intl.formatMessage({ id: header })}
                     </Typography>
+
+                    {headerDetail ? (
+                        <>
+                            <Typography
+                                aria-hidden
+                                sx={{ flex: 'none', color: 'text.disabled' }}
+                            >
+                                /
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    minWidth: 0,
+                                    fontWeight: 500,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}
+                            >
+                                {headerDetail}
+                            </Typography>
+                        </>
+                    ) : null}
 
                     {/* TODO (UI / UX) - restore the per-page documentation link here.
                         Pages still set headerLink via usePageTitle but nothing renders it. */}
 
-                    <Box sx={{ ml: 'auto' }}>
+                    <Box sx={{ ml: 'auto', flex: 'none', pl: 1 }}>
                         <SidePanelDocsOpenButton />
                     </Box>
                 </Paper>
