@@ -180,3 +180,4 @@ Some of this is called out in the docs.
 1. Moving to strict state machines
 2. Replacing PostgREST to GQL
 3. Moving broken up Zustand states into a single one or two stores
+4. Moving away from default exports — new components and modules should use named exports. Avoid default exports unless there's a specific reason to use one.
