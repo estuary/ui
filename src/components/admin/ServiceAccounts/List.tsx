@@ -57,9 +57,6 @@ export function ServiceAccountsList() {
                 }}
             >
                 <Box sx={{ maxWidth: 660 }}>
-                    <Typography variant="h6" sx={{ mb: 0.5 }}>
-                        Service accounts
-                    </Typography>
                     <Typography color="text.secondary">
                         Service accounts provide non-login identities for CI/CD
                         pipelines, AI agents, and other programmatic
