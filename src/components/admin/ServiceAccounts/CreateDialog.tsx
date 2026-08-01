@@ -53,7 +53,7 @@ const GUIDED_STEPS = ['Identity', 'Access', 'API key'];
 // The full-name preview is tinted with the account's stable color. The name is
 // derived per keystroke, so the color settles once typing pauses and crossfades
 // to its new value instead of strobing through a hue per character.
-const NAME_COLOR_DEBOUNCE_MS = 300;
+const NAME_COLOR_DEBOUNCE_MS = 400;
 const NAME_COLOR_FADE_MS = 1000;
 
 type CreateMode = 'quick' | 'guided';
