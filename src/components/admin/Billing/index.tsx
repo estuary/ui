@@ -20,7 +20,6 @@ import PaymentMethods from 'src/components/admin/Billing/PaymentMethods';
 import PricingTierDetails from 'src/components/admin/Billing/PricingTierDetails';
 import { INVOICE_ROW_HEIGHT } from 'src/components/admin/Billing/shared';
 import TenantOptions from 'src/components/admin/Billing/TenantOptions';
-import AdminTabs from 'src/components/admin/Tabs';
 import GraphLoadingState from 'src/components/graphs/states/Loading';
 import GraphStateWrapper from 'src/components/graphs/states/Wrapper';
 import UsageByMonthGraph from 'src/components/graphs/UsageByMonthGraph';
@@ -128,8 +127,6 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
 
     return (
         <>
-            <AdminTabs />
-
             <Grid container spacing={{ xs: 3, md: 2 }} sx={{ py: 2 }}>
                 <Grid size={{ xs: 12, md: 9 }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>

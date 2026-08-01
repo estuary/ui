@@ -4,7 +4,7 @@ export const RouteTitles: Record<string, string> = {
     'routeTitle.home': `Welcome`,
     'routeTitle.dashboard': `Dashboard`,
     'routeTitle.admin': `Admin`,
-    'routeTitle.admin.accessGrants': `Access Grants`,
+    'routeTitle.admin.accessGrants': `Account Access`,
     'routeTitle.admin.api': `CLI - API`,
     'routeTitle.admin.billing': `Billing`,
     'routeTitle.admin.settings': `Settings`,

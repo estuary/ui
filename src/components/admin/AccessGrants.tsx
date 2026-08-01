@@ -3,7 +3,6 @@ import { Box, Divider, Stack, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import { authenticatedRoutes } from 'src/app/routes';
-import AdminTabs from 'src/components/admin/Tabs';
 import MessageWithLink from 'src/components/content/MessageWithLink';
 import AccessGrantsTable from 'src/components/tables/AccessGrants';
 import usePageTitle from 'src/hooks/usePageTitle';
@@ -16,8 +15,6 @@ function AccessGrants() {
 
     return (
         <>
-            <AdminTabs />
-
             <Stack spacing={2} sx={{ my: 2 }}>
                 <Box>
                     <Typography component="div" variant="h6" sx={{ mb: 0.5 }}>
