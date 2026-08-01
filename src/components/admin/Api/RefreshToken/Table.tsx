@@ -58,18 +58,11 @@ function Row({ row }: RowProps) {
             </TableCell>
 
             <TableCell sx={row.expired ? { opacity: 0.5 } : undefined}>
-                {intl.formatMessage(
-                    { id: 'admin.cli_api.refreshToken.table.label.uses' },
-                    { count: row.uses }
-                )}
+                {`Used ${row.uses} ${row.uses === 1 ? 'time' : 'times'}`}
             </TableCell>
 
             <TableCell sx={row.expired ? { opacity: 0.5 } : undefined}>
-                {row.expired ? (
-                    <Typography>
-                        <FormattedMessage id="admin.cli_api.refreshToken.table.status.expired" />
-                    </Typography>
-                ) : null}
+                {row.expired ? <Typography>Expired</Typography> : null}
             </TableCell>
 
             <TableCell>
@@ -134,7 +127,7 @@ export function RefreshTokenTable() {
                 }}
             >
                 <Button onClick={() => setDialogOpen(true)} variant="outlined">
-                    <FormattedMessage id="admin.cli_api.refreshToken.cta.create" />
+                    Create Personal Token
                 </Button>
 
                 <CreateRefreshTokenDialog
@@ -146,7 +139,7 @@ export function RefreshTokenTable() {
 
             {error ? (
                 <Typography color="error" sx={{ mb: 2 }}>
-                    <FormattedMessage id="admin.cli_api.refreshToken.table.error" />
+                    There was an error loading personal tokens.
                 </Typography>
             ) : null}
 
@@ -157,12 +150,8 @@ export function RefreshTokenTable() {
                             <TableCell>
                                 <FormattedMessage id="entityTable.data.created" />
                             </TableCell>
-                            <TableCell>
-                                <FormattedMessage id="admin.cli_api.refreshToken.table.column.label" />
-                            </TableCell>
-                            <TableCell>
-                                <FormattedMessage id="admin.cli_api.refreshToken.table.column.uses" />
-                            </TableCell>
+                            <TableCell>Label</TableCell>
+                            <TableCell>Uses</TableCell>
                             <TableCell sx={{ width: 100 }} />
                             <TableCell sx={{ width: 125 }} />
                         </TableRow>
@@ -185,7 +174,7 @@ export function RefreshTokenTable() {
                                     sx={{ textAlign: 'center', p: 4 }}
                                 >
                                     <Typography sx={{ py: 1 }}>
-                                        <FormattedMessage id="admin.cli_api.refreshToken.table.noContent.header" />
+                                        No personal tokens found.
                                     </Typography>
                                     <Typography
                                         component="a"
@@ -199,7 +188,7 @@ export function RefreshTokenTable() {
                                             },
                                         }}
                                     >
-                                        <FormattedMessage id="admin.cli_api.refreshToken.table.noContent.cta" />
+                                        Create one now
                                     </Typography>
                                 </TableCell>
                             </TableRow>
