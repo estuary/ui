@@ -109,7 +109,7 @@ export function ServiceAccountsList() {
                             sx={{
                                 display: 'grid',
                                 gridTemplateColumns:
-                                    'repeat(auto-fit, minmax(320px, 1fr))',
+                                    'repeat(auto-fill, minmax(240px, 400px))',
                                 gap: 2,
                             }}
                         >
@@ -137,7 +137,7 @@ export function ServiceAccountsList() {
                                 sx={{
                                     display: 'grid',
                                     gridTemplateColumns:
-                                        'repeat(auto-fill, minmax(240px, 1fr))',
+                                        'repeat(auto-fill, minmax(200px, 300px))',
                                     gap: 1.5,
                                 }}
                             >
