@@ -46,12 +46,17 @@ function MetaItem({ label, children }: { label: string; children: ReactNode }) {
 }
 
 export function ServiceAccountDetails() {
-    usePageTitle({
-        header: authenticatedRoutes.admin.serviceAccounts.details.title,
-    });
-
     const navigate = useNavigate();
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
+
+    // Taken from the URL rather than the fetched account so the breadcrumb is
+    // populated on the first render instead of appearing once the query lands.
+    usePageTitle({
+        header: authenticatedRoutes.admin.serviceAccounts.details.title,
+        headerDetail: catalogName
+            ? splitCatalogName(catalogName).leaf
+            : undefined,
+    });
 
     const { serviceAccount, fetching } = useServiceAccount(catalogName);
 

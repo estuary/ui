@@ -7,19 +7,32 @@ import { useTopBarStore } from 'src/stores/TopBar/Store';
 
 interface PageTitleProps {
     header: string;
+    headerDetail?: string;
     headerLink?: string;
 }
 
-function usePageTitle({ header, headerLink }: PageTitleProps) {
-    const [setHeader, setHeaderLink] = useTopBarStore(
-        useShallow((state) => [state.setHeader, state.setHeaderLink])
+function usePageTitle({ header, headerDetail, headerLink }: PageTitleProps) {
+    const [setHeader, setHeaderDetail, setHeaderLink] = useTopBarStore(
+        useShallow((state) => [
+            state.setHeader,
+            state.setHeaderDetail,
+            state.setHeaderLink,
+        ])
     );
 
     useEffect(() => {
         // This sets for the title in the TopBar
         setHeader(header);
+        setHeaderDetail(headerDetail);
         setHeaderLink(headerLink);
-    }, [header, headerLink, setHeader, setHeaderLink]);
+    }, [
+        header,
+        headerDetail,
+        headerLink,
+        setHeader,
+        setHeaderDetail,
+        setHeaderLink,
+    ]);
 
     // This sets the title inside the actual HTML file so the tab name changes
     useBrowserTitle(header);
