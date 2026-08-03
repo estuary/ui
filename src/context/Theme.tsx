@@ -1018,7 +1018,6 @@ const themeSettings = createTheme({
                 root: {
                     fontSize: 14,
                     borderRadius: 4,
-                    textTransform: 'none',
                 },
             },
         },
@@ -1056,20 +1055,6 @@ const themeSettings = createTheme({
             styleOverrides: {
                 root: {
                     transitionTimingFunction: standardTransitionEasing,
-                },
-            },
-        },
-        MuiTab: {
-            styleOverrides: {
-                root: {
-                    textTransform: 'none',
-                },
-            },
-        },
-        MuiToggleButton: {
-            styleOverrides: {
-                root: {
-                    textTransform: 'none',
                 },
             },
         },
@@ -1115,6 +1100,7 @@ const themeSettings = createTheme({
         },
         button: {
             fontSize: 14,
+            textTransform: 'none',
         },
         formSectionHeader: {
             fontSize: 18,
