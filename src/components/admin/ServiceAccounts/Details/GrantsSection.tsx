@@ -24,7 +24,6 @@ import {
     useRevokeAllApiKeys,
 } from 'src/api/gql/serviceAccounts';
 import { GrantDialog } from 'src/components/admin/ServiceAccounts/GrantDialog';
-import { capabilityColor } from 'src/components/admin/ServiceAccounts/shared';
 import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
 import AlertBox from 'src/components/shared/AlertBox';
 
@@ -176,11 +175,7 @@ export function GrantsSection({
                         >
                             {grant.prefix}
                         </Typography>
-                        <Chip
-                            label={grant.capability}
-                            size="small"
-                            color={capabilityColor(grant.capability)}
-                        />
+                        <Chip label={grant.capability} size="small" />
                         <IconButton
                             size="small"
                             aria-label="Edit capability"

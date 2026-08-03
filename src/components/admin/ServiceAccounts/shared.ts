@@ -4,25 +4,10 @@ import { DateTime, Duration } from 'luxon';
 
 import { stringToColor } from 'src/utils/stableColor';
 
-// A color valid for both <Chip color> and <ToggleButton color>.
-export type CapabilityColor = 'info' | 'primary' | 'warning';
-
-// How each capability reads. read is the gentlest (info), write is the working
-// default (primary), admin is the most privileged (warning). Accepts a string
-// since grant capabilities come from the GraphQL `Capability` enum, which also
-// includes `none`.
-const CAPABILITY_COLOR: Record<string, CapabilityColor> = {
-    read: 'info',
-    write: 'primary',
-    admin: 'warning',
-};
-
-export function capabilityColor(capability: string): CapabilityColor {
-    return CAPABILITY_COLOR[capability] ?? 'info';
-}
-
 // Capabilities offered when granting access, ordered least- to most-privileged.
-export const CAPABILITY_OPTIONS: Capability[] = ['read', 'write', 'admin'];
+export const CAPABILITY_OPTIONS: Capability[] = ['read', 'admin'];
+
+export const featureDescription = `Service accounts provide non-login identities for CI/CD pipelines, AI agents, and other programmatic integrations — including the Kafka-compatible API "dekaf".`;
 
 // API key lifetimes. Values are ISO-8601 durations passed to createApiKey's
 // required `validFor`. (The design's "No expiry" is omitted because the field

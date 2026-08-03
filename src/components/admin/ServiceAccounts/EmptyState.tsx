@@ -1,15 +1,15 @@
-import { Box, Button, Link, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { Developer, Plus } from 'iconoir-react';
 
+import { featureDescription } from 'src/components/admin/ServiceAccounts/shared';
 import { defaultOutline, logoColors } from 'src/context/Theme';
 
 interface EmptyStateProps {
-    onQuickCreate: () => void;
-    onGuidedCreate: () => void;
+    onCreate: () => void;
 }
 
-export function EmptyState({ onQuickCreate, onGuidedCreate }: EmptyStateProps) {
+export function EmptyState({ onCreate }: EmptyStateProps) {
     return (
         <Stack
             sx={{
@@ -41,28 +41,12 @@ export function EmptyState({ onQuickCreate, onGuidedCreate }: EmptyStateProps) {
             </Typography>
 
             <Typography color="text.secondary" sx={{ maxWidth: 440, mb: 3.5 }}>
-                Create a non-login identity to give pipelines, agents and
-                integrations scoped, programmatic access to your catalog — with
-                API keys you can rotate and revoke anytime.
+                {featureDescription}
             </Typography>
 
-            <Button
-                variant="contained"
-                startIcon={<Plus />}
-                onClick={onQuickCreate}
-            >
+            <Button variant="contained" startIcon={<Plus />} onClick={onCreate}>
                 Create your first service account
             </Button>
-
-            <Link
-                component="button"
-                type="button"
-                underline="hover"
-                onClick={onGuidedCreate}
-                sx={{ mt: 2 }}
-            >
-                Use guided setup instead →
-            </Link>
         </Stack>
     );
 }
