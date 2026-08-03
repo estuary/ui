@@ -11,10 +11,9 @@ import { AccountCard } from 'src/components/admin/ServiceAccounts/AccountCard';
 import { CompactAccountCard } from 'src/components/admin/ServiceAccounts/CompactAccountCard';
 import { CreateServiceAccountDialog } from 'src/components/admin/ServiceAccounts/CreateDialog';
 import { EmptyState } from 'src/components/admin/ServiceAccounts/EmptyState';
+import { featureDescription } from 'src/components/admin/ServiceAccounts/shared';
 import AlertBox from 'src/components/shared/AlertBox';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
-
-type CreateMode = 'quick' | 'guided';
 
 export function ServiceAccountsList() {
     const navigate = useNavigate();
@@ -22,12 +21,8 @@ export function ServiceAccountsList() {
     const { serviceAccounts, fetching, error } = useServiceAccounts();
 
     const [createOpen, setCreateOpen] = useState(false);
-    const [createMode, setCreateMode] = useState<CreateMode>('quick');
 
-    const openCreate = (mode: CreateMode) => {
-        setCreateMode(mode);
-        setCreateOpen(true);
-    };
+    const openCreate = () => setCreateOpen(true);
 
     const openDetail = (catalogName: string) => {
         navigate(
@@ -47,39 +42,8 @@ export function ServiceAccountsList() {
 
     return (
         <Box>
-            <Stack
-                direction="row"
-                spacing={3}
-                sx={{
-                    mb: 3,
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                }}
-            >
-                <Box sx={{ maxWidth: 660 }}>
-                    <Typography color="text.secondary">
-                        Service accounts provide non-login identities for CI/CD
-                        pipelines, AI agents, and other programmatic
-                        integrations — including the Kafka-compatible API
-                        “dekaf”.
-                    </Typography>
-                </Box>
-
-                {hasAccounts ? (
-                    <Button
-                        variant="contained"
-                        startIcon={<Plus />}
-                        onClick={() => openCreate('quick')}
-                        sx={{ flex: 'none' }}
-                    >
-                        Create service account
-                    </Button>
-                ) : null}
-            </Stack>
-
             <CreateServiceAccountDialog
                 open={createOpen}
-                mode={createMode}
                 onClose={() => setCreateOpen(false)}
                 onCreated={openDetail}
             />
@@ -95,12 +59,33 @@ export function ServiceAccountsList() {
                     Loading…
                 </Typography>
             ) : !hasAccounts ? (
-                <EmptyState
-                    onQuickCreate={() => openCreate('quick')}
-                    onGuidedCreate={() => openCreate('guided')}
-                />
+                <EmptyState onCreate={openCreate} />
             ) : (
                 <Stack spacing={4}>
+                    <Stack
+                        direction="row"
+                        spacing={3}
+                        sx={{
+                            mb: 3,
+                            justifyContent: 'space-between',
+                            alignItems: 'flex-start',
+                        }}
+                    >
+                        <Box sx={{ maxWidth: 660 }}>
+                            <Typography color="text.secondary">
+                                {featureDescription}
+                            </Typography>
+                        </Box>
+
+                        <Button
+                            variant="contained"
+                            startIcon={<Plus />}
+                            onClick={openCreate}
+                            sx={{ flex: 'none' }}
+                        >
+                            Create service account
+                        </Button>
+                    </Stack>
                     {grantedAccounts.length > 0 ? (
                         <Box
                             sx={{

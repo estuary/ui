@@ -1,9 +1,6 @@
 import type { Capability } from 'src/types';
 
-import {
-    CAPABILITY_OPTIONS,
-    capabilityColor,
-} from 'src/components/admin/ServiceAccounts/shared';
+import { CAPABILITY_OPTIONS } from 'src/components/admin/ServiceAccounts/shared';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 
@@ -14,8 +11,7 @@ interface CapabilitySelectorProps {
     disabled?: boolean;
 }
 
-// Segmented read / write / admin control. Each option lights up in its own
-// capability color when selected.
+// Segmented read / admin control.
 export function CapabilitySelector({
     value,
     onChange,
@@ -35,11 +31,7 @@ export function CapabilitySelector({
             }}
         >
             {CAPABILITY_OPTIONS.map((capability) => (
-                <OutlinedToggleButton
-                    key={capability}
-                    value={capability}
-                    color={capabilityColor(capability)}
-                >
+                <OutlinedToggleButton key={capability} value={capability}>
                     {capability}
                 </OutlinedToggleButton>
             ))}
