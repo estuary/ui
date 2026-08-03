@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { useMutation, useQuery } from 'urql';
 
 import { graphql } from 'src/gql-types';
+import { useValidatedSelectedTenant } from 'src/hooks/useValidatedSelectedTenant';
 
 const DEFAULT_SERVICE_ACCOUNTS: ServiceAccount[] = [];
 
@@ -40,8 +41,8 @@ export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
 `);
 
 const SERVICE_ACCOUNTS_QUERY = graphql(`
-    query ServiceAccounts($first: Int) {
-        serviceAccounts(first: $first) {
+    query ServiceAccounts($filter: ServiceAccountsFilter, $first: Int) {
+        serviceAccounts(filter: $filter, first: $first) {
             edges {
                 node {
                     ...ServiceAccountFields
@@ -52,9 +53,16 @@ const SERVICE_ACCOUNTS_QUERY = graphql(`
 `);
 
 export function useServiceAccounts() {
+    // The filter scopes the list to the accounts the selected organization
+    // reaches through the role-grant graph. Every result depends on it, so the
+    // query waits for a confirmed tenant rather than fetching unscoped and
+    // replacing the results a moment later.
+    const tenant = useValidatedSelectedTenant();
+
     const [{ fetching, data, error }] = useQuery({
         query: SERVICE_ACCOUNTS_QUERY,
-        variables: { first: SERVICE_ACCOUNTS_LIMIT },
+        variables: { filter: { tenant }, first: SERVICE_ACCOUNTS_LIMIT },
+        pause: !tenant,
     });
 
     const serviceAccounts = useMemo(
@@ -64,7 +72,10 @@ export function useServiceAccounts() {
         [data]
     );
 
-    return { serviceAccounts, fetching, error };
+    // urql reports a paused query as idle, which callers would read as "loaded,
+    // and empty". Waiting on the tenant is still loading as far as they are
+    // concerned.
+    return { serviceAccounts, fetching: fetching || !tenant, error };
 }
 
 // The schema exposes service accounts only as a paginated connection — there is
