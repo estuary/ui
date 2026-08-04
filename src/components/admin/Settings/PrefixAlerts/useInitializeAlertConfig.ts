@@ -26,7 +26,7 @@ export function useInitializeAlertConfig() {
     const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata
     );
-    const setServerError = useAlertSubscriptionsStore(
+    const setServerErrors = useAlertSubscriptionsStore(
         (state) => state.setServerErrors
     );
     const prefixErrors = useAlertSubscriptionsStore(
@@ -93,17 +93,18 @@ export function useInitializeAlertConfig() {
             (err) => typeof err !== 'undefined'
         );
 
-        setServerError(
+        setServerErrors(
             !fetching && !effectiveConfigResponse.fetching && errors.length > 0
                 ? errors
-                : []
+                : [],
+            true
         );
     }, [
         effectiveConfigResponse?.error,
         effectiveConfigResponse.fetching,
         error,
         fetching,
-        setServerError,
+        setServerErrors,
     ]);
 
     useEffect(() => {

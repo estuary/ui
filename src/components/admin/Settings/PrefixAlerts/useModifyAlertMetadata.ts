@@ -26,7 +26,7 @@ export function useModifyAlertMetadata(
 
     const { upsertConfig } = useUpsertAlertConfig();
 
-    const setServerError = useAlertSubscriptionsStore(
+    const setServerErrors = useAlertSubscriptionsStore(
         (state) => state.setServerErrors
     );
 
@@ -45,7 +45,7 @@ export function useModifyAlertMetadata(
 
     const onClick = async () => {
         setLoading(true);
-        setServerError([], true);
+        setServerErrors([], true);
 
         if (catalogPrefix.length === 0) {
             logRocketEvent('AlertSubscription', {
@@ -195,7 +195,7 @@ export function useModifyAlertMetadata(
             closeDialog();
         }
 
-        setServerError(serverErrors);
+        setServerErrors(serverErrors);
         setLoading(false);
     };
 
