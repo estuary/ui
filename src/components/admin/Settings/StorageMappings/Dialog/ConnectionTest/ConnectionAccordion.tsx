@@ -170,14 +170,18 @@ export function ConnectionAccordion({
                 <Stack spacing={1}>
                     <Stack
                         direction="row"
+                        gap={1}
                         justifyContent="space-between"
-                        alignItems="center"
+                        alignItems="flex-start"
                     >
-                        <Box>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
                             {connection.errorMessage ? (
                                 <Typography
                                     variant="body2"
-                                    sx={{ color: 'warning.main' }}
+                                    sx={{
+                                        color: 'warning.main',
+                                        overflowWrap: 'anywhere',
+                                    }}
                                 >
                                     {connection.errorMessage}
                                 </Typography>
@@ -187,6 +191,7 @@ export function ConnectionAccordion({
                             variant="text"
                             size="small"
                             disabled={isTesting}
+                            sx={{ flexShrink: 0 }}
                             onClick={() => {
                                 // there's a risk of breaking other connections when updating the bucket policy for AWS,
                                 // so we want to test all connections using the same bucket at once.
