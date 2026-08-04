@@ -1,6 +1,12 @@
 import { useEffect, useMemo } from 'react';
 
-import { Autocomplete, FormControl, FormLabel, TextField } from '@mui/material';
+import {
+    Autocomplete,
+    FormControl,
+    FormLabel,
+    inputBaseClasses,
+    TextField,
+} from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -86,7 +92,12 @@ function DataPlaneSelector() {
                         helperText={intl.formatMessage({
                             id: 'tenant.dataPlane.helper',
                         })}
-                        sx={{ maxWidth: 424 }}
+                        sx={{
+                            maxWidth: 424,
+                            [`& .${inputBaseClasses.root}`]: {
+                                borderRadius: 3,
+                            },
+                        }}
                     />
                 )}
             />
