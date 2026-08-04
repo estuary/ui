@@ -1,3 +1,5 @@
+import type { PublicDataPlaneNode } from 'src/api/gql/dataPlanes';
+
 import { useEffect, useMemo } from 'react';
 
 import {
@@ -21,6 +23,16 @@ import { usePublicDataPlanes } from 'src/hooks/dataPlanes/usePublicDataPlanes';
 // the plane new tenants land on when nothing else is picked.
 const DEFAULT_PUBLIC_DATA_PLANE = 'ops/dp/public/aws-us-east-1-c1';
 
+const INPUT_SX = {
+    maxWidth: 424,
+    [`& .${inputBaseClasses.root}`]: { borderRadius: 3 },
+};
+
+// The region and full catalog name are both shown: multiple public planes can
+// share a region, so the name is what makes the choice unambiguous.
+const optionLabel = (option: PublicDataPlaneNode) =>
+    `${option.region} (${option.name})`;
+
 function DataPlaneSelector() {
     const intl = useIntl();
     const { dataPlanes, loading, error } = usePublicDataPlanes();
@@ -28,8 +40,16 @@ function DataPlaneSelector() {
     const selected = useOnboardingStore_requestedDataPlane();
     const setSelected = useOnboardingStore_setRequestedDataPlane();
 
+    // Sorted by provider first because groupBy only groups correctly when the
+    // list is already ordered by group; sorting on name alone worked only
+    // because the names happen to embed the provider.
     const options = useMemo(
-        () => [...dataPlanes].sort((a, b) => a.name.localeCompare(b.name)),
+        () =>
+            [...dataPlanes].sort(
+                (a, b) =>
+                    a.cloudProvider.localeCompare(b.cloudProvider) ||
+                    a.region.localeCompare(b.region)
+            ),
         [dataPlanes]
     );
 
@@ -65,10 +85,7 @@ function DataPlaneSelector() {
                 value={currentOption ?? null}
                 onChange={(_event, value) => setSelected(value?.name ?? null)}
                 groupBy={(option) => option.cloudProvider}
-                getOptionLabel={(option) => `${option.region} (${option.name})`}
-                isOptionEqualToValue={(option, value) =>
-                    option.name === value.name
-                }
+                getOptionLabel={optionLabel}
                 renderOption={(props, option) => {
                     const { key, ...rest } = props;
                     return (
@@ -79,7 +96,7 @@ function DataPlaneSelector() {
                                 size={20}
                             />
                             <span style={{ marginLeft: 8 }}>
-                                {option.region} ({option.name})
+                                {optionLabel(option)}
                             </span>
                         </li>
                     );
@@ -92,12 +109,7 @@ function DataPlaneSelector() {
                         helperText={intl.formatMessage({
                             id: 'tenant.dataPlane.helper',
                         })}
-                        sx={{
-                            maxWidth: 424,
-                            [`& .${inputBaseClasses.root}`]: {
-                                borderRadius: 3,
-                            },
-                        }}
+                        sx={INPUT_SX}
                     />
                 )}
             />
