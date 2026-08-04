@@ -82,6 +82,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                     control={
                                         <Checkbox
                                             checked={selected}
+                                            disableRipple={isSystem}
                                             onChange={(event) => {
                                                 setSingleAlertType(
                                                     option.alertType,
@@ -149,6 +150,13 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                     style={{
                                         alignItems: 'flex-start',
                                         marginRight: 'unset',
+                                    }}
+                                    sx={{
+                                        '& .MuiCheckbox-root:hover': {
+                                            backgroundColor: isSystem
+                                                ? 'unset'
+                                                : undefined,
+                                        },
                                     }}
                                 />
                             </FormControl>
