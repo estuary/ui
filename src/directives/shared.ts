@@ -88,8 +88,7 @@ export const DIRECTIVES: Directives = {
                 // claims parser rejects unknown keys, and older agents
                 // don't know this one — leaving it out lets the backend
                 // fall back to its own default plane.
-                ...(typeof requestedDataPlane === 'string' &&
-                requestedDataPlane.length > 0
+                ...(hasLength(requestedDataPlane)
                     ? { requestedDataPlane }
                     : {}),
             };
