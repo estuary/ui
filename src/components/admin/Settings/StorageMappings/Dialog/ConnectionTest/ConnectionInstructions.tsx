@@ -7,7 +7,9 @@ import {
     useAwsArnsForBucket,
     useBucketPolicy,
 } from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/awsHooks';
-import markdown from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/aws.md?raw';
+import awsMarkdown from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/aws.md?raw';
+import azureMarkdown from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/azure.md?raw';
+import gcpMarkdown from 'src/components/admin/Settings/StorageMappings/Dialog/ConnectionTest/instructions/gcp.md?raw';
 import { MarkdownInstructions } from 'src/components/admin/Settings/StorageMappings/Dialog/shared/MarkdownInstructions';
 
 function Aws({ connection }: { connection: Connection }) {
@@ -26,7 +28,9 @@ function Aws({ connection }: { connection: Connection }) {
         [bucket, region, policy]
     );
 
-    return <MarkdownInstructions markdown={markdown} variables={variables} />;
+    return (
+        <MarkdownInstructions markdown={awsMarkdown} variables={variables} />
+    );
 }
 
 function Azure({ connection }: { connection: Connection }) {
@@ -49,7 +53,9 @@ function Azure({ connection }: { connection: Connection }) {
         ]
     );
 
-    return <MarkdownInstructions markdown={markdown} variables={variables} />;
+    return (
+        <MarkdownInstructions markdown={azureMarkdown} variables={variables} />
+    );
 }
 
 function Gcp({ connection }: { connection: Connection }) {
@@ -64,7 +70,9 @@ function Gcp({ connection }: { connection: Connection }) {
         [bucket, gcpServiceAccountEmail]
     );
 
-    return <MarkdownInstructions markdown={markdown} variables={variables} />;
+    return (
+        <MarkdownInstructions markdown={gcpMarkdown} variables={variables} />
+    );
 }
 
 export function ConnectionInstructions({
