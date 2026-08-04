@@ -56,6 +56,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                         <ListItem
                             key={`${alertType}-${index}`}
                             dense
+                            disableGutters
                             sx={{
                                 'backgroundColor': selected
                                     ? theme.palette.primary.alpha_05
@@ -65,6 +66,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                     : defaultOutline[theme.palette.mode],
                                 'borderRadius': '6px',
                                 'marginBottom': '6px',
+                                'padding': 0,
                                 '&:hover': {
                                     borderColor:
                                         isSystem || disabled
@@ -152,6 +154,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
                                         marginRight: 'unset',
                                     }}
                                     sx={{
+                                        'padding': '4px 16px',
                                         '& .MuiCheckbox-root:hover': {
                                             backgroundColor: isSystem
                                                 ? 'unset'
