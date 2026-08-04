@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
     Box,
     Button,
+    Collapse,
     Dialog,
     DialogActions,
     DialogContent,
@@ -247,7 +248,7 @@ export function CreateServiceAccountDialog({
                             label="Grant access to this prefix"
                         />
 
-                        {grantOn ? (
+                        <Collapse in={grantOn}>
                             <>
                                 <Stack
                                     direction="row"
@@ -287,7 +288,7 @@ export function CreateServiceAccountDialog({
                                     page.
                                 </Typography>
                             </>
-                        ) : null}
+                        </Collapse>
                     </Box>
                 </Stack>
             </DialogContent>
