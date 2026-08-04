@@ -24,7 +24,7 @@ export default function PrefixField({ staticPrefix }: PrefixFieldProps) {
         (state) => state.prefixErrors
     );
     const duplicatePrefixExists = useAlertSubscriptionsStore(
-        (state) => state.duplicateEmailExists
+        (state) => state.duplicatePrefixExists
     );
     const setSubscribedPrefix = useAlertSubscriptionsStore(
         (state) => state.setSubscribedPrefix

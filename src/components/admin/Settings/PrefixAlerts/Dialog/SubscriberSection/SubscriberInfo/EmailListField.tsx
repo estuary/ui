@@ -11,7 +11,7 @@ const EmailListField = ({ subscription, staticEmail }: EmailListFieldProps) => {
     const intl = useIntl();
 
     const duplicatePrefixExists = useAlertSubscriptionsStore(
-        (state) => state.duplicateEmailExists
+        (state) => state.duplicatePrefixExists
     );
 
     return staticEmail || duplicatePrefixExists ? (

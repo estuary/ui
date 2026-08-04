@@ -12,7 +12,7 @@ const AddButton = () => {
         (state) => state.addTemplatedSubscription
     );
     const duplicatePrefixExists = useAlertSubscriptionsStore(
-        (state) => state.duplicateEmailExists
+        (state) => state.duplicatePrefixExists
     );
 
     const { emptyEmailDetected, duplicateSubscriptionEmails } =

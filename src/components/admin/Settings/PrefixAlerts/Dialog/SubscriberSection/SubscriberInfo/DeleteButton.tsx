@@ -10,7 +10,7 @@ const DeleteButton = ({ subscription: { id } }: SubscriptionDependentProps) => {
     const theme = useTheme();
 
     const duplicatePrefixExists = useAlertSubscriptionsStore(
-        (state) => state.duplicateEmailExists
+        (state) => state.duplicatePrefixExists
     );
     const markSubscriptionForDeletion = useAlertSubscriptionsStore(
         (state) => state.markSubscriptionForDeletion

@@ -32,7 +32,7 @@ const AlertTypeList = ({ options, subscription }: AlertTypeListProps) => {
         (state) => state.setSingleAlertType
     );
     const duplicatePrefixExists = useAlertSubscriptionsStore(
-        (state) => state.duplicateEmailExists
+        (state) => state.duplicatePrefixExists
     );
 
     const disabled = serverErrors.length > 0 || duplicatePrefixExists;

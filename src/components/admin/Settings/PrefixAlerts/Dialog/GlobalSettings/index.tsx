@@ -17,7 +17,7 @@ const GlobalSettings = () => {
         (state) => state.catalogPrefix
     );
     const duplicatePrefixExists = useAlertSubscriptionsStore(
-        (state) => state.duplicateEmailExists
+        (state) => state.duplicatePrefixExists
     );
     const mutableConfigs = useAlertSubscriptionsStore(
         (state) => state.mutableSubscriptionMetadata.configs

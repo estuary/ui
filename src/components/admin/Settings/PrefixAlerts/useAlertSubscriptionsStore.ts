@@ -17,7 +17,11 @@ import produce from 'immer';
 import { isEmpty, omit } from 'lodash';
 import { type CombinedError } from 'urql';
 
-import { hasOwnProperty, sortByAlertType } from 'src/utils/misc-utils';
+import {
+    appendWithForwardSlash,
+    hasOwnProperty,
+    sortByAlertType,
+} from 'src/utils/misc-utils';
 import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 import { devtoolsOptions } from 'src/utils/store-utils';
 import { validateCatalogName } from 'src/validation';
@@ -27,7 +31,7 @@ interface AlertSubscriptionState {
     alertTypeOptions: AlertTypeInfo[];
     alertTypeOptionsFetching: boolean;
     catalogPrefix: string;
-    duplicateEmailExists: boolean;
+    duplicatePrefixExists: boolean;
     initializationErrors: (CombinedError | PostgrestError)[];
     initializeAlertTypeOptions: (
         values: AlertTypeInfo[],
@@ -94,7 +98,7 @@ const getInitialState = (): Pick<
     | 'alertTypeOptions'
     | 'alertTypeOptionsFetching'
     | 'catalogPrefix'
-    | 'duplicateEmailExists'
+    | 'duplicatePrefixExists'
     | 'initializationErrors'
     | 'isEditFlow'
     | 'mutableSubscriptionMetadata'
@@ -105,7 +109,7 @@ const getInitialState = (): Pick<
     alertTypeOptions: [],
     alertTypeOptionsFetching: false,
     catalogPrefix: '',
-    duplicateEmailExists: false,
+    duplicatePrefixExists: false,
     initializationErrors: [],
     isEditFlow: false,
     mutableSubscriptionMetadata: {
@@ -473,33 +477,53 @@ const useAlertSubscriptionsStore = create<AlertSubscriptionState>()(
             setSubscribedPrefix: (value) =>
                 set(
                     produce((state: AlertSubscriptionState) => {
+                        const formattedValue = appendWithForwardSlash(value);
+
+                        // Reset mutable subscription metadata state whenever the
+                        // stored prefix meaningfully diverges from the prefix input,
+                        // preserving templated subscriptions when the prefix input
+                        // does not have existing subscribers.
+                        const formattedPreviousPrefix = appendWithForwardSlash(
+                            state.catalogPrefix
+                        );
+
+                        if (formattedPreviousPrefix !== formattedValue) {
+                            state.mutableSubscriptionMetadata = {
+                                ...getInitialState()
+                                    .mutableSubscriptionMetadata,
+                                subscriptions:
+                                    formattedValue.length > 0 &&
+                                    hasOwnProperty(
+                                        state.subscriptionMetadata,
+                                        formattedValue
+                                    )
+                                        ? state.subscriptionMetadata[
+                                              formattedValue
+                                          ].subscriptions
+                                        : state.mutableSubscriptionMetadata.subscriptions
+                                              .filter(
+                                                  ({ email }) =>
+                                                      email.length === 0
+                                              )
+                                              .map((subscription) => ({
+                                                  ...subscription,
+                                                  catalogPrefix: formattedValue,
+                                              })),
+                            };
+                        }
+
+                        // Update the stored catalog prefix.
                         state.catalogPrefix = value;
 
                         // Validate the prefix and store validation errors.
                         state.prefixErrors =
                             validateCatalogName(value, false, true) ?? [];
 
-                        state.duplicateEmailExists =
+                        state.duplicatePrefixExists =
                             !state.isEditFlow &&
                             Object.keys(state.subscriptionMetadata).includes(
-                                value
+                                formattedValue
                             );
-
-                        // Reset mutable subscription metadata state.
-                        state.mutableSubscriptionMetadata =
-                            getInitialState().mutableSubscriptionMetadata;
-
-                        // Evaluate the existing subscriptions for the prefix.
-                        state.mutableSubscriptionMetadata.subscriptions =
-                            state.catalogPrefix.length > 0 &&
-                            hasOwnProperty(
-                                state.subscriptionMetadata,
-                                state.catalogPrefix
-                            )
-                                ? state.subscriptionMetadata[
-                                      state.catalogPrefix
-                                  ].subscriptions
-                                : [];
                     }),
                     false,
                     'subscribed prefix set'

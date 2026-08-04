@@ -21,7 +21,7 @@ const DeleteButton = ({ closeDialog }: DialogActionProps) => {
             )
     );
     const duplicatePrefixExists = useAlertSubscriptionsStore(
-        (state) => state.duplicateEmailExists
+        (state) => state.duplicatePrefixExists
     );
 
     const catalogPrefix = useAlertSubscriptionsStore(
