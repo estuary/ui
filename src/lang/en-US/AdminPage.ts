@@ -97,7 +97,8 @@ export const AdminPage: Record<string, string> = {
     'admin.billing.paymentMethods.table.label.details': `Details`,
     'admin.billing.paymentMethods.table.label.primary': `Primary`,
     'admin.billing.paymentMethods.table.label.actions': `Actions`,
-    'admin.billing.paymentMethods.table.emptyTableDefault.message': `No payment methods available.`,
+    'admin.billing.paymentMethods.table.emptyTableDefault.header': `No payment methods available.`,
+    'admin.billing.paymentMethods.table.emptyTableDefault.message': `Click "Add Payment Method" to register a payment method.`,
     'admin.billing.addPaymentMethods.title': `Add a payment method`,
     'admin.billing.addPaymentMethods.stripeLoadError': `Unable to load the forms from Stripe. ${Errors['error.tryAgain']}`,
 

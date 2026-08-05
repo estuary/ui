@@ -1,16 +1,18 @@
-import type { PaymentMethod } from 'src/gql-types/graphql';
+import type {
+    RowProps,
+    RowsProps,
+} from 'src/components/tables/PaymentMethods/types';
 
-import { Button, TableCell, TableRow } from '@mui/material';
+import { Button, TableCell, TableRow, Typography } from '@mui/material';
 
 import { Check } from 'iconoir-react';
 
+import {
+    deleteTenantPaymentMethod,
+    setTenantPrimaryPaymentMethod,
+} from 'src/api/billing';
 import { cardLogos } from 'src/components/tables/PaymentMethods/shared';
-
-export interface PaymentMethodRowProps extends PaymentMethod {
-    isPrimaryMethod: boolean;
-    onDelete(): void;
-    onPrimary(): void;
-}
+import { useTenantStore } from 'src/stores/Tenant';
 
 const Row = ({
     billingDetails,
@@ -20,7 +22,7 @@ const Row = ({
     onPrimary,
     type: methodType,
     usBankAccount,
-}: PaymentMethodRowProps) => {
+}: RowProps) => {
     const cardBrandLogo = card?.brand ? cardLogos[card.brand] : undefined;
 
     return (
@@ -49,9 +51,9 @@ const Row = ({
 
             <TableCell>
                 {methodType === 'card' ? (
-                    <>
+                    <Typography>
                         Expires {card?.expMonth}/{card?.expYear}
-                    </>
+                    </Typography>
                 ) : (
                     usBankAccount?.accountHolderType
                 )}
@@ -74,4 +76,32 @@ const Row = ({
     );
 };
 
-export default Row;
+function Rows({ data, primaryMethodId }: RowsProps) {
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
+    return (
+        <>
+            {data.map((datum) => (
+                <Row
+                    {...datum}
+                    key={datum.id}
+                    isPrimaryMethod={datum.id === primaryMethodId}
+                    onDelete={async () => {
+                        await deleteTenantPaymentMethod(
+                            selectedTenant,
+                            datum.id
+                        );
+                    }}
+                    onPrimary={async () => {
+                        await setTenantPrimaryPaymentMethod(
+                            selectedTenant,
+                            datum.id
+                        );
+                    }}
+                />
+            ))}
+        </>
+    );
+}
+
+export default Rows;
