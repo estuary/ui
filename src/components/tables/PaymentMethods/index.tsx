@@ -5,7 +5,6 @@ import {
     TableBody,
     TableCell,
     TableContainer,
-    TableHead,
     TableRow,
     Typography,
 } from '@mui/material';
@@ -19,6 +18,7 @@ import {
     setTenantPrimaryPaymentMethod,
 } from 'src/api/billing';
 import AlertBox from 'src/components/shared/AlertBox';
+import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
 import TableLoadingRows from 'src/components/tables/Loading';
 import Row from 'src/components/tables/PaymentMethods/Rows';
 import { columns } from 'src/components/tables/PaymentMethods/shared';
@@ -73,31 +73,11 @@ const PaymentMethodsTable = () => {
     ) : (
         <TableContainer>
             <Table
-                sx={{ minWidth: 650 }}
                 aria-label="simple table"
                 size="small"
+                sx={{ minWidth: 650 }}
             >
-                <TableHead>
-                    <TableRow
-                        sx={{
-                            background: (theme) =>
-                                theme.palette.background.default,
-                        }}
-                    >
-                        {columns.map((column, index) => (
-                            <TableCell
-                                key={`${column.field}-${index}`}
-                                width={column.width ?? 'auto'}
-                            >
-                                {column.headerIntlKey ? (
-                                    <FormattedMessage
-                                        id={column.headerIntlKey}
-                                    />
-                                ) : null}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                </TableHead>
+                <EntityTableHeader columns={columns} />
 
                 <TableBody>
                     {!selectedTenant || fetching ? (
