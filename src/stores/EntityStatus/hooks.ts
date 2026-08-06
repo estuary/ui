@@ -42,6 +42,18 @@ export const useEntityStatusStore_autoDiscoverLastSuccess = (
     return response.controller_status.auto_discover?.last_success;
 };
 
+export const useEntityStatusStore_autoDiscoverNextAt = (
+    catalogName: string
+) => {
+    const response = useEntityStatusStore_singleResponse(catalogName);
+
+    if (!response || !isCaptureControllerStatus(response.controller_status)) {
+        return undefined;
+    }
+
+    return response.controller_status.auto_discover?.next_at;
+};
+
 export const useEntityStatusStore_lastActivated = (catalogName: string) => {
     const response = useEntityStatusStore_singleResponse(catalogName);
 

@@ -149,6 +149,52 @@ export interface CatalogStats_Dashboard extends BaseCatalogStats {
     bytes_read_by_me?: number;
 }
 
+export interface DocsAndBytes {
+    docsTotal?: number;
+    bytesTotal?: number;
+}
+
+// Shapes mirror ops-catalog/stats.schema.yaml. Only the fields with a `sum` or
+// `maximize` reduce strategy are modelled: `bytesBehind` and
+// `lastSourcePublishedAt` have no reduce strategy, default to last-write-wins,
+// and are deliberately not surfaced anywhere in the UI.
+export interface CaptureBindingStats {
+    // Documents written out to the collection. Summed, and what the task's
+    // own `bytes_written_by_me` is accumulated from.
+    out?: DocsAndBytes;
+    // Publication time of the most recently captured document. The same field
+    // the OpenMetrics endpoint encodes as
+    // `captured_last_published_at_time_seconds{task,collection}` — that
+    // endpoint reads this very row, so the two cannot disagree.
+    lastPublishedAt?: string;
+}
+
+export interface MaterializeBindingStats {
+    // Documents read from the source collection. Summed, and what the task's
+    // own `bytes_read_by_me` is accumulated from — so per-binding totals add
+    // up to the figure the usage graph shows.
+    right?: DocsAndBytes;
+    // Publication time of the most recent *source* document processed — the
+    // materialize-side counterpart, encoded as
+    // `materialized_last_source_published_at_time_seconds`.
+    //
+    // No reduce strategy, which is deliberate rather than an oversight: this
+    // tracks a catch-up frontier, so a task replaying a backlog genuinely is
+    // processing old source documents and last-write-wins reports that
+    // honestly. `maximize` would pin it to the best watermark ever reached and
+    // never show a task falling behind again.
+    lastSourcePublishedAt?: string;
+}
+
+export interface TaskStats {
+    capture?: Record<string, CaptureBindingStats>;
+    materialize?: Record<string, MaterializeBindingStats>;
+}
+
+export interface BindingStatsResponse extends BaseCatalogStats {
+    taskStats: TaskStats | null;
+}
+
 export interface Directive {
     created_at: Date;
     detail: null;
