@@ -143,12 +143,6 @@ export const AdminPage: Record<string, string> = {
     'admin.dataPlanes.public.table.noContent.header': `No data planes found`,
     'admin.dataPlanes.public.table.noContent.message': `There was an issue reaching our servers. Please try again. If the issue persists, ${CTAs['cta.support']}.`,
 
-    'admin.tabs.users': `Account Access`,
-    'admin.tabs.notifications': `Notifications`,
-    'admin.tabs.api': `CLI-API`,
-    'admin.tabs.billing': `Billing`,
-    'admin.tabs.settings': `Settings`,
-
     // Storage Mappings
     'storageMappings.header': `Collection Storage`,
     'storageMappingsTable.title': `Storage Locations`,
