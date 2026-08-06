@@ -14,9 +14,7 @@ import { useIntl } from 'react-intl';
 import { eChartsTooltipSX } from 'src/components/graphs/tooltips';
 import {
     cardHeaderSx,
-    defaultBoxShadow,
     opaqueLightModeBackground,
-    opaqueLightModeBorder,
     semiTransparentBackground,
 } from 'src/context/Theme';
 
@@ -41,16 +39,26 @@ function CardWrapper({
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                boxShadow: defaultBoxShadow,
                 borderRadius: 3,
                 rowGap: 2,
                 minWidth: disableMinWidth ? undefined : 'min-content',
                 background: opaqueLightMode
                     ? opaqueLightModeBackground[theme.palette.mode]
                     : semiTransparentBackground[theme.palette.mode],
-                border: opaqueLightMode
-                    ? opaqueLightModeBorder[theme.palette.mode]
-                    : undefined,
+                // A hairline rather than a drop shadow.
+                //
+                // The old shadow stacked three layers, one of which cast
+                // *upward* — light from two directions at once, which is what
+                // made it read as dated. It was also doing redundant work in
+                // light mode, where a white card already separates from the
+                // #F7F9FC page, and no work at all in dark, where a 10%-black
+                // shadow on a near-black page is invisible.
+                //
+                // `palette.divider` specifically, because that is what the stat
+                // cards inside this one already use. The page was nesting
+                // bordered cards inside shadowed ones — two elevation languages,
+                // one inside the other.
+                border: `1px solid ${theme.palette.divider}`,
                 ...((sx as any) ?? {}),
             }}
         >
