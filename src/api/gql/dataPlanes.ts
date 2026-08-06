@@ -1,4 +1,7 @@
-import type { DataPlanesQuery, PublicDataPlanesQuery } from 'src/gql-types/graphql';
+import type {
+    DataPlanesQuery,
+    PublicDataPlanesQuery,
+} from 'src/gql-types/graphql';
 import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { graphql } from 'src/gql-types';
