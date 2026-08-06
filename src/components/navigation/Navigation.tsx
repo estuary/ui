@@ -71,8 +71,8 @@ export const Navigation = () => {
                   ]
                 : []),
             {
-                title: 'CLI - API',
-                link: authenticatedRoutes.admin.api.fullPath,
+                title: 'Service Accounts',
+                link: authenticatedRoutes.admin.serviceAccounts.fullPath,
             },
         ],
         [hasAnyAccess]
