@@ -58,8 +58,9 @@ function DataPlaneSelector() {
     useEffect(() => {
         if (!selected && options.length > 0) {
             const preferred =
-                options.find((option) => option.name === DEFAULT_PUBLIC_DATA_PLANE) ??
-                options[0];
+                options.find(
+                    (option) => option.name === DEFAULT_PUBLIC_DATA_PLANE
+                ) ?? options[0];
             setSelected(preferred.name);
         }
     }, [options, selected, setSelected]);
