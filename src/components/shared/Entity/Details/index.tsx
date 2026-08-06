@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import useConstant from 'use-constant';
 
-import { Box, Divider, Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 
 import { useUnmount } from 'react-use';
 
@@ -60,15 +60,36 @@ function EntityDetails() {
                             catalogName={catalogName}
                             lastChecked={lastChecked}
                         >
-                            <Stack spacing={2} sx={{ m: 1 }}>
-                                <DetailsToolBar />
-                                <Divider />
-                                <DetailTabs />
-                            </Stack>
+                            {/* No top margin: it sat on top of the container's
+                                own padding, putting 34px between the page
+                                header and the task name.
 
-                            <Box sx={{ m: 1 }}>
-                                <RenderTab />
-                            </Box>
+                                The tab panel is in this Stack rather than a
+                                Box of its own so the gap under the tabs is the
+                                same 16px as the one above them and as every
+                                gutter on the page below. On its own it had an
+                                8px margin that collapsed with the Stack's,
+                                leaving the tabs sitting half a step too close
+                                to the content they label.
+
+                                It keeps a Box because two tabs render more
+                                than one child, and as bare Stack children they
+                                would pick up the 16px spacing between them.
+
+                                No horizontal margin either: PageContainer's
+                                padding is the page's left edge, and this used
+                                to add 8px on top of it. The sum happened to
+                                equal the page header's inset while the sidebar
+                                was out, which is why the misalignment only ever
+                                showed once it was collapsed. */}
+                            <Stack spacing={2} sx={{ mb: 1 }}>
+                                <DetailsToolBar />
+                                <DetailTabs />
+
+                                <Box>
+                                    <RenderTab />
+                                </Box>
+                            </Stack>
                         </EntityRelationshipsHydrator>
                     </EntityStatusHydrator>
                 </ShardHydrator>
