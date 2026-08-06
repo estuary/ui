@@ -58,32 +58,22 @@ function AlertsAreActiveBadge({
     return (
         <Badge
             badgeContent={activeAlertCount}
-            color="error"
             invisible={fetching}
             overlap="rectangular"
-            // Sized and positioned to sit *inside* the tab. This is only ever
-            // rendered into a Tab label, and MUI clips that three times over —
-            // `MuiTab-root`, `MuiTabs-scroller` and `MuiTabs-root` all set
-            // `overflow: hidden`. At the default 20px and `top: -4` the badge
-            // started 6px above the 34px pill and had its top sliced off.
-            // Unclipping the ancestors is not an option: the scroller's
-            // overflow is what makes `variant="scrollable"` scroll.
+            // Sized to sit inside the tab. MUI clips a Tab label three times
+            // over — tab, scroller and tabs root all set `overflow: hidden` —
+            // and the default 20px badge had its top sliced off by the pill.
+            // The scroller's overflow is what makes `variant="scrollable"`
+            // scroll, so it cannot be unclipped. The geometry below is tuned
+            // against the pill defined in NavigationTabs; the two move together.
+            //
+            // Colours are set rather than derived from `color="error"`: white
+            // measures 4.92:1 on this red, clearing the 4.5 this 10px text
+            // needs, but the theme's `contrastThreshold` is 5 so
+            // `getContrastText` would reject it and return dark text at 3.94.
+            // `errorMain` is also the constant the alerts panel uses.
             sx={{
                 [`& .${badgeClasses.badge}`]: {
-                    // `errorMain` explicitly, in both modes, rather than
-                    // whatever `color="error"` resolves to. It is the same
-                    // constant the alerts panel draws its dot with, so the tab
-                    // and the panel finally agree — the badge used to be amber
-                    // while the panel beside the chart was red for the same
-                    // alerts.
-                    //
-                    // White is set rather than left to `getContrastText`: on
-                    // #CA3B55 white measures 4.92:1, which clears the 4.5 this
-                    // 10px text needs, but the theme's `contrastThreshold` is 5
-                    // — so MUI would round it down to dark text at 3.94 and
-                    // fail. #CA3B55 is also the only red tried that stays
-                    // legible on both cards (4.92 light, 3.17 dark); dark
-                    // mode's own #E45972 drops white to 3.52.
                     backgroundColor: errorMain,
                     color: '#FFFFFF',
                     fontSize: 10,

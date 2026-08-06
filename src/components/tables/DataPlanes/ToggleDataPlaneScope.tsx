@@ -10,12 +10,6 @@ import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
-// MUI uppercases ToggleButton labels. The theme opts MuiButton and MuiTab out
-// of that but not MuiToggleButton, so "Private"/"Public" arrived as
-// PRIVATE/PUBLIC — shouting, under a heading that does not. Same local fix as
-// the chart's Data/Docs selector; see the note there on why it is not
-// theme-wide.
-const sentenceCaseSx = { textTransform: 'none' } as const;
 
 function ToggleDataPlaneScope() {
     const intl = useIntl();
@@ -49,7 +43,6 @@ function ToggleDataPlaneScope() {
                 onClick={changeScope}
                 selected={dataPlaneScope === 'private'}
                 size="small"
-                sx={sentenceCaseSx}
                 value="private"
             >
                 {intl.formatMessage({
@@ -60,7 +53,6 @@ function ToggleDataPlaneScope() {
                 onClick={changeScope}
                 selected={dataPlaneScope === 'public'}
                 size="small"
-                sx={sentenceCaseSx}
                 value="public"
             >
                 {intl.formatMessage({

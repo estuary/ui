@@ -31,6 +31,9 @@ function CardWrapper({
     const theme = useTheme();
     const belowLg = useMediaQuery(theme.breakpoints.down('lg'));
 
+    // A divider hairline rather than a drop shadow. The old shadow stacked
+    // three layers, one of them casting upward, and did redundant work in light
+    // mode while being invisible in dark.
     return (
         <Stack
             sx={{
@@ -45,19 +48,6 @@ function CardWrapper({
                 background: opaqueLightMode
                     ? opaqueLightModeBackground[theme.palette.mode]
                     : semiTransparentBackground[theme.palette.mode],
-                // A hairline rather than a drop shadow.
-                //
-                // The old shadow stacked three layers, one of which cast
-                // *upward* — light from two directions at once, which is what
-                // made it read as dated. It was also doing redundant work in
-                // light mode, where a white card already separates from the
-                // #F7F9FC page, and no work at all in dark, where a 10%-black
-                // shadow on a near-black page is invisible.
-                //
-                // `palette.divider` specifically, because that is what the stat
-                // cards inside this one already use. The page was nesting
-                // bordered cards inside shadowed ones — two elevation languages,
-                // one inside the other.
                 border: `1px solid ${theme.palette.divider}`,
                 ...((sx as any) ?? {}),
             }}

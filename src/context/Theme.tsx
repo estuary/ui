@@ -447,10 +447,6 @@ export const hiddenButAccessibleRadio: SxProps<Theme> = {
     },
 };
 
-// `defaultBoxShadow` and `opaqueLightModeBorder` lived here. CardWrapper was
-// their only consumer and it now draws a `palette.divider` hairline instead, so
-// both were dead. Cards on this product do not cast shadows.
-
 // TODO need to consolidate lots of duplicated "rgba(247, 249, 252, 0.05)" values in the theme, but not today...
 export const stripePaymentFormFieldBackgroundDark = 'rgba(247, 249, 252, 0.05)';
 
@@ -466,14 +462,8 @@ export const opaqueLightModeBackground = {
 // We just look into waiting for css variable support - https://mui.com/material-ui/customization/css-theme-variables/overview/
 
 /**
- * The surface a page, dialog or menu sits on — one step up the ramp from the
- * canvas behind it, and one step below the white cards that sit on top.
- *
- * Dark mode always worked this way: canvas 900, this 800, cards a 5% white
- * wash above that. Light mode had this on `white`, which is also what the cards
- * are, so a card and the panel under it were the same colour and only the
- * hairline told them apart. Everything that reads this token — page panels,
- * menus, popovers, dialogs, chart tooltips — was sitting white-on-white.
+ * The surface a page, dialog or menu sits on — one step up the grey ramp from
+ * the canvas behind it, and one step below the white cards that sit on top.
  */
 export const paperBackground = {
     light: sample_grey[100],

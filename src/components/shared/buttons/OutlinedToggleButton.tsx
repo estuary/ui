@@ -18,6 +18,12 @@ const OutlinedToggleButton = styled(ToggleButton)(({
     const colorKey = color === 'standard' || !color ? 'primary' : color;
 
     return {
+        // MUI uppercases ToggleButton labels. The theme opts MuiButton and
+        // MuiTab out of that but not MuiToggleButton, so every label here
+        // arrived shouting. Owned at this level rather than in the theme
+        // because a theme override would also catch the icon-only raw
+        // ToggleButtons in the data preview.
+        'textTransform': 'none',
         'padding': '3px 9px',
         'border': intensifiedOutline[theme.palette.mode],
         'borderRadius': 4,

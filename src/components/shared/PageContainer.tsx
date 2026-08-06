@@ -150,15 +150,9 @@ function PageContainer({ children, hideBackground }: Props) {
 
             <Paper
                 sx={{
-                    // The same 16px as the header Paper above. This used to be
-                    // 8px with the sidebar out and 40px with it collapsed, on
-                    // the reasoning that a wider pane wants more breathing
-                    // room — but the header's padding is fixed, and the two
-                    // Papers are joined into one card by the shared corner
-                    // radius, so collapsing the sidebar stepped the page's
-                    // content 32px right of its own title. Someone collapsing
-                    // the sidebar is asking for width; taking 80px of it back
-                    // as padding argued with them.
+                    // The same 16px as the header Paper above, which the
+                    // shared corner radius joins this to. This is the page's
+                    // left edge — page content should not add its own.
                     px: 2,
                     // Tighter against a header, which is joined to this panel
                     // by the shared corner radius below and so already provides
