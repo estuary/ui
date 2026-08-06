@@ -80,6 +80,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
         LUXON_GRAIN_SETTINGS[range.grain];
 
     const resizeListener = useRef<EventListener | null>(null);
+    const resizeObserver = useRef<ResizeObserver | null>(null);
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
     const [renderingTimezone, setRenderingTimezone] = useState<string>('');
@@ -110,6 +111,19 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
 
                 resizeListener.current = () => chart.resize();
                 window.addEventListener('resize', resizeListener.current);
+
+                // The window listener alone is not enough: collapsing or
+                // expanding the navigation sidebar resizes this container
+                // without resizing the window, so the canvas kept whatever
+                // width it was initialised at. It then overflowed its card —
+                // whose floor is `min-content` — and pushed into whatever sat
+                // beside it. Observing the element catches every cause of a
+                // size change, the window included.
+                resizeObserver.current = new ResizeObserver(() => {
+                    chart.resize();
+                });
+
+                resizeObserver.current.observe(chartDom);
             }
         }
     }, [id, myChart]);
@@ -118,6 +132,8 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
         if (resizeListener.current) {
             window.removeEventListener('resize', resizeListener.current);
         }
+
+        resizeObserver.current?.disconnect();
     });
 
     // Update the "last updated" string shown as an xAxis label
