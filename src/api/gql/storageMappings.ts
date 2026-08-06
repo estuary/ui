@@ -1,7 +1,7 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type { CloudProvider } from 'src/utils/cloudRegions';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useClient, useQuery } from 'urql';
 
@@ -130,6 +130,42 @@ const QUERY = graphql(`
         }
     }
 `);
+
+// Number of storage mappings fetched per page in the settings table.
+const STORAGE_MAPPINGS_PAGE_SIZE = 10;
+
+const TABLE_QUERY = graphql(`
+    query StorageMappingsTable(
+        $underPrefix: Prefix!
+        $first: Int
+        $after: String
+    ) {
+        storageMappings(
+            by: { underPrefix: $underPrefix }
+            first: $first
+            after: $after
+        ) {
+            edges {
+                cursor
+                node {
+                    catalogPrefix
+                    spec
+                }
+            }
+            pageInfo {
+                ...PageInfoFields
+            }
+        }
+    }
+`);
+
+// Row shape consumed by the settings table. `spec` is the raw server-side
+// storage definition (stores + data plane assignments), matching what the
+// table renders directly without the client-side FragmentStore mapping.
+export interface StorageMappingTableRow {
+    catalogPrefix: string;
+    spec: StorageMappingSpec;
+}
 
 // Maps cloud provider names to storage provider variants (for GraphQL mutations)
 const CLOUD_TO_STORAGE_PROVIDER: Record<CloudProvider, StorageProvider> = {
@@ -332,5 +368,42 @@ export function useStorageMappings() {
         storageMappings,
         loading: fetching,
         error,
+    };
+}
+
+const EMPTY_ROWS: StorageMappingTableRow[] = [];
+
+// Cursor-paginated storage mappings for the admin settings table. Forward
+// pagination only; pair with useCursorPagination for backwards navigation.
+export function usePaginatedStorageMappings(afterCursor?: string) {
+    const tenant = useTenantStore((state) => state.selectedTenant);
+
+    const [{ fetching, data, error }] = useQuery({
+        query: TABLE_QUERY,
+        variables: {
+            underPrefix: tenant,
+            first: STORAGE_MAPPINGS_PAGE_SIZE,
+            after: afterCursor,
+        },
+        pause: !tenant,
+    });
+
+    const storageMappings = useMemo<StorageMappingTableRow[]>(
+        () =>
+            data?.storageMappings.edges.map((edge) => ({
+                catalogPrefix: edge.node.catalogPrefix,
+                spec: edge.node.spec as StorageMappingSpec,
+            })) ?? EMPTY_ROWS,
+        [data]
+    );
+
+    const pageInfo = data?.storageMappings.pageInfo ?? null;
+
+    return {
+        storageMappings,
+        fetching,
+        error,
+        pageInfo,
+        pageSize: STORAGE_MAPPINGS_PAGE_SIZE,
     };
 }
