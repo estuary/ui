@@ -10,7 +10,11 @@ import { authenticatedRoutes } from 'src/app/routes';
 import CapturesTable from 'src/components/tables/Captures';
 import usePageTitle from 'src/hooks/usePageTitle';
 
-const boxStyling: SxProps<Theme> = { marginBottom: 2, padding: 2 };
+// Vertical padding only. The horizontal padding here, plus the Toolbar's
+// default 24px gutters above, indented this page's content past its own title
+// in the header bar — PageContainer's padding is the page's left edge, and
+// Welcome, Admin and the details pages all sit flush against it.
+const boxStyling: SxProps<Theme> = { marginBottom: 2, paddingY: 2 };
 
 const Capture = () => {
     usePageTitle({
@@ -23,6 +27,7 @@ const Capture = () => {
     return (
         <>
             <Toolbar
+                disableGutters
                 sx={{
                     alignItems: 'center',
                     display: 'flex',

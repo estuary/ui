@@ -130,7 +130,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
         <>
             <AdminTabs />
 
-            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ py: 2 }}>
                 <Grid size={{ xs: 12, md: 9 }}>
                     <Typography variant="h6" sx={{ mb: 0.5 }}>
                         {intl.formatMessage({ id: 'admin.billing.header' })}
@@ -147,7 +147,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                 </Grid>
             </Grid>
 
-            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ p: 2 }}>
+            <Grid container spacing={{ xs: 3, md: 2 }} sx={{ py: 2 }}>
                 <BillingLoadError />
 
                 <Grid size={{ xs: 12, md: 6 }}>
