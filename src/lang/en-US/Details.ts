@@ -12,6 +12,8 @@ export const Details: Record<string, string> = {
     'details.tabs.history': `History`,
     'details.tabs.ops': `Logs`,
 
+    'details.toolbar.copyName': `Copy name`,
+
     'details.history.noPublications': `No publications were found.`,
     'details.history.diffFailed': `Unable to get specs to compare.`,
     'details.history.title': `Change History`,
@@ -68,6 +70,8 @@ export const Details: Record<string, string> = {
     'detailsPanel.shardDetails.errorTitle': `Shard Replica Processing Errors`,
     'detailsPanel.shardDetails.warningTitle': `Shard Replica Processing Warnings`,
     'detailsPanel.shardDetails.noStatusFound': `No shard status to report`,
+    // Decision: the explainer is named for the question, not "Docs".
+    'detailsPanel.shardDetails.explainerLink': `What is a shard?`,
     'detailsPanel.shardDetails.docPath': `https://docs.estuary.dev/concepts/advanced/shards/`,
     'detailsPanel.dataPreview.header': `Data Preview`,
     'detailsPanel.dataPreview.failedParsingMessage': `Ran into an problem parsing data. This is a UI bug and does not mean there is an issue with your data.`,
@@ -81,8 +85,12 @@ export const Details: Record<string, string> = {
     'detailsPanel.status.header': `Status`,
     'detailsPanel.details.title': `Details`,
     'detailsPanel.totals.title': `Usage this month`,
-    'detailsPanel.recentUsage.title.prefix': `Usage over the past`,
+    // Reads as a card heading followed by its range picker: "Data Movement
+    // [48 hours]". Shared with the collection details page, whose chart is the
+    // same chart.
+    'detailsPanel.recentUsage.title.prefix': `Data Movement`,
     'detailsPanel.recentUsage.range.label': `Timeframe`,
+    'detailsPanel.rangeChip.tooltip': `Covers the timeframe selected at the top of the page.`,
     'detailsPanel.recentUsage.filter.label.hours': `{range} hours`,
     'detailsPanel.recentUsage.filter.label.days': `{range} days`,
     'detailsPanel.recentUsage.filter.label.months': `{range} months`,
@@ -97,4 +105,84 @@ export const Details: Record<string, string> = {
     'detailsPanel.graph.syncDelay.tooltip': `Reporting can be delayed by up to 2x the set update delay in the configuration.`,
 
     'detailsPanel.status.taskDisabled.message': `Task is disabled`,
+
+    // Two surfaces, as decision #9 required: the Alerts tab's count badge and
+    // this panel. #9 also said no permanent alerts surface — that part is
+    // deliberately reversed, so the panel is always beside the chart and its
+    // dot goes green when nothing is firing.
+    'detailsPanel.alerts.panel.title': `Alerts`,
+    'detailsPanel.alerts.panel.none': `No alerts firing.`,
+
+    // Elapsed-time units. Minutes are the finest on purpose — the reporting
+    // pipeline floors at roughly four, so seconds would be invented precision.
+    // Bare units. Freshness is an age — "1 minute" — while the bindings
+    // table's Last data is a point in time, so only that wraps them in "ago".
+    'detailsPanel.elapsed.minutes': `{count, plural, one {minute} other {minutes}}`,
+    'detailsPanel.elapsed.hours': `{count, plural, one {hour} other {hours}}`,
+    'detailsPanel.elapsed.days': `{count, plural, one {day} other {days}}`,
+    'detailsPanel.elapsed.ago': `{elapsed} ago`,
+
+    // Status strip — the page's status line, laid out horizontally under the tabs.
+    'detailsPanel.strip.freshness': `Freshness`,
+    'detailsPanel.strip.freshness.tooltip': `How long ago the newest document across all of this task's bindings was published. Stats take about four minutes to reach this page, so a steady few minutes is the reporting delay rather than lag.`,
+    'detailsPanel.strip.freshness.none': `No data yet`,
+    'detailsPanel.strip.freshness.none.tooltip': `No binding moved data in the range selected on the chart above.`,
+    // Replaced a plain collection count, which the bindings card heading and
+    // its filter chips both already state further down the page.
+    'detailsPanel.strip.dataMoved': `Data moved`,
+    'detailsPanel.strip.dataMoved.tooltip': `Total across every binding for the selected range. Written for a capture, read for a materialization — the same figure the chart plots.`,
+    'detailsPanel.strip.autoDiscover': `Auto-discover`,
+    'detailsPanel.strip.autoDiscover.last': `Last`,
+    'detailsPanel.strip.autoDiscover.next': `Next`,
+    'detailsPanel.strip.never': `never`,
+    // "Status" rather than "Shards": the product's own alert copy already calls
+    // this condition a Task Failure, and a term needing a tooltip is the wrong label.
+    'detailsPanel.strip.status': `Status`,
+    'detailsPanel.strip.status.running': `Running`,
+    'detailsPanel.strip.status.failed': `Failed`,
+    'detailsPanel.strip.status.warning': `Warnings`,
+    'detailsPanel.strip.status.disabled': `Disabled`,
+    'detailsPanel.strip.status.viewAlerts': `View this in Alerts`,
+    // The product's own term for this, taken from
+    // spec.endpoint.connector.config.syncSchedule.syncFrequency. Never "commit delay".
+    // The connector's own account of what it is doing, which is not the same
+    // fact as the Status cell's shard state — a task can be Running while the
+    // connector is mid-backfill.
+    'detailsPanel.strip.connectorStatus.tooltip': `Reported by the connector: {message}`,
+    'detailsPanel.strip.syncSchedule': `Sync schedule`,
+    'detailsPanel.strip.syncSchedule.inline': `(sync schedule {frequency})`,
+    'detailsPanel.strip.syncSchedule.tooltip': `Where a sync schedule is set, a steady lag near its value is expected behaviour rather than a backlog.`,
+    'detailsPanel.strip.footer.updated': `Updated {timestamp}`,
+    'detailsPanel.strip.footer.created': `Created {timestamp}`,
+    'detailsPanel.strip.footer.connectorDocs': `Connector docs`,
+
+    // Bindings table.
+    'detailsPanel.bindings.title': `Bindings`,
+    'detailsPanel.bindings.table.aria': `Bindings`,
+    // The chip's text is the range itself, formatted from the same keys
+    // DetailsRange labels its picker with — see BindingsCardHeader.
+    'detailsPanel.bindings.subtitle.written': `{count, plural, one {# binding} other {# bindings}} · {volume} written`,
+    'detailsPanel.bindings.subtitle.read': `{count, plural, one {# binding} other {# bindings}} · {volume} read`,
+    'detailsPanel.bindings.search.capture': `Filter by source stream or collection`,
+    'detailsPanel.bindings.search.materialization': `Filter by collection`,
+    'detailsPanel.bindings.filter.all': `All`,
+    'detailsPanel.bindings.rowsPerPage': `Bindings per page`,
+    'detailsPanel.bindings.empty': `This task has no bindings.`,
+    'detailsPanel.bindings.noMatches': `No bindings match this filter.`,
+    // "Enabled" rather than "Active": the flag only says the binding is not
+    // switched off, which is not a claim that data is flowing.
+    'detailsPanel.bindings.status.enabled': `Enabled`,
+    'detailsPanel.bindings.status.disabled': `Disabled`,
+    'detailsPanel.bindings.column.sourceStream': `Source stream`,
+    'detailsPanel.bindings.column.collection': `Collection`,
+    'detailsPanel.bindings.column.status': `Status`,
+    'detailsPanel.bindings.column.docs': `Docs`,
+    'detailsPanel.bindings.column.dataWritten': `Data written`,
+    'detailsPanel.bindings.column.dataRead': `Data read`,
+    'detailsPanel.bindings.column.lastData': `Last data`,
+    // The bar is relative to the busiest binding, which is good for comparing
+    // rows but says nothing about how much of the task a row accounts for — so
+    // the tooltip carries the share instead.
+    'detailsPanel.bindings.volume.tooltip': `{share} of this task's total for the selected range. Bar length is relative to the largest binding.`,
+    'detailsPanel.bindings.volume.none.tooltip': `No data recorded for this binding in the selected range.`,
 };

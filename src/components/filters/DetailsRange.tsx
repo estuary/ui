@@ -14,9 +14,19 @@ import { cardHeaderSx, linkButtonSx } from 'src/context/Theme';
 import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
+interface Props {
+    // The picker doubles as a card heading on the collection page, where it
+    // labels the chart it sits on. On a task it is a page-level control in the
+    // toolbar and wants a neutral label, because it governs the strip and the
+    // bindings table as well as the chart.
+    labelId?: string;
+}
+
 // TODO (details range) - we should probably not add many more predefined ranges and
 //  start allowing a user to enter their own range manually.
-function DetailsRange() {
+function DetailsRange({
+    labelId = 'detailsPanel.recentUsage.title.prefix',
+}: Props) {
     const intl = useIntl();
 
     const [range, setRange] = useDetailsUsageStore(
@@ -44,7 +54,7 @@ function DetailsRange() {
     return (
         <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <Typography id="hourly-filter-selector__label" sx={cardHeaderSx}>
-                <FormattedMessage id="detailsPanel.recentUsage.title.prefix" />
+                <FormattedMessage id={labelId} />
             </Typography>
 
             <Button

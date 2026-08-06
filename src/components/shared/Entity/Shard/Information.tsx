@@ -3,11 +3,12 @@ import type { TableColumns } from 'src/types';
 
 import { useState } from 'react';
 
-import { Grid, Stack, Table, TableContainer } from '@mui/material';
+import { Grid, Stack, Table, TableContainer, Typography } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
+import { OVERVIEW_CARD_TITLE_WEIGHT } from 'src/components/shared/Entity/Details/Overview/shared';
 import ShardAlerts from 'src/components/shared/Entity/Shard/Alerts';
 import HydrationError from 'src/components/shared/Entity/Shard/HydrationError';
 import InformationTableBody from 'src/components/shared/Entity/Shard/TableBody';
@@ -44,15 +45,33 @@ function ShardInformation({ taskName, taskTypes }: Props) {
     return (
         <CardWrapper
             message={
-                <Stack direction="row" spacing={1}>
-                    <FormattedMessage id="detailsPanel.shardDetails.title" />
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: 'baseline' }}
+                >
+                    {/* Wrapped in an element rather than left as a bare
+                        FormattedMessage: Stack's `spacing` targets child
+                        elements, so a text node got no gap and the heading ran
+                        straight into the link. */}
+                    <Typography
+                        component="span"
+                        sx={{ fontWeight: OVERVIEW_CARD_TITLE_WEIGHT }}
+                    >
+                        <FormattedMessage id="detailsPanel.shardDetails.title" />
+                    </Typography>
+
+                    {/* Named for the question a confused reader is actually
+                        asking, rather than a generic "Docs". This is the one
+                        place the word "shard" is load-bearing, so it is also the
+                        one place that needs an explainer. */}
                     <ExternalLink
                         link={intl.formatMessage({
                             id: 'detailsPanel.shardDetails.docPath',
                         })}
                     >
                         {intl.formatMessage({
-                            id: 'terms.documentation',
+                            id: 'detailsPanel.shardDetails.explainerLink',
                         })}
                     </ExternalLink>
                 </Stack>
