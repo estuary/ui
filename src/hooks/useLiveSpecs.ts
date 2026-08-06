@@ -47,16 +47,31 @@ function useLiveSpecs(specType?: Entity, matchName?: string) {
     };
 }
 
+// A binding of a capture or materialization, as stored in the live spec. The
+// collection name is `target` on captures and `source` on materializations, and
+// `source` may be either a string or a FullSource object — reach for
+// `getCollectionName` rather than reading either directly.
+export interface LiveSpecBinding {
+    disable?: boolean;
+    resource?: Record<string, any>;
+    source?: string | { name: string };
+    target?: string;
+}
+
 export interface LiveSpecsQuery_details extends LiveSpecsQuery {
     'data_plane_name': string;
     'id': string;
     'spec': {
+        // Collections carry a schema and key; captures and materializations
+        // carry bindings and an endpoint instead.
         schema: {
             properties: Record<string, any>;
             required?: string[];
         };
         key: string[];
         projections?: Schema;
+        bindings?: LiveSpecBinding[];
+        endpoint?: Schema;
     };
     'created_at': string;
     'connector_logo_url': string;
