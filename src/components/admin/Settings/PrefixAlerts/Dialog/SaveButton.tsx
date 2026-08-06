@@ -7,18 +7,34 @@ import { Button } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
-import { useModifyAlertSubscription } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertSubscription';
+import { useModifyAlertMetadata } from 'src/components/admin/Settings/PrefixAlerts/useModifyAlertMetadata';
+import { isValidEmail } from 'src/validation';
 
 const SaveButton = ({ closeDialog }: DialogActionProps) => {
     const intl = useIntl();
-    const { loading, onClick } = useModifyAlertSubscription(closeDialog);
+    const { loading, onClick } = useModifyAlertMetadata(closeDialog);
 
     const errorsExist = useAlertSubscriptionsStore(
-        (state) => state.emailErrorsExist || state.prefixErrorsExist
+        (state) =>
+            state.prefixErrors.length > 0 ||
+            state.mutableSubscriptionMetadata.subscriptions.some(
+                ({ email, emailErrorsExist }) =>
+                    emailErrorsExist || !isValidEmail(email)
+            )
+    );
+    const duplicatePrefixExists = useAlertSubscriptionsStore(
+        (state) => state.duplicatePrefixExists
     );
 
-    const subscription = useAlertSubscriptionsStore(
-        (state) => state.subscription
+    const catalogPrefix = useAlertSubscriptionsStore(
+        (state) => state.catalogPrefix
+    );
+    const metadataMissing = useAlertSubscriptionsStore(
+        (state) =>
+            state.mutableSubscriptionMetadata.subscriptions.length === 0 ||
+            state.mutableSubscriptionMetadata.subscriptions.some(
+                ({ email }) => email.length === 0
+            )
     );
 
     const disabled = useMemo(
@@ -26,10 +42,17 @@ const SaveButton = ({ closeDialog }: DialogActionProps) => {
             Boolean(
                 errorsExist ||
                     loading ||
-                    subscription.catalogPrefix.length === 0 ||
-                    subscription.email.length === 0
+                    catalogPrefix.length === 0 ||
+                    metadataMissing ||
+                    duplicatePrefixExists
             ),
-        [errorsExist, loading, subscription.catalogPrefix, subscription.email]
+        [
+            catalogPrefix,
+            duplicatePrefixExists,
+            errorsExist,
+            loading,
+            metadataMissing,
+        ]
     );
 
     return (

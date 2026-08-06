@@ -1,5 +1,4 @@
-import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
-import type { AlertTypeInfo } from 'src/gql-types/graphql';
+import type { SubscriptionMetadataDictionary } from 'src/components/admin/Settings/PrefixAlerts/types';
 import type { TableState } from 'src/types';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -21,15 +20,17 @@ import {
 } from 'src/components/tables/PrefixAlerts/shared';
 import TableFilter from 'src/components/tables/PrefixAlerts/TableFilter';
 import { useGetAlertSubscriptions } from 'src/context/AlertSubscriptions';
-import { useGetAlertTypes } from 'src/context/AlertType';
 import { TableStatuses } from 'src/types';
+import { bundleSubscriptionsByPrefix } from 'src/utils/notification-utils';
 
 function PrefixAlertTable() {
     const [{ data, error, fetching }] = useGetAlertSubscriptions();
-    const [alertTypeResponse] = useGetAlertTypes();
 
-    const setInitializationError = useAlertSubscriptionsStore(
-        (state) => state.setInitializationError
+    const setInitializationErrors = useAlertSubscriptionsStore(
+        (state) => state.setInitializationErrors
+    );
+    const setSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.setSubscriptionMetadata
     );
 
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -37,25 +38,31 @@ function PrefixAlertTable() {
         status: TableStatuses.LOADING,
     });
 
-    const processedData: ReducedAlertSubscriptionQueryResponse['alertSubscriptions'] =
-        useMemo(() => {
-            if (!data) {
-                return [];
-            }
+    const processedData: SubscriptionMetadataDictionary = useMemo(() => {
+        if (!data?.alertSubscriptions) {
+            return {};
+        }
 
-            return searchQuery
-                ? data.alertSubscriptions.filter(
-                      ({ catalogPrefix, email }) =>
-                          catalogPrefix.includes(searchQuery) ||
-                          email.includes(searchQuery)
-                  )
-                : data.alertSubscriptions;
-        }, [data, searchQuery]);
+        const evaluatedData = searchQuery
+            ? data.alertSubscriptions.filter(
+                  ({ catalogPrefix, email }) =>
+                      catalogPrefix.includes(searchQuery) ||
+                      email?.includes(searchQuery)
+              )
+            : data.alertSubscriptions;
 
-    const alertTypeDefs: AlertTypeInfo[] = useMemo(
-        () =>
-            !alertTypeResponse.data ? [] : alertTypeResponse.data.alertTypes,
-        [alertTypeResponse.data]
+        return bundleSubscriptionsByPrefix(
+            evaluatedData.map(({ alertTypes, catalogPrefix, email }) => ({
+                alertTypes,
+                catalogPrefix,
+                email: email ?? '',
+            }))
+        );
+    }, [data?.alertSubscriptions, searchQuery]);
+
+    const processedDataExists = useMemo(
+        () => Object.keys(processedData).length > 0,
+        [processedData]
     );
 
     // TODO: Create a hook that encapsulates this logic since it is used for the
@@ -69,15 +76,30 @@ function PrefixAlertTable() {
     });
 
     useEffect(() => {
-        if (!fetching && !alertTypeResponse.fetching) {
-            setInitializationError(error);
+        if (!fetching) {
+            setInitializationErrors([error]);
+            setSubscriptionMetadata(
+                data?.alertSubscriptions.map(
+                    ({ alertTypes, catalogPrefix, email }) => ({
+                        alertTypes,
+                        catalogPrefix,
+                        email: email ?? '',
+                    })
+                ) ?? []
+            );
         }
-    }, [alertTypeResponse.fetching, error, fetching, setInitializationError]);
+    }, [
+        data?.alertSubscriptions,
+        error,
+        fetching,
+        setInitializationErrors,
+        setSubscriptionMetadata,
+    ]);
 
     useEffect(() => {
-        if (fetching || alertTypeResponse.fetching) {
+        if (fetching) {
             setTableState({ status: TableStatuses.LOADING });
-        } else if (processedData.length > 0) {
+        } else if (processedDataExists) {
             displayLoadingState.current?.cancel();
 
             setTableState({
@@ -92,12 +114,7 @@ function PrefixAlertTable() {
                     : TableStatuses.NO_EXISTING_DATA,
             });
         }
-    }, [
-        alertTypeResponse.fetching,
-        fetching,
-        processedData.length,
-        searchQuery,
-    ]);
+    }, [processedDataExists, fetching, searchQuery]);
 
     const loading = tableState.status === TableStatuses.LOADING;
 
@@ -144,12 +161,8 @@ function PrefixAlertTable() {
                             disableDoclink: true,
                         }}
                         rows={
-                            processedData.length > 0 &&
-                            alertTypeDefs.length > 0 ? (
-                                <Rows
-                                    alertTypeDefs={alertTypeDefs}
-                                    data={processedData}
-                                />
+                            processedDataExists ? (
+                                <Rows data={Object.values(processedData)} />
                             ) : null
                         }
                         tableState={tableState}

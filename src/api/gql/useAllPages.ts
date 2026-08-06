@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useQuery } from 'urql';
 
-interface Connection<TNode> {
+export interface Connection<TNode> {
     edges: { node: TNode }[];
     pageInfo: {
         hasNextPage: boolean;
