@@ -14,7 +14,6 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
 import { useTopBarStore } from 'src/stores/TopBar/Store';
-import { useNavigationStore } from 'src/stores/useNavigationStore';
 
 interface Props {
     children: ReactNode | ReactNode[];
@@ -25,7 +24,6 @@ function PageContainer({ children, hideBackground }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const header = useTopBarStore((state) => state.header);
-    const navigationOpen = useNavigationStore((state) => state.open);
 
     const notification = useNotificationStore(
         notificationStoreSelectors.notification
@@ -134,8 +132,6 @@ function PageContainer({ children, hideBackground }: Props) {
                         width: '100%',
                         boxShadow: boxShadowMixin,
                         borderRadius: '16px 16px 0 0',
-                        borderBottom: '1px solid',
-                        borderColor: 'divider',
                         background: backgroundMixin,
                     }}
                 >
@@ -154,10 +150,22 @@ function PageContainer({ children, hideBackground }: Props) {
 
             <Paper
                 sx={{
-                    px: navigationOpen ? 1 : { xs: 1, md: 5 },
-                    transition: (t) =>
-                        `padding ${t.transitions.duration.shortest}ms`,
-                    py: 2,
+                    // The same 16px as the header Paper above. This used to be
+                    // 8px with the sidebar out and 40px with it collapsed, on
+                    // the reasoning that a wider pane wants more breathing
+                    // room — but the header's padding is fixed, and the two
+                    // Papers are joined into one card by the shared corner
+                    // radius, so collapsing the sidebar stepped the page's
+                    // content 32px right of its own title. Someone collapsing
+                    // the sidebar is asking for width; taking 80px of it back
+                    // as padding argued with them.
+                    px: 2,
+                    // Tighter against a header, which is joined to this panel
+                    // by the shared corner radius below and so already provides
+                    // the separation the full padding was doing. Unchanged on
+                    // pages that have no header.
+                    pt: header ? 1 : 2,
+                    pb: 2,
                     flex: 1,
                     minHeight: 0,
                     overflow: 'auto',
