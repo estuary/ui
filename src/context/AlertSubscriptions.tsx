@@ -1,4 +1,4 @@
-import type { ReducedAlertSubscriptionQueryResponse } from 'src/api/types';
+import type { AlertSubscriptionsQuery } from 'src/gql-types/graphql';
 import type { BaseComponentProps } from 'src/types';
 import type { UseQueryResponse } from 'urql';
 
@@ -10,7 +10,7 @@ import { AlertSubscriptionQuery } from 'src/api/alerts';
 import { useTenantStore } from 'src/stores/Tenant';
 
 const AlertSubscriptionsContext = createContext<UseQueryResponse<
-    ReducedAlertSubscriptionQueryResponse,
+    AlertSubscriptionsQuery,
     { prefix: string }
 > | null>(null);
 

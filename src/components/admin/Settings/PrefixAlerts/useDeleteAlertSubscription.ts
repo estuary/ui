@@ -57,10 +57,8 @@ export function useDeleteAlertSubscription() {
                         });
                     }
 
-                    const { email, catalogPrefix } = response.data;
-
                     return Promise.resolve({
-                        prefix: catalogPrefix,
+                        prefix,
                         email,
                         id: uuid,
                     });

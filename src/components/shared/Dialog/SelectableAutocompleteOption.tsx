@@ -43,7 +43,7 @@ const SelectableAutocompleteOption = ({
                 <Box style={{ flexShrink: 0, marginRight: 4, width: 18 }} />
             )}
 
-            <Stack>{Content}</Stack>
+            <Stack style={{ flexGrow: 1 }}>{Content}</Stack>
         </Box>
     );
 };

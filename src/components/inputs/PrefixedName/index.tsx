@@ -36,6 +36,7 @@ function PrefixedName({
     defaultPrefix,
     disabled,
     entityType,
+    fixedPrefix,
     hideErrorMessage,
     label,
     onChange,
@@ -66,6 +67,7 @@ function PrefixedName({
         allowBlankName,
         allowEndSlash,
         defaultPrefix,
+        fixedPrefix,
         onChange,
         onNameChange,
         onPrefixChange,
@@ -84,7 +86,7 @@ function PrefixedName({
         }
 
         const messageKey =
-            singleOption || prefix.length > 0
+            singleOption || fixedPrefix || prefix.length > 0
                 ? entityType
                     ? 'prefixedName.description.singlePrefix'
                     : 'prefixedName.description.singlePrefix.noEntityType'
@@ -98,6 +100,7 @@ function PrefixedName({
         );
     }, [
         entityType,
+        fixedPrefix,
         intl,
         name.length,
         prefix.length,
@@ -229,7 +232,10 @@ function PrefixedName({
                     //  name input is of less importance. Mainly for GenerateInvitation
                     [`& .${inputAdornmentClasses.root}, & .${inputAdornmentClasses.root} .${autocompleteClasses.root}`]:
                         {
-                            width: allowBlankName ? '100%' : undefined,
+                            width:
+                                allowBlankName && !singleOption && !fixedPrefix
+                                    ? '100%'
+                                    : undefined,
                         },
                     // Gross - but prevents the name input from showing a border while inside another border
                     [`& div > div > fieldset.${outlinedInputClasses.notchedOutline}`]:
@@ -244,11 +250,13 @@ function PrefixedName({
                     <InputAdornment
                         //  This makes it so if a user clicks on the tenant name the input gets focus
                         style={
-                            singleOption ? { pointerEvents: 'none' } : undefined
+                            singleOption || fixedPrefix
+                                ? { pointerEvents: 'none' }
+                                : undefined
                         }
                         position="start"
                     >
-                        {singleOption ? (
+                        {singleOption || fixedPrefix ? (
                             prefix
                         ) : (
                             <PrefixSelector
