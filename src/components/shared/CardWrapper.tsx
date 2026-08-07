@@ -34,6 +34,12 @@ function CardWrapper({
     // A divider hairline rather than a drop shadow. The old shadow stacked
     // three layers, one of them casting upward, and did redundant work in light
     // mode while being invisible in dark.
+    //
+    // Light mode only, at review request. Dark mode separates the card from the
+    // panel by tone already — the card carries a 5% white wash over grey[800] —
+    // so a border there is a second separator doing the first one's job. Light
+    // mode has no such wash: its card is white on grey[100], a much narrower
+    // step, and the border is what makes the edge legible.
     return (
         <Stack
             sx={{
@@ -48,7 +54,10 @@ function CardWrapper({
                 background: opaqueLightMode
                     ? opaqueLightModeBackground[theme.palette.mode]
                     : semiTransparentBackground[theme.palette.mode],
-                border: `1px solid ${theme.palette.divider}`,
+                border:
+                    theme.palette.mode === 'light'
+                        ? `1px solid ${theme.palette.divider}`
+                        : 'none',
                 ...((sx as any) ?? {}),
             }}
         >

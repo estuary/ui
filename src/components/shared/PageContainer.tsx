@@ -14,6 +14,7 @@ import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
 import { useTopBarStore } from 'src/stores/TopBar/Store';
+import { useNavigationStore } from 'src/stores/useNavigationStore';
 
 interface Props {
     children: ReactNode | ReactNode[];
@@ -24,6 +25,19 @@ function PageContainer({ children, hideBackground }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const header = useTopBarStore((state) => state.header);
+    const navigationOpen = useNavigationStore((state) => state.open);
+
+    // Wider inset once the sidebar is collapsed, at review request, so page
+    // content does not sit against the window edge with the sidebar's mass
+    // gone.
+    //
+    // Caution: this applies to the content panel only. The header panel above
+    // is fixed at 16px, and the two are welded into one card by a shared corner
+    // radius, so with the sidebar collapsed the content sits 24px right of the
+    // page title. With the sidebar open the two still agree at 16px.
+    const contentPx = navigationOpen ? 2 : { xs: 2, md: 5 };
+    const contentPxTransition = (t: typeof theme) =>
+        `padding ${t.transitions.duration.shortest}ms`;
 
     const notification = useNotificationStore(
         notificationStoreSelectors.notification
@@ -155,15 +169,16 @@ function PageContainer({ children, hideBackground }: Props) {
 
             <Paper
                 sx={{
-                    // The same 16px as the header Paper above, which the
-                    // shared corner radius joins this to. This is the page's
-                    // left edge — page content should not add its own.
-                    // Equal on all four sides. The header's bottom rule is the
-                    // top edge content is inset from, exactly as this panel's
-                    // own edge is the left one, so the two insets must match —
-                    // an 8px top against a 16px left reads as a mistake once
-                    // the rule gives the eye something to measure against.
-                    p: 2,
+                    // Matches the header Paper's 16px while the sidebar is
+                    // open. See contentPx for the collapsed state.
+                    px: contentPx,
+                    transition: contentPxTransition,
+                    // The header's bottom rule is the top edge content is inset
+                    // from, exactly as this panel's own edge is the left one,
+                    // so the two insets must match — an 8px top against a 16px
+                    // left reads as a mistake once the rule gives the eye
+                    // something to measure against.
+                    py: 2,
                     flex: 1,
                     minHeight: 0,
                     overflow: 'auto',

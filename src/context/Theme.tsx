@@ -1037,6 +1037,13 @@ const themeSettings = createTheme({
                 },
             },
         },
+        MuiToggleButton: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
+                },
+            },
+        },
         MuiTabs: {
             ...baseBackground,
             defaultProps: {
