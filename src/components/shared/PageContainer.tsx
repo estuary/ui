@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Paper, Snackbar, Typography, useTheme } from '@mui/material';
 
+import { Building } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import AlertBox from 'src/components/shared/AlertBox';
@@ -13,6 +14,7 @@ import { paperBackground } from 'src/context/Theme';
 import useNotificationStore, {
     notificationStoreSelectors,
 } from 'src/stores/NotificationStore';
+import { useTenantStore } from 'src/stores/Tenant';
 import { useTopBarStore } from 'src/stores/TopBar/Store';
 import { useNavigationStore } from 'src/stores/useNavigationStore';
 
@@ -25,7 +27,9 @@ function PageContainer({ children, hideBackground }: Props) {
     const intl = useIntl();
     const theme = useTheme();
     const header = useTopBarStore((state) => state.header);
+    const headerDetail = useTopBarStore((state) => state.headerDetail);
     const navigationOpen = useNavigationStore((state) => state.open);
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
 
     const notification = useNotificationStore(
         notificationStoreSelectors.notification
@@ -139,14 +143,54 @@ function PageContainer({ children, hideBackground }: Props) {
                         background: backgroundMixin,
                     }}
                 >
-                    <Typography sx={{ fontWeight: 'bold' }}>
+                    {selectedTenant ? (
+                        <>
+                            <Building
+                                aria-hidden
+                                style={{ width: 16, height: 16 }}
+                            />
+                            <Typography sx={{ flex: 'none' }}>
+                                {selectedTenant.replace(/\/$/, '')}
+                            </Typography>
+                            <Typography
+                                aria-hidden
+                                sx={{ flex: 'none', color: 'text.disabled' }}
+                            >
+                                /
+                            </Typography>
+                        </>
+                    ) : null}
+
+                    <Typography sx={{ fontWeight: 'bold', flex: 'none' }}>
                         {intl.formatMessage({ id: header })}
                     </Typography>
+
+                    {headerDetail ? (
+                        <>
+                            <Typography
+                                aria-hidden
+                                sx={{ flex: 'none', color: 'text.disabled' }}
+                            >
+                                /
+                            </Typography>
+                            <Typography
+                                sx={{
+                                    minWidth: 0,
+                                    fontWeight: 500,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                }}
+                            >
+                                {headerDetail}
+                            </Typography>
+                        </>
+                    ) : null}
 
                     {/* TODO (UI / UX) - restore the per-page documentation link here.
                         Pages still set headerLink via usePageTitle but nothing renders it. */}
 
-                    <Box sx={{ ml: 'auto' }}>
+                    <Box sx={{ ml: 'auto', flex: 'none', pl: 1 }}>
                         <SidePanelDocsOpenButton />
                     </Box>
                 </Paper>

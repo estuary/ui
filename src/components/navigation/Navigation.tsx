@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Box, List, Stack, useTheme } from '@mui/material';
 
 import {
+    Building,
     CloudDownload,
     CloudUpload,
     DatabaseScript,
@@ -13,13 +14,20 @@ import {
 } from 'iconoir-react';
 
 import { authenticatedRoutes } from 'src/app/routes';
+import { ADMIN_SECTION } from 'src/components/admin/shared';
 import { Pill as AgentSkillsPill } from 'src/components/AgentSkills/Pill';
 import CompanyLogo from 'src/components/graphics/CompanyLogo';
 import CompanyMark from 'src/components/graphics/CompanyMark';
 import { HelpMenu } from 'src/components/menus/HelpMenu';
-import NavLink, { NavButton } from 'src/components/navigation/NavItems';
+import { OrgMenu } from 'src/components/menus/OrgMenu';
+import NavLink, {
+    NavButton,
+    NavSection,
+} from 'src/components/navigation/NavItems';
 import { UserButton, UserMenu } from 'src/components/navigation/User';
 import { UpdateAlert } from 'src/components/UpdateAlert';
+import { useUserInfoSummaryStore } from 'src/context/UserInfoSummary/useUserInfoSummaryStore';
+import { useTenantStore } from 'src/stores/Tenant';
 import { useNavigationStore } from 'src/stores/useNavigationStore';
 
 const NavWidths = {
@@ -34,8 +42,41 @@ export const Navigation = () => {
 
     const [helpAnchor, setHelpAnchor] = useState<HTMLElement | null>(null);
 
+    const [orgAnchor, setOrgAnchor] = useState<HTMLElement | null>(null);
+
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
     const open = useNavigationStore((state) => state.open);
     const toggleOpen = useNavigationStore((state) => state.toggleOpen);
+
+    // Billing is only meaningful for users with a tenant of their own.
+    const hasAnyAccess = useUserInfoSummaryStore((state) => state.hasAnyAccess);
+
+    const adminItems = useMemo(
+        () => [
+            {
+                title: 'Account Access',
+                link: authenticatedRoutes.admin.accessGrants.fullPath,
+            },
+            {
+                title: 'Settings',
+                link: authenticatedRoutes.admin.settings.fullPath,
+            },
+            ...(hasAnyAccess
+                ? [
+                      {
+                          title: 'Billing',
+                          link: authenticatedRoutes.admin.billing.fullPath,
+                      },
+                  ]
+                : []),
+            {
+                title: 'Service Accounts',
+                link: authenticatedRoutes.admin.serviceAccounts.fullPath,
+            },
+        ],
+        [hasAnyAccess]
+    );
 
     return (
         <Box
@@ -100,10 +141,11 @@ export const Navigation = () => {
                         link={authenticatedRoutes.materializations.path}
                         isOpen={open}
                     />
-                    <NavLink
+                    <NavSection
                         icon={<Settings />}
-                        title={authenticatedRoutes.admin.title}
+                        title={ADMIN_SECTION}
                         link={authenticatedRoutes.admin.path}
+                        items={adminItems}
                         isOpen={open}
                     />
                 </List>
@@ -154,6 +196,21 @@ export const Navigation = () => {
                         anchorEl={menuAnchor}
                         onClose={() => setMenuAnchor(null)}
                     />
+
+                    {selectedTenant ? (
+                        <>
+                            <NavButton
+                                icon={<Building />}
+                                title={selectedTenant.replace(/\/$/, '')}
+                                onClick={(e) => setOrgAnchor(e.currentTarget)}
+                                isOpen={open}
+                            />
+                            <OrgMenu
+                                anchorEl={orgAnchor}
+                                onClose={() => setOrgAnchor(null)}
+                            />
+                        </>
+                    ) : null}
                 </Box>
             </Stack>
         </Box>
