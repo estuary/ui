@@ -152,7 +152,11 @@ describe('buildBindingRows', () => {
     };
 
     test('includes disabled bindings, which writes_to would omit', () => {
-        const rows = buildBindingRows(captureBindings, [captureStats], 'capture');
+        const rows = buildBindingRows(
+            captureBindings,
+            [captureStats],
+            'capture'
+        );
 
         expect(rows).toHaveLength(2);
         expect(rows[1]).toMatchObject({
@@ -162,7 +166,11 @@ describe('buildBindingRows', () => {
     });
 
     test('attaches stats by collection name and zero-fills the rest', () => {
-        const rows = buildBindingRows(captureBindings, [captureStats], 'capture');
+        const rows = buildBindingRows(
+            captureBindings,
+            [captureStats],
+            'capture'
+        );
 
         expect(rows[0]).toMatchObject({ bytes: 500, docs: 5 });
         expect(rows[1]).toMatchObject({ bytes: 0, docs: 0 });
@@ -244,7 +252,9 @@ describe('buildBindingRows', () => {
 
 describe('accumulateBindingStats', () => {
     const interval = (bytes: number, docs: number): TaskStats => ({
-        capture: { 'acmeco/orders': { out: { bytesTotal: bytes, docsTotal: docs } } },
+        capture: {
+            'acmeco/orders': { out: { bytesTotal: bytes, docsTotal: docs } },
+        },
     });
 
     test('adds every interval of the window', () => {

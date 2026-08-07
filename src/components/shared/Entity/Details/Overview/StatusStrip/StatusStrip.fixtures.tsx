@@ -9,7 +9,6 @@ import { Box } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
-import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import { getElapsed } from 'src/components/shared/Entity/Details/Overview/shared';
 import AutoDiscoverCell from 'src/components/shared/Entity/Details/Overview/StatusStrip/AutoDiscoverCell';
 import HeroValue from 'src/components/shared/Entity/Details/Overview/StatusStrip/HeroValue';
@@ -20,6 +19,7 @@ import {
 import StripCell from 'src/components/shared/Entity/Details/Overview/StatusStrip/StripCell';
 import StripFooter from 'src/components/shared/Entity/Details/Overview/StatusStrip/StripFooter';
 import TaskStatusCell from 'src/components/shared/Entity/Details/Overview/StatusStrip/TaskStatusCell';
+import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import { EntityContextProvider } from 'src/context/EntityContext';
 import invariableStores from 'src/context/Zustand/invariableStores';
 import { useEntityStatusStore } from 'src/stores/EntityStatus/Store';
