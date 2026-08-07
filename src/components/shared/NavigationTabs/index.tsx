@@ -58,7 +58,7 @@ function NavigationTabs({
             {...(TabsProps ?? {})}
             value={selectedTab}
             sx={{
-                'minHeight': 0,
+                minHeight: 0,
                 [`& .${tabsClasses.indicator}`]: { display: 'none' },
                 // `scrollButtons="auto"` disables the arrows when there is
                 // nothing to scroll to but still lays them out, 40px each side.

@@ -10,7 +10,6 @@ import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
 import { useZustandStore } from 'src/context/Zustand/provider';
 import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 
-
 function ToggleDataPlaneScope() {
     const intl = useIntl();
 

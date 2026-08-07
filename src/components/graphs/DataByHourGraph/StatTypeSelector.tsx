@@ -6,7 +6,6 @@ import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleBu
 import OutlinedToggleButtonGroup from 'src/components/shared/OutlinedToggleButtonGroup';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
-
 function StatTypeSelector() {
     const intl = useIntl();
 
