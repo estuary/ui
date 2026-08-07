@@ -20,7 +20,7 @@ function Settings() {
             <Grid
                 container
                 spacing={{ xs: 3, md: 2 }}
-                sx={{ p: 2, justifyContent: 'flex-end' }}
+                sx={{ py: 2, justifyContent: 'flex-end' }}
             >
                 <Grid
                     size={{ xs: 12, md: 3 }}

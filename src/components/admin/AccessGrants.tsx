@@ -18,7 +18,7 @@ function AccessGrants() {
         <>
             <AdminTabs />
 
-            <Stack spacing={2} sx={{ m: 2 }}>
+            <Stack spacing={2} sx={{ my: 2 }}>
                 <Box>
                     <Typography component="div" variant="h6" sx={{ mb: 0.5 }}>
                         <FormattedMessage id="terms.permissions" />
