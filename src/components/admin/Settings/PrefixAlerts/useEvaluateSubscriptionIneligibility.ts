@@ -1,0 +1,42 @@
+import { useMemo } from 'react';
+
+import useAlertSubscriptionsStore from 'src/components/admin/Settings/PrefixAlerts/useAlertSubscriptionsStore';
+
+export function useEvaluateSubscriptionIneligibility() {
+    const mutableSubscriptionMetadata = useAlertSubscriptionsStore(
+        (state) => state.mutableSubscriptionMetadata
+    );
+
+    return useMemo(() => {
+        const { subscriptions } = mutableSubscriptionMetadata;
+        const activeSubscriptions = subscriptions.filter(
+            ({ deleted }) => !deleted
+        );
+
+        const emptyEmailDetected = activeSubscriptions.some(
+            (subscription) => subscription.email.length === 0
+        );
+
+        const duplicateSubscriptionEmails = activeSubscriptions
+            .filter(({ email }) => {
+                if (email.length === 0) {
+                    return false;
+                }
+
+                const firstIndex = activeSubscriptions.findIndex(
+                    (subscription) => subscription.email === email
+                );
+                const lastIndex = activeSubscriptions.findLastIndex(
+                    (subscription) => subscription.email === email
+                );
+
+                return firstIndex !== lastIndex;
+            })
+            .map(({ email }) => email);
+
+        return {
+            duplicateSubscriptionEmails,
+            emptyEmailDetected,
+        };
+    }, [mutableSubscriptionMetadata]);
+}
