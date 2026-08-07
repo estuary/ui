@@ -30,6 +30,12 @@ const Materializations = () => {
                     alignItems: 'center',
                     display: 'flex',
                     justifyContent: 'space-between',
+                    // Toolbar carries a 56/64px min-height meant for an app
+                    // bar. Here it is only a flex row, and that height centres
+                    // the button, putting ~11px above it that Welcome and
+                    // Admin do not have. Keyed by breakpoint because the height
+                    // it overrides is itself a media query.
+                    minHeight: { xs: 'unset', sm: 'unset' },
                 }}
             >
                 <NavLink

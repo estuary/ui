@@ -132,6 +132,11 @@ function PageContainer({ children, hideBackground }: Props) {
                         width: '100%',
                         boxShadow: boxShadowMixin,
                         borderRadius: '16px 16px 0 0',
+                        // Separates the header from the content panel below,
+                        // which the shared corner radius otherwise welds into
+                        // one surface. Kept at review request.
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
                         background: backgroundMixin,
                     }}
                 >
@@ -153,13 +158,12 @@ function PageContainer({ children, hideBackground }: Props) {
                     // The same 16px as the header Paper above, which the
                     // shared corner radius joins this to. This is the page's
                     // left edge — page content should not add its own.
-                    px: 2,
-                    // Tighter against a header, which is joined to this panel
-                    // by the shared corner radius below and so already provides
-                    // the separation the full padding was doing. Unchanged on
-                    // pages that have no header.
-                    pt: header ? 1 : 2,
-                    pb: 2,
+                    // Equal on all four sides. The header's bottom rule is the
+                    // top edge content is inset from, exactly as this panel's
+                    // own edge is the left one, so the two insets must match —
+                    // an 8px top against a 16px left reads as a mistake once
+                    // the rule gives the eye something to measure against.
+                    p: 2,
                     flex: 1,
                     minHeight: 0,
                     overflow: 'auto',
