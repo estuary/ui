@@ -119,7 +119,7 @@ function PrefixAlertTable() {
     const loading = tableState.status === TableStatuses.LOADING;
 
     return (
-        <Box style={{ margin: '0 16px' }}>
+        <Box>
             <Stack
                 direction="row"
                 sx={{

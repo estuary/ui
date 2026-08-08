@@ -10,9 +10,10 @@ import { authenticatedRoutes } from 'src/app/routes';
 import CollectionsTable from 'src/components/tables/Collections';
 import usePageTitle from 'src/hooks/usePageTitle';
 
+// Vertical padding only — PageContainer already owns the page's left edge.
 const boxStyling: SxProps<Theme> = {
     marginBottom: 2,
-    padding: 2,
+    paddingY: 2,
 };
 
 const Collections = () => {
@@ -24,10 +25,17 @@ const Collections = () => {
     return (
         <>
             <Toolbar
+                disableGutters
                 sx={{
                     alignItems: 'center',
                     display: 'flex',
                     justifyContent: 'space-between',
+                    // Toolbar carries a 56/64px min-height meant for an app
+                    // bar. Here it is only a flex row, and that height centres
+                    // the button, putting ~11px above it that Welcome and
+                    // Admin do not have. Keyed by breakpoint because the height
+                    // it overrides is itself a media query.
+                    minHeight: { xs: 'unset', sm: 'unset' },
                 }}
             >
                 <NavLink

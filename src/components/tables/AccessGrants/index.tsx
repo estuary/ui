@@ -71,7 +71,7 @@ function AccessGrantsTable({ tablePrefix, showUser }: Props) {
         <Box sx={{ mb: showUser ? 8 : 0 }}>
             {/* The Access Grants page stacks two tables under one page title,
                 so each carries its own heading to tell them apart. */}
-            <Box sx={{ ml: 2 }}>
+            <Box>
                 <Title header={headerKey} />
             </Box>
             <TableHydrator
