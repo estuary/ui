@@ -45,6 +45,7 @@ export interface TaskShardDetails {
     portProtocol?: any;
     protoPrefix?: any;
     publicPrefix?: any;
+    runtimeV2?: boolean;
     shardEndpoints?: EndpointsDictionary;
     spec?: Shard['spec'];
     status?: Shard['status'];

@@ -8,12 +8,15 @@ import { useIntl } from 'react-intl';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
 import DataPlane from 'src/components/shared/Entity/DataPlane';
+import { BacklogSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/BacklogSection';
 import ConnectorSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/ConnectorSection';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
 import StatusSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/StatusSection';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
+import { useMaterializationBacklog } from 'src/hooks/details/useMaterializationBacklog';
 import useRelatedEntities from 'src/hooks/details/useRelatedEntities';
+import { useShardDetail_runtimeV2 } from 'src/stores/ShardDetail/hooks';
 import {
     formatDataPlaneName,
     getDataPlaneScope,
@@ -28,11 +31,27 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
 
     const relatedEntities = useRelatedEntities();
 
+    // Only the V2 runtime reports a task's progress through its bindings, so
+    // there is nothing to show for a task running on anything else.
+    const runtimeV2 = useShardDetail_runtimeV2(entityName);
+    const showBacklog = entityType === 'materialization' && runtimeV2;
+
+    // Passing an empty name leaves the queries unissued, so this costs nothing
+    // for a task with no backlog rows to show. Where it does apply, the request
+    // is shared with the rows themselves rather than repeated.
+    const { loading: backlogLoading } = useMaterializationBacklog(
+        // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
+        // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
+        showBacklog ? entityName : ''
+    );
+
     const data = useMemo(() => {
         const response = [];
 
-        // If there is nothing to show then display the loading status
-        if (!latestLiveSpec) {
+        // If there is nothing to show then display the loading status. The
+        // backlog rows are covered here as well, so the card fills in once,
+        // rather than settling and then filling those two in behind it.
+        if (!latestLiveSpec || backlogLoading) {
             response.push(
                 {
                     title: <Skeleton width="33%" />,
@@ -65,6 +84,13 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
                     id: 'data.connectorStatus',
                 }),
                 val: <StatusSection entityName={entityName} />,
+            });
+        }
+
+        if (showBacklog) {
+            response.push({
+                title: 'Data Backlog',
+                val: <BacklogSection entityName={entityName} />,
             });
         }
 
@@ -109,7 +135,14 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         });
 
         return response;
-    }, [entityName, entityType, intl, latestLiveSpec]);
+    }, [
+        backlogLoading,
+        entityName,
+        entityType,
+        intl,
+        latestLiveSpec,
+        showBacklog,
+    ]);
 
     return (
         <CardWrapper
