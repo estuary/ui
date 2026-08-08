@@ -1,10 +1,14 @@
-import type { CatalogStats_Backlog } from 'src/types';
+import type {
+    CatalogStats_Backlog,
+    CatalogStats_LastPublished,
+} from 'src/types';
 
 import { hasLength } from 'src/utils/misc-utils';
 
 interface BindingReading {
     collectionName: string;
     bytesBehind: number;
+    lastSourcePublishedAt?: string;
 }
 
 export interface MaterializationBacklog {
@@ -12,6 +16,16 @@ export interface MaterializationBacklog {
     bytesBehind: number;
     // The timestamp of the stats document the readings came from.
     ts: string;
+}
+
+interface BindingTimeLag {
+    collectionName: string;
+    seconds: number;
+}
+
+export interface MaterializationTimeLag {
+    bindings: BindingTimeLag[];
+    seconds: number;
 }
 
 // `bytesBehind` is a u64 in the stats protocol, and the default JSON encoding for
@@ -69,6 +83,7 @@ export const parseMaterializationBacklog = (
         .map(([collectionName, bindingStats]) => ({
             collectionName,
             bytesBehind: toByteCount(bindingStats?.bytesBehind),
+            lastSourcePublishedAt: bindingStats?.lastSourcePublishedAt,
         }))
         .sort((left, right) => right.bytesBehind - left.bytesBehind);
 
@@ -79,5 +94,76 @@ export const parseMaterializationBacklog = (
             0
         ),
         ts: latest.ts,
+    };
+};
+
+// The latest publication timestamp per collection across a set of stats rows.
+// `lastPublishedAt` reduces by maximizing within a row's grain, but a collection
+// spans several rows, and the newest row does not necessarily carry the field —
+// a row written because a materialization read the collection records no
+// publication of its own.
+export const latestPublishedByCollection = (
+    rows: CatalogStats_LastPublished[]
+): Record<string, string> =>
+    rows.reduce<Record<string, string>>((latest, row) => {
+        const lastPublishedAt =
+            row.flow_document?.statsSummary?.lastPublishedAt;
+
+        if (!lastPublishedAt) {
+            return latest;
+        }
+
+        const known = latest[row.catalog_name];
+
+        return !known || Date.parse(lastPublishedAt) > Date.parse(known)
+            ? { ...latest, [row.catalog_name]: lastPublishedAt }
+            : latest;
+    }, {});
+
+// How far behind a materialization is in source-publication time: the gap
+// between the newest document published to a source collection and the newest
+// one the binding has processed. A task is only as caught up as its worst
+// binding, so the task-level figure is the maximum rather than a sum.
+//
+// Returns null when no binding has both timestamps, which is the case for a
+// runtime that reports neither and for a collection nothing has published to.
+export const computeMaterializationTimeLag = (
+    bindings: Array<
+        Pick<BindingReading, 'collectionName' | 'lastSourcePublishedAt'>
+    >,
+    lastPublishedByCollection: Record<string, string>
+): MaterializationTimeLag | null => {
+    const lags = bindings.flatMap(
+        ({ collectionName, lastSourcePublishedAt }) => {
+            const lastPublishedAt = lastPublishedByCollection[collectionName];
+
+            if (!lastSourcePublishedAt || !lastPublishedAt) {
+                return [];
+            }
+
+            const seconds =
+                (Date.parse(lastPublishedAt) -
+                    Date.parse(lastSourcePublishedAt)) /
+                1000;
+
+            if (!Number.isFinite(seconds)) {
+                return [];
+            }
+
+            // A binding can sit at or past its collection's recorded frontier,
+            // since the two timestamps come from rows written by different tasks
+            // at different moments. Anything at or beyond it has read everything
+            // the collection currently holds.
+            return [{ collectionName, seconds: Math.max(seconds, 0) }];
+        }
+    );
+
+    if (!hasLength(lags)) {
+        return null;
+    }
+
+    return {
+        bindings: lags.sort((left, right) => right.seconds - left.seconds),
+        seconds: lags[0].seconds,
     };
 };

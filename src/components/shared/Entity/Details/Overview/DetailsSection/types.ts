@@ -17,3 +17,7 @@ export interface StatusSectionProps {
 export interface BacklogSectionProps {
     entityName: DetailsSectionProps['entityName'];
 }
+
+export interface TimeLagSectionProps {
+    entityName: DetailsSectionProps['entityName'];
+}

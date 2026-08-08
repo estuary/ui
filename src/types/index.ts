@@ -152,8 +152,10 @@ export interface CatalogStats_Dashboard extends BaseCatalogStats {
 // The slice of `catalog_stats.flow_document` that describes a materialization's
 // bindings. The keys of `materialize` are source collection names.
 //
-// `bytesBehind` is how much of that collection the binding has yet to read.
-// Bindings with nothing left to read omit it rather than reporting zero.
+// `bytesBehind` is how much of that collection the binding has yet to read, and
+// `lastSourcePublishedAt` is the publication timestamp of the newest source
+// document it has processed. Bindings with nothing left to read omit
+// `bytesBehind` rather than reporting zero.
 export interface CatalogStats_Backlog extends BaseCatalogStats {
     flow_document: {
         taskStats?: {
@@ -162,6 +164,7 @@ export interface CatalogStats_Backlog extends BaseCatalogStats {
                     // A u64 in the stats protocol, so it may arrive as a number
                     // or as a string depending on the producer's JSON encoding.
                     bytesBehind?: number | string;
+                    lastSourcePublishedAt?: string;
                 };
             };
             // Metered uptime, which a task reports on its own schedule. It can be
@@ -171,6 +174,18 @@ export interface CatalogStats_Backlog extends BaseCatalogStats {
                 uptimeSeconds: number;
                 usageRate?: number;
             };
+        };
+    };
+}
+
+// A collection's own stats row, where `lastPublishedAt` is the publication
+// timestamp of the newest document written to it. It reduces by maximizing, so
+// the newest row that carries the field holds the latest publication within that
+// row's time grain.
+export interface CatalogStats_LastPublished extends BaseCatalogStats {
+    flow_document: {
+        statsSummary?: {
+            lastPublishedAt?: string;
         };
     };
 }
