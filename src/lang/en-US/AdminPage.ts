@@ -244,47 +244,4 @@ export const AdminPage: Record<string, string> = {
     'storageMappings.dialog.prefix.validation.required': `Estuary prefix is required.`,
     'storageMappings.dialog.prefix.validation.duplicate': `A storage mapping already exists at this prefix. [Click here to see it.]({link})`,
     'storageMappings.dialog.prefix.validation.uncoveredSpecs': `{count} live spec(s) would be impacted by creating this storage mapping. Choose an empty prefix or contact support for help.`,
-
-    // Instructions - shared
-    'storageMappings.dialog.instructions.step1.createBucket': `Step 1: Create the storage bucket`,
-    'storageMappings.dialog.instructions.bucketName': `Bucket name:`,
-    'storageMappings.dialog.instructions.region': `Region:`,
-
-    // Instructions - AWS
-    'storageMappings.dialog.instructions.aws.createBucketPrompt': `If you haven't already, {docLink}.`,
-    'storageMappings.dialog.instructions.aws.createBucketPrompt.docLink': `create the S3 bucket`,
-    'storageMappings.dialog.instructions.aws.createBucketPrompt.docPath': `https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html`,
-    'storageMappings.dialog.instructions.aws.step2.title': `Step 2: Apply the bucket policy`,
-    'storageMappings.dialog.instructions.aws.step2.webUi': `<b>Option A - Web UI:</b> Navigate to the Permissions tab and paste this into your bucket policy.`,
-    'storageMappings.dialog.instructions.aws.step2.cli': `<b>Option B - CLI:</b> Paste the following into your terminal:`,
-    'storageMappings.dialog.instructions.aws.step2.note': `This policy includes all data planes that use this bucket - existing connections will be preserved.`,
-
-    // Instructions - GCP
-    'storageMappings.dialog.instructions.gcp.createBucketPrompt': `If you haven't already, {docLink}.`,
-    'storageMappings.dialog.instructions.gcp.createBucketPrompt.docLink': `create the GCP bucket`,
-    'storageMappings.dialog.instructions.gcp.createBucketPrompt.docPath': `https://cloud.google.com/storage/docs/creating-buckets`,
-    'storageMappings.dialog.instructions.gcp.step2.title': `Step 2: Grant bucket permissions`,
-    'storageMappings.dialog.instructions.gcp.step2.webUi': `<b>Option A - Web UI:</b> In the Cloud Console, navigate to your bucket, click "Permissions", then "Grant Access". Paste this service account email into the "Principals" field:`,
-    'storageMappings.dialog.instructions.gcp.step2.webUi.selectRole': `Select the <b>Storage Admin</b> role.`,
-    'storageMappings.dialog.instructions.gcp.step2.cli': `<b>Option B - CLI:</b> Paste the following into your terminal:`,
-
-    // Instructions - Azure
-    'storageMappings.dialog.instructions.azure.step1.title': `Step 1: Create the blob storage container`,
-    'storageMappings.dialog.instructions.azure.step1.prompt': `If you haven't already, `,
-    'storageMappings.dialog.instructions.azure.step1.link': `create the Azure blob storage container`,
-    'storageMappings.dialog.instructions.azure.step1.linkPath': `https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container`,
-    'storageMappings.dialog.instructions.azure.step2.title': `Step 2: Add the Estuary application to your Azure tenant`,
-    'storageMappings.dialog.instructions.azure.step2.description': `An Azure AD administrator must add Estuary's Azure application to your tenant. This creates a service principal that Estuary uses to access your storage.`,
-    'storageMappings.dialog.instructions.azure.step2.link': `Click here to add the application`,
-    'storageMappings.dialog.instructions.azure.step3.title': `Step 3: Assign the Storage Blob Data Owner role`,
-    'storageMappings.dialog.instructions.azure.step3.navigateToAccount': `Navigate to your storage account <b>{storageAccountName}</b>`,
-    'storageMappings.dialog.instructions.azure.step3.openIam': `Open "Access Control (IAM)"`,
-    'storageMappings.dialog.instructions.azure.step3.addRole': `Click "Add role assignment"`,
-    'storageMappings.dialog.instructions.azure.step3.selectRole': `In the "Role" tab, search for and select <b>Storage Blob Data Owner</b>`,
-    'storageMappings.dialog.instructions.azure.step3.selectMember': `In the "Members" tab, search for and select <b>{applicationName}</b>`,
-    'storageMappings.dialog.instructions.azure.step3.reviewAssign': `Click "Review + assign"`,
-    'storageMappings.dialog.instructions.azure.step3.note': `Note: Role assignments can take up to 10 minutes to propagate. If the connection test fails after assigning the role, wait a few minutes and retry.`,
-    'storageMappings.dialog.instructions.azure.docsLink': `For more help, see the `,
-    'storageMappings.dialog.instructions.azure.docsLinkText': `Azure docs`,
-    'storageMappings.dialog.instructions.azure.docsLinkPath': `https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal`,
 };
