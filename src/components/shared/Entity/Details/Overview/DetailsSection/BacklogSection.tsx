@@ -24,7 +24,7 @@ export function BacklogSection({ entityName }: BacklogSectionProps) {
 
     return (
         <Typography component="div">
-            {formatBytes(backlog.bytesBehind)}
+            {formatBytes(backlog.bytesBehind, 0)}
         </Typography>
     );
 }

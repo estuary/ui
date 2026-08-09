@@ -1,14 +1,24 @@
-import type { CatalogStats_Backlog } from 'src/types';
+import type {
+    CatalogStats_Backlog,
+    CatalogStats_LastPublished,
+} from 'src/types';
 
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
-import { parseMaterializationBacklog } from 'src/hooks/details/shared';
+import {
+    computeMaterializationTimeLag,
+    latestPublishedByCollection,
+    parseMaterializationBacklog,
+} from 'src/hooks/details/shared';
 
 // Builds one hourly stats row for a task. `catalog_stats.flow_document` holds a
 // materialization's per-binding stats under `taskStats.materialize`, keyed by
 // source collection name. See ops-catalog/stats.schema.yaml of estuary/flow.
 const statsRow = (
     ts: string,
-    materialize?: Record<string, { bytesBehind?: number | string }>
+    materialize?: Record<
+        string,
+        { bytesBehind?: number | string; lastSourcePublishedAt?: string }
+    >
 ): CatalogStats_Backlog => ({
     catalog_name: 'acmeCo/warehouse',
     grain: 'hourly',
@@ -119,6 +129,20 @@ describe('parseMaterializationBacklog', () => {
         expect(parseMaterializationBacklog([])).toBeNull();
     });
 
+    test('carries each binding source timestamp through for the time lag', () => {
+        const backlog = parseMaterializationBacklog([
+            statsRow('2026-08-07T19:00:00Z', {
+                'acmeCo/orders': {
+                    lastSourcePublishedAt: '2026-08-07T12:00:00Z',
+                },
+            }),
+        ]);
+
+        expect(backlog?.bindings[0].lastSourcePublishedAt).toBe(
+            '2026-08-07T12:00:00Z'
+        );
+    });
+
     // A real hourly row from hyphametrics/snowflake/materialize-snowflake, with
     // the per-binding `out` and `right` tallies dropped since nothing reads them.
     // Twelve bindings, of which three are behind. Note the `interval` heartbeat
@@ -191,7 +215,7 @@ describe('parseMaterializationBacklog', () => {
         test('renders the total the way the card does', () => {
             const backlog = parseMaterializationBacklog([row]);
 
-            expect(formatBytes(backlog?.bytesBehind)).toBe('1.13 MB');
+            expect(formatBytes(backlog?.bytesBehind, 0)).toBe('1 MB');
         });
 
         test('reports the stats document timestamp', () => {
@@ -199,5 +223,134 @@ describe('parseMaterializationBacklog', () => {
                 '2026-08-07T20:00:00.000Z'
             );
         });
+    });
+});
+
+describe('latestPublishedByCollection', () => {
+    const row = (
+        catalogName: string,
+        lastPublishedAt?: string
+    ): CatalogStats_LastPublished => ({
+        catalog_name: catalogName,
+        grain: 'monthly',
+        ts: '2026-08-01T00:00:00Z',
+        flow_document: lastPublishedAt
+            ? { statsSummary: { lastPublishedAt } }
+            : { statsSummary: {} },
+    });
+
+    test('keeps the latest timestamp per collection across rows', () => {
+        expect(
+            latestPublishedByCollection([
+                row('acmeCo/orders', '2026-07-31T23:00:00Z'),
+                row('acmeCo/orders', '2026-08-07T12:00:00Z'),
+                row('acmeCo/shipments', '2026-08-06T09:00:00Z'),
+            ])
+        ).toEqual({
+            'acmeCo/orders': '2026-08-07T12:00:00Z',
+            'acmeCo/shipments': '2026-08-06T09:00:00Z',
+        });
+    });
+
+    // A row written because a materialization read the collection records no
+    // publication of its own, so the newest row may carry no timestamp.
+    test('ignores rows with no lastPublishedAt', () => {
+        expect(
+            latestPublishedByCollection([
+                row('acmeCo/orders', '2026-08-07T12:00:00Z'),
+                row('acmeCo/orders'),
+            ])
+        ).toEqual({ 'acmeCo/orders': '2026-08-07T12:00:00Z' });
+    });
+});
+
+describe('computeMaterializationTimeLag', () => {
+    test('reports the gap for a binding that is behind', () => {
+        const lag = computeMaterializationTimeLag(
+            [
+                {
+                    collectionName: 'acmeCo/orders',
+                    lastSourcePublishedAt: '2026-08-07T12:00:00Z',
+                },
+            ],
+            { 'acmeCo/orders': '2026-08-07T12:05:00Z' }
+        );
+
+        expect(lag?.seconds).toBe(300);
+    });
+
+    test('takes the worst binding, not the sum', () => {
+        const lag = computeMaterializationTimeLag(
+            [
+                {
+                    collectionName: 'acmeCo/orders',
+                    lastSourcePublishedAt: '2026-08-07T12:00:00Z',
+                },
+                {
+                    collectionName: 'acmeCo/shipments',
+                    lastSourcePublishedAt: '2026-08-07T11:00:00Z',
+                },
+            ],
+            {
+                'acmeCo/orders': '2026-08-07T12:05:00Z',
+                'acmeCo/shipments': '2026-08-07T12:05:00Z',
+            }
+        );
+
+        expect(lag?.seconds).toBe(3900);
+        expect(lag?.bindings[0].collectionName).toBe('acmeCo/shipments');
+    });
+
+    // The two timestamps come from rows written by different tasks at different
+    // moments, so a binding can sit past its collection's recorded frontier.
+    test('clamps a binding that has read past the frontier to zero', () => {
+        const lag = computeMaterializationTimeLag(
+            [
+                {
+                    collectionName: 'acmeCo/orders',
+                    lastSourcePublishedAt: '2026-08-07T12:05:00Z',
+                },
+            ],
+            { 'acmeCo/orders': '2026-08-07T12:00:00Z' }
+        );
+
+        expect(lag?.seconds).toBe(0);
+    });
+
+    test('skips bindings missing either timestamp', () => {
+        expect(
+            computeMaterializationTimeLag(
+                [{ collectionName: 'acmeCo/orders' }],
+                {
+                    'acmeCo/orders': '2026-08-07T12:00:00Z',
+                }
+            )
+        ).toBeNull();
+
+        expect(
+            computeMaterializationTimeLag(
+                [
+                    {
+                        collectionName: 'acmeCo/orders',
+                        lastSourcePublishedAt: '2026-08-07T12:00:00Z',
+                    },
+                ],
+                {}
+            )
+        ).toBeNull();
+    });
+
+    test('ignores unparseable timestamps', () => {
+        expect(
+            computeMaterializationTimeLag(
+                [
+                    {
+                        collectionName: 'acmeCo/orders',
+                        lastSourcePublishedAt: 'not a timestamp',
+                    },
+                ],
+                { 'acmeCo/orders': '2026-08-07T12:00:00Z' }
+            )
+        ).toBeNull();
     });
 });

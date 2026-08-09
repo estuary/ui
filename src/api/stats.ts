@@ -5,6 +5,7 @@ import type {
     CatalogStats_Backlog,
     CatalogStats_Dashboard,
     CatalogStats_Details,
+    CatalogStats_LastPublished,
     Entity,
 } from 'src/types';
 
@@ -269,6 +270,23 @@ const getMaterializationBacklog = (catalogName: string) => {
         .returns<CatalogStats_Backlog[]>();
 };
 
+// Where each of a materialization's source collections has been written up to,
+// which pairs with the task's own `lastSourcePublishedAt` to say how far behind
+// it is in time. `lastPublishedAt` reduces by maximizing, so a month's row
+// already holds the latest publication within that month; two months of rows
+// place the frontier of any collection still being written to.
+const getCollectionsLastPublished = (collectionNames: string[]) => {
+    const previousMonth = DateTime.utc().startOf('month').minus({ months: 1 });
+
+    return supabaseClient
+        .from(TABLES.CATALOG_STATS)
+        .select(STATS_DOCUMENT_QUERY)
+        .in('catalog_name', collectionNames)
+        .eq('grain', monthlyGrain)
+        .gte('ts', previousMonth.toFormat(defaultQueryDateFormat))
+        .returns<CatalogStats_LastPublished[]>();
+};
+
 const getStatsForDashboard = (tenant: string) => {
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
@@ -329,6 +347,7 @@ const getStatsForDashboard = (tenant: string) => {
 // };
 
 export {
+    getCollectionsLastPublished,
     getMaterializationBacklog,
     getStatsByName,
     getStatsForDashboard,

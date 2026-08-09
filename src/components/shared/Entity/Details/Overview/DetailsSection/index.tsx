@@ -12,6 +12,7 @@ import { BacklogSection } from 'src/components/shared/Entity/Details/Overview/De
 import ConnectorSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/ConnectorSection';
 import { TIME_SETTINGS } from 'src/components/shared/Entity/Details/Overview/DetailsSection/shared';
 import StatusSection from 'src/components/shared/Entity/Details/Overview/DetailsSection/StatusSection';
+import { TimeLagSection } from 'src/components/shared/Entity/Details/Overview/DetailsSection/TimeLagSection';
 import KeyValueList from 'src/components/shared/KeyValueList';
 import { useEntityType } from 'src/context/EntityContext';
 import { useMaterializationBacklog } from 'src/hooks/details/useMaterializationBacklog';
@@ -39,11 +40,12 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
     // Passing an empty name leaves the queries unissued, so this costs nothing
     // for a task with no backlog rows to show. Where it does apply, the request
     // is shared with the rows themselves rather than repeated.
-    const { loading: backlogLoading } = useMaterializationBacklog(
-        // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
-        // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
-        showBacklog ? entityName : ''
-    );
+    const { loading: backlogLoading, timeLagLoading } =
+        useMaterializationBacklog(
+            // TODO: this is a bit of a hack. An empty string below prevents the hook from firing - necessary because
+            // DetailsSection is used for more than just materializations. Would be nice to split this out into more composable components.
+            showBacklog ? entityName : ''
+        );
 
     const data = useMemo(() => {
         const response = [];
@@ -51,7 +53,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         // If there is nothing to show then display the loading status. The
         // backlog rows are covered here as well, so the card fills in once,
         // rather than settling and then filling those two in behind it.
-        if (!latestLiveSpec || backlogLoading) {
+        if (!latestLiveSpec || backlogLoading || timeLagLoading) {
             response.push(
                 {
                     title: <Skeleton width="33%" />,
@@ -91,6 +93,15 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
             response.push({
                 title: 'Data Backlog',
                 val: <BacklogSection entityName={entityName} />,
+            });
+
+            // Both rows are shown for any V2 materialization. When the lag cannot
+            // be computed — a source collection whose producer is not on V2 records
+            // no `lastPublishedAt` to compare against — the row renders an em-dash
+            // rather than dropping out.
+            response.push({
+                title: 'Time Behind',
+                val: <TimeLagSection entityName={entityName} />,
             });
         }
 
@@ -142,6 +153,7 @@ function DetailsSection({ entityName, latestLiveSpec }: DetailsSectionProps) {
         intl,
         latestLiveSpec,
         showBacklog,
+        timeLagLoading,
     ]);
 
     return (

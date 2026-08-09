@@ -1,7 +1,7 @@
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 
 import { DataGrains } from 'src/components/graphs/types';
-import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
+import { LUXON_GRAIN_SETTINGS, toHumanDuration } from 'src/services/luxon';
 
 // The chart formatter calls DateTime.fromISO(ts) without { setZone: true }, so Luxon
 // converts the UTC timestamp to the local timezone by default.  Users in timezones
@@ -104,5 +104,39 @@ describe('LUXON_GRAIN_SETTINGS', () => {
             expect(relativeUnit).toBe('hours');
             expect(timeUnit).toBe('hour');
         });
+    });
+});
+
+describe('toHumanDuration', () => {
+    const lag = Duration.fromObject({
+        seconds: 1 * 86400 + 6 * 3600 + 27 * 60 + 28,
+    });
+
+    test('spells out every unit by default', () => {
+        expect(toHumanDuration(lag)).toBe(
+            '1 day, 6 hours, 27 minutes, 28 seconds'
+        );
+    });
+
+    test('keeps only the largest units when capped', () => {
+        expect(toHumanDuration(lag, { maxUnits: 2 })).toBe('1 day, 6 hours');
+    });
+
+    test('caps against the units that survive, not the raw shift', () => {
+        // No whole hours, so minutes are the second significant unit.
+        expect(
+            toHumanDuration(
+                Duration.fromObject({ seconds: 86400 + 27 * 60 + 28 }),
+                { maxUnits: 2 }
+            )
+        ).toBe('1 day, 27 minutes');
+    });
+
+    test('renders zero rather than an empty string', () => {
+        expect(
+            toHumanDuration(Duration.fromObject({ seconds: 0 }), {
+                maxUnits: 2,
+            })
+        ).toBe('0 seconds');
     });
 });
