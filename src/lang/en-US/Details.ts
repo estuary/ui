@@ -12,6 +12,8 @@ export const Details: Record<string, string> = {
     'details.tabs.history': `History`,
     'details.tabs.ops': `Logs`,
 
+    'details.toolbar.copyName': `Copy name`,
+
     'details.history.noPublications': `No publications were found.`,
     'details.history.diffFailed': `Unable to get specs to compare.`,
     'details.history.title': `Change History`,
