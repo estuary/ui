@@ -393,6 +393,59 @@ describe('accumulateBindingStats', () => {
             ).get('acmeco/orders')?.lastPublishedAt
         ).toBeNull();
     });
+
+    // An interval can stamp a frontier while the binding moved nothing in it —
+    // a materialization advancing past source documents it filtered out, say.
+    // Reporting that as "last data" would put a time beside a zero.
+    test('ignores a timestamp from an interval that moved nothing', () => {
+        expect(
+            accumulateBindingStats(
+                [
+                    {
+                        materialize: {
+                            'acmeco/orders': {
+                                right: { bytesTotal: 0, docsTotal: 0 },
+                                lastSourcePublishedAt: '2026-08-06T23:00:00Z',
+                            } as any,
+                        },
+                    },
+                ],
+                'materialization'
+            ).get('acmeco/orders')
+        ).toEqual({ bytes: 0, docs: 0, lastPublishedAt: null });
+    });
+
+    // The guard is per interval, not per binding: a quiet interval must not
+    // discard the timestamp of a busy one.
+    test('keeps the timestamp of a busy interval beside a silent one', () => {
+        expect(
+            accumulateBindingStats(
+                [
+                    {
+                        capture: {
+                            'acmeco/orders': {
+                                out: { bytesTotal: 20, docsTotal: 2 },
+                                lastPublishedAt: '2026-08-06T10:00:00Z',
+                            },
+                        },
+                    },
+                    {
+                        capture: {
+                            'acmeco/orders': {
+                                out: { bytesTotal: 0, docsTotal: 0 },
+                                lastPublishedAt: '2026-08-06T23:00:00Z',
+                            },
+                        },
+                    },
+                ],
+                'capture'
+            ).get('acmeco/orders')
+        ).toEqual({
+            bytes: 20,
+            docs: 2,
+            lastPublishedAt: '2026-08-06T10:00:00Z',
+        });
+    });
 });
 
 describe('countBindings', () => {
@@ -411,11 +464,24 @@ describe('getVolumeTotals', () => {
     test('sums the total and takes the largest binding', () => {
         expect(
             getVolumeTotals([
-                row({ bytes: 10 }),
-                row({ bytes: 30 }),
-                row({ bytes: 20 }),
+                row({ bytes: 10, collection: 'acmeco/a' }),
+                row({ bytes: 30, collection: 'acmeco/b' }),
+                row({ bytes: 20, collection: 'acmeco/c' }),
             ])
         ).toEqual({ maxBytes: 30, totalBytes: 60 });
+    });
+
+    // `catalog_stats` breaks volume down per collection, not per binding, so two
+    // bindings on one collection both carry its whole figure. Summing rows would
+    // report more than the task moved and disagree with the chart.
+    test('counts a collection once even when two bindings share it', () => {
+        expect(
+            getVolumeTotals([
+                row({ bytes: 30, collection: 'acmeco/a', index: 0 }),
+                row({ bytes: 30, collection: 'acmeco/a', index: 1 }),
+                row({ bytes: 10, collection: 'acmeco/b', index: 2 }),
+            ])
+        ).toEqual({ maxBytes: 30, totalBytes: 40 });
     });
 
     // The bars divide by maxBytes, so a task that moved nothing must not hand

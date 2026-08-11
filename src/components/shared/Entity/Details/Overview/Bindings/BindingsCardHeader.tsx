@@ -6,9 +6,11 @@ import { Skeleton, Stack, Typography, useTheme } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import RangeChip from 'src/components/shared/Entity/Details/Overview/RangeChip';
-import { OVERVIEW_CARD_TITLE_SX } from 'src/components/shared/Entity/Details/Overview/shared';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
-import { diminishedTextColor } from 'src/context/Theme';
+import {
+    cardHeaderSx_emphasized,
+    diminishedTextColor,
+} from 'src/context/Theme';
 
 interface Props {
     count: number;
@@ -50,8 +52,8 @@ function BindingsCardHeader({
             }}
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
-                <Typography component="span" sx={OVERVIEW_CARD_TITLE_SX}>
-                    {intl.formatMessage({ id: 'detailsPanel.bindings.title' })}
+                <Typography component="span" sx={cardHeaderSx_emphasized}>
+                    {intl.formatMessage({ id: 'terms.bindings' })}
                 </Typography>
 
                 <RangeChip range={range} />
@@ -75,7 +77,16 @@ function BindingsCardHeader({
                                     ? 'detailsPanel.bindings.subtitle.read'
                                     : 'detailsPanel.bindings.subtitle.written',
                         },
-                        { count, volume: formatBytes(totalBytes) }
+                        {
+                            count,
+                            // Composed rather than re-pluralised here, so the
+                            // word matches everywhere it appears in the app.
+                            unit: intl.formatMessage(
+                                { id: 'terms.bindings.plural' },
+                                { count }
+                            ),
+                            volume: formatBytes(totalBytes),
+                        }
                     )
                 )}
             </Typography>

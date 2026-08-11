@@ -109,13 +109,14 @@ export const Details: Record<string, string> = {
     'detailsPanel.elapsed.days': `{count, plural, one {day} other {days}}`,
     'detailsPanel.elapsed.ago': `{elapsed} ago`,
 
-    // Bindings table.
-    'detailsPanel.bindings.title': `Bindings`,
-    'detailsPanel.bindings.table.aria': `Bindings`,
-    // The chip's text is the range itself, formatted from the same keys
-    // DetailsRange labels its picker with — see BindingsCardHeader.
-    'detailsPanel.bindings.subtitle.written': `{count, plural, one {# binding} other {# bindings}} · {volume} written`,
-    'detailsPanel.bindings.subtitle.read': `{count, plural, one {# binding} other {# bindings}} · {volume} read`,
+    // Bindings table. The card heading and the table's accessible name both come
+    // from `terms.bindings`, and `{unit}` below from `terms.bindings.plural`, so
+    // the word is not restated here.
+    //
+    // The chip beside the heading carries the range itself, formatted through
+    // `getRangeLabelDescriptor` — see RangeChip.
+    'detailsPanel.bindings.subtitle.written': `{count} {unit} · {volume} written`,
+    'detailsPanel.bindings.subtitle.read': `{count} {unit} · {volume} read`,
     'detailsPanel.bindings.search.capture': `Filter by source stream or collection`,
     'detailsPanel.bindings.search.materialization': `Filter by collection`,
     'detailsPanel.bindings.filter.all': `All`,

@@ -2,15 +2,8 @@ import type { DataByHourRange } from 'src/components/graphs/types';
 import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 import type { Entity } from 'src/types';
 
-import CardWrapper from 'src/components/shared/CardWrapper';
-import BindingsCardHeader from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsCardHeader';
-import BindingsTable from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsTable';
-import BindingsToolbar from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsToolbar';
-import {
-    buildBindingRows,
-    getSearchLabelId,
-} from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
-import { useBindingsTableState } from 'src/components/shared/Entity/Details/Overview/Bindings/useBindingsTableState';
+import BindingsCard from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsCard';
+import { buildBindingRows } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { EntityContextProvider } from 'src/context/EntityContext';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
@@ -21,7 +14,16 @@ import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageSto
 
 export const PREFIX = 'acmeco/recruiting';
 
-export const CAPTURE_STREAMS: [string, number, number, boolean][] = [
+// One fixture binding, positional so the table below stays readable as a table:
+// stream name, bytes, docs, disabled.
+export type StreamFixture = [
+    name: string,
+    bytes: number,
+    docs: number,
+    disabled: boolean,
+];
+
+export const CAPTURE_STREAMS: StreamFixture[] = [
     ['applications', 262_000_000, 1_418_000, false],
     ['candidates', 171_400_000, 963_000, false],
     ['scorecards', 96_300_000, 214_000, false],
@@ -81,9 +83,7 @@ const lastPublishedFor = (index: number, bytes: number): string | undefined => {
 
 // Built through the real join so the story exercises buildBindingRows rather
 // than hand-rolling row objects that could drift from it.
-export const buildCaptureRows = (
-    streams: [string, number, number, boolean][]
-): BindingRow[] =>
+export const buildCaptureRows = (streams: StreamFixture[]): BindingRow[] =>
     buildBindingRows(
         streams.map(([stream, _bytes, _docs, disable]) => ({
             ...(disable ? { disable: true } : {}),
@@ -109,7 +109,7 @@ export const buildCaptureRows = (
     );
 
 export const buildMaterializationRows = (
-    streams: [string, number, number, boolean][]
+    streams: StreamFixture[]
 ): BindingRow[] =>
     buildBindingRows(
         streams.map(([stream, _bytes, _docs, disable]) => ({
@@ -145,7 +145,7 @@ export const buildMaterializationRows = (
 
 export const LARGE_TASK_BINDING_COUNT = 1200;
 
-export const buildLargeTaskStreams = (): [string, number, number, boolean][] =>
+export const buildLargeTaskStreams = (): StreamFixture[] =>
     Array.from({ length: LARGE_TASK_BINDING_COUNT }, (_value, index) => [
         `table_${String(index).padStart(4, '0')}`,
         // Deterministic but uneven, and a long tail of exact zeroes so the
@@ -169,9 +169,9 @@ interface HarnessProps {
     volumesLoading?: boolean;
 }
 
-// Everything rendered below is the production component, driven by the same
-// `useBindingsTableState` the page uses. Only the data fetch is replaced by
-// fixtures, so a story cannot show behaviour the app does not have.
+// Renders the production `BindingsCard` itself — same card props, header, state
+// hook and row layout as the page. Only the data fetch is replaced by fixtures,
+// so a story cannot show behaviour the app does not have.
 export function BindingsHarness({
     bindings,
     entityType,
@@ -179,62 +179,14 @@ export function BindingsHarness({
     volumesLoading = false,
 }: HarnessProps) {
     const storeRange = useDetailsUsageStore((state) => state.range);
-    const effectiveRange = range ?? storeRange;
-
-    const {
-        counts,
-        filter,
-        handlers,
-        maxBytes,
-        page,
-        rowsPerPage,
-        sortDirection,
-        sortedRows,
-        sortKey,
-        totalBytes,
-        visibleRows,
-    } = useBindingsTableState(bindings);
 
     return (
         <EntityContextProvider value={entityType}>
-            <CardWrapper
-                // Matches Bindings/index.tsx — without it the card inherits the
-                // table's minWidth and the overflow escapes the scroll container.
-                disableMinWidth
-                message={
-                    <BindingsCardHeader
-                        count={counts.all}
-                        entityType={entityType}
-                        loading={volumesLoading}
-                        range={effectiveRange}
-                        totalBytes={totalBytes}
-                    />
-                }
-            >
-                <BindingsToolbar
-                    counts={counts}
-                    filter={filter}
-                    searchLabelId={getSearchLabelId(entityType)}
-                    setFilter={handlers.filter}
-                />
-
-                <BindingsTable
-                    entityType={entityType}
-                    maxBytes={maxBytes}
-                    totalBytes={totalBytes}
-                    onPageChange={handlers.page}
-                    onRowsPerPageChange={handlers.rowsPerPage}
-                    onSortChange={handlers.sort}
-                    page={page}
-                    rows={sortedRows}
-                    rowsPerPage={rowsPerPage}
-                    sortDirection={sortDirection}
-                    sortKey={sortKey}
-                    totalBindings={counts.all}
-                    visibleRows={visibleRows}
-                    volumesLoading={volumesLoading}
-                />
-            </CardWrapper>
+            <BindingsCard
+                bindings={bindings}
+                range={range ?? storeRange}
+                volumesLoading={volumesLoading}
+            />
         </EntityContextProvider>
     );
 }

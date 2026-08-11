@@ -184,9 +184,21 @@ export const readLastPublishedAt = (
  * A collection absent from an interval simply contributed nothing to it; it is
  * not an error, and it must not zero out the intervals where it did appear.
  *
- * Volumes sum; the timestamp takes the maximum. Within one interval the field
- * is last-write-wins and means "the frontier as of that interval" — across
- * intervals the newest of those is the one the window is asking about.
+ * Volumes sum. The timestamp takes the maximum *of the intervals that moved
+ * data*, which is two decisions:
+ *
+ * - Maximum across intervals, because within one interval the field is
+ *   last-write-wins and means "the frontier as of that interval", so the newest
+ *   of those is the one the selected window is asking about. This is a different
+ *   question from the one the stats pipeline answers, where a `maximize` reduce
+ *   would be wrong — see `MaterializeBindingStats` in `src/types`. There the
+ *   field tracks a catch-up frontier over all time and must be free to go
+ *   backwards; here the window is fixed, so taking its newest cannot hide a task
+ *   falling behind.
+ * - Only from intervals with volume, because an interval can carry a timestamp
+ *   while the binding moved nothing in it. Reporting that as "last data" would
+ *   put a time in the column beside a zero, which the table elsewhere promises
+ *   not to do.
  */
 export const accumulateBindingStats = (
     taskStatsByInterval: TaskStats[] | null | undefined,
@@ -210,7 +222,14 @@ export const accumulateBindingStats = (
 
         for (const [collection, stats] of Object.entries(byCollection)) {
             const { bytes, docs } = readVolume(stats, entityType);
-            const lastPublishedAt = readLastPublishedAt(stats, entityType);
+
+            // See the note above: a timestamp only counts from an interval that
+            // actually moved something.
+            const lastPublishedAt =
+                docs > 0 || bytes > 0
+                    ? readLastPublishedAt(stats, entityType)
+                    : null;
+
             const running = totals.get(collection);
 
             if (running) {
@@ -284,21 +303,36 @@ export const countBindings = (rows: BindingRow[]): BindingCounts => {
 /**
  * The two volume figures the card needs, in one pass.
  *
- * `totalBytes` is everything the task moved over the selected range, summed from
- * the same per-binding rows the table renders — so the card's subtitle and the
- * rows cannot disagree. `maxBytes` is the busiest binding, which is what each
- * row's bar is drawn relative to.
+ * `totalBytes` is everything the task moved over the selected range; `maxBytes`
+ * is the busiest binding, which each row's bar is drawn relative to.
+ *
+ * The total counts each collection once, not each row. `catalog_stats` breaks
+ * volume down per collection, not per binding, so two bindings on one collection
+ * — a materialization writing one collection to two tables is ordinary — each
+ * carry that collection's whole figure. Summing rows would then report more than
+ * the task moved, and disagree with the chart above it. Nothing better is
+ * available per row: there is no per-binding split to attribute.
  */
 export const getVolumeTotals = (
     rows: BindingRow[]
-): { maxBytes: number; totalBytes: number } =>
-    rows.reduce(
-        (accumulated, row) => ({
-            maxBytes: Math.max(accumulated.maxBytes, row.bytes),
-            totalBytes: accumulated.totalBytes + row.bytes,
-        }),
-        { maxBytes: 0, totalBytes: 0 }
-    );
+): { maxBytes: number; totalBytes: number } => {
+    const countedCollections = new Set<string>();
+    let maxBytes = 0;
+    let totalBytes = 0;
+
+    for (const row of rows) {
+        // Unaffected by the de-duplication: rows sharing a collection share its
+        // figure, so the largest is the same either way.
+        maxBytes = Math.max(maxBytes, row.bytes);
+
+        if (!countedCollections.has(row.collection)) {
+            countedCollections.add(row.collection);
+            totalBytes += row.bytes;
+        }
+    }
+
+    return { maxBytes, totalBytes };
+};
 
 const compareStrings = (left: string, right: string) =>
     left.localeCompare(right);

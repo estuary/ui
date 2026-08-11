@@ -4,7 +4,7 @@ import { Tooltip, Typography, useTheme } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { diminishedTextColor } from 'src/context/Theme';
+import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
 import { getRangeLabelDescriptor } from 'src/services/luxon';
 
 interface Props {
@@ -36,7 +36,7 @@ function RangeChip({ range }: Props) {
             <Typography
                 component="span"
                 sx={{
-                    border: `1px solid ${theme.palette.divider}`,
+                    border: defaultOutline[theme.palette.mode],
                     borderRadius: 4,
                     color: diminishedTextColor[theme.palette.mode],
                     cursor: 'help',

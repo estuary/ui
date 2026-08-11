@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import type { DateTime } from 'luxon';
 
 const UNIT_LABEL_IDS = {
     minutes: 'detailsPanel.elapsed.minutes',
@@ -27,17 +27,14 @@ export interface Elapsed {
  * second. A local stack has no such floor — it is one process — which is exactly
  * how a dev-VM screenshot showing "8 seconds" hid this.
  *
- * Accepts an already-parsed `DateTime` so a caller needing the same instant for
- * something else — a table cell showing the age and the full timestamp on hover
- * — parses the string once rather than once per use.
+ * Takes a parsed `DateTime` rather than an ISO string: the caller needs the same
+ * instant for the timestamp it shows on hover, so parsing here as well would
+ * parse every row twice.
  */
-export const getElapsed = (timestamp: string | DateTime): Elapsed => {
-    const parsed =
-        typeof timestamp === 'string' ? DateTime.fromISO(timestamp) : timestamp;
-
+export const getElapsed = (timestamp: DateTime): Elapsed => {
     const seconds = Math.max(
         0,
-        Math.round(Math.abs(parsed.diffNow('seconds').seconds))
+        Math.round(Math.abs(timestamp.diffNow('seconds').seconds))
     );
 
     if (seconds < 3600) {
@@ -60,17 +57,4 @@ export const getElapsed = (timestamp: string | DateTime): Elapsed => {
         value: Math.round(seconds / 86400),
         unitLabelId: UNIT_LABEL_IDS.days,
     };
-};
-
-/**
- * One style for every card heading on this page.
- *
- * The app-wide `cardHeaderSx` is `fontWeight: 300`, which is thin enough that a
- * heading reads as a caption when it sits above a table of bold figures. The
- * design puts these nearer 600, so the Overview's card titles carry that and
- * `cardHeaderSx` is left alone for everywhere else.
- */
-export const OVERVIEW_CARD_TITLE_SX = {
-    fontSize: 16,
-    fontWeight: 600,
 };

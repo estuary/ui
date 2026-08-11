@@ -55,7 +55,7 @@ interface Column {
 // *is* the collection, so it has none — a Destination table column was built and
 // cut, being a mechanical transform of the collection name, not navigable, and
 // the widest column on the table.
-const getColumns = (volumeHeaderIntlKey: string): Column[] => [
+const getSharedColumns = (volumeHeaderIntlKey: string): Column[] => [
     {
         headerIntlKey: 'detailsPanel.bindings.column.collection',
         sortKey: 'collection',
@@ -85,10 +85,10 @@ const CAPTURE_COLUMNS: Column[] = [
         headerIntlKey: 'detailsPanel.bindings.column.sourceStream',
         sortKey: 'resourcePath',
     },
-    ...getColumns('detailsPanel.bindings.column.dataWritten'),
+    ...getSharedColumns('detailsPanel.bindings.column.dataWritten'),
 ];
 
-const MATERIALIZATION_COLUMNS: Column[] = getColumns(
+const MATERIALIZATION_COLUMNS: Column[] = getSharedColumns(
     'detailsPanel.bindings.column.dataRead'
 );
 
@@ -203,7 +203,7 @@ function BindingsTable({
             >
                 <Table
                     aria-label={intl.formatMessage({
-                        id: 'detailsPanel.bindings.table.aria',
+                        id: 'terms.bindings',
                     })}
                     size="small"
                     sx={{ minWidth: isCapture ? 840 : 700 }}

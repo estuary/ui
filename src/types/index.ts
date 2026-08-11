@@ -219,11 +219,17 @@ export interface MaterializeBindingStats {
     // materialize-side counterpart, encoded as
     // `materialized_last_source_published_at_time_seconds`.
     //
-    // No reduce strategy, which is deliberate rather than an oversight: this
-    // tracks a catch-up frontier, so a task replaying a backlog genuinely is
-    // processing old source documents and last-write-wins reports that
-    // honestly. `maximize` would pin it to the best watermark ever reached and
-    // never show a task falling behind again.
+    // No reduce strategy *in the stats pipeline*, which is deliberate rather
+    // than an oversight: over all time this tracks a catch-up frontier, so a
+    // task replaying a backlog genuinely is processing old source documents and
+    // last-write-wins reports that honestly. A `maximize` reduce there would pin
+    // it to the best watermark ever reached and never show a task falling behind
+    // again.
+    //
+    // Note this does not conflict with `accumulateBindingStats` taking the
+    // maximum across the intervals of a *selected window*: that answers "the
+    // newest thing this binding moved inside this window", where the window is
+    // fixed and the answer cannot mask later regression.
     lastSourcePublishedAt?: string;
 }
 

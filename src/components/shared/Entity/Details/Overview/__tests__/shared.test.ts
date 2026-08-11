@@ -1,7 +1,8 @@
+import { DateTime } from 'luxon';
+
 import { getElapsed } from 'src/components/shared/Entity/Details/Overview/shared';
 
-const agoBySeconds = (seconds: number) =>
-    new Date(Date.now() - seconds * 1000).toISOString();
+const agoBySeconds = (seconds: number) => DateTime.now().minus({ seconds });
 
 describe('getElapsed', () => {
     // The whole point of this formatter. Stats reach the page through two

@@ -1,6 +1,6 @@
 import type { BindingStatus } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 
-import { Stack, TableCell, Typography, useTheme } from '@mui/material';
+import { Box, Stack, TableCell, Typography, useTheme } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
@@ -33,8 +33,9 @@ function StatusCell({ status }: Props) {
     return (
         <TableCell>
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                <span
-                    style={{
+                <Box
+                    component="span"
+                    sx={{
                         backgroundColor: color,
                         borderRadius: '50%',
                         display: 'inline-block',
