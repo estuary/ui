@@ -8,6 +8,7 @@ import { Grid } from '@mui/material';
 import { DataPreview } from 'src/components/collection/DataPreview';
 import { useEditorStore_specs } from 'src/components/editor/Store/hooks';
 import { TaskEndpoints } from 'src/components/shared/Endpoints/TaskEndpoints';
+import Bindings from 'src/components/shared/Entity/Details/Overview/Bindings';
 import DetailsSection from 'src/components/shared/Entity/Details/Overview/DetailsSection';
 import Usage from 'src/components/shared/Entity/Details/Usage';
 import ShardInformation from 'src/components/shared/Entity/Shard/Information';
@@ -49,6 +50,19 @@ function Overview({ name }: DetailsOverviewProps) {
                     loading={!Boolean(latestLiveSpec)}
                 />
             </Grid>
+
+            {/* A task's bindings get the full width, below the chart and the
+                rail. They were a chip list inside the rail, which is a quarter
+                of the page, so anything past the first few sat behind an
+                "N more" toggle. A collection has no bindings. */}
+            {isCollection ? null : (
+                <Grid size={{ xs: 12 }}>
+                    <Bindings
+                        entityName={entityName}
+                        latestLiveSpec={latestLiveSpec}
+                    />
+                </Grid>
+            )}
 
             {/* The grid item below exists when no children are present which creates 16 pixels of vertical padding. */}
             {!isCollection ? (

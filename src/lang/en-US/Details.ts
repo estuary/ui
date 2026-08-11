@@ -83,6 +83,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.totals.title': `Usage this month`,
     'detailsPanel.recentUsage.title.prefix': `Usage over the past`,
     'detailsPanel.recentUsage.range.label': `Timeframe`,
+    'detailsPanel.rangeChip.tooltip': `Covers the timeframe selected on the chart above.`,
     'detailsPanel.recentUsage.filter.label.hours': `{range} hours`,
     'detailsPanel.recentUsage.filter.label.days': `{range} days`,
     'detailsPanel.recentUsage.filter.label.months': `{range} months`,
@@ -97,4 +98,42 @@ export const Details: Record<string, string> = {
     'detailsPanel.graph.syncDelay.tooltip': `Reporting can be delayed by up to 2x the set update delay in the configuration.`,
 
     'detailsPanel.status.taskDisabled.message': `Task is disabled`,
+
+    // Elapsed-time units. Minutes are the finest on purpose — the reporting
+    // pipeline floors at roughly four, so seconds would be invented precision.
+    // Bare units, because the bindings table's Last data wraps them in "ago".
+    'detailsPanel.elapsed.minutes': `{count, plural, one {minute} other {minutes}}`,
+    'detailsPanel.elapsed.hours': `{count, plural, one {hour} other {hours}}`,
+    'detailsPanel.elapsed.days': `{count, plural, one {day} other {days}}`,
+    'detailsPanel.elapsed.ago': `{elapsed} ago`,
+
+    // Bindings table.
+    'detailsPanel.bindings.title': `Bindings`,
+    'detailsPanel.bindings.table.aria': `Bindings`,
+    // The chip's text is the range itself, formatted from the same keys
+    // DetailsRange labels its picker with — see BindingsCardHeader.
+    'detailsPanel.bindings.subtitle.written': `{count, plural, one {# binding} other {# bindings}} · {volume} written`,
+    'detailsPanel.bindings.subtitle.read': `{count, plural, one {# binding} other {# bindings}} · {volume} read`,
+    'detailsPanel.bindings.search.capture': `Filter by source stream or collection`,
+    'detailsPanel.bindings.search.materialization': `Filter by collection`,
+    'detailsPanel.bindings.filter.all': `All`,
+    'detailsPanel.bindings.rowsPerPage': `Bindings per page`,
+    'detailsPanel.bindings.empty': `This task has no bindings.`,
+    'detailsPanel.bindings.noMatches': `No bindings match this filter.`,
+    // "Enabled" rather than "Active": the flag only says the binding is not
+    // switched off, which is not a claim that data is flowing.
+    'detailsPanel.bindings.status.enabled': `Enabled`,
+    'detailsPanel.bindings.status.disabled': `Disabled`,
+    'detailsPanel.bindings.column.sourceStream': `Source stream`,
+    'detailsPanel.bindings.column.collection': `Collection`,
+    'detailsPanel.bindings.column.status': `Status`,
+    'detailsPanel.bindings.column.docs': `Docs`,
+    'detailsPanel.bindings.column.dataWritten': `Data written`,
+    'detailsPanel.bindings.column.dataRead': `Data read`,
+    'detailsPanel.bindings.column.lastData': `Last data`,
+    // The bar is relative to the busiest binding, which is good for comparing
+    // rows but says nothing about how much of the task a row accounts for — so
+    // the tooltip carries the share instead.
+    'detailsPanel.bindings.volume.tooltip': `{share} of this task's total for the selected range. Bar length is relative to the largest binding.`,
+    'detailsPanel.bindings.volume.none.tooltip': `No data recorded for this binding in the selected range.`,
 };

@@ -14,10 +14,9 @@ interface Props {
 /**
  * The timeframe a card's figures cover, as a quiet chip beside its heading.
  *
- * Shared by every card the range governs. The picker itself sits in the page
- * toolbar, which is far from the bindings table and above the fold on a long
- * page — a card of totals whose window is only stated somewhere else is the
- * kind of thing that gets misread once and then never trusted.
+ * The picker itself sits on the chart card above, so a card of totals further
+ * down the page states nothing about its own window. That is the kind of thing
+ * which gets misread once and then never trusted.
  *
  * The label comes from the same two message keys DetailsRange labels its button
  * with, so a chip can never word the window differently from the control that
