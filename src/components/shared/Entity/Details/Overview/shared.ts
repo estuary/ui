@@ -1,21 +1,5 @@
 import { DateTime } from 'luxon';
 
-/**
- * How stale a freshness figure on this page can be purely because of reporting.
- *
- * Task stats reach `catalog_stats` through two derivation rollups and a
- * materialization. Measured 2026-08-06 by scraping the OpenMetrics endpoint and
- * comparing every freshness gauge against wall clock: ~400 independent
- * derivations under `ops/` clustered at 260-280s, and the 125 capture bindings
- * under `estuary/` bottomed out at 253s. Two unrelated tenants, same floor, so
- * it is the pipeline rather than any one task's real lag.
- *
- * This is why nothing here renders seconds. A local stack has no such floor —
- * it is one process — which is exactly how a dev-VM screenshot showing
- * "8 seconds" hid the problem.
- */
-export const REPORTING_FLOOR_SECONDS = 270;
-
 const UNIT_LABEL_IDS = {
     minutes: 'detailsPanel.elapsed.minutes',
     hours: 'detailsPanel.elapsed.hours',
@@ -33,15 +17,27 @@ export interface Elapsed {
  * Split rather than pre-formatted so a caller can give the number visual weight
  * separately from its unit.
  *
- * Minutes are the finest unit on purpose — see REPORTING_FLOOR_SECONDS. A value
- * under a minute means the clocks disagree, not that data landed this second.
+ * Minutes are the finest unit on purpose. Task stats reach `catalog_stats`
+ * through two derivation rollups and a materialization, which floors reporting
+ * at roughly 270 seconds — measured 2026-08-06 against the OpenMetrics endpoint,
+ * where ~400 independent derivations under `ops/` clustered at 260-280s and the
+ * 125 capture bindings under `estuary/` bottomed out at 253s. Two unrelated
+ * tenants, same floor, so it is the pipeline rather than any one task's real lag.
+ * A value under a minute means the clocks disagree, not that data landed this
+ * second. A local stack has no such floor — it is one process — which is exactly
+ * how a dev-VM screenshot showing "8 seconds" hid this.
+ *
+ * Accepts an already-parsed `DateTime` so a caller needing the same instant for
+ * something else — a table cell showing the age and the full timestamp on hover
+ * — parses the string once rather than once per use.
  */
-export const getElapsed = (timestamp: string): Elapsed => {
+export const getElapsed = (timestamp: string | DateTime): Elapsed => {
+    const parsed =
+        typeof timestamp === 'string' ? DateTime.fromISO(timestamp) : timestamp;
+
     const seconds = Math.max(
         0,
-        Math.round(
-            Math.abs(DateTime.fromISO(timestamp).diffNow('seconds').seconds)
-        )
+        Math.round(Math.abs(parsed.diffNow('seconds').seconds))
     );
 
     if (seconds < 3600) {
@@ -67,19 +63,14 @@ export const getElapsed = (timestamp: string): Elapsed => {
 };
 
 /**
- * Card heading weight for this page.
+ * One style for every card heading on this page.
  *
  * The app-wide `cardHeaderSx` is `fontWeight: 300`, which is thin enough that a
  * heading reads as a caption when it sits above a table of bold figures. The
  * design puts these nearer 600, so the Overview's card titles carry that and
  * `cardHeaderSx` is left alone for everywhere else.
  */
-export const OVERVIEW_CARD_TITLE_WEIGHT = 600;
-
-/**
- * One style for every card heading on this page.
- */
 export const OVERVIEW_CARD_TITLE_SX = {
     fontSize: 16,
-    fontWeight: OVERVIEW_CARD_TITLE_WEIGHT,
+    fontWeight: 600,
 };

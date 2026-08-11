@@ -8,7 +8,7 @@ import {
     countBindings,
     filterBindings,
     getResourcePath,
-    getTaskFreshness,
+    getVolumeTotals,
     readVolume,
     sortBindings,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
@@ -395,37 +395,6 @@ describe('accumulateBindingStats', () => {
     });
 });
 
-describe('getTaskFreshness', () => {
-    // The reason this is a maximum. Modelled on estuary/hubspot-native, where
-    // the busiest binding sits at the reporting floor and two thirds are
-    // reference tables a day or more old — the mean of the real task reads 9.1
-    // hours while it is completely current.
-    test('takes the newest binding, undragged by dormant ones', () => {
-        expect(
-            getTaskFreshness([
-                row({ lastPublishedAt: '2026-08-04T00:00:00Z' }),
-                row({ lastPublishedAt: '2026-08-06T15:00:00Z' }),
-                row({ lastPublishedAt: '2026-06-01T00:00:00Z' }),
-            ])
-        ).toBe('2026-08-06T15:00:00Z');
-    });
-
-    test('skips bindings with no timestamp rather than treating them as now', () => {
-        expect(
-            getTaskFreshness([
-                row({ lastPublishedAt: null }),
-                row({ lastPublishedAt: '2026-08-06T15:00:00Z' }),
-                row({ lastPublishedAt: null }),
-            ])
-        ).toBe('2026-08-06T15:00:00Z');
-    });
-
-    test('reports nothing when no binding moved data in the window', () => {
-        expect(getTaskFreshness([row(), row()])).toBeNull();
-        expect(getTaskFreshness([])).toBeNull();
-    });
-});
-
 describe('countBindings', () => {
     test('splits enabled from disabled', () => {
         expect(
@@ -435,6 +404,28 @@ describe('countBindings', () => {
                 row({ status: 'disabled' }),
             ])
         ).toEqual({ all: 3, disabled: 2, enabled: 1 });
+    });
+});
+
+describe('getVolumeTotals', () => {
+    test('sums the total and takes the largest binding', () => {
+        expect(
+            getVolumeTotals([
+                row({ bytes: 10 }),
+                row({ bytes: 30 }),
+                row({ bytes: 20 }),
+            ])
+        ).toEqual({ maxBytes: 30, totalBytes: 60 });
+    });
+
+    // The bars divide by maxBytes, so a task that moved nothing must not hand
+    // back a figure that turns every width into NaN.
+    test('reports zeroes for no rows and for silent rows', () => {
+        expect(getVolumeTotals([])).toEqual({ maxBytes: 0, totalBytes: 0 });
+        expect(getVolumeTotals([row(), row()])).toEqual({
+            maxBytes: 0,
+            totalBytes: 0,
+        });
     });
 });
 

@@ -1,12 +1,6 @@
 import type { DataByHourRange } from 'src/components/graphs/types';
-import type {
-    BindingRow,
-    BindingsFilterState,
-    BindingSortKey,
-} from 'src/components/shared/Entity/Details/Overview/Bindings/types';
-import type { Entity, SortDirection } from 'src/types';
-
-import { useMemo, useState } from 'react';
+import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
+import type { Entity } from 'src/types';
 
 import CardWrapper from 'src/components/shared/CardWrapper';
 import BindingsCardHeader from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsCardHeader';
@@ -14,11 +8,9 @@ import BindingsTable from 'src/components/shared/Entity/Details/Overview/Binding
 import BindingsToolbar from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsToolbar';
 import {
     buildBindingRows,
-    countBindings,
-    DEFAULT_BINDINGS_PER_PAGE,
-    filterBindings,
-    sortBindings,
+    getSearchLabelId,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
+import { useBindingsTableState } from 'src/components/shared/Entity/Details/Overview/Bindings/useBindingsTableState';
 import { EntityContextProvider } from 'src/context/EntityContext';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
@@ -177,9 +169,9 @@ interface HarnessProps {
     volumesLoading?: boolean;
 }
 
-// Mirrors the state wiring in Bindings/index.tsx. The components below it, and
-// therefore everything rendered, are the production ones; only the data fetch is
-// replaced by fixtures.
+// Everything rendered below is the production component, driven by the same
+// `useBindingsTableState` the page uses. Only the data fetch is replaced by
+// fixtures, so a story cannot show behaviour the app does not have.
 export function BindingsHarness({
     bindings,
     entityType,
@@ -189,47 +181,19 @@ export function BindingsHarness({
     const storeRange = useDetailsUsageStore((state) => state.range);
     const effectiveRange = range ?? storeRange;
 
-    const [filter, setFilter] = useState<BindingsFilterState>({
-        query: '',
-        status: 'all',
-    });
-    const [sortKey, setSortKey] = useState<BindingSortKey>('bytes');
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_BINDINGS_PER_PAGE);
-
-    const counts = useMemo(() => countBindings(bindings), [bindings]);
-
-    const sortedRows = useMemo(
-        () =>
-            sortBindings(
-                filterBindings(bindings, filter),
-                sortKey,
-                sortDirection
-            ),
-        [bindings, filter, sortDirection, sortKey]
-    );
-
-    const visibleRows = useMemo(
-        () =>
-            sortedRows.slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage
-            ),
-        [page, rowsPerPage, sortedRows]
-    );
-
-    const { maxBytes, totalBytes } = useMemo(
-        () =>
-            bindings.reduce(
-                (accumulated, row) => ({
-                    maxBytes: Math.max(accumulated.maxBytes, row.bytes),
-                    totalBytes: accumulated.totalBytes + row.bytes,
-                }),
-                { maxBytes: 0, totalBytes: 0 }
-            ),
-        [bindings]
-    );
+    const {
+        counts,
+        filter,
+        handlers,
+        maxBytes,
+        page,
+        rowsPerPage,
+        sortDirection,
+        sortedRows,
+        sortKey,
+        totalBytes,
+        visibleRows,
+    } = useBindingsTableState(bindings);
 
     return (
         <EntityContextProvider value={entityType}>
@@ -250,42 +214,17 @@ export function BindingsHarness({
                 <BindingsToolbar
                     counts={counts}
                     filter={filter}
-                    searchLabelId={
-                        entityType === 'materialization'
-                            ? 'detailsPanel.bindings.search.materialization'
-                            : 'detailsPanel.bindings.search.capture'
-                    }
-                    setFilter={(update) => {
-                        setFilter(update);
-                        setPage(0);
-                    }}
+                    searchLabelId={getSearchLabelId(entityType)}
+                    setFilter={handlers.filter}
                 />
 
                 <BindingsTable
                     entityType={entityType}
                     maxBytes={maxBytes}
                     totalBytes={totalBytes}
-                    onPageChange={setPage}
-                    onRowsPerPageChange={(next) => {
-                        setRowsPerPage(next);
-                        setPage(0);
-                    }}
-                    onSortChange={(nextKey) => {
-                        if (nextKey === sortKey) {
-                            setSortDirection(
-                                sortDirection === 'asc' ? 'desc' : 'asc'
-                            );
-                        } else {
-                            setSortKey(nextKey);
-                            setSortDirection(
-                                nextKey === 'collection' ||
-                                    nextKey === 'resourcePath'
-                                    ? 'asc'
-                                    : 'desc'
-                            );
-                        }
-                        setPage(0);
-                    }}
+                    onPageChange={handlers.page}
+                    onRowsPerPageChange={handlers.rowsPerPage}
+                    onSortChange={handlers.sort}
                     page={page}
                     rows={sortedRows}
                     rowsPerPage={rowsPerPage}

@@ -47,11 +47,15 @@ interface Column {
     sortKey?: BindingSortKey;
 }
 
-const CAPTURE_COLUMNS: Column[] = [
-    {
-        headerIntlKey: 'detailsPanel.bindings.column.sourceStream',
-        sortKey: 'resourcePath',
-    },
+// The two entity types differ in exactly two places, so the rest is built once:
+// a capture leads with a source stream column, and the volume column is worded
+// for the direction data moved.
+//
+// A capture's source stream is a second name column. A materialization's binding
+// *is* the collection, so it has none — a Destination table column was built and
+// cut, being a mechanical transform of the collection name, not navigable, and
+// the widest column on the table.
+const getColumns = (volumeHeaderIntlKey: string): Column[] => [
     {
         headerIntlKey: 'detailsPanel.bindings.column.collection',
         sortKey: 'collection',
@@ -64,37 +68,7 @@ const CAPTURE_COLUMNS: Column[] = [
         headerIntlKey: 'detailsPanel.bindings.column.docs',
         sortKey: 'docs',
     },
-    {
-        align: 'right',
-        headerIntlKey: 'detailsPanel.bindings.column.dataWritten',
-        sortKey: 'bytes',
-    },
-    {
-        align: 'right',
-        headerIntlKey: 'detailsPanel.bindings.column.lastData',
-        sortKey: 'lastPublishedAt',
-    },
-];
-
-// A materialization's binding *is* the collection, so there is no second name
-// column. A Destination table column was built and cut: it is a mechanical
-// transform of the collection name, is not navigable, and was the widest column.
-const MATERIALIZATION_COLUMNS: Column[] = [
-    {
-        headerIntlKey: 'detailsPanel.bindings.column.collection',
-        sortKey: 'collection',
-    },
-    { headerIntlKey: 'detailsPanel.bindings.column.status' },
-    {
-        align: 'right',
-        headerIntlKey: 'detailsPanel.bindings.column.docs',
-        sortKey: 'docs',
-    },
-    {
-        align: 'right',
-        headerIntlKey: 'detailsPanel.bindings.column.dataRead',
-        sortKey: 'bytes',
-    },
+    { align: 'right', headerIntlKey: volumeHeaderIntlKey, sortKey: 'bytes' },
     // Present for materializations too, which it was not before. The field
     // differs — a materialization stamps the newest *source* document it
     // processed rather than one it published — but the question the column
@@ -105,6 +79,18 @@ const MATERIALIZATION_COLUMNS: Column[] = [
         sortKey: 'lastPublishedAt',
     },
 ];
+
+const CAPTURE_COLUMNS: Column[] = [
+    {
+        headerIntlKey: 'detailsPanel.bindings.column.sourceStream',
+        sortKey: 'resourcePath',
+    },
+    ...getColumns('detailsPanel.bindings.column.dataWritten'),
+];
+
+const MATERIALIZATION_COLUMNS: Column[] = getColumns(
+    'detailsPanel.bindings.column.dataRead'
+);
 
 // MUI's default sort arrow is sized for body text and hidden entirely until a
 // column is active, which reads as "only this column sorts". Scale it to the

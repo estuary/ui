@@ -29,7 +29,7 @@ function LastDataCell({ lastPublishedAt, loading }: Props) {
     }
 
     const timestamp = DateTime.fromISO(lastPublishedAt);
-    const elapsed = getElapsed(lastPublishedAt);
+    const elapsed = getElapsed(timestamp);
 
     return (
         <TableCell align="right">

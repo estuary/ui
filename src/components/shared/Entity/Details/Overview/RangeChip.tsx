@@ -5,7 +5,7 @@ import { Tooltip, Typography, useTheme } from '@mui/material';
 import { useIntl } from 'react-intl';
 
 import { diminishedTextColor } from 'src/context/Theme';
-import { LUXON_GRAIN_SETTINGS } from 'src/services/luxon';
+import { getRangeLabelDescriptor } from 'src/services/luxon';
 
 interface Props {
     range: DataByHourRange;
@@ -18,16 +18,15 @@ interface Props {
  * down the page states nothing about its own window. That is the kind of thing
  * which gets misread once and then never trusted.
  *
- * The label comes from the same two message keys DetailsRange labels its button
- * with, so a chip can never word the window differently from the control that
- * set it.
+ * The label comes from `getRangeLabelDescriptor`, the same helper DetailsRange
+ * labels its button with, so a chip can never word the window differently from
+ * the control that set it.
  */
 function RangeChip({ range }: Props) {
     const intl = useIntl();
     const theme = useTheme();
 
-    const { relativeUnit, selectedLabelKey } =
-        LUXON_GRAIN_SETTINGS[range.grain];
+    const { id, values } = getRangeLabelDescriptor(range);
 
     return (
         <Tooltip
@@ -47,14 +46,7 @@ function RangeChip({ range }: Props) {
                     whiteSpace: 'nowrap',
                 }}
             >
-                {intl.formatMessage(
-                    {
-                        id:
-                            selectedLabelKey ??
-                            `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
-                    },
-                    { range: range.amount }
-                )}
+                {intl.formatMessage({ id }, values)}
             </Typography>
         </Tooltip>
     );

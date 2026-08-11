@@ -19,6 +19,15 @@ import { getCollectionName } from 'src/utils/workflow-utils';
 export const BINDINGS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 export const DEFAULT_BINDINGS_PER_PAGE = 25;
 
+// A capture's rows carry a source stream as well as a collection, so its search
+// covers both. Read from here rather than branching at each call site: the
+// Storybook harness has to word this the same way the page does, or a story
+// shows something the app never shows.
+export const getSearchLabelId = (entityType: Entity): string =>
+    entityType === 'materialization'
+        ? 'detailsPanel.bindings.search.materialization'
+        : 'detailsPanel.bindings.search.capture';
+
 // Fallback keys, for a spec whose resource predates `_meta.path`. Endpoint
 // resource configs are connector-specific, so there is no single field holding
 // the stream name; connectors annotate the relevant property with
@@ -262,25 +271,6 @@ export const buildBindingRows = (
     });
 };
 
-/**
- * When this task last moved data: the newest of its bindings.
- *
- * The maximum, never an average. Measured against a live production capture
- * (`estuary/hubspot-native`, 15 bindings), the maximum reads 4 minutes — the
- * reporting floor, i.e. "current" — while the mean of the same 15 reads 9.1
- * hours, because two thirds of them are reference tables that legitimately
- * update daily or slower. The mean makes a healthy task look dead, and gets
- * worse the more bindings a task has.
- */
-export const getTaskFreshness = (rows: BindingRow[]): string | null =>
-    rows.reduce<string | null>(
-        (newest, row) =>
-            row.lastPublishedAt && (!newest || row.lastPublishedAt > newest)
-                ? row.lastPublishedAt
-                : newest,
-        null
-    );
-
 export const countBindings = (rows: BindingRow[]): BindingCounts => {
     const enabled = rows.filter((row) => row.status === 'enabled').length;
 
@@ -292,14 +282,23 @@ export const countBindings = (rows: BindingRow[]): BindingCounts => {
 };
 
 /**
- * Everything this task moved over the selected range.
+ * The two volume figures the card needs, in one pass.
  *
- * Summed from the same per-binding rows the table renders, so the strip's
- * headline and the bindings card's subtitle cannot disagree — they are one
- * number read twice, not two numbers that happen to agree.
+ * `totalBytes` is everything the task moved over the selected range, summed from
+ * the same per-binding rows the table renders — so the card's subtitle and the
+ * rows cannot disagree. `maxBytes` is the busiest binding, which is what each
+ * row's bar is drawn relative to.
  */
-export const getTotalBytes = (rows: BindingRow[]): number =>
-    rows.reduce((total, row) => total + row.bytes, 0);
+export const getVolumeTotals = (
+    rows: BindingRow[]
+): { maxBytes: number; totalBytes: number } =>
+    rows.reduce(
+        (accumulated, row) => ({
+            maxBytes: Math.max(accumulated.maxBytes, row.bytes),
+            totalBytes: accumulated.totalBytes + row.bytes,
+        }),
+        { maxBytes: 0, totalBytes: 0 }
+    );
 
 const compareStrings = (left: string, right: string) =>
     left.localeCompare(right);
