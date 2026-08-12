@@ -2,8 +2,10 @@ import type { PostgrestResponse } from '@supabase/postgrest-js';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
     CatalogStats,
+    CatalogStats_Backlog,
     CatalogStats_Dashboard,
     CatalogStats_Details,
+    CatalogStats_LastPublished,
     Entity,
 } from 'src/types';
 
@@ -78,6 +80,10 @@ const MATERIALIZATION_QUERY = `
     docs_read:docs_read_by_me,
     bytes_read:bytes_read_by_me
 `;
+
+// Per-binding readings live in the stats document rather than in dedicated
+// columns, so anything below binding granularity has to come out of the JSON.
+const STATS_DOCUMENT_QUERY = `${BASE_QUERY},flow_document`;
 
 const hourlyGrain = 'hourly';
 const dailyGrain = 'daily';
@@ -244,6 +250,43 @@ const getStatsForDetails = (
         .returns<CatalogStats_Details[]>();
 };
 
+// `bytesBehind` is a gauge describing where a materialization stands right now,
+// so the newest reading is the only one worth showing, and hourly is the finest
+// grain available.
+//
+// A few rows are fetched rather than just the newest, because a row carries no
+// binding stats at all when a usage heartbeat opened the hour — see
+// `newestBindingStats`, which picks the newest row that does.
+const BACKLOG_HOURS = 6;
+
+const getMaterializationBacklog = (catalogName: string) => {
+    return supabaseClient
+        .from(TABLES.CATALOG_STATS)
+        .select(STATS_DOCUMENT_QUERY)
+        .eq('catalog_name', catalogName)
+        .eq('grain', hourlyGrain)
+        .order('ts', { ascending: false })
+        .limit(BACKLOG_HOURS)
+        .returns<CatalogStats_Backlog[]>();
+};
+
+// Where each of a materialization's source collections has been written up to,
+// which pairs with the task's own `lastSourcePublishedAt` to say how far behind
+// it is in time. `lastPublishedAt` reduces by maximizing, so a month's row
+// already holds the latest publication within that month; two months of rows
+// place the frontier of any collection still being written to.
+const getCollectionsLastPublished = (collectionNames: string[]) => {
+    const previousMonth = DateTime.utc().startOf('month').minus({ months: 1 });
+
+    return supabaseClient
+        .from(TABLES.CATALOG_STATS)
+        .select(STATS_DOCUMENT_QUERY)
+        .in('catalog_name', collectionNames)
+        .eq('grain', monthlyGrain)
+        .gte('ts', previousMonth.toFormat(defaultQueryDateFormat))
+        .returns<CatalogStats_LastPublished[]>();
+};
+
 const getStatsForDashboard = (tenant: string) => {
     return supabaseClient
         .from(TABLES.CATALOG_STATS)
@@ -303,4 +346,10 @@ const getStatsForDashboard = (tenant: string) => {
 //     );
 // };
 
-export { getStatsByName, getStatsForDashboard, getStatsForDetails };
+export {
+    getCollectionsLastPublished,
+    getMaterializationBacklog,
+    getStatsByName,
+    getStatsForDashboard,
+    getStatsForDetails,
+};

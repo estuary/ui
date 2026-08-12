@@ -79,7 +79,7 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
     const { shortFormat, longFormat, getTimeZone, labelKey } =
         LUXON_GRAIN_SETTINGS[range.grain];
 
-    const resizeListener = useRef<EventListener | null>(null);
+    const resizeObserver = useRef<ResizeObserver | null>(null);
     const [myChart, setMyChart] = useState<echarts.ECharts | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('');
     const [renderingTimezone, setRenderingTimezone] = useState<string>('');
@@ -108,16 +108,24 @@ function DataByHourGraph({ id, stats = [] }: DataByHourGraphProps) {
                 // Save off chart into state
                 setMyChart(chart);
 
-                resizeListener.current = () => chart.resize();
-                window.addEventListener('resize', resizeListener.current);
+                // Observing the element rather than the window: collapsing
+                // the navigation sidebar resizes this container without
+                // resizing the window, so the canvas kept whatever width it
+                // was initialised at and overflowed its card. This covers the
+                // window case too, so there is no listener alongside it —
+                // echarts' resize() has no no-op early-out, and each call
+                // forces two synchronous layouts.
+                resizeObserver.current = new ResizeObserver(() =>
+                    chart.resize()
+                );
+
+                resizeObserver.current.observe(chartDom);
             }
         }
     }, [id, myChart]);
 
     useUnmount(() => {
-        if (resizeListener.current) {
-            window.removeEventListener('resize', resizeListener.current);
-        }
+        resizeObserver.current?.disconnect();
     });
 
     // Update the "last updated" string shown as an xAxis label

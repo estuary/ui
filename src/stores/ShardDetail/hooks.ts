@@ -99,6 +99,20 @@ export const useShardDetail_setDictionaryHydrated = () => {
     >(storeName(entityType), (state) => state.setDictionaryHydrated);
 };
 
+// Whether a task runs on the V2 runtime, which is the only runtime that reports
+// per-binding progress in its stats documents. A task's shards all come from one
+// template, so any shard carrying the flag settles it.
+export const useShardDetail_runtimeV2 = (taskName: string) => {
+    const entityType = useEntityType();
+
+    const shards = useZustandStore<
+        ShardDetailStore,
+        ShardDetailStore['shardDictionary'][string]
+    >(storeName(entityType), (state) => state.shardDictionary[taskName]);
+
+    return Boolean(shards?.some(({ runtimeV2 }) => runtimeV2));
+};
+
 export const useShardDetail_readDictionary = (
     taskName: string,
     taskTypes?: ShardEntityTypes[]

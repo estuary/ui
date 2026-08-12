@@ -125,7 +125,7 @@ export function RefreshTokenTable() {
     }, [fetching, error, refreshTokens.length, currentPage, goToPage]);
 
     return (
-        <Box sx={{ mx: 2 }}>
+        <Box>
             <Box
                 sx={{
                     width: '100%',
