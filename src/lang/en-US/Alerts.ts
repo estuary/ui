@@ -2,7 +2,7 @@ export const Alerts: Record<string, string> = {
     'alerts.config.title': `Alerts`,
     'alerts.config.message': `Below are tasks with an active alert. If you have taken steps to fix they may take some time to clear.`,
     'alerts.config.header': `Organization Notifications`,
-    'alerts.config.cta.addAlertMethod': `Configure Notifications`,
+    'alerts.config.cta.addAlertMethod': `Create Notifications`,
 
     'alerts.config.dialog.cta.addSubscriber': `Add Recipient`,
     'alerts.config.dialog.cta.deleteAll': `Delete Prefix Alerts`,
@@ -17,7 +17,7 @@ export const Alerts: Record<string, string> = {
     'alerts.config.dialog.generate.description': `Choose where you'd like notifications to be sent. Email addresses can be for mailing lists, {docLink}, or individual users.`,
     'alerts.config.dialog.generate.description.docLink': `Slack channels`,
     'alerts.config.dialog.generate.description.docPath': `https://slack.com/intl/en-au/help/articles/206819278-Send-emails-to-Slack`,
-    'alerts.config.dialog.generate.header': `Configure Notification Methods`,
+    'alerts.config.dialog.generate.header': `Create Notification Methods`,
     'alerts.config.dialog.prefixField.duplicate': `One or more subscriptions already exist for this prefix. To edit, please return to the Organization Notifications table and click the Edit button on the corresponding row.`,
     'alerts.config.dialog.update.description': `Choose the notifications you'd like to receive.`,
     'alerts.config.dialog.update.header': `Update Notification Methods`,
@@ -25,7 +25,7 @@ export const Alerts: Record<string, string> = {
     'alerts.config.table.aria.label': `Organization Notifications Table`,
     'alerts.config.table.filterLabel': `Filter by Prefix or Email`,
     'alerts.config.table.noContent.header': `No subscriptions found.`,
-    'alerts.config.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Configure Notifications" above to create a subscription.`,
+    'alerts.config.table.noContent.message': `To begin receiving email notifications for a prefix you admin, click "Create Notifications" above to create a subscription.`,
     'alerts.config.table.label.alertMethod': `Notification Method`,
 
     'alerts.overview.title.fetching': `Fetching active alerts...`,
