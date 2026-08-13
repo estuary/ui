@@ -15,14 +15,9 @@ import {
     useShardDetail_setShards,
 } from 'src/stores/ShardDetail/hooks';
 
-export const TASK_NAME = 'acmeco/recruiting/hello-world';
+const TASK_NAME = 'acmeco/recruiting/hello-world';
 
-export type ShardStatusCode =
-    | 'FAILED'
-    | 'PRIMARY'
-    | 'IDLE'
-    | 'STANDBY'
-    | 'BACKFILL';
+type ShardStatusCode = 'FAILED' | 'PRIMARY' | 'IDLE' | 'STANDBY' | 'BACKFILL';
 
 // Only the fields `getEverythingForDictionary` (src/stores/ShardDetail/Store.ts)
 // actually reads to color-code a shard — real `Shard` objects carry far more
