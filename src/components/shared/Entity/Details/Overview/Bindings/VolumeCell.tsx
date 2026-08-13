@@ -25,6 +25,23 @@ const barSx = {
     overflow: 'hidden',
 };
 
+// formatBytes always renders 2 fraction digits ("1.20 GB", "854.00 MB"), but
+// the unit segment's width still shifts the digits left/right between rows.
+// Splitting the digits from the unit and right-aligning the digits in a fixed
+// box keeps the decimal point lined up vertically down the column, the way
+// Vercel's numeric table columns do.
+//
+// A plain split on the space `formatBytes` (via `prettyBytes`) always emits
+// between the number and unit — verified against the library's default
+// `space: true` behaviour, which this call never overrides — rather than a
+// regex re-deriving a shape the string is already guaranteed to have.
+function splitFormattedBytes(formatted: string): [string, string] {
+    const spaceIndex = formatted.indexOf(' ');
+    return spaceIndex === -1
+        ? [formatted, '']
+        : [formatted.slice(0, spaceIndex), formatted.slice(spaceIndex + 1)];
+}
+
 interface Props {
     bytes: number;
     // The selected range is still loading, so this binding's total for it is not
@@ -72,6 +89,8 @@ function VolumeCell({ bytes, loading, maxBytes, totalBytes }: Props) {
 
     const shareOfTotal = totalBytes === 0 ? 0 : bytes / totalBytes;
 
+    const [digits, unit] = splitFormattedBytes(formatBytes(bytes));
+
     return (
         <TableCell align="right" sx={{ minWidth: 124 }}>
             <Tooltip
@@ -105,10 +124,38 @@ function VolumeCell({ bytes, loading, maxBytes, totalBytes }: Props) {
                                 bytes === 0
                                     ? diminishedTextColor[theme.palette.mode]
                                     : undefined,
+                            display: 'flex',
+                            justifyContent: 'flex-end',
                             whiteSpace: 'nowrap',
                         }}
                     >
-                        {formatBytes(bytes)}
+                        <Box
+                            component="span"
+                            sx={{
+                                fontVariantNumeric: 'tabular-nums',
+                                minWidth: 48,
+                                textAlign: 'right',
+                            }}
+                        >
+                            {digits}
+                        </Box>
+
+                        <Box
+                            component="span"
+                            sx={{
+                                color:
+                                    bytes === 0
+                                        ? undefined
+                                        : diminishedTextColor[
+                                              theme.palette.mode
+                                          ],
+                                minWidth: 30,
+                                pl: 0.5,
+                                textAlign: 'left',
+                            }}
+                        >
+                            {unit}
+                        </Box>
                     </Typography>
 
                     <Box
@@ -119,9 +166,13 @@ function VolumeCell({ bytes, loading, maxBytes, totalBytes }: Props) {
                     >
                         <Box
                             sx={{
-                                backgroundColor: theme.palette.primary.main,
+                                backgroundColor:
+                                    bytes === 0
+                                        ? 'transparent'
+                                        : theme.palette.primary.main,
                                 borderRadius: 1,
                                 height: '100%',
+                                transition: 'width 0.2s ease-out',
                                 width: `${percentOfMax}%`,
                             }}
                         />

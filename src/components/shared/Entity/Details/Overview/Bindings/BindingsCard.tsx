@@ -1,3 +1,4 @@
+import type { Theme } from '@mui/material';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 
@@ -9,12 +10,23 @@ import { getSearchLabelId } from 'src/components/shared/Entity/Details/Overview/
 import { useBindingsTableState } from 'src/components/shared/Entity/Details/Overview/Bindings/useBindingsTableState';
 import Error from 'src/components/shared/Error';
 import { useEntityType } from 'src/context/EntityContext';
+import { defaultOutline } from 'src/context/Theme';
 
 interface Props {
     bindings: BindingRow[];
     error?: any;
     // The window the figures cover, stated by the chip beside the heading.
     range: DataByHourRange;
+    // The spec itself hasn't resolved yet, so even names, statuses and counts
+    // are unknown — distinct from `volumesLoading`, which only means the
+    // numeric columns are still filling in on top of a spec already known.
+    specLoading: boolean;
+    // Whether the task's own shards are currently reporting errors — the same
+    // signal the page's header status pill is built from. Surfaced as a chip
+    // in the card header: a task-wide fact, not a per-binding one, so it
+    // shouldn't repaint every enabled row identically and erase the one
+    // distinction the status column exists to make.
+    taskHasError: boolean;
     // Volumes for the selected range are in flight. Names and statuses come from
     // the spec and stay accurate throughout.
     volumesLoading: boolean;
@@ -28,7 +40,14 @@ interface Props {
  * disagree with the page about card props, header or row layout — which had
  * already happened once and gave two false readings during review.
  */
-function BindingsCard({ bindings, error, range, volumesLoading }: Props) {
+function BindingsCard({
+    bindings,
+    error,
+    range,
+    specLoading,
+    taskHasError,
+    volumesLoading,
+}: Props) {
     const entityType = useEntityType();
 
     const {
@@ -51,12 +70,23 @@ function BindingsCard({ bindings, error, range, volumesLoading }: Props) {
             // minWidth and the card refuses to narrow, spilling the overflow
             // onto the page rather than into the table's scroll container.
             disableMinWidth
+            // CardWrapper only borders itself in light mode — in dark mode it
+            // relies on a tonal wash to separate from the page, which is too
+            // faint for a dense data table sitting on it: rows and header read
+            // as floating rather than contained. Give this card an explicit
+            // hairline in both modes so its edge stays legible next to a wash
+            // that changes intensity elsewhere on the page.
+            sx={{
+                border: (theme: Theme) => defaultOutline[theme.palette.mode],
+            }}
             message={
                 <BindingsCardHeader
                     count={counts.all}
                     entityType={entityType}
-                    loading={volumesLoading}
+                    loading={specLoading || volumesLoading}
                     range={range}
+                    rows={sortedRows}
+                    taskHasError={taskHasError}
                     totalBytes={totalBytes}
                 />
             }
@@ -72,8 +102,10 @@ function BindingsCard({ bindings, error, range, volumesLoading }: Props) {
 
             <BindingsTable
                 entityType={entityType}
+                isFiltered={filter.query !== '' || filter.status !== 'all'}
                 maxBytes={maxBytes}
                 totalBytes={totalBytes}
+                onClearFilter={handlers.resetFilter}
                 onPageChange={handlers.page}
                 onRowsPerPageChange={handlers.rowsPerPage}
                 onSortChange={handlers.sort}
@@ -82,6 +114,7 @@ function BindingsCard({ bindings, error, range, volumesLoading }: Props) {
                 rowsPerPage={rowsPerPage}
                 sortDirection={sortDirection}
                 sortKey={sortKey}
+                specLoading={specLoading}
                 totalBindings={counts.all}
                 visibleRows={visibleRows}
                 volumesLoading={volumesLoading}

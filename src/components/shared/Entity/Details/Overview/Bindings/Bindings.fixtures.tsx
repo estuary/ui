@@ -167,6 +167,12 @@ interface HarnessProps {
     // Renders the state the table is in between selecting a range and its
     // volumes arriving.
     volumesLoading?: boolean;
+    // Renders the placeholder rows shown before the spec itself has resolved.
+    specLoading?: boolean;
+    // Renders the state where the task's own shards are reporting errors —
+    // every enabled binding's Status cell shows the red "Error" pill rather
+    // than green/amber. See StatusCell.
+    taskHasError?: boolean;
 }
 
 // Renders the production `BindingsCard` itself — same card props, header, state
@@ -176,6 +182,8 @@ export function BindingsHarness({
     bindings,
     entityType,
     range,
+    specLoading = false,
+    taskHasError = false,
     volumesLoading = false,
 }: HarnessProps) {
     const storeRange = useDetailsUsageStore((state) => state.range);
@@ -185,6 +193,8 @@ export function BindingsHarness({
             <BindingsCard
                 bindings={bindings}
                 range={range ?? storeRange}
+                specLoading={specLoading}
+                taskHasError={taskHasError}
                 volumesLoading={volumesLoading}
             />
         </EntityContextProvider>

@@ -26,6 +26,10 @@ interface BindingsTableState {
             update: (previous: BindingsFilterState) => BindingsFilterState
         ) => void;
         page: (next: number) => void;
+        // Clears the search query and status chip in one step, for the empty
+        // state's "clear filter" action — resetting each separately would
+        // re-filter (and re-render the empty state) in between.
+        resetFilter: () => void;
         rowsPerPage: (next: number) => void;
         sort: (nextKey: BindingSortKey) => void;
     };
@@ -94,6 +98,10 @@ export function useBindingsTableState(
                 setPage(0);
             },
             page: setPage,
+            resetFilter: () => {
+                setFilter(DEFAULT_FILTER);
+                setPage(0);
+            },
             rowsPerPage: (next: number) => {
                 setRowsPerPage(next);
                 setPage(0);

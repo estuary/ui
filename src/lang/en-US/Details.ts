@@ -107,7 +107,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.elapsed.minutes': `{count, plural, one {minute} other {minutes}}`,
     'detailsPanel.elapsed.hours': `{count, plural, one {hour} other {hours}}`,
     'detailsPanel.elapsed.days': `{count, plural, one {day} other {days}}`,
-    'detailsPanel.elapsed.ago': `{elapsed} ago`,
+    'detailsPanel.elapsed.ago.suffix': `ago`,
 
     // Bindings table. The card heading and the table's accessible name both come
     // from `terms.bindings`, and `{unit}` below from `terms.bindings.plural`, so
@@ -119,14 +119,23 @@ export const Details: Record<string, string> = {
     'detailsPanel.bindings.subtitle.read': `{count} {unit} · {volume} read`,
     'detailsPanel.bindings.search.capture': `Filter by source stream or collection`,
     'detailsPanel.bindings.search.materialization': `Filter by collection`,
+    'detailsPanel.bindings.search.clear': `Clear search`,
     'detailsPanel.bindings.filter.all': `All`,
     'detailsPanel.bindings.rowsPerPage': `Bindings per page`,
     'detailsPanel.bindings.empty': `This task has no bindings.`,
     'detailsPanel.bindings.noMatches': `No bindings match this filter.`,
+    'detailsPanel.bindings.clearFilter': `Clear filter`,
     // "Enabled" rather than "Active": the flag only says the binding is not
     // switched off, which is not a claim that data is flowing.
     'detailsPanel.bindings.status.enabled': `Enabled`,
     'detailsPanel.bindings.status.disabled': `Disabled`,
+    // Enabled, but nothing moved through it in the selected range, and the
+    // connector itself isn't reporting errors — a benign quiet, not a failure.
+    'detailsPanel.bindings.status.noData': `No data`,
+    'detailsPanel.bindings.status.noData.tooltip': `Enabled, but no documents were captured in the selected range.`,
+    // The connector's shards are actively reporting errors. Task-wide, so it
+    // shows once as a chip beside the heading rather than on every row.
+    'detailsPanel.bindings.taskError': `Connector error`,
     'detailsPanel.bindings.column.sourceStream': `Source stream`,
     'detailsPanel.bindings.column.collection': `Collection`,
     'detailsPanel.bindings.column.status': `Status`,
@@ -134,6 +143,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.bindings.column.dataWritten': `Data written`,
     'detailsPanel.bindings.column.dataRead': `Data read`,
     'detailsPanel.bindings.column.lastData': `Last data`,
+    'detailsPanel.bindings.download': `Download CSV`,
     // The bar is relative to the busiest binding, which is good for comparing
     // rows but says nothing about how much of the task a row accounts for — so
     // the tooltip carries the share instead.

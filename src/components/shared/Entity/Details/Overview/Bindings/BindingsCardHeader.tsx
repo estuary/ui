@@ -1,12 +1,30 @@
+import type { Columns } from 'react-csv-downloader/dist/esm/lib/csv';
 import type { DataByHourRange } from 'src/components/graphs/types';
+import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 import type { Entity } from 'src/types';
 
-import { Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { useMemo } from 'react';
 
+import {
+    Chip,
+    IconButton,
+    Skeleton,
+    Stack,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@mui/material';
+
+import { Download } from 'iconoir-react';
+import CsvDownload from 'react-csv-downloader';
 import { useIntl } from 'react-intl';
 
 import RangeChip from 'src/components/shared/Entity/Details/Overview/RangeChip';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
+import {
+    generateFileName,
+    tableExportSeparator,
+} from 'src/components/tables/shared';
 import {
     cardHeaderSx_emphasized,
     diminishedTextColor,
@@ -15,11 +33,16 @@ import {
 interface Props {
     count: number;
     entityType: Entity;
-    // Volumes for the selected range are still loading, so the total below them
-    // is not known yet.
+    // Loading and empty both disable the download button: there is nothing
+    // meaningful to export yet, or nothing at all.
     loading: boolean;
-    // The chart's range, so the chip states the window these figures cover.
+    // The window the figures cover, so an export always matches what the
+    // header and table are currently showing.
     range: DataByHourRange;
+    rows: BindingRow[];
+    // Whether the task's own shards are currently reporting errors — a
+    // task-wide fact surfaced once here rather than repeated on every row.
+    taskHasError: boolean;
     totalBytes: number;
 }
 
@@ -35,10 +58,77 @@ function BindingsCardHeader({
     entityType,
     loading,
     range,
+    rows,
+    taskHasError,
     totalBytes,
 }: Props) {
     const intl = useIntl();
     const theme = useTheme();
+
+    const isCapture = entityType !== 'materialization';
+
+    // Mirrors the table's own columns, so the export matches what the card
+    // is currently showing rather than some other cut of the same rows.
+    const exportColumns = useMemo<Columns>(
+        () => [
+            ...(isCapture
+                ? [
+                      {
+                          id: 'sourceStream',
+                          displayName: intl.formatMessage({
+                              id: 'detailsPanel.bindings.column.sourceStream',
+                          }),
+                      },
+                  ]
+                : []),
+            {
+                id: 'collection',
+                displayName: intl.formatMessage({
+                    id: 'detailsPanel.bindings.column.collection',
+                }),
+            },
+            {
+                id: 'status',
+                displayName: intl.formatMessage({
+                    id: 'detailsPanel.bindings.column.status',
+                }),
+            },
+            {
+                id: 'docs',
+                displayName: intl.formatMessage({
+                    id: 'detailsPanel.bindings.column.docs',
+                }),
+            },
+            {
+                id: 'bytes',
+                displayName: intl.formatMessage({
+                    id: isCapture
+                        ? 'detailsPanel.bindings.column.dataWritten'
+                        : 'detailsPanel.bindings.column.dataRead',
+                }),
+            },
+            {
+                id: 'lastData',
+                displayName: intl.formatMessage({
+                    id: 'detailsPanel.bindings.column.lastData',
+                }),
+            },
+        ],
+        [intl, isCapture]
+    );
+
+    const exportData = useMemo(
+        () =>
+            rows.map((row) => ({
+                ...(isCapture ? { sourceStream: row.resourcePath } : {}),
+                collection: row.collection,
+                status: row.status,
+                docs: row.docs,
+                bytes: row.bytes,
+                lastData: row.lastPublishedAt ?? '',
+            })),
+        [isCapture, rows]
+    );
 
     return (
         <Stack
@@ -57,39 +147,81 @@ function BindingsCardHeader({
                 </Typography>
 
                 <RangeChip range={range} />
+
+                {taskHasError ? (
+                    <Chip
+                        color="error"
+                        label={intl.formatMessage({
+                            id: 'detailsPanel.bindings.taskError',
+                        })}
+                        size="small"
+                        variant="outlined"
+                    />
+                ) : null}
             </Stack>
 
-            <Typography
-                component="div"
-                sx={{
-                    color: diminishedTextColor[theme.palette.mode],
-                    fontSize: 13,
-                    fontWeight: 400,
-                }}
-            >
-                {loading ? (
-                    <Skeleton width={168} sx={{ display: 'inline-block' }} />
-                ) : (
-                    intl.formatMessage(
-                        {
-                            id:
-                                entityType === 'materialization'
-                                    ? 'detailsPanel.bindings.subtitle.read'
-                                    : 'detailsPanel.bindings.subtitle.written',
-                        },
-                        {
-                            count,
-                            // Composed rather than re-pluralised here, so the
-                            // word matches everywhere it appears in the app.
-                            unit: intl.formatMessage(
-                                { id: 'terms.bindings.plural' },
-                                { count }
-                            ),
-                            volume: formatBytes(totalBytes),
-                        }
-                    )
-                )}
-            </Typography>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
+                <Typography
+                    component="div"
+                    sx={{
+                        color: diminishedTextColor[theme.palette.mode],
+                        fontSize: 13,
+                        fontWeight: 400,
+                    }}
+                >
+                    {loading ? (
+                        <Skeleton
+                            width={168}
+                            sx={{ display: 'inline-block' }}
+                        />
+                    ) : (
+                        intl.formatMessage(
+                            {
+                                id:
+                                    entityType === 'materialization'
+                                        ? 'detailsPanel.bindings.subtitle.read'
+                                        : 'detailsPanel.bindings.subtitle.written',
+                            },
+                            {
+                                count,
+                                // Composed rather than re-pluralised here, so the
+                                // word matches everywhere it appears in the app.
+                                unit: intl.formatMessage(
+                                    { id: 'terms.bindings.plural' },
+                                    { count }
+                                ),
+                                volume: formatBytes(totalBytes),
+                            }
+                        )
+                    )}
+                </Typography>
+
+                <CsvDownload
+                    columns={exportColumns}
+                    datas={exportData}
+                    disabled={loading || rows.length === 0}
+                    filename={generateFileName('bindings')}
+                    separator={tableExportSeparator}
+                >
+                    <Tooltip
+                        title={intl.formatMessage({
+                            id: 'detailsPanel.bindings.download',
+                        })}
+                    >
+                        <span>
+                            <IconButton
+                                aria-label={intl.formatMessage({
+                                    id: 'detailsPanel.bindings.download',
+                                })}
+                                disabled={loading || rows.length === 0}
+                                size="small"
+                            >
+                                <Download height={16} width={16} />
+                            </IconButton>
+                        </span>
+                    </Tooltip>
+                </CsvDownload>
+            </Stack>
         </Stack>
     );
 }

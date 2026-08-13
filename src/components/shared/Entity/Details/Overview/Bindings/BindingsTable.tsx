@@ -1,3 +1,4 @@
+import type { SxProps, Theme } from '@mui/material';
 import type { MouseEvent } from 'react';
 import type {
     BindingRow,
@@ -5,10 +6,14 @@ import type {
 } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 import type { Entity, SortDirection } from 'src/types';
 
+import { useState } from 'react';
+
 import {
     Box,
+    Button,
     iconButtonClasses,
     Skeleton,
+    Stack,
     Table,
     TableBody,
     TableCell,
@@ -23,7 +28,7 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { ArrowDown } from 'iconoir-react';
+import { ArrowDown, FilterListCircle, Search } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
 import LastDataCell from 'src/components/shared/Entity/Details/Overview/Bindings/LastDataCell';
@@ -36,7 +41,11 @@ import VolumeCell from 'src/components/shared/Entity/Details/Overview/Bindings/V
 import EntityNameDetailsLink from 'src/components/shared/Entity/EntityNameDetailsLink';
 import { formatDocs } from 'src/components/tables/cells/stats/shared';
 import TablePaginationActions from 'src/components/tables/PaginationActions';
-import { diminishedTextColor } from 'src/context/Theme';
+import {
+    diminishedTextColor,
+    doubleElevationHoverBackground,
+    getTableHeaderWithoutHeaderColor,
+} from 'src/context/Theme';
 import useDetailsNavigator from 'src/hooks/useDetailsNavigator';
 import { ENTITY_SETTINGS } from 'src/settings/entity';
 
@@ -116,6 +125,65 @@ const sortLabelSx = {
     },
 };
 
+// Row height: the global MuiTableCell override (Theme.tsx) only sets horizontal
+// padding, so `size="small"` alone left rows feeling cramped edge-to-edge but not
+// tall enough to click comfortably. A little vertical breathing room, plus outer
+// columns nudged to align with the card's own padding, without losing density.
+const bodyCellSx = {
+    py: 1.25,
+};
+
+// The selected row's first cell trades 2px of its left padding for a solid
+// accent border, so the border doesn't shove the cell's content sideways
+// relative to every other (unselected) row.
+const firstBodyCellSx = { ...bodyCellSx, pl: 2 };
+const firstBodyCellSelectedSx = { ...bodyCellSx, pl: '14px' };
+const lastBodyCellSx = { ...bodyCellSx, pr: 2 };
+
+// The first and last columns nudge their padding to align with the card's
+// own edge padding, everywhere a row of cells gets built from `columns`
+// (the header, and the loading skeleton) — real body rows use the selection-
+// aware variants above instead, since their first cell also has to account
+// for the selected border.
+const getEdgeCellSx = (
+    columnIndex: number,
+    columnCount: number
+): SxProps<Theme> => ({
+    ...(columnIndex === 0 && { pl: 2 }),
+    ...(columnIndex === columnCount - 1 && { pr: 2 }),
+});
+
+// MUI's default `hover` prop uses `action.hover`, a near-invisible tint in dark
+// mode. Swap in the same neutral hover surface used by DataGrid list views
+// (`doubleElevationHoverBackground`) so a row's hover state actually reads, and
+// give it a quick transition instead of the default instant snap.
+//
+// The row carries `cursor: pointer` because the *entire* row navigates (see
+// the TableRow's onClick below) — matching Vercel's dashboard, where any
+// click on a table row opens it, not just a click precisely on the link text.
+//
+// A row that was clicked into stays visually "current" after the pointer
+// leaves — `sessionStorage`-backed, so it survives the round trip to the
+// collection's own details page and back, the way a Vercel dashboard row
+// keeps a distinct highlight once selected rather than only on hover.
+const getRowSx = (selected: boolean): SxProps<Theme> => ({
+    'cursor': 'pointer',
+    'transition': (theme) =>
+        theme.transitions.create('background-color', {
+            duration: theme.transitions.duration.shortest,
+        }),
+    ...(selected && {
+        backgroundColor: (theme) => theme.palette.primary.alpha_08,
+        borderLeft: (theme) => `2px solid ${theme.palette.primary.main}`,
+    }),
+    '&:hover': {
+        backgroundColor: (theme) =>
+            selected
+                ? theme.palette.primary.alpha_12
+                : doubleElevationHoverBackground[theme.palette.mode],
+    },
+});
+
 // The shared pagination actions are sized for full-page tables. Inside a card
 // they crowd the bottom edge, so tighten the icon buttons and keep a little
 // breathing room beneath the row.
@@ -139,7 +207,14 @@ const getBindingColumns = (entityType: Entity) =>
 
 interface Props {
     entityType: Entity;
+    // Whether the toolbar's search or status chip is narrowing the set, so the
+    // empty state can tell "your filter matched nothing" apart from "this task
+    // truly has no bindings" and offer a way out of the former.
+    isFiltered: boolean;
     maxBytes: number;
+    // Resets the search query and status chip. Only reachable from the empty
+    // state when `isFiltered` is true.
+    onClearFilter: () => void;
     onPageChange: (page: number) => void;
     onRowsPerPageChange: (rowsPerPage: number) => void;
     onSortChange: (sortKey: BindingSortKey) => void;
@@ -160,11 +235,23 @@ interface Props {
     // the spec and stay accurate throughout, so only the two numeric columns go
     // to a loading state.
     volumesLoading: boolean;
+    // The spec itself hasn't resolved yet, so even names and statuses are
+    // unknown — every column gets a placeholder row rather than rendering the
+    // "no bindings" empty state, which would otherwise flash before the real
+    // rows (or the real empty state) arrives.
+    specLoading: boolean;
 }
+
+// Placeholder rows shown while the spec is still resolving. A fixed count
+// reads as "still loading" rather than committing to a real row count before
+// one is known.
+const SKELETON_ROW_COUNT = 5;
 
 function BindingsTable({
     entityType,
+    isFiltered,
     maxBytes,
+    onClearFilter,
     onPageChange,
     onRowsPerPageChange,
     onSortChange,
@@ -173,6 +260,7 @@ function BindingsTable({
     rowsPerPage,
     sortDirection,
     sortKey,
+    specLoading,
     totalBindings,
     totalBytes,
     visibleRows,
@@ -181,9 +269,21 @@ function BindingsTable({
     const intl = useIntl();
     const theme = useTheme();
 
-    const { generatePath } = useDetailsNavigator(
+    const { generatePath, navigateToPath } = useDetailsNavigator(
         ENTITY_SETTINGS.collection.routes.details
     );
+
+    // Scoped per task page, so switching tasks doesn't carry over a highlight
+    // that belongs to a different task's binding list.
+    const selectionStorageKey = `estuary.bindings.selectedRow:${window.location.pathname}`;
+    const [selectedCollection, setSelectedCollection] = useState<string | null>(
+        () => sessionStorage.getItem(selectionStorageKey)
+    );
+
+    const selectRow = (collection: string) => {
+        setSelectedCollection(collection);
+        sessionStorage.setItem(selectionStorageKey, collection);
+    };
 
     const columns = getBindingColumns(entityType);
     const isCapture = entityType !== 'materialization';
@@ -206,11 +306,20 @@ function BindingsTable({
                         id: 'terms.bindings',
                     })}
                     size="small"
-                    sx={{ minWidth: isCapture ? 840 : 700 }}
+                    sx={{
+                        minWidth: isCapture ? 840 : 700,
+                        // Gives the header its own solid surface instead of
+                        // letting the card's translucent wash show through —
+                        // the same treatment other tables in the app use so
+                        // the header reads as a fixed baseline rather than
+                        // fading into the background, which matters more in
+                        // dark mode where the wash alone reads flat.
+                        ...getTableHeaderWithoutHeaderColor(),
+                    }}
                 >
                     <TableHead>
                         <TableRow>
-                            {columns.map((column) => (
+                            {columns.map((column, columnIndex) => (
                                 <TableCell
                                     key={column.headerIntlKey}
                                     align={column.align}
@@ -219,7 +328,13 @@ function BindingsTable({
                                             ? sortDirection
                                             : false
                                     }
-                                    sx={{ whiteSpace: 'nowrap' }}
+                                    sx={{
+                                        whiteSpace: 'nowrap',
+                                        ...getEdgeCellSx(
+                                            columnIndex,
+                                            columns.length
+                                        ),
+                                    }}
                                 >
                                     {column.sortKey ? (
                                         <TableSortLabel
@@ -252,98 +367,226 @@ function BindingsTable({
                     </TableHead>
 
                     <TableBody>
-                        {visibleRows.length === 0 ? (
+                        {specLoading ? (
+                            Array.from({ length: SKELETON_ROW_COUNT }).map(
+                                (_, rowIndex) => (
+                                    <TableRow
+                                        key={`bindings-skeleton-${rowIndex}`}
+                                    >
+                                        {columns.map((column, columnIndex) => (
+                                            <TableCell
+                                                key={column.headerIntlKey}
+                                                align={column.align}
+                                                sx={{
+                                                    ...bodyCellSx,
+                                                    ...getEdgeCellSx(
+                                                        columnIndex,
+                                                        columns.length
+                                                    ),
+                                                }}
+                                            >
+                                                <Skeleton
+                                                    sx={{
+                                                        display: 'inline-block',
+                                                    }}
+                                                    width={
+                                                        columnIndex === 0
+                                                            ? 160
+                                                            : column.align ===
+                                                                'right'
+                                                              ? 48
+                                                              : 96
+                                                    }
+                                                />
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                )
+                            )
+                        ) : visibleRows.length === 0 ? (
                             <TableRow>
                                 {/* Tracks the column count, which differs by
                                     entity type: 6 capture, 5 materialization. */}
                                 <TableCell
                                     align="center"
                                     colSpan={columns.length}
-                                    sx={{ py: 4 }}
+                                    sx={{ py: 6, px: 2 }}
                                 >
-                                    <Typography
-                                        component="div"
+                                    <Stack
+                                        alignItems="center"
+                                        spacing={1}
                                         sx={{
                                             color: diminishedTextColor[
                                                 theme.palette.mode
                                             ],
                                         }}
                                     >
-                                        {intl.formatMessage({
-                                            id:
-                                                totalBindings === 0
-                                                    ? 'detailsPanel.bindings.empty'
-                                                    : 'detailsPanel.bindings.noMatches',
-                                        })}
-                                    </Typography>
+                                        {totalBindings === 0 ? (
+                                            <FilterListCircle
+                                                height={28}
+                                                width={28}
+                                                strokeWidth={1.5}
+                                            />
+                                        ) : (
+                                            <Search
+                                                height={28}
+                                                width={28}
+                                                strokeWidth={1.5}
+                                            />
+                                        )}
+
+                                        <Typography component="div">
+                                            {intl.formatMessage({
+                                                id:
+                                                    totalBindings === 0
+                                                        ? 'detailsPanel.bindings.empty'
+                                                        : 'detailsPanel.bindings.noMatches',
+                                            })}
+                                        </Typography>
+
+                                        {isFiltered ? (
+                                            <Button
+                                                onClick={onClearFilter}
+                                                size="small"
+                                                variant="text"
+                                            >
+                                                {intl.formatMessage({
+                                                    id: 'detailsPanel.bindings.clearFilter',
+                                                })}
+                                            </Button>
+                                        ) : null}
+                                    </Stack>
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            visibleRows.map((row) => (
-                                <TableRow
-                                    key={`${row.collection}-${row.index}`}
-                                    hover
-                                >
-                                    {isCapture ? (
+                            visibleRows.map((row) => {
+                                const isSelected =
+                                    row.collection === selectedCollection;
+                                const firstCellSx = isSelected
+                                    ? firstBodyCellSelectedSx
+                                    : firstBodyCellSx;
+
+                                return (
+                                    <TableRow
+                                        key={`${row.collection}-${row.index}`}
+                                        onClick={(event) => {
+                                            // The whole row is the link, matching
+                                            // the cursor/hover affordance it
+                                            // carries — not just the collection
+                                            // name text within it, and not just
+                                            // the link's own glyphs within that
+                                            // cell (its cell has no onClick of
+                                            // its own, so its padding falls
+                                            // through to here like every other
+                                            // cell's does).
+                                            selectRow(row.collection);
+
+                                            // The collection-name cell renders a
+                                            // real anchor (EntityNameDetailsLink),
+                                            // which already navigates on its own
+                                            // via href. Let that native/router
+                                            // navigation happen instead of also
+                                            // firing navigateToPath here, which
+                                            // would push a second, redundant
+                                            // history entry to the same
+                                            // destination.
+                                            if (
+                                                (
+                                                    event.target as HTMLElement
+                                                ).closest('a')
+                                            ) {
+                                                return;
+                                            }
+
+                                            navigateToPath({
+                                                catalog_name: row.collection,
+                                            });
+                                        }}
+                                        sx={getRowSx(isSelected)}
+                                    >
+                                        {isCapture ? (
+                                            <TableCell
+                                                sx={{
+                                                    ...firstCellSx,
+                                                    fontFamily: 'monospace',
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                {row.resourcePath}
+                                            </TableCell>
+                                        ) : null}
+
                                         <TableCell
                                             sx={{
-                                                fontFamily: 'monospace',
+                                                ...(isCapture
+                                                    ? bodyCellSx
+                                                    : firstCellSx),
                                                 whiteSpace: 'nowrap',
                                             }}
                                         >
-                                            {row.resourcePath}
-                                        </TableCell>
-                                    ) : null}
-
-                                    <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                                        <EntityNameDetailsLink
-                                            name={row.collection}
-                                            path={generatePath({
-                                                catalog_name: row.collection,
-                                            })}
-                                        />
-                                    </TableCell>
-
-                                    <StatusCell status={row.status} />
-
-                                    <TableCell
-                                        align="right"
-                                        sx={{
-                                            color:
-                                                row.docs === 0 &&
-                                                !volumesLoading
-                                                    ? diminishedTextColor[
-                                                          theme.palette.mode
-                                                      ]
-                                                    : undefined,
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        {volumesLoading ? (
-                                            <Skeleton
-                                                width={48}
-                                                sx={{
-                                                    display: 'inline-block',
-                                                }}
+                                            <EntityNameDetailsLink
+                                                name={row.collection}
+                                                path={generatePath({
+                                                    catalog_name:
+                                                        row.collection,
+                                                })}
+                                                plain
                                             />
-                                        ) : (
-                                            formatDocs(row.docs)
-                                        )}
-                                    </TableCell>
+                                        </TableCell>
 
-                                    <VolumeCell
-                                        bytes={row.bytes}
-                                        loading={volumesLoading}
-                                        maxBytes={maxBytes}
-                                        totalBytes={totalBytes}
-                                    />
+                                        <StatusCell
+                                            status={row.status}
+                                            hasVolume={
+                                                volumesLoading
+                                                    ? undefined
+                                                    : row.docs > 0 ||
+                                                      row.bytes > 0
+                                            }
+                                        />
 
-                                    <LastDataCell
-                                        lastPublishedAt={row.lastPublishedAt}
-                                        loading={volumesLoading}
-                                    />
-                                </TableRow>
-                            ))
+                                        <TableCell
+                                            align="right"
+                                            sx={{
+                                                ...bodyCellSx,
+                                                color:
+                                                    row.docs === 0 &&
+                                                    !volumesLoading
+                                                        ? diminishedTextColor[
+                                                              theme.palette.mode
+                                                          ]
+                                                        : undefined,
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            {volumesLoading ? (
+                                                <Skeleton
+                                                    width={48}
+                                                    sx={{
+                                                        display: 'inline-block',
+                                                    }}
+                                                />
+                                            ) : (
+                                                formatDocs(row.docs)
+                                            )}
+                                        </TableCell>
+
+                                        <VolumeCell
+                                            bytes={row.bytes}
+                                            loading={volumesLoading}
+                                            maxBytes={maxBytes}
+                                            totalBytes={totalBytes}
+                                        />
+
+                                        <LastDataCell
+                                            lastPublishedAt={
+                                                row.lastPublishedAt
+                                            }
+                                            loading={volumesLoading}
+                                            sx={lastBodyCellSx}
+                                        />
+                                    </TableRow>
+                                );
+                            })
                         )}
                     </TableBody>
                 </Table>
