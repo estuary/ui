@@ -21,12 +21,6 @@ interface Props {
     // are unknown — distinct from `volumesLoading`, which only means the
     // numeric columns are still filling in on top of a spec already known.
     specLoading: boolean;
-    // Whether the task's own shards are currently reporting errors — the same
-    // signal the page's header status pill is built from. Surfaced as a chip
-    // in the card header: a task-wide fact, not a per-binding one, so it
-    // shouldn't repaint every enabled row identically and erase the one
-    // distinction the status column exists to make.
-    taskHasError: boolean;
     // Volumes for the selected range are in flight. Names and statuses come from
     // the spec and stay accurate throughout.
     volumesLoading: boolean;
@@ -45,7 +39,6 @@ function BindingsCard({
     error,
     range,
     specLoading,
-    taskHasError,
     volumesLoading,
 }: Props) {
     const entityType = useEntityType();
@@ -86,7 +79,6 @@ function BindingsCard({
                     loading={specLoading || volumesLoading}
                     range={range}
                     rows={sortedRows}
-                    taskHasError={taskHasError}
                     totalBytes={totalBytes}
                 />
             }

@@ -138,19 +138,3 @@ export const VolumesLoading: Story = {
         />
     ),
 };
-
-/**
- * The connector's shards are reporting errors. A "Connector error" chip
- * appears in the card header — the failure is task-wide, not a property of
- * any one row — while each row's own status pill keeps showing whether that
- * particular binding actually moved data in the range.
- */
-export const TaskErroring: Story = {
-    render: () => (
-        <BindingsHarness
-            bindings={buildCaptureRows(CAPTURE_STREAMS)}
-            entityType="capture"
-            taskHasError
-        />
-    ),
-};

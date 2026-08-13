@@ -17,7 +17,7 @@ import type {
 import { getCollectionName } from 'src/utils/workflow-utils';
 
 export const BINDINGS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
-export const DEFAULT_BINDINGS_PER_PAGE = 25;
+export const DEFAULT_BINDINGS_PER_PAGE = 10;
 
 // A capture's rows carry a source stream as well as a collection, so its search
 // covers both. Read from here rather than branching at each call site: the

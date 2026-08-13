@@ -4,7 +4,6 @@ import BindingsCard from 'src/components/shared/Entity/Details/Overview/Bindings
 import { useEntityType } from 'src/context/EntityContext';
 import useBindings from 'src/hooks/details/useBindings';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
-import { useShardDetail_readDictionary } from 'src/stores/ShardDetail/hooks';
 
 interface Props {
     entityName: string;
@@ -33,20 +32,12 @@ function Bindings({ entityName, latestLiveSpec }: Props) {
         latestLiveSpec
     );
 
-    // The same signal the page's own header status pill is built from (see
-    // `EntityStatus`), read here so the bindings table's Status column can
-    // show a real failure instead of just a duller "enabled" — see StatusCell.
-    const { shardsHaveErrors } = useShardDetail_readDictionary(entityName, [
-        entityType,
-    ]);
-
     return (
         <BindingsCard
             bindings={bindings}
             error={error}
             range={range}
             specLoading={!latestLiveSpec}
-            taskHasError={shardsHaveErrors}
             volumesLoading={statsLoading}
         />
     );

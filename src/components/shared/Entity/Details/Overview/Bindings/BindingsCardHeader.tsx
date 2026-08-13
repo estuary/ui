@@ -6,7 +6,6 @@ import type { Entity } from 'src/types';
 import { useMemo } from 'react';
 
 import {
-    Chip,
     IconButton,
     Skeleton,
     Stack,
@@ -40,9 +39,6 @@ interface Props {
     // header and table are currently showing.
     range: DataByHourRange;
     rows: BindingRow[];
-    // Whether the task's own shards are currently reporting errors — a
-    // task-wide fact surfaced once here rather than repeated on every row.
-    taskHasError: boolean;
     totalBytes: number;
 }
 
@@ -59,7 +55,6 @@ function BindingsCardHeader({
     loading,
     range,
     rows,
-    taskHasError,
     totalBytes,
 }: Props) {
     const intl = useIntl();
@@ -147,17 +142,6 @@ function BindingsCardHeader({
                 </Typography>
 
                 <RangeChip range={range} />
-
-                {taskHasError ? (
-                    <Chip
-                        color="error"
-                        label={intl.formatMessage({
-                            id: 'detailsPanel.bindings.taskError',
-                        })}
-                        size="small"
-                        variant="outlined"
-                    />
-                ) : null}
             </Stack>
 
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>

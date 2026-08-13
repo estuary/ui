@@ -133,9 +133,6 @@ export const Details: Record<string, string> = {
     // connector itself isn't reporting errors — a benign quiet, not a failure.
     'detailsPanel.bindings.status.noData': `No data`,
     'detailsPanel.bindings.status.noData.tooltip': `Enabled, but no documents were captured in the selected range.`,
-    // The connector's shards are actively reporting errors. Task-wide, so it
-    // shows once as a chip beside the heading rather than on every row.
-    'detailsPanel.bindings.taskError': `Connector error`,
     'detailsPanel.bindings.column.sourceStream': `Source stream`,
     'detailsPanel.bindings.column.collection': `Collection`,
     'detailsPanel.bindings.column.status': `Status`,
