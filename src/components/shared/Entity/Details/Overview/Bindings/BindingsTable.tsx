@@ -6,8 +6,6 @@ import type {
 } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 import type { Entity, SortDirection } from 'src/types';
 
-import { useState } from 'react';
-
 import {
     Box,
     Button,
@@ -133,18 +131,12 @@ const bodyCellSx = {
     py: 1.25,
 };
 
-// The selected row's first cell trades 2px of its left padding for a solid
-// accent border, so the border doesn't shove the cell's content sideways
-// relative to every other (unselected) row.
 const firstBodyCellSx = { ...bodyCellSx, pl: 2 };
-const firstBodyCellSelectedSx = { ...bodyCellSx, pl: '14px' };
 const lastBodyCellSx = { ...bodyCellSx, pr: 2 };
 
 // The first and last columns nudge their padding to align with the card's
-// own edge padding, everywhere a row of cells gets built from `columns`
-// (the header, and the loading skeleton) — real body rows use the selection-
-// aware variants above instead, since their first cell also has to account
-// for the selected border.
+// own edge padding, everywhere a row of cells gets built from `columns` — the
+// header, the loading skeleton, and real body rows alike.
 const getEdgeCellSx = (
     columnIndex: number,
     columnCount: number
@@ -161,28 +153,17 @@ const getEdgeCellSx = (
 // The row carries `cursor: pointer` because the *entire* row navigates (see
 // the TableRow's onClick below) — matching Vercel's dashboard, where any
 // click on a table row opens it, not just a click precisely on the link text.
-//
-// A row that was clicked into stays visually "current" after the pointer
-// leaves — `sessionStorage`-backed, so it survives the round trip to the
-// collection's own details page and back, the way a Vercel dashboard row
-// keeps a distinct highlight once selected rather than only on hover.
-const getRowSx = (selected: boolean): SxProps<Theme> => ({
+const rowSx: SxProps<Theme> = {
     'cursor': 'pointer',
     'transition': (theme) =>
         theme.transitions.create('background-color', {
             duration: theme.transitions.duration.shortest,
         }),
-    ...(selected && {
-        backgroundColor: (theme) => theme.palette.primary.alpha_08,
-        borderLeft: (theme) => `2px solid ${theme.palette.primary.main}`,
-    }),
     '&:hover': {
         backgroundColor: (theme) =>
-            selected
-                ? theme.palette.primary.alpha_12
-                : doubleElevationHoverBackground[theme.palette.mode],
+            doubleElevationHoverBackground[theme.palette.mode],
     },
-});
+};
 
 // The shared pagination actions are sized for full-page tables. Inside a card
 // they crowd the bottom edge, so tighten the icon buttons and keep a little
@@ -272,18 +253,6 @@ function BindingsTable({
     const { generatePath, navigateToPath } = useDetailsNavigator(
         ENTITY_SETTINGS.collection.routes.details
     );
-
-    // Scoped per task page, so switching tasks doesn't carry over a highlight
-    // that belongs to a different task's binding list.
-    const selectionStorageKey = `estuary.bindings.selectedRow:${window.location.pathname}`;
-    const [selectedCollection, setSelectedCollection] = useState<string | null>(
-        () => sessionStorage.getItem(selectionStorageKey)
-    );
-
-    const selectRow = (collection: string) => {
-        setSelectedCollection(collection);
-        sessionStorage.setItem(selectionStorageKey, collection);
-    };
 
     const columns = getBindingColumns(entityType);
     const isCapture = entityType !== 'materialization';
@@ -459,134 +428,111 @@ function BindingsTable({
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            visibleRows.map((row) => {
-                                const isSelected =
-                                    row.collection === selectedCollection;
-                                const firstCellSx = isSelected
-                                    ? firstBodyCellSelectedSx
-                                    : firstBodyCellSx;
+                            visibleRows.map((row) => (
+                                <TableRow
+                                    key={`${row.collection}-${row.index}`}
+                                    onClick={(event) => {
+                                        // The collection-name cell renders a
+                                        // real anchor (EntityNameDetailsLink),
+                                        // which already navigates on its own
+                                        // via href. Let that native/router
+                                        // navigation happen instead of also
+                                        // firing navigateToPath here, which
+                                        // would push a second, redundant
+                                        // history entry to the same
+                                        // destination.
+                                        if (
+                                            (
+                                                event.target as HTMLElement
+                                            ).closest('a')
+                                        ) {
+                                            return;
+                                        }
 
-                                return (
-                                    <TableRow
-                                        key={`${row.collection}-${row.index}`}
-                                        onClick={(event) => {
-                                            // The whole row is the link, matching
-                                            // the cursor/hover affordance it
-                                            // carries — not just the collection
-                                            // name text within it, and not just
-                                            // the link's own glyphs within that
-                                            // cell (its cell has no onClick of
-                                            // its own, so its padding falls
-                                            // through to here like every other
-                                            // cell's does).
-                                            selectRow(row.collection);
+                                        navigateToPath({
+                                            catalog_name: row.collection,
+                                        });
+                                    }}
+                                    sx={rowSx}
+                                >
+                                    {isCapture ? (
+                                        <TableCell
+                                            sx={{
+                                                ...firstBodyCellSx,
+                                                fontFamily: 'monospace',
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            {row.resourcePath}
+                                        </TableCell>
+                                    ) : null}
 
-                                            // The collection-name cell renders a
-                                            // real anchor (EntityNameDetailsLink),
-                                            // which already navigates on its own
-                                            // via href. Let that native/router
-                                            // navigation happen instead of also
-                                            // firing navigateToPath here, which
-                                            // would push a second, redundant
-                                            // history entry to the same
-                                            // destination.
-                                            if (
-                                                (
-                                                    event.target as HTMLElement
-                                                ).closest('a')
-                                            ) {
-                                                return;
-                                            }
-
-                                            navigateToPath({
-                                                catalog_name: row.collection,
-                                            });
+                                    <TableCell
+                                        sx={{
+                                            ...(isCapture
+                                                ? bodyCellSx
+                                                : firstBodyCellSx),
+                                            whiteSpace: 'nowrap',
                                         }}
-                                        sx={getRowSx(isSelected)}
                                     >
-                                        {isCapture ? (
-                                            <TableCell
+                                        <EntityNameDetailsLink
+                                            name={row.collection}
+                                            path={generatePath({
+                                                catalog_name: row.collection,
+                                            })}
+                                            plain
+                                        />
+                                    </TableCell>
+
+                                    <StatusCell
+                                        status={row.status}
+                                        hasVolume={
+                                            volumesLoading
+                                                ? undefined
+                                                : row.docs > 0 || row.bytes > 0
+                                        }
+                                    />
+
+                                    <TableCell
+                                        align="right"
+                                        sx={{
+                                            ...bodyCellSx,
+                                            color:
+                                                row.docs === 0 &&
+                                                !volumesLoading
+                                                    ? diminishedTextColor[
+                                                          theme.palette.mode
+                                                      ]
+                                                    : undefined,
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        {volumesLoading ? (
+                                            <Skeleton
+                                                width={48}
                                                 sx={{
-                                                    ...firstCellSx,
-                                                    fontFamily: 'monospace',
-                                                    whiteSpace: 'nowrap',
+                                                    display: 'inline-block',
                                                 }}
-                                            >
-                                                {row.resourcePath}
-                                            </TableCell>
-                                        ) : null}
-
-                                        <TableCell
-                                            sx={{
-                                                ...(isCapture
-                                                    ? bodyCellSx
-                                                    : firstCellSx),
-                                                whiteSpace: 'nowrap',
-                                            }}
-                                        >
-                                            <EntityNameDetailsLink
-                                                name={row.collection}
-                                                path={generatePath({
-                                                    catalog_name:
-                                                        row.collection,
-                                                })}
-                                                plain
                                             />
-                                        </TableCell>
+                                        ) : (
+                                            formatDocs(row.docs)
+                                        )}
+                                    </TableCell>
 
-                                        <StatusCell
-                                            status={row.status}
-                                            hasVolume={
-                                                volumesLoading
-                                                    ? undefined
-                                                    : row.docs > 0 ||
-                                                      row.bytes > 0
-                                            }
-                                        />
+                                    <VolumeCell
+                                        bytes={row.bytes}
+                                        loading={volumesLoading}
+                                        maxBytes={maxBytes}
+                                        totalBytes={totalBytes}
+                                    />
 
-                                        <TableCell
-                                            align="right"
-                                            sx={{
-                                                ...bodyCellSx,
-                                                color:
-                                                    row.docs === 0 &&
-                                                    !volumesLoading
-                                                        ? diminishedTextColor[
-                                                              theme.palette.mode
-                                                          ]
-                                                        : undefined,
-                                                whiteSpace: 'nowrap',
-                                            }}
-                                        >
-                                            {volumesLoading ? (
-                                                <Skeleton
-                                                    width={48}
-                                                    sx={{
-                                                        display: 'inline-block',
-                                                    }}
-                                                />
-                                            ) : (
-                                                formatDocs(row.docs)
-                                            )}
-                                        </TableCell>
-
-                                        <VolumeCell
-                                            bytes={row.bytes}
-                                            loading={volumesLoading}
-                                            maxBytes={maxBytes}
-                                            totalBytes={totalBytes}
-                                        />
-
-                                        <LastDataCell
-                                            lastPublishedAt={
-                                                row.lastPublishedAt
-                                            }
-                                            loading={volumesLoading}
-                                            sx={lastBodyCellSx}
-                                        />
-                                    </TableRow>
-                                );
-                            })
+                                    <LastDataCell
+                                        lastPublishedAt={row.lastPublishedAt}
+                                        loading={volumesLoading}
+                                        sx={lastBodyCellSx}
+                                    />
+                                </TableRow>
+                            ))
                         )}
                     </TableBody>
                 </Table>
