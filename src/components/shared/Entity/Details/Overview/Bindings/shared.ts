@@ -165,7 +165,7 @@ export const readVolume = (
  * question — but on their own page each is the honest answer to "when did this
  * binding last move anything", which is what the column asks.
  */
-export const readLastPublishedAt = (
+const readLastPublishedAt = (
     stats: CaptureBindingStats | MaterializeBindingStats | undefined,
     entityType: Entity
 ): string | null =>

@@ -190,7 +190,7 @@ export interface CatalogStats_LastPublished extends BaseCatalogStats {
     };
 }
 
-export interface DocsAndBytes {
+interface DocsAndBytes {
     docsTotal?: number;
     bytesTotal?: number;
 }

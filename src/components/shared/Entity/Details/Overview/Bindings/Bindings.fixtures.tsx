@@ -12,7 +12,7 @@ import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageSto
 // Stream names are the Greenhouse connector's public API surface; the tenant is
 // a placeholder and every volume is synthetic.
 
-export const PREFIX = 'acmeco/recruiting';
+const PREFIX = 'acmeco/recruiting';
 
 // One fixture binding, positional so the table below stays readable as a table:
 // stream name, bytes, docs, disabled.
@@ -143,7 +143,7 @@ export const buildMaterializationRows = (
         'materialization'
     );
 
-export const LARGE_TASK_BINDING_COUNT = 1200;
+const LARGE_TASK_BINDING_COUNT = 1200;
 
 export const buildLargeTaskStreams = (): StreamFixture[] =>
     Array.from({ length: LARGE_TASK_BINDING_COUNT }, (_value, index) => [
