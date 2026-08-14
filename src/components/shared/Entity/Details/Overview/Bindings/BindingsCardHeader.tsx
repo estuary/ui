@@ -138,7 +138,7 @@ function BindingsCardHeader({
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
                 <Typography component="span" sx={cardHeaderSx_emphasized}>
-                    {intl.formatMessage({ id: 'terms.bindings' })}
+                    {intl.formatMessage({ id: 'terms.collections' })}
                 </Typography>
 
                 <RangeChip range={range} />
@@ -171,7 +171,7 @@ function BindingsCardHeader({
                                 // Composed rather than re-pluralised here, so the
                                 // word matches everywhere it appears in the app.
                                 unit: intl.formatMessage(
-                                    { id: 'terms.bindings.plural' },
+                                    { id: 'terms.collections.plural' },
                                     { count }
                                 ),
                                 volume: formatBytes(totalBytes),
@@ -184,7 +184,7 @@ function BindingsCardHeader({
                     columns={exportColumns}
                     datas={exportData}
                     disabled={loading || rows.length === 0}
-                    filename={generateFileName('bindings')}
+                    filename={generateFileName('collections')}
                     separator={tableExportSeparator}
                 >
                     <Tooltip

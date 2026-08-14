@@ -26,17 +26,21 @@ function Bindings({ entityName, latestLiveSpec }: Props) {
     // these figures cover without the table having to thread it back up.
     const range = useDetailsUsageStore((state) => state.range);
 
-    const { bindings, error, statsLoading } = useBindings(
-        entityName,
-        entityType,
-        latestLiveSpec
-    );
+    const {
+        bindings,
+        bytesBehindLoading,
+        error,
+        secondsBehindLoading,
+        statsLoading,
+    } = useBindings(entityName, entityType, latestLiveSpec);
 
     return (
         <BindingsCard
             bindings={bindings}
+            bytesBehindLoading={bytesBehindLoading}
             error={error}
             range={range}
+            secondsBehindLoading={secondsBehindLoading}
             specLoading={!latestLiveSpec}
             volumesLoading={statsLoading}
         />

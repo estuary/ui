@@ -14,9 +14,14 @@ import { defaultOutline } from 'src/context/Theme';
 
 interface Props {
     bindings: BindingRow[];
+    // The lag columns' own loading state, independent of `volumesLoading` — see
+    // `useBindings`. Defaulted false by callers (Storybook fixtures) that don't
+    // model the backlog request at all, the same way `volumesLoading` is.
+    bytesBehindLoading?: boolean;
     error?: any;
     // The window the figures cover, stated by the chip beside the heading.
     range: DataByHourRange;
+    secondsBehindLoading?: boolean;
     // The spec itself hasn't resolved yet, so even names, statuses and counts
     // are unknown — distinct from `volumesLoading`, which only means the
     // numeric columns are still filling in on top of a spec already known.
@@ -36,8 +41,10 @@ interface Props {
  */
 function BindingsCard({
     bindings,
+    bytesBehindLoading = false,
     error,
     range,
+    secondsBehindLoading = false,
     specLoading,
     volumesLoading,
 }: Props) {
@@ -93,6 +100,7 @@ function BindingsCard({
             />
 
             <BindingsTable
+                bytesBehindLoading={bytesBehindLoading}
                 entityType={entityType}
                 isFiltered={filter.query !== '' || filter.status !== 'all'}
                 maxBytes={maxBytes}
@@ -104,6 +112,7 @@ function BindingsCard({
                 page={page}
                 rows={sortedRows}
                 rowsPerPage={rowsPerPage}
+                secondsBehindLoading={secondsBehindLoading}
                 sortDirection={sortDirection}
                 sortKey={sortKey}
                 specLoading={specLoading}

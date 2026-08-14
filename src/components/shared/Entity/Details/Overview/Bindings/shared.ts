@@ -5,6 +5,10 @@ import type {
     BindingSortKey,
     BindingVolume,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
+import type {
+    MaterializationBacklog,
+    MaterializationTimeLag,
+} from 'src/hooks/details/shared';
 import type { LiveSpecBinding } from 'src/hooks/useLiveSpecs';
 import type {
     CaptureBindingStats,
@@ -281,6 +285,14 @@ export const buildBindingRows = (
             resourcePath: getResourcePath(binding.resource, collection),
             // `disable` is absent rather than false on an enabled binding.
             status: binding.disable ? 'disabled' : 'enabled',
+            // Neither figure comes from the spec/stats join this function does —
+            // captures have no upstream frontier to be behind, and a
+            // materialization's readings are attached afterward by
+            // `attachBacklogReadings` once its backlog query resolves. Null here
+            // is simply "not attached yet", same meaning it has everywhere else
+            // on the row.
+            bytesBehind: null,
+            secondsBehind: null,
             ...(totals.get(collection) ?? {
                 bytes: 0,
                 docs: 0,
@@ -289,6 +301,81 @@ export const buildBindingRows = (
         };
     });
 };
+
+/**
+ * Attaches per-binding backlog/time-lag readings to spec-built rows, matched by
+ * collection name.
+ *
+ * A pure join rather than folded into `buildBindingRows`: the backlog and
+ * time-lag queries resolve on their own schedule (a second request, chained
+ * off the first — see `useMaterializationBacklog`), so the rows exist and
+ * render before either answers, and this runs again each time one does.
+ */
+export const attachBacklogReadings = (
+    rows: BindingRow[],
+    backlog: MaterializationBacklog | null,
+    timeLag: MaterializationTimeLag | null
+): BindingRow[] => {
+    // Captures never get here (see `useBindings`), and a materialization whose
+    // backlog hasn't loaded yet simply hasn't attached readings; either way the
+    // null every row already carries from `buildBindingRows` is the answer.
+    if (!backlog) {
+        return rows;
+    }
+
+    const bytesBehindByCollection = new Map(
+        backlog.bindings.map(({ collectionName, bytesBehind }) => [
+            collectionName,
+            bytesBehind,
+        ])
+    );
+    const secondsBehindByCollection = new Map(
+        timeLag?.bindings.map(({ collectionName, seconds }) => [
+            collectionName,
+            seconds,
+        ]) ?? []
+    );
+
+    // Matched by collection name rather than by `status`: a binding disabled
+    // recently enough that the latest hourly stats row still names it keeps
+    // whatever reading that row carries, rather than being forced back to
+    // null. That is the correct reading, not a stale leftover — the row
+    // describes real backlog the task had at that moment, disabled binding or
+    // not, and disabling doesn't retroactively erase it. `buildBindingRows`
+    // already surfaces disabled bindings for the same reason (see its own
+    // comment); this join simply doesn't special-case status at all.
+    return rows.map((row) => ({
+        ...row,
+        // `.get` returning undefined (collection absent from the reading) is
+        // distinct from a real 0: `??` only substitutes on nullish, so a
+        // genuine "caught up" reading of 0 survives untouched.
+        bytesBehind: bytesBehindByCollection.get(row.collection) ?? null,
+        secondsBehind: secondsBehindByCollection.get(row.collection) ?? null,
+    }));
+};
+
+/**
+ * Which of two independent query failures `useBindings` should surface.
+ *
+ * A failed backlog/time-lag fetch leaves every row's `bytesBehind`/
+ * `secondsBehind` at `null` — the same shape as "not attached yet" or
+ * "caught up" — so silently dropping that error would render those columns as
+ * quietly current instead of erroring, the exact trap `BacklogSection`'s own
+ * comment warns about at the task level. But the stats error takes
+ * precedence when both are present: it blanks names, statuses and every
+ * other column, not just the two lag ones, so it is the more consequential
+ * of the two and the one a single error slot should report.
+ *
+ * Pulled out of `useBindings` as a pure function rather than left as an
+ * inline `??`, purely so this precedence rule has a unit test — the hook
+ * itself is thin SWR wiring with no test of its own in this codebase, and
+ * getting this one line backwards would silently swap which failure a
+ * customer's screenshot shows.
+ */
+export const combineBindingsError = (
+    statsError: unknown,
+    backlogError: unknown
+): unknown => statsError ?? backlogError;
 
 export const countBindings = (rows: BindingRow[]): BindingCounts => {
     const enabled = rows.filter((row) => row.status === 'enabled').length;
@@ -339,11 +426,22 @@ const compareStrings = (left: string, right: string) =>
 
 const compareNumbers = (left: number, right: number) => left - right;
 
+// A row with no reading — every capture, and a materialization binding the
+// latest backlog didn't cover — is treated as caught up rather than as an
+// unknown worth surfacing first, the same "missing is least severe" rule
+// `lastPublishedAt` uses below. -1 is a safe stand-in because a real reading
+// is never negative, and it keeps this a plain subtraction (no NaN from
+// `Infinity - Infinity` if both sides are missing).
+const compareBehind = (left: number | null, right: number | null) =>
+    compareNumbers(left ?? -1, right ?? -1);
+
 const comparators: Record<
     BindingSortKey,
     (left: BindingRow, right: BindingRow) => number
 > = {
     bytes: (left, right) => compareNumbers(left.bytes, right.bytes),
+    bytesBehind: (left, right) =>
+        compareBehind(left.bytesBehind, right.bytesBehind),
     collection: (left, right) =>
         compareStrings(left.collection, right.collection),
     docs: (left, right) => compareNumbers(left.docs, right.docs),
@@ -355,6 +453,8 @@ const comparators: Record<
         compareStrings(left.lastPublishedAt ?? '', right.lastPublishedAt ?? ''),
     resourcePath: (left, right) =>
         compareStrings(left.resourcePath, right.resourcePath),
+    secondsBehind: (left, right) =>
+        compareBehind(left.secondsBehind, right.secondsBehind),
 };
 
 export const sortBindings = (

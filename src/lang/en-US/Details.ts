@@ -109,9 +109,11 @@ export const Details: Record<string, string> = {
     'detailsPanel.elapsed.days': `{count, plural, one {day} other {days}}`,
     'detailsPanel.elapsed.ago.suffix': `ago`,
 
-    // Bindings table. The card heading and the table's accessible name both come
-    // from `terms.bindings`, and `{unit}` below from `terms.bindings.plural`, so
-    // the word is not restated here.
+    // Bindings table — internal name only; the user-facing word is
+    // "collections", not "bindings" (see `terms.collections`). The card
+    // heading and the table's accessible name both come from that shared key,
+    // and `{unit}` below from `terms.collections.plural`, so the word is not
+    // restated here.
     //
     // The chip beside the heading carries the range itself, formatted through
     // `getRangeLabelDescriptor` — see RangeChip.
@@ -121,9 +123,9 @@ export const Details: Record<string, string> = {
     'detailsPanel.bindings.search.materialization': `Filter by collection`,
     'detailsPanel.bindings.search.clear': `Clear search`,
     'detailsPanel.bindings.filter.all': `All`,
-    'detailsPanel.bindings.rowsPerPage': `Bindings per page`,
-    'detailsPanel.bindings.empty': `This task has no bindings.`,
-    'detailsPanel.bindings.noMatches': `No bindings match this filter.`,
+    'detailsPanel.bindings.rowsPerPage': `Collections per page`,
+    'detailsPanel.bindings.empty': `This task has no collections.`,
+    'detailsPanel.bindings.noMatches': `No collections match this filter.`,
     'detailsPanel.bindings.clearFilter': `Clear filter`,
     // "Enabled" rather than "Active": the flag only says the binding is not
     // switched off, which is not a claim that data is flowing.
@@ -140,10 +142,28 @@ export const Details: Record<string, string> = {
     'detailsPanel.bindings.column.dataWritten': `Data written`,
     'detailsPanel.bindings.column.dataRead': `Data read`,
     'detailsPanel.bindings.column.lastData': `Last data`,
+    // Materialization only — a capture has no upstream frontier to be behind.
+    'detailsPanel.bindings.column.bytesBehind': `Bytes behind`,
+    'detailsPanel.bindings.column.secondsBehind': `Time behind`,
     'detailsPanel.bindings.download': `Download CSV`,
-    // The bar is relative to the busiest binding, which is good for comparing
-    // rows but says nothing about how much of the task a row accounts for — so
-    // the tooltip carries the share instead.
-    'detailsPanel.bindings.volume.tooltip': `{share} of this task's total for the selected range. Bar length is relative to the largest binding.`,
+    // The bar is relative to the busiest collection, which is good for
+    // comparing rows but says nothing about how much of the task a row
+    // accounts for (the tooltip carries the share instead) or how far behind
+    // it is (that's the separate lag columns, materialization-only) — spelled
+    // out explicitly because a length bar reads as a progress/lag indicator
+    // by default, and this one is neither.
+    'detailsPanel.bindings.volume.tooltip': `{share} of this task's total volume for the selected range — not a lag or progress indicator. Bar length is relative to the busiest collection.`,
     'detailsPanel.bindings.volume.none.tooltip': `No data recorded for this binding in the selected range.`,
+    // Both lag figures read from the same gauge, so both tooltips carry the same
+    // hedge: it is a delta-sum that is only re-anchored on a fresh reading, not
+    // recomputed live, so a binding that has already caught up can still show a
+    // stale nonzero figure for a while. Directional, not authoritative.
+    'detailsPanel.bindings.bytesBehind.tooltip': `Bytes this binding's materialization has yet to write, as of the task's last stats reading — not the selected range. A delta-sum gauge rather than a live figure: it can lag behind reality and occasionally still shows a caught-up binding as behind.`,
+    'detailsPanel.bindings.bytesBehind.none.tooltip': `No backlog reading yet for this binding.`,
+    'detailsPanel.bindings.secondsBehind.tooltip': `How far behind in source-publication time, as of the task's last stats reading — not the selected range. Reads from the same delta-sum gauge as bytes behind, so treat it as directional rather than exact.`,
+    'detailsPanel.bindings.secondsBehind.none.tooltip': `No time-lag reading yet for this binding.`,
+    // Shared by both lag columns for the zero case, which is a real answer
+    // (nothing left to read) rather than a missing one — see the "none" variants
+    // above for that case instead.
+    'detailsPanel.bindings.behind.caughtUp': `Caught up`,
 };

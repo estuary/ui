@@ -22,6 +22,7 @@ import {
     TableRow,
     TableSortLabel,
     tableSortLabelClasses,
+    Tooltip,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -29,6 +30,7 @@ import {
 import { ArrowDown, FilterListCircle, Search } from 'iconoir-react';
 import { useIntl } from 'react-intl';
 
+import LagCell from 'src/components/shared/Entity/Details/Overview/Bindings/LagCell';
 import LastDataCell from 'src/components/shared/Entity/Details/Overview/Bindings/LastDataCell';
 import {
     BINDINGS_PER_PAGE_OPTIONS,
@@ -52,52 +54,95 @@ interface Column {
     headerIntlKey: string;
     // Omitted for Status, which is unsortable on purpose — see below.
     sortKey?: BindingSortKey;
+    // Pins this column's width so `table-layout: auto` doesn't hand it a share
+    // of the table's leftover width. Every column with fixed-shape content
+    // (a badge, a number, a formatted byte/time figure) sets this; the two
+    // that carry a real name (Collection, Source stream) leave it unset, so
+    // they're the ones that absorb the table's surplus width when the card is
+    // wider than the columns strictly need — which is where surplus width
+    // belongs, since a name is the one thing on the row worth the room.
+    // Without this, the browser had been handing most of that surplus to
+    // whichever numeric columns happened to have the longest header text
+    // ("Bytes behind", "Time behind"), leaving Docs squeezed tight and the
+    // others mostly empty space around a right-aligned figure.
+    width?: number;
 }
 
-// The two entity types differ in exactly two places, so the rest is built once:
-// a capture leads with a source stream column, and the volume column is worded
-// for the direction data moved.
-//
-// A capture's source stream is a second name column. A materialization's binding
-// *is* the collection, so it has none — a Destination table column was built and
-// cut, being a mechanical transform of the collection name, not navigable, and
-// the widest column on the table.
-const getSharedColumns = (volumeHeaderIntlKey: string): Column[] => [
+// The columns every row shares regardless of entity type, minus the freshness
+// column at the end — captures and materializations disagree on what that
+// should be (see below), so it isn't part of the shared set.
+const getBaseColumns = (volumeHeaderIntlKey: string): Column[] => [
     {
         headerIntlKey: 'detailsPanel.bindings.column.collection',
         sortKey: 'collection',
     },
     // Unsortable: the filter chips above the table already order by status, and
     // carry the counts too.
-    { headerIntlKey: 'detailsPanel.bindings.column.status' },
+    {
+        headerIntlKey: 'detailsPanel.bindings.column.status',
+        width: 110,
+    },
     {
         align: 'right',
         headerIntlKey: 'detailsPanel.bindings.column.docs',
         sortKey: 'docs',
+        width: 90,
     },
-    { align: 'right', headerIntlKey: volumeHeaderIntlKey, sortKey: 'bytes' },
-    // Present for materializations too, which it was not before. The field
-    // differs — a materialization stamps the newest *source* document it
-    // processed rather than one it published — but the question the column
-    // answers is the same, and both live in the row already fetched.
     {
         align: 'right',
-        headerIntlKey: 'detailsPanel.bindings.column.lastData',
-        sortKey: 'lastPublishedAt',
+        headerIntlKey: volumeHeaderIntlKey,
+        sortKey: 'bytes',
+        width: 170,
     },
 ];
+
+// Capture-only. A materialization's freshness answer is `secondsBehind`
+// instead (see `LAG_COLUMNS`) — it says the same thing this column would
+// (how current is this binding) but against the source's own frontier rather
+// than against nothing, which is strictly the more useful of the two
+// wherever it's available. A capture has no such frontier, so this is all it
+// gets.
+const LAST_DATA_COLUMN: Column = {
+    align: 'right',
+    headerIntlKey: 'detailsPanel.bindings.column.lastData',
+    sortKey: 'lastPublishedAt',
+    width: 120,
+};
 
 const CAPTURE_COLUMNS: Column[] = [
     {
         headerIntlKey: 'detailsPanel.bindings.column.sourceStream',
         sortKey: 'resourcePath',
     },
-    ...getSharedColumns('detailsPanel.bindings.column.dataWritten'),
+    ...getBaseColumns('detailsPanel.bindings.column.dataWritten'),
+    LAST_DATA_COLUMN,
 ];
 
-const MATERIALIZATION_COLUMNS: Column[] = getSharedColumns(
-    'detailsPanel.bindings.column.dataRead'
-);
+// Materialization-only: a capture has no upstream frontier to be behind, so
+// `BindingRow.bytesBehind`/`secondsBehind` are always null there and the
+// column would be dead weight on every capture row. `secondsBehind` replaces
+// `LAST_DATA_COLUMN` rather than sitting beside it — once a source-relative
+// answer exists, the source-blind one it was standing in for stops earning
+// its column.
+const LAG_COLUMNS: Column[] = [
+    {
+        align: 'right',
+        headerIntlKey: 'detailsPanel.bindings.column.bytesBehind',
+        sortKey: 'bytesBehind',
+        width: 130,
+    },
+    {
+        align: 'right',
+        headerIntlKey: 'detailsPanel.bindings.column.secondsBehind',
+        sortKey: 'secondsBehind',
+        width: 130,
+    },
+];
+
+const MATERIALIZATION_COLUMNS: Column[] = [
+    ...getBaseColumns('detailsPanel.bindings.column.dataRead'),
+    ...LAG_COLUMNS,
+];
 
 // MUI's default sort arrow is sized for body text and hidden entirely until a
 // column is active, which reads as "only this column sorts". Scale it to the
@@ -133,6 +178,50 @@ const bodyCellSx = {
 
 const firstBodyCellSx = { ...bodyCellSx, pl: 2 };
 const lastBodyCellSx = { ...bodyCellSx, pr: 2 };
+
+// Rows here commonly share a long tenant/prefix (every binding on a task
+// lives under the same catalog path) and differ only in their last segment —
+// exactly the part end-ellipsis would cut first. `direction: rtl` paired with
+// `textAlign: left` is the standard CSS-only trick for anchoring the ellipsis
+// to the *start* of the string instead: it doesn't reverse the text (there's
+// no strong-RTL content in a catalog name), it only flips which edge the
+// browser treats as "the end" for overflow purposes, so the visible tail
+// survives and the cut lands on the shared prefix nobody was reading anyway.
+const truncateStartSx: SxProps<Theme> = {
+    direction: 'rtl',
+    display: 'block',
+    overflow: 'hidden',
+    textAlign: 'left',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    // `EntityNameDetailsLink`'s anchor renders as `display: flex` internally
+    // (MUI's Link-on-Typography default). Left alone, `direction: rtl` above
+    // flips a flex container's main axis, not just its text alignment — that
+    // wins over `textAlign: left` and shoves short, non-overflowing names
+    // flush against the right edge instead of leaving them flush left. Forcing
+    // the anchor back to a plain block sidesteps flex layout entirely, so the
+    // rtl trick only ever touches how the actual text overflows.
+    //
+    // `overflow`/`text-overflow`/`white-space` aren't inherited properties, so
+    // setting them only on this wrapping Box clips the anchor's text at the
+    // Box's edge (the anchor is a nested block, a separate box) without ever
+    // drawing the "…" — the ellipsis glyph is only inserted by the element
+    // that owns the overflowing line box, which is the anchor itself. They
+    // have to be repeated here for the ellipsis to actually render, not just
+    // the clipping.
+    '& a': {
+        display: 'block',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+    },
+};
+
+// A cap on the Collection column specifically: it's the one column with no
+// fixed `width` (see `Column.width`), so it's also the one that would
+// otherwise absorb an unreasonably long name's entire footprint and drag the
+// whole table wider rather than truncating.
+const COLLECTION_CELL_MAX_WIDTH = 360;
 
 // The first and last columns nudge their padding to align with the card's
 // own edge padding, everywhere a row of cells gets built from `columns` — the
@@ -187,6 +276,12 @@ const getBindingColumns = (entityType: Entity) =>
         : CAPTURE_COLUMNS;
 
 interface Props {
+    // The bytes-behind column's own loading state — a separate, later-resolving
+    // request from `volumesLoading` (see `useBindings`), so it is not correct
+    // to reuse that flag here: doing so was the exact bug this prop exists to
+    // fix, where the column read as "no reading" instead of loading whenever
+    // the backlog query was still in flight after the primary stats resolved.
+    bytesBehindLoading: boolean;
     entityType: Entity;
     // Whether the toolbar's search or status chip is narrowing the set, so the
     // empty state can tell "your filter matched nothing" apart from "this task
@@ -202,6 +297,11 @@ interface Props {
     page: number;
     rows: BindingRow[];
     rowsPerPage: number;
+    // The seconds-behind column's own loading state — chained after the
+    // bytes-behind request (see `useBindings`/`useMaterializationBacklog`), so
+    // it lags `bytesBehindLoading` and must be tracked separately rather than
+    // sharing one flag between the two lag columns.
+    secondsBehindLoading: boolean;
     sortDirection: SortDirection;
     sortKey: BindingSortKey;
     // Every binding on the task, before filtering. Needed to tell "this task has
@@ -229,6 +329,7 @@ interface Props {
 const SKELETON_ROW_COUNT = 5;
 
 function BindingsTable({
+    bytesBehindLoading,
     entityType,
     isFiltered,
     maxBytes,
@@ -239,6 +340,7 @@ function BindingsTable({
     page,
     rows,
     rowsPerPage,
+    secondsBehindLoading,
     sortDirection,
     sortKey,
     specLoading,
@@ -272,11 +374,17 @@ function BindingsTable({
             >
                 <Table
                     aria-label={intl.formatMessage({
-                        id: 'terms.bindings',
+                        id: 'terms.collections',
                     })}
                     size="small"
                     sx={{
-                        minWidth: isCapture ? 840 : 700,
+                        // Materialization swaps its one freshness column for
+                        // two lag columns (`LAST_DATA_COLUMN` vs
+                        // `LAG_COLUMNS`) rather than gaining columns outright,
+                        // so the two floors land close together despite
+                        // materialization dropping the wide monospace source
+                        // stream column captures carry.
+                        minWidth: isCapture ? 840 : 820,
                         // Gives the header its own solid surface instead of
                         // letting the card's translucent wash show through —
                         // the same treatment other tables in the app use so
@@ -299,6 +407,12 @@ function BindingsTable({
                                     }
                                     sx={{
                                         whiteSpace: 'nowrap',
+                                        // Pins this column's rendered width —
+                                        // see `Column.width` for why the name
+                                        // columns are the only ones left out.
+                                        ...(column.width && {
+                                            width: column.width,
+                                        }),
                                         ...getEdgeCellSx(
                                             columnIndex,
                                             columns.length
@@ -374,8 +488,11 @@ function BindingsTable({
                             )
                         ) : visibleRows.length === 0 ? (
                             <TableRow>
-                                {/* Tracks the column count, which differs by
-                                    entity type: 6 capture, 5 materialization. */}
+                                {/* Tracks the column count, which happens to
+                                    be 6 for both entity types — a capture
+                                    swaps `LAST_DATA_COLUMN` for a materialization's
+                                    two lag columns, one column net difference
+                                    against its extra source-stream column. */}
                                 <TableCell
                                     align="center"
                                     colSpan={columns.length}
@@ -472,16 +589,25 @@ function BindingsTable({
                                             ...(isCapture
                                                 ? bodyCellSx
                                                 : firstBodyCellSx),
-                                            whiteSpace: 'nowrap',
+                                            maxWidth: COLLECTION_CELL_MAX_WIDTH,
+                                            overflow: 'hidden',
                                         }}
                                     >
-                                        <EntityNameDetailsLink
-                                            name={row.collection}
-                                            path={generatePath({
-                                                catalog_name: row.collection,
-                                            })}
-                                            plain
-                                        />
+                                        <Tooltip
+                                            placement="bottom"
+                                            title={row.collection}
+                                        >
+                                            <Box sx={truncateStartSx}>
+                                                <EntityNameDetailsLink
+                                                    name={row.collection}
+                                                    path={generatePath({
+                                                        catalog_name:
+                                                            row.collection,
+                                                    })}
+                                                    plain
+                                                />
+                                            </Box>
+                                        </Tooltip>
                                     </TableCell>
 
                                     <StatusCell
@@ -526,11 +652,30 @@ function BindingsTable({
                                         totalBytes={totalBytes}
                                     />
 
-                                    <LastDataCell
-                                        lastPublishedAt={row.lastPublishedAt}
-                                        loading={volumesLoading}
-                                        sx={lastBodyCellSx}
-                                    />
+                                    {isCapture ? (
+                                        <LastDataCell
+                                            lastPublishedAt={
+                                                row.lastPublishedAt
+                                            }
+                                            loading={volumesLoading}
+                                            sx={lastBodyCellSx}
+                                        />
+                                    ) : (
+                                        <>
+                                            <LagCell
+                                                kind="bytes"
+                                                loading={bytesBehindLoading}
+                                                value={row.bytesBehind}
+                                            />
+
+                                            <LagCell
+                                                kind="seconds"
+                                                loading={secondsBehindLoading}
+                                                sx={lastBodyCellSx}
+                                                value={row.secondsBehind}
+                                            />
+                                        </>
+                                    )}
                                 </TableRow>
                             ))
                         )}

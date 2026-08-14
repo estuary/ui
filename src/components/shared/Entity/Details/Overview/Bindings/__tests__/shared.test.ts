@@ -1,10 +1,16 @@
 import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
+import type {
+    MaterializationBacklog,
+    MaterializationTimeLag,
+} from 'src/hooks/details/shared';
 import type { LiveSpecBinding } from 'src/hooks/useLiveSpecs';
 import type { TaskStats } from 'src/types';
 
 import {
     accumulateBindingStats,
+    attachBacklogReadings,
     buildBindingRows,
+    combineBindingsError,
     countBindings,
     filterBindings,
     getResourcePath,
@@ -15,11 +21,13 @@ import {
 
 const row = (overrides: Partial<BindingRow> = {}): BindingRow => ({
     bytes: 0,
+    bytesBehind: null,
     collection: 'acmeco/one',
     docs: 0,
     index: 0,
     lastPublishedAt: null,
     resourcePath: 'one',
+    secondsBehind: null,
     status: 'enabled',
     ...overrides,
 });
@@ -228,6 +236,48 @@ describe('buildBindingRows', () => {
         );
 
         expect(rows.map((r) => r.index)).toEqual([0, 1]);
+    });
+
+    // Neither entity type gets a reading from this join: a capture has no
+    // upstream frontier to be behind at all, and a materialization's readings
+    // only arrive later, from `attachBacklogReadings`. Both must land here as
+    // null, not 0 — a real 0 means "caught up", which this function has no
+    // basis to claim before a backlog reading exists.
+    test('leaves bytesBehind and secondsBehind null for every entity type', () => {
+        const [captureRow] = buildBindingRows(
+            captureBindings,
+            [captureStats],
+            'capture'
+        );
+
+        expect(captureRow).toMatchObject({
+            bytesBehind: null,
+            secondsBehind: null,
+        });
+
+        const [materializationRow] = buildBindingRows(
+            [
+                {
+                    resource: { table: 'orders' },
+                    source: { name: 'acmeco/orders' },
+                },
+            ],
+            [
+                {
+                    materialize: {
+                        'acmeco/orders': {
+                            right: { bytesTotal: 20, docsTotal: 1 },
+                        },
+                    },
+                },
+            ],
+            'materialization'
+        );
+
+        expect(materializationRow).toMatchObject({
+            bytesBehind: null,
+            secondsBehind: null,
+        });
     });
 
     test('sums a binding across the intervals of the window', () => {
@@ -448,6 +498,123 @@ describe('accumulateBindingStats', () => {
     });
 });
 
+describe('attachBacklogReadings', () => {
+    const backlog = (
+        bindings: Array<{
+            collectionName: string;
+            bytesBehind: number;
+        }>
+    ): MaterializationBacklog => ({
+        bindings: bindings.map((b) => ({ ...b, lastSourcePublishedAt: '' })),
+        bytesBehind: bindings.reduce((sum, b) => sum + b.bytesBehind, 0),
+        ts: '2026-08-07T20:00:00Z',
+    });
+
+    const timeLag = (
+        bindings: Array<{ collectionName: string; seconds: number }>
+    ): MaterializationTimeLag => ({
+        bindings,
+        seconds: Math.max(0, ...bindings.map((b) => b.seconds)),
+    });
+
+    // Every capture, and a materialization before its backlog query has
+    // resolved: `buildBindingRows` already left both fields null, and that is
+    // the correct answer in both cases, not just a placeholder.
+    test('leaves rows untouched when there is no backlog yet', () => {
+        const rows = [row({ collection: 'acmeco/one' })];
+
+        expect(attachBacklogReadings(rows, null, null)).toEqual(rows);
+    });
+
+    test('attaches bytesBehind by collection name', () => {
+        const rows = [
+            row({ collection: 'acmeco/orders' }),
+            row({ collection: 'acmeco/shipments' }),
+        ];
+
+        const attached = attachBacklogReadings(
+            rows,
+            backlog([
+                { collectionName: 'acmeco/orders', bytesBehind: 1000 },
+                { collectionName: 'acmeco/shipments', bytesBehind: 0 },
+            ]),
+            null
+        );
+
+        expect(attached.map((r) => r.bytesBehind)).toEqual([1000, 0]);
+    });
+
+    // A reading of exactly 0 means caught up, a real answer that must survive
+    // `?? null` untouched — only a genuinely absent (undefined) entry should
+    // fall back to null.
+    test('keeps a real zero reading distinct from a missing one', () => {
+        const rows = [
+            row({ collection: 'acmeco/orders' }),
+            row({ collection: 'acmeco/untracked' }),
+        ];
+
+        const attached = attachBacklogReadings(
+            rows,
+            backlog([{ collectionName: 'acmeco/orders', bytesBehind: 0 }]),
+            null
+        );
+
+        expect(attached[0].bytesBehind).toBe(0);
+        expect(attached[1].bytesBehind).toBeNull();
+    });
+
+    // The time-lag query is a second request chained off the backlog one (see
+    // `useMaterializationBacklog`), so bytesBehind can be known well before
+    // secondsBehind is: each field's absence is independent.
+    test('attaches secondsBehind independently of bytesBehind', () => {
+        const rows = [row({ collection: 'acmeco/orders' })];
+
+        const withoutTimeLag = attachBacklogReadings(
+            rows,
+            backlog([{ collectionName: 'acmeco/orders', bytesBehind: 1000 }]),
+            null
+        );
+
+        expect(withoutTimeLag[0].bytesBehind).toBe(1000);
+        expect(withoutTimeLag[0].secondsBehind).toBeNull();
+
+        const withTimeLag = attachBacklogReadings(
+            rows,
+            backlog([{ collectionName: 'acmeco/orders', bytesBehind: 1000 }]),
+            timeLag([{ collectionName: 'acmeco/orders', seconds: 42 }])
+        );
+
+        expect(withTimeLag[0].secondsBehind).toBe(42);
+    });
+
+    // A binding the newest stats row didn't cover (see `newestBindingStats`)
+    // gets no reading rather than being assumed caught up.
+    test('leaves a row null when its collection is absent from the reading', () => {
+        const rows = [row({ collection: 'acmeco/untracked' })];
+
+        const attached = attachBacklogReadings(
+            rows,
+            backlog([{ collectionName: 'acmeco/orders', bytesBehind: 1000 }]),
+            timeLag([{ collectionName: 'acmeco/orders', seconds: 42 }])
+        );
+
+        expect(attached[0].bytesBehind).toBeNull();
+        expect(attached[0].secondsBehind).toBeNull();
+    });
+
+    test('does not mutate its input rows', () => {
+        const rows = [row({ collection: 'acmeco/orders' })];
+
+        attachBacklogReadings(
+            rows,
+            backlog([{ collectionName: 'acmeco/orders', bytesBehind: 1000 }]),
+            null
+        );
+
+        expect(rows[0].bytesBehind).toBeNull();
+    });
+});
+
 describe('countBindings', () => {
     test('splits enabled from disabled', () => {
         expect(
@@ -554,6 +721,38 @@ describe('sortBindings', () => {
 
         expect(input.map((r) => r.bytes)).toEqual([1, 2]);
     });
+
+    // A capture, and a materialization binding the latest backlog skipped, has
+    // no reading at all — not a real zero. Sorting it as caught up rather than
+    // as an unknown worth surfacing first is the same "missing is least
+    // severe" rule `lastPublishedAt` uses.
+    test('sorts a missing bytesBehind as caught up, ahead of nothing', () => {
+        const withNull = [
+            row({ bytesBehind: 500, collection: 'acmeco/a' }),
+            row({ bytesBehind: null, collection: 'acmeco/b' }),
+            row({ bytesBehind: 0, collection: 'acmeco/c' }),
+        ];
+
+        expect(
+            sortBindings(withNull, 'bytesBehind', 'desc').map(
+                (r) => r.collection
+            )
+        ).toEqual(['acmeco/a', 'acmeco/c', 'acmeco/b']);
+    });
+
+    test('sorts secondsBehind the same way, missing treated as caught up', () => {
+        const withNull = [
+            row({ collection: 'acmeco/a', secondsBehind: 300 }),
+            row({ collection: 'acmeco/b', secondsBehind: null }),
+            row({ collection: 'acmeco/c', secondsBehind: 0 }),
+        ];
+
+        expect(
+            sortBindings(withNull, 'secondsBehind', 'asc').map(
+                (r) => r.collection
+            )
+        ).toEqual(['acmeco/b', 'acmeco/c', 'acmeco/a']);
+    });
 });
 
 describe('filterBindings', () => {
@@ -600,5 +799,39 @@ describe('filterBindings', () => {
         expect(
             filterBindings(rows, { query: 'orders', status: 'disabled' })
         ).toHaveLength(0);
+    });
+});
+
+describe('combineBindingsError', () => {
+    test('reports neither error when both requests succeeded', () => {
+        expect(combineBindingsError(undefined, undefined)).toBeUndefined();
+    });
+
+    test('reports the stats error alone', () => {
+        const statsError = new Error('stats request failed');
+
+        expect(combineBindingsError(statsError, undefined)).toBe(statsError);
+    });
+
+    test('reports the backlog error alone', () => {
+        const backlogError = new Error('backlog request failed');
+
+        expect(combineBindingsError(undefined, backlogError)).toBe(
+            backlogError
+        );
+    });
+
+    // Regression: a failed backlog fetch leaves bytesBehind/secondsBehind at
+    // null on every row — indistinguishable from "not attached yet" — so
+    // dropping this error would render a materialization as quietly caught up
+    // instead of erroring. The stats error still wins when both are present,
+    // because it blanks the whole table rather than just the two lag columns.
+    test('prefers the stats error when both requests failed', () => {
+        const statsError = new Error('stats request failed');
+        const backlogError = new Error('backlog request failed');
+
+        expect(combineBindingsError(statsError, backlogError)).toBe(
+            statsError
+        );
     });
 });

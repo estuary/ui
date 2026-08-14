@@ -7,7 +7,12 @@ import { useMemo } from 'react';
 import { useQuery } from '@supabase-cache-helpers/postgrest-swr';
 
 import { getBindingStats } from 'src/api/stats';
-import { buildBindingRows } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
+import {
+    attachBacklogReadings,
+    buildBindingRows,
+    combineBindingsError,
+} from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
+import { useMaterializationBacklog } from 'src/hooks/details/useMaterializationBacklog';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
 const EMPTY_ROWS: BindingRow[] = [];
@@ -18,6 +23,16 @@ interface UseBindingsResponse {
     // The spec drives the rows, so they render before stats arrive; this flags
     // only that the volume columns are still filling in.
     statsLoading: boolean;
+    // The lag columns arrive from a second request, independent of the one
+    // `statsLoading` tracks (see `useMaterializationBacklog`), and it resolves
+    // on its own schedule — often after `statsLoading` has already gone false.
+    // Split in two rather than one combined flag: `bytesBehind` only waits on
+    // the first (backlog) query, while `secondsBehind` additionally waits on
+    // the time-lag query chained after it, so tying both columns to the
+    // slower flag would hold the bytes column in a loading state past the
+    // point its own data has actually arrived.
+    bytesBehindLoading: boolean;
+    secondsBehindLoading: boolean;
 }
 
 /**
@@ -68,7 +83,7 @@ function useBindings(
         [data]
     );
 
-    const bindings = useMemo(
+    const specRows = useMemo(
         () =>
             buildBindingRows(
                 latestLiveSpec?.spec?.bindings,
@@ -78,10 +93,32 @@ function useBindings(
         [entityType, intervals, latestLiveSpec]
     );
 
+    // Captures have no upstream frontier to be behind, so this only asks for a
+    // materialization — passing '' for a capture leans on the same
+    // `hasLength` gate `useMaterializationBacklog` already uses to skip the
+    // query entirely, rather than adding a second conditional here.
+    const {
+        backlog,
+        error: backlogError,
+        loading: backlogLoading,
+        timeLag,
+        timeLagLoading,
+    } = useMaterializationBacklog(
+        entityType === 'materialization' ? entityName : ''
+    );
+
+    const bindings = useMemo(
+        () => attachBacklogReadings(specRows, backlog, timeLag),
+        [specRows, backlog, timeLag]
+    );
+
     return {
         bindings: bindings.length === 0 ? EMPTY_ROWS : bindings,
-        error,
+        // See `combineBindingsError` for why this isn't a bare `??` here.
+        error: combineBindingsError(error, backlogError),
         statsLoading: isLoading,
+        bytesBehindLoading: backlogLoading,
+        secondsBehindLoading: timeLagLoading,
     };
 }
 

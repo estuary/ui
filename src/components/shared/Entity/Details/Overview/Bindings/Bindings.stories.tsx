@@ -9,7 +9,9 @@ import {
     buildCaptureRows,
     buildLargeTaskStreams,
     buildMaterializationRows,
+    buildMaterializationRowsWithBacklog,
     CAPTURE_STREAMS,
+    MIXED_STATUS_STREAMS,
 } from 'src/components/shared/Entity/Details/Overview/Bindings/Bindings.fixtures';
 import enUSMessages from 'src/lang/en-US';
 
@@ -56,6 +58,24 @@ export const Materialization: Story = {
     ),
 };
 
+/**
+ * The two lag columns, materialization-only. Every third row cycles through a
+ * caught-up binding (a literal 0 reading, rendered as "Caught up" rather than
+ * a blank — every stream here has a reading, so the "no reading yet" dash
+ * never shows), a moderately-behind one (about an hour of bytes, a few hours
+ * of source time), and a heavily-behind one (about a day of bytes, a couple
+ * of days of source time) — see `buildMaterializationRowsWithBacklog` for
+ * exactly how each tier is derived.
+ */
+export const MaterializationBacklog: Story = {
+    render: () => (
+        <BindingsHarness
+            bindings={buildMaterializationRowsWithBacklog(CAPTURE_STREAMS)}
+            entityType="materialization"
+        />
+    ),
+};
+
 /** A task with a single binding still has to read as a table. */
 export const SingleBinding: Story = {
     render: () => (
@@ -92,6 +112,22 @@ export const NoneEnabled: Story = {
 /** A spec with no bindings at all. */
 export const Empty: Story = {
     render: () => <BindingsHarness bindings={[]} entityType="capture" />,
+};
+
+/**
+ * 12 bindings, so the default 10-per-page pagination actually kicks in —
+ * and every status the table can show (enabled, disabled, no data) plus the
+ * full range of bar lengths all land on that first page regardless, without
+ * paging through to see it. `job_openings` is disabled but still carries a
+ * real bar; `eeoc` is enabled with none.
+ */
+export const MixedStatusesOnePage: Story = {
+    render: () => (
+        <BindingsHarness
+            bindings={buildCaptureRows(MIXED_STATUS_STREAMS)}
+            entityType="capture"
+        />
+    ),
 };
 
 /**

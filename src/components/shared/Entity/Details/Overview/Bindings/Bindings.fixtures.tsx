@@ -1,9 +1,16 @@
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type { BindingRow } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
+import type {
+    MaterializationBacklog,
+    MaterializationTimeLag,
+} from 'src/hooks/details/shared';
 import type { Entity } from 'src/types';
 
 import BindingsCard from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsCard';
-import { buildBindingRows } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
+import {
+    attachBacklogReadings,
+    buildBindingRows,
+} from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { EntityContextProvider } from 'src/context/EntityContext';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
@@ -53,6 +60,29 @@ export const CAPTURE_STREAMS: StreamFixture[] = [
     ['eeoc', 0, 0, false],
     ['offer_custom_fields', 0, 0, false],
     ['candidate_survey_responses', 0, 0, true],
+    ['hiring_team_history', 0, 0, true],
+    ['job_stage_history', 0, 0, true],
+];
+
+// 12 bindings so the default 10-per-page pagination actually kicks in, with
+// every status the table can show landing on that first page anyway:
+// `job_openings` is disabled but still carries real historical volume (a bar
+// and a grey pill together), and `eeoc` is enabled with none (an amber pill
+// and no bar) — sorted just ahead of the two zero-volume disabled streams
+// that spill onto page two, since `eeoc` alone ties them all on bytes but
+// sorts first alphabetically. The other eight are ordinary enabled bindings
+// with a wide volume spread, so the bar's length actually varies row to row.
+export const MIXED_STATUS_STREAMS: StreamFixture[] = [
+    ['applications', 262_000_000, 1_418_000, false],
+    ['candidates', 171_400_000, 963_000, false],
+    ['scorecards', 96_300_000, 214_000, false],
+    ['activity_feed', 71_800_000, 1_104_000, false],
+    ['application_stages', 54_900_000, 486_000, false],
+    ['interviews', 43_100_000, 121_000, false],
+    ['scheduled_interviews', 38_600_000, 97_400, false],
+    ['job_openings', 30_000_000, 41_200, true],
+    ['job_posts', 27_400_000, 18_600, false],
+    ['eeoc', 0, 0, false],
     ['hiring_team_history', 0, 0, true],
     ['job_stage_history', 0, 0, true],
 ];
@@ -142,6 +172,79 @@ export const buildMaterializationRows = (
         ],
         'materialization'
     );
+
+// Three backlog tiers, cycled by index so every stream list produces a mix
+// rather than needing its own hand-authored numbers: caught up (nothing left
+// to write, the ordinary state once a binding is through its backfill),
+// moderately behind (roughly an hour's worth at the binding's own rate — the
+// kind of gap a busy binding can carry indefinitely without anyone noticing),
+// and heavily behind (roughly a day's worth — the case this column exists to
+// surface). Scaled off the binding's own window volume, the same way a
+// backlog that never drains tracks a stuck binding's actual throughput,
+// rather than a fixed number that would be tiny beside a busy stream and huge
+// beside a quiet one.
+const BYTES_BEHIND_MULTIPLIER_BY_TIER = [0, 1, 24];
+
+const bytesBehindFor = (index: number, bytes: number): number =>
+    Math.round(bytes * BYTES_BEHIND_MULTIPLIER_BY_TIER[index % 3]);
+
+// Matches the byte tiers above in spirit, not in exact ratio: time behind and
+// bytes behind come from the same gauge but are not required to move
+// together, so keeping their timings independent (a few minutes / a few hours
+// / a few days rather than three exact multiples of one figure) is the more
+// honest fixture — a moderately-behind binding could easily still be near an
+// hour boundary while its byte figure sits well under it.
+const SECONDS_BEHIND_BY_TIER = [0, 3 * 3600, 2 * 86400];
+
+const secondsBehindFor = (index: number): number =>
+    SECONDS_BEHIND_BY_TIER[index % 3];
+
+// Builds the same `MaterializationBacklog`/`MaterializationTimeLag` shape
+// `useMaterializationBacklog` hands to `attachBacklogReadings`, so the story
+// exercises the real join rather than rows with the two fields poked in by
+// hand.
+const buildBacklogReadings = (
+    streams: StreamFixture[]
+): { backlog: MaterializationBacklog; timeLag: MaterializationTimeLag } => {
+    const bindings = streams.map(([stream, bytes], index) => ({
+        collectionName: `${PREFIX}/${stream}`,
+        bytesBehind: bytesBehindFor(index, bytes),
+        lastSourcePublishedAt: '',
+    }));
+
+    const timeLagBindings = streams.map(([stream], index) => ({
+        collectionName: `${PREFIX}/${stream}`,
+        seconds: secondsBehindFor(index),
+    }));
+
+    return {
+        backlog: {
+            bindings,
+            bytesBehind: bindings.reduce(
+                (sum, { bytesBehind }) => sum + bytesBehind,
+                0
+            ),
+            ts: new Date().toISOString(),
+        },
+        timeLag: {
+            bindings: timeLagBindings,
+            seconds: Math.max(0, ...timeLagBindings.map((b) => b.seconds)),
+        },
+    };
+};
+
+// Same rows `buildMaterializationRows` builds, with bytesBehind/secondsBehind
+// attached the way the real page attaches them — a second pass through
+// `attachBacklogReadings`, not fields set by hand — so a story showing the lag
+// columns cannot show a shape the join itself does not produce.
+export const buildMaterializationRowsWithBacklog = (
+    streams: StreamFixture[]
+): BindingRow[] => {
+    const rows = buildMaterializationRows(streams);
+    const { backlog, timeLag } = buildBacklogReadings(streams);
+
+    return attachBacklogReadings(rows, backlog, timeLag);
+};
 
 const LARGE_TASK_BINDING_COUNT = 1200;
 
