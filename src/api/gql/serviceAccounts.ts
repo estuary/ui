@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { useMutation, useQuery } from 'urql';
 
 import { graphql } from 'src/gql-types';
-import { useValidatedSelectedTenant } from 'src/hooks/useValidatedSelectedTenant';
 
 const DEFAULT_SERVICE_ACCOUNTS: ServiceAccount[] = [];
 
@@ -41,8 +40,8 @@ export const SERVICE_ACCOUNT_FRAGMENT = graphql(`
 `);
 
 const SERVICE_ACCOUNTS_QUERY = graphql(`
-    query ServiceAccounts($filter: ServiceAccountsFilter, $first: Int) {
-        serviceAccounts(filter: $filter, first: $first) {
+    query ServiceAccounts($first: Int) {
+        serviceAccounts(first: $first) {
             edges {
                 node {
                     ...ServiceAccountFields
@@ -52,17 +51,13 @@ const SERVICE_ACCOUNTS_QUERY = graphql(`
     }
 `);
 
+// The list shows every account the caller may query, across organizations:
+// the schema has no way to narrow it to one. Callers holding accounts in
+// several organizations see them all in one list.
 export function useServiceAccounts() {
-    // The filter scopes the list to the accounts the selected organization
-    // reaches through the role-grant graph. Every result depends on it, so the
-    // query waits for a confirmed tenant rather than fetching unscoped and
-    // replacing the results a moment later.
-    const tenant = useValidatedSelectedTenant();
-
     const [{ fetching, data, error }] = useQuery({
         query: SERVICE_ACCOUNTS_QUERY,
-        variables: { filter: { tenant }, first: SERVICE_ACCOUNTS_LIMIT },
-        pause: !tenant,
+        variables: { first: SERVICE_ACCOUNTS_LIMIT },
     });
 
     const serviceAccounts = useMemo(
@@ -72,10 +67,7 @@ export function useServiceAccounts() {
         [data]
     );
 
-    // urql reports a paused query as idle, which callers would read as "loaded,
-    // and empty". Waiting on the tenant is still loading as far as they are
-    // concerned.
-    return { serviceAccounts, fetching: fetching || !tenant, error };
+    return { serviceAccounts, fetching, error };
 }
 
 // The schema exposes service accounts only as a paginated connection — there is
