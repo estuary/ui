@@ -152,16 +152,8 @@ const QUERY = graphql(`
 const STORAGE_MAPPINGS_PAGE_SIZE = 10;
 
 const TABLE_QUERY = graphql(`
-    query StorageMappingsTable(
-        $underPrefix: Prefix!
-        $first: Int
-        $after: String
-    ) {
-        storageMappings(
-            by: { underPrefix: $underPrefix }
-            first: $first
-            after: $after
-        ) {
+    query StorageMappingsTable($first: Int, $after: String) {
+        storageMappings(first: $first, after: $after) {
             edges {
                 cursor
                 node {
@@ -396,16 +388,12 @@ const EMPTY_ROWS: StorageMappingTableRow[] = [];
 // Cursor-paginated storage mappings for the admin settings table. Forward
 // pagination only; pair with useCursorPagination for backwards navigation.
 export function usePaginatedStorageMappings(afterCursor?: string) {
-    const tenant = useTenantStore((state) => state.selectedTenant);
-
     const [{ fetching, data, error }] = useQuery({
         query: TABLE_QUERY,
         variables: {
-            underPrefix: tenant,
             first: STORAGE_MAPPINGS_PAGE_SIZE,
             after: afterCursor,
         },
-        pause: !tenant,
     });
 
     const storageMappings = useMemo<StorageMappingTableRow[]>(
