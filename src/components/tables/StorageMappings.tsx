@@ -1,3 +1,5 @@
+import type { StorageMappingTableRow } from 'src/api/gql/storageMappings';
+
 import { useEffect } from 'react';
 
 import {
@@ -11,12 +13,15 @@ import {
     TablePagination,
     TableRow,
     Typography,
+    useTheme,
 } from '@mui/material';
 
 import { usePaginatedStorageMappings } from 'src/api/gql/storageMappings';
 import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/AddStorageButton';
-import Rows from 'src/components/tables/StorageMappings/Rows';
+import ChipListCell from 'src/components/tables/cells/ChipList';
+import { getEntityTableRowSx } from 'src/context/Theme';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
+import { useDialog } from 'src/hooks/useDialog';
 
 const tableColumns = [
     'Catalog Prefix',
@@ -27,7 +32,37 @@ const tableColumns = [
 
 const columnCount = tableColumns.length;
 
-function StorageMappingsTable() {
+function Row({ row }: { row: StorageMappingTableRow }) {
+    const theme = useTheme();
+
+    const { onOpen } = useDialog('EDIT_STORAGE_MAPPING');
+
+    const store = row.spec.stores?.[0];
+
+    return (
+        <TableRow
+            hover
+            sx={getEntityTableRowSx(theme)}
+            onClick={() => onOpen({ prefix: row.catalogPrefix })}
+        >
+            <TableCell>{row.catalogPrefix}</TableCell>
+
+            <ChipListCell
+                values={row.spec.data_planes}
+                maxChips={3}
+                stripPath={false}
+            />
+
+            <TableCell>
+                {store ? `${store.provider}/${store.bucket}` : null}
+            </TableCell>
+
+            <TableCell>{store?.prefix}</TableCell>
+        </TableRow>
+    );
+}
+
+export function StorageMappingsTable() {
     const { currentPage, cursor, goToPage, onPageChange } =
         useCursorPagination();
 
@@ -95,7 +130,12 @@ function StorageMappingsTable() {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            <Rows data={storageMappings} />
+                            storageMappings.map((row) => (
+                                <Row
+                                    key={`StorageMappings-${row.catalogPrefix}`}
+                                    row={row}
+                                />
+                            ))
                         )}
                     </TableBody>
 
@@ -133,5 +173,3 @@ function StorageMappingsTable() {
         </Box>
     );
 }
-
-export default StorageMappingsTable;

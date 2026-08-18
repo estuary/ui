@@ -6,7 +6,6 @@ import { useCallback, useMemo } from 'react';
 import { useClient, useQuery } from 'urql';
 
 import { graphql } from 'src/gql-types';
-import { useTenantStore } from 'src/stores/Tenant';
 
 const COLLECTION_DATA_SUFFIX = 'collection-data/';
 
@@ -135,8 +134,8 @@ const TEST_CONNECTION_HEALTH = graphql(`
 `);
 
 const QUERY = graphql(`
-    query StorageMappingQuery($underPrefix: Prefix!) {
-        storageMappings(by: { underPrefix: $underPrefix }) {
+    query StorageMappingQuery {
+        storageMappings {
             edges {
                 cursor
                 node {
@@ -235,19 +234,10 @@ function fromServerStore(store: ServerFragmentStore): FragmentStore {
 
 export function useStorageMappingService() {
     const client = useClient();
-    const tenant = useTenantStore((state) => state.selectedTenant);
 
     const refetchMappings = useCallback(() => {
-        if (tenant) {
-            client
-                .query(
-                    QUERY,
-                    { underPrefix: tenant },
-                    { requestPolicy: 'network-only' }
-                )
-                .toPromise();
-        }
-    }, [client, tenant]);
+        client.query(QUERY, {}, { requestPolicy: 'network-only' }).toPromise();
+    }, [client]);
 
     const testConnection = useCallback(
         async (
@@ -352,12 +342,8 @@ export function useStorageMappingService() {
 }
 
 export function useStorageMappings() {
-    const tenant = useTenantStore((state) => state.selectedTenant);
-
     const [{ data, fetching, error }] = useQuery({
         query: QUERY,
-        variables: { underPrefix: tenant },
-        pause: !tenant,
     });
 
     const storageMappings: StorageMapping[] =
