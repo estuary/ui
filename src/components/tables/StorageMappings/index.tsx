@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
     Box,
     Table,
@@ -26,7 +28,8 @@ const tableColumns = [
 const columnCount = tableColumns.length;
 
 function StorageMappingsTable() {
-    const { currentPage, cursor, onPageChange } = useCursorPagination();
+    const { currentPage, cursor, goToPage, onPageChange } =
+        useCursorPagination();
 
     const { storageMappings, fetching, error, pageInfo, pageSize } =
         usePaginatedStorageMappings(cursor);
@@ -34,6 +37,21 @@ function StorageMappingsTable() {
     const handlePageChange = (event: any, page: number) => {
         onPageChange(event, page, pageInfo?.endCursor);
     };
+
+    // A page comes back empty when the mapping list shrinks between fetches,
+    // or when a cursor points past the end of the list. The pagination footer
+    // renders only for a page that has rows, so step back to keep a Previous
+    // control available and to land the user on populated rows.
+    useEffect(() => {
+        if (
+            !fetching &&
+            !error &&
+            storageMappings.length === 0 &&
+            currentPage > 0
+        ) {
+            goToPage(currentPage - 1);
+        }
+    }, [fetching, error, storageMappings.length, currentPage, goToPage]);
 
     return (
         <Box sx={{ my: 2 }}>
