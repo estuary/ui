@@ -66,31 +66,48 @@ export const LUXON_GRAIN_SETTINGS: {
     },
 };
 
+// Spells out a duration in whole units, leaving out the units that are zero.
+// Luxon's own `toHuman` keeps them, which turns a few seconds into
+// "0 days, 0 hours, 0 minutes, 3 seconds".
+//
+// `maxUnits` keeps only that many of the largest units still standing, so a long
+// span reads as "1 day, 6 hours" instead of trailing minutes and seconds that add
+// no information at that scale. Omit it to spell out every unit.
 // Based on https://github.com/moment/luxon/issues/1134#issuecomment-1668033880
-export const toAbsHumanDuration = (start: DateTime, end: DateTime): string => {
-    // Better Duration.toHuman support https://github.com/moment/luxon/issues/1134
-    const duration = end
-        .diff(start)
+export const toHumanDuration = (
+    duration: Duration,
+    { maxUnits }: { maxUnits?: number } = {}
+): string => {
+    const units = duration
         .shiftTo('days', 'hours', 'minutes', 'seconds')
         .toObject();
 
-    const prefix = start > end ? 'in ' : '';
-    const suffix = end > start ? ' ago' : '';
-
-    if ('seconds' in duration) {
-        duration.seconds = Math.round(duration.seconds!);
+    if ('seconds' in units) {
+        units.seconds = Math.round(units.seconds!);
     }
 
+    // `shiftTo` orders the units largest first, and dropping the zeroes preserves
+    // that order, so the leading entries are the significant ones.
+    const significant = Object.entries(units)
+        .filter(([_key, value]) => value !== 0)
+        .map(([key, value]) => [key, Math.abs(value)]);
+
     const cleanedDuration = Object.fromEntries(
-        Object.entries(duration)
-            .filter(([_key, value]) => value !== 0)
-            .map(([key, value]) => [key, Math.abs(value)])
+        maxUnits ? significant.slice(0, maxUnits) : significant
     ) as DurationObjectUnits;
 
     if (Object.keys(cleanedDuration).length === 0) {
         cleanedDuration.seconds = 0;
     }
 
-    const human = Duration.fromObject(cleanedDuration).toHuman();
-    return `${prefix}${human}${suffix}`;
+    return Duration.fromObject(cleanedDuration).toHuman();
+};
+
+// The signed variant: the gap between two moments, worded relative to now with
+// an "in "/" ago" affix.
+export const toAbsHumanDuration = (start: DateTime, end: DateTime): string => {
+    const prefix = start > end ? 'in ' : '';
+    const suffix = end > start ? ' ago' : '';
+
+    return `${prefix}${toHumanDuration(end.diff(start))}${suffix}`;
 };

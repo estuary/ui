@@ -7,7 +7,7 @@ import { RefreshTokenTable } from 'src/components/admin/Api/RefreshToken/Table';
 export function RefreshToken() {
     return (
         <Box sx={{ mb: 5 }}>
-            <Stack sx={{ mx: 2, mb: 1 }}>
+            <Stack sx={{ mb: 1 }}>
                 <Typography
                     sx={{
                         mb: 0.5,

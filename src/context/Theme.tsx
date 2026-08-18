@@ -196,7 +196,11 @@ const xs = 0;
 // TODO: Balance the light mode color palette.
 const lightMode: PaletteOptions = {
     background: {
-        default: sample_grey[100],
+        // One step down the ramp, so light mode has the same three surfaces
+        // dark mode does: canvas, then panel, then card. It used to start at
+        // 100, which left the panel on white and the cards with nowhere
+        // lighter to go — see `paperBackground`.
+        default: sample_grey[200],
     },
     contrastThreshold,
     error: {
@@ -443,14 +447,6 @@ export const hiddenButAccessibleRadio: SxProps<Theme> = {
     },
 };
 
-export const defaultBoxShadow =
-    'rgb(50 50 93 / 7%) 0px 3px 6px -1px, rgb(0 0 0 / 10%) 0px -2px 4px -1px, rgb(0 0 0 / 10%) 0px 2px 4px -1px';
-
-export const opaqueLightModeBorder = {
-    light: `1px solid rgba(255, 255, 255, 0.8)`,
-    dark: undefined,
-};
-
 // TODO need to consolidate lots of duplicated "rgba(247, 249, 252, 0.05)" values in the theme, but not today...
 export const stripePaymentFormFieldBackgroundDark = 'rgba(247, 249, 252, 0.05)';
 
@@ -465,8 +461,12 @@ export const opaqueLightModeBackground = {
 //      OR
 // We just look into waiting for css variable support - https://mui.com/material-ui/customization/css-theme-variables/overview/
 
+/**
+ * The surface a page, dialog or menu sits on — one step up the grey ramp from
+ * the canvas behind it, and one step below the white cards that sit on top.
+ */
 export const paperBackground = {
-    light: 'white',
+    light: sample_grey[100],
     dark: sample_grey[800],
 };
 
@@ -1031,6 +1031,13 @@ const themeSettings = createTheme({
             },
         },
         MuiTab: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none',
+                },
+            },
+        },
+        MuiToggleButton: {
             styleOverrides: {
                 root: {
                     textTransform: 'none',

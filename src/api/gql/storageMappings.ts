@@ -8,6 +8,23 @@ import { useClient, useQuery } from 'urql';
 import { graphql } from 'src/gql-types';
 import { useTenantStore } from 'src/stores/Tenant';
 
+const COLLECTION_DATA_SUFFIX = 'collection-data/';
+
+function stripCollectionDataSuffix(
+    prefix: string | null | undefined
+): string | null | undefined {
+    if (
+        prefix !== COLLECTION_DATA_SUFFIX &&
+        !prefix?.endsWith(`/${COLLECTION_DATA_SUFFIX}`)
+    ) {
+        return prefix;
+    }
+
+    const base = prefix.slice(0, -COLLECTION_DATA_SUFFIX.length);
+
+    return base || null;
+}
+
 // Public types
 export interface FragmentStore {
     provider: CloudProvider;
@@ -322,7 +339,10 @@ export function useStorageMappings() {
             return {
                 catalogPrefix: edge.node.catalogPrefix,
                 spec: {
-                    fragmentStores: spec.stores.map(fromServerStore),
+                    fragmentStores: spec.stores.map((store) => ({
+                        ...fromServerStore(store),
+                        storagePrefix: stripCollectionDataSuffix(store.prefix),
+                    })),
                     dataPlanes: spec.data_planes ?? [],
                 },
             };

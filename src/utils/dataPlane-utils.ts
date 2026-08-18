@@ -28,6 +28,10 @@ import { hasLength, OPENID_HOST } from 'src/utils/misc-utils';
 export enum SHARD_LABELS {
     EXPOSE_PORT = 'estuary.dev/expose-port',
     HOSTNAME = 'estuary.dev/hostname',
+    // Set when a task's shard template carries the `enable-runtime-v2` flag,
+    // which selects the V2 task runtime. Only the V2 runtime reports the
+    // per-binding progress readings in a task's stats documents.
+    RUNTIME_V2 = 'estuary.dev/flag/enable-runtime-v2',
     TASK_NAME = 'estuary.dev/task-name',
     TASK_TYPE = 'estuary.dev/task-type',
 }

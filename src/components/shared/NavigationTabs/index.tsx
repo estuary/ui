@@ -2,7 +2,7 @@ import type { NavigationTabsProps } from 'src/components/shared/NavigationTabs/t
 
 import { Fragment, useMemo, useState } from 'react';
 
-import { Box, Tab, Tabs } from '@mui/material';
+import { alpha, Tab, tabClasses, Tabs, tabsClasses } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 import { Link, useLocation } from 'react-router-dom';
@@ -47,18 +47,56 @@ function NavigationTabs({
         [getPath, intl, keyPrefix, pathname, tabs]
     );
 
+    // A filled pill for the selected tab instead of MUI's sliding underline.
+    // The underline needs a rule beneath the row to sit against, and that rule
+    // was one of three stacked across the top of a details page.
     return (
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs
-                allowScrollButtonsMobile
-                variant="scrollable"
-                scrollButtons="auto"
-                {...(TabsProps ?? {})}
-                value={selectedTab}
-            >
-                {tabsRendered}
-            </Tabs>
-        </Box>
+        <Tabs
+            allowScrollButtonsMobile
+            variant="scrollable"
+            scrollButtons="auto"
+            {...(TabsProps ?? {})}
+            value={selectedTab}
+            sx={{
+                minHeight: 0,
+                [`& .${tabsClasses.indicator}`]: { display: 'none' },
+                // `scrollButtons="auto"` disables the arrows when there is
+                // nothing to scroll to but still lays them out, 40px each side.
+                // The left one is disabled whenever the row is scrolled fully
+                // left — its resting state — so it was indenting every tab row
+                // past its own page's left edge with no overflow in sight.
+                //
+                // MUI keeps the box to stop the row jumping as the arrows
+                // toggle, so this trades that: a row long enough to scroll will
+                // shift 40px the first time it does. Worth it while no row in
+                // the app overflows at desktop width.
+                [`& .${tabsClasses.scrollButtons}.Mui-disabled`]: {
+                    display: 'none',
+                },
+                // 8px between pills, flush at both ends. They touched the
+                // moment a hovered tab neighboured the selected one.
+                [`& .${tabsClasses.flexContainer}`]: { gap: 1 },
+                [`& .${tabClasses.root}`]: {
+                    borderRadius: 2,
+                    minHeight: 0,
+                    p: 1,
+                    textTransform: 'none',
+                },
+                [`& .${tabClasses.root}:hover:not(.${tabClasses.selected})`]: {
+                    backgroundColor: 'action.hover',
+                },
+                [`& .${tabClasses.selected}`]: {
+                    backgroundColor: (theme) =>
+                        alpha(
+                            theme.palette.primary.main,
+                            theme.palette.mode === 'light' ? 0.09 : 0.2
+                        ),
+                },
+                ...((TabsProps?.sx as any) ?? {}),
+            }}
+        >
+            {tabsRendered}
+        </Tabs>
     );
 }
 

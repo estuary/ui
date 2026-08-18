@@ -19,7 +19,10 @@ function StandAloneTableTitle({
         <Stack
             direction="column"
             spacing={messageIntlKey ? 2 : 0}
-            sx={{ m: 2, mb: 0 }}
+            // Vertical only. The 16px of horizontal margin here set every
+            // section heading on Admin > Settings 16px right of the page's
+            // own left edge, while the tables under them sat flush.
+            sx={{ mt: 2 }}
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
                 <Typography component="div" variant="h6">
