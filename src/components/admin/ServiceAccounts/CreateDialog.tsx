@@ -5,6 +5,7 @@ import type { Capability } from 'src/types';
 import { useEffect, useRef, useState } from 'react';
 
 import {
+    autocompleteClasses,
     Box,
     Button,
     ButtonBase,
@@ -76,6 +77,18 @@ const NAME_TEXT_SX = {
     lineHeight: `${NAME_LINE_HEIGHT}px`,
 } as const;
 
+const LOCATION_FONT_SIZE = 15;
+const LOCATION_LINE_HEIGHT = 22;
+
+// Shared by the read-only location and the autocomplete it swaps to. Left to
+// their defaults the two derive different line boxes — `normal` against the
+// theme's ratio — and the text shifts as they swap.
+const LOCATION_TEXT_SX = {
+    fontFamily: 'monospace',
+    fontSize: LOCATION_FONT_SIZE,
+    lineHeight: `${LOCATION_LINE_HEIGHT}px`,
+} as const;
+
 const TRUNCATE_SX = {
     display: 'block',
     whiteSpace: 'nowrap',
@@ -97,7 +110,6 @@ const IDENTITY_SX: SxProps<Theme> = {
 // shift the text beside it.
 const INLINE_EDIT_BUTTON_SX: SystemStyleObject<Theme> = {
     minWidth: 0,
-    flex: 1,
     gap: 0.75,
     justifyContent: 'flex-start',
     cursor: 'pointer',
@@ -116,11 +128,16 @@ const INLINE_EDIT_BUTTON_SX: SystemStyleObject<Theme> = {
 
 const NAME_BUTTON_SX: SystemStyleObject<Theme> = {
     ...NAME_TEXT_SX,
+    // Fills the row beside the randomize button.
+    flex: 1,
     color: 'text.primary',
 };
 
 const LOCATION_BUTTON_SX: SystemStyleObject<Theme> = {
-    fontSize: 13,
+    ...LOCATION_TEXT_SX,
+    // Sized to its line box. Flexing here would stretch it down the column and
+    // land the text lower than the autocomplete it swaps with.
+    flex: 'none',
     color: 'text.secondary',
 };
 
@@ -139,8 +156,10 @@ const INLINE_INPUT_SX: SystemStyleObject<Theme> = {
 // but left for screen readers, and the underline and helper slot are collapsed.
 const INLINE_AUTOCOMPLETE_SX: SystemStyleObject<Theme> = {
     // The standard variant reserves 16px above itself for a floating label that
-    // is hidden here. Left in, it pushes the column past the row's padding.
-    [`& .${inputBaseClasses.formControl}`]: { mt: 0 },
+    // is hidden here. Left in, it pushes the column past the row's padding. Its
+    // 1px of bottom padding, meant to sit above the underline, goes with it —
+    // there is no underline, and it lifts the text off the read-mode baseline.
+    [`&&& .${inputBaseClasses.formControl}`]: { mt: 0, pb: 0 },
     [`& .${inputLabelClasses.root}`]: {
         position: 'absolute',
         width: 1,
@@ -152,9 +171,14 @@ const INLINE_AUTOCOMPLETE_SX: SystemStyleObject<Theme> = {
     [`& .${formHelperTextClasses.root}`]: { display: 'none' },
     [`& .${inputClasses.underline}:before, & .${inputClasses.underline}:after`]:
         { display: 'none' },
-    [`& .${inputBaseClasses.input}`]: {
+    // The autocomplete's own size-small rule for this input carries four
+    // classes, so it needs to be outranked rather than tied — a tie loses on
+    // source order, since MUI's styles are injected after these.
+    [`&&& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]: {
         p: 0,
-        fontSize: 13,
+        // MUI pins the input at 1.4375em, which overrides the line box.
+        height: 'auto',
+        ...LOCATION_TEXT_SX,
         color: 'text.secondary',
     },
 };
@@ -309,6 +333,7 @@ function IdentityFields({
                 sx={{
                     minWidth: 0,
                     flex: 1,
+                    py: 0.25,
                     // Stretched to the monogram so the name's line box starts at
                     // its top edge and the location ends at its bottom, rather
                     // than the pair floating centered against it.
@@ -411,11 +436,10 @@ function IdentityFields({
                 {editingLocation ? (
                     <Box
                         sx={[INLINE_INPUT_SX, INLINE_AUTOCOMPLETE_SX]}
+                        // Enter deliberately does nothing here: Tab is what
+                        // commits a highlighted prefix, and leaving on Enter
+                        // would skip the blur that normalizes the value.
                         onKeyDown={(event) => {
-                            if (event.key === 'Enter') {
-                                setEditingLocation(false);
-                            }
-
                             if (event.key === 'Escape') {
                                 // Kept off the dialog, which would take it as a
                                 // request to close.
