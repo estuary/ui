@@ -12,6 +12,12 @@ import {
     replaceWhitespacesWithUnderscores,
 } from 'src/utils/misc-utils';
 
+// `useAutocomplete` checks this flag, not `defaultPrevented`, to decide whether
+// to skip its own key handling.
+type MuiKeyboardEvent = React.KeyboardEvent & {
+    defaultMuiPrevented?: boolean;
+};
+
 interface LeavesAutocompleteProps {
     leaves: string[];
     value: string;
@@ -23,6 +29,17 @@ interface LeavesAutocompleteProps {
     errorMessage?: string;
     helperText?: string;
     textFieldVariant?: TextFieldVariants;
+    autoFocus?: boolean;
+}
+
+// The prefix one level up: "acmeCo/prod/" -> "acmeCo/", "acmeCo/" -> "".
+function parentPrefix(prefix: string): string {
+    const withoutTrailingSlash = prefix.endsWith('/')
+        ? prefix.slice(0, -1)
+        : prefix;
+    const lastSlash = withoutTrailingSlash.lastIndexOf('/');
+
+    return lastSlash === -1 ? '' : withoutTrailingSlash.slice(0, lastSlash + 1);
 }
 
 // Insert <wbr> after each "/" so the browser only wraps at path boundaries
@@ -58,6 +75,7 @@ export function LeavesAutocomplete({
     errorMessage,
     helperText,
     textFieldVariant,
+    autoFocus = false,
 }: LeavesAutocompleteProps) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -86,11 +104,78 @@ export function LeavesAutocomplete({
         });
     }, [leaves]);
 
+    // The options actually on offer. Held in one place so the popup and the
+    // Tab-to-select handler below cannot disagree about what index N means.
+    const offered = useMemo(
+        () => branches.filter((b) => b.startsWith(value) && b !== value),
+        [branches, value]
+    );
+
     return (
         <Autocomplete
             sx={{ mb: 0, pb: 0 }}
             freeSolo
+            // Selecting a prefix is the only useful action here; emptying the
+            // field is done by editing the text.
+            disableClearable
             autoHighlight
+            onKeyDown={(event) => {
+                const input = event.target as HTMLInputElement;
+
+                if (event.key === 'Enter') {
+                    // Enter leaves the field rather than picking an option.
+                    // `defaultMuiPrevented` is the hook's own opt-out; a plain
+                    // preventDefault does not stop its Enter handling.
+                    (event as MuiKeyboardEvent).defaultMuiPrevented = true;
+                    input.blur();
+                    return;
+                }
+
+                if (event.key !== 'Tab') {
+                    return;
+                }
+
+                if (event.shiftKey) {
+                    const parent = parentPrefix(value);
+
+                    // Already at the root, so let Shift+Tab step back out of
+                    // the field.
+                    if (parent === value) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    onChange(parent);
+                    return;
+                }
+
+                // Tab takes the highlighted option, Shift+Tab walks back up.
+                // MUI tracks the highlight on the input as
+                // `aria-activedescendant`, and stamps each option with its
+                // index into the offered list.
+                const activeId = input.getAttribute('aria-activedescendant');
+                const index = activeId
+                    ? document
+                          .getElementById(activeId)
+                          ?.getAttribute('data-option-index')
+                    : null;
+
+                const picked =
+                    index === null || index === undefined
+                        ? undefined
+                        : offered[Number(index)];
+
+                // Nothing to pick, so let Tab move focus on as usual — the
+                // field must not trap a keyboard user.
+                if (picked === undefined) {
+                    return;
+                }
+
+                // Focus stays put: Tab fills in the prefix so the next segment
+                // can be tabbed into straight away. Enter leaves the field.
+                event.preventDefault();
+                onChange(picked);
+            }}
             value={value}
             options={branches}
             open={isOpen}
@@ -98,12 +183,7 @@ export function LeavesAutocomplete({
                 setIsOpen(true);
             }}
             disableCloseOnSelect={true}
-            filterOptions={(options) =>
-                options.filter(
-                    (option: string) =>
-                        option.startsWith(value) && option !== value
-                )
-            }
+            filterOptions={() => offered}
             inputValue={value}
             onInputChange={(_event, newInputValue, _reason) =>
                 onChange(replaceWhitespacesWithUnderscores(newInputValue))
@@ -125,6 +205,7 @@ export function LeavesAutocomplete({
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    autoFocus={autoFocus}
                     label={label}
                     required={required}
                     error={error}
