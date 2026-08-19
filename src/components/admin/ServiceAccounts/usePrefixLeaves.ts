@@ -5,8 +5,10 @@ import { useStorageMappings } from 'src/api/gql/storageMappings';
 import { useTenantStore } from 'src/stores/Tenant';
 
 // Catalog prefixes a service account can be homed at or granted access to,
-// derived from the tenant's live specs and storage mappings and scoped to the
-// globally selected tenant. Shared by the create dialog and the grant dialog.
+// derived from the tenant's live specs and storage mappings, narrowed to the
+// tenant selected in the store. That selection is empty until the user picks a
+// tenant, in which case every visible prefix is offered. Shared by the create
+// dialog and the grant dialog.
 export function usePrefixLeaves() {
     const { storageMappings } = useStorageMappings();
     const liveSpecNames = useLiveSpecs();

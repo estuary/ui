@@ -8,10 +8,6 @@ export const AdminPage: Record<string, string> = {
     'admin.roles.message.docLink': `authorization settings`,
     'admin.roles.message.docPath': `https://go.estuary.dev/provision`,
 
-    'admin.cli_api.header': `Programmatic Access to ${CommonMessages.productName}`,
-    'admin.cli_api.message': `Use Refresh and Access tokens to connect to ${CommonMessages.productName} programmatically.`,
-    'admin.cli_api.accessToken': `Access Token`,
-    'admin.cli_api.accessToken.message': `Access tokens enable authentication using flowctl.`,
 
     'admin.billing.header': `Billing`,
     'admin.billing.message.freeTier': `The free tier lets you try ${CommonMessages.productName} with up to 2 tasks and 10GB per month without entering a credit card. Usage beyond these limits automatically starts a 30 day free trial.`,
@@ -126,7 +122,7 @@ export const AdminPage: Record<string, string> = {
 
     'admin.tabs.users': `Account Access`,
     'admin.tabs.notifications': `Notifications`,
-    'admin.tabs.api': `CLI-API`,
+    'admin.tabs.serviceAccounts': `Service Accounts`,
     'admin.tabs.billing': `Billing`,
     'admin.tabs.settings': `Settings`,
 

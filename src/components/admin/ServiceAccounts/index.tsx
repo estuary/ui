@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import { ServiceAccountsList } from 'src/components/admin/ServiceAccounts/List';
+import AdminTabs from 'src/components/admin/Tabs';
 import usePageTitle from 'src/hooks/usePageTitle';
 
 export function ServiceAccounts() {
@@ -10,8 +11,12 @@ export function ServiceAccounts() {
     });
 
     return (
-        <Box sx={{ py: 2 }}>
-            <ServiceAccountsList />
-        </Box>
+        <>
+            <AdminTabs />
+
+            <Box sx={{ py: 2 }}>
+                <ServiceAccountsList />
+            </Box>
+        </>
     );
 }
