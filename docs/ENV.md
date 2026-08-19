@@ -56,11 +56,11 @@ foo_enabled=true
 
 ## API Endpoints
 
-| Key                                 | Description                                            |
-| ----------------------------------- | ------------------------------------------------------ |
-| `VITE_ESTUARY_API_URL`              | Base URL for the Estuary API; endpoint paths (GraphQL, task/collection authorization, entity status) are appended at each call site |
-| `VITE_MARKETPLACE_VERIFY_URL`       | Endpoint for verifying GCP Marketplace subscriptions   |
-| `VITE_DEFAULT_DATA_PLANE_SUFFIX`    | Default data-plane suffix appended to data-plane names |
+| Key                              | Description                                                                                                                         |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_ESTUARY_API_URL`           | Base URL for the Estuary API; endpoint paths (GraphQL, task/collection authorization, entity status) are appended at each call site |
+| `VITE_MARKETPLACE_VERIFY_URL`    | Endpoint for verifying GCP Marketplace subscriptions                                                                                |
+| `VITE_DEFAULT_DATA_PLANE_SUFFIX` | Default data-plane suffix appended to data-plane names                                                                              |
 
 ---
 
@@ -143,6 +143,22 @@ Disabled locally by default.
 | Key                           | Description                       |
 | ----------------------------- | --------------------------------- |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | Test key for stripe local testing |
+
+---
+
+## MCP
+
+The Estuary MCP server (`estuary/flow`, `mcp/`) routes the browser leg of its
+OAuth flow through the dashboard, which owns login and consent. It arrives as
+`/mcp-auth?adapter=<origin>&state=<handoff>`.
+
+| Key                                | Description                                                                                        |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `VITE_MCP_ALLOWED_ADAPTER_ORIGINS` | Comma-separated exact origins of MCP servers allowed to request consent. Unset = feature disabled. |
+
+An origin on this list can have a five-minute credential minted for it and
+handed over by redirect, so treat additions the way you would treat a new
+redirect URI. Unset authorizes nothing.
 
 ---
 

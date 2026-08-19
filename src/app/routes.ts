@@ -141,6 +141,14 @@ const dataPlaneAuth = {
     path: '/data-plane-auth-req',
 };
 
+// Consent checkpoint for the Estuary MCP server's OAuth flow. Authenticated on
+// purpose: the whole point of routing the MCP adapter's browser leg through the
+// dashboard is that only the dashboard can establish who the user is.
+const mcpAuth = {
+    title: 'routeTitle.mcpAuthReq',
+    path: '/mcp-auth',
+};
+
 const home = {
     title: 'routeTitle.home',
     path: '/welcome',
@@ -251,6 +259,7 @@ export const authenticatedRoutes = {
     collections,
     dataPlaneAuth,
     home,
+    mcpAuth,
     materializations,
     marketplace: marketplace.authenticated,
     user,
