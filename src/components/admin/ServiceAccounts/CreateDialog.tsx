@@ -59,7 +59,7 @@ interface CreateServiceAccountDialogProps {
 // The monogram is squared off the row height, so the two track together.
 const IDENTITY_HEIGHT = 72;
 
-const NAME_EDIT_ICON_CLASS = 'service-account-name-edit';
+const EDIT_ICON_CLASS = 'service-account-inline-edit';
 
 // Shared by the read-only name and the input it swaps to, so the text keeps its
 // size and position across the two states.
@@ -92,27 +92,36 @@ const IDENTITY_SX: SxProps<Theme> = {
     p: 1,
 };
 
-// The name reads as plain text until it is clicked. The pencil keeps its place
-// in the layout at all times and only fades in on hover, so revealing it does
-// not shift the name.
-const NAME_BUTTON_SX: SystemStyleObject<Theme> = {
+// Both fields read as plain text until clicked. The pencil keeps its place in
+// the layout at all times and only fades in on hover, so revealing it does not
+// shift the text beside it.
+const INLINE_EDIT_BUTTON_SX: SystemStyleObject<Theme> = {
     minWidth: 0,
     flex: 1,
     gap: 0.75,
     justifyContent: 'flex-start',
     cursor: 'pointer',
-    ...NAME_TEXT_SX,
-    color: 'text.primary',
-    [`& .${NAME_EDIT_ICON_CLASS}`]: {
+    [`& .${EDIT_ICON_CLASS}`]: {
         flex: 'none',
-        // Muted against the name it sits beside, so it reads as an affordance
-        // rather than part of the text.
+        // Muted against the text it sits beside, so it reads as an affordance
+        // rather than part of the value.
         color: 'text.secondary',
         opacity: 0,
         transition: 'opacity 150ms ease',
     },
-    [`&:hover .${NAME_EDIT_ICON_CLASS}, &:focus-visible .${NAME_EDIT_ICON_CLASS}`]:
-        { opacity: 1 },
+    [`&:hover .${EDIT_ICON_CLASS}, &:focus-visible .${EDIT_ICON_CLASS}`]: {
+        opacity: 0.7,
+    },
+};
+
+const NAME_BUTTON_SX: SystemStyleObject<Theme> = {
+    ...NAME_TEXT_SX,
+    color: 'text.primary',
+};
+
+const LOCATION_BUTTON_SX: SystemStyleObject<Theme> = {
+    fontSize: 13,
+    color: 'text.secondary',
 };
 
 // Both inputs sit directly on the identity surface. They carry no border until
@@ -166,6 +175,47 @@ const MONOGRAM_SX: SxProps<Theme> = {
     transition: `background ${NAME_COLOR_FADE_MS}ms ease, border-color ${NAME_COLOR_FADE_MS}ms ease, color ${NAME_COLOR_FADE_MS}ms ease`,
 };
 
+interface InlineEditButtonProps {
+    value: string;
+    placeholder: string;
+    label: string;
+    textSx: SystemStyleObject<Theme>;
+    onEdit: () => void;
+}
+
+// The resting state of an editable field: the value as plain text, with a
+// pencil that surfaces on hover to say it can be changed.
+function InlineEditButton({
+    value,
+    placeholder,
+    label,
+    textSx,
+    onEdit,
+}: InlineEditButtonProps) {
+    const filled = hasLength(value);
+
+    return (
+        <ButtonBase
+            onClick={onEdit}
+            disableRipple
+            aria-label={`Edit ${label}, currently ${filled ? value : 'unset'}`}
+            sx={[INLINE_EDIT_BUTTON_SX, textSx]}
+        >
+            <Box
+                component="span"
+                sx={{
+                    ...TRUNCATE_SX,
+                    color: filled ? 'inherit' : 'text.disabled',
+                }}
+            >
+                {filled ? value : placeholder}
+            </Box>
+
+            <EditPencil width={14} height={14} className={EDIT_ICON_CLASS} />
+        </ButtonBase>
+    );
+}
+
 interface IdentityFieldsProps {
     name: string;
     onNameChange: (name: string) => void;
@@ -199,27 +249,29 @@ function IdentityFields({
     // `namePreview` substitutes a placeholder leaf for an unnamed account.
     // Hashing that placeholder would assign a color the account will never
     // wear, so the unnamed case is carried through as an empty string.
-    const [editing, setEditing] = useState(false);
+    const [editingName, setEditingName] = useState(false);
+    const [editingLocation, setEditingLocation] = useState(false);
 
-    // Held so Escape can put the name back. Without it Escape would reach the
+    // Held so Escape can put the value back. Without it Escape would reach the
     // dialog and close the whole thing mid-edit.
     const [nameBeforeEdit, setNameBeforeEdit] = useState(name);
+    const [locationBeforeEdit, setLocationBeforeEdit] = useState(location);
 
     const nameInputRef = useRef<HTMLInputElement>(null);
 
     // Focus lands here rather than on `autoFocus` so the caret can be placed
     // deliberately: at the end of the name, ready to be extended. The effect is
-    // keyed on `editing` alone, so typing never moves the caret back.
+    // keyed on the mode alone, so typing never moves the caret back.
     useEffect(() => {
         const node = nameInputRef.current;
 
-        if (!editing || !node) {
+        if (!editingName || !node) {
             return;
         }
 
         node.focus();
         node.setSelectionRange(node.value.length, node.value.length);
-    }, [editing]);
+    }, [editingName]);
 
     const settledIdentity = useDebouncedValue(
         hasLength(name) ? namePreview : '',
@@ -271,7 +323,7 @@ function IdentityFields({
                     spacing={1}
                     sx={{ alignItems: 'center' }}
                 >
-                    {editing ? (
+                    {editingName ? (
                         <InputBase
                             value={name}
                             onChange={(event) =>
@@ -281,10 +333,10 @@ function IdentityFields({
                                         .toLowerCase()
                                 )
                             }
-                            onBlur={() => setEditing(false)}
+                            onBlur={() => setEditingName(false)}
                             onKeyDown={(event) => {
                                 if (event.key === 'Enter') {
-                                    setEditing(false);
+                                    setEditingName(false);
                                 }
 
                                 if (event.key === 'Escape') {
@@ -292,7 +344,7 @@ function IdentityFields({
                                     // as a request to close.
                                     event.stopPropagation();
                                     onNameChange(nameBeforeEdit);
-                                    setEditing(false);
+                                    setEditingName(false);
                                 }
                             }}
                             placeholder="service-account"
@@ -314,46 +366,27 @@ function IdentityFields({
                             }}
                         />
                     ) : (
-                        <ButtonBase
-                            onClick={() => {
+                        <InlineEditButton
+                            value={name}
+                            placeholder="service-account"
+                            label="name"
+                            textSx={NAME_BUTTON_SX}
+                            onEdit={() => {
                                 setNameBeforeEdit(name);
-                                setEditing(true);
+                                setEditingName(true);
                             }}
-                            disableRipple
-                            aria-label={`Edit name, currently ${
-                                hasLength(name) ? name : 'unset'
-                            }`}
-                            sx={NAME_BUTTON_SX}
-                        >
-                            <Box
-                                component="span"
-                                sx={{
-                                    ...TRUNCATE_SX,
-                                    color: hasLength(name)
-                                        ? 'text.primary'
-                                        : 'text.disabled',
-                                }}
-                            >
-                                {hasLength(name) ? name : 'service-account'}
-                            </Box>
-
-                            <EditPencil
-                                width={14}
-                                height={14}
-                                className={NAME_EDIT_ICON_CLASS}
-                            />
-                        </ButtonBase>
+                        />
                     )}
 
-                    {editing ? (
-                        <Tooltip title="Generate a new name">
+                    {editingName ? (
+                        <Tooltip title="Randomize name">
                             <IconButton
                                 size="small"
                                 onClick={onRegenerate}
                                 // Keep focus on the input, so regenerating does
                                 // not blur out of edit mode.
                                 onMouseDown={(event) => event.preventDefault()}
-                                aria-label="Generate a new name"
+                                aria-label="Randomize name"
                                 // Boxed to the name's line height. Left at its
                                 // natural size it is the tallest thing on the
                                 // row and pushes the name down off the
@@ -365,22 +398,56 @@ function IdentityFields({
                                     height: NAME_LINE_HEIGHT,
                                 }}
                             >
-                                <Refresh width={18} height={18} />
+                                <Refresh
+                                    width={14}
+                                    height={14}
+                                    strokeWidth={2}
+                                />
                             </IconButton>
                         </Tooltip>
                     ) : null}
                 </Stack>
 
-                <Box sx={[INLINE_INPUT_SX, INLINE_AUTOCOMPLETE_SX]}>
-                    <LeavesAutocomplete
-                        leaves={leaves}
+                {editingLocation ? (
+                    <Box
+                        sx={[INLINE_INPUT_SX, INLINE_AUTOCOMPLETE_SX]}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                setEditingLocation(false);
+                            }
+
+                            if (event.key === 'Escape') {
+                                // Kept off the dialog, which would take it as a
+                                // request to close.
+                                event.stopPropagation();
+                                onLocationChange(locationBeforeEdit);
+                                setEditingLocation(false);
+                            }
+                        }}
+                    >
+                        <LeavesAutocomplete
+                            leaves={leaves}
+                            value={location}
+                            onChange={onLocationChange}
+                            onBlur={() => setEditingLocation(false)}
+                            label="Catalog location"
+                            textFieldVariant="standard"
+                            autoFocus
+                            required
+                        />
+                    </Box>
+                ) : (
+                    <InlineEditButton
                         value={location}
-                        onChange={onLocationChange}
-                        label="Catalog location"
-                        textFieldVariant="standard"
-                        required
+                        placeholder="No location selected"
+                        label="catalog location"
+                        textSx={LOCATION_BUTTON_SX}
+                        onEdit={() => {
+                            setLocationBeforeEdit(location);
+                            setEditingLocation(true);
+                        }}
                     />
-                </Box>
+                )}
             </Box>
         </Stack>
     );
@@ -485,22 +552,15 @@ export function CreateServiceAccountDialog({
                         </AlertBox>
                     ) : null}
 
-                    <Stack spacing={1}>
-                        <IdentityFields
-                            name={name}
-                            onNameChange={setName}
-                            location={location}
-                            onLocationChange={setLocation}
-                            leaves={leaves}
-                            namePreview={namePreview}
-                            onRegenerate={regenerateName}
-                        />
-
-                        <Typography variant="caption" color="text.secondary">
-                            Lowercase letters, numbers and dashes. Must be
-                            unique.
-                        </Typography>
-                    </Stack>
+                    <IdentityFields
+                        name={name}
+                        onNameChange={setName}
+                        location={location}
+                        onLocationChange={setLocation}
+                        leaves={leaves}
+                        namePreview={namePreview}
+                        onRegenerate={regenerateName}
+                    />
 
                     <Box
                         sx={{
@@ -556,8 +616,8 @@ export function CreateServiceAccountDialog({
                                     color="text.secondary"
                                     sx={{ display: 'block', mt: 1.5 }}
                                 >
-                                    Grants the same prefix the account lives
-                                    under. Need different or multiple prefixes?
+                                    Grants access to the service account's home
+                                    prefix. Need different or multiple prefixes?
                                     Add grants later from the account details
                                     page.
                                 </Typography>
