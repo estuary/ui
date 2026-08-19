@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import {
     Box,
+    Stack,
     Table,
     TableBody,
     TableCell,
@@ -18,7 +19,6 @@ import {
 
 import { usePaginatedStorageMappings } from 'src/api/gql/storageMappings';
 import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/AddStorageButton';
-import ChipListCell from 'src/components/tables/cells/ChipList';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { useDialog } from 'src/hooks/useDialog';
@@ -47,11 +47,15 @@ function Row({ row }: { row: StorageMappingTableRow }) {
         >
             <TableCell>{row.catalogPrefix}</TableCell>
 
-            <ChipListCell
-                values={row.spec.data_planes}
-                maxChips={3}
-                stripPath={false}
-            />
+            <TableCell>
+                <Stack>
+                    {row.spec.data_planes.map((dataPlane) => (
+                        <Typography key={dataPlane} variant="body2">
+                            {dataPlane.replace('ops/dp/', '')}
+                        </Typography>
+                    ))}
+                </Stack>
+            </TableCell>
 
             <TableCell>
                 {store ? `${store.provider}/${store.bucket}` : null}
