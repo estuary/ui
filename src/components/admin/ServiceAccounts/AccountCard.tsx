@@ -15,6 +15,7 @@ import {
 import { GrantScroller } from 'src/components/admin/ServiceAccounts/GrantScroller';
 import {
     monogram,
+    MONOGRAM_TEXT_COLOR,
     monogramColor,
     splitCatalogName,
 } from 'src/components/admin/ServiceAccounts/shared';
@@ -117,7 +118,7 @@ export function AccountCard({
                             justifyContent: 'center',
                             fontSize: 14,
                             fontWeight: 700,
-                            color: '#06121f',
+                            color: MONOGRAM_TEXT_COLOR,
                             background: monogramColor(
                                 serviceAccount.catalogName
                             ),

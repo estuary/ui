@@ -2,7 +2,7 @@ import type { Capability } from 'src/types';
 
 import { DateTime, Duration } from 'luxon';
 
-import { stringToColor } from 'src/utils/stableColor';
+import { stringToReadableColor } from 'src/utils/stableColor';
 
 // Capabilities offered when granting access, ordered least- to most-privileged.
 export const CAPABILITY_OPTIONS: Capability[] = ['read', 'admin'];
@@ -66,8 +66,15 @@ export function monogram(catalogName: string): string {
     return (alphanumeric.slice(0, 1) || 'SA').toUpperCase();
 }
 
+// The monogram itself is always this near-black, in both themes, so the tile
+// behind it carries the account's color and the letter stays a constant.
+export const MONOGRAM_TEXT_COLOR = '#06121F';
+
 // Stable per-account background color for the monogram avatar, derived from the
-// catalog name. High lightness keeps dark monogram text readable across hues.
+// catalog name. The color is lightened until it clears AA against
+// `MONOGRAM_TEXT_COLOR`, so no hue leaves the letter unreadable.
 export function monogramColor(catalogName: string): string {
-    return stringToColor(catalogName, { saturation: 80, lightness: 60 });
+    return stringToReadableColor(catalogName, MONOGRAM_TEXT_COLOR, {
+        saturation: 80,
+    });
 }

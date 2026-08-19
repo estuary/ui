@@ -4,7 +4,7 @@ import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
-import { codeBackground, getButtonIcon } from 'src/context/Theme';
+import { getButtonIcon } from 'src/context/Theme';
 import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 const borderRadius = 3;
@@ -26,7 +26,7 @@ function SingleLineCode({
                 maxWidth: 1000,
                 mb: subsequentCommandExists ? 1 : undefined,
                 display: 'flex',
-                bgcolor: codeBackground[theme.palette.mode],
+                bgcolor: theme.palette.background.code,
                 borderRadius,
                 ...(sx ?? {}),
             }}

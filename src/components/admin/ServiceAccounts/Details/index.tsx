@@ -15,6 +15,7 @@ import { ApiKeysSection } from 'src/components/admin/ServiceAccounts/Details/Api
 import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
 import {
     monogram,
+    MONOGRAM_TEXT_COLOR,
     monogramColor,
     splitCatalogName,
 } from 'src/components/admin/ServiceAccounts/shared';
@@ -113,7 +114,7 @@ export function ServiceAccountDetails() {
                             justifyContent: 'center',
                             fontSize: 17,
                             fontWeight: 700,
-                            color: '#06121f',
+                            color: MONOGRAM_TEXT_COLOR,
                             background: monogramColor(
                                 serviceAccount.catalogName
                             ),
