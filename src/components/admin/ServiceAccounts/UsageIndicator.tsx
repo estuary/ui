@@ -15,7 +15,7 @@ function usageStatus(lastUsedAt: string | null | undefined): {
     label: string;
 } {
     if (!lastUsedAt) {
-        return { tone: 'unused', label: 'Never used' };
+        return { tone: 'unused', label: 'Never' };
     }
 
     const used = DateTime.fromISO(lastUsedAt);

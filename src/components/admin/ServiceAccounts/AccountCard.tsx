@@ -4,6 +4,7 @@ import type { ServiceAccount, UserGrant } from 'src/gql-types/graphql';
 import { useState } from 'react';
 
 import { Box, ButtonBase, Stack, Typography } from '@mui/material';
+import { decomposeColor, recomposeColor } from '@mui/material/styles';
 
 import { Folder, Lock, WarningTriangle } from 'iconoir-react';
 
@@ -35,6 +36,26 @@ interface AccountCardProps {
 }
 
 const CARD_SURFACE_CLASS = 'service-account-card-surface';
+const EXPIRY_BAND_CLASS = 'service-account-card-expiry';
+
+// The expiry color sits at rest a little short of its full palette value, and
+// comes up to it when the pointer is on the card. The band and the card's border
+// both carry it, so they move together.
+const EXPIRY_SATURATION = 0.5;
+
+// Pulls a color toward its own luminance, which is what the CSS `saturate()`
+// filter computes, so a color mixed here matches one the browser filters.
+function desaturate(color: string, amount: number) {
+    const [red, green, blue] = decomposeColor(color).values;
+    const luminance = 0.213 * red + 0.715 * green + 0.072 * blue;
+    const mix = (channel: number) =>
+        Math.round(luminance + (channel - luminance) * amount);
+
+    return recomposeColor({
+        type: 'rgb',
+        values: [mix(red), mix(green), mix(blue)],
+    });
+}
 
 const META_LABEL_SX: SxProps<Theme> = {
     fontSize: 10,
@@ -79,7 +100,15 @@ export function AccountCard({
                     opacity: hasGrants ? 1 : 0.85,
                     [`& .${CARD_SURFACE_CLASS}`]: {
                         borderColor: (theme) =>
-                            defaultOutlineColor_hovered[theme.palette.mode],
+                            expiry
+                                ? theme.palette[expiryPalette].main
+                                : defaultOutlineColor_hovered[
+                                      theme.palette.mode
+                                  ],
+                    },
+                    [`& .${EXPIRY_BAND_CLASS}`]: {
+                        background: (theme) =>
+                            theme.palette[expiryPalette].main,
                     },
                 },
             }}
@@ -103,7 +132,12 @@ export function AccountCard({
                             : 'transparent',
                     border: (theme) => defaultOutline[theme.palette.mode],
                     borderColor: (theme) =>
-                        defaultOutlineColor[theme.palette.mode],
+                        expiry
+                            ? desaturate(
+                                  theme.palette[expiryPalette].main,
+                                  EXPIRY_SATURATION
+                              )
+                            : defaultOutlineColor[theme.palette.mode],
                     borderStyle: hasGrants ? 'solid' : 'dashed',
                     transition: 'border-color 0.1s ease',
                 }}
@@ -177,7 +211,10 @@ export function AccountCard({
                         </Typography>
 
                         {hasGrants ? (
-                            <GrantScroller maxHeight={62} hovered={hovered}>
+                            <GrantScroller
+                                baseHeight={62}
+                                cardHovered={hovered}
+                            >
                                 {grants.map((grant) => (
                                     <Stack
                                         key={grant.prefix}
@@ -227,6 +264,7 @@ export function AccountCard({
                 inside the seven-day warning window. */}
             {expiry ? (
                 <Stack
+                    className={EXPIRY_BAND_CLASS}
                     direction="row"
                     spacing={0.75}
                     sx={{
@@ -240,11 +278,15 @@ export function AccountCard({
                         mt: (theme) => `-${theme.radius.lg}`,
                         pt: (theme) => `calc(${theme.radius.lg} + 4px)`,
                         background: (theme) =>
-                            theme.palette[expiryPalette].main,
+                            desaturate(
+                                theme.palette[expiryPalette].main,
+                                EXPIRY_SATURATION
+                            ),
                         color: (theme) =>
                             theme.palette.getContrastText(
                                 theme.palette[expiryPalette].main
                             ),
+                        transition: 'background-color 0.1s ease',
                     }}
                 >
                     <WarningTriangle width={14} height={14} />

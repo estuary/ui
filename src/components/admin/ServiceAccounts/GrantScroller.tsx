@@ -32,8 +32,8 @@ const SAMPLES = 48;
 const MASK = `linear-gradient(to bottom, transparent 0, #000 var(--top-fade, 0px), #000 calc(100% - var(--bottom-fade, 0px)), transparent 100%)`;
 
 interface GrantScrollerProps {
-    maxHeight: number;
-    hovered: boolean;
+    baseHeight: number;
+    cardHovered: boolean;
     children: ReactNode;
 }
 
@@ -144,27 +144,39 @@ function currentOffset(viewport: HTMLElement, inner: HTMLElement) {
     return viewport.scrollTop + translated;
 }
 
-// Caps the list height and clips the overflow. Each edge fades in proportion to
-// how far the content has scrolled away from it — no top fade at the very top,
-// no bottom fade at the very bottom. When the content overflows, hovering the
-// card sweeps through it; leaving pauses it in place. The viewport is also a
-// real scroll container, so a wheel over the list takes the position over and
-// the sweep stops. Leaving and returning hands that position back to the sweep,
-// which carries on from where the reader stopped.
+// Holds the list to `baseHeight` and clips the overflow. The height is a flex
+// basis rather than a cap, so a card left taller than its content by a
+// neighboring card hands the slack to the list and more rows show.
+//
+// Each edge fades in proportion to how far the content has scrolled away from
+// it — no top fade at the very top, no bottom fade at the very bottom.
+//
+// When the content overflows, hovering the list sweeps through it, and moving
+// off the list pauses it in place. The viewport is also a real scroll container,
+// so a wheel over the list takes the position over and the sweep stays off for
+// the rest of the visit. Leaving the card ends the visit and hands the position
+// back to the sweep, in place, so the next hover of the list carries on from
+// where the reader stopped. Nothing here ever rewinds the list.
 export function GrantScroller({
-    maxHeight,
-    hovered,
+    baseHeight,
+    cardHovered,
     children,
 }: GrantScrollerProps) {
     const viewportRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const [overflow, setOverflow] = useState(0);
 
+    // The sweep answers to the pointer over the list itself. The card is a much
+    // larger target, and hovering its header or its expiry band is not a request
+    // to read the grants.
+    const [hovered, setHovered] = useState(false);
+
     const sweep = useRef<Animation | null>(null);
     const curve = useRef<SweepCurve | null>(null);
 
     // Set once the wheel moves the list, so the position lives in scrollTop and
-    // the sweep stays off. Cleared when the sweep takes the position back.
+    // the sweep stays off. Cleared when the pointer leaves the card and the
+    // sweep takes the position back.
     const readerScrolled = useRef(false);
 
     // Fades last written. A frame that would not change them leaves the mask
@@ -269,28 +281,17 @@ export function GrantScroller({
             return;
         }
 
-        if (!hovered) {
-            // Leaving pauses the sweep in place. A list the reader scrolled has
-            // no sweep to pause and keeps their position for the next visit.
-            if (!readerScrolled.current) {
-                animation.pause();
-            }
-
+        // A list the reader scrolled holds their position, and the sweep leaves
+        // it alone until they leave the card.
+        if (readerScrolled.current) {
             return;
         }
 
-        if (readerScrolled.current) {
-            // Seek to the time that draws the list where the reader left it,
-            // then clear the scroll offset in the same frame so the handover
-            // draws no jump.
-            animation.currentTime =
-                sweepTimeAt(built, viewport.scrollTop) * built.durationMs;
-            viewport.scrollTop = 0;
-
-            readerScrolled.current = false;
+        if (hovered) {
+            animation.play();
+        } else {
+            animation.pause();
         }
-
-        animation.play();
     }, [hovered, overflow]);
 
     useEffect(() => {
@@ -353,11 +354,43 @@ export function GrantScroller({
         return () => cancelAnimationFrame(frame);
     }, [hovered, overflow, syncFade]);
 
+    // Leaving the card re-arms the sweep over a list the reader scrolled. The
+    // list does not move: the sweep is seeked to the time that draws it where
+    // they parked it, and the scroll offset is cleared in the same frame, so it
+    // sits paused on that position ready for the next hover.
+    useEffect(() => {
+        const viewport = viewportRef.current;
+        const animation = sweep.current;
+        const built = curve.current;
+
+        if (
+            cardHovered ||
+            !viewport ||
+            !animation ||
+            !built ||
+            !readerScrolled.current
+        ) {
+            return;
+        }
+
+        animation.pause();
+        animation.currentTime =
+            sweepTimeAt(built, viewport.scrollTop) * built.durationMs;
+        viewport.scrollTop = 0;
+
+        readerScrolled.current = false;
+    }, [cardHovered, overflow]);
+
     return (
         <Box
             ref={viewportRef}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
             sx={{
-                'maxHeight': maxHeight,
+                // A scroll container's automatic minimum size is zero, so the
+                // basis holds the height the card is sized around and growth
+                // past it comes out of the card's spare room.
+                'flex': `1 1 ${baseHeight}px`,
                 'overflowX': 'hidden',
                 'overflowY': 'auto',
                 'maskImage': MASK,
