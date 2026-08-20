@@ -10,7 +10,9 @@ import { Link as RouterLink } from 'react-router-dom';
 import {
     appendWithForwardSlash,
     replaceWhitespacesWithUnderscores,
+    stripDisallowedCatalogCharacters,
 } from 'src/utils/misc-utils';
+import { breakAtSlashes } from 'src/utils/path-utils';
 
 // `useAutocomplete` checks this flag, not `defaultPrevented`, to decide whether
 // to skip its own key handling.
@@ -40,14 +42,6 @@ function parentPrefix(prefix: string): string {
     const lastSlash = withoutTrailingSlash.lastIndexOf('/');
 
     return lastSlash === -1 ? '' : withoutTrailingSlash.slice(0, lastSlash + 1);
-}
-
-// Insert <wbr> after each "/" so the browser only wraps at path boundaries
-function breakAtSlashes(text: string) {
-    const segments = text.split('/');
-    return segments.flatMap((seg, i) =>
-        i < segments.length - 1 ? [seg, '/', <wbr key={i} />] : [seg]
-    );
 }
 
 const markdownOptions = {
@@ -186,7 +180,11 @@ export function LeavesAutocomplete({
             filterOptions={() => offered}
             inputValue={value}
             onInputChange={(_event, newInputValue, _reason) =>
-                onChange(replaceWhitespacesWithUnderscores(newInputValue))
+                onChange(
+                    stripDisallowedCatalogCharacters(
+                        replaceWhitespacesWithUnderscores(newInputValue)
+                    )
+                )
             }
             onChange={(_event, newValue) => {
                 onChange(newValue ?? '');

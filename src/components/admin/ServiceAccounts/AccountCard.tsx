@@ -1,5 +1,4 @@
 import type { SxProps, Theme } from '@mui/material';
-import type { ReactNode } from 'react';
 import type { ServiceAccount, UserGrant } from 'src/gql-types/graphql';
 
 import { useState } from 'react';
@@ -20,6 +19,7 @@ import {
     splitCatalogName,
 } from 'src/components/admin/ServiceAccounts/shared';
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
+import { CatalogPath } from 'src/components/shared/CatalogPath';
 import {
     defaultOutline,
     defaultOutline_hovered,
@@ -40,24 +40,6 @@ const META_LABEL_SX: SxProps<Theme> = {
     fontWeight: 600,
     color: (theme) => diminishedTextColor[theme.palette.mode],
 };
-
-// Render a catalog prefix so it only wraps after a slash: each "/"-terminated
-// segment stays on one line, with a break opportunity between segments.
-function slashBreaks(prefix: string): ReactNode[] {
-    return prefix
-        .split(/(?<=\/)/)
-        .filter(Boolean)
-        .flatMap((segment, index) => [
-            <Box
-                key={`segment-${index}`}
-                component="span"
-                sx={{ whiteSpace: 'nowrap' }}
-            >
-                {segment}
-            </Box>,
-            <wbr key={`break-${index}`} />,
-        ]);
-}
 
 export function AccountCard({
     serviceAccount,
@@ -189,12 +171,10 @@ export function AccountCard({
                                         >
                                             <Folder width={13} height={13} />
                                         </Box>
-                                        <Typography
+                                        <CatalogPath
+                                            path={grant.prefix}
                                             variant="caption"
-                                            sx={{ fontFamily: 'monospace' }}
-                                        >
-                                            {slashBreaks(grant.prefix)}
-                                        </Typography>
+                                        />
                                     </Stack>
                                 ))}
                             </GrantScroller>

@@ -8,6 +8,7 @@ import {
     journalStatusIsWarning,
     replaceWhitespacesWithUnderscores,
     splitPathAndName,
+    stripDisallowedCatalogCharacters,
     stripPathing,
 } from 'src/utils/misc-utils';
 
@@ -157,5 +158,35 @@ describe('journalStatusIsError', () => {
 
     test('returns false for undefined', () => {
         expect(journalStatusIsError(undefined)).toBe(false);
+    });
+});
+
+describe('stripDisallowedCatalogCharacters', () => {
+    test('keeps letters, numbers, dashes, underscores, periods and slashes', () => {
+        expect(
+            stripDisallowedCatalogCharacters('acmeCo/prod_v2/anvils-1.0/')
+        ).toBe('acmeCo/prod_v2/anvils-1.0/');
+    });
+
+    test('drops an apostrophe', () => {
+        expect(stripDisallowedCatalogCharacters("acmeCo/account's/")).toBe(
+            'acmeCo/accounts/'
+        );
+    });
+
+    test('drops punctuation and symbols', () => {
+        expect(
+            stripDisallowedCatalogCharacters('acmeCo/(one)+two@three#/')
+        ).toBe('acmeCo/onetwothree/');
+    });
+
+    test('keeps letters outside ASCII', () => {
+        expect(stripDisallowedCatalogCharacters('acmeCo/café/日本/')).toBe(
+            'acmeCo/café/日本/'
+        );
+    });
+
+    test('returns an empty string when nothing is allowed', () => {
+        expect(stripDisallowedCatalogCharacters('!@#$%')).toBe('');
     });
 });

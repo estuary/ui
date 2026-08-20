@@ -13,12 +13,8 @@ import { authenticatedRoutes } from 'src/app/routes';
 import { CreateApiKeyDialog } from 'src/components/admin/ServiceAccounts/CreateApiKeyDialog';
 import { ApiKeysSection } from 'src/components/admin/ServiceAccounts/Details/ApiKeysSection';
 import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
-import {
-    monogram,
-    MONOGRAM_TEXT_COLOR,
-    monogramColor,
-    splitCatalogName,
-} from 'src/components/admin/ServiceAccounts/shared';
+import { IdentityCard } from 'src/components/admin/ServiceAccounts/IdentityCard';
+import { splitCatalogName } from 'src/components/admin/ServiceAccounts/shared';
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import useGlobalSearchParams, {
     GlobalSearchParams,
@@ -39,12 +35,15 @@ function MetaItem({ label, children }: { label: string; children: ReactNode }) {
             <Typography component="div" sx={META_LABEL_SX}>
                 {label}
             </Typography>
-            <Typography variant="body2" sx={{ mt: 0.5 }}>
+            <Typography component="div" variant="body2" sx={{ mt: 0.5 }}>
                 {children}
             </Typography>
         </Box>
     );
 }
+
+// The header wears the card larger than the create dialog does.
+const IDENTITY_SCALE = 1.25;
 
 export function ServiceAccountDetails() {
     const navigate = useNavigate();
@@ -98,58 +97,14 @@ export function ServiceAccountDetails() {
 
         body = (
             <>
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{ alignItems: 'center', mb: 4.5 }}
-                >
-                    <Box
-                        sx={{
-                            width: 52,
-                            height: 52,
-                            flex: 'none',
-                            borderRadius: (theme) => theme.radius.md,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 17,
-                            fontWeight: 700,
-                            color: MONOGRAM_TEXT_COLOR,
-                            background: monogramColor(
-                                serviceAccount.catalogName
-                            ),
-                        }}
-                    >
-                        {monogram(serviceAccount.catalogName)}
-                    </Box>
-
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Box
-                            component="span"
-                            sx={{
-                                fontFamily: 'monospace',
-                                fontWeight: 600,
-                                color: 'text.primary',
-                                fontSize: 20,
-                                overflowWrap: 'anywhere',
-                            }}
-                        >
-                            {leaf}
-                        </Box>
-                        <UsageIndicator
-                            lastUsedAt={serviceAccount.lastUsedAt}
-                            variant="body2"
-                            sx={{ mt: 0.75 }}
-                        />
-                    </Box>
-                </Stack>
+                <IdentityCard
+                    name={leaf}
+                    location={prefix}
+                    scale={IDENTITY_SCALE}
+                    sx={{ mb: 4.5 }}
+                />
 
                 <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 6, mb: 5 }}>
-                    <MetaItem label="Location">
-                        <Box component="span" sx={{ fontFamily: 'monospace' }}>
-                            {prefix}
-                        </Box>
-                    </MetaItem>
                     <MetaItem label="Created">
                         {DateTime.fromISO(
                             serviceAccount.createdAt
@@ -158,12 +113,11 @@ export function ServiceAccountDetails() {
                     <MetaItem label="Created by">
                         {serviceAccount.createdByEmail ?? 'Unknown'}
                     </MetaItem>
-                    <MetaItem label="Last used">
-                        {serviceAccount.lastUsedAt
-                            ? DateTime.fromISO(
-                                  serviceAccount.lastUsedAt
-                              ).toRelative()
-                            : 'Never'}
+                    <MetaItem label="Usage">
+                        <UsageIndicator
+                            lastUsedAt={serviceAccount.lastUsedAt}
+                            variant="body2"
+                        />
                     </MetaItem>
                     <MetaItem label="API keys">
                         {serviceAccount.apiKeys.length === 0

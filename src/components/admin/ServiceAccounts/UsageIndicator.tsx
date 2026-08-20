@@ -1,6 +1,6 @@
 import type { SxProps, Theme, TypographyProps } from '@mui/material';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Tooltip, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
 
@@ -27,18 +27,18 @@ function usageStatus(lastUsedAt: string | null | undefined): {
         now.startOf('week').diff(used.startOf('week'), 'weeks').weeks
     );
 
-    if (weekDiff <= 3) {
+    if (weekDiff <= 6) {
         let label: string;
         if (dayDiff <= 0) {
-            label = 'Last used today';
+            label = 'Today';
         } else if (dayDiff === 1) {
-            label = 'Last used yesterday';
+            label = 'Yesterday';
         } else if (weekDiff === 0) {
-            label = 'Last used this week';
+            label = 'This week';
         } else if (weekDiff === 1) {
-            label = 'Last used last week';
+            label = 'Last week';
         } else {
-            label = `Last used ${weekDiff} weeks ago`;
+            label = `${weekDiff} weeks ago`;
         }
 
         return { tone: 'recent', label };
@@ -53,7 +53,9 @@ function usageStatus(lastUsedAt: string | null | undefined): {
     const label =
         monthsAgo >= 12
             ? 'Unused for over a year'
-            : `Unused for ${monthsAgo} month${monthsAgo === 1 ? '' : 's'}`;
+            : monthsAgo >= 3
+              ? `Unused for ${monthsAgo} months`
+              : `Unused for ${weekDiff} week${weekDiff === 1 ? '' : 's'}`;
 
     return { tone: 'stale', label };
 }
@@ -74,7 +76,7 @@ export function UsageIndicator({
 }: UsageIndicatorProps) {
     const usage = usageStatus(lastUsedAt);
 
-    return (
+    const indicator = (
         <Stack
             direction="row"
             spacing={0.75}
@@ -102,5 +104,22 @@ export function UsageIndicator({
                 {usage.label}
             </Typography>
         </Stack>
+    );
+
+    // The label is deliberately coarse — "this week", "3 months" — so the exact
+    // moment is kept a hover away. An account that has never authenticated has
+    // no moment to show.
+    if (!lastUsedAt) {
+        return indicator;
+    }
+
+    return (
+        <Tooltip
+            title={DateTime.fromISO(lastUsedAt).toLocaleString(
+                DateTime.DATETIME_FULL
+            )}
+        >
+            {indicator}
+        </Tooltip>
     );
 }

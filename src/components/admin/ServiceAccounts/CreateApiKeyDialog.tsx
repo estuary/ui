@@ -99,14 +99,6 @@ export function CreateApiKeyDialog({
 
                 <DialogContent>
                     <Stack spacing={2} sx={{ mt: 1 }}>
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ fontFamily: 'monospace' }}
-                        >
-                            {catalogName}
-                        </Typography>
-
                         {error ? (
                             <AlertBox severity="error" short>
                                 <Typography>{error}</Typography>
@@ -121,7 +113,7 @@ export function CreateApiKeyDialog({
                             size="small"
                             fullWidth
                             placeholder="CI deploy pipeline"
-                            helperText="Helps you recognise this key later."
+                            helperText="Helps you recognize this key later."
                         />
 
                         <Box>

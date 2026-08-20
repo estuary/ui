@@ -26,6 +26,7 @@ import {
 import { GrantDialog } from 'src/components/admin/ServiceAccounts/GrantDialog';
 import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
 import AlertBox from 'src/components/shared/AlertBox';
+import { CatalogPath } from 'src/components/shared/CatalogPath';
 
 interface GrantsSectionProps {
     catalogName: string;
@@ -162,19 +163,11 @@ export function GrantsSection({
                         <Box sx={{ display: 'flex', color: 'text.secondary' }}>
                             <Folder />
                         </Box>
-                        <Typography
+                        <CatalogPath
+                            path={grant.prefix}
                             variant="body2"
-                            sx={{
-                                flex: 1,
-                                minWidth: 0,
-                                fontFamily: 'monospace',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                            }}
-                        >
-                            {grant.prefix}
-                        </Typography>
+                            sx={{ flex: 1 }}
+                        />
                         <Chip label={grant.capability} size="small" />
                         <IconButton
                             size="small"
