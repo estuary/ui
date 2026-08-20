@@ -14,8 +14,8 @@ import {
 
 import { CheckCircle } from 'iconoir-react';
 
-import SingleLineCode from 'src/components/content/SingleLineCode';
 import AlertBox from 'src/components/shared/AlertBox';
+import { CopyValueButton } from 'src/components/shared/buttons/CopyValueButton';
 
 interface SecretRevealModalProps {
     open: boolean;
@@ -27,14 +27,6 @@ interface SecretRevealModalProps {
     account: string;
     onDone: () => void;
 }
-
-const META_LABEL_SX = {
-    fontSize: 10,
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase',
-    fontWeight: 600,
-    color: 'text.secondary',
-} as const;
 
 // Shows a freshly minted API key exactly once. The user must acknowledge they
 // stored it before they can dismiss the dialog (no close affordance otherwise).
@@ -84,7 +76,7 @@ export function SecretRevealModal({
                                 API key created
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {description}
+                                {description} - Expires {expires}
                             </Typography>
                         </Box>
                     </Stack>
@@ -95,35 +87,18 @@ export function SecretRevealModal({
                         short
                     >
                         <Typography>
-                            This secret will not be shown again. Store it
+                            This secret will not be provided again. Store it
                             somewhere safe before closing this dialog. Use it as
                             the value of FLOW_API_KEY in your CI/CD environment.
                         </Typography>
                     </AlertBox>
 
-                    <Box data-private>
-                        <SingleLineCode value={secret} />
-                    </Box>
-
-                    <Stack direction="row" spacing={3}>
-                        <Box>
-                            <Typography component="div" sx={META_LABEL_SX}>
-                                Expires
-                            </Typography>
-                            <Typography variant="body2">{expires}</Typography>
-                        </Box>
-                        <Box sx={{ minWidth: 0 }}>
-                            <Typography component="div" sx={META_LABEL_SX}>
-                                Account
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ fontFamily: 'monospace' }}
-                            >
-                                {account}
-                            </Typography>
-                        </Box>
-                    </Stack>
+                    <CopyValueButton
+                        value={secret}
+                        source="SecretRevealModal"
+                        label="Copy API key"
+                        sx={{ alignSelf: 'flex-start' }}
+                    />
 
                     <Box
                         sx={{
@@ -141,7 +116,7 @@ export function SecretRevealModal({
                                     }
                                 />
                             }
-                            label="I’ve copied my API key and stored it securely"
+                            label="I've stored my API key somewhere safe"
                         />
                     </Box>
                 </Stack>

@@ -1,6 +1,6 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
 
-import { Developer, Plus } from 'iconoir-react';
+import { Planet, Plus } from 'iconoir-react';
 
 import { featureDescription } from 'src/components/admin/ServiceAccounts/shared';
 import { defaultOutline, logoColors } from 'src/context/Theme';
@@ -33,7 +33,7 @@ export function EmptyState({ onCreate }: EmptyStateProps) {
                     color: 'primary.main',
                 }}
             >
-                <Developer width={40} height={40} />
+                <Planet width={40} height={40} />
             </Box>
 
             <Typography variant="h6" sx={{ mb: 1.25 }}>

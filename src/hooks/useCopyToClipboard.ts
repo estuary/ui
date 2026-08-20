@@ -15,9 +15,12 @@ export function useCopyToClipboard(componentName: string) {
                 },
                 () => {
                     setIsCopied(false);
+                    // The value is deliberately left out: this hook copies
+                    // access tokens and API keys, and a failure must not put
+                    // them in session telemetry.
                     logRocketEvent('Error_Silent', {
-                        copiedValue: value,
                         component: componentName,
+                        operation: 'copyToClipboard',
                     });
                 }
             );

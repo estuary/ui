@@ -131,11 +131,6 @@ export function AccountCard({
                             sx={{ mt: 0.5 }}
                         />
                     </Box>
-
-                    <ExpiryWarning
-                        expiresAt={soonestExpiry(serviceAccount.apiKeys)}
-                        sx={{ flex: 'none' }}
-                    />
                 </Stack>
 
                 <Box
@@ -207,6 +202,10 @@ export function AccountCard({
                         <Typography component="span" sx={META_LABEL_SX}>
                             API keys
                         </Typography>
+                        <ExpiryWarning
+                            expiresAt={soonestExpiry(serviceAccount.apiKeys)}
+                            sx={{ flex: 'none' }}
+                        />
                         <Stack
                             direction="row"
                             spacing={0.75}

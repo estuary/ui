@@ -97,7 +97,10 @@ export function ExpiryWarning({
             <Typography
                 variant={variant}
                 color="inherit"
-                sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}
+                sx={{
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                }}
             >
                 {alert.label}
             </Typography>
