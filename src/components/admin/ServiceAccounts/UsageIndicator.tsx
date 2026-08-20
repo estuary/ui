@@ -52,10 +52,10 @@ function usageStatus(lastUsedAt: string | null | undefined): {
     );
     const label =
         monthsAgo >= 12
-            ? 'Unused for over a year'
+            ? 'Over a year ago'
             : monthsAgo >= 3
-              ? `Unused for ${monthsAgo} months`
-              : `Unused for ${weekDiff} week${weekDiff === 1 ? '' : 's'}`;
+              ? `${monthsAgo} months ago`
+              : `${weekDiff} week${weekDiff === 1 ? '' : 's'} ago`;
 
     return { tone: 'stale', label };
 }
@@ -116,7 +116,7 @@ export function UsageIndicator({
     return (
         <Tooltip
             title={DateTime.fromISO(lastUsedAt).toLocaleString(
-                DateTime.DATETIME_FULL
+                DateTime.DATETIME_MED_WITH_WEEKDAY
             )}
         >
             {indicator}

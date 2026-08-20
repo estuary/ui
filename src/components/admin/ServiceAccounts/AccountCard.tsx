@@ -5,11 +5,11 @@ import { useState } from 'react';
 
 import { Box, ButtonBase, Stack, Typography } from '@mui/material';
 
-import { Folder, Key, Lock } from 'iconoir-react';
+import { Folder, Lock, WarningTriangle } from 'iconoir-react';
 
 import {
-    ExpiryWarning,
     soonestExpiry,
+    tokenExpiry,
 } from 'src/components/admin/ServiceAccounts/ExpiryWarning';
 import { GrantScroller } from 'src/components/admin/ServiceAccounts/GrantScroller';
 import {
@@ -22,9 +22,10 @@ import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndica
 import { CatalogPath } from 'src/components/shared/CatalogPath';
 import {
     defaultOutline,
-    defaultOutline_hovered,
+    defaultOutlineColor,
+    defaultOutlineColor_hovered,
     diminishedTextColor,
-    semiTransparentBackground,
+    semiTransparentBackground_oneLayerElevated,
 } from 'src/context/Theme';
 
 interface AccountCardProps {
@@ -33,10 +34,12 @@ interface AccountCardProps {
     onOpen: (catalogName: string) => void;
 }
 
+const CARD_SURFACE_CLASS = 'service-account-card-surface';
+
 const META_LABEL_SX: SxProps<Theme> = {
     fontSize: 10,
     letterSpacing: '0.08em',
-    textTransform: 'uppercase',
+    // textTransform: 'uppercase',
     fontWeight: 600,
     color: (theme) => diminishedTextColor[theme.palette.mode],
 };
@@ -48,8 +51,8 @@ export function AccountCard({
 }: AccountCardProps) {
     const grantCount = grants.length;
     const hasGrants = grantCount > 0;
-
-    const keyCount = serviceAccount.apiKeys.length;
+    const expiry = tokenExpiry(soonestExpiry(serviceAccount.apiKeys));
+    const expiryPalette = expiry?.severity === 'expired' ? 'error' : 'warning';
 
     const [hovered, setHovered] = useState(false);
 
@@ -59,30 +62,52 @@ export function AccountCard({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             sx={{
+                // The frame holds the card face and, when there is an expiry
+                // to flag, the colored band tucked behind its bottom edge.
+                // `overflow: hidden` rounds the band's bottom corners to the
+                // card radius.
                 'display': 'flex',
                 'flexDirection': 'column',
                 'alignItems': 'stretch',
                 'width': '100%',
                 'textAlign': 'left',
-                'p': 2,
                 'borderRadius': (theme) => theme.radius.lg,
-                'background': (theme) =>
-                    hasGrants
-                        ? semiTransparentBackground[theme.palette.mode]
-                        : 'transparent',
-                'border': (theme) => defaultOutline[theme.palette.mode],
-                'borderStyle': hasGrants ? 'solid' : 'dashed',
+                'overflow': 'hidden',
                 'opacity': hasGrants ? 1 : 0.7,
-                'transition': 'border-color 0.1s ease, opacity 0.1s ease',
+                'transition': 'opacity 0.1s ease',
                 '&:hover': {
-                    border: (theme) =>
-                        defaultOutline_hovered[theme.palette.mode],
-                    borderStyle: hasGrants ? 'solid' : 'dashed',
                     opacity: hasGrants ? 1 : 0.85,
+                    [`& .${CARD_SURFACE_CLASS}`]: {
+                        borderColor: (theme) =>
+                            defaultOutlineColor_hovered[theme.palette.mode],
+                    },
                 },
             }}
         >
-            <Stack spacing={1.75} sx={{ flex: 1 }}>
+            <Stack
+                className={CARD_SURFACE_CLASS}
+                spacing={1.75}
+                sx={{
+                    // Painted over the band, and opaque so only the rounded
+                    // corners let it through.
+                    position: 'relative',
+                    zIndex: 1,
+                    flex: 1,
+                    p: 2,
+                    borderRadius: (theme) => theme.radius.lg,
+                    background: (theme) =>
+                        hasGrants || expiry
+                            ? semiTransparentBackground_oneLayerElevated[
+                                  theme.palette.mode
+                              ]
+                            : 'transparent',
+                    border: (theme) => defaultOutline[theme.palette.mode],
+                    borderColor: (theme) =>
+                        defaultOutlineColor[theme.palette.mode],
+                    borderStyle: hasGrants ? 'solid' : 'dashed',
+                    transition: 'border-color 0.1s ease',
+                }}
+            >
                 {/* Identity */}
                 <Stack
                     direction="row"
@@ -144,7 +169,11 @@ export function AccountCard({
                 <Stack spacing={1.25} sx={{ flex: 1 }}>
                     <Stack spacing={0.75} sx={{ flex: 1 }}>
                         <Typography component="span" sx={META_LABEL_SX}>
-                            Access
+                            Access{' '}
+                            {grantCount > 3
+                                ? `(${grantCount}
+                            ${grantCount === 1 ? 'grant' : 'grants'})`
+                                : null}
                         </Typography>
 
                         {hasGrants ? (
@@ -190,44 +219,44 @@ export function AccountCard({
                             </Stack>
                         )}
                     </Stack>
-
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Typography component="span" sx={META_LABEL_SX}>
-                            API keys
-                        </Typography>
-                        <ExpiryWarning
-                            expiresAt={soonestExpiry(serviceAccount.apiKeys)}
-                            sx={{ flex: 'none' }}
-                        />
-                        <Stack
-                            direction="row"
-                            spacing={0.75}
-                            sx={{ alignItems: 'center' }}
-                        >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    color: 'text.secondary',
-                                }}
-                            >
-                                <Key width={15} height={15} />
-                            </Box>
-                            <Typography variant="body2">
-                                {keyCount === 0
-                                    ? 'No keys'
-                                    : `${keyCount} ${keyCount === 1 ? 'key' : 'keys'}`}
-                            </Typography>
-                        </Stack>
-                    </Stack>
                 </Stack>
             </Stack>
+
+            {/* Expiry band, running behind the card face's bottom edge and
+                out past it. Red once a key has lapsed, orange while one is
+                inside the seven-day warning window. */}
+            {expiry ? (
+                <Stack
+                    direction="row"
+                    spacing={0.75}
+                    sx={{
+                        // Pulled up by one corner radius so the card's rounded
+                        // bottom corners curve away onto the band.
+                        flex: 'none',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        px: 1.5,
+                        py: 0.5,
+                        mt: (theme) => `-${theme.radius.lg}`,
+                        pt: (theme) => `calc(${theme.radius.lg} + 4px)`,
+                        background: (theme) =>
+                            theme.palette[expiryPalette].main,
+                        color: (theme) =>
+                            theme.palette.getContrastText(
+                                theme.palette[expiryPalette].main
+                            ),
+                    }}
+                >
+                    <WarningTriangle width={14} height={14} />
+                    <Typography
+                        variant="caption"
+                        color="inherit"
+                        sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}
+                    >
+                        {expiry.label}
+                    </Typography>
+                </Stack>
+            ) : null}
         </ButtonBase>
     );
 }

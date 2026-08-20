@@ -12,6 +12,8 @@ interface CopyValueButtonProps extends Omit<ButtonProps, 'onClick'> {
     source: string;
     label: string;
     copiedLabel?: string;
+    /** Called once the value has actually reached the clipboard. */
+    onCopied?: () => void;
 }
 
 /**
@@ -28,6 +30,7 @@ export function CopyValueButton({
     source,
     label,
     copiedLabel = 'Copied',
+    onCopied,
     ...props
 }: CopyValueButtonProps) {
     const { isCopied, handleCopy } = useCopyToClipboard(source);
@@ -43,7 +46,13 @@ export function CopyValueButton({
                 )
             }
             color={isCopied ? 'success' : 'primary'}
-            onClick={() => handleCopy(value)}
+            onClick={() => {
+                void handleCopy(value)?.then((copied) => {
+                    if (copied) {
+                        onCopied?.();
+                    }
+                });
+            }}
             {...props}
         >
             {isCopied ? copiedLabel : label}

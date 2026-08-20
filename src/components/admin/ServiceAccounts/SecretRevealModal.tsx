@@ -3,11 +3,9 @@ import { useEffect, useState } from 'react';
 import {
     Box,
     Button,
-    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
-    FormControlLabel,
     Stack,
     Typography,
 } from '@mui/material';
@@ -38,11 +36,13 @@ export function SecretRevealModal({
     account,
     onDone,
 }: SecretRevealModalProps) {
-    const [acknowledged, setAcknowledged] = useState(false);
+    // Dismissing loses the secret for good, so the dialog holds until it has
+    // been copied.
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         if (open) {
-            setAcknowledged(false);
+            setCopied(false);
         }
     }, [open]);
 
@@ -97,37 +97,14 @@ export function SecretRevealModal({
                         value={secret}
                         source="SecretRevealModal"
                         label="Copy API key"
+                        onCopied={() => setCopied(true)}
                         sx={{ alignSelf: 'flex-start' }}
                     />
-
-                    <Box
-                        sx={{
-                            pt: 2,
-                            borderTop: (theme) =>
-                                `1px solid ${theme.palette.divider}`,
-                        }}
-                    >
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={acknowledged}
-                                    onChange={(event) =>
-                                        setAcknowledged(event.target.checked)
-                                    }
-                                />
-                            }
-                            label="I've stored my API key somewhere safe"
-                        />
-                    </Box>
                 </Stack>
             </DialogContent>
 
             <DialogActions>
-                <Button
-                    variant="contained"
-                    onClick={onDone}
-                    disabled={!acknowledged}
-                >
+                <Button variant="contained" onClick={onDone} disabled={!copied}>
                     Done
                 </Button>
             </DialogActions>

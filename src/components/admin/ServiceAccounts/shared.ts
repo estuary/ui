@@ -19,8 +19,8 @@ export interface LifetimeOption {
 
 export const LIFETIME_OPTIONS: LifetimeOption[] = [
     { label: '30 days', value: 'P30D' },
-    { label: '60 days', value: 'P60D' },
     { label: '90 days', value: 'P90D' },
+    { label: '180 days', value: 'P180D' },
     { label: '1 year', value: 'P1Y' },
 ];
 

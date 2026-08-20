@@ -113,7 +113,7 @@ export function ServiceAccountDetails() {
                     <MetaItem label="Created by">
                         {serviceAccount.createdByEmail ?? 'Unknown'}
                     </MetaItem>
-                    <MetaItem label="Usage">
+                    <MetaItem label="Last active">
                         <UsageIndicator
                             lastUsedAt={serviceAccount.lastUsedAt}
                             variant="body2"

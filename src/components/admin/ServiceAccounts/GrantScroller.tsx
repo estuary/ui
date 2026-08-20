@@ -8,25 +8,28 @@ import {
     useState,
 } from 'react';
 
-import { Box, keyframes, Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 
 // Maximum fade depth at each edge, and the scroll distance (px) over which it
 // ramps in. At an edge the fade is 0, so the first/last row is fully visible.
 const FADE = 14;
 const RAMP = 10;
 
-const MASK = `linear-gradient(to bottom, transparent 0, #000 var(--top-fade, 0px), #000 calc(100% - var(--bottom-fade, 0px)), transparent 100%)`;
+// Rate the sweep holds through the middle of a pass, in px/s.
+const SCROLL_SPEED = 32;
 
-// Gently scroll the clipped content top-to-bottom while the card is hovered;
-// ease-in-out softens each turnaround.
-const reveal = keyframes`
-    0% {
-        transform: translateY(0);
-    }
-    100% {
-        transform: translateY(var(--grant-scroll-distance, 0px));
-    }
-`;
+// Distance over which the rate eases away from an end and into the far one, and
+// the pause held at each end. Both ends of a pass hold, and the direction
+// alternates, so a turnaround pauses for twice HOLD_SECONDS.
+const EASE_ZONE = 20;
+const HOLD_SECONDS = 0.2;
+
+// Samples taken of the position curve to build the animation's keyframes. The
+// compositor interpolates linearly between them, which is exact through the
+// constant middle and fine-grained enough for the eased ends.
+const SAMPLES = 48;
+
+const MASK = `linear-gradient(to bottom, transparent 0, #000 var(--top-fade, 0px), #000 calc(100% - var(--bottom-fade, 0px)), transparent 100%)`;
 
 interface GrantScrollerProps {
     maxHeight: number;
@@ -34,10 +37,120 @@ interface GrantScrollerProps {
     children: ReactNode;
 }
 
+interface SweepCurve {
+    durationMs: number;
+    points: { at: number; px: number }[];
+}
+
+// One-way pass of the sweep, sampled as (time fraction, px) pairs: it holds at
+// the near end, eases up to the cruising rate over EASE_ZONE, holds that rate
+// through the middle, then eases down into the far end and holds again. The
+// samples serve as the animation's keyframes and as the table that maps a
+// position back to a time.
+function buildSweep(distance: number): SweepCurve {
+    const zone = Math.min(EASE_ZONE, distance / 2);
+    const ramp = (2 * zone) / SCROLL_SPEED;
+    const cruise = (distance - 2 * zone) / SCROLL_SPEED;
+    const moving = 2 * ramp + cruise;
+    const total = moving + 2 * HOLD_SECONDS;
+
+    // Integral of a smoothstep rate ramp, so the rate leaves an end at zero and
+    // arrives at the cruising rate with no kink.
+    const ramped = (fraction: number) =>
+        SCROLL_SPEED *
+        ramp *
+        (fraction * fraction * fraction -
+            (fraction * fraction * fraction * fraction) / 2);
+
+    const positionAt = (seconds: number) => {
+        if (seconds <= 0) {
+            return 0;
+        }
+
+        if (seconds >= moving) {
+            return distance;
+        }
+
+        if (seconds < ramp) {
+            return ramped(seconds / ramp);
+        }
+
+        if (seconds < ramp + cruise) {
+            return zone + SCROLL_SPEED * (seconds - ramp);
+        }
+
+        return distance - ramped((moving - seconds) / ramp);
+    };
+
+    const points = [];
+
+    for (let index = 0; index <= SAMPLES; index += 1) {
+        const at = index / SAMPLES;
+
+        points.push({ at, px: positionAt(at * total - HOLD_SECONDS) });
+    }
+
+    return { durationMs: total * 1000, points };
+}
+
+// Time fraction at which the sweep sits at `px`, read off the same samples the
+// animation interpolates, so seeking to it lands exactly on that position.
+function sweepTimeAt(curve: SweepCurve, px: number) {
+    const { points } = curve;
+    const target = Math.min(Math.max(px, 0), points[points.length - 1].px);
+
+    for (let index = 1; index < points.length; index += 1) {
+        const previous = points[index - 1];
+        const next = points[index];
+
+        if (target <= next.px) {
+            const span = next.px - previous.px;
+            const share = span > 0 ? (target - previous.px) / span : 0;
+
+            return previous.at + share * (next.at - previous.at);
+        }
+    }
+
+    return 1;
+}
+
+// Wheel deltas arrive in pixels, lines, or pages depending on the device and
+// the browser. Normalize to pixels so a gesture moves the list by what it asked
+// for.
+const LINE_HEIGHT = 16;
+
+function wheelPixels(event: WheelEvent, viewport: HTMLElement) {
+    if (event.deltaMode === 1) {
+        return event.deltaY * LINE_HEIGHT;
+    }
+
+    if (event.deltaMode === 2) {
+        return event.deltaY * viewport.clientHeight;
+    }
+
+    return event.deltaY;
+}
+
+// How far the list is displaced, whichever mechanism put it there: the sweep
+// writes a transform for the compositor to interpolate, and the reader's wheel
+// writes scrollTop. Only one is ever in effect, so the sum is the position.
+function currentOffset(viewport: HTMLElement, inner: HTMLElement) {
+    const transform = getComputedStyle(inner).transform;
+    const translated =
+        transform && transform !== 'none'
+            ? -new DOMMatrixReadOnly(transform).m42
+            : 0;
+
+    return viewport.scrollTop + translated;
+}
+
 // Caps the list height and clips the overflow. Each edge fades in proportion to
 // how far the content has scrolled away from it — no top fade at the very top,
 // no bottom fade at the very bottom. When the content overflows, hovering the
-// card auto-scrolls through it; leaving pauses it in place.
+// card sweeps through it; leaving pauses it in place. The viewport is also a
+// real scroll container, so a wheel over the list takes the position over and
+// the sweep stops. Leaving and returning hands that position back to the sweep,
+// which carries on from where the reader stopped.
 export function GrantScroller({
     maxHeight,
     hovered,
@@ -46,6 +159,17 @@ export function GrantScroller({
     const viewportRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
     const [overflow, setOverflow] = useState(0);
+
+    const sweep = useRef<Animation | null>(null);
+    const curve = useRef<SweepCurve | null>(null);
+
+    // Set once the wheel moves the list, so the position lives in scrollTop and
+    // the sweep stays off. Cleared when the sweep takes the position back.
+    const readerScrolled = useRef(false);
+
+    // Fades last written. A frame that would not change them leaves the mask
+    // alone, since rewriting it rasterizes the gradient again.
+    const written = useRef({ top: -1, bottom: -1 });
 
     useLayoutEffect(() => {
         const viewport = viewportRef.current;
@@ -69,8 +193,7 @@ export function GrantScroller({
         return () => observer.disconnect();
     }, []);
 
-    // Derive the edge fades from the inner element's current translateY so they
-    // track the live scroll position, including while paused mid-scroll.
+    // Derive the edge fades from the live position so they track either driver.
     const syncFade = useCallback(() => {
         const viewport = viewportRef.current;
         const inner = innerRef.current;
@@ -79,30 +202,139 @@ export function GrantScroller({
             return;
         }
 
+        // Half-pixel steps are finer than the fade reads, and they keep the
+        // mask from being rewritten on every frame of a slow pass.
         const ramp = (value: number) =>
-            (Math.min(Math.max(value, 0), RAMP) / RAMP) * FADE;
+            Math.round((Math.min(Math.max(value, 0), RAMP) / RAMP) * FADE * 2) /
+            2;
 
-        const distance = inner.offsetHeight - viewport.clientHeight;
+        const distance = viewport.scrollHeight - viewport.clientHeight;
+        const scrolled = distance > 0 ? currentOffset(viewport, inner) : 0;
 
-        if (distance <= 0) {
-            viewport.style.setProperty('--top-fade', '0px');
-            viewport.style.setProperty('--bottom-fade', '0px');
+        const top = distance > 0 ? ramp(scrolled) : 0;
+        const bottom = distance > 0 ? ramp(distance - scrolled) : 0;
+
+        if (top !== written.current.top) {
+            viewport.style.setProperty('--top-fade', `${top}px`);
+            written.current.top = top;
+        }
+
+        if (bottom !== written.current.bottom) {
+            viewport.style.setProperty('--bottom-fade', `${bottom}px`);
+            written.current.bottom = bottom;
+        }
+    }, []);
+
+    // The sweep is a composited transform animation, held paused until hovered.
+    useEffect(() => {
+        const inner = innerRef.current;
+
+        if (!inner || overflow <= 2) {
+            return undefined;
+        }
+
+        const built = buildSweep(overflow);
+
+        const animation = inner.animate(
+            built.points.map(({ at, px }) => ({
+                offset: at,
+                transform: `translateY(-${px}px)`,
+                easing: 'linear',
+            })),
+            {
+                duration: built.durationMs,
+                direction: 'alternate',
+                iterations: Number.POSITIVE_INFINITY,
+            }
+        );
+
+        animation.pause();
+
+        sweep.current = animation;
+        curve.current = built;
+
+        return () => {
+            animation.cancel();
+            sweep.current = null;
+            curve.current = null;
+        };
+    }, [overflow]);
+
+    useEffect(() => {
+        const viewport = viewportRef.current;
+        const animation = sweep.current;
+        const built = curve.current;
+
+        if (!viewport || !animation || !built) {
             return;
         }
 
-        const transform = getComputedStyle(inner).transform;
-        const scrolled =
-            transform && transform !== 'none'
-                ? -new DOMMatrixReadOnly(transform).m42
-                : 0;
+        if (!hovered) {
+            // Leaving pauses the sweep in place. A list the reader scrolled has
+            // no sweep to pause and keeps their position for the next visit.
+            if (!readerScrolled.current) {
+                animation.pause();
+            }
 
-        viewport.style.setProperty('--top-fade', `${ramp(scrolled)}px`);
-        viewport.style.setProperty(
-            '--bottom-fade',
-            `${ramp(distance - scrolled)}px`
-        );
-    }, []);
+            return;
+        }
 
+        if (readerScrolled.current) {
+            // Seek to the time that draws the list where the reader left it,
+            // then clear the scroll offset in the same frame so the handover
+            // draws no jump.
+            animation.currentTime =
+                sweepTimeAt(built, viewport.scrollTop) * built.durationMs;
+            viewport.scrollTop = 0;
+
+            readerScrolled.current = false;
+        }
+
+        animation.play();
+    }, [hovered, overflow]);
+
+    useEffect(() => {
+        const viewport = viewportRef.current;
+        const inner = innerRef.current;
+
+        if (!viewport || !inner) {
+            return undefined;
+        }
+
+        const takeOver = (event: WheelEvent) => {
+            if (readerScrolled.current) {
+                return;
+            }
+
+            readerScrolled.current = true;
+
+            // While the sweep runs, the position lives in a transform and
+            // scrollTop sits at 0, so an upward gesture has nothing to scroll
+            // and the browser discards it. Claim this one event and apply its
+            // delta by hand, folding the transform into scrollTop as it goes.
+            // The rest of the gesture scrolls natively.
+            event.preventDefault();
+
+            const offset = currentOffset(viewport, inner);
+
+            sweep.current?.cancel();
+            viewport.scrollTop = offset + wheelPixels(event, viewport);
+        };
+
+        syncFade();
+
+        viewport.addEventListener('wheel', takeOver, { passive: false });
+        viewport.addEventListener('scroll', syncFade, { passive: true });
+
+        return () => {
+            viewport.removeEventListener('wheel', takeOver);
+            viewport.removeEventListener('scroll', syncFade);
+        };
+    }, [overflow, syncFade]);
+
+    // A composited transform fires no events, so the fades are sampled per
+    // frame while the pointer is on the card. This only reads the position; the
+    // motion itself stays on the compositor.
     useEffect(() => {
         let frame = 0;
 
@@ -111,6 +343,7 @@ export function GrantScroller({
                 syncFade();
                 frame = requestAnimationFrame(loop);
             };
+
             frame = requestAnimationFrame(loop);
         } else {
             // Settle one frame so the paused position's fade is reflected.
@@ -120,36 +353,25 @@ export function GrantScroller({
         return () => cancelAnimationFrame(frame);
     }, [hovered, overflow, syncFade]);
 
-    const overflowing = overflow > 2;
-    // Scale duration with distance to hold a roughly constant scroll speed.
-    const duration = Math.max(4, Math.round(overflow / 15) + 2);
-
     return (
         <Box
             ref={viewportRef}
             sx={{
-                maxHeight,
-                overflow: 'hidden',
-                maskImage: MASK,
-                WebkitMaskImage: MASK,
+                'maxHeight': maxHeight,
+                'overflowX': 'hidden',
+                'overflowY': 'auto',
+                'maskImage': MASK,
+                'WebkitMaskImage': MASK,
+                // The edge fades signal the remaining content, so the scrollbar
+                // itself is hidden.
+                'scrollbarWidth': 'none',
+                'msOverflowStyle': 'none',
+                '&::-webkit-scrollbar': {
+                    display: 'none',
+                },
             }}
         >
-            <Stack
-                ref={innerRef}
-                sx={{
-                    '--grant-scroll-distance': `-${overflow}px`,
-                    ...(overflowing
-                        ? {
-                              animation: `${reveal} ${duration}s ease-in-out infinite alternate`,
-                              animationPlayState: hovered
-                                  ? 'running'
-                                  : 'paused',
-                          }
-                        : {}),
-                }}
-            >
-                {children}
-            </Stack>
+            <Stack ref={innerRef}>{children}</Stack>
         </Box>
     );
 }
