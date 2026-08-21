@@ -2,7 +2,7 @@ import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
 import type { ReactNode } from 'react';
 
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 import {
     autocompleteClasses,
@@ -42,6 +42,9 @@ const HELPER_FADE_MS = 150;
 
 const NAME_PLACEHOLDER = 'service-account';
 const LOCATION_PLACEHOLDER = 'No home prefix selected';
+
+// An account is named at one size, so the measurements are taken once.
+const LAYOUT = identityLayout();
 
 const EDIT_ICON_CLASS = 'service-account-inline-edit';
 
@@ -96,15 +99,13 @@ const INLINE_AUTOCOMPLETE_SX: SystemStyleObject<Theme> = {
         { display: 'none' },
 };
 
-interface IdentityCardProps {
+interface EditableIdentityCardProps {
     /** The account's leaf name, without its prefix. */
     name: string;
+    onNameChange: (name: string) => void;
     /** The catalog prefix the account lives under, trailing slash included. */
     location: string;
-    /** Omit to render the name as plain text, with no edit affordance. */
-    onNameChange?: (name: string) => void;
-    /** Omit to render the location as plain text, with no edit affordance. */
-    onLocationChange?: (location: string) => void;
+    onLocationChange: (location: string) => void;
     /**
      * Shown in place of the location while the name is being edited. It takes
      * the location's line, so keep it to one line's worth of text.
@@ -116,35 +117,29 @@ interface IdentityCardProps {
      */
     locationHelperText?: string;
     /** Prefixes offered while editing the location. */
-    leaves?: string[];
-    /** Omit to leave the randomize button off the name row. */
-    onRegenerate?: () => void;
-    /** Multiplies every measurement. 1 is the create dialog's size. */
-    scale?: number;
+    leaves: string[];
+    /** Draws a new name for the account. */
+    onRegenerate: () => void;
     sx?: SxProps<Theme>;
 }
 
 /**
- * How a service account is presented: a monogram tile over its stable color,
- * with the leaf name above the catalog location it lives under.
- *
- * Each line is editable in place when given a change handler, and plain text
- * without one — so the create dialog's card and the details page's card are the
- * same card, and an account being created looks like the one it is about to
- * become.
+ * An account being named: a monogram tile over the color its catalog name
+ * hashes to, with the leaf name above the catalog location it lives under. Both
+ * lines are edited in place, so the account looks like the one it is about to
+ * become — the same card the details page shows once it exists.
  */
-export function IdentityCard({
+export function EditableIdentityCard({
     name,
-    location,
     onNameChange,
+    location,
     onLocationChange,
     nameHelperText,
     locationHelperText,
     leaves,
     onRegenerate,
-    scale = 1,
     sx,
-}: IdentityCardProps) {
+}: EditableIdentityCardProps) {
     const {
         cardSx,
         columnSx,
@@ -155,7 +150,7 @@ export function IdentityCard({
         nameHelperSx,
         locationHelperSx,
         locationIconSize,
-    } = useMemo(() => identityLayout(scale), [scale]);
+    } = LAYOUT;
 
     // The catalog name the two lines add up to, and what the tile's color is
     // hashed from. An unnamed account stands in its placeholder, so the card
@@ -208,15 +203,14 @@ export function IdentityCard({
 
     // The tile color is derived per keystroke, so it settles once typing pauses
     // and crossfades to its new value instead of strobing through a hue per
-    // character. A read-only card seeds the settled value on mount, so it paints
-    // its color straight away.
+    // character.
     //
     // The debounce lives in this component, so it has to unmount when the
     // surface holding it closes. Held somewhere longer-lived, the next time the
     // surface opened the tile would start on the last session's color and fade
     // off it.
     //
-    // `namePreview` substitutes a placeholder leaf for an unnamed account.
+    // `catalogName` substitutes a placeholder leaf for an unnamed account.
     // Hashing that placeholder would assign a color the account will never
     // wear, so the unnamed case is carried through as an empty string.
     const settledIdentity = useDebouncedValue(
@@ -282,7 +276,7 @@ export function IdentityCard({
                         helperSx={nameHelperSx}
                         sx={{ flex: 1, minWidth: 0 }}
                     >
-                        {onNameChange && editingName ? (
+                        {editingName ? (
                             <InputBase
                                 value={name}
                                 onChange={(event) =>
@@ -333,19 +327,15 @@ export function IdentityCard({
                                 placeholder={NAME_PLACEHOLDER}
                                 label="name"
                                 textSx={nameSx}
-                                onEdit={
-                                    onNameChange
-                                        ? () => {
-                                              setNameBeforeEdit(name);
-                                              setEditingName(true);
-                                          }
-                                        : undefined
-                                }
+                                onEdit={() => {
+                                    setNameBeforeEdit(name);
+                                    setEditingName(true);
+                                }}
                             />
                         )}
                     </SwapLine>
 
-                    {onRegenerate && editingName ? (
+                    {editingName ? (
                         <Tooltip title="Randomize name">
                             <IconButton
                                 size="small"
@@ -400,7 +390,7 @@ export function IdentityCard({
                             />
                         </Box>
 
-                        {onLocationChange && editingLocation ? (
+                        {editingLocation ? (
                             <Box
                                 sx={[
                                     INLINE_INPUT_SX,
@@ -439,7 +429,7 @@ export function IdentityCard({
                                 }}
                             >
                                 <LeavesAutocomplete
-                                    leaves={leaves ?? []}
+                                    leaves={leaves}
                                     value={location}
                                     onChange={onLocationChange}
                                     onBlur={() => setEditingLocation(false)}
@@ -455,14 +445,10 @@ export function IdentityCard({
                                 placeholder={LOCATION_PLACEHOLDER}
                                 label="catalog location"
                                 textSx={locationSx}
-                                onEdit={
-                                    onLocationChange
-                                        ? () => {
-                                              setLocationBeforeEdit(location);
-                                              setEditingLocation(true);
-                                          }
-                                        : undefined
-                                }
+                                onEdit={() => {
+                                    setLocationBeforeEdit(location);
+                                    setEditingLocation(true);
+                                }}
                             />
                         )}
                     </Stack>
@@ -543,12 +529,11 @@ interface FieldTextProps {
     placeholder: string;
     label: string;
     textSx: SystemStyleObject<Theme>;
-    /** Omitted on a read-only card, which drops the pencil and the click. */
-    onEdit?: () => void;
+    onEdit: () => void;
 }
 
-// One of the card's two lines at rest. With `onEdit` it is a button carrying the
-// hover pencil; without, plain text.
+// One of the card's two lines at rest: the value as a button, carrying the
+// pencil that appears on hover.
 function FieldText({
     value,
     placeholder,
@@ -558,22 +543,6 @@ function FieldText({
 }: FieldTextProps) {
     const filled = hasLength(value);
 
-    const text = (
-        <Box
-            component="span"
-            sx={{
-                ...TRUNCATE_SX,
-                color: filled ? 'inherit' : 'text.disabled',
-            }}
-        >
-            {filled ? value : placeholder}
-        </Box>
-    );
-
-    if (!onEdit) {
-        return <Box sx={textSx}>{text}</Box>;
-    }
-
     return (
         <ButtonBase
             onClick={onEdit}
@@ -581,7 +550,16 @@ function FieldText({
             aria-label={`Edit ${label}, currently ${filled ? value : 'unset'}`}
             sx={[EDITABLE_TEXT_SX, textSx]}
         >
-            {text}
+            <Box
+                component="span"
+                sx={{
+                    ...TRUNCATE_SX,
+                    color: filled ? 'inherit' : 'text.disabled',
+                }}
+            >
+                {filled ? value : placeholder}
+            </Box>
+
             <EditPencil width={14} height={14} className={EDIT_ICON_CLASS} />
         </ButtonBase>
     );

@@ -13,7 +13,7 @@ import { authenticatedRoutes } from 'src/app/routes';
 import { CreateApiKeyDialog } from 'src/components/admin/ServiceAccounts/CreateApiKeyDialog';
 import { ApiKeysSection } from 'src/components/admin/ServiceAccounts/Details/ApiKeysSection';
 import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
-import { IdentityCard } from 'src/components/admin/ServiceAccounts/IdentityCard';
+import { ServiceAccountIdentity } from 'src/components/admin/ServiceAccounts/ServiceAccountIdentity';
 import { splitCatalogName } from 'src/components/admin/ServiceAccounts/shared';
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import AlertBox from 'src/components/shared/AlertBox';
@@ -100,7 +100,7 @@ export function ServiceAccountDetails() {
 
         body = (
             <>
-                <IdentityCard
+                <ServiceAccountIdentity
                     name={leaf}
                     location={prefix}
                     scale={IDENTITY_SCALE}

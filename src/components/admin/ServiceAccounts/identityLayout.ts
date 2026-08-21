@@ -3,13 +3,14 @@ import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
 
 import { MONOGRAM_TEXT_COLOR } from 'src/components/admin/ServiceAccounts/shared';
 
-// The card an account is presented as: a monogram tile over its stable color,
-// with the leaf name above the catalog location it lives under. Shared by the
-// create dialog, which makes the two lines editable, and the details page,
-// which does not — so an account looks the same before and after it exists.
+// The measurements of the card an account is presented as: a monogram tile over
+// its stable color, with the leaf name above the catalog location it lives
+// under. Shared by EditableIdentityCard, which the create dialog names an
+// account through, and ServiceAccountIdentity, which the details page shows —
+// so an account looks the same before and after it exists.
 
 // How long the monogram takes to cross-fade to a new color.
-export const MONOGRAM_FADE_MS = 1000;
+const MONOGRAM_FADE_MS = 1000;
 
 export const TRUNCATE_SX = {
     display: 'block',
@@ -30,10 +31,11 @@ const BASE = {
 };
 
 /**
- * The card's measurements, multiplied by `scale`.
+ * The card's measurements, multiplied by `scale`. An account is named at scale
+ * 1; the details page wears the card larger.
  *
  * Every value is rounded to whole pixels. The name and location line boxes are
- * pinned rather than left to each element's default, because the create dialog
+ * pinned rather than left to each element's default, because the editable card
  * swaps each line between a span and an input — they derive different line
  * boxes, and the text would shift as they swap. A fractional line box would put
  * that alignment back off by a subpixel.
@@ -58,9 +60,10 @@ export function identityLayout(scale = 1) {
         lineHeight: `${locationLineHeight}px`,
     } as const;
 
-    // A field's helper text stands in for the line it is not on, so it takes
-    // that line's box and the card keeps its height. It reads as prose about the
-    // field rather than as a catalog value, so it drops the monospace face.
+    // A field's helper text stands in for the line it is not on while that field
+    // is being edited, so it takes that line's box and the card keeps its
+    // height. It reads as prose about the field rather than as a catalog value,
+    // so it drops the monospace face.
     const helperTextSx = {
         fontFamily: 'inherit',
         fontSize: px(BASE.helperFontSize),

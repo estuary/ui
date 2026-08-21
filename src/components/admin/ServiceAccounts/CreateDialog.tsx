@@ -17,7 +17,7 @@ import {
 
 import { useCreateServiceAccount } from 'src/api/gql/serviceAccounts';
 import { CapabilitySelector } from 'src/components/admin/ServiceAccounts/CapabilitySelector';
-import { IdentityCard } from 'src/components/admin/ServiceAccounts/IdentityCard';
+import { EditableIdentityCard } from 'src/components/admin/ServiceAccounts/EditableIdentityCard';
 import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
 import AlertBox from 'src/components/shared/AlertBox';
 import { CatalogPath } from 'src/components/shared/CatalogPath';
@@ -137,7 +137,7 @@ export function CreateServiceAccountDialog({
                             bgcolor: (theme) => theme.palette.background.code,
                         }}
                     >
-                        <IdentityCard
+                        <EditableIdentityCard
                             name={name}
                             onNameChange={setName}
                             location={location}
