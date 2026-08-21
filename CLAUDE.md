@@ -1,13 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude Code in this repository.
-
-## Setup
-
-- Node and npm versions: see `engines` in `package.json`.
-- Local development runs against a local [Estuary Flow](https://github.com/estuary/flow) stack.
-- `@estuary/flow-web` and `data-plane-gateway` are vendored tarballs in `__inline-deps__/`. See `__inline-deps__/README.md` and the `hack-in-*` npm scripts to update them.
-- `npm start` runs the dev server on `localhost:3000`. All other tasks (lint, format, typecheck, test, storybook, codegen, knip) are npm scripts in `package.json`.
+Guidance for Claude Code in this repository. Setup and local run: see `README.md`.
 
 ## Docs Index
 

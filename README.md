@@ -10,20 +10,9 @@ Run: `npm install`
 
 ## Troubleshooting
 
-### 401 error for `@estuary/flow-web`
+### `data-plane-gateway` or `@estuary/flow-web` is outdated
 
-You need to update `~/.npmrc` with the following:
-
-```
-//npm.pkg.github.com/:_authToken=__YOUR_AUTH_TOKEN_YOU_MADE_ON_GITHUB__
-@estuary:registry=https://npm.pkg.github.com/
-```
-
-[Github docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token).
-
-### `data-plane-gateway` is outdated
-
-Please see `__inline-deps__/README.md` for instructions
+Both are vendored tarballs in `__inline-deps__/`. Please see `__inline-deps__/README.md` for instructions
 
 ### Why don't I see logs locally?
 
