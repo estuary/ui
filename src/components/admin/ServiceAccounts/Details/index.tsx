@@ -16,6 +16,7 @@ import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/Gran
 import { IdentityCard } from 'src/components/admin/ServiceAccounts/IdentityCard';
 import { splitCatalogName } from 'src/components/admin/ServiceAccounts/shared';
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
+import AlertBox from 'src/components/shared/AlertBox';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -58,7 +59,7 @@ export function ServiceAccountDetails() {
             : undefined,
     });
 
-    const { serviceAccount, fetching } = useServiceAccount(catalogName);
+    const { serviceAccount, fetching, error } = useServiceAccount(catalogName);
 
     const [createKeyOpen, setCreateKeyOpen] = useState(false);
 
@@ -87,7 +88,9 @@ export function ServiceAccountDetails() {
     } else if (fetching && !serviceAccount) {
         body = <Typography>Loading…</Typography>;
     } else if (!serviceAccount) {
-        body = (
+        // A failed query also leaves nothing to render. The alert above says why,
+        // so claiming the account does not exist would be wrong.
+        body = error ? null : (
             <Typography color="text.secondary">
                 {`Service account “${catalogName}” was not found.`}
             </Typography>
@@ -152,6 +155,13 @@ export function ServiceAccountDetails() {
         <Box sx={{ py: 2 }}>
             <Box sx={{ maxWidth: 1000, mx: 'auto' }}>
                 {backButton}
+
+                {error ? (
+                    <AlertBox severity="error" short sx={{ mb: 3 }}>
+                        <Typography>{error.message}</Typography>
+                    </AlertBox>
+                ) : null}
+
                 {body}
             </Box>
         </Box>
