@@ -43,7 +43,11 @@
         "codegen": "graphql-codegen",
         "codegen:local": "LOCAL=true graphql-codegen",
         "codegen:check": "graphql-codegen --check",
-        "knip": "knip"
+        "knip": "knip",
+        "demo": "bash ./scripts/demo-tunnel/demo-tunnel.sh start",
+        "demo:stop": "bash ./scripts/demo-tunnel/demo-tunnel.sh stop",
+        "demo:status": "bash ./scripts/demo-tunnel/demo-tunnel.sh status",
+        "demo:restart": "bash ./scripts/demo-tunnel/demo-tunnel.sh restart"
     },
     "dependencies": {
         "@date-fns/utc": "^2.1.1",
