@@ -1,6 +1,6 @@
 import type { TextFieldVariants } from '@mui/material';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { Autocomplete, Box, Link, TextField, Typography } from '@mui/material';
 
@@ -73,6 +73,12 @@ export function LeavesAutocomplete({
 }: LeavesAutocompleteProps) {
     const [isOpen, setIsOpen] = useState(false);
 
+    // What Enter picked on its way out of the field. The blur it triggers runs
+    // before the pick arrives back as `value`, so the normalization on blur has
+    // to be told about it — reading the prop there would write the half-typed
+    // prefix back over the option that was just taken.
+    const pickedOnExit = useRef<string | null>(null);
+
     const msg = errorMessage ?? helperText;
     const displayMessage = msg ? (
         <Markdown options={markdownOptions}>{msg}</Markdown>
@@ -105,6 +111,22 @@ export function LeavesAutocomplete({
         [branches, value]
     );
 
+    // The option MUI has highlighted, if there is one. It tracks the highlight
+    // on the input as `aria-activedescendant`, and stamps each option with its
+    // index into the offered list.
+    const highlightedOption = (input: HTMLInputElement) => {
+        const activeId = input.getAttribute('aria-activedescendant');
+        const index = activeId
+            ? document
+                  .getElementById(activeId)
+                  ?.getAttribute('data-option-index')
+            : null;
+
+        return index === null || index === undefined
+            ? undefined
+            : offered[Number(index)];
+    };
+
     return (
         <Autocomplete
             sx={{ mb: 0, pb: 0 }}
@@ -117,10 +139,18 @@ export function LeavesAutocomplete({
                 const input = event.target as HTMLInputElement;
 
                 if (event.key === 'Enter') {
-                    // Enter leaves the field rather than picking an option.
+                    // Enter takes the highlighted option and leaves the field.
                     // `defaultMuiPrevented` is the hook's own opt-out; a plain
                     // preventDefault does not stop its Enter handling.
                     (event as MuiKeyboardEvent).defaultMuiPrevented = true;
+
+                    const picked = highlightedOption(input);
+
+                    if (picked !== undefined) {
+                        pickedOnExit.current = picked;
+                        onChange(picked);
+                    }
+
                     input.blur();
                     return;
                 }
@@ -144,20 +174,7 @@ export function LeavesAutocomplete({
                 }
 
                 // Tab takes the highlighted option, Shift+Tab walks back up.
-                // MUI tracks the highlight on the input as
-                // `aria-activedescendant`, and stamps each option with its
-                // index into the offered list.
-                const activeId = input.getAttribute('aria-activedescendant');
-                const index = activeId
-                    ? document
-                          .getElementById(activeId)
-                          ?.getAttribute('data-option-index')
-                    : null;
-
-                const picked =
-                    index === null || index === undefined
-                        ? undefined
-                        : offered[Number(index)];
+                const picked = highlightedOption(input);
 
                 // Nothing to pick, so let Tab move focus on as usual — the
                 // field must not trap a keyboard user.
@@ -192,10 +209,16 @@ export function LeavesAutocomplete({
             onClose={() => setIsOpen(false)}
             onBlur={() => {
                 setIsOpen(false);
+
+                // Whatever the field is leaving on: the option Enter just took,
+                // or the text the prop still holds.
+                const leavingWith = pickedOnExit.current ?? value;
+                pickedOnExit.current = null;
+
                 // append trailing slash if not present to adhere to prefix convention.
                 // might make sense as a configurable option if we want to use this for catalog_names in the future
-                const appendedVal = appendWithForwardSlash(value);
-                if (appendedVal && appendedVal !== value) {
+                const appendedVal = appendWithForwardSlash(leavingWith);
+                if (appendedVal && appendedVal !== leavingWith) {
                     onChange(appendedVal);
                 }
                 onBlur?.();
