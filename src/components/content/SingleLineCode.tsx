@@ -2,8 +2,6 @@ import type { SingleLineCodeProps } from 'src/components/content/types';
 
 import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { getButtonIcon } from 'src/context/Theme';
 import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
@@ -15,7 +13,6 @@ function SingleLineCode({
     subsequentCommandExists,
     sx,
 }: SingleLineCodeProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const { isCopied, handleCopy } = useCopyToClipboard('SingleLineCode');
@@ -46,9 +43,7 @@ function SingleLineCode({
             </Typography>
 
             <Tooltip
-                title={intl.formatMessage({
-                    id: 'common.copied',
-                })}
+                title="Copied"
                 placement="right"
                 open={isCopied}
                 arrow

@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 
 import { Xmark } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { useCreateRefreshToken } from 'src/api/gql/refreshTokens';
 import SingleLineCode from 'src/components/content/SingleLineCode';
@@ -42,7 +41,6 @@ interface Props {
 }
 
 export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const [label, setLabel] = useState('');
@@ -119,7 +117,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
 
                 <IconButton disabled={generating} onClick={onClose}>
                     <Xmark
-                        aria-label={intl.formatMessage({ id: 'cta.close' })}
+                        aria-label="Close"
                         style={{
                             fontSize: '1rem',
                             color: theme.palette.text.primary,

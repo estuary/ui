@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 
 import { Trash } from 'iconoir-react';
-import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useRefreshTokens } from 'src/api/gql/refreshTokens';
 import { CreateRefreshTokenDialog } from 'src/components/admin/Api/RefreshToken/CreateDialog';
@@ -34,8 +33,6 @@ interface RowProps {
 }
 
 function Row({ row }: RowProps) {
-    const intl = useIntl();
-
     const [revokeOpen, setRevokeOpen] = useState(false);
 
     return (
@@ -67,7 +64,7 @@ function Row({ row }: RowProps) {
 
             <TableCell>
                 <IconButton
-                    aria-label={intl.formatMessage({ id: 'cta.remove' })}
+                    aria-label="Remove"
                     className="revoke-action"
                     color="error"
                     onClick={() => setRevokeOpen(true)}
@@ -147,9 +144,7 @@ export function RefreshTokenTable() {
                 <Table size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell>
-                                <FormattedMessage id="entityTable.data.created" />
-                            </TableCell>
+                            <TableCell>Created</TableCell>
                             <TableCell>Label</TableCell>
                             <TableCell>Uses</TableCell>
                             <TableCell sx={{ width: 100 }} />
@@ -164,7 +159,7 @@ export function RefreshTokenTable() {
                                     colSpan={5}
                                     sx={{ textAlign: 'center' }}
                                 >
-                                    <FormattedMessage id="common.loading" />
+                                    Loading...
                                 </TableCell>
                             </TableRow>
                         ) : refreshTokens.length === 0 && !error ? (

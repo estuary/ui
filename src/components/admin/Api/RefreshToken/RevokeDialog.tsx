@@ -12,8 +12,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import { FormattedMessage } from 'react-intl';
-
 import { useRevokeRefreshToken } from 'src/api/gql/refreshTokens';
 import Error from 'src/components/shared/Error';
 
@@ -75,7 +73,7 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} disabled={saving}>
-                    <FormattedMessage id="cta.cancel" />
+                    Cancel
                 </Button>
                 <Button
                     variant="outlined"
@@ -84,7 +82,7 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
                     disabled={saving}
                     loading={saving}
                 >
-                    <FormattedMessage id="cta.remove" />
+                    Remove
                 </Button>
             </DialogActions>
         </Dialog>
