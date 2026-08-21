@@ -47,9 +47,9 @@ Set in `createTheme()` — do not override these per-component without good reas
 
 ---
 
-## Exported Tokens
+## Exported Tokens (legacy pattern — do not add new ones)
 
-Import from `src/context/Theme`. Use these instead of hardcoding values in your code.
+`src/context/Theme.tsx` exports ~80 loose consts (colors, backgrounds, outlines, sx snippets). Consume the existing ones instead of hardcoding values. But the loose-const pattern itself is the thing to migrate off: new design tokens go in the augmented theme (see "Adding a new design token" below), and code that uses loose consts should move to theme keys when touched.
 
 ### Z-indexes
 
@@ -139,6 +139,16 @@ theme.palette.primary.alpha_26; // 26% opacity
 theme.palette.primary.alpha_50; // 50% opacity
 ```
 
+### Adding a new design token
+
+Augment the theme; do not export a const. The palette alpha variants above use this mechanism.
+
+1. Add a `declare module '@mui/material/styles'` augmentation for `Theme` and `ThemeOptions`.
+2. Set the value in `createTheme()`.
+3. Consume via `theme.*` in `sx` callbacks: `borderRadius: (theme) => theme.radius.lg`.
+
+The theme is the single source of truth for palette, spacing, typography, and transitions — new tokens are peers of those. Store px values as **strings** (`'12px'`): in `sx.borderRadius` a number is multiplied by `theme.shape.borderRadius`, while a string is literal.
+
 ---
 
 ## Conventions
@@ -189,6 +199,10 @@ Prefer `iconoir-react` over `@mui/icons-material`. The project uses Iconoir thro
 ---
 
 ## Known Gotchas
+
+### iconoir icon sizing
+
+iconoir icons render as `<svg width="1.5em" height="1.5em">`, so `style={{ fontSize: N }}` renders at **1.5×N px** — `fontSize: 20` is a 30px icon. The `fontSize` styling is a vestige of a brief lucide migration (reverted May 2026) that had a different multiplier. Size icons with explicit `width={N} height={N}` props instead. The global `IconoirProvider` (`src/context/Iconoir.tsx`) sets `fontSize: '14px'`, which makes unsized icons 21px.
 
 ### Popper transitions
 

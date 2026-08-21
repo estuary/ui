@@ -91,7 +91,7 @@ Older forms use an explicit `FormStatus` enum (`INIT`, `SAVING`, `SAVED`, `TESTI
 
 ### Current approach
 
-Newer flows use a stricter custom state machine where step order is closely controlled. XState or a similar library is under consideration for future use.
+Newer flows use a stricter custom state machine where step order is closely controlled. This direction is under review as of June 2026 — confirm it still holds before you extend the strict state-machine pattern to new flows or adopt a library for it.
 
 UI responds to status changes for spinners, error messages, and CTAs.
 

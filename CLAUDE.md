@@ -13,7 +13,7 @@ Read the matching doc before you work in an area:
 - `docs/ROUTING.md` — routes (`src/app/routes.ts`), guards, URL param conventions
 - `docs/JSONFORMS.md` — connector form renderer pipeline, custom annotations, AJV
 - `docs/MUI.md` — theme tokens, conventions, gotchas
-- `docs/I18N.md` — message files (`src/lang/en-US/`), naming conventions
+- `docs/I18N.md` — react-intl retirement rules and the wrapper migration scaffold
 - `docs/ERROR_HANDLING.md` — error flow, display components
 - `docs/INTEGRATIONS.md` — Supabase, Data-Plane-Gateway, Monaco, LogRocket; initialization order
 - `docs/BUILD.md` — Vite plugins
@@ -25,7 +25,7 @@ Read the matching doc before you work in an area:
 
 - New data fetching uses GraphQL (URQL). PostgREST (`src/api/`) remains for existing batch operations.
 - Access Zustand state through pre-made hooks, not inline `useShallow` selectors.
-- MUI v7: use theme tokens from `src/context/Theme.tsx`, not hardcoded values. Use `slots`/`slotProps`, not `components`/`componentsProps`. Use `iconoir-react`, not `@mui/icons-material`.
+- MUI v7: consume existing tokens from `src/context/Theme.tsx` rather than hardcoding values; add new tokens to the augmented theme (`docs/MUI.md`). Use `slots`/`slotProps`, not `components`/`componentsProps`. Use `iconoir-react`, not `@mui/icons-material`.
 - Use named exports for new components and modules.
 
 ## Gotchas
@@ -41,5 +41,7 @@ Read the matching doc before you work in an area:
 ## In-Flight Migrations
 
 - PostgREST → GraphQL (`docs/GRAPHQL.md`)
-- Strict state machines for workflows
-- Consolidation of split Zustand stores into one or two stores
+- react-intl removal (`docs/I18N.md`) — no new usage; keep the named-export + deprecated-wrapper scaffold intact
+- Design tokens: new tokens go in the augmented MUI theme; the loose exported consts in `src/context/Theme.tsx` migrate to theme keys over time (`docs/MUI.md`)
+- `src/components/inputs/PrefixedName/` is freeze-and-replace: do not modify it, even for small fixes; migrate consumers to simpler replacements, then delete it
+- Under review since the June 2026 direction change: strict workflow state machines, Zustand store consolidation. Confirm these still hold before you push code toward them.
