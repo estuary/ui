@@ -123,8 +123,7 @@ export function ApiKeysSection({ tokens, onCreateKey }: ApiKeysSectionProps) {
                 <Box>
                     <Typography variant="subtitle1">API keys</Typography>
                     <Typography variant="caption" color="text.secondary">
-                        Secrets are shown once at creation. Rotate or revoke
-                        them anytime.
+                        Rotate or revoke these anytime.
                     </Typography>
                 </Box>
                 <Button

@@ -1,12 +1,14 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
+import type { ReactNode } from 'react';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import {
     autocompleteClasses,
     Box,
     ButtonBase,
+    Fade,
     formHelperTextClasses,
     IconButton,
     InputBase,
@@ -17,7 +19,7 @@ import {
     Tooltip,
 } from '@mui/material';
 
-import { EditPencil, Refresh } from 'iconoir-react';
+import { EditPencil, Home, Refresh } from 'iconoir-react';
 
 import {
     identityLayout,
@@ -30,13 +32,16 @@ import {
 } from 'src/components/admin/ServiceAccounts/shared';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
 import { useDebouncedValue } from 'src/hooks/useDebouncedValue';
-import { hasLength } from 'src/utils/misc-utils';
+import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
 
 // How long typing has to pause before the monogram color moves.
 const NAME_COLOR_DEBOUNCE_MS = 400;
 
+// How long a line takes to cross over between its value and a helper text.
+const HELPER_FADE_MS = 150;
+
 const NAME_PLACEHOLDER = 'service-account';
-const LOCATION_PLACEHOLDER = 'No prefix selected';
+const LOCATION_PLACEHOLDER = 'No home prefix selected';
 
 const EDIT_ICON_CLASS = 'service-account-inline-edit';
 
@@ -100,6 +105,16 @@ interface IdentityCardProps {
     onNameChange?: (name: string) => void;
     /** Omit to render the location as plain text, with no edit affordance. */
     onLocationChange?: (location: string) => void;
+    /**
+     * Shown in place of the location while the name is being edited. It takes
+     * the location's line, so keep it to one line's worth of text.
+     */
+    nameHelperText?: string;
+    /**
+     * Shown in place of the name while the location is being edited. It takes
+     * the name's line, so keep it to one line's worth of text.
+     */
+    locationHelperText?: string;
     /** Prefixes offered while editing the location. */
     leaves?: string[];
     /** Omit to leave the randomize button off the name row. */
@@ -123,6 +138,8 @@ export function IdentityCard({
     location,
     onNameChange,
     onLocationChange,
+    nameHelperText,
+    locationHelperText,
     leaves,
     onRegenerate,
     scale = 1,
@@ -135,11 +152,22 @@ export function IdentityCard({
         nameTextSx,
         nameLineHeight,
         locationTextSx,
+        nameHelperSx,
+        locationHelperSx,
+        locationIconSize,
     } = useMemo(() => identityLayout(scale), [scale]);
 
-    // The catalog name the two lines add up to. An unnamed account stands in its
-    // placeholder, so the card always has something to show.
-    const catalogName = `${location}${hasLength(name) ? name : NAME_PLACEHOLDER}`;
+    // The catalog name the two lines add up to, and what the tile's color is
+    // hashed from. An unnamed account stands in its placeholder, so the card
+    // always has something to hash.
+    //
+    // A prefix picks up its trailing slash when the edit is committed, so the
+    // slash is added here too. Without it the name the color comes from changes
+    // on the way out of the edit, and the tile would settle on one color while
+    // typing and then move to another.
+    const catalogName = `${appendWithForwardSlash(location)}${
+        hasLength(name) ? name : NAME_PLACEHOLDER
+    }`;
 
     const [editingName, setEditingName] = useState(false);
     const [editingLocation, setEditingLocation] = useState(false);
@@ -150,6 +178,19 @@ export function IdentityCard({
     const [locationBeforeEdit, setLocationBeforeEdit] = useState(location);
 
     const nameInputRef = useRef<HTMLInputElement>(null);
+
+    // Each field's helper text takes the other field's line while that field is
+    // being edited. The card keeps its height, the value being typed keeps its
+    // place, and the help sits on the line the reader is not using.
+    // Each helper is mounted for as long as its field is editable, so it has
+    // something to fade out to when the edit ends.
+    const showLocationHelper = editingLocation;
+    const showNameHelper = editingName;
+
+    // The name's helper renders on the location's line, away from the input it
+    // belongs to, so the input points at it.
+    const generatedId = useId();
+    const nameHelperId = `${generatedId}-name-helper`;
 
     // Focus lands here rather than on `autoFocus` so the caret can be placed
     // deliberately: at the end of the name, ready to be extended. The effect is
@@ -198,9 +239,10 @@ export function IdentityCard({
 
     const locationSx = {
         ...locationTextSx,
-        // Sized to its line box. Flexing here would stretch it down the column
-        // and land the text lower than the autocomplete it swaps with.
-        flex: 'none',
+        // Fills the row beside the home icon, so the whole line is a click
+        // target for the edit it opens.
+        flex: 1,
+        minWidth: 0,
         color: 'text.secondary',
     };
 
@@ -221,8 +263,11 @@ export function IdentityCard({
                 }}
             >
                 {/* The letter tracks the live name, so it lands on the
-                    keystroke rather than waiting out the debounce. */}
-                {hasLength(name) ? monogram(catalogName) : null}
+                    keystroke rather than waiting out the debounce. It comes off
+                    the name on its own: a prefix mid-edit has no trailing slash
+                    yet, and reading the two as one catalog name would take the
+                    letter from the half-typed prefix instead. */}
+                {hasLength(name) ? monogram(name) : null}
             </Box>
 
             <Box sx={columnSx}>
@@ -231,62 +276,74 @@ export function IdentityCard({
                     spacing={1}
                     sx={{ alignItems: 'center' }}
                 >
-                    {onNameChange && editingName ? (
-                        <InputBase
-                            value={name}
-                            onChange={(event) =>
-                                onNameChange(
-                                    event.target.value
-                                        .replace(/[^a-z0-9-]/gi, '')
-                                        .toLowerCase()
-                                )
-                            }
-                            onBlur={() => setEditingName(false)}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    setEditingName(false);
+                    <SwapLine
+                        helperText={locationHelperText}
+                        helperVisible={showLocationHelper}
+                        helperSx={nameHelperSx}
+                        sx={{ flex: 1, minWidth: 0 }}
+                    >
+                        {onNameChange && editingName ? (
+                            <InputBase
+                                value={name}
+                                onChange={(event) =>
+                                    onNameChange(
+                                        event.target.value
+                                            .replace(/[^a-z0-9-]/gi, '')
+                                            .toLowerCase()
+                                    )
                                 }
+                                onBlur={() => setEditingName(false)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        setEditingName(false);
+                                    }
 
-                                if (event.key === 'Escape') {
-                                    // Kept off the dialog, which would take it
-                                    // as a request to close.
-                                    event.stopPropagation();
-                                    onNameChange(nameBeforeEdit);
-                                    setEditingName(false);
+                                    if (event.key === 'Escape') {
+                                        // Kept off the dialog, which would take it
+                                        // as a request to close.
+                                        event.stopPropagation();
+                                        onNameChange(nameBeforeEdit);
+                                        setEditingName(false);
+                                    }
+                                }}
+                                placeholder={NAME_PLACEHOLDER}
+                                inputRef={nameInputRef}
+                                inputProps={{
+                                    'aria-label': 'Name',
+                                    'aria-describedby': showNameHelper
+                                        ? nameHelperId
+                                        : undefined,
+                                }}
+                                sx={{
+                                    ...INLINE_INPUT_SX,
+                                    ...nameSx,
+                                    minWidth: 0,
+                                    // MUI fixes the input at 1.4375em, which
+                                    // overrides the line box and leaves it a pixel
+                                    // shorter than the read-only span.
+                                    [`& .${inputBaseClasses.input}`]: {
+                                        p: 0,
+                                        height: 'auto',
+                                    },
+                                }}
+                            />
+                        ) : (
+                            <FieldText
+                                value={name}
+                                placeholder={NAME_PLACEHOLDER}
+                                label="name"
+                                textSx={nameSx}
+                                onEdit={
+                                    onNameChange
+                                        ? () => {
+                                              setNameBeforeEdit(name);
+                                              setEditingName(true);
+                                          }
+                                        : undefined
                                 }
-                            }}
-                            placeholder={NAME_PLACEHOLDER}
-                            inputRef={nameInputRef}
-                            inputProps={{ 'aria-label': 'Name' }}
-                            sx={{
-                                ...INLINE_INPUT_SX,
-                                ...nameSx,
-                                minWidth: 0,
-                                // MUI fixes the input at 1.4375em, which
-                                // overrides the line box and leaves it a pixel
-                                // shorter than the read-only span.
-                                [`& .${inputBaseClasses.input}`]: {
-                                    p: 0,
-                                    height: 'auto',
-                                },
-                            }}
-                        />
-                    ) : (
-                        <FieldText
-                            value={name}
-                            placeholder={NAME_PLACEHOLDER}
-                            label="name"
-                            textSx={nameSx}
-                            onEdit={
-                                onNameChange
-                                    ? () => {
-                                          setNameBeforeEdit(name);
-                                          setEditingName(true);
-                                      }
-                                    : undefined
-                            }
-                        />
-                    )}
+                            />
+                        )}
+                    </SwapLine>
 
                     {onRegenerate && editingName ? (
                         <Tooltip title="Randomize name">
@@ -318,70 +375,166 @@ export function IdentityCard({
                     ) : null}
                 </Stack>
 
-                {onLocationChange && editingLocation ? (
-                    <Box
-                        sx={[
-                            INLINE_INPUT_SX,
-                            INLINE_AUTOCOMPLETE_SX,
-                            {
-                                // The autocomplete's own size-small rule for
-                                // this input carries four classes, so it needs
-                                // to be outranked rather than tied — a tie
-                                // loses on source order, since MUI's styles are
-                                // injected after these.
-                                [`&&& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]:
-                                    {
-                                        p: 0,
-                                        // MUI pins the input at 1.4375em, which
-                                        // overrides the line box.
-                                        height: 'auto',
-                                        ...locationTextSx,
-                                        color: 'text.secondary',
-                                    },
-                            },
-                        ]}
-                        // Enter deliberately does nothing here: Tab is what
-                        // commits a highlighted prefix, and leaving on Enter
-                        // would skip the blur that normalizes the value.
-                        onKeyDown={(event) => {
-                            if (event.key === 'Escape') {
-                                // Kept off the dialog, which would take it as a
-                                // request to close.
-                                event.stopPropagation();
-                                onLocationChange(locationBeforeEdit);
-                                setEditingLocation(false);
-                            }
-                        }}
+                <SwapLine
+                    helperText={nameHelperText}
+                    helperVisible={showNameHelper}
+                    helperSx={locationHelperSx}
+                    helperId={nameHelperId}
+                    sx={{ flex: 'none' }}
+                >
+                    <Stack
+                        direction="row"
+                        spacing={0.75}
+                        sx={{ alignItems: 'center', minWidth: 0, flex: 1 }}
                     >
-                        <LeavesAutocomplete
-                            leaves={leaves ?? []}
-                            value={location}
-                            onChange={onLocationChange}
-                            onBlur={() => setEditingLocation(false)}
-                            label="Catalog location"
-                            textFieldVariant="standard"
-                            autoFocus
-                            required
-                        />
-                    </Box>
-                ) : (
-                    <FieldText
-                        value={location}
-                        placeholder={LOCATION_PLACEHOLDER}
-                        label="catalog location"
-                        textSx={locationSx}
-                        onEdit={
-                            onLocationChange
-                                ? () => {
-                                      setLocationBeforeEdit(location);
-                                      setEditingLocation(true);
-                                  }
-                                : undefined
-                        }
-                    />
-                )}
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flex: 'none',
+                                color: 'text.secondary',
+                            }}
+                        >
+                            <Home
+                                width={locationIconSize}
+                                height={locationIconSize}
+                            />
+                        </Box>
+
+                        {onLocationChange && editingLocation ? (
+                            <Box
+                                sx={[
+                                    INLINE_INPUT_SX,
+                                    INLINE_AUTOCOMPLETE_SX,
+                                    {
+                                        flex: 1,
+                                        minWidth: 0,
+                                        // The autocomplete's own size-small rule for
+                                        // this input carries four classes, so it needs
+                                        // to be outranked rather than tied — a tie
+                                        // loses on source order, since MUI's styles are
+                                        // injected after these.
+                                        [`&&& .${autocompleteClasses.inputRoot} .${autocompleteClasses.input}`]:
+                                            {
+                                                p: 0,
+                                                // MUI pins the input at 1.4375em, which
+                                                // overrides the line box.
+                                                height: 'auto',
+                                                ...locationTextSx,
+                                                color: 'text.secondary',
+                                            },
+                                    },
+                                ]}
+                                // Enter and Tab are the autocomplete's own:
+                                // Enter takes the highlighted prefix and
+                                // leaves the field, Tab takes it and stays for
+                                // the next segment.
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Escape') {
+                                        // Kept off the dialog, which would take it as a
+                                        // request to close.
+                                        event.stopPropagation();
+                                        onLocationChange(locationBeforeEdit);
+                                        setEditingLocation(false);
+                                    }
+                                }}
+                            >
+                                <LeavesAutocomplete
+                                    leaves={leaves ?? []}
+                                    value={location}
+                                    onChange={onLocationChange}
+                                    onBlur={() => setEditingLocation(false)}
+                                    label="Catalog location"
+                                    textFieldVariant="standard"
+                                    autoFocus
+                                    required
+                                />
+                            </Box>
+                        ) : (
+                            <FieldText
+                                value={location}
+                                placeholder={LOCATION_PLACEHOLDER}
+                                label="catalog location"
+                                textSx={locationSx}
+                                onEdit={
+                                    onLocationChange
+                                        ? () => {
+                                              setLocationBeforeEdit(location);
+                                              setEditingLocation(true);
+                                          }
+                                        : undefined
+                                }
+                            />
+                        )}
+                    </Stack>
+                </SwapLine>
             </Box>
         </Stack>
+    );
+}
+
+interface SwapLineProps {
+    /** Faded in over the line's value. Omit to leave the value on its own. */
+    helperText?: string;
+    helperVisible: boolean;
+    helperSx: SystemStyleObject<Theme>;
+    /** Set when an input elsewhere on the card describes itself with it. */
+    helperId?: string;
+    sx: SystemStyleObject<Theme>;
+    children: ReactNode;
+}
+
+// One line of the card, crossfading between its value and a helper text. The
+// value keeps its place in the layout and the helper is laid over it, so the
+// card holds its height through the swap. A faded-out layer is hidden outright,
+// which keeps its pencil off the tab order and its text out of the reading
+// order.
+function SwapLine({
+    helperText,
+    helperVisible,
+    helperSx,
+    helperId,
+    sx,
+    children,
+}: SwapLineProps) {
+    const hasHelper = hasLength(helperText);
+
+    return (
+        <Box sx={{ position: 'relative', display: 'flex', minWidth: 0, ...sx }}>
+            <Fade
+                in={!hasHelper || !helperVisible}
+                timeout={HELPER_FADE_MS}
+                // The card paints its value straight away; only the swap fades.
+                appear={false}
+            >
+                <Box
+                    sx={{
+                        'display': 'flex',
+                        'flex': 1,
+                        'minWidth': 0,
+                        '& > *': { flex: 1, minWidth: 0 },
+                    }}
+                >
+                    {children}
+                </Box>
+            </Fade>
+
+            {hasHelper ? (
+                <Fade in={helperVisible} timeout={HELPER_FADE_MS}>
+                    <Box
+                        id={helperId}
+                        sx={{
+                            ...helperSx,
+                            ...TRUNCATE_SX,
+                            position: 'absolute',
+                            inset: 0,
+                            color: 'text.secondary',
+                        }}
+                    >
+                        {helperText}
+                    </Box>
+                </Fade>
+            ) : null}
+        </Box>
     );
 }
 

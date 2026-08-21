@@ -142,6 +142,8 @@ export function CreateServiceAccountDialog({
                             onNameChange={setName}
                             location={location}
                             onLocationChange={setLocation}
+                            // nameHelperText="Lowercase letters, numbers, and dashes"
+                            locationHelperText="The home prefix - controls who may manage the service account"
                             leaves={leaves}
                             onRegenerate={regenerateName}
                         />
@@ -164,7 +166,7 @@ export function CreateServiceAccountDialog({
                                     }
                                 />
                             }
-                            label="Grant access to this prefix"
+                            label="Grant access to the home prefix"
                         />
                         <Collapse in={grantOn}>
                             <>
@@ -188,7 +190,7 @@ export function CreateServiceAccountDialog({
                                             variant="body2"
                                             color="text.disabled"
                                         >
-                                            No prefix selected
+                                            No home prefix selected
                                         </Typography>
                                     )}
                                     <CapabilitySelector

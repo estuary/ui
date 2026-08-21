@@ -26,6 +26,7 @@ const BASE = {
     locationFontSize: 14,
     locationLineHeight: 22,
     monogramFontSize: 20,
+    helperFontSize: 12,
 };
 
 /**
@@ -42,6 +43,7 @@ export function identityLayout(scale = 1) {
 
     const cardHeight = px(BASE.cardHeight);
     const nameLineHeight = px(BASE.nameLineHeight);
+    const locationLineHeight = px(BASE.locationLineHeight);
 
     const nameTextSx = {
         fontFamily: 'monospace',
@@ -53,7 +55,25 @@ export function identityLayout(scale = 1) {
     const locationTextSx = {
         fontFamily: 'monospace',
         fontSize: px(BASE.locationFontSize),
-        lineHeight: `${px(BASE.locationLineHeight)}px`,
+        lineHeight: `${locationLineHeight}px`,
+    } as const;
+
+    // A field's helper text stands in for the line it is not on, so it takes
+    // that line's box and the card keeps its height. It reads as prose about the
+    // field rather than as a catalog value, so it drops the monospace face.
+    const helperTextSx = {
+        fontFamily: 'inherit',
+        fontSize: px(BASE.helperFontSize),
+    } as const;
+
+    const nameHelperSx = {
+        ...helperTextSx,
+        lineHeight: `${nameLineHeight}px`,
+    } as const;
+
+    const locationHelperSx = {
+        ...helperTextSx,
+        lineHeight: `${locationLineHeight}px`,
     } as const;
 
     const cardSx: SystemStyleObject<Theme> = {
@@ -96,10 +116,14 @@ export function identityLayout(scale = 1) {
     return {
         cardHeight,
         nameLineHeight,
+        // The home icon on the location line, sized to the text beside it.
+        locationIconSize: px(BASE.locationFontSize),
         cardSx,
         columnSx,
         monogramSx,
         nameTextSx,
         locationTextSx,
+        nameHelperSx,
+        locationHelperSx,
     };
 }
