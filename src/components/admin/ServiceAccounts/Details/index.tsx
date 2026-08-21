@@ -13,10 +13,12 @@ import { authenticatedRoutes } from 'src/app/routes';
 import { CreateApiKeyDialog } from 'src/components/admin/ServiceAccounts/CreateApiKeyDialog';
 import { ApiKeysSection } from 'src/components/admin/ServiceAccounts/Details/ApiKeysSection';
 import { GrantsSection } from 'src/components/admin/ServiceAccounts/Details/GrantsSection';
-import { ServiceAccountIdentity } from 'src/components/admin/ServiceAccounts/ServiceAccountIdentity';
-import { splitCatalogName } from 'src/components/admin/ServiceAccounts/shared';
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import AlertBox from 'src/components/shared/AlertBox';
+import {
+    CatalogIdentity,
+    splitCatalogName,
+} from 'src/components/shared/CatalogIdentity';
 import useGlobalSearchParams, {
     GlobalSearchParams,
 } from 'src/hooks/searchParams/useGlobalSearchParams';
@@ -96,13 +98,10 @@ export function ServiceAccountDetails() {
             </Typography>
         );
     } else {
-        const { prefix, leaf } = splitCatalogName(serviceAccount.catalogName);
-
         body = (
             <>
-                <ServiceAccountIdentity
-                    name={leaf}
-                    location={prefix}
+                <CatalogIdentity
+                    catalogName={serviceAccount.catalogName}
                     scale={IDENTITY_SCALE}
                     sx={{ mb: 4.5 }}
                 />

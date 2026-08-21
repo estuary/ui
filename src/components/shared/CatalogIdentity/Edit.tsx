@@ -22,14 +22,14 @@ import {
 import { EditPencil, Home, Refresh } from 'iconoir-react';
 
 import {
-    identityLayout,
-    TRUNCATE_SX,
-} from 'src/components/admin/ServiceAccounts/identityLayout';
-import {
     monogram,
     MONOGRAM_TEXT_COLOR,
     monogramColor,
-} from 'src/components/admin/ServiceAccounts/shared';
+} from 'src/components/shared/CatalogIdentity/catalogName';
+import {
+    identityLayout,
+    TRUNCATE_SX,
+} from 'src/components/shared/CatalogIdentity/layout';
 import { LeavesAutocomplete } from 'src/components/shared/LeavesAutocomplete/LeavesAutocomplete';
 import { useDebouncedValue } from 'src/hooks/useDebouncedValue';
 import { appendWithForwardSlash, hasLength } from 'src/utils/misc-utils';
@@ -40,13 +40,13 @@ const NAME_COLOR_DEBOUNCE_MS = 400;
 // How long a line takes to cross over between its value and a helper text.
 const HELPER_FADE_MS = 150;
 
-const NAME_PLACEHOLDER = 'service-account';
+const NAME_PLACEHOLDER = 'name';
 const LOCATION_PLACEHOLDER = 'No home prefix selected';
 
-// An account is named at one size, so the measurements are taken once.
+// An entity is named at one size, so the measurements are taken once.
 const LAYOUT = identityLayout();
 
-const EDIT_ICON_CLASS = 'service-account-inline-edit';
+const EDIT_ICON_CLASS = 'catalog-identity-inline-edit';
 
 // A field at rest while it can still be changed: plain text, with a pencil that
 // keeps its place in the layout at all times and only fades in on hover, so
@@ -99,7 +99,7 @@ const INLINE_AUTOCOMPLETE_SX: SystemStyleObject<Theme> = {
         { display: 'none' },
 };
 
-interface EditableIdentityCardProps {
+interface CatalogIdentityEditorProps {
     /** The account's leaf name, without its prefix. */
     name: string;
     onNameChange: (name: string) => void;
@@ -124,12 +124,12 @@ interface EditableIdentityCardProps {
 }
 
 /**
- * An account being named: a monogram tile over the color its catalog name
- * hashes to, with the leaf name above the catalog location it lives under. Both
- * lines are edited in place, so the account looks like the one it is about to
- * become — the same card the details page shows once it exists.
+ * A catalog entity being named: a monogram tile over the color its catalog name
+ * hashes to, with the leaf name above the prefix it lives under. Both lines are
+ * edited in place, so the entity looks like the one it is about to become — the
+ * same card `CatalogIdentity` shows once it exists.
  */
-export function EditableIdentityCard({
+export function CatalogIdentityEditor({
     name,
     onNameChange,
     location,
@@ -139,7 +139,7 @@ export function EditableIdentityCard({
     leaves,
     onRegenerate,
     sx,
-}: EditableIdentityCardProps) {
+}: CatalogIdentityEditorProps) {
     const {
         cardSx,
         columnSx,
@@ -153,7 +153,7 @@ export function EditableIdentityCard({
     } = LAYOUT;
 
     // The catalog name the two lines add up to, and what the tile's color is
-    // hashed from. An unnamed account stands in its placeholder, so the card
+    // hashed from. An unnamed entity stands in its placeholder, so the card
     // always has something to hash.
     //
     // A prefix picks up its trailing slash when the edit is committed, so the
@@ -210,8 +210,8 @@ export function EditableIdentityCard({
     // surface opened the tile would start on the last session's color and fade
     // off it.
     //
-    // `catalogName` substitutes a placeholder leaf for an unnamed account.
-    // Hashing that placeholder would assign a color the account will never
+    // `catalogName` substitutes a placeholder leaf for an unnamed entity.
+    // Hashing that placeholder would assign a color the entity will never
     // wear, so the unnamed case is carried through as an empty string.
     const settledIdentity = useDebouncedValue(
         hasLength(name) ? catalogName : '',

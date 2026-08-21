@@ -11,13 +11,13 @@ import {
     tokenExpiry,
 } from 'src/components/admin/ServiceAccounts/ExpiryWarning';
 import { GrantScroller } from 'src/components/admin/ServiceAccounts/GrantScroller';
+import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import {
     monogram,
     MONOGRAM_TEXT_COLOR,
     monogramColor,
     splitCatalogName,
-} from 'src/components/admin/ServiceAccounts/shared';
-import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
+} from 'src/components/shared/CatalogIdentity';
 import { CatalogPath } from 'src/components/shared/CatalogPath';
 import {
     defaultOutline,

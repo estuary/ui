@@ -1,13 +1,13 @@
 import type { Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
 
-import { MONOGRAM_TEXT_COLOR } from 'src/components/admin/ServiceAccounts/shared';
+import { MONOGRAM_TEXT_COLOR } from 'src/components/shared/CatalogIdentity/catalogName';
 
-// The measurements of the card an account is presented as: a monogram tile over
-// its stable color, with the leaf name above the catalog location it lives
-// under. Shared by EditableIdentityCard, which the create dialog names an
-// account through, and ServiceAccountIdentity, which the details page shows —
-// so an account looks the same before and after it exists.
+// The measurements of the card a catalog entity is presented as: a monogram tile
+// over its stable color, with the leaf name above the prefix it lives under.
+// Shared by CatalogIdentityEditor, which an entity is named through, and
+// CatalogIdentity, which shows one that exists — so an entity looks the same
+// before and after it is created.
 
 // How long the monogram takes to cross-fade to a new color.
 const MONOGRAM_FADE_MS = 1000;
@@ -19,7 +19,7 @@ export const TRUNCATE_SX = {
     textOverflow: 'ellipsis',
 } as const;
 
-// Every measurement at scale 1, as the create dialog uses it.
+// Every measurement at scale 1, the size an entity is named at.
 const BASE = {
     cardHeight: 72,
     nameFontSize: 18,

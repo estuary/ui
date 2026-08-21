@@ -7,7 +7,7 @@ import { Lock } from 'iconoir-react';
 import {
     monogram,
     splitCatalogName,
-} from 'src/components/admin/ServiceAccounts/shared';
+} from 'src/components/shared/CatalogIdentity';
 import { defaultOutline, defaultOutline_hovered } from 'src/context/Theme';
 
 interface CompactAccountCardProps {

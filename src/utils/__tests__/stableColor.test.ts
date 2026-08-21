@@ -1,6 +1,6 @@
 import { getContrastRatio } from '@mui/material/styles';
 
-import { MONOGRAM_TEXT_COLOR } from 'src/components/admin/ServiceAccounts/shared';
+import { MONOGRAM_TEXT_COLOR } from 'src/components/shared/CatalogIdentity';
 import { stringToReadableColor } from 'src/utils/stableColor';
 
 // Enough distinct strings to land on every hue the hash can produce.

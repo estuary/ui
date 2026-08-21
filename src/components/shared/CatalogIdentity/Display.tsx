@@ -7,36 +7,32 @@ import { Box, Stack } from '@mui/material';
 import { Home } from 'iconoir-react';
 
 import {
-    identityLayout,
-    TRUNCATE_SX,
-} from 'src/components/admin/ServiceAccounts/identityLayout';
-import {
     monogram,
     monogramColor,
-} from 'src/components/admin/ServiceAccounts/shared';
-import { appendWithForwardSlash } from 'src/utils/misc-utils';
+    splitCatalogName,
+} from 'src/components/shared/CatalogIdentity/catalogName';
+import {
+    identityLayout,
+    TRUNCATE_SX,
+} from 'src/components/shared/CatalogIdentity/layout';
 
-interface ServiceAccountIdentityProps {
-    /** The account's leaf name, without its prefix. */
-    name: string;
-    /** The catalog prefix the account lives under, trailing slash included. */
-    location: string;
-    /** Multiplies every measurement. 1 is the create dialog's card. */
+interface CatalogIdentityProps {
+    /** The entity's catalog name, prefix included. */
+    catalogName: string;
+    /** Multiplies every measurement. 1 is the size an entity is named at. */
     scale?: number;
     sx?: SxProps<Theme>;
 }
 
 /**
- * How a service account is presented: a monogram tile over the color its
- * catalog name hashes to, with the leaf name above the catalog location it
- * lives under.
+ * How a catalog entity is presented: a monogram tile over the color its catalog
+ * name hashes to, with the leaf name above the prefix it lives under.
  */
-export function ServiceAccountIdentity({
-    name,
-    location,
+export function CatalogIdentity({
+    catalogName,
     scale = 1,
     sx,
-}: ServiceAccountIdentityProps) {
+}: CatalogIdentityProps) {
     const {
         cardSx,
         columnSx,
@@ -46,9 +42,9 @@ export function ServiceAccountIdentity({
         locationIconSize,
     } = useMemo(() => identityLayout(scale), [scale]);
 
-    // The color is hashed from the whole catalog name, so two accounts with the
+    // The color is hashed from the whole catalog name, so two entities with the
     // same leaf under different prefixes wear different tiles.
-    const catalogName = `${appendWithForwardSlash(location)}${name}`;
+    const { prefix, leaf } = splitCatalogName(catalogName);
 
     return (
         <Stack
@@ -57,7 +53,7 @@ export function ServiceAccountIdentity({
             sx={[cardSx, ...(Array.isArray(sx) ? sx : [sx ?? {}])]}
         >
             <Box sx={{ ...monogramSx, background: monogramColor(catalogName) }}>
-                {monogram(name)}
+                {monogram(leaf)}
             </Box>
 
             <Box sx={columnSx}>
@@ -69,7 +65,7 @@ export function ServiceAccountIdentity({
                         color: 'text.primary',
                     }}
                 >
-                    {name}
+                    {leaf}
                 </Box>
 
                 <Stack
@@ -99,7 +95,7 @@ export function ServiceAccountIdentity({
                             color: 'text.secondary',
                         }}
                     >
-                        {location}
+                        {prefix}
                     </Box>
                 </Stack>
             </Box>

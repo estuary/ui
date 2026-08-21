@@ -17,9 +17,9 @@ import {
 
 import { useCreateServiceAccount } from 'src/api/gql/serviceAccounts';
 import { CapabilitySelector } from 'src/components/admin/ServiceAccounts/CapabilitySelector';
-import { EditableIdentityCard } from 'src/components/admin/ServiceAccounts/EditableIdentityCard';
 import { usePrefixLeaves } from 'src/components/admin/ServiceAccounts/usePrefixLeaves';
 import AlertBox from 'src/components/shared/AlertBox';
+import { CatalogIdentityEditor } from 'src/components/shared/CatalogIdentity';
 import { CatalogPath } from 'src/components/shared/CatalogPath';
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import { defaultOutline } from 'src/context/Theme';
@@ -137,7 +137,7 @@ export function CreateServiceAccountDialog({
                             bgcolor: (theme) => theme.palette.background.code,
                         }}
                     >
-                        <EditableIdentityCard
+                        <CatalogIdentityEditor
                             name={name}
                             onNameChange={setName}
                             location={location}
