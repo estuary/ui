@@ -1,8 +1,6 @@
 import type { SxProps, Theme } from '@mui/material';
 import type { ServiceAccount, UserGrant } from 'src/gql-types/graphql';
 
-import { useState } from 'react';
-
 import { Box, ButtonBase, Stack, Typography } from '@mui/material';
 import { decomposeColor, recomposeColor } from '@mui/material/styles';
 
@@ -75,13 +73,9 @@ export function AccountCard({
     const expiry = tokenExpiry(soonestExpiry(serviceAccount.apiKeys));
     const expiryPalette = expiry?.severity === 'expired' ? 'error' : 'warning';
 
-    const [hovered, setHovered] = useState(false);
-
     return (
         <ButtonBase
             onClick={() => onOpen(serviceAccount.catalogName)}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
             sx={{
                 // The frame holds the card face and, when there is an expiry
                 // to flag, the colored band tucked behind its bottom edge.
@@ -211,10 +205,7 @@ export function AccountCard({
                         </Typography>
 
                         {hasGrants ? (
-                            <GrantScroller
-                                baseHeight={62}
-                                cardHovered={hovered}
-                            >
+                            <GrantScroller baseHeight={62}>
                                 {grants.map((grant) => (
                                     <Stack
                                         key={grant.prefix}
