@@ -254,8 +254,11 @@ function DialogInner({
 
 export function UpdateMappingWizard() {
     const { open, onClose, context } = useDialog('EDIT_STORAGE_MAPPING');
-    const { storageMappings, error: storageMappingsError } =
-        useStorageMappings();
+    const {
+        storageMappings,
+        loading: storageMappingsLoading,
+        error: storageMappingsError,
+    } = useStorageMappings();
     const {
         dataPlanes,
         loading: dataPlanesLoading,
@@ -321,9 +324,16 @@ export function UpdateMappingWizard() {
     }, [storageMapping, methods]);
 
     // If the dialog is open but we can't resolve a mapping (missing prefix
-    // or no match) and we're not still loading, close the dialog to clear
-    // stale query params. This shouldn't ever happen.
-    const notFound = open && !dataPlanesLoading && (!prefix || !storageMapping);
+    // or no match), close the dialog to clear stale query params. Wait for
+    // both queries to settle first: on a deep link the mappings can still be
+    // loading after the data planes resolve, and a query error leaves the
+    // list empty — closing then would hide the error dialog below.
+    const notFound =
+        open &&
+        !dataPlanesLoading &&
+        !storageMappingsLoading &&
+        !queryError &&
+        (!prefix || !storageMapping);
     useEffect(() => {
         if (notFound) {
             logRocketConsole('StorageMapping:edit:notFound', { prefix });

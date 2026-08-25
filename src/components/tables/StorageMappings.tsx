@@ -49,7 +49,8 @@ function Row({ row }: { row: StorageMappingTableRow }) {
 
             <TableCell>
                 <Stack>
-                    {row.spec.data_planes.map((dataPlane) => (
+                    {/* The spec omits data_planes entirely when empty */}
+                    {(row.spec.data_planes ?? []).map((dataPlane) => (
                         <Typography key={dataPlane} variant="body2">
                             {dataPlane.replace('ops/dp/', '')}
                         </Typography>

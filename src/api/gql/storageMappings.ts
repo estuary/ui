@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react';
 
 import { useClient, useQuery } from 'urql';
 
+import { useAllPages } from 'src/api/gql/useAllPages';
 import { graphql } from 'src/gql-types';
 
 const COLLECTION_DATA_SUFFIX = 'collection-data/';
@@ -75,10 +76,13 @@ interface ServerFragmentStore {
     account_tenant_id?: string | null;
 }
 
-// Shape of the storage mapping `spec` field, which the schema types as JSON
+// Shape of the storage mapping `spec` field, which the schema types as JSON.
+// The server omits `data_planes` from the JSON when the list is empty
+// (serde `skip_serializing_if`), so reads must treat it as optional. Writes
+// always include it.
 interface StorageMappingSpec {
     stores: ServerFragmentStore[];
-    data_planes: string[];
+    data_planes?: string[];
 }
 
 interface StorageMappingVariables {
@@ -133,15 +137,20 @@ const TEST_CONNECTION_HEALTH = graphql(`
     }
 `);
 
+// The server caps each page at its DEFAULT_PAGE_SIZE (50); useAllPages walks
+// every page so consumers see the complete mapping list.
 const QUERY = graphql(`
-    query StorageMappingQuery {
-        storageMappings {
+    query StorageMappingQuery($after: String) {
+        storageMappings(after: $after) {
             edges {
                 cursor
                 node {
                     catalogPrefix
                     spec
                 }
+            }
+            pageInfo {
+                ...PageInfoFields
             }
         }
     }
@@ -235,10 +244,6 @@ function fromServerStore(store: ServerFragmentStore): FragmentStore {
 export function useStorageMappingService() {
     const client = useClient();
 
-    const refetchMappings = useCallback(() => {
-        client.query(QUERY, {}, { requestPolicy: 'network-only' }).toPromise();
-    }, [client]);
-
     const testConnection = useCallback(
         async (
             catalogPrefix: string,
@@ -297,10 +302,9 @@ export function useStorageMappingService() {
                 );
             }
 
-            refetchMappings();
             return result.data.createStorageMapping;
         },
-        [client, refetchMappings]
+        [client]
     );
 
     const update = useCallback(
@@ -328,10 +332,9 @@ export function useStorageMappingService() {
                 );
             }
 
-            refetchMappings();
             return result.data.updateStorageMapping;
         },
-        [client, refetchMappings]
+        [client]
     );
 
     return {
@@ -341,30 +344,42 @@ export function useStorageMappingService() {
     };
 }
 
+// Fetches every storage mapping the user can read. Consumers rely on the
+// list being complete: the edit dialog resolves its clicked row from it, and
+// PrefixCard's duplicate/coverage validators reject prefixes based on it.
 export function useStorageMappings() {
-    const [{ data, fetching, error }] = useQuery({
-        query: QUERY,
-    });
-
-    const storageMappings: StorageMapping[] =
-        data?.storageMappings.edges.map((edge) => {
-            const spec = edge.node.spec as StorageMappingSpec;
+    const { data, loading, error } = useAllPages(QUERY, {
+        getConnection: (d) => d.storageMappings,
+        transform: (node): StorageMapping => {
+            const spec = node.spec as StorageMappingSpec;
 
             return {
-                catalogPrefix: edge.node.catalogPrefix,
+                catalogPrefix: node.catalogPrefix,
                 spec: {
-                    fragmentStores: spec.stores.map((store) => ({
+                    fragmentStores: (spec.stores ?? []).map((store) => ({
                         ...fromServerStore(store),
                         storagePrefix: stripCollectionDataSuffix(store.prefix),
                     })),
                     dataPlanes: spec.data_planes ?? [],
                 },
             };
-        }) ?? [];
+        },
+    });
+
+    // A graphcache invalidation (create/update mutation) refetches only the
+    // page held by the active query, so useAllPages can re-append that page's
+    // rows. Keep the last occurrence of each prefix — it is the freshest.
+    const storageMappings = useMemo(
+        () =>
+            Array.from(
+                new Map(data.map((sm) => [sm.catalogPrefix, sm])).values()
+            ),
+        [data]
+    );
 
     return {
         storageMappings,
-        loading: fetching,
+        loading,
         error,
     };
 }
