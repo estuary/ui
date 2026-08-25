@@ -1,5 +1,4 @@
 import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
@@ -12,9 +11,9 @@ import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/Toggl
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName, PROVIDER_LABELS } from 'src/utils/cloudRegions';
 import {
-    formatDataPlaneName,
     formatIamOidc,
-    generateDataPlaneOption,
+    parseDataPlaneName,
+    toPresentableName,
 } from 'src/utils/dataPlane-utils';
 
 const TITLE_ID = 'data-plane-dialog-title';
@@ -23,8 +22,14 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
     const intl = useIntl();
     const parseCidrBlocks = useParseCidrBlocks();
 
-    const { dataPlaneName, scope } = generateDataPlaneOption(dataPlane);
-    const { ipv4, ipv6 } = parseCidrBlocks(dataPlane.cidr_blocks);
+    const { cloudProvider, scope } = dataPlane;
+    const { ipv4, ipv6 } = parseCidrBlocks(dataPlane.cidrBlocks);
+
+    // The region is parsed out of the data plane name rather than read off the
+    // `region` field so it stays in sync with the displayed name. They differ
+    // for the local data plane: `ops/dp/public/local-flow` parses to `flow`,
+    // while the field reports `local`.
+    const { region } = parseDataPlaneName(dataPlane.name, scope);
 
     return (
         <Dialog
@@ -45,12 +50,12 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                     justifyContent="flex-start"
                 >
                     <DataPlaneIcon
-                        provider={dataPlaneName.provider}
+                        provider={cloudProvider}
                         scope={scope}
                         size={30}
                     />
                     <Typography variant="h6" sx={{ ml: 1, fontWeight: 600 }}>
-                        {formatDataPlaneName(dataPlaneName)}
+                        {toPresentableName(dataPlane)}
                     </Typography>
                     <Badge
                         sx={{
@@ -73,28 +78,21 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                     })}
                 </Typography>
                 <Stack spacing={1}>
-                    {dataPlaneName.provider ? (
+                    {cloudProvider ? (
                         <DataPlaneDialogField
                             label={intl.formatMessage({
                                 id: 'admin.dataPlanes.dialog.cloudProvider',
                             })}
-                            value={
-                                PROVIDER_LABELS[
-                                    dataPlaneName.provider as CloudProvider
-                                ]
-                            }
+                            value={PROVIDER_LABELS[cloudProvider]}
                             showCopyButton={false}
                         />
                     ) : null}
-                    {dataPlaneName.region ? (
+                    {region ? (
                         <DataPlaneDialogField
                             label={intl.formatMessage({
                                 id: 'admin.dataPlanes.column.header.region',
                             })}
-                            value={getRegionDisplayName(
-                                dataPlaneName.provider as CloudProvider,
-                                dataPlaneName.region
-                            )}
+                            value={getRegionDisplayName(cloudProvider, region)}
                             showCopyButton={false}
                         />
                     ) : null}
@@ -102,7 +100,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         label={intl.formatMessage({
                             id: 'admin.dataPlanes.dialog.internalId',
                         })}
-                        value={dataPlane.data_plane_name}
+                        value={dataPlane.name}
                     />
                     <ToggleField
                         lowercaseButton
@@ -122,12 +120,12 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             },
                         ]}
                     />
-                    {dataPlane.data_plane_fqdn ? (
+                    {dataPlane.fqdn ? (
                         <DataPlaneDialogField
                             label={intl.formatMessage({
                                 id: 'data.idProvider',
                             })}
-                            value={formatIamOidc(dataPlane.data_plane_fqdn)}
+                            value={formatIamOidc(dataPlane.fqdn)}
                         />
                     ) : null}
                 </Stack>
