@@ -658,6 +658,11 @@ export type DataPlane = {
   gcpPscEndpoints: Array<Scalars['JSON']['output']>;
   /** GCP service account email for this data-plane. */
   gcpServiceAccountEmail?: Maybe<Scalars['String']['output']>;
+  /**
+   * Unique id of this data-plane, as referenced by a `LiveSpec`'s
+   * `dataPlaneId`.
+   */
+  id: Scalars['Id']['output'];
   /** Whether this is a public data-plane. */
   isPublic: Scalars['Boolean']['output'];
   /** Name of this data-plane under the catalog namespace. */
@@ -708,12 +713,17 @@ export type DataPlaneEdge = {
 };
 
 /**
- * Optional filter for the `dataPlanes` query. When omitted, all accessible
- * data planes are returned.
+ * Filter for the `dataPlanes` query. Each field is optional and only
+ * narrows results. A filter cannot show data planes the caller cannot read.
  */
 export type DataPlanesFilter = {
   /** Filter on the `closed` flag. */
   closed?: InputMaybe<BoolFilter>;
+  /**
+   * Match data planes by id, such as a `LiveSpec`'s `dataPlaneId`.
+   * Unknown or unauthorized ids are silently dropped.
+   */
+  id?: InputMaybe<IdFilter>;
 };
 
 export type DateFilter = {
@@ -767,6 +777,11 @@ export type GcpPrivateServiceConnectInput = {
   dnsZoneName: Scalars['String']['input'];
   region: Scalars['String']['input'];
   serviceAttachment: Scalars['String']['input'];
+};
+
+export type IdFilter = {
+  /** Match any id in this non-empty set. */
+  in?: InputMaybe<Array<Scalars['Id']['input']>>;
 };
 
 /** Status of the inferred schema */
