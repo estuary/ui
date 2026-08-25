@@ -683,6 +683,12 @@ type DataPlane {
   """GCP service account email for this data-plane."""
   gcpServiceAccountEmail: String
 
+  """
+  Unique id of this data-plane, as referenced by a `LiveSpec`'s
+  `dataPlaneId`.
+  """
+  id: Id!
+
   """Whether this is a public data-plane."""
   isPublic: Boolean!
 
@@ -740,12 +746,18 @@ type DataPlaneEdge {
 }
 
 """
-Optional filter for the `dataPlanes` query. When omitted, all accessible
-data planes are returned.
+Filter for the `dataPlanes` query. Each field is optional and only
+narrows results. A filter cannot show data planes the caller cannot read.
 """
 input DataPlanesFilter {
   """Filter on the `closed` flag."""
   closed: BoolFilter
+
+  """
+  Match data planes by id, such as a `LiveSpec`'s `dataPlaneId`.
+  Unknown or unauthorized ids are silently dropped.
+  """
+  id: IdFilter
 }
 
 input DateFilter {
@@ -810,6 +822,11 @@ input GCPPrivateServiceConnectInput {
 }
 
 scalar Id
+
+input IdFilter {
+  """Match any id in this non-empty set."""
+  in: [Id!]
+}
 
 """Status of the inferred schema"""
 type InferredSchemaStatus {
