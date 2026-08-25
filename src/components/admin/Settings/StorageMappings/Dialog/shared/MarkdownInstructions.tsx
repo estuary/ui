@@ -43,6 +43,7 @@ export function MarkdownInstructions({
     );
     const markdownOptions = useMemo(
         () => ({
+            disableParsingRawHTML: true,
             overrides: {
                 h1: {
                     component: Typography,
