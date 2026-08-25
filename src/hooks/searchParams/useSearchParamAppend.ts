@@ -4,6 +4,10 @@ import { createSearchParams, useSearchParams } from 'react-router-dom';
 
 import { encodeParamVal } from 'src/utils/misc-utils';
 
+// Returns a builder that merges values into a copy of the current search
+// params. It does not navigate — the caller navigates with (or links to) the
+// returned URLSearchParams. An array value replaces the key with one entry
+// per element; undefined deletes the key.
 export default function useSearchParamAppend() {
     const [searchParams] = useSearchParams();
 

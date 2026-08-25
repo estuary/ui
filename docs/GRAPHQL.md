@@ -64,12 +64,12 @@ This should not impact normal users and only `support` staff. We have the `mutat
 
 ## Graph Caching
 
-Look for `TODO (gql caching)` in the code.
+Entity types are not yet normalized: the `keys` map in `src/context/URQL.tsx` returns `null` for them. The migration rules are in the comment on that map.
 
 ### Impact
 
-We do not use Graph caching so there are times we are fetching more data than we need.
+Mutation results do not merge into cached queries. Mutations compensate with manual `invalidateQuery` updaters, and stale data can persist until the request-policy ttl refetches.
 
 ### Workaround
 
-We are fine with this for _now_ but will want to handle this in the near future.
+Migrate types to real keys as you touch them. Backend prerequisite for some updaters to go away: `updateAlertConfig` and `revokeRefreshToken` must return the mutated entity.

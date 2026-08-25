@@ -34,6 +34,18 @@ import CheckSquare from 'src/icons/CheckSquare';
 import { DEFAULT_TOOLBAR_HEIGHT } from 'src/utils/editor-utils';
 import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
+// This file holds the app's global styling: color palettes, z-indexes,
+// spacing, typography, and MUI component defaults. Component-scoped
+// styling lives with its component and composes theme tokens rather than
+// raw values.
+//
+// The exported style consts in this file (colors, backgrounds, outlines,
+// sx objects) are a closed set — do not add new ones. Add new global
+// tokens by augmenting the theme (see the `declare module` blocks below).
+// When you touch code that consumes a loose const, migrate it: to a theme
+// key if the value is global, or into the consuming component if it has a
+// single consumer.
+
 // The code block commented out directly below is how the typography variants can be extended
 // or existing variants disabled.
 //
@@ -55,6 +67,11 @@ import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 //     }
 // }
 
+// To add a global design token: declare the key on the relevant interface below,
+// set the value in createTheme(), and consume it via `theme.*` in sx
+// callbacks. Store px values as strings ('12px') — in sx.borderRadius a
+// number is multiplied by theme.shape.borderRadius, while a string is
+// used literally.
 declare module '@mui/material/styles' {
     interface PaletteColor {
         alpha_05?: string;
@@ -193,7 +210,11 @@ const sm = 650;
 const xs = 0;
 
 // Color Palettes
-// TODO: Balance the light mode color palette.
+// TODO: Balance the light mode color palette. Some light/dark token pairs
+//  are intentionally incomplete while this is in progress — check both modes
+//  when building new UI. Dark mode stacks opacity so nested surfaces darken
+//  as they nest; light mode has no equivalent and typically shows nesting
+//  with outlines.
 const lightMode: PaletteOptions = {
     background: {
         // One step down the ramp, so light mode has the same three surfaces
@@ -322,6 +343,9 @@ const darkMode: PaletteOptions = {
     },
 };
 
+// Every z-index in this file is a multiple of zIndexIncrement. When you add
+// one, derive it from zIndexIncrement and comment what it must stack above
+// or below.
 // TODO (zindex) We should make a helper or something to help manage zindex.
 //  It doesn't come up often but happens enough it would be nice to handle better.
 export const zIndexIncrement = 5;

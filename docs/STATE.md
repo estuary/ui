@@ -2,12 +2,14 @@
 
 ## Overview
 
-Three layers of state:
+State lives in four places:
 
 1. **React Context** — top-level app concerns (auth, routing, theme, notifications)
-2. **Zustand Stores** — complex domain state (user, entities, forms, bindings, workflows)
-3. **SWR** — REST data fetching with caching/revalidation
-4. **GQL** — Moving towards using GQL and just accessing data directly
+2. **Zustand Stores** — client editing/UI state (forms, bindings, workflow progression)
+3. **URQL graphcache** — server data fetched over GraphQL; the target home for all server data (`docs/GRAPHQL.md`)
+4. **SWR** — REST fetching (entity status, shards, journal data, gateway auth). Data-plane reads come from the Data-Plane-Gateway and are not in GraphQL, so this path stays for them. New control-plane data goes to GraphQL.
+
+Many Zustand stores still mirror server data through hydration slices. Narrow them as you touch them (see In-Flight Migrations in `CLAUDE.md`).
 
 ---
 
@@ -15,15 +17,9 @@ Three layers of state:
 
 ### Store Composition via Slices
 
-Stores are assembled from reusable slice factories:
+`getStoreWithHydrationSettings()` (`src/stores/extensions/Hydration.ts`) is the one shared slice factory: ten stores compose it in for the legacy hydration path described below.
 
-- `getStoreWithHydrationSettings()` — async data loading from APIs
-- `getStoreWithFieldSelectionSettings()` — field picker state
-- `getStoreWithBackfillSettings()` — backfill configuration
-- `getStoreWithToggleDisableSettings()` — enable/disable toggles
-- `getStoreWithTimeTravelSettings()` — time travel / historical data settings
-
-Example from `BindingStore`:
+Large stores also split their own state into single-consumer slice files (e.g. `src/stores/Binding/slices/` — field selection, backfill, toggle-disable, time travel). These organize one store's files and enable unit tests per slice:
 
 ```typescript
 getInitialState = (set) => ({
@@ -34,13 +30,22 @@ getInitialState = (set) => ({
 });
 ```
 
-State mutations use Immer's `produce()` when updating multiple or deeply nested values. However, we are looking at moving away from using Immer specifically due to some performance issues.
+Write a slice as a shared factory only when a second store consumes it.
 
 ### Consuming Stores in Components
 
-As of Q1 2026 - We are moving back to having pre-made hooks. This way we can more easily make mass changes during migrations/refactoring/etc.
+Select one value per store hook call:
 
-We currently have a lot of direct selector access with `useShallow`:
+```typescript
+const active = useBillingStore((state) => state.active);
+const setActive = useBillingStore((state) => state.setActive);
+```
+
+A single-value selector returns a stable reference, so it needs no equality helper. Zustand setters are stable, so selecting one never causes a re-render.
+
+Multi-field and derived selections live in named hooks in the store's `hooks.ts` (e.g., `useBinding_sourceCaptureFlags`). This keeps `useShallow` and its pitfalls (see `docs/INFINITE_LOOP_PATTERNS.md`) in one vetted place per store, and store refactors touch one file. Derive shapes with `useMemo` or at write time; do not build new objects inside a selector.
+
+Many components still select tuples inline:
 
 ```typescript
 const [active, setActive] = useBillingStore(
@@ -48,7 +53,7 @@ const [active, setActive] = useBillingStore(
 );
 ```
 
-Pre-made named hooks (e.g., `useBinding_sourceCaptureFlags`) are used for complex derived state to keep selector logic out of components.
+Migrate these as you touch them.
 
 ### Local Zustand (Scoped Stores)
 
@@ -56,26 +61,11 @@ Pre-made named hooks (e.g., `useBinding_sourceCaptureFlags`) are used for comple
 
 ---
 
-## Store Hydration
+## Store Hydration (legacy)
 
-### Without GraphQL
+Several stores fetch their own server data through the `StoreWithHydration` slice (`src/stores/extensions/Hydration.ts`). Do not extend this pattern: new control-plane data comes over GraphQL and stays in the URQL cache; data-plane reads go through SWR against the Data-Plane-Gateway. Hydration slices shrink away as their data moves to the URQL cache.
 
-Stores implement `StoreWithHydration`:
-
-```typescript
-interface StoreWithHydration {
-    hydrated: boolean;
-    hydrateState: () => Promise<void> | void;
-    hydrationError: string | null;
-    active: boolean; // Set to false to prevent hydration
-}
-```
-
-Components call `store.hydrateState()` on mount. Set `store.setActive(false)` on unmount to prevent unnecessary hydration. Eventually this should be replaced by cancelling in-flight calls on unmount.
-
-### With GraphQL
-
-Data is not loaded into a store when using GraphQL — it stays in the URQL cache. This allows graph caching to work correctly. See `docs/GRAPHQL.md` for details.
+When a component consumes a hydrated store, call `setActive(true)` on mount and `setActive(false)` on unmount. Hydration setters silently discard writes while `active` is false — the gate stops a late fetch response from writing stale data into the global store.
 
 ### React 18 StrictMode
 
@@ -106,27 +96,3 @@ Different entity creation/edit flows exist as separate contexts and store hydrat
 - `materialization_create` / `materialization_edit`
 
 Each flow has its own context, store hydration, and UI progression. Common UI is shared through components that accept configuration as props.
-
----
-
-## Search Params as State
-
-URL search params are synced with stores via:
-
-- `useGlobalSearchParams()` — reads global filters and pagination
-- `useSearchParamAppend()` — adds params without triggering a full navigation
-
-This enables browser back/forward navigation and shareable links.
-
----
-
-## Binding Index Tracking
-
-Bindings maintain multiple index mappings to cross-reference client and server state:
-
-- `bindingIndex` — position in the client resource config array
-- `builtBindingIndex` — position in the server-built spec
-- `liveBindingIndex` — position in the live spec
-- `validatedBindingIndex` — position in the validation response
-
-Use the correct index when cross-referencing errors from the server back to the client UI.

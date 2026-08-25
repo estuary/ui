@@ -53,8 +53,15 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                     //         alerts: relayPagination(),
                     //     },
                     // },
+                    // Migration: replace these null keys with real keys — `id`
+                    // where the schema has one, otherwise a natural key
+                    // (catalogPrefix, token, catalogName, ...). A null key
+                    // embeds the object in its parent query result, so
+                    // mutation results never merge into other cached queries.
+                    // Keep null only for value objects with no identity
+                    // (EffectiveAlertConfig, FieldProvenance). Queries and
+                    // mutations must select the key fields.
                     keys: {
-                        // TODO (gql caching)  - see GRAPHQL.md
                         Alert: (_data) => null,
                         AlertConfig: (_data) => null,
                         AlertSubscription: (_data) => null,
@@ -68,6 +75,10 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
                     },
+                    // Normalization only merges update results into entities
+                    // already in the cache. Creates and deletes need updaters
+                    // here: a new entity does not join cached lists and a
+                    // deleted one is not evicted on its own.
                     updates: {
                         Mutation: {
                             createInviteLink(_result, _args, cache) {

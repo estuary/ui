@@ -23,8 +23,10 @@ if (
     );
 }
 
-// Put global initializing code early. The LogRocket one _MUST_ be done
-//  before the `createClient` call made below for Supabase
+// Put global initializing code early. LogRocket must init before the
+//  `createClient` call below: LogRocket instruments network calls at init,
+//  so a Supabase client created first would make requests LogRocket never
+//  records or sanitizes.
 initLogRocket();
 
 // PostHog's init is in `ui/src/context/PostHog.tsx`
