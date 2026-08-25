@@ -105,7 +105,7 @@ One class component exists: `src/forms/overrides/material/complex/CombinatorProp
 
 ### Zustand Stores
 
-See `CLAUDE.md` for the full Zustand architecture. Key React-specific patterns:
+See [`STATE.md`](./STATE.md) for the full Zustand architecture. Key React-specific patterns:
 
 - **Direct selector access** — components access store state via `useShallow` selectors:
     ```typescript
