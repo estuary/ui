@@ -54,7 +54,6 @@ function BindingsCard({
         counts,
         filter,
         handlers,
-        maxBytes,
         page,
         rowsPerPage,
         sortDirection,
@@ -103,7 +102,6 @@ function BindingsCard({
                 bytesBehindLoading={bytesBehindLoading}
                 entityType={entityType}
                 isFiltered={filter.query !== '' || filter.status !== 'all'}
-                maxBytes={maxBytes}
                 totalBytes={totalBytes}
                 onClearFilter={handlers.resetFilter}
                 onPageChange={handlers.page}

@@ -628,14 +628,14 @@ describe('countBindings', () => {
 });
 
 describe('getVolumeTotals', () => {
-    test('sums the total and takes the largest binding', () => {
+    test('sums the total across bindings', () => {
         expect(
             getVolumeTotals([
                 row({ bytes: 10, collection: 'acmeco/a' }),
                 row({ bytes: 30, collection: 'acmeco/b' }),
                 row({ bytes: 20, collection: 'acmeco/c' }),
             ])
-        ).toEqual({ maxBytes: 30, totalBytes: 60 });
+        ).toEqual({ totalBytes: 60 });
     });
 
     // `catalog_stats` breaks volume down per collection, not per binding, so two
@@ -648,17 +648,14 @@ describe('getVolumeTotals', () => {
                 row({ bytes: 30, collection: 'acmeco/a', index: 1 }),
                 row({ bytes: 10, collection: 'acmeco/b', index: 2 }),
             ])
-        ).toEqual({ maxBytes: 30, totalBytes: 40 });
+        ).toEqual({ totalBytes: 40 });
     });
 
-    // The bars divide by maxBytes, so a task that moved nothing must not hand
-    // back a figure that turns every width into NaN.
+    // The tooltip's share figure divides by the total, so a task that moved
+    // nothing must not hand back a figure that turns the share into NaN.
     test('reports zeroes for no rows and for silent rows', () => {
-        expect(getVolumeTotals([])).toEqual({ maxBytes: 0, totalBytes: 0 });
-        expect(getVolumeTotals([row(), row()])).toEqual({
-            maxBytes: 0,
-            totalBytes: 0,
-        });
+        expect(getVolumeTotals([])).toEqual({ totalBytes: 0 });
+        expect(getVolumeTotals([row(), row()])).toEqual({ totalBytes: 0 });
     });
 });
 
@@ -830,8 +827,6 @@ describe('combineBindingsError', () => {
         const statsError = new Error('stats request failed');
         const backlogError = new Error('backlog request failed');
 
-        expect(combineBindingsError(statsError, backlogError)).toBe(
-            statsError
-        );
+        expect(combineBindingsError(statsError, backlogError)).toBe(statsError);
     });
 });

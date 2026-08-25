@@ -22,7 +22,6 @@ import {
     TableRow,
     TableSortLabel,
     tableSortLabelClasses,
-    Tooltip,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -287,7 +286,6 @@ interface Props {
     // empty state can tell "your filter matched nothing" apart from "this task
     // truly has no bindings" and offer a way out of the former.
     isFiltered: boolean;
-    maxBytes: number;
     // Resets the search query and status chip. Only reachable from the empty
     // state when `isFiltered` is true.
     onClearFilter: () => void;
@@ -332,7 +330,6 @@ function BindingsTable({
     bytesBehindLoading,
     entityType,
     isFiltered,
-    maxBytes,
     onClearFilter,
     onPageChange,
     onRowsPerPageChange,
@@ -593,21 +590,20 @@ function BindingsTable({
                                             overflow: 'hidden',
                                         }}
                                     >
-                                        <Tooltip
-                                            placement="bottom"
-                                            title={row.collection}
-                                        >
-                                            <Box sx={truncateStartSx}>
-                                                <EntityNameDetailsLink
-                                                    name={row.collection}
-                                                    path={generatePath({
-                                                        catalog_name:
-                                                            row.collection,
-                                                    })}
-                                                    plain
-                                                />
-                                            </Box>
-                                        </Tooltip>
+                                        {/* No tooltip: the name is truncated
+                                            from the start, so the distinctive
+                                            tail stays readable, and the link
+                                            itself leads to the full name. */}
+                                        <Box sx={truncateStartSx}>
+                                            <EntityNameDetailsLink
+                                                name={row.collection}
+                                                path={generatePath({
+                                                    catalog_name:
+                                                        row.collection,
+                                                })}
+                                                plain
+                                            />
+                                        </Box>
                                     </TableCell>
 
                                     <StatusCell
@@ -648,7 +644,6 @@ function BindingsTable({
                                     <VolumeCell
                                         bytes={row.bytes}
                                         loading={volumesLoading}
-                                        maxBytes={maxBytes}
                                         totalBytes={totalBytes}
                                     />
 

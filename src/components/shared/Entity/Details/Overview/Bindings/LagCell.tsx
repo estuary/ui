@@ -1,19 +1,11 @@
 import type { SxProps, Theme } from '@mui/material';
 
-import {
-    Box,
-    Skeleton,
-    TableCell,
-    Tooltip,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Box, Skeleton, TableCell, Tooltip, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
 import { secondsToElapsed } from 'src/components/shared/Entity/Details/Overview/shared';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
-import { diminishedTextColor } from 'src/context/Theme';
 
 // formatBytes always renders 2 fraction digits ("1.20 GB", "854.00 MB"), but
 // the unit segment's width still shifts the digits left/right between rows.
@@ -61,7 +53,6 @@ interface Props {
 
 function LagCell({ kind, loading, sx, value }: Props) {
     const intl = useIntl();
-    const theme = useTheme();
 
     if (loading) {
         return (
@@ -92,13 +83,7 @@ function LagCell({ kind, loading, sx, value }: Props) {
         return (
             <TableCell align="right" sx={{ minWidth: 96, ...sx }}>
                 <Tooltip placement="left" title={tooltip}>
-                    <Typography
-                        component="div"
-                        sx={{
-                            color: diminishedTextColor[theme.palette.mode],
-                            cursor: 'help',
-                        }}
-                    >
+                    <Typography component="div" sx={{ cursor: 'help' }}>
                         {intl.formatMessage({
                             id: 'detailsPanel.bindings.behind.caughtUp',
                         })}
@@ -149,7 +134,6 @@ function LagCell({ kind, loading, sx, value }: Props) {
                     <Box
                         component="span"
                         sx={{
-                            color: diminishedTextColor[theme.palette.mode],
                             minWidth: kind === 'bytes' ? 30 : undefined,
                             pl: 0.5,
                             textAlign: 'left',

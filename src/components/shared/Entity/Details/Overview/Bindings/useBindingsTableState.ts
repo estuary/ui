@@ -33,7 +33,6 @@ interface BindingsTableState {
         rowsPerPage: (next: number) => void;
         sort: (nextKey: BindingSortKey) => void;
     };
-    maxBytes: number;
     page: number;
     rowsPerPage: number;
     sortDirection: SortDirection;
@@ -84,10 +83,7 @@ export function useBindingsTableState(
         return sortedRows.slice(start, start + rowsPerPage);
     }, [page, rowsPerPage, sortedRows]);
 
-    const { maxBytes, totalBytes } = useMemo(
-        () => getVolumeTotals(bindings),
-        [bindings]
-    );
+    const { totalBytes } = useMemo(() => getVolumeTotals(bindings), [bindings]);
 
     const handlers = useMemo(
         () => ({
@@ -129,7 +125,6 @@ export function useBindingsTableState(
         counts,
         filter,
         handlers,
-        maxBytes,
         page,
         rowsPerPage,
         sortDirection,

@@ -158,9 +158,9 @@ export const Details: Record<string, string> = {
     // hedge: it is a delta-sum that is only re-anchored on a fresh reading, not
     // recomputed live, so a binding that has already caught up can still show a
     // stale nonzero figure for a while. Directional, not authoritative.
-    'detailsPanel.bindings.bytesBehind.tooltip': `Bytes this binding's materialization has yet to write, as of the task's last stats reading — not the selected range. A delta-sum gauge rather than a live figure: it can lag behind reality and occasionally still shows a caught-up binding as behind.`,
+    'detailsPanel.bindings.bytesBehind.tooltip': `Bytes still to write, as of the task's last stats reading rather than the selected range. Directional, not exact.`,
     'detailsPanel.bindings.bytesBehind.none.tooltip': `No backlog reading yet for this binding.`,
-    'detailsPanel.bindings.secondsBehind.tooltip': `How far behind in source-publication time, as of the task's last stats reading — not the selected range. Reads from the same delta-sum gauge as bytes behind, so treat it as directional rather than exact.`,
+    'detailsPanel.bindings.secondsBehind.tooltip': `Lag in source-publication time, as of the task's last stats reading rather than the selected range. Directional, not exact.`,
     'detailsPanel.bindings.secondsBehind.none.tooltip': `No time-lag reading yet for this binding.`,
     // Shared by both lag columns for the zero case, which is a real answer
     // (nothing left to read) rather than a missing one — see the "none" variants

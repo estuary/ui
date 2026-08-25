@@ -388,10 +388,7 @@ export const countBindings = (rows: BindingRow[]): BindingCounts => {
 };
 
 /**
- * The two volume figures the card needs, in one pass.
- *
- * `totalBytes` is everything the task moved over the selected range; `maxBytes`
- * is the busiest binding, which each row's bar is drawn relative to.
+ * Everything the task moved over the selected range.
  *
  * The total counts each collection once, not each row. `catalog_stats` breaks
  * volume down per collection, not per binding, so two bindings on one collection
@@ -400,25 +397,18 @@ export const countBindings = (rows: BindingRow[]): BindingCounts => {
  * the task moved, and disagree with the chart above it. Nothing better is
  * available per row: there is no per-binding split to attribute.
  */
-export const getVolumeTotals = (
-    rows: BindingRow[]
-): { maxBytes: number; totalBytes: number } => {
+export const getVolumeTotals = (rows: BindingRow[]): { totalBytes: number } => {
     const countedCollections = new Set<string>();
-    let maxBytes = 0;
     let totalBytes = 0;
 
     for (const row of rows) {
-        // Unaffected by the de-duplication: rows sharing a collection share its
-        // figure, so the largest is the same either way.
-        maxBytes = Math.max(maxBytes, row.bytes);
-
         if (!countedCollections.has(row.collection)) {
             countedCollections.add(row.collection);
             totalBytes += row.bytes;
         }
     }
 
-    return { maxBytes, totalBytes };
+    return { totalBytes };
 };
 
 const compareStrings = (left: string, right: string) =>

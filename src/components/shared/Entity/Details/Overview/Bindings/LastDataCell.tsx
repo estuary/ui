@@ -1,19 +1,11 @@
 import type { SxProps, Theme } from '@mui/material';
 
-import {
-    Box,
-    Skeleton,
-    TableCell,
-    Tooltip,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { Box, Skeleton, TableCell, Tooltip, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
 import { useIntl } from 'react-intl';
 
 import { getElapsed } from 'src/components/shared/Entity/Details/Overview/shared';
-import { diminishedTextColor } from 'src/context/Theme';
 
 interface Props {
     // Null when this binding moved nothing in the selected range, which is a
@@ -28,7 +20,6 @@ interface Props {
 
 function LastDataCell({ lastPublishedAt, loading, sx }: Props) {
     const intl = useIntl();
-    const theme = useTheme();
 
     if (loading) {
         return (
@@ -85,16 +76,10 @@ function LastDataCell({ lastPublishedAt, loading, sx }: Props) {
                         {elapsed.value}
                     </Box>
 
-                    {/* Unit and "ago" share the same dimmed treatment as the
-                        volume column's byte-unit suffix, so both adjacent
-                        numeric columns follow the same hierarchy convention. */}
-                    <Box
-                        component="span"
-                        sx={{
-                            color: diminishedTextColor[theme.palette.mode],
-                            pl: 0.5,
-                        }}
-                    >
+                    {/* Unit and "ago" read at the same weight as the figure
+                        they belong to, matching the volume and lag columns'
+                        own unit suffixes. */}
+                    <Box component="span" sx={{ pl: 0.5 }}>
                         {intl.formatMessage(
                             { id: elapsed.unitLabelId },
                             { count: elapsed.value }

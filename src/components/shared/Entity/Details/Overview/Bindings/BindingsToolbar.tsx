@@ -12,6 +12,7 @@ import {
     IconButton,
     InputAdornment,
     inputBaseClasses,
+    outlinedInputClasses,
     Stack,
     TextField,
     useTheme,
@@ -26,6 +27,16 @@ import { diminishedTextColor } from 'src/context/Theme';
 import { QUICK_DEBOUNCE_WAIT } from 'src/utils/workflow-utils';
 
 type FilterValue = BindingStatus | 'all';
+
+// A deliberately quiet hover for the search field's outline. MUI's default
+// jumps it to an opaque `text.primary`, and even the app-wide
+// `defaultOutlineColor_hovered` (0.6) reads as a hard flash against the 0.23
+// resting border. This is just enough lift to confirm the field is hoverable.
+// Light is an RGB translation of #0B131E; dark is an RGB translation of #F7F9FC.
+const searchOutlineColor_hovered = {
+    light: `rgba(11, 19, 30, 0.35)`,
+    dark: `rgba(247, 249, 252, 0.35)`,
+};
 
 const FILTERS: { value: FilterValue; labelId: string }[] = [
     { value: 'all', labelId: 'detailsPanel.bindings.filter.all' },
@@ -159,6 +170,13 @@ function BindingsToolbar({ counts, filter, searchLabelId, setFilter }: Props) {
                     flexGrow: 1,
                     minWidth: 220,
                     [`& .${inputBaseClasses.root}`]: { borderRadius: 3 },
+                    // Excluding the focused state leaves the primary focus ring
+                    // to win once the field is actually active.
+                    [`& .${outlinedInputClasses.root}:not(.${outlinedInputClasses.focused}):hover .${outlinedInputClasses.notchedOutline}`]:
+                        {
+                            borderColor:
+                                searchOutlineColor_hovered[theme.palette.mode],
+                        },
                 }}
                 type="text"
                 variant="outlined"
