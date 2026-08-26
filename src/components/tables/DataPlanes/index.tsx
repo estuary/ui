@@ -1,8 +1,9 @@
 import type { SxProps } from '@mui/material';
+import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
 import type { TableState } from 'src/types';
 import type { CombinedError } from 'urql';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import {
     Box,
@@ -108,6 +109,14 @@ function DataPlanesTable() {
         };
     }, [pageInfo?.hasNextPage, pageInfo?.hasPreviousPage]);
 
+    const handleDataPlaneScopeChange = useCallback(
+        (newScope: DataPlaneScopes) => {
+            setScope(newScope);
+            goToPage(0); // reset to first page when changing scope to support cursor pagination
+        },
+        [goToPage, setScope]
+    );
+
     const handlePageChange = useCallback(
         (event: any, newPage: number) => {
             onPageChange(event, newPage, pageInfo?.endCursor);
@@ -136,7 +145,10 @@ function DataPlanesTable() {
     return (
         <Box data-public>
             <Toolbar sx={toolbarStyle} disableGutters>
-                <ToggleDataPlaneScope />
+                <ToggleDataPlaneScope
+                    scope={dataPlaneScope}
+                    onChange={handleDataPlaneScopeChange}
+                />
             </Toolbar>
 
             <TableContainer component={Box} sx={tableContainerStyle}>

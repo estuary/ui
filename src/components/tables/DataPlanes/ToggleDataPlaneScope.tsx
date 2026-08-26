@@ -1,8 +1,10 @@
-import { ToggleButtonGroup } from '@mui/material';
+import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
+
 import { useCallback } from 'react';
 
+import { ToggleButtonGroup } from '@mui/material';
+
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
-import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
 
 type ToggleDataPlaneScopeProps = {
     scope: DataPlaneScopes;
