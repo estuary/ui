@@ -123,8 +123,6 @@ export const AdminPage: Record<string, string> = {
     'admin.prefix.issueGrant.error.invalidPrefix': `The value entered in the Shared Prefix text field is not an extension of an existing prefix.`,
     'admin.prefix.issueGrant.error.duplicatePrefix': `The requested access has already been provisioned.`,
 
-    'admin.dataPlanes.private.option': `Private`,
-    'admin.dataPlanes.public.option': `Public`,
     'admin.dataPlanes.header': `Data Planes`,
     'admin.dataPlanes.column.header.name': `Name`,
     'admin.dataPlanes.column.header.provider': `Provider`,

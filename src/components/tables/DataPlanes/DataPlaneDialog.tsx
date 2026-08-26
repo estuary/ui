@@ -122,9 +122,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                     />
                     {dataPlane.fqdn ? (
                         <DataPlaneDialogField
-                            label={intl.formatMessage({
-                                id: 'data.idProvider',
-                            })}
+                            label="IAM OIDC"
                             value={formatIamOidc(dataPlane.fqdn)}
                         />
                     ) : null}
