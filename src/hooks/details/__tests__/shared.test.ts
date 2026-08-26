@@ -215,7 +215,7 @@ describe('parseMaterializationBacklog', () => {
         test('renders the total the way the card does', () => {
             const backlog = parseMaterializationBacklog([row]);
 
-            expect(formatBytes(backlog?.bytesBehind, 0)).toBe('1 MB');
+            expect(formatBytes(backlog?.bytesBehind, 1)).toBe('1.1 MB');
         });
 
         test('reports the stats document timestamp', () => {
