@@ -84,14 +84,54 @@ check_stack() {
   done
 }
 
-gen_env() {
-  local url="$1"
+# The demo must serve the LOCAL stack, never production. gen_env overrides the
+# endpoint URLs to the tunnel origin, but the anon key and other settings are
+# inherited from .env.development.local. Commenting those vars out is how you
+# point a local dev UI at the production backend — and Vite then silently falls
+# back to the production values in .env. For a publicly tunneled demo that would
+# expose production, so refuse it explicitly and up front.
+PROD_HOST_RE='api\.estuary\.dev|[a-z0-9]+\.supabase\.co|config-encryption\.estuary\.dev'
+
+assert_local_backend() {
   local src="$UI_DIR/.env.development.local"
-  local dst="$UI_DIR/.env.production.local"
   if [ ! -f "$src" ]; then
     err "$src not found — cannot derive demo env."
     exit 1
   fi
+
+  # These must be active (uncommented) so the build binds to the local stack.
+  # If any is commented/missing, Vite falls back to the production value in .env.
+  local required=(VITE_SUPABASE_URL VITE_ESTUARY_API_URL VITE_SUPABASE_ANON_KEY VITE_ENCRYPTION_URL)
+  local commented=() v
+  for v in "${required[@]}"; do
+    if ! grep -qE "^[[:space:]]*${v}=" "$src"; then
+      commented+=("$v")
+    fi
+  done
+  if [ "${#commented[@]}" -gt 0 ]; then
+    err "Refusing to start the demo — these are commented out or missing in"
+    err "  $src:"
+    for v in "${commented[@]}"; do err "    - $v"; done
+    err "With them unset, Vite falls back to the PRODUCTION values in .env, so this"
+    err "publicly tunneled demo would point at the production backend. Uncomment the"
+    err "local-stack values (localhost / supabase-demo) and re-run."
+    exit 1
+  fi
+
+  # Even when set, forbid production hosts in the endpoint URLs.
+  if grep -qE "^[[:space:]]*VITE_(SUPABASE_URL|ESTUARY_API_URL|ENCRYPTION_URL)=.*(${PROD_HOST_RE})" "$src"; then
+    err "Refusing to start the demo — $src points an endpoint at a PRODUCTION host"
+    err "(api.estuary.dev / *.supabase.co / config-encryption.estuary.dev). The demo"
+    err "must run against your LOCAL stack. Restore the localhost values and re-run."
+    exit 1
+  fi
+}
+
+gen_env() {
+  local url="$1"
+  local src="$UI_DIR/.env.development.local"
+  local dst="$UI_DIR/.env.production.local"
+  # assert_local_backend has already validated $src by the time we get here.
   # Inherit local-stack settings (anon key, feature flags, etc.) and override
   # only the three endpoint URLs to the single tunnel origin.
   sed -E \
@@ -99,6 +139,21 @@ gen_env() {
     -e "s#^VITE_ESTUARY_API_URL=.*#VITE_ESTUARY_API_URL=$url#" \
     -e "s#^VITE_ENCRYPTION_URL=.*#VITE_ENCRYPTION_URL=$url/v1/encrypt-config#" \
     "$src" > "$dst"
+
+  # The overrides must have landed as active lines pointing at the tunnel; if an
+  # override failed to match, the build would fall through to .env (production).
+  local u
+  for u in VITE_SUPABASE_URL VITE_ESTUARY_API_URL; do
+    if ! grep -qE "^[[:space:]]*${u}=${url}$" "$dst"; then
+      err "Generated $dst did not set ${u} to the tunnel origin; aborting to avoid a"
+      err "production fallback."
+      exit 1
+    fi
+  done
+  if grep -qE "^[[:space:]]*VITE_(SUPABASE_URL|ESTUARY_API_URL|ENCRYPTION_URL)=.*(${PROD_HOST_RE})" "$dst"; then
+    err "Generated $dst still references a production host; aborting."
+    exit 1
+  fi
 }
 
 start() {
@@ -112,6 +167,9 @@ start() {
     status
     exit 1
   fi
+
+  log "Verifying the demo is configured for the local stack (not production)..."
+  assert_local_backend
 
   log "Checking local flow stack (ports $KONG_PORT/$AGENT_PORT/$ENC_PORT)..."
   check_stack
