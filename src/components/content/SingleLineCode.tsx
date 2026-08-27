@@ -7,6 +7,7 @@ import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 const borderRadius = 3;
 
+/** @deprecated Prefer `CopyValueField` from src/components/shared/CopyValueField */
 function SingleLineCode({
     value,
     compact,
