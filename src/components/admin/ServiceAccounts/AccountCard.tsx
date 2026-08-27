@@ -67,8 +67,8 @@ export function AccountCard({
 
     return (
         <BandedDiv
-            side={expiry ? 'bottom' : undefined}
-            bandColor={expiryColor}
+            side="bottom"
+            bandColor={expiry ? expiryColor : undefined}
             label={
                 expiry ? (
                     <>

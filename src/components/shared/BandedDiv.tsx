@@ -37,11 +37,12 @@ export function desaturate(color: string, amount: number) {
 }
 
 interface BandedDivProps {
-    /** The edge carrying the band. Omit to render the frame and face alone. */
+    /** The edge carrying the band. */
     side?: BandSide;
     /**
      * The band's full-strength color. With `onClick` set, the band rests
-     * desaturated and comes up to this color on hover.
+     * desaturated and comes up to this color on hover. Omit to render the
+     * frame and face alone.
      */
     bandColor?: string;
     /**
@@ -72,7 +73,7 @@ interface BandedDivProps {
  * the band needs no radius of its own.
  */
 export function BandedDiv({
-    side,
+    side = 'left',
     bandColor,
     label,
     onClick,
@@ -116,7 +117,7 @@ export function BandedDiv({
     );
 
     const band =
-        side && bandColor ? (
+        bandColor !== undefined ? (
             <Stack
                 key="band"
                 className={BAND_CLASS}
@@ -147,7 +148,7 @@ export function BandedDiv({
         alignItems: 'stretch',
         borderRadius: cornerRadius,
         overflow: 'hidden',
-        ...(interactive && side && bandColor
+        ...(interactive && bandColor
             ? {
                   [`&:hover .${BAND_CLASS}`]: { background: bandColor },
               }
