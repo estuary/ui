@@ -724,6 +724,11 @@ export type DataPlanesFilter = {
    * Unknown or unauthorized ids are silently dropped.
    */
   id?: InputMaybe<IdFilter>;
+  /**
+   * Filter on the `public` flag, which is derived from the data plane's
+   * name prefix (`ops/dp/public/` vs `ops/dp/private/`).
+   */
+  public?: InputMaybe<BoolFilter>;
 };
 
 export type DateFilter = {
@@ -1768,6 +1773,8 @@ export type QueryRoot = {
    *
    * `filter.closed.eq` restricts results to data planes whose `closed`
    * flag matches it; omitting it returns both open and closed planes.
+   * `filter.public.eq` restricts results to public or private planes;
+   * omitting it returns both.
    */
   dataPlanes: DataPlaneConnection;
   /** Resolves the effective alert config at a single prefix or catalog name. */
