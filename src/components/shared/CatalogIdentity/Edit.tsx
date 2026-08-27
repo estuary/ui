@@ -307,6 +307,15 @@ export function CatalogIdentityEditor({
                                     'aria-describedby': showNameHelper
                                         ? nameHelperId
                                         : undefined,
+                                    // A bare "name" field reads as a login form
+                                    // to password managers. Each manager has
+                                    // its own opt-out attribute; the browser
+                                    // follows autoComplete.
+                                    'data-1p-ignore': true,
+                                    'data-lpignore': 'true',
+                                    'data-bwignore': true,
+                                    'data-form-type': 'other',
+                                    'autoComplete': 'off',
                                 }}
                                 sx={{
                                     ...INLINE_INPUT_SX,
