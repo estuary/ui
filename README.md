@@ -2,71 +2,32 @@
 
 The web UI for Estuary.
 
-# How to install?
-
-Ensure `node` and `npm` are both installed. Please check `package.json` for version info.
-
-Run: `npm install`
-
-## Troubleshooting
-
-### 401 error for `@estuary/flow-web`
-
-You need to update `~/.npmrc` with the following:
-
-```
-//npm.pkg.github.com/:_authToken=__YOUR_AUTH_TOKEN_YOU_MADE_ON_GITHUB__
-@estuary:registry=https://npm.pkg.github.com/
-```
-
-[Github docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token).
-
-### `data-plane-gateway` is outdated
-
-Please see `__inline-deps__/README.md` for instructions
-
-### Why don't I see logs locally?
-
-You should get logs with V1 Control Plane. You just need to make sure the Ops Catalog is started.
-
-With the update to V2 Control Plane the logs will no longer work in the UI by default. This is due to how the journal selectors for Logs are currently handled. We ned to know about a "pub id" to add to the selector. Currently there is no consistent way for the UI to fetch this.
-
-To get logs you will need to grab this "pub id" and update the query... details TBD.
-
 # How to start/run?
 
-Make sure [Estuary](https://github.com/estuary/flow) is running.
+The UI runs against a local [Estuary](https://github.com/estuary/flow) stack, including its local Supabase instance. Make sure that stack is running first.
 
-Run: `npm start`
+Then:
 
-The UI is built to hit our own instance of Supabase. That means you will need to have that running locally as well.
+```
+npm install
+npm start
+```
+
+The app is served at [http://localhost:3000](http://localhost:3000).
 
 ## How to log in locally
 
 1. On the login page, enter any email address and click **Sign in with Magic Link**.
 2. Open the local email UI at [http://localhost:5434/](http://localhost:5434/) (Mailpit).
-3. Find the magic link email for your address. You can either:
-   - Click the **Log In** link in the email, or
-   - Copy the OTP code from the email, click **Already have an OTP code?** on the login page, and paste it in.
+3. Copy the OTP code from the email, click **Already have an OTP code?** on the login page, and paste it in.
 4. On first login you will be prompted to accept the terms of service and create an organization.
 
-# How to test against prod?
+## Troubleshooting
 
-Run: `npm run build`
+### `data-plane-gateway` or `@estuary/flow-web` is outdated
 
-then
+Both are vendored tarballs in `__inline-deps__/`. Please see `__inline-deps__/README.md` for instructions.
 
-Run : `npm run preview`
+# More documentation
 
-This will run a build and then start previewing it. When running as `preview` you will be running production mode - meaning all the code that runs in prod will be running.
-
-# Stuff we use
-
-- [TypeScript](https://github.com/microsoft/TypeScript) for code
-- [MUI](https://github.com/mui/material-ui) for components
-- [JSON Forms](https://github.com/eclipsesource/jsonforms) for forms
-- [Apache ECharts](https://github.com/apache/echarts) for charts
-- [Zustand](https://github.com/pmndrs/zustand) for local state
-- [Supabase](https://github.com/supabase) for server calls
-- [SWR](https://github.com/vercel/swr) for server calls
-- [Vite](https://github.com/vitejs) for build
+Architecture, conventions, and gotchas live in [`docs/`](docs/).

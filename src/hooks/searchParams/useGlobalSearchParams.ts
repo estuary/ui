@@ -2,6 +2,8 @@ import { useCallback, useMemo } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 
+// Search param keys shared across the app. Register new keys here and read
+// them with useGlobalSearchParams so key names stay in one place.
 export enum GlobalSearchParams {
     CATALOG_NAME = 'catalogName',
     CONNECTOR_IMAGE_PATH = 'connImgPath',
