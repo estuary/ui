@@ -13,7 +13,7 @@ import {
 import { CheckCircle } from 'iconoir-react';
 
 import AlertBox from 'src/components/shared/AlertBox';
-import { CopyValueButton } from 'src/components/shared/buttons/CopyValueButton';
+import { CopyValueField } from 'src/components/shared/CopyValueField';
 
 interface SecretRevealModalProps {
     open: boolean;
@@ -93,13 +93,20 @@ export function SecretRevealModal({
                         </Typography>
                     </AlertBox>
 
-                    <CopyValueButton
-                        value={secret}
-                        source="SecretRevealModal"
-                        label="Copy API key"
-                        onCopied={() => setCopied(true)}
-                        sx={{ alignSelf: 'flex-start' }}
-                    />
+                    {/* data-private keeps the revealed secret out of the
+                        LogRocket session replay. */}
+                    <Box data-private>
+                        <CopyValueField
+                            label="API key"
+                            value={secret}
+                            source="SecretRevealModal"
+                            onCopied={() => setCopied(true)}
+                            valueSx={{
+                                wordBreak: 'break-all',
+                                lineHeight: 1.4,
+                            }}
+                        />
+                    </Box>
                 </Stack>
             </DialogContent>
 
