@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import type { ReactNode } from 'react';
+
+import { useLayoutEffect, useRef, useState } from 'react';
 
 import {
     Box,
@@ -36,6 +38,65 @@ interface RevealedKey {
     secret: string;
     description: string;
     expires: string;
+}
+
+// Animates the dialog's height across the phase swap, using the mechanism
+// from WizardContent: the outer box holds an explicit height measured off the
+// content, and transitions it only while a swap is in flight so in-phase
+// resizes stay instant. Rendered inside the Dialog, so the measured height
+// unmounts with it and a reopen starts fresh.
+function AnimatedHeight({
+    switchKey,
+    children,
+}: {
+    // The phase discriminator; a change animates the next height difference.
+    switchKey: string;
+    children: ReactNode;
+}) {
+    const innerRef = useRef<HTMLDivElement>(null);
+    const [height, setHeight] = useState<number | undefined>(undefined);
+    const [transitioning, setTransitioning] = useState(false);
+    const prevKeyRef = useRef(switchKey);
+
+    useLayoutEffect(() => {
+        if (prevKeyRef.current !== switchKey) {
+            setTransitioning(true);
+            prevKeyRef.current = switchKey;
+        }
+
+        const el = innerRef.current;
+
+        if (!el) {
+            return undefined;
+        }
+
+        setHeight(el.scrollHeight);
+
+        const observer = new ResizeObserver(() => {
+            setHeight(el.scrollHeight);
+        });
+        observer.observe(el);
+
+        return () => observer.disconnect();
+    }, [switchKey]);
+
+    return (
+        <Box
+            onTransitionEnd={() => setTransitioning(false)}
+            sx={{
+                height: height ?? 'auto',
+                // The incoming content renders at full size immediately; the
+                // box catches up. Clipping only during the catch-up keeps the
+                // taller content from spilling out of the paper.
+                overflow: transitioning ? 'hidden' : undefined,
+                transition: transitioning
+                    ? (theme) => theme.transitions.create('height')
+                    : 'none',
+            }}
+        >
+            <Box ref={innerRef}>{children}</Box>
+        </Box>
+    );
 }
 
 // One dialog, two phases: the form, then - once a key is minted - the one-time
@@ -94,87 +155,89 @@ export function CreateApiKeyDialog({
         <Dialog
             open={open}
             onClose={revealed ? undefined : onClose}
-            maxWidth="xs"
+            maxWidth="sm"
             fullWidth
             aria-labelledby={TITLE_ID}
             slotProps={{
                 transition: { onExited: resetSession },
             }}
         >
-            {revealed ? (
-                <SecretReveal
-                    secret={revealed.secret}
-                    description={revealed.description}
-                    expires={revealed.expires}
-                    titleId={TITLE_ID}
-                    onDone={onClose}
-                />
-            ) : (
-                <>
-                    <DialogTitleWithClose
-                        id={TITLE_ID}
-                        onClose={onClose}
-                        disabled={fetching}
-                    >
-                        Create API key
-                    </DialogTitleWithClose>
-
-                    <DialogContent>
-                        <Stack spacing={2} sx={{ mt: 1 }}>
-                            {error ? (
-                                <AlertBox severity="error" short>
-                                    <Typography>{error}</Typography>
-                                </AlertBox>
-                            ) : null}
-
-                            <TextField
-                                label="Description"
-                                value={label}
-                                onChange={(event) =>
-                                    setLabel(event.target.value)
-                                }
-                                required
-                                size="small"
-                                fullWidth
-                                placeholder="CI deploy pipeline"
-                                helperText="Helps you recognize this key later."
-                            />
-
-                            <Box>
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    sx={{ mb: 1 }}
-                                >
-                                    Lifetime
-                                </Typography>
-                                <LifetimeSelector
-                                    value={validFor}
-                                    onChange={setValidFor}
-                                />
-                            </Box>
-                        </Stack>
-                    </DialogContent>
-
-                    <DialogActions>
-                        <Button
-                            onClick={onClose}
+            <AnimatedHeight switchKey={revealed ? 'reveal' : 'form'}>
+                {revealed ? (
+                    <SecretReveal
+                        secret={revealed.secret}
+                        description={revealed.description}
+                        expires={revealed.expires}
+                        titleId={TITLE_ID}
+                        onDone={onClose}
+                    />
+                ) : (
+                    <>
+                        <DialogTitleWithClose
+                            id={TITLE_ID}
+                            onClose={onClose}
                             disabled={fetching}
-                            variant="outlined"
                         >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="contained"
-                            onClick={handleCreate}
-                            disabled={!hasLength(label) || fetching}
-                            loading={fetching}
-                        >
-                            Create key
-                        </Button>
-                    </DialogActions>
-                </>
-            )}
+                            Create API key
+                        </DialogTitleWithClose>
+
+                        <DialogContent>
+                            <Stack spacing={2} sx={{ mt: 1 }}>
+                                {error ? (
+                                    <AlertBox severity="error" short>
+                                        <Typography>{error}</Typography>
+                                    </AlertBox>
+                                ) : null}
+
+                                <TextField
+                                    label="Description"
+                                    value={label}
+                                    onChange={(event) =>
+                                        setLabel(event.target.value)
+                                    }
+                                    required
+                                    size="small"
+                                    fullWidth
+                                    placeholder="CI deploy pipeline"
+                                    helperText="Helps you recognize this key later."
+                                />
+
+                                <Box>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{ mb: 1 }}
+                                    >
+                                        Lifetime
+                                    </Typography>
+                                    <LifetimeSelector
+                                        value={validFor}
+                                        onChange={setValidFor}
+                                    />
+                                </Box>
+                            </Stack>
+                        </DialogContent>
+
+                        <DialogActions>
+                            <Button
+                                onClick={onClose}
+                                disabled={fetching}
+                                variant="outlined"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={handleCreate}
+                                disabled={!hasLength(label) || fetching}
+                                loading={fetching}
+                            >
+                                Create key
+                            </Button>
+                        </DialogActions>
+                    </>
+                )}
+            </AnimatedHeight>
         </Dialog>
     );
 }
