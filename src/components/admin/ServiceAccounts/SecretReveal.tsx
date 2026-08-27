@@ -3,7 +3,6 @@ import { useState } from 'react';
 import {
     Box,
     Button,
-    Dialog,
     DialogActions,
     DialogContent,
     Stack,
@@ -15,53 +14,31 @@ import { CheckCircle } from 'iconoir-react';
 import AlertBox from 'src/components/shared/AlertBox';
 import { CopyValueField } from 'src/components/shared/CopyValueField';
 
-interface SecretRevealModalProps {
-    open: boolean;
+interface SecretRevealProps {
     secret: string;
     description: string;
     // Pre-formatted expiry, e.g. "Sep 17, 2026" or "1 year".
     expires: string;
-    // The owning account's catalog name.
-    account: string;
+    // The heading's element id, for the owning Dialog's aria-labelledby.
+    titleId: string;
     onDone: () => void;
-    /**
-     * Called once the exit transition finishes. The dialog's content stays on
-     * screen through the fade-out, so the owner clears the secret here, not
-     * in onDone.
-     */
-    onExited?: () => void;
 }
 
-// Shows a freshly minted API key exactly once. The user must acknowledge they
-// stored it before they can dismiss the dialog (no close affordance otherwise).
-export function SecretRevealModal({
-    open,
+// The reveal phase of the create API key dialog: shows a freshly minted key
+// exactly once. Dismissing loses the secret for good, so Done stays locked
+// until the key has been copied. The copied gate needs no reset - this
+// component unmounts with its dialog.
+export function SecretReveal({
     secret,
     description,
     expires,
-    account,
+    titleId,
     onDone,
-    onExited,
-}: SecretRevealModalProps) {
-    // Dismissing loses the secret for good, so the dialog holds until it has
-    // been copied. The flag resets after the exit transition, so the unlocked
-    // Done button keeps its state through the fade-out.
+}: SecretRevealProps) {
     const [copied, setCopied] = useState(false);
 
     return (
-        <Dialog
-            open={open}
-            maxWidth="sm"
-            fullWidth
-            slotProps={{
-                transition: {
-                    onExited: () => {
-                        setCopied(false);
-                        onExited?.();
-                    },
-                },
-            }}
-        >
+        <>
             <DialogContent>
                 <Stack spacing={2.5}>
                     <Stack
@@ -86,7 +63,7 @@ export function SecretRevealModal({
                             <CheckCircle />
                         </Box>
                         <Box>
-                            <Typography variant="h6">
+                            <Typography id={titleId} variant="h6">
                                 API key created
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
@@ -113,7 +90,7 @@ export function SecretRevealModal({
                         <CopyValueField
                             label="API key"
                             value={secret}
-                            source="SecretRevealModal"
+                            source="SecretReveal"
                             onCopied={() => setCopied(true)}
                             valueSx={{
                                 wordBreak: 'break-all',
@@ -129,6 +106,6 @@ export function SecretRevealModal({
                     {copied ? 'Done' : 'Copy and save your key first'}
                 </Button>
             </DialogActions>
-        </Dialog>
+        </>
     );
 }
