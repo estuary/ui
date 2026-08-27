@@ -2,7 +2,9 @@ import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
 import type { ReactNode } from 'react';
 
-import { Box, ButtonBase, Stack } from '@mui/material';
+import { useLayoutEffect, useRef, useState } from 'react';
+
+import { Box, ButtonBase } from '@mui/material';
 import { decomposeColor, recomposeColor } from '@mui/material/styles';
 
 export type BandSide = 'top' | 'bottom' | 'left' | 'right';
@@ -36,6 +38,60 @@ export function desaturate(color: string, amount: number) {
     });
 }
 
+// Rotates its child 90° as one unit. A CSS transform never affects layout —
+// a rotated label would keep its wide horizontal box and stretch the band —
+// so the child is measured and its dimensions swapped onto a spacer, with the
+// rotated child centered absolutely inside it.
+function RotatedLabel({ children }: { children: ReactNode }) {
+    const labelRef = useRef<HTMLDivElement>(null);
+    const [size, setSize] = useState<{ width: number; height: number } | null>(
+        null
+    );
+
+    useLayoutEffect(() => {
+        const el = labelRef.current;
+
+        if (!el) {
+            return undefined;
+        }
+
+        const measure = () =>
+            setSize({ width: el.offsetWidth, height: el.offsetHeight });
+
+        measure();
+
+        const observer = new ResizeObserver(measure);
+        observer.observe(el);
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <Box
+            sx={{
+                position: 'relative',
+                width: size?.height,
+                height: size?.width,
+            }}
+        >
+            <Box
+                ref={labelRef}
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    // Sized to its content: an absolutely positioned box would
+                    // otherwise shrink to the narrow spacer and wrap.
+                    width: 'max-content',
+                    transform: 'translate(-50%, -50%) rotate(90deg)',
+                }}
+            >
+                {children}
+            </Box>
+        </Box>
+    );
+}
+
 interface BandedDivProps {
     /** The edge carrying the band. */
     side?: BandSide;
@@ -46,8 +102,9 @@ interface BandedDivProps {
      */
     bandColor?: string;
     /**
-     * Rendered inside the band, on a centered row. Reads vertically when the
-     * band is on the left or right: text glyphs rotate 90°, icons stay upright.
+     * Rendered centered inside the band, and rotated 90° as a unit when the
+     * band is on the left or right. The node owns its internal layout — pass
+     * a row Stack for an icon-and-text label.
      */
     label?: ReactNode;
     /** Makes the whole frame a button, and the band's color hover-driven. */
@@ -118,17 +175,16 @@ export function BandedDiv({
 
     const band =
         bandColor !== undefined ? (
-            <Stack
+            <Box
                 key="band"
                 className={BAND_CLASS}
-                direction="row"
-                spacing={0.75}
                 sx={{
                     flex: 'none',
+                    display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     ...(verticalBand
-                        ? { px: 0.5, py: 1.5, writingMode: 'vertical-rl' }
+                        ? { px: 0.5, py: 1.5 }
                         : { px: 1.5, py: 0.5 }),
                     ...tuckSx[side],
                     background: interactive
@@ -138,8 +194,8 @@ export function BandedDiv({
                     transition: 'background-color 0.1s ease',
                 }}
             >
-                {label}
-            </Stack>
+                {verticalBand ? <RotatedLabel>{label}</RotatedLabel> : label}
+            </Box>
         ) : null;
 
     const frameSx: SystemStyleObject<Theme> = {
