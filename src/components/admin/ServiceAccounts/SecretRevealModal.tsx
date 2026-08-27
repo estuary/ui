@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import {
     Box,
@@ -24,6 +24,12 @@ interface SecretRevealModalProps {
     // The owning account's catalog name.
     account: string;
     onDone: () => void;
+    /**
+     * Called once the exit transition finishes. The dialog's content stays on
+     * screen through the fade-out, so the owner clears the secret here, not
+     * in onDone.
+     */
+    onExited?: () => void;
 }
 
 // Shows a freshly minted API key exactly once. The user must acknowledge they
@@ -35,19 +41,27 @@ export function SecretRevealModal({
     expires,
     account,
     onDone,
+    onExited,
 }: SecretRevealModalProps) {
     // Dismissing loses the secret for good, so the dialog holds until it has
-    // been copied.
+    // been copied. The flag resets after the exit transition, so the unlocked
+    // Done button keeps its state through the fade-out.
     const [copied, setCopied] = useState(false);
 
-    useEffect(() => {
-        if (open) {
-            setCopied(false);
-        }
-    }, [open]);
-
     return (
-        <Dialog open={open} maxWidth="sm" fullWidth>
+        <Dialog
+            open={open}
+            maxWidth="sm"
+            fullWidth
+            slotProps={{
+                transition: {
+                    onExited: () => {
+                        setCopied(false);
+                        onExited?.();
+                    },
+                },
+            }}
+        >
             <DialogContent>
                 <Stack spacing={2.5}>
                     <Stack
@@ -112,7 +126,7 @@ export function SecretRevealModal({
 
             <DialogActions>
                 <Button variant="contained" onClick={onDone} disabled={!copied}>
-                    Done
+                    {copied ? 'Done' : 'Copy and save your key first'}
                 </Button>
             </DialogActions>
         </Dialog>

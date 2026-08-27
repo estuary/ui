@@ -75,8 +75,9 @@ export function CreateApiKeyDialog({
         setSecret(result.data.createApiKey.secret);
     };
 
+    // The secret survives until the reveal modal has fully faded out; clearing
+    // it here would empty the modal's content mid-transition.
     const handleRevealDone = () => {
-        setSecret(null);
         onClose();
     };
 
@@ -152,12 +153,13 @@ export function CreateApiKeyDialog({
             </Dialog>
 
             <SecretRevealModal
-                open={Boolean(secret)}
+                open={Boolean(open && secret)}
                 secret={secret ?? ''}
                 description={label || 'API key'}
                 expires={formatExpiryFromNow(validFor)}
                 account={catalogName}
                 onDone={handleRevealDone}
+                onExited={() => setSecret(null)}
             />
         </>
     );
