@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import {
     Box,
@@ -42,14 +42,22 @@ export function CreateApiKeyDialog({
 
     const [{ fetching }, createApiKey] = useCreateApiKey();
 
-    useEffect(() => {
+    // Seed the form whenever the dialog opens. This runs during render, so the
+    // first frame the user sees already holds the fresh values. An effect would
+    // paint one frame of the previous session first: its leftover label briefly
+    // enables the Create button before the reset lands.
+    const [seededFor, setSeededFor] = useState(open);
+
+    if (open !== seededFor) {
+        setSeededFor(open);
+
         if (open) {
             setLabel('');
             setValidFor(DEFAULT_LIFETIME);
             setSecret(null);
             setError(null);
         }
-    }, [open]);
+    }
 
     const handleCreate = async () => {
         setError(null);
@@ -73,12 +81,6 @@ export function CreateApiKeyDialog({
         }
 
         setSecret(result.data.createApiKey.secret);
-    };
-
-    // The secret survives until the reveal modal has fully faded out; clearing
-    // it here would empty the modal's content mid-transition.
-    const handleRevealDone = () => {
-        onClose();
     };
 
     return (
@@ -158,7 +160,7 @@ export function CreateApiKeyDialog({
                 description={label || 'API key'}
                 expires={formatExpiryFromNow(validFor)}
                 account={catalogName}
-                onDone={handleRevealDone}
+                onDone={onClose}
                 onExited={() => setSecret(null)}
             />
         </>
