@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from '@mui/material';
 
 import { authenticatedRoutes } from 'src/app/routes';
 import AlertBox from 'src/components/shared/AlertBox';
-import { CopyValueButton } from 'src/components/shared/buttons/CopyValueButton';
+import { CopyValueField } from 'src/components/shared/CopyValueField';
 import { useUserStore } from 'src/context/User/useUserContextStore';
 import usePageTitle from 'src/hooks/usePageTitle';
 
@@ -18,11 +18,14 @@ function FlowctlAccessToken() {
             <Stack spacing={2}>
                 {accessToken ? (
                     <Stack spacing={2}>
-                        <CopyValueButton
+                        <CopyValueField
+                            label="Access token"
                             value={accessToken}
                             source="FlowctlAccessToken"
-                            label="Copy access token"
-                            sx={{ alignSelf: 'flex-start' }}
+                            valueSx={{
+                                wordBreak: 'break-all',
+                                lineHeight: 1.4,
+                            }}
                         />
                         <Typography>
                             Paste this token into your terminal to complete
