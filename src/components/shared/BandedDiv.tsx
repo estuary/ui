@@ -194,10 +194,11 @@ export function BandedDiv({
                 minWidth: 0,
                 borderRadius: cornerRadius,
                 // Hardcoded default surface for now: the face must be opaque
-                // for the band tuck to read, so a bare BandedDiv gets a padded
-                // paper face rather than a see-through one.
+                // for the band tuck to read, so a bare BandedDiv gets a
+                // padded, outlined paper face rather than a see-through one.
                 p: 2,
                 background: (theme) => theme.palette.background.paper,
+                border: (theme) => `1px solid ${theme.palette.divider}`,
                 ...faceSx,
             }}
         >
