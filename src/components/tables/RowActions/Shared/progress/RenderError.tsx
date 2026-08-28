@@ -18,7 +18,6 @@ function RenderError({ draftId, error, skipped }: RenderErrorProps) {
                 <Error
                     error={error}
                     severity={skipped ? 'info' : undefined}
-                    hideIcon={skipped}
                     hideTitle
                 />
             ) : null}

@@ -5,13 +5,7 @@ import { forwardRef } from 'react';
 
 import { AlertTitle, Box, IconButton, useTheme } from '@mui/material';
 
-import {
-    CheckCircle,
-    InfoCircle,
-    WarningHexagon,
-    WarningTriangle,
-    Xmark,
-} from 'iconoir-react';
+import { Xmark } from 'iconoir-react';
 
 import { BandedDiv } from 'src/components/shared/BandedDiv';
 import { paperBackground } from 'src/context/Theme';
@@ -23,22 +17,9 @@ const ALERT_TEXT = {
     dark: 'rgb(255, 255, 255)',
 };
 
-const SEVERITY_ICON = {
-    error: WarningHexagon,
-    warning: WarningTriangle,
-    info: InfoCircle,
-    success: CheckCircle,
-};
-
-// Iconoir icons render at 1.5em, so an explicit width/height is the only way
-// to get the px size asked for.
-const ICON_SIZE = 20;
-
 export interface AlertBoxProps {
     severity: AlertColor;
     children?: ReactNode;
-    /** Leaves the severity band bare, with no icon in it. */
-    hideIcon?: boolean;
     /** Adds a close button to the end of the alert's first row. */
     onClose?: () => void;
     sx?: SxProps<Theme>;
@@ -47,30 +28,20 @@ export interface AlertBoxProps {
 
 /**
  * A severity-banded box for messages the user has to read: the band carries
- * the severity color and its icon, and the face carries the copy.
+ * the severity color, and the face carries the copy.
  *
  * The ref lands on the alert's content, which is what a caller scrolling an
  * alert into view wants to reach.
  */
 export const AlertBox = forwardRef<HTMLDivElement, AlertBoxProps>(
-    function AlertBox(
-        { severity, children, hideIcon, onClose, sx, title },
-        ref
-    ) {
+    function AlertBox({ severity, children, onClose, sx, title }, ref) {
         const theme = useTheme();
-
-        const Icon = SEVERITY_ICON[severity];
 
         return (
             <BandedDiv
                 side="left"
-                radius="sm"
+                radius="md"
                 bandColor={theme.palette[severity][theme.palette.mode]}
-                label={
-                    hideIcon ? undefined : (
-                        <Icon width={ICON_SIZE} height={ICON_SIZE} />
-                    )
-                }
                 faceSx={{
                     px: 1.5,
                     py: 1,

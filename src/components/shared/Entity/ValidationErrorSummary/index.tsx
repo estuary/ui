@@ -28,15 +28,10 @@ import { hasLength } from 'src/utils/misc-utils';
 
 interface Props {
     ErrorComponent?: any | boolean;
-    hideIcon?: boolean;
     headerMessageId?: string;
 }
 
-function ValidationErrorSummary({
-    headerMessageId,
-    hideIcon,
-    ErrorComponent,
-}: Props) {
+function ValidationErrorSummary({ headerMessageId, ErrorComponent }: Props) {
     const intl = useIntl();
     const scrollToTarget = useRef<HTMLDivElement>(null);
     const scrollIntoView = useScrollIntoView(scrollToTarget);
@@ -87,7 +82,7 @@ function ValidationErrorSummary({
 
     return show ? (
         <Collapse in={formErrorsExist} timeout="auto" unmountOnExit>
-            <AlertBox severity="error" hideIcon={hideIcon} ref={scrollToTarget}>
+            <AlertBox severity="error" ref={scrollToTarget}>
                 <AlertTitle>
                     {intl.formatMessage({
                         id: headerMessageId ?? defaultHeaderMessageId,

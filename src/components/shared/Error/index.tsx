@@ -12,7 +12,6 @@ import Message from 'src/components/shared/Error/Message';
 
 export interface ErrorProps {
     error?: ErrorDetails;
-    hideIcon?: boolean;
     hideTitle?: boolean;
     linkOptions?: ExternalLinkOptions;
     noAlertBox?: boolean;
@@ -22,7 +21,6 @@ export interface ErrorProps {
 
 function Error({
     error,
-    hideIcon,
     hideTitle,
     linkOptions,
     noAlertBox,
@@ -45,7 +43,6 @@ function Error({
         <Box sx={{ width: '100%' }}>
             <AlertBox
                 severity={severity ?? 'error'}
-                hideIcon={hideIcon}
                 title={
                     !hideTitle ? (
                         <AlertTitle>
