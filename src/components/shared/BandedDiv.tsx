@@ -7,6 +7,8 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { Box, ButtonBase } from '@mui/material';
 import { decomposeColor, recomposeColor } from '@mui/material/styles';
 
+import { defaultOutline } from 'src/context/Theme';
+
 export type BandSide = 'top' | 'bottom' | 'left' | 'right';
 
 /** On the face element, so an owner can restyle it from the frame's hover. */
@@ -198,7 +200,7 @@ export function BandedDiv({
                 // padded, outlined paper face rather than a see-through one.
                 p: 2,
                 background: (theme) => theme.palette.background.paper,
-                border: (theme) => `1px solid ${theme.palette.divider}`,
+                border: (theme) => defaultOutline[theme.palette.mode],
                 ...faceSx,
             }}
         >
