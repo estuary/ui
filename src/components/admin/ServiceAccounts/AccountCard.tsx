@@ -1,7 +1,8 @@
 import type { SxProps, Theme } from '@mui/material';
+import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
 import type { ServiceAccount, UserGrant } from 'src/gql-types/graphql';
 
-import { Box, Stack, Typography, useTheme } from '@mui/material';
+import { Box, ButtonBase, Stack, Typography, useTheme } from '@mui/material';
 
 import { Folder, Lock, WarningTriangle } from 'iconoir-react';
 
@@ -65,172 +66,198 @@ export function AccountCard({
         theme.palette[expiry?.severity === 'expired' ? 'error' : 'warning']
             .main;
 
+    // The card face, styled the same whether it stands alone or sits over the
+    // expiry band.
+    const faceSx: SystemStyleObject<Theme> = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        p: 2,
+        pb: 1,
+        background:
+            hasGrants || expiry
+                ? semiTransparentBackground_oneLayerElevated[theme.palette.mode]
+                : 'transparent',
+        border: defaultOutline[theme.palette.mode],
+        borderColor: expiry
+            ? desaturate(expiryColor, BAND_REST_SATURATION)
+            : defaultOutlineColor[theme.palette.mode],
+        borderStyle: hasGrants ? 'solid' : 'dashed',
+        transition: 'border-color 0.1s ease',
+    };
+
+    const restOpacity = hasGrants ? 1 : 0.7;
+    const hoverOpacity = hasGrants ? 1 : 0.85;
+
+    const cardContent = (
+        <Stack spacing={1.75} sx={{ flex: 1 }}>
+            {/* Identity */}
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+                <Box
+                    sx={{
+                        width: 42,
+                        height: 42,
+                        flex: 'none',
+                        borderRadius: theme.radius.md,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: MONOGRAM_TEXT_COLOR,
+                        background: monogramColor(serviceAccount.catalogName),
+                    }}
+                >
+                    {monogram(serviceAccount.catalogName)}
+                </Box>
+
+                <Box sx={{ minWidth: 0, flex: 1 }}>
+                    <Box
+                        component="span"
+                        sx={{
+                            fontFamily: 'monospace',
+                            fontWeight: 600,
+                            color: 'text.primary',
+                            fontSize: 14,
+                            display: 'block',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                        }}
+                    >
+                        {splitCatalogName(serviceAccount.catalogName).leaf}
+                    </Box>
+
+                    <UsageIndicator
+                        lastUsedAt={serviceAccount.lastUsedAt}
+                        sx={{ mt: 0.5 }}
+                    />
+                </Box>
+            </Stack>
+
+            <Box
+                sx={{
+                    height: '1px',
+                    background: theme.palette.divider,
+                }}
+            />
+
+            {/* Details */}
+            <Stack spacing={1.25} sx={{ flex: 1 }}>
+                <Stack spacing={0.75} sx={{ flex: 1 }}>
+                    <Typography component="span" sx={META_LABEL_SX}>
+                        Access{' '}
+                        {grantCount > 3
+                            ? `(${grantCount}
+                            ${grantCount === 1 ? 'grant' : 'grants'})`
+                            : null}
+                    </Typography>
+
+                    {hasGrants ? (
+                        <GrantScroller baseHeight={62}>
+                            {grants.map((grant) => (
+                                <Stack
+                                    key={grant.prefix}
+                                    direction="row"
+                                    spacing={0.75}
+                                    sx={{ alignItems: 'flex-start' }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            flex: 'none',
+                                            pt: '3px',
+                                            color: 'text.secondary',
+                                        }}
+                                    >
+                                        <Folder width={13} height={13} />
+                                    </Box>
+                                    <CatalogPath
+                                        path={grant.prefix}
+                                        variant="caption"
+                                    />
+                                </Stack>
+                            ))}
+                        </GrantScroller>
+                    ) : (
+                        <Stack
+                            direction="row"
+                            spacing={0.5}
+                            sx={{
+                                alignItems: 'center',
+                                color: 'text.secondary',
+                                fontStyle: 'italic',
+                            }}
+                        >
+                            <Lock width={13} height={13} />
+                            <Typography variant="caption">No access</Typography>
+                        </Stack>
+                    )}
+                </Stack>
+            </Stack>
+        </Stack>
+    );
+
+    // An account with nothing to flag is a plain card: the face styles sit
+    // directly on the button, and there is no frame to tuck a band behind.
+    if (!expiry) {
+        return (
+            <ButtonBase
+                onClick={() => onOpen(serviceAccount.catalogName)}
+                sx={{
+                    ...faceSx,
+                    'width': '100%',
+                    'textAlign': 'left',
+                    'borderRadius': theme.radius.lg,
+                    'opacity': restOpacity,
+                    'transition': 'opacity 0.1s ease, border-color 0.1s ease',
+                    '&:hover': {
+                        opacity: hoverOpacity,
+                        borderColor:
+                            defaultOutlineColor_hovered[theme.palette.mode],
+                    },
+                }}
+            >
+                {cardContent}
+            </ButtonBase>
+        );
+    }
+
     return (
         <BandedDiv
             side="bottom"
-            bandColor={expiry ? expiryColor : undefined}
+            bandColor={expiryColor}
             label={
-                expiry ? (
-                    <>
-                        <WarningTriangle width={14} height={14} />
-                        <Typography
-                            variant="caption"
-                            color="inherit"
-                            sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}
-                        >
-                            {expiry.label}
-                        </Typography>
-                    </>
-                ) : undefined
+                <Stack
+                    direction="row"
+                    spacing={0.75}
+                    sx={{ alignItems: 'center' }}
+                >
+                    <WarningTriangle width={14} height={14} />
+                    <Typography
+                        variant="caption"
+                        color="inherit"
+                        sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}
+                    >
+                        {expiry.label}
+                    </Typography>
+                </Stack>
             }
             onClick={() => onOpen(serviceAccount.catalogName)}
             sx={{
                 'width': '100%',
-                'opacity': hasGrants ? 1 : 0.7,
+                'opacity': restOpacity,
                 'transition': 'opacity 0.1s ease',
                 '&:hover': {
-                    opacity: hasGrants ? 1 : 0.85,
+                    opacity: hoverOpacity,
                     [`& .${BANDED_DIV_FACE_CLASS}`]: {
-                        borderColor: expiry
-                            ? expiryColor
-                            : defaultOutlineColor_hovered[theme.palette.mode],
+                        borderColor: expiryColor,
                     },
                 },
             }}
-            faceSx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'stretch',
-                p: 2,
-                pb: 1,
-                background:
-                    hasGrants || expiry
-                        ? semiTransparentBackground_oneLayerElevated[
-                              theme.palette.mode
-                          ]
-                        : 'transparent',
-                border: defaultOutline[theme.palette.mode],
-                borderColor: expiry
-                    ? desaturate(expiryColor, BAND_REST_SATURATION)
-                    : defaultOutlineColor[theme.palette.mode],
-                borderStyle: hasGrants ? 'solid' : 'dashed',
-                transition: 'border-color 0.1s ease',
-            }}
+            faceSx={faceSx}
         >
-            <Stack spacing={1.75} sx={{ flex: 1 }}>
-                {/* Identity */}
-                <Stack
-                    direction="row"
-                    spacing={1.5}
-                    sx={{ alignItems: 'center' }}
-                >
-                    <Box
-                        sx={{
-                            width: 42,
-                            height: 42,
-                            flex: 'none',
-                            borderRadius: theme.radius.md,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 14,
-                            fontWeight: 700,
-                            color: MONOGRAM_TEXT_COLOR,
-                            background: monogramColor(
-                                serviceAccount.catalogName
-                            ),
-                        }}
-                    >
-                        {monogram(serviceAccount.catalogName)}
-                    </Box>
-
-                    <Box sx={{ minWidth: 0, flex: 1 }}>
-                        <Box
-                            component="span"
-                            sx={{
-                                fontFamily: 'monospace',
-                                fontWeight: 600,
-                                color: 'text.primary',
-                                fontSize: 14,
-                                display: 'block',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                            }}
-                        >
-                            {splitCatalogName(serviceAccount.catalogName).leaf}
-                        </Box>
-
-                        <UsageIndicator
-                            lastUsedAt={serviceAccount.lastUsedAt}
-                            sx={{ mt: 0.5 }}
-                        />
-                    </Box>
-                </Stack>
-
-                <Box
-                    sx={{
-                        height: '1px',
-                        background: theme.palette.divider,
-                    }}
-                />
-
-                {/* Details */}
-                <Stack spacing={1.25} sx={{ flex: 1 }}>
-                    <Stack spacing={0.75} sx={{ flex: 1 }}>
-                        <Typography component="span" sx={META_LABEL_SX}>
-                            Access{' '}
-                            {grantCount > 3
-                                ? `(${grantCount}
-                            ${grantCount === 1 ? 'grant' : 'grants'})`
-                                : null}
-                        </Typography>
-
-                        {hasGrants ? (
-                            <GrantScroller baseHeight={62}>
-                                {grants.map((grant) => (
-                                    <Stack
-                                        key={grant.prefix}
-                                        direction="row"
-                                        spacing={0.75}
-                                        sx={{ alignItems: 'flex-start' }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                flex: 'none',
-                                                pt: '3px',
-                                                color: 'text.secondary',
-                                            }}
-                                        >
-                                            <Folder width={13} height={13} />
-                                        </Box>
-                                        <CatalogPath
-                                            path={grant.prefix}
-                                            variant="caption"
-                                        />
-                                    </Stack>
-                                ))}
-                            </GrantScroller>
-                        ) : (
-                            <Stack
-                                direction="row"
-                                spacing={0.5}
-                                sx={{
-                                    alignItems: 'center',
-                                    color: 'text.secondary',
-                                    fontStyle: 'italic',
-                                }}
-                            >
-                                <Lock width={13} height={13} />
-                                <Typography variant="caption">
-                                    No access
-                                </Typography>
-                            </Stack>
-                        )}
-                    </Stack>
-                </Stack>
-            </Stack>
+            {cardContent}
         </BandedDiv>
     );
 }
