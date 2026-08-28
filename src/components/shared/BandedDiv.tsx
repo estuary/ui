@@ -66,52 +66,65 @@ function toDecomposableColor(color: string): string {
     return canvasContext.fillStyle as string;
 }
 
-// Rotates its child 90° as one unit. A CSS transform never affects layout —
-// a rotated label would keep its wide horizontal box and stretch the band —
-// so the child is measured and its dimensions swapped onto a spacer, with the
-// rotated child centered absolutely inside it.
+// Rotates its child 270° as one unit and hands it the band's full run, so a
+// vertical band's label gets the same canvas an unrotated label gets on a
+// horizontal band. A CSS transform never affects layout, so the sizes are
+// measured: the child's natural height becomes the spacer's width (the band's
+// thickness), the spacer stretches along the band, and the spacer's measured
+// length becomes the rotated child's width.
 function RotatedLabel({ children }: { children: ReactNode }) {
+    const spacerRef = useRef<HTMLDivElement>(null);
     const labelRef = useRef<HTMLDivElement>(null);
-    const [size, setSize] = useState<{ width: number; height: number } | null>(
-        null
-    );
+
+    // The label's natural height, which is the band's thickness.
+    const [thickness, setThickness] = useState<number | null>(null);
+    // The stretched spacer's length, which the rotated label spans.
+    const [run, setRun] = useState<number | null>(null);
 
     useLayoutEffect(() => {
-        const el = labelRef.current;
+        const spacer = spacerRef.current;
+        const label = labelRef.current;
 
-        if (!el) {
+        if (!spacer || !label) {
             return undefined;
         }
 
-        const measure = () =>
-            setSize({ width: el.offsetWidth, height: el.offsetHeight });
+        const measure = () => {
+            setThickness(label.offsetHeight);
+            setRun(spacer.offsetHeight);
+        };
 
         measure();
 
         const observer = new ResizeObserver(measure);
-        observer.observe(el);
+        observer.observe(spacer);
+        observer.observe(label);
 
         return () => observer.disconnect();
     }, []);
 
     return (
         <Box
+            ref={spacerRef}
             sx={{
                 position: 'relative',
-                width: size?.height,
-                height: size?.width,
+                alignSelf: 'stretch',
+                width: thickness ?? undefined,
             }}
         >
             <Box
                 ref={labelRef}
                 sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    // Sized to its content: an absolutely positioned box would
-                    // otherwise shrink to the narrow spacer and wrap.
-                    width: 'max-content',
-                    transform: 'translate(-50%, -50%) rotate(270deg)',
+                    'position': 'absolute',
+                    'top': '50%',
+                    'left': '50%',
+                    // Until the run is measured, size to content: an
+                    // absolutely positioned box would otherwise shrink to the
+                    // narrow spacer and wrap.
+                    'width': run ?? 'max-content',
+                    'display': 'flex',
+                    'transform': 'translate(-50%, -50%) rotate(270deg)',
+                    '& > *': { flex: 1, minWidth: 0 },
                 }}
             >
                 {children}
@@ -130,9 +143,10 @@ interface BandedDivProps {
      */
     bandColor: string;
     /**
-     * Rendered centered inside the band, and rotated 90° as a unit when the
-     * band is on the left or right. The node owns its internal layout — pass
-     * a row Stack for an icon-and-text label.
+     * Rendered into a slot spanning the band's visible run, stretched to fill
+     * it in either orientation, and rotated 270° as a unit when the band is
+     * on the left or right. The node owns its internal layout and alignment —
+     * e.g. a row Stack with centered content for an icon-and-text label.
      */
     label?: ReactNode;
     /** Makes the whole frame a button, and the band's color hover-driven. */
@@ -238,7 +252,21 @@ export function BandedDiv({
                 transition: 'background-color 0.1s ease',
             }}
         >
-            {verticalBand ? <RotatedLabel>{label}</RotatedLabel> : label}
+            {verticalBand ? (
+                <RotatedLabel>{label}</RotatedLabel>
+            ) : (
+                <Box
+                    sx={{
+                        'flex': 1,
+                        'alignSelf': 'stretch',
+                        'display': 'flex',
+                        'minWidth': 0,
+                        '& > *': { flex: 1, minWidth: 0 },
+                    }}
+                >
+                    {label}
+                </Box>
+            )}
         </Box>
     );
 
