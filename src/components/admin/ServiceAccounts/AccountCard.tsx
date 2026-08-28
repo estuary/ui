@@ -14,7 +14,6 @@ import { GrantScroller } from 'src/components/admin/ServiceAccounts/GrantScrolle
 import { UsageIndicator } from 'src/components/admin/ServiceAccounts/UsageIndicator';
 import {
     BAND_REST_SATURATION,
-    BANDED_DIV_FACE_CLASS,
     BandedDiv,
     desaturate,
 } from 'src/components/shared/BandedDiv';
@@ -206,7 +205,6 @@ export function AccountCard({
                 onClick={() => onOpen(serviceAccount.catalogName)}
                 sx={{
                     ...faceSx,
-                    'width': '100%',
                     'textAlign': 'left',
                     'borderRadius': theme.radius.lg,
                     'opacity': restOpacity,
@@ -229,20 +227,16 @@ export function AccountCard({
             bandColor={expiryColor}
             label={
                 <>
-                    <WarningTriangle width={14} height={14} /> {expiry.label}
+                    <WarningTriangle width={14} height={14} /> flat objects and
+                    silently misroute everything else. - Border specifically
+                    can't go to the frame. The face's b
                 </>
             }
             onClick={() => onOpen(serviceAccount.catalogName)}
             sx={{
-                'width': '100%',
                 'opacity': restOpacity,
                 'transition': 'opacity 0.1s ease',
-                '&:hover': {
-                    opacity: hoverOpacity,
-                    [`& .${BANDED_DIV_FACE_CLASS}`]: {
-                        borderColor: expiryColor,
-                    },
-                },
+                '&:hover': { opacity: hoverOpacity },
             }}
             faceSx={faceSx}
         >
