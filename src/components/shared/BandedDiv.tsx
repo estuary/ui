@@ -7,8 +7,6 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { Box, ButtonBase } from '@mui/material';
 import { decomposeColor, recomposeColor } from '@mui/material/styles';
 
-import { defaultOutline } from 'src/context/Theme';
-
 export type BandSide = 'top' | 'bottom' | 'left' | 'right';
 
 /** On the face element, so an owner can restyle it from the frame's hover. */
@@ -22,6 +20,10 @@ export const BAND_REST_SATURATION = 0.5;
 // How much of the band's visible run stays clear of the face overlap, so its
 // label never slips under the face's edge.
 const BAND_OVERLAP_GAP = 4;
+
+// The least visible band run, in px past the overlap. A label-less band would
+// otherwise collapse to its padding and read as a sliver.
+const BAND_MIN_VISIBLE = 20;
 
 /**
  * Pulls a color toward its own luminance, which is what the CSS `saturate()`
@@ -175,6 +177,8 @@ export function BandedDiv({
     const cornerRadius = (theme: Theme) => theme.radius[radius];
     const overlap = (theme: Theme) =>
         `calc(${theme.radius[radius]} + ${BAND_OVERLAP_GAP}px)`;
+    const minThickness = (theme: Theme) =>
+        `calc(${theme.radius[radius]} + ${BAND_OVERLAP_GAP + BAND_MIN_VISIBLE}px)`;
 
     // The negative margin tucks the band under the face by one corner radius;
     // the matching padding keeps the label out past the overlap.
@@ -196,11 +200,16 @@ export function BandedDiv({
                 minWidth: 0,
                 borderRadius: cornerRadius,
                 // Hardcoded default surface for now: the face must be opaque
-                // for the band tuck to read, so a bare BandedDiv gets a
-                // padded, outlined paper face rather than a see-through one.
+                // for the band tuck to read, so a bare BandedDiv gets a padded
+                // paper face outlined in the band color — desaturated at rest
+                // alongside an interactive band, rising with it on hover.
                 p: 2,
                 background: (theme) => theme.palette.background.paper,
-                border: (theme) => defaultOutline[theme.palette.mode],
+                border: '1px solid',
+                borderColor: interactive
+                    ? desaturate(resolvedBandColor, BAND_REST_SATURATION)
+                    : resolvedBandColor,
+                transition: 'border-color 0.1s ease',
                 ...faceSx,
             }}
         >
@@ -217,7 +226,9 @@ export function BandedDiv({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                ...(verticalBand ? { px: 0.5, py: 1.5 } : { px: 1.5, py: 0.5 }),
+                ...(verticalBand
+                    ? { px: 0.5, py: 1.5, minWidth: minThickness }
+                    : { px: 1.5, py: 0.5, minHeight: minThickness }),
                 ...tuckSx[side],
                 background: interactive
                     ? desaturate(resolvedBandColor, BAND_REST_SATURATION)
@@ -240,6 +251,9 @@ export function BandedDiv({
         ...(interactive
             ? {
                   [`&:hover .${BAND_CLASS}`]: { background: resolvedBandColor },
+                  [`&:hover .${BANDED_DIV_FACE_CLASS}`]: {
+                      borderColor: resolvedBandColor,
+                  },
               }
             : {}),
     };
