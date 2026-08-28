@@ -78,9 +78,16 @@ export function SecretReveal({
                         short
                     >
                         <Typography>
-                            This secret will not be provided again. Store it
-                            somewhere safe before closing this dialog. Use it as
-                            the value of FLOW_API_KEY in your CI/CD environment.
+                            This secret will not be provided again. Use it as
+                            the value of{' '}
+                            <Typography
+                                component="code"
+                                fontFamily="monospace"
+                                color="goldenrod"
+                            >
+                                FLOW_AUTH_TOKEN
+                            </Typography>{' '}
+                            in your CI/CD environment.
                         </Typography>
                     </AlertBox>
 

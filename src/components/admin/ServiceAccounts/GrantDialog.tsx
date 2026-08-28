@@ -162,6 +162,10 @@ export function GrantDialog({
                             onChange={setCapability}
                         />
                     </Box>
+
+                    <Typography variant="body2" color="text.secondary">
+                        Changes to grants may take a couple of minutes to apply.
+                    </Typography>
                 </Stack>
             </DialogContent>
 

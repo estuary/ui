@@ -227,9 +227,7 @@ export function AccountCard({
             bandColor={expiryColor}
             label={
                 <>
-                    <WarningTriangle width={14} height={14} /> flat objects and
-                    silently misroute everything else. - Border specifically
-                    can't go to the frame. The face's b
+                    <WarningTriangle width={14} height={14} /> {expiry.label}
                 </>
             }
             onClick={() => onOpen(serviceAccount.catalogName)}

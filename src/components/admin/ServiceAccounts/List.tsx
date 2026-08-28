@@ -13,7 +13,6 @@ import { CreateServiceAccountDialog } from 'src/components/admin/ServiceAccounts
 import { EmptyState } from 'src/components/admin/ServiceAccounts/EmptyState';
 import { featureDescription } from 'src/components/admin/ServiceAccounts/shared';
 import AlertBox from 'src/components/shared/AlertBox';
-import { BandedDiv } from 'src/components/shared/BandedDiv';
 import { GlobalSearchParams } from 'src/hooks/searchParams/useGlobalSearchParams';
 
 export function ServiceAccountsList() {
@@ -134,9 +133,6 @@ export function ServiceAccountsList() {
                             </Box>
                         </Box>
                     ) : null}
-                    <BandedDiv side="bottom" bandColor="tomato" label="HEllo">
-                        HEllo
-                    </BandedDiv>
                 </Stack>
             )}
         </Box>
