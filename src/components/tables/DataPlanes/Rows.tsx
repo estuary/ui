@@ -1,9 +1,8 @@
-import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type {
     RowProps,
     RowsProps,
 } from 'src/components/tables/DataPlanes/types';
-import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { useState } from 'react';
 
@@ -14,15 +13,11 @@ import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName } from 'src/utils/cloudRegions';
-import {
-    formatDataPlaneName,
-    generateDataPlaneOption,
-} from 'src/utils/dataPlane-utils';
+import { toPresentableName } from 'src/utils/dataPlane-utils';
 
 function Row({ row, rowSx, onRowClick }: RowProps) {
-    const { dataPlaneName, scope } = generateDataPlaneOption(row);
     const parseCidrBlocks = useParseCidrBlocks();
-    const { ipv4 } = parseCidrBlocks(row.cidr_blocks);
+    const { ipv4 } = parseCidrBlocks(row.cidrBlocks);
 
     return (
         <TableRow
@@ -38,18 +33,15 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
             <TableCell>
                 <Stack direction="row" spacing={1} alignItems="center">
                     <DataPlaneIcon
-                        provider={dataPlaneName.provider}
-                        scope={scope}
+                        provider={row.cloudProvider}
+                        scope={row.scope}
                         size={20}
                     />
                 </Stack>
             </TableCell>
-            <TableCell>{formatDataPlaneName(dataPlaneName)}</TableCell>
+            <TableCell>{toPresentableName(row)}</TableCell>
             <TableCell>
-                {getRegionDisplayName(
-                    dataPlaneName.provider as CloudProvider,
-                    dataPlaneName.region
-                )}
+                {getRegionDisplayName(row.cloudProvider, row.region)}
             </TableCell>
             <TableCell sx={{ fontFamily: 'monospace' }}>{ipv4}</TableCell>
         </TableRow>
@@ -59,11 +51,9 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
 function Rows({ data }: RowsProps) {
     const theme = useTheme();
 
-    const [selectedRow, setSelectedRow] = useState<BaseDataPlaneQuery | null>(
-        null
-    );
+    const [selectedRow, setSelectedRow] = useState<DataPlaneNode | null>(null);
 
-    const handleRowClick = (row: BaseDataPlaneQuery) => {
+    const handleRowClick = (row: DataPlaneNode) => {
         setSelectedRow(row);
     };
 
@@ -75,7 +65,7 @@ function Rows({ data }: RowsProps) {
         <>
             {data.map((row) => (
                 <Row
-                    key={row.id}
+                    key={row.name}
                     row={row}
                     rowSx={getEntityTableRowSx(theme)}
                     onRowClick={handleRowClick}
