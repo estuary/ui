@@ -162,12 +162,6 @@ interface BandedDivProps {
     /** Corner radius shared by the frame and the face. */
     radius?: 'sm' | 'md' | 'lg' | 'xl';
     /**
-     * Merged onto the band, over its defaults. Text styling set here (font
-     * size, weight) inherits into the label, which renders in caption type at
-     * weight 600 unless overridden.
-     */
-    bandSx?: SystemStyleObject<Theme>;
-    /**
      * Merged onto the face, over its default padded paper surface. Keep any
      * background override opaque: the band tucks behind the face, and anything
      * translucent lets the band ghost through.
@@ -192,7 +186,6 @@ export function BandedDiv({
     label,
     onClick,
     radius = 'lg',
-    bandSx,
     faceSx,
     sx,
     children,
@@ -287,12 +280,11 @@ export function BandedDiv({
                 color: (theme) =>
                     theme.palette.getContrastText(resolvedBandColor),
                 transition: 'background-color 0.1s ease',
-                // Band text defaults, inherited by the label so bandSx can
-                // override them.
+                // Band text defaults, inherited by the label. A label that
+                // wants different text styling brings its own element.
                 typography: 'caption',
                 fontWeight: 600,
                 whiteSpace: 'nowrap',
-                ...bandSx,
             }}
         >
             {verticalBand ? (
