@@ -607,12 +607,6 @@ const alternativeDataGridHeader = {
     dark: 'transparent',
 };
 
-export const alertTextPrimary = {
-    light: 'rgba(0, 0, 0, 0.8)',
-    dark: 'rgb(255, 255, 255)',
-};
-export const alertBackground = paperBackground;
-
 export const alertColorsReversed: {
     [k in AlertColor]: { light: string; dark: string };
 } = {

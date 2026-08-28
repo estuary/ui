@@ -1,150 +1,113 @@
-import type { AlertBoxProps } from 'src/components/shared/types';
+import type { AlertColor, SxProps, Theme } from '@mui/material';
+import type { ReactNode } from 'react';
 
-import { forwardRef, useMemo } from 'react';
+import { forwardRef } from 'react';
 
-import {
-    Alert,
-    alertClasses,
-    AlertTitle,
-    Typography,
-    useTheme,
-} from '@mui/material';
+import { AlertTitle, Box, IconButton, useTheme } from '@mui/material';
 
 import {
     CheckCircle,
     InfoCircle,
     WarningHexagon,
     WarningTriangle,
+    Xmark,
 } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
-import { alertBackground, alertTextPrimary } from 'src/context/Theme';
+import { BandedDiv } from 'src/components/shared/BandedDiv';
+import { paperBackground } from 'src/context/Theme';
 
-const SHARED_STYLING = {
-    borderRadius: 2,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
+// Alert copy, softened off pure black in light mode so the severity band stays
+// the loudest thing in the box.
+const ALERT_TEXT = {
+    light: 'rgba(0, 0, 0, 0.8)',
+    dark: 'rgb(255, 255, 255)',
 };
 
-const HEADER_MESSAGE = {
-    warning: 'alert.warning',
-    success: 'alert.success',
-    info: 'alert.info',
-    error: 'alert.error',
+const SEVERITY_ICON = {
+    error: WarningHexagon,
+    warning: WarningTriangle,
+    info: InfoCircle,
+    success: CheckCircle,
 };
 
-const AlertBox = forwardRef<any, AlertBoxProps>(function NavLinkRef(
-    { short, severity, headerMessage, hideIcon, title, children, onClose, sx },
-    ref
-) {
-    const intl = useIntl();
-    const theme = useTheme();
+// Iconoir icons render at 1.5em, so an explicit width/height is the only way
+// to get the px size asked for.
+const ICON_SIZE = 20;
 
-    const iconComponentStyling = useMemo(
-        () =>
-            !short
-                ? {
-                      color: alertTextPrimary[theme.palette.mode],
-                      fontSize: '1em',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                  }
-                : undefined,
-        [short, theme.palette.mode]
-    );
+export interface AlertBoxProps {
+    severity: AlertColor;
+    children?: ReactNode;
+    /** Leaves the severity band bare, with no icon in it. */
+    hideIcon?: boolean;
+    /** Adds a close button to the end of the alert's first row. */
+    onClose?: () => void;
+    sx?: SxProps<Theme>;
+    title?: ReactNode;
+    /** @deprecated Ignored. AlertBox has a single presentation. */
+    short?: boolean;
+    /** @deprecated Ignored. Pass the header copy as `title`. */
+    headerMessage?: string | ReactNode;
+}
 
-    const header = useMemo(() => {
-        if (short) {
-            return null;
-        }
+/**
+ * A severity-banded box for messages the user has to read: the band carries
+ * the severity color and its icon, and the face carries the copy.
+ *
+ * The ref lands on the alert's content, which is what a caller scrolling an
+ * alert into view wants to reach.
+ */
+export const AlertBox = forwardRef<HTMLDivElement, AlertBoxProps>(
+    function AlertBox(
+        { severity, children, hideIcon, onClose, sx, title },
+        ref
+    ) {
+        const theme = useTheme();
 
-        let headerChild;
-        if (headerMessage) {
-            headerChild = headerMessage;
-        } else if (HEADER_MESSAGE[severity]) {
-            headerChild = intl.formatMessage({
-                id: HEADER_MESSAGE[severity],
-            });
-        }
+        const Icon = SEVERITY_ICON[severity];
 
-        if (headerChild) {
-            return (
-                <Typography
-                    variant="h4"
-                    component="div"
-                    sx={{
-                        pb: 1,
-                    }}
+        return (
+            <BandedDiv
+                side="left"
+                radius="sm"
+                bandColor={theme.palette[severity][theme.palette.mode]}
+                label={
+                    hideIcon ? undefined : (
+                        <Icon width={ICON_SIZE} height={ICON_SIZE} />
+                    )
+                }
+                faceSx={{
+                    px: 1.5,
+                    py: 1,
+                    background: paperBackground[theme.palette.mode],
+                    color: ALERT_TEXT[theme.palette.mode],
+                }}
+                sx={sx}
+            >
+                <Box
+                    ref={ref}
+                    role="alert"
+                    sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}
                 >
-                    {headerChild}
-                </Typography>
-            );
-        }
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                        {title ? <AlertTitle>{title}</AlertTitle> : null}
 
-        return null;
-    }, [headerMessage, intl, severity, short]);
+                        {children}
+                    </Box>
 
-    return (
-        <Alert
-            {...(hideIcon ? { icon: false } : {})}
-            ref={ref}
-            severity={severity}
-            variant="outlined"
-            iconMapping={{
-                error: <WarningHexagon style={iconComponentStyling} />,
-                warning: <WarningTriangle style={iconComponentStyling} />,
-                info: <InfoCircle style={iconComponentStyling} />,
-                success: <CheckCircle style={iconComponentStyling} />,
-            }}
-            onClose={onClose}
-            sx={{
-                ...(sx ?? {}),
-                backgroundColor: alertBackground[theme.palette.mode],
-                color: alertTextPrimary[theme.palette.mode],
-                borderColor: theme.palette[severity][theme.palette.mode],
-                padding: 0,
-                pl: hideIcon ? 2 : undefined,
-                [`& > .${alertClasses.message}`]: {
-                    p: 1,
-                    pl: 0,
-                    width: '100%',
-                },
-                [`& > .${alertClasses.action}`]: short
-                    ? {
-                          margin: 0,
-                          padding: 1,
-                          paddingTop: 0.5,
-                          alignItems: 'center',
-                      }
-                    : {
-                          margin: 0,
-                          padding: 1,
-                      },
-                [`& > .${alertClasses.icon}`]: short
-                    ? {
-                          ...SHARED_STYLING,
-                          borderLeftColor:
-                              theme.palette[severity][theme.palette.mode],
-                          color: alertTextPrimary[theme.palette.mode],
-                          mr: 0,
-                          px: 1,
-                          borderLeftStyle: 'solid',
-                          borderLeftWidth: 15,
-                      }
-                    : {
-                          ...SHARED_STYLING,
-                          background:
-                              theme.palette[severity][theme.palette.mode],
-                          px: 3,
-                          pt: 2,
-                      },
-            }}
-        >
-            {header}
-            {title ? <AlertTitle>{title}</AlertTitle> : null}
-            {children}
-        </Alert>
-    );
-});
+                    {onClose ? (
+                        <IconButton
+                            aria-label="Close"
+                            onClick={onClose}
+                            size="small"
+                            sx={{ color: 'inherit', flex: 'none' }}
+                        >
+                            <Xmark width={16} height={16} />
+                        </IconButton>
+                    ) : null}
+                </Box>
+            </BandedDiv>
+        );
+    }
+);
 
 export default AlertBox;
