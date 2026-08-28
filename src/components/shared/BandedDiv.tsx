@@ -38,6 +38,30 @@ export function desaturate(color: string, amount: number) {
     });
 }
 
+// MUI's color math (decomposeColor, getContrastText) rejects named CSS colors
+// like `tomato`. Assigning a color to a canvas fillStyle makes the browser
+// parse and normalize it to hex or rgba(), which MUI accepts. The context is
+// reset to black first, so an unparseable color degrades to a black band
+// rather than silently reusing the previous call's color.
+let canvasContext: CanvasRenderingContext2D | null | undefined;
+
+function toDecomposableColor(color: string): string {
+    if (color.startsWith('#') || color.includes('(')) {
+        return color;
+    }
+
+    canvasContext ??= document.createElement('canvas').getContext('2d');
+
+    if (!canvasContext) {
+        return color;
+    }
+
+    canvasContext.fillStyle = '#000000';
+    canvasContext.fillStyle = color;
+
+    return canvasContext.fillStyle as string;
+}
+
 // Rotates its child 90° as one unit. A CSS transform never affects layout —
 // a rotated label would keep its wide horizontal box and stretch the band —
 // so the child is measured and its dimensions swapped onto a spacer, with the
@@ -96,7 +120,8 @@ interface BandedDivProps {
     /** The edge carrying the band. */
     side?: BandSide;
     /**
-     * The band's full-strength color. With `onClick` set, the band rests
+     * The band's full-strength color, as any color the browser can parse —
+     * named CSS colors included. With `onClick` set, the band rests
      * desaturated and comes up to this color on hover.
      */
     bandColor: string;
@@ -142,6 +167,8 @@ export function BandedDiv({
     const verticalBand = side === 'left' || side === 'right';
     const bandFirst = side === 'top' || side === 'left';
 
+    const resolvedBandColor = toDecomposableColor(bandColor);
+
     const cornerRadius = (theme: Theme) => theme.radius[radius];
     const overlap = (theme: Theme) =>
         `calc(${theme.radius[radius]} + ${BAND_OVERLAP_GAP}px)`;
@@ -184,9 +211,10 @@ export function BandedDiv({
                 ...(verticalBand ? { px: 0.5, py: 1.5 } : { px: 1.5, py: 0.5 }),
                 ...tuckSx[side],
                 background: interactive
-                    ? desaturate(bandColor, BAND_REST_SATURATION)
-                    : bandColor,
-                color: (theme) => theme.palette.getContrastText(bandColor),
+                    ? desaturate(resolvedBandColor, BAND_REST_SATURATION)
+                    : resolvedBandColor,
+                color: (theme) =>
+                    theme.palette.getContrastText(resolvedBandColor),
                 transition: 'background-color 0.1s ease',
             }}
         >
@@ -202,7 +230,7 @@ export function BandedDiv({
         overflow: 'hidden',
         ...(interactive
             ? {
-                  [`&:hover .${BAND_CLASS}`]: { background: bandColor },
+                  [`&:hover .${BAND_CLASS}`]: { background: resolvedBandColor },
               }
             : {}),
     };
