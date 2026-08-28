@@ -83,7 +83,7 @@ function RotatedLabel({ children }: { children: ReactNode }) {
                     // Sized to its content: an absolutely positioned box would
                     // otherwise shrink to the narrow spacer and wrap.
                     width: 'max-content',
-                    transform: 'translate(-50%, -50%) rotate(90deg)',
+                    transform: 'translate(-50%, -50%) rotate(270deg)',
                 }}
             >
                 {children}
@@ -97,10 +97,9 @@ interface BandedDivProps {
     side?: BandSide;
     /**
      * The band's full-strength color. With `onClick` set, the band rests
-     * desaturated and comes up to this color on hover. Omit to render the
-     * frame and face alone.
+     * desaturated and comes up to this color on hover.
      */
-    bandColor?: string;
+    bandColor: string;
     /**
      * Rendered centered inside the band, and rotated 90° as a unit when the
      * band is on the left or right. The node owns its internal layout — pass
@@ -173,30 +172,27 @@ export function BandedDiv({
         </Box>
     );
 
-    const band =
-        bandColor !== undefined ? (
-            <Box
-                key="band"
-                className={BAND_CLASS}
-                sx={{
-                    flex: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    ...(verticalBand
-                        ? { px: 0.5, py: 1.5 }
-                        : { px: 1.5, py: 0.5 }),
-                    ...tuckSx[side],
-                    background: interactive
-                        ? desaturate(bandColor, BAND_REST_SATURATION)
-                        : bandColor,
-                    color: (theme) => theme.palette.getContrastText(bandColor),
-                    transition: 'background-color 0.1s ease',
-                }}
-            >
-                {verticalBand ? <RotatedLabel>{label}</RotatedLabel> : label}
-            </Box>
-        ) : null;
+    const band = (
+        <Box
+            key="band"
+            className={BAND_CLASS}
+            sx={{
+                flex: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                ...(verticalBand ? { px: 0.5, py: 1.5 } : { px: 1.5, py: 0.5 }),
+                ...tuckSx[side],
+                background: interactive
+                    ? desaturate(bandColor, BAND_REST_SATURATION)
+                    : bandColor,
+                color: (theme) => theme.palette.getContrastText(bandColor),
+                transition: 'background-color 0.1s ease',
+            }}
+        >
+            {verticalBand ? <RotatedLabel>{label}</RotatedLabel> : label}
+        </Box>
+    );
 
     const frameSx: SystemStyleObject<Theme> = {
         display: 'flex',
@@ -204,7 +200,7 @@ export function BandedDiv({
         alignItems: 'stretch',
         borderRadius: cornerRadius,
         overflow: 'hidden',
-        ...(interactive && bandColor
+        ...(interactive
             ? {
                   [`&:hover .${BAND_CLASS}`]: { background: bandColor },
               }
