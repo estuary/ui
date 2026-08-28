@@ -153,8 +153,8 @@ interface BandedDivProps {
      * it in either orientation, and rotated 270° as a unit when the band is
      * on the left or right. A single element owns its internal layout and
      * alignment; a fragment, string, or array is laid onto a default centered
-     * row — caption type, a small gap, no wrapping — so a bare
-     * icon-and-text label works without a wrapper.
+     * row — caption type with a small gap — so a bare icon-and-text label
+     * works without a wrapper. Long labels wrap, thickening the band.
      */
     label?: ReactNode;
     /** Makes the whole frame a button, and the band's color hover-driven. */
@@ -207,11 +207,15 @@ export function BandedDiv({
         ) : (
             <Box
                 sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 0.75,
-                    minWidth: 0,
+                    'display': 'flex',
+                    'alignItems': 'center',
+                    'justifyContent': 'center',
+                    'gap': 0.75,
+                    'minWidth': 0,
+                    // A wrapping label squeezes the row, and an SVG's minimum
+                    // size resolves to zero, so an unpinned icon would shrink
+                    // away while the text wraps.
+                    '& > svg': { flex: 'none' },
                 }}
             >
                 {label}
@@ -284,7 +288,6 @@ export function BandedDiv({
                 // wants different text styling brings its own element.
                 typography: 'caption',
                 fontWeight: 600,
-                whiteSpace: 'nowrap',
             }}
         >
             {verticalBand ? (
