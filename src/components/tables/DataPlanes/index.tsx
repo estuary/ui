@@ -70,12 +70,8 @@ function DataPlanesTable() {
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const { dataPlaneScope, setScope } = useDataPlaneScope();
     const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery({
-        filter: {
-            tenant: selectedTenant,
-            public: {
-                eq: dataPlaneScope === 'public',
-            },
-        },
+        tenant: selectedTenant,
+        public: dataPlaneScope === 'public',
         limit: rowsPerPage,
         cursor,
     });

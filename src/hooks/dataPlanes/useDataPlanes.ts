@@ -8,7 +8,7 @@ import { DATA_PLANES_QUERY, toDataPlaneNode } from 'src/api/gql/dataPlanes';
 import { useAllPages } from 'src/api/gql/useAllPages';
 
 type DataPlanesArgs = {
-    filter?: DataPlanesFilter;
+    public?: boolean;
     cursor?: string;
     limit?: number;
 };
@@ -49,6 +49,7 @@ export function useDataPlanesQuery(
     const [{ fetching, data, error }] = useQuery({
         query: DATA_PLANES_QUERY,
         variables: { filter, after: cursor, first: limit },
+        pause: !tenantPrefix,
     });
 
     const dataPlanes = useMemo(() => {
