@@ -228,20 +228,9 @@ export function AccountCard({
             side="bottom"
             bandColor={expiryColor}
             label={
-                <Stack
-                    direction="row"
-                    spacing={0.75}
-                    sx={{ alignItems: 'center' }}
-                >
-                    <WarningTriangle width={14} height={14} />
-                    <Typography
-                        variant="caption"
-                        color="inherit"
-                        sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}
-                    >
-                        {expiry.label}
-                    </Typography>
-                </Stack>
+                <>
+                    <WarningTriangle width={14} height={14} /> {expiry.label}
+                </>
             }
             onClick={() => onOpen(serviceAccount.catalogName)}
             sx={{
