@@ -2,7 +2,13 @@ import type { SxProps, Theme } from '@mui/material';
 import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
 import type { ReactNode } from 'react';
 
-import { useLayoutEffect, useRef, useState } from 'react';
+import {
+    Fragment,
+    isValidElement,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 
 import { Box, ButtonBase } from '@mui/material';
 import { decomposeColor, recomposeColor } from '@mui/material/styles';
@@ -145,8 +151,10 @@ interface BandedDivProps {
     /**
      * Rendered into a slot spanning the band's visible run, stretched to fill
      * it in either orientation, and rotated 270° as a unit when the band is
-     * on the left or right. The node owns its internal layout and alignment —
-     * e.g. a row Stack with centered content for an icon-and-text label.
+     * on the left or right. A single element owns its internal layout and
+     * alignment; a fragment, string, or array is laid onto a default centered
+     * row — caption type, a small gap, no wrapping — so a bare
+     * icon-and-text label works without a wrapper.
      */
     label?: ReactNode;
     /** Makes the whole frame a button, and the band's color hover-driven. */
@@ -187,6 +195,31 @@ export function BandedDiv({
     const bandFirst = side === 'top' || side === 'left';
 
     const resolvedBandColor = toDecomposableColor(bandColor);
+
+    // A single element owns the slot. Anything looser — a fragment, string,
+    // or array — gets the default treatment: a centered row with a sane gap
+    // between children.
+    const labelOwnsLayout = isValidElement(label) && label.type !== Fragment;
+
+    const labelContent =
+        labelOwnsLayout || label === null || label === undefined ? (
+            label
+        ) : (
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 0.75,
+                    minWidth: 0,
+                    typography: 'caption',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap',
+                }}
+            >
+                {label}
+            </Box>
+        );
 
     const cornerRadius = (theme: Theme) => theme.radius[radius];
     const overlap = (theme: Theme) =>
@@ -253,7 +286,7 @@ export function BandedDiv({
             }}
         >
             {verticalBand ? (
-                <RotatedLabel>{label}</RotatedLabel>
+                <RotatedLabel>{labelContent}</RotatedLabel>
             ) : (
                 <Box
                     sx={{
@@ -264,7 +297,7 @@ export function BandedDiv({
                         '& > *': { flex: 1, minWidth: 0 },
                     }}
                 >
-                    {label}
+                    {labelContent}
                 </Box>
             )}
         </Box>
