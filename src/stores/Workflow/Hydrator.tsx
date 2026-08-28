@@ -35,7 +35,6 @@ function WorkflowHydratorInner({ children }: WorkflowInitializerProps) {
     if (hydrationError) {
         return (
             <Error
-                condensed
                 error={{
                     ...BASE_ERROR,
                     message: hydrationError,

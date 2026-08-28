@@ -11,7 +11,6 @@ import AlertBox from 'src/components/shared/AlertBox';
 import Message from 'src/components/shared/Error/Message';
 
 export interface ErrorProps {
-    condensed?: boolean;
     error?: ErrorDetails;
     hideIcon?: boolean;
     hideTitle?: boolean;
@@ -22,7 +21,6 @@ export interface ErrorProps {
 }
 
 function Error({
-    condensed,
     error,
     hideIcon,
     hideTitle,

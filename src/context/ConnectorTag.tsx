@@ -135,7 +135,6 @@ export const ConnectorTagProvider = ({
     if (fetchError) {
         return (
             <ErrorComponent
-                condensed
                 error={{
                     ...BASE_ERROR,
                     message: intl.formatMessage({

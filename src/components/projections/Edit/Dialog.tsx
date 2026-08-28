@@ -63,7 +63,7 @@ function EditProjectionDialog({
             <DialogContent>
                 {serverError ? (
                     <Box style={{ marginBottom: 16 }}>
-                        <Error condensed error={serverError} severity="error" />
+                        <Error error={serverError} severity="error" />
                     </Box>
                 ) : null}
 

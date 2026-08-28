@@ -85,11 +85,7 @@ function ShareDataDialog({ open, setOpen }: Props) {
                                 </Typography>
                             </AlertBox>
                         ) : (
-                            <Error
-                                error={serverError}
-                                condensed={true}
-                                hideTitle={true}
-                            />
+                            <Error error={serverError} hideTitle={true} />
                         )}
                     </Box>
                 ) : null}

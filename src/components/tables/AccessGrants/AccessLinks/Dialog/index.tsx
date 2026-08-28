@@ -69,11 +69,7 @@ function PrefixInvitationDialog({ open, setOpen }: BaseDialogProps) {
             <DialogContent>
                 {error ? (
                     <Box sx={{ mb: 3 }}>
-                        <Error
-                            error={error}
-                            condensed={true}
-                            hideTitle={true}
-                        />
+                        <Error error={error} hideTitle={true} />
                     </Box>
                 ) : null}
 

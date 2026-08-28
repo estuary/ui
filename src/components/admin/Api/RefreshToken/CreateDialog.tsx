@@ -133,7 +133,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
             <DialogContent>
                 <Stack spacing={3} sx={{ mb: 1 }}>
                     {serverError ? (
-                        <Error severity="error" error={serverError} condensed />
+                        <Error severity="error" error={serverError} />
                     ) : null}
 
                     {token ? (

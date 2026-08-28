@@ -46,7 +46,7 @@ export function ErrorImporting({ error }: FallbackProps) {
     }, [error]);
 
     if (stopTrying) {
-        return <Error error={error} condensed />;
+        return <Error error={error} />;
     }
 
     return <FullPageSpinner />;

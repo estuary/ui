@@ -135,7 +135,6 @@ const DataPlaneAuthReq = () => {
             <Box style={{ marginBottom: 2, padding: 2 }}>
                 {redirectResult.error ? (
                     <Error
-                        condensed
                         error={
                             typeof redirectResult.error === 'string'
                                 ? {

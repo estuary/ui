@@ -67,7 +67,7 @@ export function RedeemInviteLink({ grantToken }: Props) {
                         })}
                     </Typography>
 
-                    <Error error={redeemError} condensed />
+                    <Error error={redeemError} />
 
                     <MessageWithLink messageID="tenant.grantDirective.error.message.help" />
                 </Stack>

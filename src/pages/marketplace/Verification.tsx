@@ -76,7 +76,6 @@ function MarketplaceVerification() {
                 {serverError ? (
                     <Error
                         error={{ ...BASE_ERROR, message: serverError.message }}
-                        condensed
                     />
                 ) : null}
 

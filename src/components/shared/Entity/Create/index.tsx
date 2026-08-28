@@ -147,7 +147,6 @@ function EntityCreate({
     if (detailsHydrationError) {
         return (
             <Error
-                condensed
                 error={{
                     ...BASE_ERROR,
                     message: detailsHydrationError,

@@ -64,9 +64,7 @@ export function RevokeDialog({ open, onClose, id, detail }: Props) {
             </DialogTitle>
             <DialogContent>
                 <Stack spacing={1}>
-                    {error ? (
-                        <Error condensed error={error} severity="error" />
-                    ) : null}
+                    {error ? <Error error={error} severity="error" /> : null}
                     <Typography>
                         {detail ? (
                             <FormattedMessage

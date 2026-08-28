@@ -62,11 +62,7 @@ function Progress({
                     renderError ? (
                         renderError(error)
                     ) : (
-                        <Error
-                            error={error}
-                            condensed={true}
-                            hideTitle={true}
-                        />
+                        <Error error={error} hideTitle={true} />
                     )
                 ) : null}
             </Box>

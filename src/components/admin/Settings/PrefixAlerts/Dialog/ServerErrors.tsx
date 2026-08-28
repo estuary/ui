@@ -22,7 +22,6 @@ export default function ServerErrors() {
             {serverErrors.map((error, index) =>
                 error ? (
                     <Error
-                        condensed
                         error={error}
                         key={`prefix-alert-save-error-${index}`}
                         severity="error"

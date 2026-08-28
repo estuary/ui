@@ -32,7 +32,6 @@ export function TaskEndpoints({ reactorAddress, taskName }: TaskEndpointProps) {
             {typeof reactorAddress === 'string' &&
             typeof gatewayHostname !== 'string' ? (
                 <Error
-                    condensed
                     error={{
                         message: 'details.taskEndpoints.error.message',
                     }}

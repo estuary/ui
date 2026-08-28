@@ -172,7 +172,6 @@ function EntityEdit({
 
             {detailsHydrationError ? (
                 <Error
-                    condensed
                     error={{
                         ...BASE_ERROR,
                         message: detailsHydrationError,

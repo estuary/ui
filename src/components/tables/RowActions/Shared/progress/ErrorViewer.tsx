@@ -15,7 +15,7 @@ function ErrorViewer({ error, renderError, state }: ErrorViewerProps) {
             {renderError ? (
                 renderError(error, state)
             ) : (
-                <Error error={error} hideTitle condensed noAlertBox={skipped} />
+                <Error error={error} hideTitle noAlertBox={skipped} />
             )}
         </Box>
     );

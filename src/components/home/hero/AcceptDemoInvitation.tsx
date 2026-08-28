@@ -97,11 +97,7 @@ function AcceptDemoInvitation({
         <Stack>
             {serverError ? (
                 <Box sx={{ mb: 3 }}>
-                    <Error
-                        error={serverError}
-                        condensed={true}
-                        hideTitle={true}
-                    />
+                    <Error error={serverError} hideTitle={true} />
                 </Box>
             ) : null}
 

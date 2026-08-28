@@ -67,7 +67,7 @@ export function SSORequired() {
 
     return (
         <FullPageDialog>
-            <Error error={error} condensed={true} hideTitle={true} />
+            <Error error={error} hideTitle={true} />
             <Stack
                 spacing={3}
                 alignItems="center"

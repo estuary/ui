@@ -83,7 +83,7 @@ function FullPageError({
                 </Stack>
 
                 <Divider />
-                <Error error={error} condensed />
+                <Error error={error} />
             </Stack>
         </FullPageWrapper>
     );

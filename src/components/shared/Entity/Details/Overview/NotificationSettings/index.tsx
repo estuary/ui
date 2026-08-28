@@ -65,11 +65,11 @@ function NotificationSettings({ taskName }: Props) {
         >
             <Stack spacing={1} sx={{ mb: alertsExist ? 2 : undefined }}>
                 {subscriptionError ? (
-                    <Error error={subscriptionError} condensed hideTitle />
+                    <Error error={subscriptionError} hideTitle />
                 ) : null}
 
                 {updateSettingsError ? (
-                    <Error error={updateSettingsError} condensed hideTitle />
+                    <Error error={updateSettingsError} hideTitle />
                 ) : null}
 
                 {subscriptionExists === false ? (

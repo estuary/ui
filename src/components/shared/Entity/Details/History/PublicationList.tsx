@@ -100,7 +100,6 @@ function PublicationList() {
                 </List>
             ) : error || !hasLength(publications) ? (
                 <Error
-                    condensed
                     error={
                         error ?? {
                             ...BASE_ERROR,

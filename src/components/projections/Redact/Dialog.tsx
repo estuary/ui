@@ -59,7 +59,7 @@ const RedactFieldDialog = ({
             <DialogContent>
                 {error ? (
                     <Box style={{ marginBottom: 16, width: 500 }}>
-                        <Error condensed error={error} severity="error" />
+                        <Error error={error} severity="error" />
                     </Box>
                 ) : null}
 

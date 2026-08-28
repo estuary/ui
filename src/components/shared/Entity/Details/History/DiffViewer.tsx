@@ -185,7 +185,6 @@ function DiffViewer() {
             </Grid>
             {pubSpecs.error ? (
                 <Error
-                    condensed
                     error={
                         pubSpecs.error ?? {
                             ...BASE_ERROR,

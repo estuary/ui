@@ -27,7 +27,7 @@ function HydrationError({ readError }: HydrationErrorProps) {
         );
     }
 
-    return <Error error={readError} condensed />;
+    return <Error error={readError} />;
 }
 
 export default HydrationError;
