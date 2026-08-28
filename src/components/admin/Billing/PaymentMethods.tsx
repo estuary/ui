@@ -155,7 +155,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
     return (
         <Stack spacing={serverErrored ? 0 : 3}>
             {setupIntentSecret === INTENT_SECRET_ERROR ? (
-                <AlertBox short severity="error">
+                <AlertBox severity="error">
                     <Typography component="div">
                         <FormattedMessage id="admin.billing.paymentMethods.cta.addPaymentMethod.error" />
                     </Typography>
@@ -198,7 +198,7 @@ const PaymentMethods = ({ showAddPayment }: AdminBillingProps) => {
             </Stack>
 
             {serverErrored ? (
-                <AlertBox short severity="error">
+                <AlertBox severity="error">
                     <Typography component="div">
                         <FormattedMessage id="admin.billing.error.paymentMethodsError" />
                     </Typography>

@@ -22,7 +22,6 @@ function HydrationErrorAlert({ hydrationError }: HydrationErrorAlertProps) {
                 title={intl.formatMessage({
                     id: 'ops.logsTable.hydrationError',
                 })}
-                short
                 sx={{
                     maxWidth: 'fit-content',
                 }}

@@ -22,7 +22,7 @@ const FieldValidationError = ({ bindingUUID }: BindingUUIDProp) => {
     }
 
     return (
-        <AlertBox severity="error" short>
+        <AlertBox severity="error">
             <Typography>
                 {intl.formatMessage({
                     id: 'fieldSelection.error.validationFailed',

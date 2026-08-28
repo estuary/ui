@@ -105,14 +105,13 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                     ) : collectionData || collectionData === null ? (
                         <Stack spacing={2}>
                             {schemaUpdateErrored ? (
-                                <AlertBox severity="warning" short>
+                                <AlertBox severity="warning">
                                     <FormattedMessage id="workflows.collectionSelector.schemaEdit.alert.message.schemaUpdateError" />
                                 </AlertBox>
                             ) : null}
 
                             {collectionInitializationAlert ? (
                                 <AlertBox
-                                    short
                                     severity={
                                         collectionInitializationAlert.severity
                                     }
@@ -182,7 +181,6 @@ function BindingsEditor({ itemType, readOnly = false }: Props) {
                     ) : (
                         <AlertBox
                             severity="warning"
-                            short
                             title={
                                 <FormattedMessage id="workflows.collectionSelector.error.title.missingCollectionSchema" />
                             }

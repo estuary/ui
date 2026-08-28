@@ -15,7 +15,6 @@ function HydrationWarning() {
         return (
             <AlertBox
                 severity="info"
-                short
                 title={intl.formatMessage({
                     id: `ops.hydrationWarning.${hydrationWarning}.title`,
                 })}

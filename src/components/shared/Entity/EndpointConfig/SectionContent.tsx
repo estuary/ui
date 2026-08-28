@@ -110,7 +110,7 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
 
             {readOnly ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="info" short>
+                    <AlertBox severity="info">
                         {intl.formatMessage({
                             id: 'entityEdit.alert.endpointConfigDisabled',
                         })}
@@ -120,7 +120,7 @@ const SectionContent = ({ readOnly = false }: SectionContentProps) => {
 
             {endpointCanBeEmpty ? (
                 <Box sx={{ mb: 3 }}>
-                    <AlertBox severity="info" short>
+                    <AlertBox severity="info">
                         {intl.formatMessage({
                             id: 'workflows.alert.endpointConfigEmpty',
                         })}

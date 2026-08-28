@@ -31,7 +31,7 @@ function Ops() {
 
     if (!shouldShowLogs) {
         return (
-            <AlertBox short severity="warning">
+            <AlertBox severity="warning">
                 {intl.formatMessage({ id: 'ops.shouldNotShowLogs' })}
             </AlertBox>
         );

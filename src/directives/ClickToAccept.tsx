@@ -144,7 +144,6 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
 
                 {showErrors ? (
                     <AlertBox
-                        short
                         severity="error"
                         title={intl.formatMessage({ id: 'error.title' })}
                     >
@@ -155,7 +154,6 @@ const ClickToAccept = ({ directive, status, mutate }: DirectiveProps) => {
                 {serverError ? (
                     <AlertBox
                         severity="error"
-                        short
                         title={intl.formatMessage({ id: 'common.fail' })}
                     >
                         {serverError}

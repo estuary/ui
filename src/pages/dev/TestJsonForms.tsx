@@ -117,7 +117,6 @@ const TestJsonForms = () => {
                 >
                     {serverError ? (
                         <AlertBox
-                            short
                             severity="error"
                             title="Failed to fetch list of connectors"
                         >
@@ -127,7 +126,6 @@ const TestJsonForms = () => {
 
                     {error !== null ? (
                         <AlertBox
-                            short
                             severity="error"
                             title="Failed to parse input"
                         >
@@ -135,7 +133,7 @@ const TestJsonForms = () => {
                         </AlertBox>
                     ) : null}
 
-                    <AlertBox severity="info" short title="Instructions">
+                    <AlertBox severity="info" title="Instructions">
                         <Box>
                             1. TESTING OAUTH - Select a connector in the
                             dropdown. This will be the connector that is looked

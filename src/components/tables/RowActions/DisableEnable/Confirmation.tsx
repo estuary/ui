@@ -13,7 +13,7 @@ function DisableEnableConfirmation({
     const intl = useIntl();
 
     return (
-        <AlertBox severity="info" short>
+        <AlertBox severity="info">
             <Typography component="div">
                 {intl.formatMessage(
                     { id: 'entityTable.disableEnable.confirm' },

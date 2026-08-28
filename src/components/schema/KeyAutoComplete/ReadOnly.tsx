@@ -52,7 +52,6 @@ function ReadOnly({ value }: Props) {
 
             {valueEmpty ? (
                 <AlertBox
-                    short
                     severity="warning"
                     title={
                         <FormattedMessage id="keyAutoComplete.keys.missing.title" />
@@ -108,11 +107,11 @@ function ReadOnly({ value }: Props) {
             )}
 
             {skimProjectionResponseEmpty ? (
-                <AlertBox short severity="warning">
+                <AlertBox severity="warning">
                     <FormattedMessage id="keyAutoComplete.noOptions.message" />
                 </AlertBox>
             ) : noUsableKeys ? (
-                <AlertBox short severity="warning">
+                <AlertBox severity="warning">
                     <FormattedMessage id="keyAutoComplete.noUsableKeys.message" />
                 </AlertBox>
             ) : null}

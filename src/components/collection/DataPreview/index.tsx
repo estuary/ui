@@ -156,7 +156,7 @@ export function DataPreview({ collectionName }: Props) {
                 ) : null}
 
                 {tenantHidesError || hide ? (
-                    <AlertBox short severity="info">
+                    <AlertBox severity="info">
                         {intl.formatMessage({
                             id: 'detailsPanel.dataPreview.hidden',
                         })}

@@ -110,12 +110,6 @@ export const CommonMessages: Record<string, string> = {
 
     'common.pathShort.prefix': '.../',
 
-    // Alert messages
-    'alert.error': 'Error',
-    'alert.warning': 'Warning',
-    'alert.success': 'Success',
-    'alert.info': 'Important',
-
     // Used in directives
     'directives.returning': `Welcome back. You still need to provide some information before using the application.`,
     'directives.grant.skipped.title': `Access Grant Token Skipped`,

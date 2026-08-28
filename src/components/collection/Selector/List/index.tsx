@@ -365,7 +365,7 @@ function CollectionSelectorList({
                 open={displayNotification}
                 placement="top"
             >
-                <AlertBox hideIcon short severity="success" title={null}>
+                <AlertBox hideIcon severity="success" title={null}>
                     {notificationMessage}
                 </AlertBox>
             </Popper>

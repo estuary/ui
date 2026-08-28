@@ -57,7 +57,6 @@ function SkimProjectionErrors() {
         >
             <Collapse component={Grid} in={show}>
                 <AlertBox
-                    short
                     severity="error"
                     title={intl.formatMessage({
                         id: 'schemaEditor.error.title',

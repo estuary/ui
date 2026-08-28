@@ -56,7 +56,7 @@ export const SSOForm = ({ grantToken }: DefaultLoginProps) => {
             </Typography>
             {submitError ? (
                 <Box>
-                    <AlertBox severity="error" short>
+                    <AlertBox severity="error">
                         <Typography>{submitError}</Typography>
                         <Typography>
                             {intl.formatMessage({ id: 'error.tryAgain' })}

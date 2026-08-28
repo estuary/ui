@@ -123,7 +123,6 @@ function PageContainer({ children, hideBackground }: Props) {
                 >
                     <AlertBox
                         severity={notification.severity}
-                        short
                         onClose={() => {
                             handlers.notificationClose(notification);
                         }}

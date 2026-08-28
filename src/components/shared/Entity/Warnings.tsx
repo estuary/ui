@@ -20,7 +20,6 @@ function EntityWarnings() {
     return (
         <Collapse in={warnEmptyBindings} unmountOnExit>
             <AlertBox
-                short
                 severity="warning"
                 title={<FormattedMessage id="workflows.entityWarnings.title" />}
             >

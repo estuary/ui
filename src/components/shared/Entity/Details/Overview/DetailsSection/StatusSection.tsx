@@ -20,7 +20,7 @@ function StatusSection({ entityName }: StatusSectionProps) {
 
     if (disabled) {
         return (
-            <AlertBox severity="warning" short sx={{ maxWidth: 'fit-content' }}>
+            <AlertBox severity="warning" sx={{ maxWidth: 'fit-content' }}>
                 {intl.formatMessage({
                     id: 'detailsPanel.status.taskDisabled.message',
                 })}

@@ -89,7 +89,6 @@ function PropertiesViewer({ disabled, editorProps }: Props) {
                 }}
             >
                 <AlertBox
-                    short
                     severity="error"
                     title={intl.formatMessage({
                         id: 'schemaEditor.error.title',

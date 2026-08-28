@@ -360,7 +360,7 @@ export function UpdateMappingWizard() {
                     id: 'storageMappings.dialog.update.title',
                 }),
                 component: (
-                    <AlertBox short severity="error">
+                    <AlertBox severity="error">
                         {intl.formatMessage({
                             id: 'storageMappings.dialog.error.loadFailed',
                         })}

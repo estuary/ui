@@ -13,7 +13,6 @@ export default function ServerError() {
     return (
         <AlertBox
             severity="error"
-            short
             title={serverError.error ? serverError.message : undefined}
         >
             <Message

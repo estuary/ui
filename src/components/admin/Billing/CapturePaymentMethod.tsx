@@ -136,9 +136,7 @@ export const PaymentForm = ({ onSuccess, onError }: PaymentFormProps) => {
         <>
             <DialogContent sx={{ overflowY: 'scroll' }}>
                 {loadingError ? (
-                    <AlertBox short severity="error">
-                        {loadingError}
-                    </AlertBox>
+                    <AlertBox severity="error">{loadingError}</AlertBox>
                 ) : null}
                 <AddressElement
                     options={{

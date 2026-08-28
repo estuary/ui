@@ -48,7 +48,6 @@ function DetailsFormForm({ entityType, readOnly }: Props) {
                         sx={{
                             maxWidth: 'fit-content',
                         }}
-                        short
                         severity="info"
                     >
                         {intl.formatMessage({
@@ -76,7 +75,7 @@ function DetailsFormForm({ entityType, readOnly }: Props) {
                         />
                     </Box>
                 ) : (
-                    <AlertBox severity="warning" short>
+                    <AlertBox severity="warning">
                         {intl.formatMessage({
                             id: `${messagePrefix}.missingConnectors`,
                         })}

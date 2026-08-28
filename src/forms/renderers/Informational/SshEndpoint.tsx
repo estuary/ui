@@ -21,7 +21,6 @@ function SshEndpointInfo() {
         >
             <AlertBox
                 severity="info"
-                short
                 title={intl.formatMessage({
                     id: 'informational.sshEndpoint.title',
                 })}

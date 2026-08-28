@@ -13,7 +13,6 @@ function SsoUserMessage() {
     return (
         <FullPageWrapper fullWidth>
             <AlertBox
-                short
                 severity="info"
                 title={intl.formatMessage({ id: 'tenant.usedSso.title' })}
             >

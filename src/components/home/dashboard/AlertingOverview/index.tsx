@@ -81,7 +81,7 @@ export default function AlertingOverview({
                 })}
             >
                 {error ? (
-                    <AlertBox short severity="error">
+                    <AlertBox severity="error">
                         {intl.formatMessage({
                             id: 'alert.active.fetchError.title',
                         })}

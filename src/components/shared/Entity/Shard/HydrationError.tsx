@@ -11,7 +11,6 @@ function HydrationError({ error }: HydrationErrorProps) {
     return (
         <AlertBox
             severity="error"
-            short
             title={intl.formatMessage({
                 id: 'detailsPanel.shardDetails.fetchError',
             })}

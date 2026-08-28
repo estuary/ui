@@ -14,7 +14,6 @@ function HydrationError({ readError }: HydrationErrorProps) {
         return (
             <AlertBox
                 severity="info"
-                short
                 title={intl.formatMessage({
                     id: 'detailsPanel.dataPreview.suspended.title',
                 })}

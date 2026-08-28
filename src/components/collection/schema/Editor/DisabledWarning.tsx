@@ -18,7 +18,6 @@ function DisabledWarning() {
     return (
         <AlertBox
             sx={{ maxWidth: 'fit-content' }}
-            short
             severity="warning"
             title={intl.formatMessage({
                 id: 'schemaEditor.editing.disabled.title',

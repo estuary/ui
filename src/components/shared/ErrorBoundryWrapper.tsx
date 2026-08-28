@@ -40,7 +40,6 @@ function ErrorFallback({ error }: { error: Error }): JSX.Element {
 
     return (
         <AlertBox
-            short
             severity="error"
             title={intl.formatMessage({ id: 'errorBoundry.title' })}
         >

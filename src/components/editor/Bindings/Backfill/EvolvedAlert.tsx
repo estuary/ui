@@ -9,7 +9,7 @@ function EvolvedAlert() {
     const intl = useIntl();
 
     return (
-        <AlertBox short severity="success">
+        <AlertBox severity="success">
             {intl.formatMessage(
                 { id: 'workflows.collectionSelector.evolvedCollections.alert' },
                 {

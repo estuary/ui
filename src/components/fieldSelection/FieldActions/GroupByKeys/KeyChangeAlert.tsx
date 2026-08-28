@@ -17,7 +17,7 @@ const KeyChangeAlert = ({ bindingUUID }: BindingUUIDProp) => {
     }
 
     return (
-        <AlertBox severity="warning" short>
+        <AlertBox severity="warning">
             <Typography>
                 {intl.formatMessage({
                     id: 'fieldSelection.groupBy.alert.backfillRequired',

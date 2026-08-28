@@ -1,6 +1,6 @@
 import type { ControllerErrorsProps } from 'src/components/tables/cells/entityStatus/ControllerErrors/types';
 
-import { alertClasses, Box, TableCell, Typography } from '@mui/material';
+import { Box, TableCell, Typography } from '@mui/material';
 
 import AlertBox from 'src/components/shared/AlertBox';
 import ButtonWithPopper from 'src/components/shared/buttons/ButtonWithPopper';
@@ -45,13 +45,9 @@ export default function ControllerErrors({
                 popper={
                     <AlertBox
                         severity="error"
-                        short
                         sx={{
                             mb: 1,
                             width: 600,
-                            [`& .${alertClasses.message}`]: {
-                                width: '100%',
-                            },
                         }}
                     >
                         {errors.map((error, index) => (

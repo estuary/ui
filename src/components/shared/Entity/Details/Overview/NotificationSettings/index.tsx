@@ -73,7 +73,7 @@ function NotificationSettings({ taskName }: Props) {
                 ) : null}
 
                 {subscriptionExists === false ? (
-                    <AlertBox short severity="info">
+                    <AlertBox severity="info">
                         <MessageWithButton
                             messageId="details.settings.notifications.alert.userNotSubscribed.message"
                             clickHandler={() => {

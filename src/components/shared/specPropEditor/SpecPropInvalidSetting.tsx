@@ -23,7 +23,7 @@ function SpecPropInvalidSetting({
             : stringifyJSON(currentSetting);
 
     return (
-        <AlertBox severity="error" short sx={{ maxWidth: 'fit-content' }}>
+        <AlertBox severity="error" sx={{ maxWidth: 'fit-content' }}>
             <Typography>
                 {intl.formatMessage(
                     {

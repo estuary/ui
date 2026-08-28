@@ -14,7 +14,7 @@ function StoppedAlert() {
 
     return (
         <Collapse in={showAlert}>
-            <AlertBox severity="info" short>
+            <AlertBox severity="info">
                 <FormattedMessage
                     id={
                         networkFailure

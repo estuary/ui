@@ -109,7 +109,7 @@ function DraftErrors({
 
         if (enableAlertStyling) {
             return (
-                <AlertBox short hideIcon severity="error">
+                <AlertBox hideIcon severity="error">
                     {content}
                 </AlertBox>
             );

@@ -15,7 +15,7 @@ function RefreshStatus({ show }: RefreshStatusProps) {
 
     return (
         <Collapse in={Boolean(!draftId || show)} unmountOnExit>
-            <AlertBox short severity="info">
+            <AlertBox severity="info">
                 {intl.formatMessage({ id: 'fieldSelection.refresh.alert' })}
             </AlertBox>
         </Collapse>

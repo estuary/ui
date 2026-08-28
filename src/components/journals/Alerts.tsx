@@ -40,7 +40,6 @@ function JournalAlerts({
             <Box sx={{ mb: 3 }}>
                 <AlertBox
                     severity="warning"
-                    short
                     title={<FormattedMessage id={title} />}
                 >
                     {typeof message === 'string' ? (

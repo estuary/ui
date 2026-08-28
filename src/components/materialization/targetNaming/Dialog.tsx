@@ -66,9 +66,7 @@ function TargetNamingDialog({
             <DialogContent>
                 <Stack spacing={2}>
                     {alertMessage ? (
-                        <AlertBox severity="info" short>
-                            {alertMessage}
-                        </AlertBox>
+                        <AlertBox severity="info">{alertMessage}</AlertBox>
                     ) : null}
                     <TargetNamingFormContent
                         initialStrategy={initialStrategy}

@@ -233,7 +233,7 @@ function AdminBilling({ showAddPayment }: AdminBillingProps) {
                                         id: 'admin.billing.paymentMethods.header',
                                     })}
                                 </Typography>
-                                <AlertBox short severity="error">
+                                <AlertBox severity="error">
                                     <Typography component="div">
                                         {intl.formatMessage({
                                             id: 'admin.billing.error.paymentMethodsError',

@@ -44,7 +44,7 @@ export function WizardContent() {
     return (
         <DialogContent>
             <Collapse in={Boolean(error)}>
-                <AlertBox short severity="error" sx={{ mb: 2 }}>
+                <AlertBox severity="error" sx={{ mb: 2 }}>
                     {error}
                 </AlertBox>
             </Collapse>

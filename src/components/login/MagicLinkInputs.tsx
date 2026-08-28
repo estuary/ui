@@ -88,7 +88,7 @@ const MagicLinkInputs = ({ onSubmit, showToken }: Props) => {
                         mb: 5,
                     }}
                 >
-                    <AlertBox severity="error" short>
+                    <AlertBox severity="error">
                         <Typography>{submitError.message}</Typography>
                     </AlertBox>
                 </Box>

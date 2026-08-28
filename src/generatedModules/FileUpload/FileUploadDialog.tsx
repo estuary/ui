@@ -165,9 +165,7 @@ export const FileUploadDialog = ({
             <DialogContent>
                 <Stack spacing={2}>
                     {fileError ? (
-                        <AlertBox severity="error" short>
-                            {fileError}
-                        </AlertBox>
+                        <AlertBox severity="error">{fileError}</AlertBox>
                     ) : null}
                     <Box
                         sx={{

@@ -18,7 +18,7 @@ function TrialOnlyPrefixAlert({
     }
 
     return (
-        <AlertBox severity="warning" short>
+        <AlertBox severity="warning">
             <Typography>{message}</Typography>
         </AlertBox>
     );

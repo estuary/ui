@@ -10,7 +10,7 @@ function Status() {
 
     if (key && severity) {
         return (
-            <AlertBox severity={severity} short>
+            <AlertBox severity={severity}>
                 <Typography sx={{ mr: 1 }}>
                     <FormattedMessage id={key} />
                 </Typography>

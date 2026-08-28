@@ -101,7 +101,7 @@ function CreateMappingWizardInner({
                               id: 'storageMappings.wizard.title.configure',
                           }),
                           component: (
-                              <AlertBox short severity="error">
+                              <AlertBox severity="error">
                                   {intl.formatMessage({
                                       id: 'storageMappings.dialog.error.loadFailed',
                                   })}

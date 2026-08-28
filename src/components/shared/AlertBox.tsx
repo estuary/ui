@@ -43,10 +43,6 @@ export interface AlertBoxProps {
     onClose?: () => void;
     sx?: SxProps<Theme>;
     title?: ReactNode;
-    /** @deprecated Ignored. AlertBox has a single presentation. */
-    short?: boolean;
-    /** @deprecated Ignored. Pass the header copy as `title`. */
-    headerMessage?: string | ReactNode;
 }
 
 /**

@@ -20,7 +20,7 @@ function LoginNotifications({ notificationMessage, notificationTitle }: Props) {
                 }}
                 autoHideDuration={10000}
             >
-                <AlertBox severity="error" short title={notificationTitle}>
+                <AlertBox severity="error" title={notificationTitle}>
                     {notificationMessage}
                 </AlertBox>
             </Snackbar>

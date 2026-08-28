@@ -27,7 +27,6 @@ const BetaWarningAndError = () => {
                 <Box>
                     <AlertBox
                         severity="warning"
-                        short
                         title={intl.formatMessage({ id: 'confirm.title' })}
                     >
                         {intl.formatMessage({
@@ -41,7 +40,6 @@ const BetaWarningAndError = () => {
                 <Box>
                     <AlertBox
                         severity="error"
-                        short
                         title={intl.formatMessage({
                             id: 'common.fail',
                         })}
@@ -54,7 +52,6 @@ const BetaWarningAndError = () => {
             {nameMissing || surveyMissing || nameInvalid ? (
                 <Box>
                     <AlertBox
-                        short
                         severity="error"
                         title={intl.formatMessage({ id: 'error.title' })}
                     >

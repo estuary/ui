@@ -17,7 +17,6 @@ function SelectorEmpty() {
         <Box sx={{ pt: 1, px: 1 }}>
             <AlertBox
                 severity="warning"
-                short
                 title={intl.formatMessage({
                     id: ENTITY_SETTINGS[entityType].workFlows
                         .bindingsEmptyTitleIntlKey,

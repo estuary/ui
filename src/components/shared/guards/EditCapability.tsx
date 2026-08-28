@@ -14,7 +14,6 @@ function EditCapabilityGuard({ children }: BaseComponentProps) {
     if (canEditEntity === false) {
         return (
             <AlertBox
-                short={false}
                 severity="error"
                 title={intl.formatMessage({
                     id: 'workflows.guards.edit.title',

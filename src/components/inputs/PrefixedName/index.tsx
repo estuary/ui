@@ -151,7 +151,7 @@ function PrefixedName({
     // Let the user know they cannot enter a name due to not having access
     if (!hasLength(objectRoles)) {
         return (
-            <AlertBox short severity="warning">
+            <AlertBox severity="warning">
                 {intl.formatMessage({
                     id: 'custom.prefixedName.noAccessGrants',
                 })}

@@ -18,7 +18,6 @@ export function PreSaveConfirmation() {
     return (
         <Stack spacing={1}>
             <AlertBox
-                short
                 severity="warning"
                 title={intl.formatMessage({
                     id: 'workflows.dataFlowBackfill.preSaveConfirmation.title',

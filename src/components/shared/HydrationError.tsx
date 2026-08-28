@@ -20,7 +20,6 @@ function HydrationError({ children }: BaseComponentProps) {
                     })}
                 </Typography>
             }
-            short
         >
             {children ? <Typography>{children}</Typography> : null}
 

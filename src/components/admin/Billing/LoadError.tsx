@@ -17,7 +17,6 @@ function BillingLoadError() {
     return (
         <Grid size={{ xs: 12 }}>
             <AlertBox
-                short
                 severity="warning"
                 title={
                     <FormattedMessage id="admin.billing.error.details.header" />

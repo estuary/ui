@@ -14,7 +14,6 @@ function BackfillNotSupportedAlert() {
         <Box sx={{ mt: 3, maxWidth: 'fit-content' }}>
             <AlertBox
                 severity="info"
-                short
                 title={intl.formatMessage(
                     {
                         id: 'workflows.collectionSelector.manualBackfill.notSupported.title',

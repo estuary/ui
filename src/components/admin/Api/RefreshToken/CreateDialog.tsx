@@ -137,7 +137,7 @@ export function CreateRefreshTokenDialog({ open, onClose, onCreated }: Props) {
                     ) : null}
 
                     {token ? (
-                        <AlertBox severity="info" short data-private>
+                        <AlertBox severity="info" data-private>
                             <Typography sx={{ mb: 1 }}>
                                 <FormattedMessage id="admin.cli_api.refreshToken.dialog.alert.copyToken" />
                             </Typography>

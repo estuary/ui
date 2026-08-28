@@ -84,12 +84,11 @@ function ConfirmationWithExplanation({
         <Box>
             {potentiallyDangerousUpdates.length > 0 ? (
                 <AlertBox
-                    short={false}
                     sx={{
                         my: 1,
                         p: 3,
                     }}
-                    headerMessage={intl.formatMessage({
+                    title={intl.formatMessage({
                         id: 'accessGrants.actions.extra.confirmation.title',
                     })}
                     severity="warning"

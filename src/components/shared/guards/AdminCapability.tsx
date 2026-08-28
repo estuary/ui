@@ -17,7 +17,6 @@ function AdminCapabilityGuard({ children }: InputBaseComponentProps) {
         return (
             <AlertBox
                 severity="error"
-                short
                 title={intl.formatMessage({
                     id: 'workflows.guards.admin.title',
                 })}

@@ -16,7 +16,6 @@ function HeaderSummary({ severity, title, children }: Props) {
     return (
         <Box sx={{ width: '100%', mb: 2 }}>
             <AlertBox
-                short
                 severity={severity}
                 title={
                     <Typography

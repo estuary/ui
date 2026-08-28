@@ -10,7 +10,7 @@ function DeleteConfirmation({ count }: BaseConfirmationProps) {
     const intl = useIntl();
 
     return (
-        <AlertBox severity="warning" short>
+        <AlertBox severity="warning">
             <Typography component="div">
                 {intl.formatMessage(
                     { id: 'entityTable.delete.confirm' },

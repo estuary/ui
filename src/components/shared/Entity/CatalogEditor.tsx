@@ -51,7 +51,6 @@ function CatalogEditor({ message }: Props) {
                             sx={{
                                 maxWidth: 'fit-content',
                             }}
-                            short
                             severity="warning"
                             title="Editing disabled"
                         >

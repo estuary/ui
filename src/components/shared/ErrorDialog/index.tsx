@@ -36,7 +36,7 @@ function ErrorDialog({ name, dialogTitle, bodyTitle, body, cta }: Props) {
         >
             <DialogTitle id={labelledBy}>{dialogTitle}</DialogTitle>
             <DialogContent>
-                <AlertBox short severity="info" title={bodyTitle}>
+                <AlertBox severity="info" title={bodyTitle}>
                     <DialogContentText id={describedby} component="div">
                         {body}
                     </DialogContentText>

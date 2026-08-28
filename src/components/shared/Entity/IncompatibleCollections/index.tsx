@@ -24,7 +24,6 @@ function IncompatibleCollections() {
             unmountOnExit
         >
             <AlertBox
-                short
                 severity="warning"
                 title={
                     <Typography

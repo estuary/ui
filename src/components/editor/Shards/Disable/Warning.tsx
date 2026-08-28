@@ -26,7 +26,6 @@ function ShardsDisableWarning() {
                 }}
             >
                 <AlertBox
-                    short
                     severity="warning"
                     title={
                         <FormattedMessage

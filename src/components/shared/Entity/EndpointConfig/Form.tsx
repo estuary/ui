@@ -62,7 +62,7 @@ function EndpointConfigForm({ readOnly }: Props) {
                 onChange={setEndpointConfig}
             />
             {endpointCanBeEmpty ? (
-                <AlertBox short severity="info">
+                <AlertBox severity="info">
                     <FormattedMessage
                         id="entityCreate.endpointConfig.configCanBeBlank.message"
                         values={{

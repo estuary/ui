@@ -239,7 +239,6 @@ function AlertHistoryTable({
         <>
             {active && totalActiveAlertsCount > MAX_ACTIVE_ALERTS ? (
                 <AlertBox
-                    short
                     sx={{
                         maxWidth: 'fit-content',
                     }}

@@ -93,7 +93,6 @@ function SidePanelIframe({ show }: Props) {
                 }}
             >
                 <AlertBox
-                    short
                     severity="info"
                     title={<FormattedMessage id="docs.iframe.disabled.title" />}
                 >
