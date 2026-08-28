@@ -136,8 +136,9 @@ interface BandedDivProps {
     /** Corner radius shared by the frame and the face. */
     radius?: 'sm' | 'md' | 'lg' | 'xl';
     /**
-     * Merged onto the face. Give the face an opaque background: the band tucks
-     * behind it, and anything translucent lets the band ghost through.
+     * Merged onto the face, over its default padded paper surface. Keep any
+     * background override opaque: the band tucks behind the face, and anything
+     * translucent lets the band ghost through.
      */
     faceSx?: SystemStyleObject<Theme>;
     sx?: SxProps<Theme>;
@@ -192,6 +193,11 @@ export function BandedDiv({
                 flex: 1,
                 minWidth: 0,
                 borderRadius: cornerRadius,
+                // Hardcoded default surface for now: the face must be opaque
+                // for the band tuck to read, so a bare BandedDiv gets a padded
+                // paper face rather than a see-through one.
+                p: 2,
+                background: (theme) => theme.palette.background.paper,
                 ...faceSx,
             }}
         >
