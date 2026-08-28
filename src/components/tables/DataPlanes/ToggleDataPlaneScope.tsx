@@ -14,9 +14,11 @@ type ToggleDataPlaneScopeProps = {
 function ToggleDataPlaneScope({ scope, onChange }: ToggleDataPlaneScopeProps) {
     const handleChange = useCallback(
         (_event: any, newValue: DataPlaneScopes) => {
-            onChange?.(newValue);
+            if (newValue && newValue !== scope) {
+                onChange?.(newValue);
+            }
         },
-        [onChange]
+        [scope, onChange]
     );
 
     return (
