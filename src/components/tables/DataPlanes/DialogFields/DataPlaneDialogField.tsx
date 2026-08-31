@@ -1,8 +1,12 @@
-import type { DataPlaneDialogFieldProps } from 'src/components/tables/DataPlanes/types';
-
 import { Stack, Typography } from '@mui/material';
 
 import SingleLineCode from 'src/components/content/SingleLineCode';
+
+interface DataPlaneDialogFieldProps {
+    label: string;
+    value: string | null;
+    showCopyButton?: boolean;
+}
 
 export function DataPlaneDialogField({
     label,

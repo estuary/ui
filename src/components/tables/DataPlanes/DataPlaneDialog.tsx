@@ -1,4 +1,4 @@
-import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
 
@@ -15,6 +15,11 @@ import {
 } from 'src/utils/dataPlane-utils';
 
 const TITLE_ID = 'data-plane-dialog-title';
+
+interface DataPlaneDialogProps {
+    onClose: () => void;
+    dataPlane: DataPlaneNode;
+}
 
 function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
     const parseCidrBlocks = useParseCidrBlocks();

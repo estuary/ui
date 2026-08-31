@@ -1,8 +1,4 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
-import type {
-    RowProps,
-    RowsProps,
-} from 'src/components/tables/DataPlanes/types';
 
 import { useState } from 'react';
 
@@ -17,6 +13,12 @@ import {
     parseDataPlaneName,
     toPresentableName,
 } from 'src/utils/dataPlane-utils';
+
+interface RowProps {
+    row: DataPlaneNode;
+    rowSx: any;
+    onRowClick: (row: DataPlaneNode) => void;
+}
 
 function Row({ row, rowSx, onRowClick }: RowProps) {
     const parseCidrBlocks = useParseCidrBlocks();
@@ -55,6 +57,10 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
             <TableCell sx={{ fontFamily: 'monospace' }}>{ipv4}</TableCell>
         </TableRow>
     );
+}
+
+interface RowsProps {
+    data: DataPlaneNode[];
 }
 
 function Rows({ data }: RowsProps) {
