@@ -8,8 +8,11 @@ import { DATA_PLANES_QUERY, toDataPlaneNode } from 'src/api/gql/dataPlanes';
 import { useAllPages } from 'src/api/gql/useAllPages';
 
 type DataPlanesArgs = {
+    /** Whether to filter data planes by public status. If not provided, no filtering will be applied. */
     public?: boolean;
+    /** The cursor for pagination. If not provided, the first page will be fetched. */
     cursor?: string;
+    /** The number of data planes to fetch per page. If not provided, the default is 10. */
     limit?: number;
 };
 

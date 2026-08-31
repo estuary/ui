@@ -3,7 +3,7 @@ import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
 import type { TableState } from 'src/types';
 import type { CombinedError } from 'urql';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import {
     Box,
@@ -69,12 +69,14 @@ function DataPlanesTable() {
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
     const { dataPlaneScope, setScope } = useDataPlaneScope();
-    const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery({
-        tenant: selectedTenant,
-        public: dataPlaneScope === 'public',
-        limit: rowsPerPage,
-        cursor,
-    });
+    const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery(
+        selectedTenant,
+        {
+            public: dataPlaneScope === 'public',
+            limit: rowsPerPage,
+            cursor,
+        }
+    );
 
     const tableState = useMemo<TableState>(() => {
         const status = getTableStatus(dataPlanes, fetching, error);
@@ -104,6 +106,15 @@ function DataPlanesTable() {
             },
         };
     }, [pageInfo?.hasNextPage, pageInfo?.hasPreviousPage]);
+
+    // reset to first page when changing tenant
+    useEffect(() => {
+        goToPage(0);
+        // exclude goToPage from the deps list as the function reference changes everytime
+        // goToPage(0) is called (since it both updates and depends on cursorHistory). Including
+        // it will cause an infinite render loop.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedTenant]);
 
     const handleDataPlaneScopeChange = useCallback(
         (newScope: DataPlaneScopes) => {
