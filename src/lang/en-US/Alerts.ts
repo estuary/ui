@@ -2,7 +2,6 @@ export const Alerts: Record<string, string> = {
     'alerts.config.title': `Alerts`,
     'alerts.config.message': `Below are tasks with an active alert. If you have taken steps to fix they may take some time to clear.`,
     'alerts.config.header': `Organization Notifications`,
-    'alerts.config.cta.addAlertMethod': `Configure Notifications`,
 
     'alerts.config.dialog.cta.addSubscriber': `Add Recipient`,
     'alerts.config.dialog.cta.deleteAll': `Delete Prefix Alerts`,
