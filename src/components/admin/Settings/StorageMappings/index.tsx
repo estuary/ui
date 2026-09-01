@@ -1,7 +1,7 @@
 import { CreateMappingWizard } from 'src/components/admin/Settings/StorageMappings/Dialog/Create';
 import { UpdateMappingWizard } from 'src/components/admin/Settings/StorageMappings/Dialog/Update';
 import StandAloneTableTitle from 'src/components/tables/EntityTable/StandAloneTableTitle';
-import StorageMappingsTable from 'src/components/tables/StorageMappings';
+import { StorageMappingsTable } from 'src/components/tables/StorageMappings';
 
 const docsUrl = 'https://docs.estuary.dev/concepts/storage-mappings/';
 
