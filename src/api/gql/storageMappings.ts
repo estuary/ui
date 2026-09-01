@@ -1,14 +1,43 @@
 import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 import type { CloudProvider } from 'src/utils/cloudRegions';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
 import { useClient, useQuery } from 'urql';
 
 import { useAllPages } from 'src/api/gql/useAllPages';
 import { graphql } from 'src/gql-types';
+import { useTenantStore } from 'src/stores/Tenant';
 
 const COLLECTION_DATA_SUFFIX = 'collection-data/';
+
+let storageMappingsVersion = 0;
+const storageMappingsListeners = new Set<() => void>();
+
+function subscribeToStorageMappings(listener: () => void) {
+    storageMappingsListeners.add(listener);
+
+    return () => {
+        storageMappingsListeners.delete(listener);
+    };
+}
+
+function getStorageMappingsVersion() {
+    return storageMappingsVersion;
+}
+
+function notifyStorageMappingsChanged() {
+    storageMappingsVersion += 1;
+    storageMappingsListeners.forEach((listener) => listener());
+}
+
+function useStorageMappingsVersion() {
+    return useSyncExternalStore(
+        subscribeToStorageMappings,
+        getStorageMappingsVersion,
+        getStorageMappingsVersion
+    );
+}
 
 function stripCollectionDataSuffix(
     prefix: string | null | undefined
@@ -140,8 +169,11 @@ const TEST_CONNECTION_HEALTH = graphql(`
 // The server caps each page at its DEFAULT_PAGE_SIZE (50); useAllPages walks
 // every page so consumers see the complete mapping list.
 const QUERY = graphql(`
-    query StorageMappingQuery($after: String) {
-        storageMappings(after: $after) {
+    query StorageMappingQuery($prefix: String!, $after: String) {
+        storageMappings(
+            filter: { catalogPrefix: { startsWith: $prefix } }
+            after: $after
+        ) {
             edges {
                 cursor
                 node {
@@ -160,8 +192,12 @@ const QUERY = graphql(`
 const STORAGE_MAPPINGS_PAGE_SIZE = 10;
 
 const TABLE_QUERY = graphql(`
-    query StorageMappingsTable($first: Int, $after: String) {
-        storageMappings(first: $first, after: $after) {
+    query StorageMappingsTable($prefix: String!, $first: Int, $after: String) {
+        storageMappings(
+            filter: { catalogPrefix: { startsWith: $prefix } }
+            first: $first
+            after: $after
+        ) {
             edges {
                 cursor
                 node {
@@ -302,6 +338,7 @@ export function useStorageMappingService() {
                 );
             }
 
+            notifyStorageMappingsChanged();
             return result.data.createStorageMapping;
         },
         [client]
@@ -332,6 +369,7 @@ export function useStorageMappingService() {
                 );
             }
 
+            notifyStorageMappingsChanged();
             return result.data.updateStorageMapping;
         },
         [client]
@@ -348,7 +386,11 @@ export function useStorageMappingService() {
 // list being complete: the edit dialog resolves its clicked row from it, and
 // PrefixCard's duplicate/coverage validators reject prefixes based on it.
 export function useStorageMappings() {
+    const tenant = useTenantStore((state) => state.selectedTenant);
+    const refreshVersion = useStorageMappingsVersion();
+
     const { data, loading, error } = useAllPages(QUERY, {
+        variables: { prefix: tenant },
         getConnection: (d) => d.storageMappings,
         transform: (node): StorageMapping => {
             const spec = node.spec as StorageMappingSpec;
@@ -364,11 +406,13 @@ export function useStorageMappings() {
                 },
             };
         },
+        pause: !tenant,
+        resetKey: refreshVersion,
     });
 
-    // A graphcache invalidation (create/update mutation) refetches only the
-    // page held by the active query, so useAllPages can re-append that page's
-    // rows. Keep the last occurrence of each prefix — it is the freshest.
+    // Graphcache can publish an active-page refetch before the mutation
+    // notification restarts the full traversal. Keep the last occurrence of
+    // each prefix so that transient overlap cannot duplicate a mapping.
     const storageMappings = useMemo(
         () =>
             Array.from(
@@ -388,13 +432,18 @@ const EMPTY_ROWS: StorageMappingTableRow[] = [];
 
 // Cursor-paginated storage mappings for the admin settings table. Forward
 // pagination only; pair with useCursorPagination for backwards navigation.
-export function usePaginatedStorageMappings(afterCursor?: string) {
+export function usePaginatedStorageMappings(
+    prefix: string,
+    afterCursor?: string
+) {
     const [{ fetching, data, error }] = useQuery({
         query: TABLE_QUERY,
         variables: {
+            prefix,
             first: STORAGE_MAPPINGS_PAGE_SIZE,
             after: afterCursor,
         },
+        pause: !prefix,
     });
 
     const storageMappings = useMemo<StorageMappingTableRow[]>(

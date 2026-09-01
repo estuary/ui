@@ -152,8 +152,6 @@ export const AdminPage: Record<string, string> = {
     // Storage Mappings
     'storageMappings.header': `Collection Storage`,
     'storageMappingsTable.title': `Storage Locations`,
-    'storageMappingsTable.filterLabel': `Filter by Prefix`,
-    'storageMappingsTable.message2': `We couldn't find any results matching your search. Please try a different filter.`,
     'storageMappings.status.active': `Primary`,
     'storageMappings.prefix.description': `The prefix you want to configure`,
     'storageMappings.provider.label': `Provider`,

@@ -22,6 +22,8 @@ import { AddStorageButton } from 'src/components/admin/Settings/StorageMappings/
 import { getEntityTableRowSx } from 'src/context/Theme';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { useDialog } from 'src/hooks/useDialog';
+import { DATA_PLANE_PREFIX } from 'src/settings/dataPlanes';
+import { useTenantStore } from 'src/stores/Tenant';
 
 const tableColumns = [
     'Catalog Prefix',
@@ -52,7 +54,7 @@ function Row({ row }: { row: StorageMappingTableRow }) {
                     {/* The spec omits data_planes entirely when empty */}
                     {(row.spec.data_planes ?? []).map((dataPlane) => (
                         <Typography key={dataPlane} variant="body2">
-                            {dataPlane.replace('ops/dp/', '')}
+                            {dataPlane.replace(DATA_PLANE_PREFIX, '')}
                         </Typography>
                     ))}
                 </Stack>
@@ -67,12 +69,16 @@ function Row({ row }: { row: StorageMappingTableRow }) {
     );
 }
 
-export function StorageMappingsTable() {
+function TenantStorageMappingsTable({
+    selectedTenant,
+}: {
+    selectedTenant: string;
+}) {
     const { currentPage, cursor, goToPage, onPageChange } =
         useCursorPagination();
 
     const { storageMappings, fetching, error, pageInfo, pageSize } =
-        usePaginatedStorageMappings(cursor);
+        usePaginatedStorageMappings(selectedTenant, cursor);
 
     const handlePageChange = (event: any, page: number) => {
         onPageChange(event, page, pageInfo?.endCursor);
@@ -176,5 +182,19 @@ export function StorageMappingsTable() {
                 </Table>
             </TableContainer>
         </Box>
+    );
+}
+
+export function StorageMappingsTable() {
+    const selectedTenant = useTenantStore((state) => state.selectedTenant);
+
+    // Remount the paginated table when the selected tenant changes so an
+    // `after` cursor from the previous tenant is never sent with the new
+    // tenant's prefix filter.
+    return (
+        <TenantStorageMappingsTable
+            key={selectedTenant}
+            selectedTenant={selectedTenant}
+        />
     );
 }
