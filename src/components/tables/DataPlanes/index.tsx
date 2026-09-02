@@ -1,9 +1,7 @@
-import type { SxProps } from '@mui/material';
 import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
-import type { TableState } from 'src/types';
 import type { CombinedError } from 'urql';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import {
     Box,
@@ -24,23 +22,10 @@ import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
 import { useDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
-import { TablePrefixes, useTableState } from 'src/stores/Tables/hooks';
 import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
 
-const toolbarStyle: SxProps = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-};
-
-const tableContainerStyle: SxProps = {
-    mb: 2,
-};
-
-const tableStyle: SxProps = {
-    minWidth: 350,
-};
+const PAGE_SIZE = 10;
 
 function getTableStatus<T>(data: T[], loading: boolean, error?: CombinedError) {
     if (loading) {
@@ -59,11 +44,6 @@ function getTableStatus<T>(data: T[], loading: boolean, error?: CombinedError) {
 }
 
 function DataPlanesTable() {
-    const { rowsPerPage, setRowsPerPage } = useTableState(
-        TablePrefixes.dataPlanes,
-        'name',
-        'asc'
-    );
     const { currentPage, cursor, goToPage, onPageChange } =
         useCursorPagination();
 
@@ -73,39 +53,13 @@ function DataPlanesTable() {
         selectedTenant,
         {
             public: dataPlaneScope === 'public',
-            limit: rowsPerPage,
+            limit: PAGE_SIZE,
             cursor,
         }
     );
 
-    const tableState = useMemo<TableState>(() => {
-        const status = getTableStatus(dataPlanes, fetching, error);
-        return { status };
-    }, [error, fetching, dataPlanes]);
-
-    const noExistingDataContentIds = useMemo(() => {
-        return DATA_PLANE_SETTINGS[dataPlaneScope].table
-            .noExistingDataContentIds;
-    }, [dataPlaneScope]);
-
-    const rows = useMemo(() => {
-        return dataPlanes.length > 0 ? <Rows data={dataPlanes} /> : null;
-    }, [dataPlanes]);
-
-    const slotProps = useMemo(() => {
-        const previousButtonDisabled = !pageInfo?.hasPreviousPage;
-        const nextButtonDisabled = !pageInfo?.hasNextPage;
-        return {
-            actions: {
-                previousButton: {
-                    disabled: previousButtonDisabled,
-                },
-                nextButton: {
-                    disabled: nextButtonDisabled,
-                },
-            },
-        };
-    }, [pageInfo?.hasNextPage, pageInfo?.hasPreviousPage]);
+    const status = getTableStatus(dataPlanes, fetching, error);
+    const settings = DATA_PLANE_SETTINGS[dataPlaneScope].table;
 
     // reset to first page when changing tenant
     useEffect(() => {
@@ -131,15 +85,6 @@ function DataPlanesTable() {
         [onPageChange, pageInfo?.endCursor]
     );
 
-    const handleRowsPerPageChange = useCallback(
-        (event: any) => {
-            const newLimit = parseInt(event.target.value, 10);
-            onPageChange(event, 0, pageInfo?.endCursor);
-            setRowsPerPage(newLimit);
-        },
-        [onPageChange, setRowsPerPage, pageInfo?.endCursor]
-    );
-
     const labelDisplayedRows = useCallback(
         ({ from }: { from: number }) => {
             return dataPlanes.length > 0
@@ -151,27 +96,47 @@ function DataPlanesTable() {
 
     return (
         <Box data-public>
-            <Toolbar sx={toolbarStyle} disableGutters>
+            <Toolbar
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                }}
+                disableGutters
+            >
                 <ToggleDataPlaneScope
                     scope={dataPlaneScope}
                     onChange={handleDataPlaneScopeChange}
                 />
             </Toolbar>
 
-            <TableContainer component={Box} sx={tableContainerStyle}>
+            <TableContainer
+                component={Box}
+                sx={{
+                    mb: 2,
+                }}
+            >
                 <Table
-                    sx={tableStyle}
+                    sx={{
+                        minWidth: 350,
+                    }}
                     size="small"
                     aria-label="Data Planes Table"
                 >
                     <EntityTableHeader columns={columns} />
 
                     <EntityTableBody
-                        rows={rows}
+                        rows={
+                            dataPlanes.length > 0 ? (
+                                <Rows data={dataPlanes} />
+                            ) : null
+                        }
                         columns={columns}
                         loading={fetching}
-                        tableState={tableState}
-                        noExistingDataContentIds={noExistingDataContentIds}
+                        tableState={{ status }}
+                        noExistingDataContentIds={
+                            settings.noExistingDataContentIds
+                        }
                     />
 
                     <TableFooter>
@@ -179,11 +144,21 @@ function DataPlanesTable() {
                             <TablePagination
                                 count={-1}
                                 page={currentPage}
-                                rowsPerPage={rowsPerPage}
+                                rowsPerPage={PAGE_SIZE}
+                                rowsPerPageOptions={[PAGE_SIZE]}
                                 onPageChange={handlePageChange}
-                                onRowsPerPageChange={handleRowsPerPageChange}
                                 labelDisplayedRows={labelDisplayedRows}
-                                slotProps={slotProps}
+                                slotProps={{
+                                    actions: {
+                                        previousButton: {
+                                            disabled:
+                                                !pageInfo?.hasPreviousPage,
+                                        },
+                                        nextButton: {
+                                            disabled: !pageInfo?.hasNextPage,
+                                        },
+                                    },
+                                }}
                             />
                         </TableRow>
                     </TableFooter>
