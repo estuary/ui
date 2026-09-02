@@ -8,11 +8,7 @@ import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFie
 import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName, PROVIDER_LABELS } from 'src/utils/cloudRegions';
-import {
-    formatIamOidc,
-    parseDataPlaneName,
-    toPresentableName,
-} from 'src/utils/dataPlane-utils';
+import { formatIamOidc, toPresentableName } from 'src/utils/dataPlane-utils';
 
 const TITLE_ID = 'data-plane-dialog-title';
 
@@ -24,14 +20,12 @@ interface DataPlaneDialogProps {
 function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
     const parseCidrBlocks = useParseCidrBlocks();
 
-    const { cloudProvider, scope } = dataPlane;
+    const { cloudProvider, region, scope, name, fqdn } = dataPlane;
     const { ipv4, ipv6 } = parseCidrBlocks(dataPlane.cidrBlocks);
 
-    // The region is parsed out of the data plane name rather than read off the
-    // `region` field so it stays in sync with the displayed name. They differ
-    // for the local data plane: `ops/dp/public/local-flow` parses to `flow`,
-    // while the field reports `local`.
-    const { region } = parseDataPlaneName(dataPlane.name, scope);
+    const dataPlaneDisplayName = toPresentableName(dataPlane);
+    const regionDisplayName = getRegionDisplayName(cloudProvider, region);
+    const iamOidc = fqdn ? formatIamOidc(fqdn) : null;
 
     return (
         <Dialog
@@ -57,7 +51,7 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                         size={30}
                     />
                     <Typography variant="h6" sx={{ ml: 1, fontWeight: 600 }}>
-                        {toPresentableName(dataPlane)}
+                        {dataPlaneDisplayName}
                     </Typography>
                     <Badge
                         sx={{
@@ -88,14 +82,11 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                     {region ? (
                         <DataPlaneDialogField
                             label="Region"
-                            value={getRegionDisplayName(cloudProvider, region)}
+                            value={regionDisplayName}
                             showCopyButton={false}
                         />
                     ) : null}
-                    <DataPlaneDialogField
-                        label="Internal ID"
-                        value={dataPlane.name}
-                    />
+                    <DataPlaneDialogField label="Internal ID" value={name} />
                     <ToggleField
                         lowercaseButton
                         label="IPs"
@@ -112,10 +103,10 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             },
                         ]}
                     />
-                    {dataPlane.fqdn ? (
+                    {iamOidc ? (
                         <DataPlaneDialogField
                             label="IAM OIDC"
-                            value={formatIamOidc(dataPlane.fqdn)}
+                            value={iamOidc}
                         />
                     ) : null}
                 </Stack>

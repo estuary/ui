@@ -9,10 +9,7 @@ import DataPlaneDialog from 'src/components/tables/DataPlanes/DataPlaneDialog';
 import { getEntityTableRowSx } from 'src/context/Theme';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName } from 'src/utils/cloudRegions';
-import {
-    parseDataPlaneName,
-    toPresentableName,
-} from 'src/utils/dataPlane-utils';
+import { toPresentableName } from 'src/utils/dataPlane-utils';
 
 interface RowProps {
     row: DataPlaneNode;
@@ -24,11 +21,11 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
     const parseCidrBlocks = useParseCidrBlocks();
     const { ipv4 } = parseCidrBlocks(row.cidrBlocks);
 
-    // The region is parsed out of the data plane name rather than read off the
-    // `region` field so it stays in sync with the displayed name. They differ
-    // for the local data plane: `ops/dp/public/local-flow` parses to `flow`,
-    // while the field reports `local`.
-    const { region } = parseDataPlaneName(row.name, row.scope);
+    const dataPlaneDisplayName = toPresentableName(row);
+    const regionDisplayName = getRegionDisplayName(
+        row.cloudProvider,
+        row.region
+    );
 
     return (
         <TableRow
@@ -50,10 +47,8 @@ function Row({ row, rowSx, onRowClick }: RowProps) {
                     />
                 </Stack>
             </TableCell>
-            <TableCell>{toPresentableName(row)}</TableCell>
-            <TableCell>
-                {getRegionDisplayName(row.cloudProvider, region)}
-            </TableCell>
+            <TableCell>{dataPlaneDisplayName}</TableCell>
+            <TableCell>{regionDisplayName}</TableCell>
             <TableCell sx={{ fontFamily: 'monospace' }}>{ipv4}</TableCell>
         </TableRow>
     );
