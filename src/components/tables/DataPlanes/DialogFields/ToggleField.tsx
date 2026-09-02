@@ -1,11 +1,21 @@
-import type { ToggleFieldProps } from 'src/components/tables/DataPlanes/types';
-
 import { useState } from 'react';
 
 import { Stack, ToggleButtonGroup, Typography } from '@mui/material';
 
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import OutlinedToggleButton from 'src/components/shared/buttons/OutlinedToggleButton';
+
+interface ToggleOption {
+    key: string;
+    label: string;
+    value: string | null;
+}
+
+interface ToggleFieldProps {
+    label: string;
+    options: ToggleOption[];
+    lowercaseButton?: boolean;
+}
 
 export function ToggleField({
     label,

@@ -30,6 +30,9 @@ import { selectableTableStoreSelectors } from 'src/stores/Tables/Store';
 import { TableStatuses } from 'src/types';
 import { getPagination, getStartingPage } from 'src/utils/table-utils';
 
+/**
+ * @deprecated Use the `@mui/material` table components instead.
+ */
 function EntityTable({
     columns,
     noExistingDataContentIds,
