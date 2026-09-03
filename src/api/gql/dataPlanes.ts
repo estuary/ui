@@ -1,4 +1,7 @@
-import type { DataPlanesQuery } from 'src/gql-types/graphql';
+import type {
+    DataPlanesQuery,
+    PublicDataPlanesQuery,
+} from 'src/gql-types/graphql';
 import type { CloudProvider } from 'src/utils/cloudRegions';
 
 import { graphql } from 'src/gql-types';
@@ -28,6 +31,27 @@ export const DATA_PLANES_QUERY = graphql(`
     }
 `);
 
+// Unauthenticated query for the pre-tenant onboarding flow. The
+// authenticated `dataPlanes` query returns nothing until the user
+// has grants, which a brand-new signup does not.
+export const PUBLIC_DATA_PLANES_QUERY = graphql(`
+    query PublicDataPlanes($after: String) {
+        publicDataPlanes(first: 100, after: $after) {
+            edges {
+                node {
+                    name
+                    cloudProvider
+                    region
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+        }
+    }
+`);
+
 type DataPlaneGqlNode = DataPlanesQuery['dataPlanes']['edges'][number]['node'];
 
 export interface DataPlaneNode extends Omit<DataPlaneGqlNode, 'cloudProvider'> {
@@ -42,5 +66,23 @@ export const toDataPlaneNode = (node: DataPlaneGqlNode): DataPlaneNode => {
         ...node,
         cloudProvider: node.cloudProvider as CloudProvider,
         scope: node.isPublic ? 'public' : 'private',
+    };
+};
+
+type PublicDataPlaneGqlNode =
+    PublicDataPlanesQuery['publicDataPlanes']['edges'][number]['node'];
+
+export interface PublicDataPlaneNode
+    extends Omit<PublicDataPlaneGqlNode, 'cloudProvider'> {
+    // Narrower than the schema's DataPlaneCloudProvider, which also allows LOCAL
+    cloudProvider: CloudProvider;
+}
+
+export const toPublicDataPlaneNode = (
+    node: PublicDataPlaneGqlNode
+): PublicDataPlaneNode => {
+    return {
+        ...node,
+        cloudProvider: node.cloudProvider as CloudProvider,
     };
 };

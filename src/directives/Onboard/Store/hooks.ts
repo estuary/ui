@@ -17,6 +17,20 @@ export const useOnboardingStore_setRequestedTenant = () => {
     >(OnboardingStoreNames.GENERAL, (state) => state.setRequestedTenant);
 };
 
+export const useOnboardingStore_requestedDataPlane = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['requestedDataPlane']
+    >(OnboardingStoreNames.GENERAL, (state) => state.requestedDataPlane);
+};
+
+export const useOnboardingStore_setRequestedDataPlane = () => {
+    return useLocalZustandStore<
+        OnboardingState,
+        OnboardingState['setRequestedDataPlane']
+    >(OnboardingStoreNames.GENERAL, (state) => state.setRequestedDataPlane);
+};
+
 export const useOnboardingStore_nameInvalid = () => {
     return useLocalZustandStore<
         OnboardingState,
