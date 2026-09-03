@@ -1,6 +1,7 @@
 import type { PostgrestResponse } from '@supabase/postgrest-js';
 import type { DataByHourRange } from 'src/components/graphs/types';
 import type {
+    BindingStatsResponse,
     CatalogStats,
     CatalogStats_Backlog,
     CatalogStats_Dashboard,
@@ -213,16 +214,31 @@ const getStatsByName = async (names: string[], filter?: StatsFilter) => {
     return errors[0] ?? { data: response.flatMap((r) => r.data) };
 };
 
-const getStatsForDetails = (
-    catalogName: string,
-    entityType: Entity,
-    range: DataByHourRange
-) => {
+/**
+ * The `ts` bounds of a range, formatted for a `catalog_stats` query.
+ *
+ * Shared so that two queries covering "the same window" cannot compute it
+ * differently — the bindings table's figures have to line up with the chart's.
+ */
+const getRangeBounds = (range: DataByHourRange) => {
     const rangeSettings = LUXON_GRAIN_SETTINGS[range.grain];
     const current = DateTime.utc().startOf(rangeSettings.timeUnit);
     const past = current.minus({
         [rangeSettings.relativeUnit]: range.amount - 1,
     });
+
+    return {
+        current: current.toFormat(defaultQueryDateFormat),
+        past: past.toFormat(defaultQueryDateFormat),
+    };
+};
+
+const getStatsForDetails = (
+    catalogName: string,
+    entityType: Entity,
+    range: DataByHourRange
+) => {
+    const { current, past } = getRangeBounds(range);
 
     let query: string;
     switch (entityType) {
@@ -244,8 +260,8 @@ const getStatsForDetails = (
         .select(query)
         .eq('catalog_name', catalogName)
         .eq('grain', range.grain)
-        .gte('ts', past.toFormat(defaultQueryDateFormat))
-        .lte('ts', current.toFormat(defaultQueryDateFormat))
+        .gte('ts', past)
+        .lte('ts', current)
         .order('ts', { ascending: true })
         .returns<CatalogStats_Details[]>();
 };
@@ -285,6 +301,34 @@ const getCollectionsLastPublished = (collectionNames: string[]) => {
         .eq('grain', monthlyGrain)
         .gte('ts', previousMonth.toFormat(defaultQueryDateFormat))
         .returns<CatalogStats_LastPublished[]>();
+};
+
+// Per-binding stats live only inside `flow_document` — `catalog_stats` is keyed
+// (catalog_name, grain, ts) with no per-binding column. The breakdown is attached
+// to task rows (not tenant-prefix rows) by `taskStats` in
+// https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
+//
+// Shares `getRangeBounds` with `getStatsForDetails`, so the bindings table and
+// the usage chart above it cover exactly the same window. Callers sum
+// `taskStats` across the returned rows.
+//
+// Only the `taskStats` subtree is selected, never the whole document: the
+// breakdown carries an entry per binding on every row, so a wide range on a task
+// with a thousand bindings is megabytes even after PostgREST has narrowed it.
+// That is why the volume columns render a loading state on a range change rather
+// than assuming the response is instant.
+const getBindingStats = (catalogName: string, range: DataByHourRange) => {
+    const { current, past } = getRangeBounds(range);
+
+    return supabaseClient
+        .from(TABLES.CATALOG_STATS)
+        .select(`catalog_name,grain,ts,taskStats:flow_document->taskStats`)
+        .eq('catalog_name', catalogName)
+        .eq('grain', range.grain)
+        .gte('ts', past)
+        .lte('ts', current)
+        .order('ts', { ascending: true })
+        .returns<BindingStatsResponse[]>();
 };
 
 const getStatsForDashboard = (tenant: string) => {
@@ -347,6 +391,7 @@ const getStatsForDashboard = (tenant: string) => {
 // };
 
 export {
+    getBindingStats,
     getCollectionsLastPublished,
     getMaterializationBacklog,
     getStatsByName,

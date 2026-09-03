@@ -1,4 +1,5 @@
 import type { DateTimeUnit, DurationObjectUnits, ToRelativeUnit } from 'luxon';
+import type { DataByHourRange } from 'src/components/graphs/types';
 
 import { DateTime, Duration } from 'luxon';
 
@@ -64,6 +65,26 @@ export const LUXON_GRAIN_SETTINGS: {
                 .setLocale(navigator.language ?? 'en-US')
                 .toLocaleString({ month: 'short' }),
     },
+};
+
+/**
+ * How a selected range is worded: the message id, and the values it needs.
+ *
+ * Shared by the range picker and by anything restating the window it chose, so
+ * a label and the control that set it can never word the same range
+ * differently. `selectedLabelKey` exists because "13 months" reads wrong for
+ * what the user picked as "Year".
+ */
+export const getRangeLabelDescriptor = (range: DataByHourRange) => {
+    const { relativeUnit, selectedLabelKey } =
+        LUXON_GRAIN_SETTINGS[range.grain];
+
+    return {
+        id:
+            selectedLabelKey ??
+            `detailsPanel.recentUsage.filter.label.${relativeUnit}`,
+        values: { range: range.amount },
+    };
 };
 
 // Spells out a duration in whole units, leaving out the units that are zero.
