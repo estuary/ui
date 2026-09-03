@@ -4,21 +4,9 @@ import { Box, Skeleton, TableCell, Tooltip, Typography } from '@mui/material';
 
 import { useIntl } from 'react-intl';
 
+import { splitFormattedBytes } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { secondsToElapsed } from 'src/components/shared/Entity/Details/Overview/shared';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
-
-// formatBytes always renders 2 fraction digits ("1.20 GB", "854.00 MB"), but
-// the unit segment's width still shifts the digits left/right between rows.
-// Splitting the digits from the unit and right-aligning the digits in a fixed
-// box keeps the decimal point lined up vertically down the column — the same
-// treatment VolumeCell gives its own byte figure, duplicated here rather than
-// imported because it is six lines closely tied to this file's own layout.
-function splitFormattedBytes(formatted: string): [string, string] {
-    const spaceIndex = formatted.indexOf(' ');
-    return spaceIndex === -1
-        ? [formatted, '']
-        : [formatted.slice(0, spaceIndex), formatted.slice(spaceIndex + 1)];
-}
 
 type LagKind = 'bytes' | 'seconds';
 
@@ -54,17 +42,13 @@ interface Props {
 function LagCell({ kind, loading, sx, value }: Props) {
     const intl = useIntl();
 
-    if (loading) {
-        return (
-            <TableCell align="right" sx={{ minWidth: 96, ...sx }}>
-                <Skeleton width={48} sx={{ display: 'inline-block' }} />
-            </TableCell>
-        );
-    }
+    const content = (() => {
+        if (loading) {
+            return <Skeleton width={48} sx={{ display: 'inline-block' }} />;
+        }
 
-    if (value === null) {
-        return (
-            <TableCell align="right" sx={{ minWidth: 96, ...sx }}>
+        if (value === null) {
+            return (
                 <Tooltip
                     placement="left"
                     title={intl.formatMessage({ id: TOOLTIP_IDS[kind].none })}
@@ -73,15 +57,13 @@ function LagCell({ kind, loading, sx, value }: Props) {
                         &mdash;
                     </Box>
                 </Tooltip>
-            </TableCell>
-        );
-    }
+            );
+        }
 
-    const tooltip = intl.formatMessage({ id: TOOLTIP_IDS[kind].value });
+        const tooltip = intl.formatMessage({ id: TOOLTIP_IDS[kind].value });
 
-    if (value === 0) {
-        return (
-            <TableCell align="right" sx={{ minWidth: 96, ...sx }}>
+        if (value === 0) {
+            return (
                 <Tooltip placement="left" title={tooltip}>
                     <Typography component="div" sx={{ cursor: 'help' }}>
                         {intl.formatMessage({
@@ -89,27 +71,25 @@ function LagCell({ kind, loading, sx, value }: Props) {
                         })}
                     </Typography>
                 </Tooltip>
-            </TableCell>
-        );
-    }
+            );
+        }
 
-    const [digits, unit] =
-        kind === 'bytes'
-            ? splitFormattedBytes(formatBytes(value))
-            : (() => {
-                  const elapsed = secondsToElapsed(value);
+        const [digits, unit] =
+            kind === 'bytes'
+                ? splitFormattedBytes(formatBytes(value))
+                : (() => {
+                      const elapsed = secondsToElapsed(value);
 
-                  return [
-                      String(elapsed.value),
-                      intl.formatMessage(
-                          { id: elapsed.unitLabelId },
-                          { count: elapsed.value }
-                      ),
-                  ];
-              })();
+                      return [
+                          String(elapsed.value),
+                          intl.formatMessage(
+                              { id: elapsed.unitLabelId },
+                              { count: elapsed.value }
+                          ),
+                      ];
+                  })();
 
-    return (
-        <TableCell align="right" sx={{ minWidth: 96, ...sx }}>
+        return (
             <Tooltip placement="left" title={tooltip}>
                 <Typography
                     component="div"
@@ -143,6 +123,12 @@ function LagCell({ kind, loading, sx, value }: Props) {
                     </Box>
                 </Typography>
             </Tooltip>
+        );
+    })();
+
+    return (
+        <TableCell align="right" sx={{ minWidth: 96, ...sx }}>
+            {content}
         </TableCell>
     );
 }

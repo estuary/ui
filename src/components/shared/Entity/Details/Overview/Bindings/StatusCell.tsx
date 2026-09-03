@@ -1,3 +1,4 @@
+import type { Theme } from '@mui/material';
 import type { ComponentType, SVGProps } from 'react';
 import type { BindingStatus } from 'src/components/shared/Entity/Details/Overview/Bindings/types';
 
@@ -43,6 +44,34 @@ const ICONS: Record<StatusVariant, ComponentType<SVGProps<SVGSVGElement>>> = {
     warning: WarningCircleSolid,
 };
 
+// A pill per variant: filled success for a binding actually moving data,
+// filled warning for one that's on but merely silent, and a hollow
+// neutral pill for one switched off outright — so "off" reads as absent
+// rather than merely quieter than "on but stuck", which is the
+// distinction that matters at a glance.
+const getVariantColors = (
+    theme: Theme
+): Record<
+    StatusVariant,
+    { background: string | undefined; icon: string; text: string }
+> => ({
+    enabled: {
+        icon: theme.palette.success.main,
+        background: theme.palette.success.alpha_12,
+        text: theme.palette.success.dark,
+    },
+    warning: {
+        icon: theme.palette.warning.main,
+        background: theme.palette.warning.alpha_12,
+        text: theme.palette.warning.dark,
+    },
+    disabled: {
+        icon: diminishedTextColor[theme.palette.mode],
+        background: theme.palette.action.selected,
+        text: diminishedTextColor[theme.palette.mode],
+    },
+});
+
 interface Props {
     status: BindingStatus;
     // Whether the binding moved anything in the selected range. Undefined
@@ -62,31 +91,11 @@ function StatusCell({ status, hasVolume }: Props) {
               ? 'warning'
               : 'enabled';
 
-    // A pill per variant: filled success for a binding actually moving data,
-    // filled warning for one that's on but merely silent, and a hollow
-    // neutral pill for one switched off outright — so "off" reads as absent
-    // rather than merely quieter than "on but stuck", which is the
-    // distinction that matters at a glance.
-    const iconColor =
-        variant === 'enabled'
-            ? theme.palette.success.main
-            : variant === 'warning'
-              ? theme.palette.warning.main
-              : diminishedTextColor[theme.palette.mode];
-
-    const backgroundColor =
-        variant === 'enabled'
-            ? theme.palette.success.alpha_12
-            : variant === 'warning'
-              ? theme.palette.warning.alpha_12
-              : theme.palette.action.selected;
-
-    const textColor =
-        variant === 'enabled'
-            ? theme.palette.success.dark
-            : variant === 'warning'
-              ? theme.palette.warning.dark
-              : diminishedTextColor[theme.palette.mode];
+    const {
+        background: backgroundColor,
+        icon: iconColor,
+        text: textColor,
+    } = getVariantColors(theme)[variant];
 
     const Icon = ICONS[variant];
 

@@ -23,6 +23,23 @@ import { getCollectionName } from 'src/utils/workflow-utils';
 export const BINDINGS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 export const DEFAULT_BINDINGS_PER_PAGE = 10;
 
+// formatBytes always renders 2 fraction digits ("1.20 GB", "854.00 MB"), but
+// the unit segment's width still shifts the digits left/right between rows.
+// Splitting the digits from the unit and right-aligning the digits in a fixed
+// box keeps the decimal point lined up vertically down the column, the way
+// Vercel's numeric table columns do.
+//
+// A plain split on the space `formatBytes` (via `prettyBytes`) always emits
+// between the number and unit — verified against the library's default
+// `space: true` behaviour, which this call never overrides — rather than a
+// regex re-deriving a shape the string is already guaranteed to have.
+export const splitFormattedBytes = (formatted: string): [string, string] => {
+    const spaceIndex = formatted.indexOf(' ');
+    return spaceIndex === -1
+        ? [formatted, '']
+        : [formatted.slice(0, spaceIndex), formatted.slice(spaceIndex + 1)];
+};
+
 // A capture's rows carry a source stream as well as a collection, so its search
 // covers both. Read from here rather than branching at each call site: the
 // Storybook harness has to word this the same way the page does, or a story

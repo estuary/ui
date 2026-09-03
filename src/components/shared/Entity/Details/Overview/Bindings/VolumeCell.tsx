@@ -9,25 +9,9 @@ import {
 
 import { useIntl } from 'react-intl';
 
+import { splitFormattedBytes } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import { diminishedTextColor } from 'src/context/Theme';
-
-// formatBytes always renders 2 fraction digits ("1.20 GB", "854.00 MB"), but
-// the unit segment's width still shifts the digits left/right between rows.
-// Splitting the digits from the unit and right-aligning the digits in a fixed
-// box keeps the decimal point lined up vertically down the column, the way
-// Vercel's numeric table columns do.
-//
-// A plain split on the space `formatBytes` (via `prettyBytes`) always emits
-// between the number and unit — verified against the library's default
-// `space: true` behaviour, which this call never overrides — rather than a
-// regex re-deriving a shape the string is already guaranteed to have.
-function splitFormattedBytes(formatted: string): [string, string] {
-    const spaceIndex = formatted.indexOf(' ');
-    return spaceIndex === -1
-        ? [formatted, '']
-        : [formatted.slice(0, spaceIndex), formatted.slice(spaceIndex + 1)];
-}
 
 interface Props {
     bytes: number;
