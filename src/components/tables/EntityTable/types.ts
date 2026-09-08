@@ -29,12 +29,6 @@ export type ColumnProps =
           renderHeader?: never;
       });
 
-export interface StandAloneTableTitleProps {
-    titleIntlKey: string;
-    docsUrl?: string;
-    messageIntlKey?: string;
-}
-
 export interface EntityTableHeaderProps extends CollectionSelectorHeaderProps {
     columns: ColumnProps[];
     columnToSort?: string;

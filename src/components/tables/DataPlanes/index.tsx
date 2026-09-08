@@ -13,19 +13,22 @@ import {
     Toolbar,
 } from '@mui/material';
 
+import { useLocalStorage } from 'react-use';
+
 import Rows from 'src/components/tables/DataPlanes/Rows';
 import { columns } from 'src/components/tables/DataPlanes/shared';
 import ToggleDataPlaneScope from 'src/components/tables/DataPlanes/ToggleDataPlaneScope';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
 import { useDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
+import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 const PAGE_SIZE = 10;
+const DEFAULT_SCOPE: DataPlaneScopes = 'private';
 
 function getTableStatus<T>(data: T[], loading: boolean, error?: CombinedError) {
     if (loading) {
@@ -48,7 +51,11 @@ function DataPlanesTable() {
         useCursorPagination();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const { dataPlaneScope, setScope } = useDataPlaneScope();
+    const [storedScope, setScope] = useLocalStorage<DataPlaneScopes>(
+        LocalStorageKeys.DATAPLANE_CHOICE,
+        DEFAULT_SCOPE
+    );
+    const dataPlaneScope = storedScope ?? DEFAULT_SCOPE;
     const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery(
         selectedTenant,
         {

@@ -16,7 +16,7 @@ export interface AlertSetting {
 
 export interface DataPlaneSetting {
     prefix: string;
-    table: TableSettings;
+    table: Pick<TableSettings, 'noExistingDataContentIds'>;
 }
 
 export interface EntitySetting {
