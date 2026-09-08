@@ -1,7 +1,7 @@
 import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
 import type { CombinedError } from 'urql';
 
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import {
     Box,
@@ -70,29 +70,20 @@ function DataPlanesTable() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedTenant]);
 
-    const handleDataPlaneScopeChange = useCallback(
-        (newScope: DataPlaneScopes) => {
-            setScope(newScope);
-            goToPage(0); // reset to first page when changing scope to support cursor pagination
-        },
-        [goToPage, setScope]
-    );
+    const handleDataPlaneScopeChange = (newScope: DataPlaneScopes) => {
+        setScope(newScope);
+        goToPage(0); // reset to first page when changing scope to support cursor pagination
+    };
 
-    const handlePageChange = useCallback(
-        (event: any, newPage: number) => {
-            onPageChange(event, newPage, pageInfo?.endCursor);
-        },
-        [onPageChange, pageInfo?.endCursor]
-    );
+    const handlePageChange = (event: any, newPage: number) => {
+        onPageChange(event, newPage, pageInfo?.endCursor);
+    };
 
-    const labelDisplayedRows = useCallback(
-        ({ from }: { from: number }) => {
-            return dataPlanes.length > 0
-                ? `${from} – ${from + dataPlanes.length - 1}`
-                : '';
-        },
-        [dataPlanes.length]
-    );
+    const labelDisplayedRows = ({ from }: { from: number }) => {
+        return dataPlanes.length > 0
+            ? `${from} – ${from + dataPlanes.length - 1}`
+            : '';
+    };
 
     return (
         <Box data-public>
