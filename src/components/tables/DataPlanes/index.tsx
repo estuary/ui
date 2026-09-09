@@ -1,4 +1,5 @@
 import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
+import type { TableColumns } from 'src/types';
 import type { CombinedError } from 'urql';
 
 import { useEffect, useState } from 'react';
@@ -21,7 +22,7 @@ import { useDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { useTenantStore } from 'src/stores/Tenant';
-import { TableColumns, TableStatuses } from 'src/types';
+import { TableStatuses } from 'src/types';
 
 const columns: TableColumns[] = [
     { field: null, headerIntlKey: null, collapseHeader: true },
