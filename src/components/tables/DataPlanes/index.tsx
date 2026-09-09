@@ -1,7 +1,8 @@
 import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
+import type { TableColumns } from 'src/types';
 import type { CombinedError } from 'urql';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Box,
@@ -14,16 +15,21 @@ import {
 } from '@mui/material';
 
 import Rows from 'src/components/tables/DataPlanes/Rows';
-import { columns } from 'src/components/tables/DataPlanes/shared';
 import ToggleDataPlaneScope from 'src/components/tables/DataPlanes/ToggleDataPlaneScope';
 import EntityTableBody from 'src/components/tables/EntityTable/TableBody';
 import EntityTableHeader from 'src/components/tables/EntityTable/TableHeader';
-import { useDataPlaneScope } from 'src/context/DataPlaneScopeContext';
 import { useDataPlanesQuery } from 'src/hooks/dataPlanes/useDataPlanes';
 import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
+
+const columns: TableColumns[] = [
+    { field: null, headerIntlKey: null, collapseHeader: true },
+    { field: null, headerIntlKey: 'admin.dataPlanes.column.header.name' },
+    { field: null, headerIntlKey: 'admin.dataPlanes.column.header.region' },
+    { field: null, headerIntlKey: 'data.ipv4' },
+];
 
 const PAGE_SIZE = 10;
 
@@ -48,7 +54,7 @@ function DataPlanesTable() {
         useCursorPagination();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const { dataPlaneScope, setScope } = useDataPlaneScope();
+    const [dataPlaneScope, setScope] = useState<DataPlaneScopes>('public');
     const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery(
         selectedTenant,
         {
