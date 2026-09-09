@@ -17,6 +17,7 @@ interface UseAllPagesOptions<TData, TVariables, TNode, TResult> {
     getConnection: (data: TData) => Connection<TNode>;
     transform: (node: TNode) => TResult;
     pause?: boolean;
+    resetKey?: unknown;
 }
 
 interface UseAllPagesResult<TResult> {
@@ -24,6 +25,19 @@ interface UseAllPagesResult<TResult> {
     loading: boolean;
     error: CombinedError | undefined;
 }
+
+interface KeyedCursor {
+    key: string;
+    value?: string;
+}
+
+interface KeyedResult<TResult> {
+    key: string;
+    data: TResult[];
+    complete: boolean;
+}
+
+const EMPTY_RESULT: never[] = [];
 
 /**
  * Fetches all pages from a Relay-style paginated query.
@@ -39,7 +53,10 @@ export function useAllPages<
 ): UseAllPagesResult<TResult> {
     const { pause } = options;
 
-    const variablesKey = JSON.stringify(options.variables ?? {});
+    const variablesKey = JSON.stringify({
+        variables: options.variables ?? {},
+        resetKey: options.resetKey ?? null,
+    });
 
     // Store callbacks in refs so they don't need to be effect dependencies.
     // Callers typically pass inline arrows (e.g. `(data) => data.liveSpecs`)
@@ -52,18 +69,27 @@ export function useAllPages<
     transformRef.current = options.transform;
 
     const accumulator = useRef<{ key: string; items: TResult[] }>({
-        key: '',
+        key: variablesKey,
         items: [],
     });
-    const [cursor, setCursor] = useState<string | undefined>();
-    const [result, setResult] = useState<TResult[]>([]);
-
-    // Reset when variables change
-    useEffect(() => {
+    if (accumulator.current.key !== variablesKey) {
         accumulator.current = { key: variablesKey, items: [] };
-        setCursor(undefined);
-        setResult([]);
-    }, [variablesKey]);
+    }
+
+    const [cursorState, setCursorState] = useState<KeyedCursor>({
+        key: variablesKey,
+    });
+    const cursor =
+        cursorState.key === variablesKey ? cursorState.value : undefined;
+
+    const [resultState, setResultState] = useState<KeyedResult<TResult>>({
+        key: variablesKey,
+        data: [],
+        complete: false,
+    });
+    const result =
+        resultState.key === variablesKey ? resultState.data : EMPTY_RESULT;
+    const complete = resultState.key === variablesKey && resultState.complete;
 
     const variables = {
         ...options.variables,
@@ -104,15 +130,19 @@ export function useAllPages<
         const { hasNextPage, endCursor } = connection.pageInfo;
 
         if (hasNextPage && endCursor) {
-            setCursor(endCursor);
+            setCursorState({ key: variablesKey, value: endCursor });
         } else {
-            setResult([...acc.items]);
+            setResultState({
+                key: variablesKey,
+                data: [...acc.items],
+                complete: true,
+            });
         }
     }, [data, fetching, variablesKey, cursor]);
 
     return {
         data: result,
-        loading: fetching && result.length === 0,
+        loading: !pause && !error && !complete,
         error,
     };
 }

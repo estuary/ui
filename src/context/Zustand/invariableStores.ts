@@ -89,9 +89,6 @@ const invariableStores = {
     [ShardDetailStoreNames.COLLECTION]: createShardDetailStore(
         ShardDetailStoreNames.COLLECTION
     ),
-    [SelectTableStoreNames.STORAGE_MAPPINGS]: createSelectableTableStore(
-        SelectTableStoreNames.STORAGE_MAPPINGS
-    ),
 
     // Transformation Create
     [TransformCreateStoreNames.TRANSFORM_CREATE]:
