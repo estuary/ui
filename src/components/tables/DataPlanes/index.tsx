@@ -47,7 +47,7 @@ function DataPlanesTable() {
         useCursorPagination();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const [dataPlaneScope, setScope] = useState<DataPlaneScopes>('private');
+    const [dataPlaneScope, setScope] = useState<DataPlaneScopes>('public');
     const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery(
         selectedTenant,
         {

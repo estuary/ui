@@ -30,18 +30,18 @@ function ToggleDataPlaneScope({ scope, onChange }: ToggleDataPlaneScopeProps) {
             onChange={handleChange}
         >
             <OutlinedToggleButton
-                selected={scope === 'private'}
-                size="small"
-                value="private"
-            >
-                Private
-            </OutlinedToggleButton>
-            <OutlinedToggleButton
                 selected={scope === 'public'}
                 size="small"
                 value="public"
             >
                 Public
+            </OutlinedToggleButton>
+            <OutlinedToggleButton
+                selected={scope === 'private'}
+                size="small"
+                value="private"
+            >
+                Private
             </OutlinedToggleButton>
         </ToggleButtonGroup>
     );
