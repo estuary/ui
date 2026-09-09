@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import {
     createBrowserRouter,
     createRoutesFromElements,
+    redirect,
     Route,
     RouterProvider,
     Routes,
@@ -11,8 +12,8 @@ import {
 
 import { authenticatedRoutes, unauthenticatedRoutes } from 'src/app/routes';
 import AccessGrants from 'src/components/admin/AccessGrants';
-import AdminApi from 'src/components/admin/Api';
 import AdminBilling from 'src/components/admin/Billing';
+import { ServiceAccounts } from 'src/components/admin/ServiceAccounts';
 import AdminSettings from 'src/components/admin/Settings';
 import { ErrorImporting } from 'src/components/shared/ErrorImporting';
 import HasSupportRoleGuard from 'src/components/shared/guards/SupportRole';
@@ -33,11 +34,13 @@ import DataPlaneAuthReq from 'src/pages/DataPlaneAuthReq';
 import GqlExplorer from 'src/pages/dev/gqlExplorer';
 import TestJsonForms from 'src/pages/dev/TestJsonForms';
 import PageNotFound from 'src/pages/error/PageNotFound';
+import FlowctlAccessToken from 'src/pages/FlowctlAccessToken';
 import HomePage from 'src/pages/Home';
 import BasicLogin from 'src/pages/login/Basic';
 import EnterpriseLogin from 'src/pages/login/Enterprise';
 import MarketplaceCallback from 'src/pages/marketplace/Callback';
 import MarketplaceVerification from 'src/pages/marketplace/Verification';
+import PersonalTokens from 'src/pages/PersonalTokens';
 import { SSORequired } from 'src/pages/SSORequired';
 import { isProduction } from 'src/utils/env-utils';
 
@@ -79,6 +82,11 @@ const MaterializationDetailsRoute = lazy(
 );
 const MaterializationEditRoute = lazy(
     () => import('src/context/Router/MaterializationEdit')
+);
+const ServiceAccountDetailsRoute = lazy(() =>
+    import('src/components/admin/ServiceAccounts/Details').then((module) => ({
+        default: module.ServiceAccountDetails,
+    }))
 );
 
 const router = createBrowserRouter(
@@ -200,6 +208,18 @@ const router = createBrowserRouter(
                     <Route
                         path={authenticatedRoutes.dataPlaneAuth.path}
                         element={<DataPlaneAuthReq />}
+                    />
+
+                    <Route
+                        path={authenticatedRoutes.flowctl.accessToken.fullPath}
+                        element={<FlowctlAccessToken />}
+                    />
+
+                    <Route
+                        path={
+                            authenticatedRoutes.settings.personalTokens.fullPath
+                        }
+                        element={<PersonalTokens />}
                     />
 
                     <Route
@@ -656,10 +676,11 @@ const router = createBrowserRouter(
                         />
                         <Route
                             path={authenticatedRoutes.admin.api.path}
-                            element={
-                                <Suspense fallback={null}>
-                                    <AdminApi />
-                                </Suspense>
+                            loader={() =>
+                                redirect(
+                                    authenticatedRoutes.flowctl.accessToken
+                                        .fullPath
+                                )
                             }
                         />
 
@@ -696,6 +717,28 @@ const router = createBrowserRouter(
                                 >
                                     <Suspense fallback={null}>
                                         <AdminBilling />
+                                    </Suspense>
+                                </ErrorBoundary>
+                            }
+                        />
+                        <Route
+                            path={
+                                authenticatedRoutes.admin.serviceAccounts.path
+                            }
+                            element={
+                                <Suspense fallback={null}>
+                                    <ServiceAccounts />
+                                </Suspense>
+                            }
+                        />
+                        <Route
+                            path={`${authenticatedRoutes.admin.serviceAccounts.path}/${authenticatedRoutes.admin.serviceAccounts.details.path}`}
+                            element={
+                                <ErrorBoundary
+                                    FallbackComponent={ErrorImporting}
+                                >
+                                    <Suspense fallback={null}>
+                                        <ServiceAccountDetailsRoute />
                                     </Suspense>
                                 </ErrorBoundary>
                             }

@@ -8,7 +8,6 @@ import Markdown from 'markdown-to-jsx';
 
 import SingleLineCode from 'src/components/content/SingleLineCode';
 import TechnicalEmphasis from 'src/components/derivation/Create/TechnicalEmphasis';
-import { codeBackground } from 'src/context/Theme';
 
 function interpolate(
     template: string,
@@ -79,7 +78,7 @@ export function MarkdownInstructions({
                                         p: 2,
                                         borderRadius: 2,
                                         bgcolor:
-                                            codeBackground[theme.palette.mode],
+                                            theme.palette.background.code,
                                         overflow: 'auto',
                                         fontFamily: 'monospace',
                                     }}
@@ -128,7 +127,7 @@ export function MarkdownInstructions({
                 },
             },
         }),
-        [theme.palette.mode]
+        [theme.palette.background.code]
     );
 
     return (

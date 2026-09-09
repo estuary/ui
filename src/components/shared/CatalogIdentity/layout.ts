@@ -1,0 +1,132 @@
+import type { Theme } from '@mui/material';
+import type { SystemStyleObject } from '@mui/system/styleFunctionSx';
+
+import { MONOGRAM_TEXT_COLOR } from 'src/components/shared/CatalogIdentity/catalogName';
+
+// The measurements of the card a catalog entity is presented as: a monogram tile
+// over its stable color, with the leaf name above the prefix it lives under.
+// Shared by CatalogIdentityEditor, which an entity is named through, and
+// CatalogIdentity, which shows one that exists — so an entity looks the same
+// before and after it is created.
+
+// How long the monogram takes to cross-fade to a new color.
+const MONOGRAM_FADE_MS = 1000;
+
+export const TRUNCATE_SX = {
+    display: 'block',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+} as const;
+
+// Every measurement at scale 1, the size an entity is named at.
+const BASE = {
+    cardHeight: 72,
+    nameFontSize: 18,
+    nameLineHeight: 24,
+    locationFontSize: 14,
+    locationLineHeight: 22,
+    monogramFontSize: 20,
+    helperFontSize: 12,
+};
+
+/**
+ * The card's measurements, multiplied by `scale`. An account is named at scale
+ * 1; the details page wears the card larger.
+ *
+ * Every value is rounded to whole pixels. The name and location line boxes are
+ * pinned rather than left to each element's default, because the editable card
+ * swaps each line between a span and an input — they derive different line
+ * boxes, and the text would shift as they swap. A fractional line box would put
+ * that alignment back off by a subpixel.
+ */
+export function identityLayout(scale = 1) {
+    const px = (value: number) => Math.round(value * scale);
+
+    const cardHeight = px(BASE.cardHeight);
+    const nameLineHeight = px(BASE.nameLineHeight);
+    const locationLineHeight = px(BASE.locationLineHeight);
+
+    const nameTextSx = {
+        fontFamily: 'monospace',
+        fontWeight: 600,
+        fontSize: px(BASE.nameFontSize),
+        lineHeight: `${nameLineHeight}px`,
+    } as const;
+
+    const locationTextSx = {
+        fontFamily: 'monospace',
+        fontSize: px(BASE.locationFontSize),
+        lineHeight: `${locationLineHeight}px`,
+    } as const;
+
+    // A field's helper text stands in for the line it is not on while that field
+    // is being edited, so it takes that line's box and the card keeps its
+    // height. It reads as prose about the field rather than as a catalog value,
+    // so it drops the monospace face.
+    const helperTextSx = {
+        fontFamily: 'inherit',
+        fontSize: px(BASE.helperFontSize),
+    } as const;
+
+    const nameHelperSx = {
+        ...helperTextSx,
+        lineHeight: `${nameLineHeight}px`,
+    } as const;
+
+    const locationHelperSx = {
+        ...helperTextSx,
+        lineHeight: `${locationLineHeight}px`,
+    } as const;
+
+    const cardSx: SystemStyleObject<Theme> = {
+        alignItems: 'center',
+        height: cardHeight,
+        overflow: 'hidden',
+    };
+
+    // Stretched to the monogram so the name's line box starts at its top edge
+    // and the location ends at its bottom, rather than the pair floating
+    // centered against it.
+    const columnSx: SystemStyleObject<Theme> = {
+        minWidth: 0,
+        flex: 1,
+        py: 0.25,
+        alignSelf: 'stretch',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+    };
+
+    // Squared off the card height, so the two track together.
+    const monogramSx: SystemStyleObject<Theme> = {
+        height: '100%',
+        aspectRatio: '1 / 1',
+        flex: 'none',
+        borderRadius: (theme) => theme.radius.md,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: px(BASE.monogramFontSize),
+        fontWeight: 700,
+        color: MONOGRAM_TEXT_COLOR,
+        // Carried in both states so the tile keeps its footprint, and so an
+        // unnamed account can fade in and out rather than snap.
+        border: '1px dashed transparent',
+        transition: `background ${MONOGRAM_FADE_MS}ms ease, border-color ${MONOGRAM_FADE_MS}ms ease, color ${MONOGRAM_FADE_MS}ms ease`,
+    };
+
+    return {
+        cardHeight,
+        nameLineHeight,
+        // The home icon on the location line, sized to the text beside it.
+        locationIconSize: px(BASE.locationFontSize),
+        cardSx,
+        columnSx,
+        monogramSx,
+        nameTextSx,
+        locationTextSx,
+        nameHelperSx,
+        locationHelperSx,
+    };
+}

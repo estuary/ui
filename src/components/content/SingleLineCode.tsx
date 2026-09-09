@@ -2,20 +2,18 @@ import type { SingleLineCodeProps } from 'src/components/content/types';
 
 import { Box, Button, Tooltip, Typography, useTheme } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
-import { codeBackground, getButtonIcon } from 'src/context/Theme';
+import { getButtonIcon } from 'src/context/Theme';
 import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 
 const borderRadius = 3;
 
+/** @deprecated Prefer `CopyValueField` from src/components/shared/CopyValueField */
 function SingleLineCode({
     value,
     compact,
     subsequentCommandExists,
     sx,
 }: SingleLineCodeProps) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const { isCopied, handleCopy } = useCopyToClipboard('SingleLineCode');
@@ -26,7 +24,7 @@ function SingleLineCode({
                 maxWidth: 1000,
                 mb: subsequentCommandExists ? 1 : undefined,
                 display: 'flex',
-                bgcolor: codeBackground[theme.palette.mode],
+                bgcolor: theme.palette.background.code,
                 borderRadius,
                 ...(sx ?? {}),
             }}
@@ -46,9 +44,7 @@ function SingleLineCode({
             </Typography>
 
             <Tooltip
-                title={intl.formatMessage({
-                    id: 'common.copied',
-                })}
+                title="Copied"
                 placement="right"
                 open={isCopied}
                 arrow

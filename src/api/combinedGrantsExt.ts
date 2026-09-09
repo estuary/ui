@@ -12,6 +12,12 @@ import {
 } from 'src/services/supabase';
 import { getCountSettings } from 'src/utils/table-utils';
 
+// Service accounts are backed by a synthetic auth.users row whose email always
+// ends in this domain (see internal.service_accounts). They surface in
+// combined_grants_ext like any human user, so the user-listing queries below
+// exclude them by email suffix.
+const SERVICE_ACCOUNT_EMAIL_PATTERN = '%@service_accounts.estuary.dev';
+
 // Used to display prefix grants in admin page
 const getGrants = (
     pagination: any,
@@ -64,7 +70,12 @@ const getGrants_Users = (
                 count: 'exact',
             }
         )
-        .or('user_email.neq.null,user_full_name.neq.null');
+        .or('user_email.neq.null,user_full_name.neq.null')
+        // A NOT LIKE test against a null email evaluates to unknown, which drops
+        // the row. Users can have a name without an email, so admit null emails.
+        .or(
+            `user_email.is.null,user_email.not.like.${SERVICE_ACCOUNT_EMAIL_PATTERN}`
+        );
 
     return defaultTableFilter<typeof query>(
         query,
@@ -120,6 +131,7 @@ const getUserInformationByPrefix = (
         .in('object_role', evaluatedObjectRoles)
         .is('subject_role', null)
         .filter('user_email', 'not.is', null)
+        .not('user_email', 'like', SERVICE_ACCOUNT_EMAIL_PATTERN)
         .returns<Grant_UserExt[]>();
 };
 

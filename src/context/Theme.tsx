@@ -108,6 +108,46 @@ declare module '@mui/material/Typography' {
     }
 }
 
+// Border-radius scale. Roundness tracks an element's size and prominence:
+// larger, more container-like surfaces get more rounding, small controls get
+// less, and `full` fully rounds pills/toggles. Values are px strings so they
+// read literally in `sx`/`styled` `borderRadius` — a *number* there is
+// multiplied by `theme.shape.borderRadius`, a string is used as-is. When
+// nesting a rounded element in the corner of another, keep corners concentric:
+// inner radius = outer radius − padding.
+interface RadiusScale {
+    /** 4px — small insets: code strips, option panels, compact tiles */
+    sm: string;
+    /** 8px — monogram/icon tiles, settings panels */
+    md: string;
+    /** 12px — cards */
+    lg: string;
+    /** 16px — large or prominent surfaces (page containers, hero blocks) */
+    xl: string;
+    /** Fully rounded — pills, toggle buttons */
+    full: string;
+}
+
+declare module '@mui/material/styles' {
+    interface Theme {
+        radius: RadiusScale;
+    }
+    interface ThemeOptions {
+        radius?: RadiusScale;
+    }
+}
+
+declare module '@mui/material/styles' {
+    interface TypeBackground {
+        /**
+         * Painted behind code and other monospace strips. Translucent in dark
+         * mode, so a strip reads as a tint of whatever surface it lands on
+         * rather than a fixed slab.
+         */
+        code: string;
+    }
+}
+
 // Colors
 const sample_blue = {
     100: '#DCE6FE',
@@ -222,6 +262,7 @@ const lightMode: PaletteOptions = {
         // 100, which left the panel on white and the cards with nowhere
         // lighter to go — see `paperBackground`.
         default: sample_grey[200],
+        code: sample_grey[200],
     },
     contrastThreshold,
     error: {
@@ -285,6 +326,7 @@ const lightMode: PaletteOptions = {
 const darkMode: PaletteOptions = {
     background: {
         default: sample_grey[900],
+        code: 'rgba(247, 249, 252, 0.05)',
     },
     contrastThreshold,
     mode: 'dark',
@@ -606,12 +648,6 @@ export const monacoEditorWidgetBackground = {
 export const monacoEditorComponentBackground = {
     light: 'vs',
     dark: 'vs-dark',
-};
-
-// RGB translation of #F7F9FC.
-export const codeBackground = {
-    light: sample_grey[200],
-    dark: 'rgba(247, 249, 252, 0.05)',
 };
 
 const expandedRowBgColor = {
@@ -1013,7 +1049,6 @@ const themeSettings = createTheme({
                 root: {
                     fontSize: 14,
                     borderRadius: 4,
-                    textTransform: 'none',
                 },
             },
         },
@@ -1054,20 +1089,6 @@ const themeSettings = createTheme({
                 },
             },
         },
-        MuiTab: {
-            styleOverrides: {
-                root: {
-                    textTransform: 'none',
-                },
-            },
-        },
-        MuiToggleButton: {
-            styleOverrides: {
-                root: {
-                    textTransform: 'none',
-                },
-            },
-        },
         MuiTabs: {
             ...baseBackground,
             defaultProps: {
@@ -1082,6 +1103,13 @@ const themeSettings = createTheme({
     },
     shape: {
         borderRadius: 2,
+    },
+    radius: {
+        sm: '4px',
+        md: '8px',
+        lg: '12px',
+        xl: '16px',
+        full: '9999px',
     },
     typography: {
         fontFamily: [
@@ -1103,6 +1131,7 @@ const themeSettings = createTheme({
         },
         button: {
             fontSize: 14,
+            textTransform: 'none',
         },
         formSectionHeader: {
             fontSize: 18,

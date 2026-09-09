@@ -27,7 +27,6 @@ export const EntityTable: Record<string, string> = {
     'entityTable.data.storagePrefix': `Storage Prefix`,
     'entityTable.data.sharedPrefix': `Shared Prefix`,
     'entityTable.data.sharedWith': `Shared With`,
-    'entityTable.data.created': `Created`,
     'entityTable.data.description': `Description`,
     'entityTable.data.user': `User`,
     'entityTable.data.alertTypes': `Alert Types`,

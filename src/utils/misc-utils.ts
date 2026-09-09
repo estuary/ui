@@ -94,6 +94,12 @@ export const appendWithForwardSlash = (value: string): string =>
 export const replaceWhitespacesWithUnderscores = (value: string): string =>
     value.replaceAll(/\s/g, '_');
 
+// Catalog names accept letters, numbers, dashes, underscores and periods, with
+// "/" separating segments. Anything else is dropped as it is typed, rather than
+// carried to the server for it to reject.
+export const stripDisallowedCatalogCharacters = (value: string): string =>
+    value.replaceAll(/[^\p{L}\p{N}\-_./]/gu, '');
+
 export const encodeParamVal = (val: any) => {
     if (typeof val === 'boolean') {
         return val ? 1 : 0;
