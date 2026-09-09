@@ -1,9 +1,6 @@
-import type { DataPlaneDialogProps } from 'src/components/tables/DataPlanes/types';
-import type { CloudProvider } from 'src/utils/cloudRegions';
+import type { DataPlaneNode } from 'src/api/gql/dataPlanes';
 
 import { Badge, Dialog, DialogContent, Stack, Typography } from '@mui/material';
-
-import { useIntl } from 'react-intl';
 
 import DialogTitleWithClose from 'src/components/shared/Dialog/TitleWithClose';
 import DataPlaneIcon from 'src/components/shared/Entity/DataPlaneIcon';
@@ -11,20 +8,24 @@ import { DataPlaneDialogField } from 'src/components/tables/DataPlanes/DialogFie
 import { ToggleField } from 'src/components/tables/DataPlanes/DialogFields/ToggleField';
 import useParseCidrBlocks from 'src/hooks/useParseCidrBlocks';
 import { getRegionDisplayName, PROVIDER_LABELS } from 'src/utils/cloudRegions';
-import {
-    formatDataPlaneName,
-    formatIamOidc,
-    generateDataPlaneOption,
-} from 'src/utils/dataPlane-utils';
+import { formatIamOidc, toPresentableName } from 'src/utils/dataPlane-utils';
 
 const TITLE_ID = 'data-plane-dialog-title';
 
+interface DataPlaneDialogProps {
+    onClose: () => void;
+    dataPlane: DataPlaneNode;
+}
+
 function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
-    const intl = useIntl();
     const parseCidrBlocks = useParseCidrBlocks();
 
-    const { dataPlaneName, scope } = generateDataPlaneOption(dataPlane);
-    const { ipv4, ipv6 } = parseCidrBlocks(dataPlane.cidr_blocks);
+    const { cloudProvider, region, scope, name, fqdn } = dataPlane;
+    const { ipv4, ipv6 } = parseCidrBlocks(dataPlane.cidrBlocks);
+
+    const dataPlaneDisplayName = toPresentableName(dataPlane);
+    const regionDisplayName = getRegionDisplayName(cloudProvider, region);
+    const iamOidc = fqdn ? formatIamOidc(fqdn) : null;
 
     return (
         <Dialog
@@ -45,12 +46,12 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                     justifyContent="flex-start"
                 >
                     <DataPlaneIcon
-                        provider={dataPlaneName.provider}
+                        provider={cloudProvider}
                         scope={scope}
                         size={30}
                     />
                     <Typography variant="h6" sx={{ ml: 1, fontWeight: 600 }}>
-                        {formatDataPlaneName(dataPlaneName)}
+                        {dataPlaneDisplayName}
                     </Typography>
                     <Badge
                         sx={{
@@ -68,47 +69,27 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                     color="text.secondary"
                     sx={{ mt: 0, mb: 2 }}
                 >
-                    {intl.formatMessage({
-                        id: 'admin.dataPlanes.dialog.description',
-                    })}
+                    Data plane details and configuration
                 </Typography>
                 <Stack spacing={1}>
-                    {dataPlaneName.provider ? (
+                    {cloudProvider ? (
                         <DataPlaneDialogField
-                            label={intl.formatMessage({
-                                id: 'admin.dataPlanes.dialog.cloudProvider',
-                            })}
-                            value={
-                                PROVIDER_LABELS[
-                                    dataPlaneName.provider as CloudProvider
-                                ]
-                            }
+                            label="Cloud Provider"
+                            value={PROVIDER_LABELS[cloudProvider]}
                             showCopyButton={false}
                         />
                     ) : null}
-                    {dataPlaneName.region ? (
+                    {region ? (
                         <DataPlaneDialogField
-                            label={intl.formatMessage({
-                                id: 'admin.dataPlanes.column.header.region',
-                            })}
-                            value={getRegionDisplayName(
-                                dataPlaneName.provider as CloudProvider,
-                                dataPlaneName.region
-                            )}
+                            label="Region"
+                            value={regionDisplayName}
                             showCopyButton={false}
                         />
                     ) : null}
-                    <DataPlaneDialogField
-                        label={intl.formatMessage({
-                            id: 'admin.dataPlanes.dialog.internalId',
-                        })}
-                        value={dataPlane.data_plane_name}
-                    />
+                    <DataPlaneDialogField label="Internal ID" value={name} />
                     <ToggleField
                         lowercaseButton
-                        label={intl.formatMessage({
-                            id: 'admin.dataPlanes.dialog.ips',
-                        })}
+                        label="IPs"
                         options={[
                             {
                                 key: 'ipv4',
@@ -122,12 +103,10 @@ function DataPlaneDialog({ onClose, dataPlane }: DataPlaneDialogProps) {
                             },
                         ]}
                     />
-                    {dataPlane.data_plane_fqdn ? (
+                    {iamOidc ? (
                         <DataPlaneDialogField
-                            label={intl.formatMessage({
-                                id: 'data.idProvider',
-                            })}
-                            value={formatIamOidc(dataPlane.data_plane_fqdn)}
+                            label="IAM OIDC"
+                            value={iamOidc}
                         />
                     ) : null}
                 </Stack>

@@ -764,6 +764,13 @@ input DataPlanesFilter {
   name prefix (`ops/dp/public/` vs `ops/dp/private/`).
   """
   public: BoolFilter
+
+  """
+  Match data planes by tenant. Only data planes whose name prefix matches the tenant are returned.
+  All public data planes are considered to match all tenants. Unknown tenants are ignored and only
+  public data planes are returned.
+  """
+  tenant: StringFilter
 }
 
 input DateFilter {
@@ -2223,6 +2230,10 @@ input StorageMappingsFilter {
   the caller's authorized read prefixes.
   """
   catalogPrefix: PrefixFilter
+}
+
+input StringFilter {
+  eq: String
 }
 
 type Tenant {
