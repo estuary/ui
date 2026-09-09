@@ -1,7 +1,7 @@
 import type { DataPlaneScopes } from 'src/stores/DetailsForm/types';
 import type { CombinedError } from 'urql';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
     Box,
@@ -13,8 +13,6 @@ import {
     Toolbar,
 } from '@mui/material';
 
-import { useLocalStorage } from 'react-use';
-
 import Rows from 'src/components/tables/DataPlanes/Rows';
 import { columns } from 'src/components/tables/DataPlanes/shared';
 import ToggleDataPlaneScope from 'src/components/tables/DataPlanes/ToggleDataPlaneScope';
@@ -25,10 +23,8 @@ import { useCursorPagination } from 'src/hooks/useCursorPagination';
 import { DATA_PLANE_SETTINGS } from 'src/settings/dataPlanes';
 import { useTenantStore } from 'src/stores/Tenant';
 import { TableStatuses } from 'src/types';
-import { LocalStorageKeys } from 'src/utils/localStorage-utils';
 
 const PAGE_SIZE = 10;
-const DEFAULT_SCOPE: DataPlaneScopes = 'private';
 
 function getTableStatus<T>(data: T[], loading: boolean, error?: CombinedError) {
     if (loading) {
@@ -51,11 +47,7 @@ function DataPlanesTable() {
         useCursorPagination();
 
     const selectedTenant = useTenantStore((state) => state.selectedTenant);
-    const [storedScope, setScope] = useLocalStorage<DataPlaneScopes>(
-        LocalStorageKeys.DATAPLANE_CHOICE,
-        DEFAULT_SCOPE
-    );
-    const dataPlaneScope = storedScope ?? DEFAULT_SCOPE;
+    const [dataPlaneScope, setScope] = useState<DataPlaneScopes>('private');
     const { dataPlanes, fetching, error, pageInfo } = useDataPlanesQuery(
         selectedTenant,
         {
