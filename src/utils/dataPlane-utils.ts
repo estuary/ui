@@ -1,8 +1,4 @@
 import type { Session } from '@supabase/supabase-js';
-import type {
-    ProtocolLabelSelector,
-    ProtocolListResponse,
-} from 'data-plane-gateway/types/gen/broker/protocol/broker';
 import type { Shard } from 'data-plane-gateway/types/shard_client';
 import type { ResponseError } from 'data-plane-gateway/types/util';
 import type { BaseDataPlaneQuery } from 'src/api/dataPlanes';
@@ -188,23 +184,6 @@ export const authorizeCollection = async (
         accessToken
     );
 
-// Streaming RPC responses going through grpc-gateway have a `result` vs `error` top-level property added,
-// which wraps the actual response. The old data-plane gateway returns unary RPC responses from the /list APIs,
-// which don't have a top-level `result` property.
-export const isNestedProtocolListResponse = (
-    response: { result: ProtocolListResponse } | ProtocolListResponse
-): response is { result: ProtocolListResponse } => 'result' in response;
-
-export const getJournals = async (
-    brokerAddress: string,
-    brokerToken: string,
-    selector: ProtocolLabelSelector
-): Promise<{ result: ProtocolListResponse } | ProtocolListResponse> =>
-    client(
-        `${brokerAddress}/v1/journals/list`,
-        { data: { selector } },
-        brokerToken
-    );
 /** @deprecated Scope is returned by dataplane gql query */
 export const getDataPlaneScope = (
     dataPlaneName: string
