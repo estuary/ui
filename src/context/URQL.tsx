@@ -74,6 +74,7 @@ function UrqlConfigProvider({ children }: BaseComponentProps) {
                         RefreshTokenInfo: (_data) => null,
                         StorageMapping: (data) => null,
                         DataPlane: (data) => null,
+                        PublicDataPlane: (data) => null,
                     },
                     // Normalization only merges update results into entities
                     // already in the cache. Creates and deletes need updaters
