@@ -12,6 +12,8 @@ export const Details: Record<string, string> = {
     'details.tabs.history': `History`,
     'details.tabs.ops': `Logs`,
 
+    'details.toolbar.copyName': `Copy name`,
+
     'details.history.noPublications': `No publications were found.`,
     'details.history.diffFailed': `Unable to get specs to compare.`,
     'details.history.title': `Change History`,
@@ -83,6 +85,7 @@ export const Details: Record<string, string> = {
     'detailsPanel.totals.title': `Usage this month`,
     'detailsPanel.recentUsage.title.prefix': `Usage over the past`,
     'detailsPanel.recentUsage.range.label': `Timeframe`,
+    'detailsPanel.rangeChip.tooltip': `Covers the timeframe selected on the chart above.`,
     'detailsPanel.recentUsage.filter.label.hours': `{range} hours`,
     'detailsPanel.recentUsage.filter.label.days': `{range} days`,
     'detailsPanel.recentUsage.filter.label.months': `{range} months`,
@@ -97,4 +100,70 @@ export const Details: Record<string, string> = {
     'detailsPanel.graph.syncDelay.tooltip': `Reporting can be delayed by up to 2x the set update delay in the configuration.`,
 
     'detailsPanel.status.taskDisabled.message': `Task is disabled`,
+
+    // Elapsed-time units. Minutes are the finest on purpose — the reporting
+    // pipeline floors at roughly four, so seconds would be invented precision.
+    // Bare units, because the bindings table's Last data wraps them in "ago".
+    'detailsPanel.elapsed.minutes': `{count, plural, one {minute} other {minutes}}`,
+    'detailsPanel.elapsed.hours': `{count, plural, one {hour} other {hours}}`,
+    'detailsPanel.elapsed.days': `{count, plural, one {day} other {days}}`,
+    'detailsPanel.elapsed.ago.suffix': `ago`,
+
+    // Bindings table — internal name only; the user-facing word is
+    // "collections", not "bindings" (see `terms.collections`). The card
+    // heading and the table's accessible name both come from that shared key,
+    // and `{unit}` below from `terms.collections.plural`, so the word is not
+    // restated here.
+    //
+    // The chip beside the heading carries the range itself, formatted through
+    // `getRangeLabelDescriptor` — see RangeChip.
+    'detailsPanel.bindings.subtitle.written': `{count} {unit} · {volume} written`,
+    'detailsPanel.bindings.subtitle.read': `{count} {unit} · {volume} read`,
+    'detailsPanel.bindings.search.capture': `Filter by source stream or collection`,
+    'detailsPanel.bindings.search.materialization': `Filter by collection`,
+    'detailsPanel.bindings.search.clear': `Clear search`,
+    'detailsPanel.bindings.filter.all': `All`,
+    'detailsPanel.bindings.rowsPerPage': `Collections per page`,
+    'detailsPanel.bindings.empty': `This task has no collections.`,
+    'detailsPanel.bindings.noMatches': `No collections match this filter.`,
+    'detailsPanel.bindings.clearFilter': `Clear filter`,
+    // "Enabled" rather than "Active": the flag only says the binding is not
+    // switched off, which is not a claim that data is flowing.
+    'detailsPanel.bindings.status.enabled': `Enabled`,
+    'detailsPanel.bindings.status.disabled': `Disabled`,
+    // Enabled, but nothing moved through it in the selected range, and the
+    // connector itself isn't reporting errors — a benign quiet, not a failure.
+    'detailsPanel.bindings.status.noData': `No data`,
+    'detailsPanel.bindings.status.noData.tooltip': `Enabled, but no documents were captured in the selected range.`,
+    'detailsPanel.bindings.column.sourceStream': `Source stream`,
+    'detailsPanel.bindings.column.collection': `Collection`,
+    'detailsPanel.bindings.column.status': `Status`,
+    'detailsPanel.bindings.column.docs': `Docs`,
+    'detailsPanel.bindings.column.dataWritten': `Data written`,
+    'detailsPanel.bindings.column.dataRead': `Data read`,
+    'detailsPanel.bindings.column.lastData': `Last data`,
+    // Materialization only — a capture has no upstream frontier to be behind.
+    'detailsPanel.bindings.column.bytesBehind': `Bytes behind`,
+    'detailsPanel.bindings.column.secondsBehind': `Time behind`,
+    'detailsPanel.bindings.download': `Download CSV`,
+    // The bar is relative to the busiest collection, which is good for
+    // comparing rows but says nothing about how much of the task a row
+    // accounts for (the tooltip carries the share instead) or how far behind
+    // it is (that's the separate lag columns, materialization-only) — spelled
+    // out explicitly because a length bar reads as a progress/lag indicator
+    // by default, and this one is neither.
+    'detailsPanel.bindings.volume.tooltip': `{share} of this task's total volume for the selected range — not a lag or progress indicator. Bar length is relative to the busiest collection.`,
+    'detailsPanel.bindings.volume.none.tooltip': `No data recorded for this binding in the selected range.`,
+    // Both lag figures read from the same gauge, so both tooltips carry the same
+    // hedge: it is a delta-sum that is only re-anchored on a fresh reading, not
+    // recomputed live, so a binding that has already caught up can still show a
+    // stale nonzero figure for a while. Directional, not authoritative.
+    'detailsPanel.bindings.bytesBehind.tooltip': `Bytes still to write, as of the task's last stats reading rather than the selected range. Directional, not exact.`,
+    'detailsPanel.bindings.bytesBehind.none.tooltip': `No backlog reading yet for this binding.`,
+    'detailsPanel.bindings.secondsBehind.tooltip': `Lag in source-publication time, as of the task's last stats reading rather than the selected range. Directional, not exact.`,
+    'detailsPanel.bindings.secondsBehind.none.tooltip': `No time-lag reading yet for this binding.`,
+    // Shared by both lag columns for the zero case, which is a real answer
+    // (nothing left to read) rather than a missing one — see the "none" variants
+    // above for that case instead.
+    'detailsPanel.bindings.behind.caughtUp': `Caught up`,
 };

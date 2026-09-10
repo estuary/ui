@@ -428,6 +428,14 @@ export const cardHeaderSx: SxProps<Theme> = {
     fontWeight: 300,
 };
 
+// The emphasized variant, for a card heading that sits above a table of bold
+// figures. `cardHeaderSx`'s 300 is thin enough there that the heading reads as a
+// caption rather than a title.
+export const cardHeaderSx_emphasized: SxProps<Theme> = {
+    fontSize: 16,
+    fontWeight: 600,
+};
+
 export const tableAlternateRowsSx: SxProps<Theme> = {
     '& tr:nth-of-type(even)': {
         backgroundColor: (theme) => theme.palette.action.hover,
