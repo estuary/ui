@@ -32,20 +32,10 @@ function EvolvedCount() {
 
     return (
         <Chip
-            aria-label={intl.formatMessage({
-                id: 'workflows.collectionSelector.manualBackfill.count.aria',
-            })}
+            label={`${evolvedCollectionsCount} ${itemType_bindings} reversioning`}
+            aria-label="Backfill count"
             color="info"
             variant="outlined"
-            label={intl.formatMessage(
-                {
-                    id: 'workflows.collectionSelector.evolvedCollections.count',
-                },
-                {
-                    count: evolvedCollectionsCount,
-                    itemType: itemType_bindings,
-                }
-            )}
         />
     );
 }

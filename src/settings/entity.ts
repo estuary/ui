@@ -18,6 +18,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         Icon: CloudUpload,
         background: semiTransparentBackground_teal,
         backgroundNesting: semiTransparentBackground_teal_nesting,
+        bindingTermSingular: 'binding',
+        bindingTermPlural: 'bindings',
         bindingTermId: 'terms.bindings.plural',
         pluralId: 'terms.sources.plural',
         routes: {
@@ -63,6 +65,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         Icon: DatabaseScript,
         background: semiTransparentBackground_blue,
         backgroundNesting: semiTransparentBackground_blue_nesting,
+        bindingTermSingular: 'collection',
+        bindingTermPlural: 'collections',
         bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.collections.plural',
         routes: {
@@ -105,6 +109,8 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         Icon: CloudDownload,
         background: semiTransparentBackground_purple,
         backgroundNesting: semiTransparentBackground_purple_nesting,
+        bindingTermSingular: 'collection',
+        bindingTermPlural: 'collections',
         bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.destinations.plural',
         routes: {
