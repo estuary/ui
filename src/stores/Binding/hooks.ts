@@ -337,6 +337,26 @@ export const useBinding_backfilledBindings_count = () =>
         })
     );
 
+export const useBinding_enabledEvolvedCollections_count = () =>
+    useBindingStore((state) => {
+        const enabledCollections = new Set(
+            getEnabledCollectionNames(state.resourceConfigs)
+        );
+
+        return state.evolvedCollections.filter(({ new_name }) =>
+            enabledCollections.has(new_name)
+        ).length;
+    });
+
+export const useBinding_enabledBackfilledBindings_count = () =>
+    useBindingStore(
+        (state) =>
+            state.backfilledBindings.filter((bindingUUID) => {
+                const resourceConfig = state.resourceConfigs[bindingUUID];
+                return resourceConfig ? !resourceConfig.meta.disable : false;
+            }).length
+    );
+
 export const useBinding_backfillSupported = () =>
     useBindingStore((state) => state.backfillSupported);
 
