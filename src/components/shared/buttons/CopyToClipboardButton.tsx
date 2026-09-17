@@ -12,6 +12,7 @@ import { useCopyToClipboard } from 'src/hooks/useCopyToClipboard';
 //  into a hook.
 function CopyToClipboardButton({
     children,
+    label,
     writeValue,
 }: CopyToClipboardButtonProps) {
     const theme = useTheme();
@@ -24,6 +25,7 @@ function CopyToClipboardButton({
     if (!children) {
         return (
             <IconButton
+                aria-label={label}
                 size="small"
                 color={isCopied ? 'success' : undefined}
                 onClick={() => handleCopy(writeValue)}
