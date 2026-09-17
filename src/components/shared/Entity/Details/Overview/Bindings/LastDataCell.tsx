@@ -3,7 +3,6 @@ import type { SxProps, Theme } from '@mui/material';
 import { Box, Skeleton, TableCell, Tooltip, Typography } from '@mui/material';
 
 import { DateTime } from 'luxon';
-import { useIntl } from 'react-intl';
 
 import { getElapsed } from 'src/components/shared/Entity/Details/Overview/shared';
 
@@ -13,14 +12,10 @@ interface Props {
     // blank instead of claiming "never".
     lastPublishedAt: string | null;
     loading: boolean;
-    // Lets the table nudge this last column's padding to align with the
-    // card's own edge without every other cell needing the same override.
     sx?: SxProps<Theme>;
 }
 
-function LastDataCell({ lastPublishedAt, loading, sx }: Props) {
-    const intl = useIntl();
-
+export function LastDataCell({ lastPublishedAt, loading, sx }: Props) {
     if (loading) {
         return (
             <TableCell align="right" sx={sx}>
@@ -38,14 +33,6 @@ function LastDataCell({ lastPublishedAt, loading, sx }: Props) {
 
     return (
         <TableCell align="right" sx={sx}>
-            {/* Uncoloured, whatever the age. A fixed staleness threshold was
-                tried and does not survive the range picker: a capture stamps
-                this when it publishes, so on a 6h range no capture binding can
-                reach 24h and the warning is unreachable — while on a 30d range
-                it lights up permanently for reference tables that update
-                weekly by design, which is how a warning teaches people to stop
-                reading it. Sorting the column finds the quiet bindings without
-                asserting a threshold that has no stable meaning here. */}
             <Tooltip
                 placement="left"
                 title={timestamp.toLocaleString(DateTime.DATETIME_FULL)}
@@ -58,13 +45,6 @@ function LastDataCell({ lastPublishedAt, loading, sx }: Props) {
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    {/* Fixed-width and right-aligned for the same reason as
-                        the volume column's digit span: elapsed is always 1-2
-                        digits (minutes top out at 59, hours at 23, days at the
-                        30-day retention window), but "hour" vs "minutes" vs
-                        "days" suffixes differ enough in width that without a
-                        fixed box here, the digit itself drifts left and right
-                        between rows as the suffix changes length. */}
                     <Box
                         component="span"
                         sx={{
@@ -76,22 +56,11 @@ function LastDataCell({ lastPublishedAt, loading, sx }: Props) {
                         {elapsed.value}
                     </Box>
 
-                    {/* Unit and "ago" read at the same weight as the figure
-                        they belong to, matching the volume and lag columns'
-                        own unit suffixes. */}
                     <Box component="span" sx={{ pl: 0.5 }}>
-                        {intl.formatMessage(
-                            { id: elapsed.unitLabelId },
-                            { count: elapsed.value }
-                        )}{' '}
-                        {intl.formatMessage({
-                            id: 'detailsPanel.elapsed.ago.suffix',
-                        })}
+                        {elapsed.unit} ago
                     </Box>
                 </Typography>
             </Tooltip>
         </TableCell>
     );
 }
-
-export default LastDataCell;

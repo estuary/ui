@@ -59,13 +59,8 @@ export const Materialization: Story = {
 };
 
 /**
- * The two lag columns, materialization-only. Every third row cycles through a
- * caught-up binding (a literal 0 reading, rendered as "Caught up" rather than
- * a blank — every stream here has a reading, so the "no reading yet" dash
- * never shows), a moderately-behind one (about an hour of bytes, a few hours
- * of source time), and a heavily-behind one (about a day of bytes, a couple
- * of days of source time) — see `buildMaterializationRowsWithBacklog` for
- * exactly how each tier is derived.
+ * The two lag columns, materialization-only. Every third row cycles through
+ * caught up, moderately behind and heavily behind.
  */
 export const MaterializationBacklog: Story = {
     render: () => (
@@ -86,10 +81,7 @@ export const SingleBinding: Story = {
     ),
 };
 
-/**
- * Every binding disabled — the case the old chip list rendered as an empty
- * field, because writes_to holds only enabled targets.
- */
+/** Every binding disabled. */
 export const NoneEnabled: Story = {
     render: () => (
         <BindingsHarness
@@ -115,11 +107,9 @@ export const Empty: Story = {
 };
 
 /**
- * 12 bindings, so the default 10-per-page pagination actually kicks in —
- * and every status the table can show (enabled, disabled, no data) plus the
- * full range of bar lengths all land on that first page regardless, without
- * paging through to see it. `job_openings` is disabled but still carries a
- * real bar; `eeoc` is enabled with none.
+ * 12 bindings, so pagination kicks in and every status the table can show lands
+ * on the first page. `job_openings` is disabled but carries a real bar; `eeoc`
+ * is enabled with none.
  */
 export const MixedStatusesOnePage: Story = {
     render: () => (
@@ -144,9 +134,8 @@ export const LargeTask: Story = {
 };
 
 /**
- * A wider range selected on the chart. The chip is the only thing that changes:
- * it takes its wording from the same message keys the picker uses, so the two
- * can never describe the same window differently.
+ * A wider range selected on the chart. The chip is the only thing that changes;
+ * it words the range the same way the picker does.
  */
 export const WiderRange: Story = {
     render: () => (
@@ -159,10 +148,8 @@ export const WiderRange: Story = {
 };
 
 /**
- * Between picking a range and its volumes arriving. Names and statuses come from
- * the spec and stay put; only Docs and Data go to skeletons — and the rows hold
- * their existing order, so the table does not reshuffle and then reshuffle back.
- * On a task with a thousand bindings this is a real wait, not a flash.
+ * Between picking a range and its volumes arriving. Names and statuses stay put;
+ * only Docs and Data go to skeletons, and the rows hold their existing order.
  */
 export const VolumesLoading: Story = {
     render: () => (

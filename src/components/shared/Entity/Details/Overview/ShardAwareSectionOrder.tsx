@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { ShardEntityTypes } from 'src/stores/ShardDetail/types';
 
-import useShardStatusNeedsAttention from 'src/hooks/details/useShardStatusNeedsAttention';
+import { useShardStatusNeedsAttention } from 'src/hooks/details/useShardStatusNeedsAttention';
 
 interface Props {
     shardInformation: ReactNode;
@@ -15,20 +15,13 @@ interface Props {
 
 /**
  * Orders the Overview tab's Shard Information card against the rest of the
- * page. People rely on shard status to flag an unhealthy task, so when it
- * needs attention, this card jumps above everything else instead of sitting
- * below it — "anything but running" shouldn't be scrollable-past.
+ * page: when shard status needs attention the card jumps above everything else.
  *
- * Reads shard status itself (`taskName`/`taskTypes` in, not a precomputed
- * boolean) so a status tick only re-renders this small component rather
- * than `Overview` and everything it builds — the usage chart, the details
- * rail, bindings, task endpoints — none of which this decision touches.
- *
- * Split out from `Overview/index.tsx` so Storybook can show the reorder on
- * its own — the page itself pulls in the usage chart, the details rail, and
- * live binding data, none of which this behaviour depends on.
+ * Reads shard status itself rather than taking a precomputed boolean, so a
+ * status tick re-renders only this component rather than `Overview` and the
+ * usage chart, details rail and bindings it builds.
  */
-function ShardAwareSectionOrder({
+export function ShardAwareSectionOrder({
     shardInformation,
     taskName,
     taskSections,
@@ -44,5 +37,3 @@ function ShardAwareSectionOrder({
         </>
     );
 }
-
-export default ShardAwareSectionOrder;

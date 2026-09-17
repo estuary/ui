@@ -26,9 +26,7 @@ interface BindingsTableState {
             update: (previous: BindingsFilterState) => BindingsFilterState
         ) => void;
         page: (next: number) => void;
-        // Clears the search query and status chip in one step, for the empty
-        // state's "clear filter" action — resetting each separately would
-        // re-filter (and re-render the empty state) in between.
+        // One step rather than two, so the table does not re-filter in between.
         resetFilter: () => void;
         rowsPerPage: (next: number) => void;
         sort: (nextKey: BindingSortKey) => void;
@@ -45,17 +43,15 @@ interface BindingsTableState {
 /**
  * Filter, sort and paging state for the bindings table.
  *
- * A hook rather than inline state because the Storybook harness needs the same
- * wiring, and a second copy of it had already drifted from this one — the
- * harness fused the filter and sort memos, so a story could not have shown the
- * behaviour the page has.
+ * A hook rather than inline state so the Storybook harness shares the exact
+ * wiring the page uses.
  */
 export function useBindingsTableState(
     bindings: BindingRow[]
 ): BindingsTableState {
     const [filter, setFilter] = useState<BindingsFilterState>(DEFAULT_FILTER);
-    // Volume descending: alphabetical only helps when you already know the
-    // name, and then you would search for it.
+    // Volume descending: alphabetical only helps if you already know the name,
+    // and then you would search for it.
     const [sortKey, setSortKey] = useState<BindingSortKey>('bytes');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [page, setPage] = useState(0);

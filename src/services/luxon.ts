@@ -87,6 +87,19 @@ export const getRangeLabelDescriptor = (range: DataByHourRange) => {
     };
 };
 
+/**
+ * The same wording as `getRangeLabelDescriptor`, as a plain string.
+ *
+ * Both exist only while the range picker is still on react-intl; fold this one
+ * into that caller and drop the descriptor once it migrates.
+ */
+export const getRangeLabel = (range: DataByHourRange): string => {
+    const { relativeUnit, selectedLabelKey } =
+        LUXON_GRAIN_SETTINGS[range.grain];
+
+    return selectedLabelKey ? 'Year' : `${range.amount} ${relativeUnit}`;
+};
+
 // Spells out a duration in whole units, leaving out the units that are zero.
 // Luxon's own `toHuman` keeps them, which turns a few seconds into
 // "0 days, 0 hours, 0 minutes, 3 seconds".

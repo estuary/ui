@@ -9,46 +9,37 @@ import {
     MinusCircleSolid,
     WarningCircleSolid,
 } from 'iconoir-react';
-import { useIntl } from 'react-intl';
 
 import { diminishedTextColor } from 'src/context/Theme';
 
 const ICON_SIZE = 14;
 
-// Three visual states, not two. "Enabled" alone answers "is this switched on?",
-// which is not the question a status column should be answering — the state
-// worth surfacing at a glance is whether the binding is actually moving
-// anything. Whether the task's *connector* is erroring is a task-wide signal
-// (surfaced instead as a chip in the card header, see BindingsCardHeader) —
-// painting every enabled row identically red on a shared failure defeats the
-// one job this column has, telling rows apart from each other.
+// Three states, not two: a binding can be switched on yet moving nothing. A
+// task-wide connector failure is deliberately not one of them — that is a chip
+// in the card header, because painting every row red on a shared failure stops
+// this column telling rows apart.
 type StatusVariant = 'enabled' | 'disabled' | 'warning';
 
-const LABEL_IDS: Record<StatusVariant, string> = {
-    enabled: 'detailsPanel.bindings.status.enabled',
-    disabled: 'detailsPanel.bindings.status.disabled',
-    warning: 'detailsPanel.bindings.status.noData',
+// "Enabled" rather than "Active": the flag only says the binding is not
+// switched off, which is not a claim that data is flowing.
+const LABELS: Record<StatusVariant, string> = {
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+    warning: 'No data',
 };
 
-const TOOLTIP_IDS: Partial<Record<StatusVariant, string>> = {
-    warning: 'detailsPanel.bindings.status.noData.tooltip',
+const TOOLTIPS: Partial<Record<StatusVariant, string>> = {
+    warning: 'Enabled, but no documents were captured in the selected range.',
 };
 
-// A distinct icon per variant, not just a distinct color, so the state reads
-// at a glance even to someone who can't rely on hue (and so it survives a
-// screenshot in grayscale). Solid glyphs match the filled-pill treatment used
-// across all three states, so they read as one vocabulary.
+// A distinct icon per variant, not just a distinct colour, so the state reads
+// without relying on hue.
 const ICONS: Record<StatusVariant, ComponentType<SVGProps<SVGSVGElement>>> = {
     enabled: CheckCircleSolid,
     disabled: MinusCircleSolid,
     warning: WarningCircleSolid,
 };
 
-// A pill per variant: filled success for a binding actually moving data,
-// filled warning for one that's on but merely silent, and a hollow
-// neutral pill for one switched off outright — so "off" reads as absent
-// rather than merely quieter than "on but stuck", which is the
-// distinction that matters at a glance.
 const getVariantColors = (
     theme: Theme
 ): Record<
@@ -80,8 +71,7 @@ interface Props {
     hasVolume?: boolean;
 }
 
-function StatusCell({ status, hasVolume }: Props) {
-    const intl = useIntl();
+export function StatusCell({ status, hasVolume }: Props) {
     const theme = useTheme();
 
     const variant: StatusVariant =
@@ -131,20 +121,17 @@ function StatusCell({ status, hasVolume }: Props) {
                     whiteSpace: 'nowrap',
                 }}
             >
-                {intl.formatMessage({ id: LABEL_IDS[variant] })}
+                {LABELS[variant]}
             </Typography>
         </Stack>
     );
 
-    const tooltipId = TOOLTIP_IDS[variant];
+    const tooltip = TOOLTIPS[variant];
 
     return (
         <TableCell>
-            {tooltipId ? (
-                <Tooltip
-                    title={intl.formatMessage({ id: tooltipId })}
-                    placement="top"
-                >
+            {tooltip ? (
+                <Tooltip title={tooltip} placement="top">
                     {pill}
                 </Tooltip>
             ) : (
@@ -153,5 +140,3 @@ function StatusCell({ status, hasVolume }: Props) {
         </TableCell>
     );
 }
-
-export default StatusCell;

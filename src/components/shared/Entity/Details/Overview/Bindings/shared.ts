@@ -23,16 +23,9 @@ import { getCollectionName } from 'src/utils/workflow-utils';
 export const BINDINGS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 export const DEFAULT_BINDINGS_PER_PAGE = 10;
 
-// formatBytes always renders 2 fraction digits ("1.20 GB", "854.00 MB"), but
-// the unit segment's width still shifts the digits left/right between rows.
-// Splitting the digits from the unit and right-aligning the digits in a fixed
-// box keeps the decimal point lined up vertically down the column, the way
-// Vercel's numeric table columns do.
-//
-// A plain split on the space `formatBytes` (via `prettyBytes`) always emits
-// between the number and unit — verified against the library's default
-// `space: true` behaviour, which this call never overrides — rather than a
-// regex re-deriving a shape the string is already guaranteed to have.
+// Splits on the space `formatBytes` (via `prettyBytes`) always emits between
+// the number and its unit, so the digits can be right-aligned independently of
+// the unit's width.
 export const splitFormattedBytes = (formatted: string): [string, string] => {
     const spaceIndex = formatted.indexOf(' ');
     return spaceIndex === -1
@@ -41,13 +34,11 @@ export const splitFormattedBytes = (formatted: string): [string, string] => {
 };
 
 // A capture's rows carry a source stream as well as a collection, so its search
-// covers both. Read from here rather than branching at each call site: the
-// Storybook harness has to word this the same way the page does, or a story
-// shows something the app never shows.
-export const getSearchLabelId = (entityType: Entity): string =>
+// covers both.
+export const getSearchLabel = (entityType: Entity): string =>
     entityType === 'materialization'
-        ? 'detailsPanel.bindings.search.materialization'
-        : 'detailsPanel.bindings.search.capture';
+        ? 'Filter by collection'
+        : 'Filter by source stream or collection';
 
 // Fallback keys, for a spec whose resource predates `_meta.path`. Endpoint
 // resource configs are connector-specific, so there is no single field holding
@@ -65,10 +56,9 @@ const RESOURCE_NAME_KEYS = [
     'path',
 ];
 
-// Qualifiers that read naturally as a prefix on the name above. Deliberately
-// excludes `prefix`, which is not reliably a namespace: source-hello-world uses
-// it for a greeting template, so treating it as one rendered a binding as
-// "Hello {}!.greetings".
+// Deliberately excludes `prefix`, which is not reliably a namespace:
+// source-hello-world uses it for a greeting template, so treating it as one
+// rendered a binding as "Hello {}!.greetings".
 const RESOURCE_NAMESPACE_KEYS = ['schema', 'namespace', 'database'];
 
 const asDisplayValue = (value: unknown): string | undefined => {
@@ -80,9 +70,8 @@ const asDisplayValue = (value: unknown): string | undefined => {
         return String(value);
     }
 
-    // Resources are often expressed as a path array. Joined with a dot, the same
-    // way `_meta.path` is, because these read as qualified names
-    // ("public.orders") rather than as file paths.
+    // Resources are often expressed as a path array, joined with a dot because
+    // these read as qualified names ("public.orders") rather than file paths.
     if (Array.isArray(value)) {
         const segments = value.filter(
             (segment): segment is string =>
@@ -113,16 +102,13 @@ const firstDisplayValue = (
 /**
  * The endpoint resource a binding reads from or writes to, as a display string.
  *
- * `resource._meta.path` is the authoritative answer where it exists: it is the
- * resource path the connector itself declared at discovery, it is present on
- * every binding a recent agent wrote, and `getBindingIndexByResourcePath`
- * already treats it as the identity of a binding. Guessing from field names is
- * only a fallback for older specs.
- *
- * Falls back to the collection's own last path segment so the column is never
- * blank: an unrecognised resource shape should still leave the row identifiable.
+ * `resource._meta.path` is authoritative where it exists: it is the resource
+ * path the connector declared at discovery, present on every binding a recent
+ * agent wrote, and `getBindingIndexByResourcePath` already treats it as the
+ * identity of a binding. Guessing from field names is only a fallback for older
+ * specs.
  */
-export const getResourcePath = (
+const getResourcePath = (
     resource: Record<string, any> | undefined,
     collection: string
 ): string => {
@@ -135,8 +121,6 @@ export const getResourcePath = (
     const declaredPath = asDisplayValue(resource._meta?.path);
 
     if (declaredPath) {
-        // Joined with a dot rather than a slash: these read as qualified names
-        // ("public.orders"), not as file paths.
         return Array.isArray(resource._meta.path)
             ? resource._meta.path.filter(Boolean).join('.')
             : declaredPath;
@@ -163,7 +147,7 @@ export const getResourcePath = (
  * the usage graph reports beside it.
  *   https://github.com/estuary/flow/blob/master/ops-catalog/catalog-stats.ts
  */
-export const readVolume = (
+const readVolume = (
     stats: CaptureBindingStats | MaterializeBindingStats | undefined,
     entityType: Entity
 ) => {
@@ -179,12 +163,9 @@ export const readVolume = (
 };
 
 /**
- * Per-binding freshness, from whichever field the entity records it in.
- *
- * A capture stamps the document it published; a materialization stamps the
- * *source* document it processed. Different fields, and only loosely the same
- * question — but on their own page each is the honest answer to "when did this
- * binding last move anything", which is what the column asks.
+ * Per-binding freshness, from whichever field the entity records it in: a
+ * capture stamps the document it published, a materialization stamps the
+ * *source* document it processed.
  */
 const readLastPublishedAt = (
     stats: CaptureBindingStats | MaterializeBindingStats | undefined,
@@ -198,30 +179,17 @@ const readLastPublishedAt = (
  * Per-collection figures over a window, accumulated across its intervals.
  *
  * `catalog_stats` holds one row per interval of a grain, each carrying its own
- * full per-binding breakdown, so the window total is the sum over rows. This is
- * the same accumulation the task's own `bytes_written_by_me`/`bytes_read_by_me`
- * get in the chart above the table, which is what keeps the two agreeing.
+ * full per-binding breakdown, so the window total is the sum over rows — the
+ * same accumulation the chart above the table performs, which is what keeps the
+ * two agreeing. A collection absent from an interval contributed nothing to it
+ * and must not zero out the intervals where it did appear.
  *
- * A collection absent from an interval simply contributed nothing to it; it is
- * not an error, and it must not zero out the intervals where it did appear.
- *
- * Volumes sum. The timestamp takes the maximum *of the intervals that moved
- * data*, which is two decisions:
- *
- * - Maximum across intervals, because within one interval the field is
- *   last-write-wins and means "the frontier as of that interval", so the newest
- *   of those is the one the selected window is asking about. This is a different
- *   question from the one the stats pipeline answers, where a `maximize` reduce
- *   would be wrong — see `MaterializeBindingStats` in `src/types`. There the
- *   field tracks a catch-up frontier over all time and must be free to go
- *   backwards; here the window is fixed, so taking its newest cannot hide a task
- *   falling behind.
- * - Only from intervals with volume, because an interval can carry a timestamp
- *   while the binding moved nothing in it. Reporting that as "last data" would
- *   put a time in the column beside a zero, which the table elsewhere promises
- *   not to do.
+ * The timestamp takes the maximum of the intervals *that moved data*. Within one
+ * interval the field is last-write-wins, so the newest is what the window asks
+ * about; but an interval can carry a timestamp while the binding moved nothing,
+ * and reporting that would put a time beside a zero.
  */
-export const accumulateBindingStats = (
+const accumulateBindingStats = (
     taskStatsByInterval: TaskStats[] | null | undefined,
     entityType: Entity
 ): Map<string, BindingVolume> => {
@@ -244,8 +212,6 @@ export const accumulateBindingStats = (
         for (const [collection, stats] of Object.entries(byCollection)) {
             const { bytes, docs } = readVolume(stats, entityType);
 
-            // See the note above: a timestamp only counts from an interval that
-            // actually moved something.
             const lastPublishedAt =
                 docs > 0 || bytes > 0
                     ? readLastPublishedAt(stats, entityType)
@@ -302,12 +268,9 @@ export const buildBindingRows = (
             resourcePath: getResourcePath(binding.resource, collection),
             // `disable` is absent rather than false on an enabled binding.
             status: binding.disable ? 'disabled' : 'enabled',
-            // Neither figure comes from the spec/stats join this function does —
-            // captures have no upstream frontier to be behind, and a
+            // Captures have no upstream frontier to be behind, and a
             // materialization's readings are attached afterward by
-            // `attachBacklogReadings` once its backlog query resolves. Null here
-            // is simply "not attached yet", same meaning it has everywhere else
-            // on the row.
+            // `attachBacklogReadings`.
             bytesBehind: null,
             secondsBehind: null,
             ...(totals.get(collection) ?? {
@@ -324,18 +287,14 @@ export const buildBindingRows = (
  * collection name.
  *
  * A pure join rather than folded into `buildBindingRows`: the backlog and
- * time-lag queries resolve on their own schedule (a second request, chained
- * off the first — see `useMaterializationBacklog`), so the rows exist and
- * render before either answers, and this runs again each time one does.
+ * time-lag queries resolve on their own schedule, so the rows render before
+ * either answers and this runs again each time one does.
  */
 export const attachBacklogReadings = (
     rows: BindingRow[],
     backlog: MaterializationBacklog | null,
     timeLag: MaterializationTimeLag | null
 ): BindingRow[] => {
-    // Captures never get here (see `useBindings`), and a materialization whose
-    // backlog hasn't loaded yet simply hasn't attached readings; either way the
-    // null every row already carries from `buildBindingRows` is the answer.
     if (!backlog) {
         return rows;
     }
@@ -353,19 +312,13 @@ export const attachBacklogReadings = (
         ]) ?? []
     );
 
-    // Matched by collection name rather than by `status`: a binding disabled
-    // recently enough that the latest hourly stats row still names it keeps
-    // whatever reading that row carries, rather than being forced back to
-    // null. That is the correct reading, not a stale leftover — the row
-    // describes real backlog the task had at that moment, disabled binding or
-    // not, and disabling doesn't retroactively erase it. `buildBindingRows`
-    // already surfaces disabled bindings for the same reason (see its own
-    // comment); this join simply doesn't special-case status at all.
+    // Status is deliberately not consulted: a recently disabled binding still
+    // named by the latest stats row keeps that row's reading, which describes
+    // real backlog the task had at that moment.
     return rows.map((row) => ({
         ...row,
         // `.get` returning undefined (collection absent from the reading) is
-        // distinct from a real 0: `??` only substitutes on nullish, so a
-        // genuine "caught up" reading of 0 survives untouched.
+        // distinct from a real 0, which `??` leaves untouched.
         bytesBehind: bytesBehindByCollection.get(row.collection) ?? null,
         secondsBehind: secondsBehindByCollection.get(row.collection) ?? null,
     }));
@@ -374,20 +327,10 @@ export const attachBacklogReadings = (
 /**
  * Which of two independent query failures `useBindings` should surface.
  *
- * A failed backlog/time-lag fetch leaves every row's `bytesBehind`/
- * `secondsBehind` at `null` — the same shape as "not attached yet" or
- * "caught up" — so silently dropping that error would render those columns as
- * quietly current instead of erroring, the exact trap `BacklogSection`'s own
- * comment warns about at the task level. But the stats error takes
- * precedence when both are present: it blanks names, statuses and every
- * other column, not just the two lag ones, so it is the more consequential
- * of the two and the one a single error slot should report.
- *
- * Pulled out of `useBindings` as a pure function rather than left as an
- * inline `??`, purely so this precedence rule has a unit test — the hook
- * itself is thin SWR wiring with no test of its own in this codebase, and
- * getting this one line backwards would silently swap which failure a
- * customer's screenshot shows.
+ * A failed backlog fetch leaves every row's `bytesBehind`/`secondsBehind` at
+ * `null` — the same shape as "caught up" — so dropping that error would render
+ * those columns as quietly current. The stats error still takes precedence when
+ * both are present: it blanks every column, not just the two lag ones.
  */
 export const combineBindingsError = (
     statsError: unknown,
@@ -407,12 +350,11 @@ export const countBindings = (rows: BindingRow[]): BindingCounts => {
 /**
  * Everything the task moved over the selected range.
  *
- * The total counts each collection once, not each row. `catalog_stats` breaks
- * volume down per collection, not per binding, so two bindings on one collection
- * — a materialization writing one collection to two tables is ordinary — each
- * carry that collection's whole figure. Summing rows would then report more than
- * the task moved, and disagree with the chart above it. Nothing better is
- * available per row: there is no per-binding split to attribute.
+ * Counts each collection once, not each row. `catalog_stats` breaks volume down
+ * per collection rather than per binding, so two bindings on one collection — a
+ * materialization writing one collection to two tables is ordinary — each carry
+ * that collection's whole figure, and summing rows would report more than the
+ * task moved.
  */
 export const getVolumeTotals = (rows: BindingRow[]): { totalBytes: number } => {
     const countedCollections = new Set<string>();
@@ -433,12 +375,9 @@ const compareStrings = (left: string, right: string) =>
 
 const compareNumbers = (left: number, right: number) => left - right;
 
-// A row with no reading — every capture, and a materialization binding the
-// latest backlog didn't cover — is treated as caught up rather than as an
-// unknown worth surfacing first, the same "missing is least severe" rule
-// `lastPublishedAt` uses below. -1 is a safe stand-in because a real reading
-// is never negative, and it keeps this a plain subtraction (no NaN from
-// `Infinity - Infinity` if both sides are missing).
+// A row with no reading is treated as caught up rather than as an unknown worth
+// surfacing first. -1 is safe because a real reading is never negative, and it
+// keeps this a plain subtraction.
 const compareBehind = (left: number | null, right: number | null) =>
     compareNumbers(left ?? -1, right ?? -1);
 
@@ -452,10 +391,8 @@ const comparators: Record<
     collection: (left, right) =>
         compareStrings(left.collection, right.collection),
     docs: (left, right) => compareNumbers(left.docs, right.docs),
-    // A binding that moved nothing in the window has no timestamp. Treated as
-    // older than everything that does, so descending puts the live bindings
-    // first and ascending groups the silent ones at the top — which is the
-    // reason to sort this column at all.
+    // A binding that moved nothing in the window has no timestamp, and sorts as
+    // older than everything that does.
     lastPublishedAt: (left, right) =>
         compareStrings(left.lastPublishedAt ?? '', right.lastPublishedAt ?? ''),
     resourcePath: (left, right) =>

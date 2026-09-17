@@ -16,9 +16,8 @@ import {
 
 import { Download } from 'iconoir-react';
 import CsvDownload from 'react-csv-downloader';
-import { useIntl } from 'react-intl';
 
-import RangeChip from 'src/components/shared/Entity/Details/Overview/RangeChip';
+import { RangeChip } from 'src/components/shared/Entity/Details/Overview/RangeChip';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import {
     generateFileName,
@@ -32,8 +31,6 @@ import {
 interface Props {
     count: number;
     entityType: Entity;
-    // Loading and empty both disable the download button: there is nothing
-    // meaningful to export yet, or nothing at all.
     loading: boolean;
     // The window the figures cover, so an export always matches what the
     // header and table are currently showing.
@@ -42,14 +39,7 @@ interface Props {
     totalBytes: number;
 }
 
-/**
- * The Bindings card heading and its summary line.
- *
- * A component rather than inline markup so the Storybook harness renders the
- * same heading as the page does — an inline copy had already drifted on font
- * weight, which made a review screenshot show something the app never showed.
- */
-function BindingsCardHeader({
+export function BindingsCardHeader({
     count,
     entityType,
     loading,
@@ -57,59 +47,27 @@ function BindingsCardHeader({
     rows,
     totalBytes,
 }: Props) {
-    const intl = useIntl();
     const theme = useTheme();
 
     const isCapture = entityType !== 'materialization';
 
-    // Mirrors the table's own columns, so the export matches what the card
-    // is currently showing rather than some other cut of the same rows.
+    // Mirrors the table's own columns, so the export matches what the card is
+    // showing rather than some other cut of the same rows.
     const exportColumns = useMemo<Columns>(
         () => [
             ...(isCapture
-                ? [
-                      {
-                          id: 'sourceStream',
-                          displayName: intl.formatMessage({
-                              id: 'detailsPanel.bindings.column.sourceStream',
-                          }),
-                      },
-                  ]
+                ? [{ id: 'sourceStream', displayName: 'Source stream' }]
                 : []),
-            {
-                id: 'collection',
-                displayName: intl.formatMessage({
-                    id: 'detailsPanel.bindings.column.collection',
-                }),
-            },
-            {
-                id: 'status',
-                displayName: intl.formatMessage({
-                    id: 'detailsPanel.bindings.column.status',
-                }),
-            },
-            {
-                id: 'docs',
-                displayName: intl.formatMessage({
-                    id: 'detailsPanel.bindings.column.docs',
-                }),
-            },
+            { id: 'collection', displayName: 'Collection' },
+            { id: 'status', displayName: 'Status' },
+            { id: 'docs', displayName: 'Docs' },
             {
                 id: 'bytes',
-                displayName: intl.formatMessage({
-                    id: isCapture
-                        ? 'detailsPanel.bindings.column.dataWritten'
-                        : 'detailsPanel.bindings.column.dataRead',
-                }),
+                displayName: isCapture ? 'Data written' : 'Data read',
             },
-            {
-                id: 'lastData',
-                displayName: intl.formatMessage({
-                    id: 'detailsPanel.bindings.column.lastData',
-                }),
-            },
+            { id: 'lastData', displayName: 'Last data' },
         ],
-        [intl, isCapture]
+        [isCapture]
     );
 
     const exportData = useMemo(
@@ -125,6 +83,9 @@ function BindingsCardHeader({
         [isCapture, rows]
     );
 
+    const unit = count === 1 ? 'collection' : 'collections';
+    const verb = entityType === 'materialization' ? 'read' : 'written';
+
     return (
         <Stack
             direction="row"
@@ -138,7 +99,7 @@ function BindingsCardHeader({
         >
             <Stack direction="row" spacing={1} sx={{ alignItems: 'baseline' }}>
                 <Typography component="span" sx={cardHeaderSx_emphasized}>
-                    {intl.formatMessage({ id: 'terms.collections' })}
+                    Collections
                 </Typography>
 
                 <RangeChip range={range} />
@@ -159,24 +120,7 @@ function BindingsCardHeader({
                             sx={{ display: 'inline-block' }}
                         />
                     ) : (
-                        intl.formatMessage(
-                            {
-                                id:
-                                    entityType === 'materialization'
-                                        ? 'detailsPanel.bindings.subtitle.read'
-                                        : 'detailsPanel.bindings.subtitle.written',
-                            },
-                            {
-                                count,
-                                // Composed rather than re-pluralised here, so the
-                                // word matches everywhere it appears in the app.
-                                unit: intl.formatMessage(
-                                    { id: 'terms.collections.plural' },
-                                    { count }
-                                ),
-                                volume: formatBytes(totalBytes),
-                            }
-                        )
+                        `${count} ${unit} · ${formatBytes(totalBytes)} ${verb}`
                     )}
                 </Typography>
 
@@ -187,16 +131,10 @@ function BindingsCardHeader({
                     filename={generateFileName('collections')}
                     separator={tableExportSeparator}
                 >
-                    <Tooltip
-                        title={intl.formatMessage({
-                            id: 'detailsPanel.bindings.download',
-                        })}
-                    >
+                    <Tooltip title="Download CSV">
                         <span>
                             <IconButton
-                                aria-label={intl.formatMessage({
-                                    id: 'detailsPanel.bindings.download',
-                                })}
+                                aria-label="Download CSV"
                                 disabled={loading || rows.length === 0}
                                 size="small"
                             >
@@ -209,5 +147,3 @@ function BindingsCardHeader({
         </Stack>
     );
 }
-
-export default BindingsCardHeader;

@@ -1,7 +1,5 @@
 import { Box, Stack, Tooltip, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import CopyToClipboardButton from 'src/components/shared/buttons/CopyToClipboardButton';
 import EditButton from 'src/components/shared/Entity/Details/ToolBar/EditButton';
 import MaterializeButton from 'src/components/shared/Entity/Details/ToolBar/MaterializeButton';
@@ -11,11 +9,9 @@ import useGlobalSearchParams, {
 } from 'src/hooks/searchParams/useGlobalSearchParams';
 
 function DetailsToolBar() {
-    const intl = useIntl();
-
     const catalogName = useGlobalSearchParams(GlobalSearchParams.CATALOG_NAME);
 
-    const copyLabel = intl.formatMessage({ id: 'details.toolbar.copyName' });
+    const copyLabel = 'Copy name';
 
     return (
         <Stack

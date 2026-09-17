@@ -7,11 +7,14 @@ import {
     useTheme,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { splitFormattedBytes } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
 import { diminishedTextColor } from 'src/context/Theme';
+
+const percentFormat = new Intl.NumberFormat(undefined, {
+    style: 'percent',
+    maximumFractionDigits: 1,
+});
 
 interface Props {
     bytes: number;
@@ -19,14 +22,11 @@ interface Props {
     // known yet. The number underneath belongs to the previous range and is only
     // there to hold the row's place in the sort — never render it.
     loading?: boolean;
-    // Task total, used for the share figure in the tooltip — which is the
-    // number someone actually wants ("this binding is a third of the
-    // traffic").
+    // Task total, used for the share figure in the tooltip.
     totalBytes: number;
 }
 
-function VolumeCell({ bytes, loading, totalBytes }: Props) {
-    const intl = useIntl();
+export function VolumeCell({ bytes, loading, totalBytes }: Props) {
     const theme = useTheme();
 
     if (loading) {
@@ -45,20 +45,11 @@ function VolumeCell({ bytes, loading, totalBytes }: Props) {
         <TableCell align="right" sx={{ minWidth: 124 }}>
             <Tooltip
                 placement="left"
-                title={intl.formatMessage(
-                    {
-                        id:
-                            bytes === 0
-                                ? 'detailsPanel.bindings.volume.none.tooltip'
-                                : 'detailsPanel.bindings.volume.tooltip',
-                    },
-                    {
-                        share: intl.formatNumber(shareOfTotal, {
-                            style: 'percent',
-                            maximumFractionDigits: 1,
-                        }),
-                    }
-                )}
+                title={
+                    bytes === 0
+                        ? 'No data recorded for this binding in the selected range.'
+                        : `${percentFormat.format(shareOfTotal)} of this task's total volume for the selected range — not a lag or progress indicator. Bar length is relative to the busiest collection.`
+                }
             >
                 <Box
                     sx={{
@@ -93,10 +84,8 @@ function VolumeCell({ bytes, loading, totalBytes }: Props) {
                         <Box
                             component="span"
                             sx={{
-                                // No colour of its own: it inherits, which
-                                // keeps the unit level with the digits it
-                                // belongs to and still lets the zero-volume
-                                // dimming on the parent carry through.
+                                // No colour of its own, so the parent's
+                                // zero-volume dimming carries through.
                                 minWidth: 30,
                                 pl: 0.5,
                                 textAlign: 'left',
@@ -110,5 +99,3 @@ function VolumeCell({ bytes, loading, totalBytes }: Props) {
         </TableCell>
     );
 }
-
-export default VolumeCell;

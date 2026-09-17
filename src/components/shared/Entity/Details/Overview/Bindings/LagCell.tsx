@@ -2,25 +2,23 @@ import type { SxProps, Theme } from '@mui/material';
 
 import { Box, Skeleton, TableCell, Tooltip, Typography } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { splitFormattedBytes } from 'src/components/shared/Entity/Details/Overview/Bindings/shared';
 import { secondsToElapsed } from 'src/components/shared/Entity/Details/Overview/shared';
 import { formatBytes } from 'src/components/tables/cells/stats/shared';
 
 type LagKind = 'bytes' | 'seconds';
 
-// One tooltip per kind, plus a "no reading" variant for null — both kinds share
-// the same reasons a reading can be absent (see BindingRow.bytesBehind), so the
-// wording only needs to change with the unit.
-const TOOLTIP_IDS: Record<LagKind, { none: string; value: string }> = {
+// Both figures read from a gauge that is only re-anchored on a fresh reading,
+// not recomputed live, so a binding that has caught up can still show a stale
+// nonzero figure. Hence the hedge in both tooltips.
+const TOOLTIPS: Record<LagKind, { none: string; value: string }> = {
     bytes: {
-        value: 'detailsPanel.bindings.bytesBehind.tooltip',
-        none: 'detailsPanel.bindings.bytesBehind.none.tooltip',
+        value: "Bytes still to write, as of the task's last stats reading rather than the selected range. Directional, not exact.",
+        none: 'No backlog reading yet for this binding.',
     },
     seconds: {
-        value: 'detailsPanel.bindings.secondsBehind.tooltip',
-        none: 'detailsPanel.bindings.secondsBehind.none.tooltip',
+        value: "Lag in source-publication time, as of the task's last stats reading rather than the selected range. Directional, not exact.",
+        none: 'No time-lag reading yet for this binding.',
     },
 };
 
@@ -39,9 +37,7 @@ interface Props {
     value: number | null;
 }
 
-function LagCell({ kind, loading, sx, value }: Props) {
-    const intl = useIntl();
-
+export function LagCell({ kind, loading, sx, value }: Props) {
     const content = (() => {
         if (loading) {
             return <Skeleton width={48} sx={{ display: 'inline-block' }} />;
@@ -49,10 +45,7 @@ function LagCell({ kind, loading, sx, value }: Props) {
 
         if (value === null) {
             return (
-                <Tooltip
-                    placement="left"
-                    title={intl.formatMessage({ id: TOOLTIP_IDS[kind].none })}
-                >
+                <Tooltip placement="left" title={TOOLTIPS[kind].none}>
                     <Box sx={{ cursor: 'help', display: 'inline-block' }}>
                         &mdash;
                     </Box>
@@ -60,15 +53,13 @@ function LagCell({ kind, loading, sx, value }: Props) {
             );
         }
 
-        const tooltip = intl.formatMessage({ id: TOOLTIP_IDS[kind].value });
+        const tooltip = TOOLTIPS[kind].value;
 
         if (value === 0) {
             return (
                 <Tooltip placement="left" title={tooltip}>
                     <Typography component="div" sx={{ cursor: 'help' }}>
-                        {intl.formatMessage({
-                            id: 'detailsPanel.bindings.behind.caughtUp',
-                        })}
+                        Caught up
                     </Typography>
                 </Tooltip>
             );
@@ -80,13 +71,7 @@ function LagCell({ kind, loading, sx, value }: Props) {
                 : (() => {
                       const elapsed = secondsToElapsed(value);
 
-                      return [
-                          String(elapsed.value),
-                          intl.formatMessage(
-                              { id: elapsed.unitLabelId },
-                              { count: elapsed.value }
-                          ),
-                      ];
+                      return [String(elapsed.value), elapsed.unit];
                   })();
 
         return (
@@ -132,5 +117,3 @@ function LagCell({ kind, loading, sx, value }: Props) {
         </TableCell>
     );
 }
-
-export default LagCell;

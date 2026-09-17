@@ -48,11 +48,7 @@ export const Healthy: Story = {
     ),
 };
 
-/**
- * A failed shard. Shard Information jumps above the bindings — the thing
- * people actually check during an incident shouldn't need a scroll past a
- * six-row table to find.
- */
+/** A failed shard: Shard Information jumps above the bindings. */
 export const NeedsAttention: Story = {
     render: () => (
         <ShardAwareSectionOrderHarness taskSections={BINDINGS} code="FAILED" />
@@ -60,10 +56,9 @@ export const NeedsAttention: Story = {
 };
 
 /**
- * A backfilling shard — non-primary and worth surfacing, but not a hard
- * failure. `shardsHaveErrors`/`shardsHaveWarnings` would both read false
- * here (see `useShardStatusNeedsAttention`), which is exactly the gap that
- * hook closes: the card still moves up.
+ * A backfilling shard: non-primary but not a hard failure, so
+ * `shardsHaveErrors`/`shardsHaveWarnings` both read false. The card still
+ * moves up — see `useShardStatusNeedsAttention`.
  */
 export const Backfilling: Story = {
     render: () => (

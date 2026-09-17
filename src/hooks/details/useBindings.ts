@@ -23,14 +23,8 @@ interface UseBindingsResponse {
     // The spec drives the rows, so they render before stats arrive; this flags
     // only that the volume columns are still filling in.
     statsLoading: boolean;
-    // The lag columns arrive from a second request, independent of the one
-    // `statsLoading` tracks (see `useMaterializationBacklog`), and it resolves
-    // on its own schedule — often after `statsLoading` has already gone false.
-    // Split in two rather than one combined flag: `bytesBehind` only waits on
-    // the first (backlog) query, while `secondsBehind` additionally waits on
-    // the time-lag query chained after it, so tying both columns to the
-    // slower flag would hold the bytes column in a loading state past the
-    // point its own data has actually arrived.
+    // Two flags rather than one: `bytesBehind` waits only on the backlog query,
+    // while `secondsBehind` also waits on the time-lag query chained after it.
     bytesBehindLoading: boolean;
     secondsBehindLoading: boolean;
 }
@@ -44,7 +38,7 @@ interface UseBindingsResponse {
  * The cost instead scales with intervals × bindings, which is why the caller
  * shows a loading state over these columns rather than treating them as instant.
  */
-function useBindings(
+export function useBindings(
     entityName: string,
     entityType: Entity,
     latestLiveSpec: LiveSpecsQuery_details | null
@@ -56,19 +50,14 @@ function useBindings(
             ? getBindingStats(entityName, range)
             : null,
         {
-            // Slower than the chart's 15s on purpose: the same window costs the
-            // chart four numbers per interval and costs this every binding on
-            // the task, so it is not a refresh worth paying for three times a
-            // minute.
+            // Slower than the chart's 15s: the same window costs the chart
+            // four numbers per interval and costs this every binding.
             revalidateOnMount: true,
             refreshInterval: 60000,
-            // Changing the range swaps the request key, so `data` would go
-            // undefined and every volume would momentarily read zero — which,
-            // because rows are sorted by volume, would reshuffle the whole
-            // table and then reshuffle it back. Holding the previous response
-            // keeps the row order still while the new window loads. Nothing
-            // stale is ever *shown*: `isLoading` is still true for the new key,
-            // so the volume cells render skeletons over these values.
+            // Changing the range swaps the request key, so every volume would
+            // momentarily read zero and reshuffle the volume-sorted table.
+            // Nothing stale is shown: `isLoading` is true for the new key, so
+            // the cells render skeletons over these values.
             keepPreviousData: true,
         }
     );
@@ -93,10 +82,8 @@ function useBindings(
         [entityType, intervals, latestLiveSpec]
     );
 
-    // Captures have no upstream frontier to be behind, so this only asks for a
-    // materialization — passing '' for a capture leans on the same
-    // `hasLength` gate `useMaterializationBacklog` already uses to skip the
-    // query entirely, rather than adding a second conditional here.
+    // Captures have no upstream frontier to be behind. Passing '' leans on the
+    // `hasLength` gate `useMaterializationBacklog` already uses to skip it.
     const {
         backlog,
         error: backlogError,
@@ -121,5 +108,3 @@ function useBindings(
         secondsBehindLoading: timeLagLoading,
     };
 }
-
-export default useBindings;

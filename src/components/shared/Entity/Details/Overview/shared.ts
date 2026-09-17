@@ -1,23 +1,18 @@
 import type { DateTime } from 'luxon';
 
-const UNIT_LABEL_IDS = {
-    minutes: 'detailsPanel.elapsed.minutes',
-    hours: 'detailsPanel.elapsed.hours',
-    days: 'detailsPanel.elapsed.days',
-} as const;
-
 export interface Elapsed {
-    unitLabelId: string;
+    unit: string;
     value: number;
 }
+
+const pluralize = (value: number, unit: string): string =>
+    value === 1 ? unit : `${unit}s`;
 
 /**
  * A count of seconds, bucketed to a number and a unit, floored at one minute.
  *
  * Split rather than pre-formatted so a caller can give the number visual weight
- * separately from its unit. Factored out of `getElapsed` so a caller already
- * holding a duration in seconds — a lag figure, say, rather than a timestamp to
- * diff — can reach the same bucketing without inventing a fake "ago" instant.
+ * separately from its unit.
  *
  * Minutes are the finest unit on purpose. Task stats reach `catalog_stats`
  * through two derivation rollups and a materialization, which floors reporting
@@ -32,25 +27,22 @@ export const secondsToElapsed = (seconds: number): Elapsed => {
     const magnitude = Math.max(0, Math.round(Math.abs(seconds)));
 
     if (magnitude < 3600) {
-        return {
-            // Never zero: "0 minutes ago" claims a precision the pipeline
-            // cannot deliver.
-            value: Math.max(1, Math.round(magnitude / 60)),
-            unitLabelId: UNIT_LABEL_IDS.minutes,
-        };
+        // Never zero: "0 minutes ago" claims a precision the pipeline cannot
+        // deliver.
+        const value = Math.max(1, Math.round(magnitude / 60));
+
+        return { value, unit: pluralize(value, 'minute') };
     }
 
     if (magnitude < 86400) {
-        return {
-            value: Math.round(magnitude / 3600),
-            unitLabelId: UNIT_LABEL_IDS.hours,
-        };
+        const value = Math.round(magnitude / 3600);
+
+        return { value, unit: pluralize(value, 'hour') };
     }
 
-    return {
-        value: Math.round(magnitude / 86400),
-        unitLabelId: UNIT_LABEL_IDS.days,
-    };
+    const value = Math.round(magnitude / 86400);
+
+    return { value, unit: pluralize(value, 'day') };
 };
 
 /**

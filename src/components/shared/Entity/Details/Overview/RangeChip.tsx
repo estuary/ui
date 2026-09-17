@@ -2,10 +2,8 @@ import type { DataByHourRange } from 'src/components/graphs/types';
 
 import { Tooltip, Typography, useTheme } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { defaultOutline, diminishedTextColor } from 'src/context/Theme';
-import { getRangeLabelDescriptor } from 'src/services/luxon';
+import { getRangeLabel } from 'src/services/luxon';
 
 interface Props {
     range: DataByHourRange;
@@ -14,24 +12,16 @@ interface Props {
 /**
  * The timeframe a card's figures cover, as a quiet chip beside its heading.
  *
- * The picker itself sits on the chart card above, so a card of totals further
- * down the page states nothing about its own window. That is the kind of thing
- * which gets misread once and then never trusted.
- *
- * The label comes from `getRangeLabelDescriptor`, the same helper DetailsRange
- * labels its button with, so a chip can never word the window differently from
- * the control that set it.
+ * The picker itself sits on the chart card above, so without this a card of
+ * totals further down the page states nothing about its own window.
  */
-function RangeChip({ range }: Props) {
-    const intl = useIntl();
+export function RangeChip({ range }: Props) {
     const theme = useTheme();
-
-    const { id, values } = getRangeLabelDescriptor(range);
 
     return (
         <Tooltip
             placement="top"
-            title={intl.formatMessage({ id: 'detailsPanel.rangeChip.tooltip' })}
+            title="Covers the timeframe selected on the chart above."
         >
             <Typography
                 component="span"
@@ -46,10 +36,8 @@ function RangeChip({ range }: Props) {
                     whiteSpace: 'nowrap',
                 }}
             >
-                {intl.formatMessage({ id }, values)}
+                {getRangeLabel(range)}
             </Typography>
         </Tooltip>
     );
 }
-
-export default RangeChip;

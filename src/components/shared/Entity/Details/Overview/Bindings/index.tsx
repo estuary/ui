@@ -1,8 +1,8 @@
 import type { LiveSpecsQuery_details } from 'src/hooks/useLiveSpecs';
 
-import BindingsCard from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsCard';
+import { BindingsCard } from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsCard';
 import { useEntityType } from 'src/context/EntityContext';
-import useBindings from 'src/hooks/details/useBindings';
+import { useBindings } from 'src/hooks/details/useBindings';
 import { useDetailsUsageStore } from 'src/stores/DetailsUsage/useDetailsUsageStore';
 
 interface Props {
@@ -13,13 +13,10 @@ interface Props {
 /**
  * The bindings of a capture or materialization, as a full-width section.
  *
- * These are the most-clicked thing on the page, and used to render as a chip
- * list inside a quarter-width rail with the remainder behind an "N more" toggle.
- *
  * The fetch lives here and the markup in `BindingsCard`, so Storybook can render
  * the same card from fixtures.
  */
-function Bindings({ entityName, latestLiveSpec }: Props) {
+export function Bindings({ entityName, latestLiveSpec }: Props) {
     const entityType = useEntityType();
 
     // Read here as well as in useBindings so the heading can state the window
@@ -46,5 +43,3 @@ function Bindings({ entityName, latestLiveSpec }: Props) {
         />
     );
 }
-
-export default Bindings;

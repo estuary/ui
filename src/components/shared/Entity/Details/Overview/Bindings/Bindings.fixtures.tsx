@@ -6,7 +6,7 @@ import type {
 } from 'src/hooks/details/shared';
 import type { Entity } from 'src/types';
 
-import BindingsCard from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsCard';
+import { BindingsCard } from 'src/components/shared/Entity/Details/Overview/Bindings/BindingsCard';
 import {
     attachBacklogReadings,
     buildBindingRows,
@@ -64,14 +64,9 @@ export const CAPTURE_STREAMS: StreamFixture[] = [
     ['job_stage_history', 0, 0, true],
 ];
 
-// 12 bindings so the default 10-per-page pagination actually kicks in, with
-// every status the table can show landing on that first page anyway:
-// `job_openings` is disabled but still carries real historical volume (a bar
-// and a grey pill together), and `eeoc` is enabled with none (an amber pill
-// and no bar) — sorted just ahead of the two zero-volume disabled streams
-// that spill onto page two, since `eeoc` alone ties them all on bytes but
-// sorts first alphabetically. The other eight are ordinary enabled bindings
-// with a wide volume spread, so the bar's length actually varies row to row.
+// 12 bindings so the default 10-per-page pagination kicks in, with every status
+// landing on the first page: `job_openings` is disabled but carries real
+// volume, `eeoc` is enabled with none.
 export const MIXED_STATUS_STREAMS: StreamFixture[] = [
     ['applications', 262_000_000, 1_418_000, false],
     ['candidates', 171_400_000, 963_000, false],
@@ -87,15 +82,12 @@ export const MIXED_STATUS_STREAMS: StreamFixture[] = [
     ['job_stage_history', 0, 0, true],
 ];
 
-// Recency modelled on a real production capture: `estuary/hubspot-native` runs
-// its busiest bindings at the reporting floor while the rest trail off. That
-// spread is the reason the strip takes the maximum rather than an average — the
-// mean of the real task reads 9.1 hours while it is perfectly current.
+// Recency modelled on `estuary/hubspot-native`, which runs its busiest bindings
+// at the reporting floor while the rest trail off.
 //
-// Bounded to just inside the stories' default six-hour range. A capture stamps
+// Bounded to just inside the stories' default six-hour range: a capture stamps
 // this field when it publishes, so its value always falls within the interval
-// reporting it: a story showing a capture binding three days old under a
-// "6 hours" chip would be showing a state the app cannot reach.
+// reporting it.
 const LAST_PUBLISHED_CEILING_SECONDS = 5.5 * 3600;
 
 const lastPublishedFor = (index: number, bytes: number): string | undefined => {
@@ -121,7 +113,6 @@ export const buildCaptureRows = (streams: StreamFixture[]): BindingRow[] =>
             target: `${PREFIX}/${stream}`,
         })),
         // One interval, because the fixture's numbers are the window totals.
-        // Summing across intervals is covered by the unit tests instead.
         [
             {
                 capture: Object.fromEntries(
@@ -173,36 +164,24 @@ export const buildMaterializationRows = (
         'materialization'
     );
 
-// Three backlog tiers, cycled by index so every stream list produces a mix
-// rather than needing its own hand-authored numbers: caught up (nothing left
-// to write, the ordinary state once a binding is through its backfill),
-// moderately behind (roughly an hour's worth at the binding's own rate — the
-// kind of gap a busy binding can carry indefinitely without anyone noticing),
-// and heavily behind (roughly a day's worth — the case this column exists to
-// surface). Scaled off the binding's own window volume, the same way a
-// backlog that never drains tracks a stuck binding's actual throughput,
-// rather than a fixed number that would be tiny beside a busy stream and huge
-// beside a quiet one.
+// Three backlog tiers cycled by index: caught up, roughly an hour behind, and
+// roughly a day behind. Scaled off each binding's own window volume, so the
+// figure tracks its throughput rather than being tiny beside a busy stream and
+// huge beside a quiet one.
 const BYTES_BEHIND_MULTIPLIER_BY_TIER = [0, 1, 24];
 
 const bytesBehindFor = (index: number, bytes: number): number =>
     Math.round(bytes * BYTES_BEHIND_MULTIPLIER_BY_TIER[index % 3]);
 
-// Matches the byte tiers above in spirit, not in exact ratio: time behind and
-// bytes behind come from the same gauge but are not required to move
-// together, so keeping their timings independent (a few minutes / a few hours
-// / a few days rather than three exact multiples of one figure) is the more
-// honest fixture — a moderately-behind binding could easily still be near an
-// hour boundary while its byte figure sits well under it.
+// Matches the byte tiers in spirit, not in ratio: both come from the same gauge
+// but are not required to move together.
 const SECONDS_BEHIND_BY_TIER = [0, 3 * 3600, 2 * 86400];
 
 const secondsBehindFor = (index: number): number =>
     SECONDS_BEHIND_BY_TIER[index % 3];
 
-// Builds the same `MaterializationBacklog`/`MaterializationTimeLag` shape
-// `useMaterializationBacklog` hands to `attachBacklogReadings`, so the story
-// exercises the real join rather than rows with the two fields poked in by
-// hand.
+// The same shape `useMaterializationBacklog` hands to `attachBacklogReadings`,
+// so the story exercises the real join.
 const buildBacklogReadings = (
     streams: StreamFixture[]
 ): { backlog: MaterializationBacklog; timeLag: MaterializationTimeLag } => {
@@ -233,10 +212,8 @@ const buildBacklogReadings = (
     };
 };
 
-// Same rows `buildMaterializationRows` builds, with bytesBehind/secondsBehind
-// attached the way the real page attaches them — a second pass through
-// `attachBacklogReadings`, not fields set by hand — so a story showing the lag
-// columns cannot show a shape the join itself does not produce.
+// Lag readings attached through `attachBacklogReadings`, as the page does,
+// rather than set by hand.
 export const buildMaterializationRowsWithBacklog = (
     streams: StreamFixture[]
 ): BindingRow[] => {
@@ -251,8 +228,8 @@ const LARGE_TASK_BINDING_COUNT = 1200;
 export const buildLargeTaskStreams = (): StreamFixture[] =>
     Array.from({ length: LARGE_TASK_BINDING_COUNT }, (_value, index) => [
         `table_${String(index).padStart(4, '0')}`,
-        // Deterministic but uneven, and a long tail of exact zeroes so the
-        // tie-break path is what paging actually depends on.
+        // Deterministic but uneven, with a long tail of exact zeroes so paging
+        // depends on the tie-break path.
         index % 7 === 0 ? 0 : (index % 97) * 1_100_000,
         index % 7 === 0 ? 0 : (index % 89) * 900,
         index % 11 === 0,
@@ -263,9 +240,8 @@ export const buildLargeTaskStreams = (): StreamFixture[] =>
 interface HarnessProps {
     bindings: BindingRow[];
     entityType: Entity;
-    // Pins the window a story shows. Left off, the store answers, which is what
-    // the page does — so the whole-page story's real range picker drives the
-    // chip here the way it drives the chart.
+    // Pins the window a story shows. Left off, the store answers, as on the
+    // page.
     range?: DataByHourRange;
     // Renders the state the table is in between selecting a range and its
     // volumes arriving.
@@ -274,9 +250,8 @@ interface HarnessProps {
     specLoading?: boolean;
 }
 
-// Renders the production `BindingsCard` itself — same card props, header, state
-// hook and row layout as the page. Only the data fetch is replaced by fixtures,
-// so a story cannot show behaviour the app does not have.
+// Renders the production `BindingsCard` itself; only the data fetch is replaced
+// by fixtures, so a story cannot show behaviour the app does not have.
 export function BindingsHarness({
     bindings,
     entityType,
