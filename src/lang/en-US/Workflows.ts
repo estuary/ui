@@ -98,18 +98,10 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `${CommonMessages['support.email']}`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
-    'workflows.collectionSelector.manualBackfill.header': `Backfill`,
     'workflows.collectionSelector.manualBackfill.notSupported.title': `This {entityType} doesn't support backfills.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message': `Please {docLink} for help with a backfill.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docLink': `${CTAs['cta.support']}`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docPath': `${CommonMessages['support.email']}`,
-
-    'workflows.collectionSelector.manualBackfill.message.capture': `Trigger a backfill of this collection from the source when published.`,
-    'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all enabled collections from the source when published. Disabled collections will not be backfilled.`,
-    'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger deletion of the destination dataset then replaying of the collection data into it when published.`,
-    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger deletion of entire destination data then replaying of the collection data into it when published.`,
-    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings.warning': `If you need to backfill, we recommend doing so from the Sources tab and selecting "Dataflow Reset" since it's often faster and uses less data.`,
-    'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
 
     'workflows.collectionSelector.evolvedCollections.alert': `Reversioned {itemType} will backfill on their own`,
 
