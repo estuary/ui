@@ -7,6 +7,9 @@ export interface OnboardingState {
     requestedTenant: string;
     setRequestedTenant: (value: string) => void;
 
+    requestedDataPlane: string | null;
+    setRequestedDataPlane: (value: string | null) => void;
+
     nameInvalid: boolean;
     setNameInvalid: (value: boolean) => void;
 

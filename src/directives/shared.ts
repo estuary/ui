@@ -80,9 +80,17 @@ export const DIRECTIVES: Directives = {
             return queryBuilder;
         },
         generateUserClaim: (args: any[]) => {
+            const [requestedTenant, survey, requestedDataPlane] = args;
             return {
-                requestedTenant: args[0],
-                survey: args.length > 1 ? args[1] : null,
+                requestedTenant,
+                survey: survey ?? null,
+                // Omitted (never sent as null) when unset: the agent's
+                // claims parser rejects unknown keys, and older agents
+                // don't know this one — leaving it out lets the backend
+                // fall back to its own default plane.
+                ...(hasLength(requestedDataPlane)
+                    ? { requestedDataPlane }
+                    : {}),
             };
         },
         calculateStatus: (appliedDirective) => {

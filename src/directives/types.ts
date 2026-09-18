@@ -41,6 +41,7 @@ interface ClickToAcceptClaim {
 interface OnboardClaim {
     requestedTenant: string;
     survey: any;
+    requestedDataPlane?: string;
 }
 
 export type UserClaims =
