@@ -60,16 +60,6 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
     'workflows.collectionSelector.notifications.toggle.disable.error': `Changes reverted. Unable to update server. Please try again.`,
 
-    'workflows.collectionSelector.footer.count': `total: {totalCount}`,
-    'workflows.collectionSelector.footer.count.empty': ` `,
-    'workflows.collectionSelector.footer.enabledCount': `enabled: {disabledBindingsCount}`,
-    'workflows.collectionSelector.footer.enabledCount.all': `all enabled`,
-    'workflows.collectionSelector.footer.enabledCount.empty': `all disabled`,
-
-    'workflows.collectionSelector.footer.backfilled': `backfilled: {calculatedCount}`,
-    'workflows.collectionSelector.footer.backfilled.all': `all backfilled`,
-    'workflows.collectionSelector.footer.backfilled.empty': `-`,
-
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
     'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,
@@ -98,25 +88,12 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.schemaInference.alert.patchService.message.docPath': `${CommonMessages['support.email']}`,
     'workflows.collectionSelector.schemaInference.cta.continue': `Apply Inferred Schema`,
 
-    'workflows.collectionSelector.manualBackfill.header': `Backfill`,
     'workflows.collectionSelector.manualBackfill.notSupported.title': `This {entityType} doesn't support backfills.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message': `Please {docLink} for help with a backfill.`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docLink': `${CTAs['cta.support']}`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docPath': `${CommonMessages['support.email']}`,
 
-    'workflows.collectionSelector.manualBackfill.message.capture': `Trigger a backfill of this collection from the source when published.`,
-    'workflows.collectionSelector.manualBackfill.message.capture.allBindings': `Trigger a backfill of all collections from the source when published. The UI will mark all collections to be backfilled but the server will filter out those that cannot be backfilled (e.g. disabled collections).`,
-    'workflows.collectionSelector.manualBackfill.message.materialization': `Trigger deletion of the destination dataset then replaying of the collection data into it when published.`,
-    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings': `Trigger deletion of entire destination data then replaying of the collection data into it when published.`,
-    'workflows.collectionSelector.manualBackfill.message.materialization.allBindings.warning': `If you need to backfill, we recommend doing so from the Sources tab and selecting "Dataflow Reset" since it's often faster and uses less data.`,
-    'workflows.collectionSelector.manualBackfill.cta.backfill': `Backfill`,
-    'workflows.collectionSelector.manualBackfill.count': `{backfillCount} of {bindingsTotal} {itemType} will be backfilled`,
-    'workflows.collectionSelector.manualBackfill.count.empty': `no {itemType} marked for backfill`,
-    'workflows.collectionSelector.manualBackfill.count.disabled': `no {itemType} available to backfill`,
-    'workflows.collectionSelector.manualBackfill.count.aria': `Backfill count`,
-
     'workflows.collectionSelector.evolvedCollections.alert': `Reversioned {itemType} will backfill on their own`,
-    'workflows.collectionSelector.evolvedCollections.count': `{count} {itemType} reversioning`,
 
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
