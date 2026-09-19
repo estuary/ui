@@ -13,12 +13,19 @@ import {
     semiTransparentBackground_teal_nesting,
 } from 'src/context/Theme';
 
+// Plain-string nouns for an entity's bindings, as [singular, plural]. Shared so that every
+// chip in the backfill section names bindings the same way.
+export const BINDING_TERMS: Record<Entity, [string, string]> = {
+    capture: ['collection', 'collections'],
+    collection: ['collection', 'collections'],
+    materialization: ['destination table', 'destination tables'],
+};
+
 export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
     capture: {
         Icon: CloudUpload,
         background: semiTransparentBackground_teal,
         backgroundNesting: semiTransparentBackground_teal_nesting,
-        bindingTermId: 'terms.bindings.plural',
         pluralId: 'terms.sources.plural',
         routes: {
             connectorSelect: authenticatedRoutes.captures.create.fullPath,
@@ -63,7 +70,6 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         Icon: DatabaseScript,
         background: semiTransparentBackground_blue,
         backgroundNesting: semiTransparentBackground_blue_nesting,
-        bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.collections.plural',
         routes: {
             connectorSelect: authenticatedRoutes.collections.create.fullPath,
@@ -105,7 +111,6 @@ export const ENTITY_SETTINGS: { [k in Entity]: EntitySetting } = {
         Icon: CloudDownload,
         background: semiTransparentBackground_purple,
         backgroundNesting: semiTransparentBackground_purple_nesting,
-        bindingTermId: 'terms.collections.plural',
         pluralId: 'terms.destinations.plural',
         routes: {
             connectorSelect:

@@ -1,18 +1,11 @@
-import type { Entity } from 'src/types';
-
 import { useMemo } from 'react';
 
 import { useEntityType } from 'src/context/EntityContext';
+import { BINDING_TERMS } from 'src/settings/entity';
 import {
     useBinding_bindingsToBackfill_count,
     useBinding_collections_count,
 } from 'src/stores/Binding/hooks';
-
-const BINDING_TERMS: Record<Entity, [string, string]> = {
-    capture: ['collection', 'collections'],
-    collection: ['collection', 'collections'],
-    materialization: ['destination table', 'destination tables'],
-};
 
 export const useBackfillCountMessage = (disabled?: boolean) => {
     const entityType = useEntityType();

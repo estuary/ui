@@ -93,8 +93,6 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.manualBackfill.notSupported.message.docLink': `${CTAs['cta.support']}`,
     'workflows.collectionSelector.manualBackfill.notSupported.message.docPath': `${CommonMessages['support.email']}`,
 
-    'workflows.collectionSelector.evolvedCollections.alert': `Reversioned {itemType} will backfill on their own`,
-
     'workflows.collectionSelector.manualBackfill.error.title': `Backfill update failed`,
     'workflows.collectionSelector.manualBackfill.error.message.singleCollection': `There was an issue updating the backfill counter for one or more bindings associated with collection, {collection}.`,
     'workflows.collectionSelector.manualBackfill.error.message.allBindings': `There was an issue updating the backfill counter for one or more bindings.`,

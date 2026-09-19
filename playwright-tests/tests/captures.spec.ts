@@ -17,7 +17,7 @@ import {
 } from '../helpers/utils';
 import { expect, Page, test } from '@playwright/test';
 
-const defaultBackfillMessage = 'no bindings marked for backfill';
+const defaultBackfillMessage = 'no collections marked for backfill';
 
 test.describe.serial('Captures:', () => {
     const uuid = crypto.randomUUID().split('-')[0];
