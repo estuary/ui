@@ -20,7 +20,7 @@ function EvolvedCount() {
     return (
         <Chip
             label={`${evolvedCollectionsCount} ${bindingTerm} reversioning`}
-            aria-label="Backfill count"
+            aria-label="Reversioned count"
             color="info"
             variant="outlined"
         />
