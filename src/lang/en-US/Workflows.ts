@@ -60,16 +60,6 @@ export const Workflows: Record<string, string> = {
     'workflows.collectionSelector.notifications.toggle.disable': `{count} {itemType} disabled`,
     'workflows.collectionSelector.notifications.toggle.disable.error': `Changes reverted. Unable to update server. Please try again.`,
 
-    'workflows.collectionSelector.footer.count': `total: {totalCount}`,
-    'workflows.collectionSelector.footer.count.empty': ` `,
-    'workflows.collectionSelector.footer.enabledCount': `enabled: {disabledBindingsCount}`,
-    'workflows.collectionSelector.footer.enabledCount.all': `all enabled`,
-    'workflows.collectionSelector.footer.enabledCount.empty': `all disabled`,
-
-    'workflows.collectionSelector.footer.backfilled': `backfilled: {calculatedCount}`,
-    'workflows.collectionSelector.footer.backfilled.all': `all backfilled`,
-    'workflows.collectionSelector.footer.backfilled.empty': `-`,
-
     'workflows.collectionSelector.schemaEdit.cta.syncSchema': `Synchronize Schema`,
     'workflows.collectionSelector.schemaEdit.header': `CLI`,
     'workflows.collectionSelector.schemaEdit.flowctlDocLink': `https://docs.estuary.dev/concepts/flowctl/`,

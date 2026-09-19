@@ -12,6 +12,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { useUnmount } from 'react-use';
 
 import {
+    getBindingUUIDsToBackfill,
     getCollectionNames,
     getCollections,
     getEnabledCollectionNames,
@@ -337,25 +338,11 @@ export const useBinding_backfilledBindings_count = () =>
         })
     );
 
-export const useBinding_enabledEvolvedCollections_count = () =>
-    useBindingStore((state) => {
-        const enabledCollections = new Set(
-            getEnabledCollectionNames(state.resourceConfigs)
-        );
-
-        return state.evolvedCollections.filter(({ new_name }) =>
-            enabledCollections.has(new_name)
-        ).length;
-    });
-
-export const useBinding_enabledBackfilledBindings_count = () =>
-    useBindingStore(
-        (state) =>
-            state.backfilledBindings.filter((bindingUUID) => {
-                const resourceConfig = state.resourceConfigs[bindingUUID];
-                return resourceConfig ? !resourceConfig.meta.disable : false;
-            }).length
-    );
+// Returns a count of the enabled bindings that will actually backfill, whether they
+// were marked manually or re-versioned by schema evolution. A binding marked both
+// ways is counted once.
+export const useBinding_bindingsToBackfill_count = () =>
+    useBindingStore((state) => getBindingUUIDsToBackfill(state).length);
 
 export const useBinding_backfillSupported = () =>
     useBindingStore((state) => state.backfillSupported);

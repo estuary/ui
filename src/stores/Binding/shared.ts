@@ -48,6 +48,34 @@ export const getEnabledCollectionNames = (
         .map(({ meta }) => meta.collectionName);
 };
 
+// Gets a list of distinct binding UUIDs that are marked to backfill. A binding will be backfilled when:
+// - the user explicitly marked it for backfill (tracked by `backfilledBindings`)
+// - when schema evolution re-versioned its collection (tracked `evolvedCollections`)
+//
+// This helper iterates the resource configs rather than unioning the two mark lists so that a binding that
+// qualifies both ways is counted only once. Disabled bindings are also filtered out because disabled bindings
+// are not backfilled.
+export const getBindingUUIDsToBackfill = (
+    state: Pick<
+        BindingState,
+        'backfilledBindings' | 'evolvedCollections' | 'resourceConfigs'
+    >
+): string[] => {
+    const markedBindingUUIDs = new Set(state.backfilledBindings);
+    const evolvedCollectionNames = new Set(
+        state.evolvedCollections.map(({ new_name }) => new_name)
+    );
+
+    return Object.entries(state.resourceConfigs)
+        .filter(
+            ([bindingUUID, { meta }]) =>
+                !meta.disable &&
+                (markedBindingUUIDs.has(bindingUUID) ||
+                    evolvedCollectionNames.has(meta.collectionName))
+        )
+        .map(([bindingUUID]) => bindingUUID);
+};
+
 const resetSingleCollectionMetadata = (
     state: BindingState,
     collection: string
