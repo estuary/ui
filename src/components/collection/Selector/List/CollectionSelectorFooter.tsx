@@ -9,22 +9,16 @@ import {
     TableRow,
 } from '@mui/material';
 
-import { useIntl } from 'react-intl';
-
 import { DEFAULT_ROW_HEIGHT } from 'src/components/collection/Selector/List/shared';
 import { defaultOutlineColor } from 'src/context/Theme';
 import { useBackfillCountMessage } from 'src/hooks/bindings/useBackfillCountMessage';
 import { useBinding_enabledBindings_count } from 'src/stores/Binding/hooks';
 
 function CollectionSelectorFooter({
-    columnCount,
     totalCount,
 }: CollectionSelectorFooterProps) {
-    const intl = useIntl();
-
     const enabledBindingsCount = useBinding_enabledBindings_count();
-
-    const { calculatedCount } = useBackfillCountMessage();
+    const { backfillCount } = useBackfillCountMessage();
 
     // TODO (FireFox Height Hack) - hardcoded height to make life easier
     return (
@@ -53,46 +47,24 @@ function CollectionSelectorFooter({
                             }
                         >
                             <Box>
-                                {intl.formatMessage(
-                                    {
-                                        id: Boolean(enabledBindingsCount)
-                                            ? enabledBindingsCount ===
-                                              totalCount
-                                                ? 'workflows.collectionSelector.footer.enabledCount.all'
-                                                : 'workflows.collectionSelector.footer.enabledCount'
-                                            : 'workflows.collectionSelector.footer.enabledCount.empty',
-                                    },
-                                    {
-                                        disabledBindingsCount:
-                                            enabledBindingsCount,
-                                    }
-                                )}
+                                {Boolean(enabledBindingsCount)
+                                    ? enabledBindingsCount === totalCount
+                                        ? 'all enabled'
+                                        : `enabled: ${enabledBindingsCount}`
+                                    : 'all disabled'}
+                            </Box>
+
+                            <Box>
+                                {Boolean(backfillCount)
+                                    ? backfillCount === totalCount
+                                        ? 'all backfilled'
+                                        : `backfilled: ${backfillCount}`
+                                    : '-'}
                             </Box>
                             <Box>
-                                {intl.formatMessage(
-                                    {
-                                        id: Boolean(calculatedCount)
-                                            ? calculatedCount === totalCount
-                                                ? 'workflows.collectionSelector.footer.backfilled.all'
-                                                : 'workflows.collectionSelector.footer.backfilled'
-                                            : 'workflows.collectionSelector.footer.backfilled.empty',
-                                    },
-                                    {
-                                        calculatedCount,
-                                    }
-                                )}
-                            </Box>
-                            <Box>
-                                {intl.formatMessage(
-                                    {
-                                        id: Boolean(totalCount)
-                                            ? 'workflows.collectionSelector.footer.count'
-                                            : 'workflows.collectionSelector.footer.count.empty',
-                                    },
-                                    {
-                                        totalCount,
-                                    }
-                                )}
+                                {Boolean(totalCount)
+                                    ? `total: ${totalCount}`
+                                    : ' '}
                             </Box>
                         </Stack>
                     ) : null}
