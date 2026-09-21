@@ -33,8 +33,6 @@ export const Workflows: Record<string, string> = {
 
     'workflows.save.review.header': `Review Changes`,
 
-    'workflows.collectionSelector.cta.rediscover': `Refresh`,
-    'workflows.collectionSelector.cta.rediscover.tooltip': `Refresh bindings with latest from source`,
     'workflows.collectionSelector.cta.schemaEdit': `CLI`,
     'workflows.collectionSelector.cta.schemaInference': `Schema Inference`,
     'workflows.collectionSelector.error.title.editorInitialization': `Editor initialization failed`,
@@ -355,7 +353,6 @@ export const Workflows: Record<string, string> = {
 
     'entityCreate.endpointConfig.configCanBeBlank.message': `This {entityType} requires no configuration.`,
 
-    'entityCreate.bindingsConfig.addCTA': `Add {itemType}`,
     'entityCreate.bindingsConfig.noRows': `Start by clicking the 'add' button above and selecting what you want to`,
     'entityCreate.bindingsConfig.noRowsTitle': `No selection made`,
     'entityCreate.bindingsConfig.noRowsTitle.capture': `Nothing found`,
